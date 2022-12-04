@@ -1,0 +1,127 @@
+---
+title: Pagination
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Pagination
+
+All `List` endpoints support pagination to allow bulk fetching multiple items. Each `List` endpoint shares a common response structure. Examples of these requests can be seen in [List Applications](/docs/api/applications#list-applications) and [List Tokens](/docs/api/tokens#list-tokens).
+
+## Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications?page=2&size=10" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+
+const applications = await bt.applications.list({
+  page: 2,
+  size: 10,
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Applications;
+
+var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var applications = client.GetAsync(new ApplicationGetRequest {
+  Page = 2,
+  PageSize = 10
+});
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import applications_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    applications_client = applications_api.ApplicationsApi(api_client)
+
+    applications = applications_client.get(page=2, size=10)
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  applications, httpResponse, err := apiClient.ApplicationsApi.Get(contextWithAPIKey).Page(2).Size(10).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### Query Parameters
+
+| Parameter | Required | Type      | Default | Description                                                        |
+| --------- | -------- | --------- | ------- | ------------------------------------------------------------------ |
+| `page`    | false    | _integer_ | 1       | Page number of the results to return.                              |
+| `size`    | false    | _integer_ | 20      | Number of results per page to return. Maximum size of 100 results. |
+
+## Response
+
+```json showLineNumbers
+{
+  "pagination": {
+    "total_items": 924,
+    "page_number": 2,
+    "page_size": 10,
+    "total_pages": 93
+  },
+  "data": [
+    {...},
+    {...},
+    {...}
+  ]
+}
+```
+
+## Pagination Object
+
+| Attribute    | Type                                                                              | Description                                                                             |
+| ------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `pagination` | _[pagination metadata](#pagination-pagination-object-pagination-metadata-object)_ | Pagination metadata for the response                                                    |
+| `data`       | _array_                                                                           | Query results of the request. See list endpoint resource for response schema definition |
+
+### Pagination Metadata Object
+
+| Attribute     | Type      | Description                                                 |
+| ------------- | --------- | ----------------------------------------------------------- |
+| `total_items` | _integer_ | Total number of items in the Tenant                         |
+| `page_number` | _integer_ | Current page number. Should match `page` query parameter.   |
+| `page_size`   | _integer_ | The size of each page. Should match `size` query parameter. |
+| `total_pages` | _integer_ | The total number of pages.                                  |

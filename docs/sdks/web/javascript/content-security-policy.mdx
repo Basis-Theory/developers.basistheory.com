@@ -1,0 +1,44 @@
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Content Security Policy
+
+If you have a [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) deployed in your website, you must include the following directives:
+
+- `script-src` - _https://js.basistheory.com_
+- `frame-src` - _https://elements.basistheory.com_ 
+
+If you are using [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/require-trusted-types-for), you must allow dynamic script loading from the _https://js.basistheory.com_ origin. This should be done **BEFORE** [initialization](/docs/sdks/web/javascript#initialization).
+
+```html showLineNumbers title="CSP"
+<head>
+  <meta http-equiv="Content-Security-Policy" 
+    content="frame-src https://elements.basistheory.com; script-src https://js.basistheory.com" />
+</head>
+```
+
+```javascript showLineNumbers title="Trusted Types"
+trustedTypes.createPolicy("default", {
+  createScriptURL: (input) => {
+    if (new URL(input).origin === "https://js.basistheory.com") {
+      return input;
+    }
+    return undefined;
+  }
+});
+```
+
+## Common CSP Errors
+
+The setup above is recommended to avoid errors similar to these:
+
+<Alert type={Alerts.WARNING}>
+  Refused to load the script '&lt;URL&gt;' because it violates the following Content Security Policy directive: (...).
+</Alert>
+
+<Alert type={Alerts.WARNING}>
+  Refused to frame 'https://elements.basistheory.com/' because it violates the following Content Security Policy directive: (...). Note that 'frame-src' was not explicitly set, so (...) is used as a fallback.
+</Alert>
+
+<Alert type={Alerts.WARNING}>
+  Failed to set the 'src' property on 'HTMLScriptElement': This document requires 'TrustedScriptURL' assignment.
+</Alert>

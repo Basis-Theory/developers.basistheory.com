@@ -1,0 +1,291 @@
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+
+# Control Data Access
+
+This guide will show you how to use granular permissions to control access to your data.
+
+Key concepts in this guide:
+
+- [Applications](/docs/api/applications)
+- [Access Controls](/docs/concepts/access-controls)
+- [Token Containers?](/docs/concepts/what-are-containers)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+Next you will need a [Management Application](/docs/api/applications#application-types) in order to provision the components in this guide.
+
+[Click here](https://portal.basistheory.com/applications/create?application_template_id=931b306f-6be7-405d-9a8d-1442a99dd2d7) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application from the **Full Management Access** template.
+
+<Alert>
+  Save the API Key from the created Management Application as it will be used in this guide to provision the next step.
+</Alert>
+
+## Create a Private Application
+
+We need a [Private Application](/docs/concepts/access-controls#application-type) to create and retrieve tokens:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "Control Access Private App",
+    "type": "private",
+    "rules": [
+        {
+            "container": "/",
+            "description": "Create Tokens",
+            "permissions": [
+                "token:create"
+            ],
+            "priority": 1,
+            "transform": "mask"
+        },
+        {
+            "container": "/users/government/",
+            "description": "Read Redacted Users",
+            "permissions": [
+                "token:read"
+            ],
+            "priority": 2,
+            "transform": "redact"
+        },
+        {
+            "container": "/users/employees/",
+            "description": "Read Revealed Users",
+            "permissions": [
+                "token:read"
+            ],
+            "priority": 3,
+            "transform": "reveal"
+        },
+        {
+            "container": "/users/",
+            "description": "Read Masked Users",
+            "permissions": [
+                "token:read"
+            ],
+            "priority": 4,
+            "transform": "mask"
+        }
+    ]
+  }'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Management API Key you created in the <a href="#getting-started">Getting Started</a> step.
+</Alert>
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used in this guide to create and list tokens.
+</Alert>
+
+This will create a Private Application with the following access rules in the following priority order:
+- Allow creation of tokens on any container under `/` root
+- Allow reads of users in the `/users/government/` container, but the data will be redacted
+- Allow reads of users in the `/users/employees/` container, and the data will be revealed
+- Allow reads of users in the `/users/` container, and the data will be masked
+
+## Create Tokens
+
+Now we want to create some tokens that will match the access rules on our Private Application we created.
+
+Run the following in your terminal to create some tokens:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokenize" \
+-X "POST" \
+-H "BT-API-KEY: test_1234567890" \
+-H "Content-Type: application/json" \
+-d '[{
+    "type": "token",
+    "data": {
+      "first_name": "Luke",
+      "last_name": "Skywalker",
+      "social_security_number": "111-22-3333",
+      "email_address": "luke@skywalkerranch.com"
+    },
+    "mask": {
+      "first_name": "{{ data.first_name }}",
+      "last_name": "{{ data.last_name | slice: 0 }}",
+      "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+      "email_address": "{{ data.email_address | split: '\''@'\'' | last }}"
+    },
+    "containers": [
+      "/users/jedis/"
+    ]
+}, {
+    "type": "token",
+    "data": {
+      "first_name": "Han",
+      "last_name": "Solo",
+      "social_security_number": "444-55-6666",
+      "email_address": "han.solo@skypilots.com"
+    },
+    "mask": {
+      "first_name": "{{ data.first_name }}",
+      "last_name": "{{ data.last_name | slice: 0 }}",
+      "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+      "email_address": "{{ data.email_address | split: '\''@'\'' | last }}"
+    },
+    "containers": [
+      "/users/employees/"
+    ]
+}, {
+    "type": "token",
+    "data": {
+      "first_name": "Leia",
+      "last_name": "Organa",
+      "social_security_number": "777-88-9999",
+      "email_address": "leia@senate.gov"
+    },
+    "mask": {
+      "first_name": "{{ data.first_name }}",
+      "last_name": "{{ data.last_name | slice: 0 }}",
+      "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+      "email_address": "{{ data.email_address | split: '\''@'\'' | last }}"
+    },
+    "metadata": {
+      "senate_seat": "Alderaan"
+    },
+    "containers": [
+      "/users/government/"
+    ]
+}, {
+    "type": "token",
+    "data": {
+      "first_name": "Boba",
+      "last_name": "Fett",
+      "social_security_number": "123-45-6789",
+      "email_address": "boba@bountyguild.com"
+    },
+    "containers": [
+      "/bounty-hunters/"
+    ]
+}]'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Private API Key you created in the <a href="#create-a-private-application">Create a Private Application</a> step.
+</Alert>
+
+## Retrieve Tokens
+
+Finally, let's retrieve our data.
+
+Run the following in your terminal to list all tokens:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokens" \
+  -H "BT-API-KEY: test_1234567890"
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Private API Key you created in the <a href="#create-a-private-application">Create a Private Application</a> step.
+</Alert>
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+  "pagination": {
+    "total_items": 3,
+    "page_number": 1,
+    "page_size": 20,
+    "total_pages": 1
+  },
+  "data": [
+    {
+      "id": "546b2528-8e57-4bd5-b607-db639d126696",
+      "type": "token",
+      "tenant_id": "306b9c97-f974-4a87-b7b5-7f286333c4a4",
+      "metadata": {
+        "senate_seat": "Alderaan"
+      },
+      "created_by": "51df57ce-ef0f-47ff-b523-a08ecb9bad8a",
+      "created_at": "2022-12-22T15:07:46.6158347+00:00",
+      "fingerprint": "BF2ktSAXbUEdhNdkX58fwUxYSfXYK5XoUjx5zQawZBYN",
+      "fingerprint_expression": "{{ data | stringify }}",
+      "mask": {
+        "first_name": "{{ data.first_name }}",
+        "last_name": "{{ data.last_name | slice: 0 }}",
+        "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+        "email_address": "{{ data.email_address | split: '@' | last }}"
+      },
+      "containers": [
+        "/users/government/"
+      ]
+    },
+    {
+      "id": "be637207-540a-4920-aabe-ca734383712a",
+      "type": "token",
+      "tenant_id": "306b9c97-f974-4a87-b7b5-7f286333c4a4",
+      "data": {
+        "first_name": "Han",
+        "last_name": "Solo",
+        "social_security_number": "444-55-6666",
+        "email_address": "han.solo@skypilots.com"
+      },
+      "created_by": "51df57ce-ef0f-47ff-b523-a08ecb9bad8a",
+      "created_at": "2022-12-22T15:07:46.6158347+00:00",
+      "fingerprint": "CKwnVWvDhR9ishqSHo39Z42wGenevTnuqDHsMu7i6f7z",
+      "fingerprint_expression": "{{ data | stringify }}",
+      "mask": {
+        "first_name": "{{ data.first_name }}",
+        "last_name": "{{ data.last_name | slice: 0 }}",
+        "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+        "email_address": "{{ data.email_address | split: '@' | last }}"
+      },
+      "containers": [
+        "/users/employees/"
+      ]
+    },
+    {
+      "id": "da06ec46-282c-45e3-a79c-8e1fd8f3b356",
+      "type": "token",
+      "tenant_id": "306b9c97-f974-4a87-b7b5-7f286333c4a4",
+      "data": {
+        "first_name": "Luke",
+        "last_name": "S",
+        "social_security_number": "XXX-XX-3333",
+        "email_address": "skywalkerranch.com"
+      },
+      "created_by": "51df57ce-ef0f-47ff-b523-a08ecb9bad8a",
+      "created_at": "2022-12-22T15:07:46.6158347+00:00",
+      "fingerprint": "BKUzzMpHBJnnidoXv32kxfCnzksNce729bCQJN7A6Ttf",
+      "fingerprint_expression": "{{ data | stringify }}",
+      "mask": {
+        "first_name": "{{ data.first_name }}",
+        "last_name": "{{ data.last_name | slice: 0 }}",
+        "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+        "email_address": "{{ data.email_address | split: '@' | last }}"
+      },
+      "containers": [
+        "/users/jedis/"
+      ]
+    }
+  ]
+}
+```
+
+Notice the following rules were applied:
+- Leia Organa's user record was redacted because it matched the `/users/government/` rule
+- Han Solo's user record was revealed because it matched the `/users/employees/` rule
+- Luke Skywalkers's user record was masked because it matched the `/users/` rule and did not match any of the more specific container rules above
+- Boba Fett's record was not returned because there was no `token:read` permission on any rule for the `/bounty-hunters/` container
+
+## Conclusion
+
+You can use one of Basis Theory's many [pre-built Application templates](https://portal.basistheory.com/applications) to get started quickly or customize [Access Controls](/docs/concepts/access-controls) to provide granular permissions around your data.
+
+## Learn More
+
+- [Access Controls](/docs/concepts/access-controls)
+- [Display Masked Data](/docs/guides/share/display-masked-data)
+- [Expressions](/docs/expressions)

@@ -1,0 +1,83 @@
+---
+sidebar_label: Lifecycle
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Elements Lifecycle
+
+After [initialization](/docs/sdks/web/javascript#initialization), **Elements** are available through `BasisTheory` instance.
+
+## Create Element
+
+This lifecycle method returns a new instance of an element type.
+
+```javascript showLineNumbers
+var cardElement = BasisTheory.createElement("card", options);
+
+var textElement = BasisTheory.createElement("text", {
+  targetId: "myInputId",
+  ...options,
+});
+```
+
+| Parameter | Required | Type     | Description                                       |
+| --------- | -------- | -------- | ------------------------------------------------- |
+| `type`    | true     | _string_ | [Type](./types) of the element you want to create |
+| `options` | false    | _object_ | [Options](./options) for customizing the element  |
+
+<Alert type={Alerts.WARNING}>
+  Unknown <code>type</code> values will throw an error.
+</Alert>
+
+## Mount Element
+
+This lifecycle method attaches the element to the DOM, under a specific DOM container.
+
+```html showLineNumbers
+<div id="my-card"></div>
+
+<script>
+  cardElement.mount("#my-card");
+</script>
+```
+
+| Parameter  | Required | Type     | Description                                                                    |
+| ---------- | -------- | -------- | ------------------------------------------------------------------------------ |
+| `selector` | true     | _string_ | CSS selector that matches the DOM container where your element will be mounted |
+
+<Alert type={Alerts.WARNING}>
+  Multiple calls to <code>element.mount</code> will result in an error.
+</Alert>
+
+<Alert type={Alerts.WARNING}>
+  If the Application key used to initialize <code>BasisTheory</code> doesn't
+  exist or doesn't have the required{" "}
+  <a href="/docs/api/applications/permissions">permissions</a>, an error will be
+  thrown by this method.
+</Alert>
+
+## Update Element
+
+This lifecycle method updates the element options the element was initialized with. The values are merged into the previous options.
+
+```javascript showLineNumbers
+cardElement.update(options);
+```
+
+| Parameter | Required | Type     | Description                                             |
+| --------- | -------- | -------- | ------------------------------------------------------- |
+| `options` | false    | _object_ | [Options](./options) for customizing the element |
+
+## Unmount Element
+
+This lifecycle method safely removes the element from the DOM, stopping any further communication with it.
+
+```javascript showLineNumbers
+cardElement.unmount();
+```
+
+<Alert
+  type={Alerts.WARNING}
+  content="Trying to mount an element that has been unmounted will result in an error."
+/>

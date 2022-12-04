@@ -1,0 +1,179 @@
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+
+# Display Masked Data
+
+This guide will show you how to customize your data so you can securely display it while remaining compliant. We will leverage the concept of a `mask` to transform the underlying data prior to display.
+
+Key concepts in this guide:
+
+- [Token Masks](/docs/concepts/what-are-tokens#masking)
+- [Access Controls](/docs/concepts/access-controls)
+- [Expressions](/docs/expressions)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+Next you will need a [Management Application](/docs/api/applications#application-types) in order to provision the components in this guide.
+
+[Click here](https://portal.basistheory.com/applications/create?application_template_id=931b306f-6be7-405d-9a8d-1442a99dd2d7) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application from the **Full Management Access** template.
+
+<Alert>
+  Save the API Key from the created Management Application as it will be used to provision the next step.
+</Alert>
+
+## Create a Private Application
+
+We need to create a Private Application which will be used to tokenize some data and retrieve the masked data. We will apply an [Acccess Policy](/docs/concepts/access-controls) to the application of `mask` on the root container `/`. 
+Access policies enable you to partition and apply granular permissions to your data.
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "Display Masked Data App",
+    "type": "private",
+    "rules": [{
+      "description": "Create and read masked data",
+      "priority": 1,
+      "container": "/",
+      "transform": "mask",
+      "permissions": [
+        "token:create",
+        "token:read"
+      ]
+    }]
+  }'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Private API Key you created in the <a href="#getting-started">Getting Started</a> step.
+</Alert>
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used in this guide to create the token and retrieve the masked data.
+</Alert>
+
+## Create a Token
+
+Next, we want to collect some user data in a token. This will securely store this information with Basis Theory, which will be retrieved later. To do this, we will call the [Tokenize](/docs/api/tokens/tokenize) endpoint directly.
+
+We will leverage [Expressions](/docs/expressions) to define the [token `mask`](/docs/concepts/what-are-tokens#masking). These are [Liquid template expressions](/docs/expressions#language) to define the format of the data when retrieving the information.
+
+Run the following in your terminal to create a token containing user information:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokenize" \
+-X "POST" \
+-H "BT-API-KEY: test_1234567890" \
+-H "Content-Type: application/json" \
+-d '{
+  "type": "token",
+  "data": {
+    "first_name": "John",
+    "last_name": "Doe",
+    "social_security_number": "111-22-3333",
+    "email_address": "johndoe@basistheory.com"
+  },
+  "mask": {
+    "first_name": "{{ data.first_name }}",
+    "last_name": "{{ data.last_name | slice: 0 }}.",
+    "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+    "email_address": "{{ data.email_address | split: '\''@'\'' | last }}"
+  }
+}'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Private API Key you created in the <a href="#getting-started">Getting Started</a> step.
+</Alert>
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+  "id": "90ead06a-e6d8-4061-9096-4486c5d7820a",
+  "type": "token",
+  "tenant_id": "76d4905e-ef89-46ea-9134-92ad5cd2e973",
+  "data": {
+    "first_name": "John",
+    "last_name": "D.",
+    "social_security_number": "XXX-XX-3333",
+    "email_address": "basistheory.com"
+  },
+  "created_by": "5f84b724-e531-4416-a39d-3e8912643999",
+  "created_at": "2022-12-20T20:40:32.1996963+00:00",
+  "fingerprint": "3CWpgMyXH3NdPxDzd47ch5uk9S6ApFTqt4cyqgwNyzYF",
+  "fingerprint_expression": "{{ data | stringify }}",
+  "mask": {
+    "first_name": "{{ data.first_name }}",
+    "last_name": "{{ data.last_name | slice: 0 }}.",
+    "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+    "email_address": "{{ data.email_address | split: '@' | last }}"
+  },
+  "containers": [
+    "/general/high/"
+  ]
+}
+```
+
+<Alert type={Alerts.INFO}>
+  It is best practice to securely collect your data from a <a href="/docs/guides/collect/collect-data-from-web">web form</a> or <a href="/docs/guides/collect/collect-inbound-data-to-api">API</a> to avoid security and compliance risks associated with directly handling the sensitive data.
+</Alert>
+
+## Retrieve the Token
+
+Now we want to retrieve the token to view the masked information.
+
+If you run the following in your terminal:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokens/90ead06a-e6d8-4061-9096-4486c5d7820a" \
+  -H "BT-API-KEY: test_1234567890"
+```
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+  "id": "90ead06a-e6d8-4061-9096-4486c5d7820a",
+  "type": "token",
+  "tenant_id": "76d4905e-ef89-46ea-9134-92ad5cd2e973",
+  "data": {
+    "first_name": "John",
+    "last_name": "D.",
+    "social_security_number": "XXX-XX-3333",
+    "email_address": "basistheory.com"
+  },
+  "created_by": "5f84b724-e531-4416-a39d-3e8912643999",
+  "created_at": "2022-12-20T20:40:32.1996963+00:00",
+  "fingerprint": "3CWpgMyXH3NdPxDzd47ch5uk9S6ApFTqt4cyqgwNyzYF",
+  "fingerprint_expression": "{{ data | stringify }}",
+  "mask": {
+    "first_name": "{{ data.first_name }}",
+    "last_name": "{{ data.last_name | slice: 0 }}.",
+    "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+    "email_address": "{{ data.email_address | split: '@' | last }}"
+  },
+  "containers": [
+    "/general/high/"
+  ]
+}
+```
+
+## Conclusion
+
+Due to the [Acccess Policy](/docs/concepts/access-controls) we created on our Private Application, the `mask` transform  will be applied to all tokens in the root container `/`. The result will have the token's `mask` applied to the data.
+
+Custom masks can be applied to any [token type](/docs/api/tokens/token-types) to help displaying sensitive data to users of your systems without exposing your applications and systems to increased compliance and security requirements.
+
+## Learn More
+
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [Access Controls](/docs/concepts/access-controls)
+- [Expressions](/docs/expressions)

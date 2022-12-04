@@ -1,0 +1,152 @@
+---
+sidebar_label: Types
+---
+
+import { 
+  CardElement,
+  CardExpirationDateElement,
+  CardNumberElement,
+  CardVerificationCodeElement,
+  TextElement
+} from '@basis-theory/basis-theory-react';
+import { BasisTheoryComponentDisplay } from '@site/src/components/sdks/BasisTheoryComponentDisplay';
+
+# Elements Types
+
+## Card Element
+
+The `"card"` element type features a one-liner credit card collector containing the following inputs:
+
+- *cardNumber*
+- *expirationDate*
+- *cvc*
+
+<BasisTheoryComponentDisplay title="Live Card Element">
+  <CardElement id="types-card-element" />
+</BasisTheoryComponentDisplay>
+
+```html showLineNumbers
+<html>
+  <body>
+    <div id="card-element">
+
+    <script defer>
+      window.addEventListener('load', () => {
+        const cardElement = BasisTheory.createElement('card');
+
+        cardElement.mount('#card-element');  
+      });
+    </script>
+  </body>
+</html>
+```
+
+## Text Element
+
+The `"text"` element type is a secure replacement for the `<input>` tag and enables collecting user `string` data.
+
+<BasisTheoryComponentDisplay title="Live Text Element">
+  <TextElement id="types-text-element" placeholder="John Doe" />
+</BasisTheoryComponentDisplay>
+
+```html showLineNumbers
+<html>
+  <body>
+    <div id="text-element">
+
+    <script defer>
+      window.addEventListener('load', () => {
+        const textElement = BasisTheory.createElement('text', {
+          targetId: 'elementTypesTextElement',
+          placeholder: 'John Doe',
+        });
+
+        textElement.mount('#text-element'); 
+      });
+    </script>
+  </body>
+</html>
+```
+
+## Card Number Element
+
+The `"cardNumber"` element type renders a card number input and an optional card icon, featuring automatic brand detection, input validation
+and masking.
+
+<BasisTheoryComponentDisplay title="Live Card Number Element">
+  <CardNumberElement id="types-card-number-element" />
+</BasisTheoryComponentDisplay>
+
+```html showLineNumbers
+<html>
+  <body>
+    <div id="card-number-element">
+
+    <script defer>
+      window.addEventListener('load', () => {
+        const cardNumberElement = BasisTheory.createElement('cardNumber', {
+          targetId: 'elementTypesCardNumberElement',
+        });
+
+        cardNumberElement.mount('#card-number-element');
+
+        cardNumberElement.on('change', ({ cardBrand }) => {
+          window.cardVerificationCodeElement?.update({ cardBrand });
+        });
+      });
+    </script>
+  </body>
+</html>
+```
+
+## Card Expiration Date Element
+
+The `"cardExpirationDate"` element type features a month/year formatted input with validation. The date must be between current month and 20 years in the future.
+
+<BasisTheoryComponentDisplay title="Live Card Expiration Date Element">
+  <CardExpirationDateElement id="types-card-expiration-date-element" />
+</BasisTheoryComponentDisplay>
+
+```html showLineNumbers
+<html>
+  <body>
+    <div id="card-expiration-date-element">
+
+    <script defer>
+      window.addEventListener('load', () => {
+        const cardExpirationDateElement = BasisTheory.createElement('cardExpirationDate', {
+          targetId: 'elementTypesCardExpirationDateElement',
+        });
+
+        cardExpirationDateElement.mount('#card-expiration-date-element');  
+      });
+    </script>
+  </body>
+</html>
+```
+
+## Card Verification Code Element
+
+The `"cardVerificationCode"` element type is used to collect the card security code.
+
+<BasisTheoryComponentDisplay title="Live Card Verification Code Element">
+  <CardVerificationCodeElement id="types-card-verification-code-element" />
+</BasisTheoryComponentDisplay>
+
+```html showLineNumbers
+<html>
+  <body>
+    <div id="card-verification-code-element">
+
+    <script defer>
+      window.addEventListener('load', () => {
+        const cardVerificationCodeElement = BasisTheory.createElement('cardVerificationCode', {
+          targetId: 'elementTypesCardVerificationCodeElement',
+        });
+
+        cardVerificationCodeElement.mount('#card-verification-code-element');  
+      });
+    </script>
+  </body>
+</html>
+```

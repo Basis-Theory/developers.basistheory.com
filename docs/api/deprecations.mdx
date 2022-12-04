@@ -1,0 +1,33 @@
+---
+title: Deprecations
+---
+
+# Deprecations
+
+## Deprecated Features
+
+The following table lists deprecated features and their respective shutdown dates.
+
+| Feature                                                             | Deprecated Date   | Shutdown Date    | Details                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------- | ----------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `request_reactor_id` and `response_reactor_id` removed from Proxies | November 30, 2022 | March 31, 2023   | In order to simplify management of Proxies, use of `request_transform` and `response_tramsform` has been recommended over Reactors.                                                                                                                                                                                                                                                                             |
+| Token Privacy Settings                                              | October 13, 2022  | February 1, 2023 | Privacy settings (i.e. classification, impact level, and restriction policy) have been deprecated and replaced by a more flexible authorization model based upon [Containers](/docs/concepts/what-are-containers) and [Access Rules](/docs/concepts/access-controls#what-are-access-rules). For more information, see the section below on [Migrating from Privacy Settings](#migrating-from-privacy-settings). |
+
+## Migrating From Privacy Settings
+
+Privacy settings were previously used to scope access to Tokens based on their data classification and impact levels.
+In order to provide a more flexible access control model that can be customized per Application, we have introduced
+Token [Containers](/docs/concepts/what-are-containers)
+to logically group Tokens according to any data governance requirements. A Token may be explicitly added to a container
+when creating the Token, or if unspecified, a Token will be placed within the container `/<classification>/<impact_level>/`
+by default. If you were previously customizing a Token's classification or impact level, please update your systems to
+directly set the `containers` attribute instead.
+
+Restriction policies were previously used in conjunction with impact level based read
+permissions (e.g. `token:general:read:low`) to define how Token data should be transformed when reading Tokens with
+a higher impact level than your permission allows. This model proved to be too inflexible as it was a global setting
+applied at the Token level and could not be customized per actor. Restriction policies no longer have any functional
+impact, and were replaced by transforms applied via [Access Rules](/docs/concepts/access-controls#what-are-access-rules).
+
+If your systems are using the `privacy` attribute of the [Token Object](/docs/api/tokens#token-object) in API responses, please
+update your integration to ignore this attribute as it will be removed on February 1, 2023.
