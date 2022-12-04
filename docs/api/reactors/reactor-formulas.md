@@ -1,32 +1,35 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Reactor Formulas
 
 Reactor formulas give you the ability to pre-configure custom integrations to securely process, enrich, and associate your tokens.
 
 ## Reactor Formula Object
 
-| Attribute            | Type     | Description                                                                                                                         |
-|----------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `id`                 | *uuid*   | Unique identifier of the Reactor Formula which can be used to [get a Reactor Formula](#reactor-formulas-get-a-reactor-formula)      |
-| `name`               | *string* | The name of the Reactor Formula. Has a maximum length of `200`                                                                      |
-| `description`        | *string* | The description of the Reactor Formula                                                                                              |
-| `type`               | *string* | [Type](#reactor-formulas-reactor-formula-types) of the Reactor Formula                                                              |
-| `status`             | *string* | [Status](#reactor-formulas-reactor-formula-statuses) of the Reactor Formula                                                         |
-| `icon`               | *string* | Base64 [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image                          |
-| `code`               | *string* | [Reactor Formula code](#reactor-formulas-reactor-formula-code) which will be executed when the Reactor Formula is processed         |
-| `configuration`      | *array*  | Array of [configuration](#reactor-formulas-reactor-formula-configuration) options for configuring a reactor                         |
-| `request_parameters` | *array*  | Array of [request parameters](#reactor-formulas-reactor-formula-request-parameters) which will be passed when executing the reactor |
-| `created_at`         | *date*   | (Optional) Created date of the Reactor Formula in ISO 8601 format                                                                   |
-| `created_by`         | *uuid*   | (Optional) The ID of the user or [Application](#applications) that created the Reactor Formula                                      |
-| `modified_at`        | *date*   | (Optional) Last modified date of the Reactor Formula in ISO 8601 format                                                             |
-| `modified_by`        | *uuid*   | (Optional) The ID of the user or [Application](#applications) that last modified the Reactor Formula                                |
+| Attribute            | Type     | Description                                                                                                                    |
+| -------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `id`                 | *uuid*   | Unique identifier of the Reactor Formula which can be used to [get a Reactor Formula](#reactor-formulas-get-a-reactor-formula) |
+| `name`               | *string* | The name of the Reactor Formula. Has a maximum length of `200`                                                                 |
+| `description`        | *string* | The description of the Reactor Formula                                                                                         |
+| `type`               | *string* | [Type](#reactor-formula-types) of the Reactor Formula                                                                          |
+| `status`             | *string* | [Status](#reactor-formula-statuses) of the Reactor Formula                                                                     |
+| `icon`               | *string* | Base64 [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image                     |
+| `code`               | *string* | [Reactor Formula code](#reactor-formula-code) which will be executed when the Reactor Formula is processed                     |
+| `configuration`      | *array*  | Array of [configuration](#reactor-formula-configuration) options for configuring a reactor                                     |
+| `request_parameters` | *array*  | Array of [request parameters](#reactor-formula-request-parameters) which will be passed when executing the reactor             |
+| `created_at`         | *date*   | (Optional) Created date of the Reactor Formula in ISO 8601 format                                                              |
+| `created_by`         | *uuid*   | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Reactor Formula                        |
+| `modified_at`        | *date*   | (Optional) Last modified date of the Reactor Formula in ISO 8601 format                                                        |
+| `modified_by`        | *uuid*   | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Reactor Formula                  |
 
 ### Reactor Formula Configuration
 
-The `configuration` property of a Reactor Formula defines the contract that the `configuration` property must satisfy on all [Reactors](#reactors-reactor-object) created from this formula.
+The `configuration` property of a Reactor Formula defines the contract that the `configuration` property must satisfy on all [Reactors](/docs/api/reactors#reactor-object) created from this formula.
 Elements of a Reactor Formula's `configuration` array have the following schema:  
 
 | Attribute     | Required | Type     | Default | Description                                                                                |
-|---------------|----------|----------|---------|--------------------------------------------------------------------------------------------|
+| ------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------ |
 | `name`        | true     | *string* | `null`  | Name of the configuration setting                                                          |
 | `description` | false    | *string* | `null`  | Description of the configuration setting                                                   |
 | `type`        | true     | *string* | `null`  | Data type of the configuration setting. Valid values are `string`, `boolean`, and `number` |
@@ -36,11 +39,11 @@ Complex nested objects (dot-separated names) are not currently supported within 
 
 ### Reactor Formula Request Parameters
 
-The `request_parameters` array on a Reactor Formula defines the contract that the `args` property must satisfy on each request when [Invoking a Reactor](#reactors-invoke-a-reactor). 
+The `request_parameters` array on a Reactor Formula defines the contract that the `args` property must satisfy on each request when [Invoking a Reactor](/docs/api/reactors#invoke-a-reactor). 
 Elements of a Reactor Formula's `request_parameters` array have the following schema:
 
 | Attribute     | Required | Type      | Default | Description                                                                            |
-|---------------|----------|-----------|---------|----------------------------------------------------------------------------------------|
+| ------------- | -------- | --------- | ------- | -------------------------------------------------------------------------------------- |
 | `name`        | true     | *string*  | `null`  | Name of the request parameter. Complex objects can be denoted as `[parent].[child]`    |
 | `description` | false    | *string*  | `null`  | Description of the request parameter                                                   |
 | `type`        | true     | *string*  | `null`  | Data type of the request parameter. Valid values are `string`, `boolean`, and `number` |
@@ -51,38 +54,26 @@ Complex objects properties can be passed within the `args` property to a Reactor
 
 Any `args` property not associated with a request parameter is still forwarded to the reactor. This allows you to provide complete complex objects including arrays, in which no type checking is applied. For instance, if no request parameters are declared, it means you can provide any payload when invoking the reactor. 
 
-For example, to pass a `card` object whose schema matches the [Card Object](#atomic-cards-atomic-card-object-card-object) stored within an [Atomic Card](#atomic-cards-atomic-card-object) token and an array of any type, 
-a Reactor Formula should define the following request parameters:
-
-| name                    | type     | optional |
-|-------------------------|----------|----------|
-| `card.number`           | *string* | false    |
-| `card.expiration_month` | *number* | false    |
-| `card.expiration_year`  | *number* | false    |
-| `card.cvc`              | *string* | true     |
-
-As you can see, only the primitive typed request parameters are defined. You could even omit them completely and they would still be forwarded to the Reactor and no validation would be applied.
-
 ### Reactor Formula Code
 
-All Reactor Formula code snippets must export a function which takes in a [request object](#reactor-formulas-reactor-formula-code-reactor-formula-request-object) and returns a [response object](#reactor-formulas-reactor-formula-code-reactor-formula-response-object).
+All Reactor Formula code snippets must export a function which takes in a [request object](#reactor-formula-request-object) and returns a [response object](#reactor-formula-response-object).
 
 #### Reactor Formula Request Object
 
-| Attribute       | Type     | Description                                                                                 |
-|-----------------|----------|---------------------------------------------------------------------------------------------|
-| `args`          | *object* | The arguments that were provided when the [reactor was invoked](#reactors-invoke-a-reactor) |
-| `configuration` | *object* | The configuration defined for the [Reactor object](#reactors-reactor-object)                |
+| Attribute       | Type     | Description                                                                                          |
+| --------------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `args`          | *object* | The arguments that were provided when the [reactor was invoked](/docs/api/reactors#invoke-a-reactor) |
+| `configuration` | *object* | The configuration defined for the [Reactor object](/docs/api/reactors#reactor-object)                |
 
 #### Reactor Formula Response Object
 
 | Attribute  | Type     | Description                                                               |
-|------------|----------|---------------------------------------------------------------------------|
+| ---------- | -------- | ------------------------------------------------------------------------- |
 | `raw`      | *object* | (Optional) Raw output returned from the Reactor                           |
 | `tokenize` | *object* | (Optional) A payload that will be tokenized to produce one or more tokens |
 
 The payload returned in the `tokenize` property will be tokenized in the same way that requests are tokenized via the Tokenize endpoint. 
-For more information, see [Tokenize](#tokenize).
+For more information, see [Tokenize](/docs/api/tokens/tokenize).
 
 Reactor Formula Code is written in Javascript (targeting Node.js v16) and generally follows the structure:
 
@@ -102,23 +93,51 @@ module.exports = async function (req) {
 
 For more information about writing your own code for a Reactor Formula, check out [our guide](https://developers.basistheory.com/guides/run-your-own-code-in-a-reactor/).
 
-## Reactor Formula Types
+### Reactor Formula Types
 
 | Type       | Description                                                                                |
-|------------|--------------------------------------------------------------------------------------------|
+| ---------- | ------------------------------------------------------------------------------------------ |
 | `official` | Official formulas that are built and supported by Basis Theory and its authorized partners |
 | `private`  | Private formulas which are only available to your Tenant                                   |
 
-## Reactor Formula Statuses
+### Reactor Formula Statuses
 
 | Type          | Description                                                                                                                                                                                                                                                                                                                                 |
-|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `verified`    | The formula has been verified and is generally available                                                                                                                                                                                                                                                                                    |
 | `coming_soon` | The formula has limited availability. Request to <a href="https://support.basistheory.com/hc/requests/new?tf_subject=Join%20Private%20Beta%20for%20Reactor%20Formula&amp;tf_description=Let%20us%20know%20which%20reactor%20formula%20you'd%20like%20to%20use&amp;tf_priority=normal" target="_blank">join the Private Beta</a> for access. |
 
-<h2 id="reactor-formulas-create-reactor-formula">Create Reactor Formula</h2>
+## Create Reactor Formula
 
-> Request
+<span class="http-method post">
+  <span class="box-method">POST</span>
+  `https://api.basistheory.com/reactor-formulas`
+</span>
+
+Create a new Reactor Formula for the Tenant.
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">reactor:create</span>
+</p>
+
+### Request
+
+#### Request Parameters
+
+| Attribute            | Required | Type     | Default | Description                                                                                                                                                                       |
+| -------------------- | -------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | true     | *string* | `null`  | The name of the Reactor Formula. Has a maximum length of `200`                                                                                                                    |
+| `description`        | false    | *string* | `null`  | The description of the Reactor Formula                                                                                                                                            |
+| `type`               | true     | *string* | `null`  | [Type](#reactor-formula-types) of the Reactor Formula                                                                                                                             |
+| `icon`               | false    | *string* | `null`  | Base64 [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image. Supported image types are: `image/png`, `image/jpg`, and `image/jpeg` |
+| `code`               | true     | *string* | `null`  | [Reactor code](#reactor-formula-code) which will be executed when the Reactor Formula is processed                                                                                |
+| `configuration`      | true     | *array*  | `[]`    | Array of [configuration](#reactor-formula-configuration) options for configuring a Reactor                                                                                        |
+| `request_parameters` | true     | *array*  | `[]`    | Array of [request parameters](#reactor-formula-request-parameters) which will be passed when executing the Reactor                                                                |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
 
 ```shell
 curl "https://api.basistheory.com/reactor-formulas" \
@@ -164,6 +183,9 @@ curl "https://api.basistheory.com/reactor-formulas" \
   }'
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
 ```javascript
 import { BasisTheory } from '@basis-theory/basis-theory-js';
 
@@ -208,6 +230,9 @@ const reactorFormula = await bt.reactorFormulas.create({
 });
 ```
 
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
 ```csharp
 using BasisTheory.net.ReactorFormulas;
 
@@ -251,6 +276,9 @@ var reactorFormula = await client.CreateAsync(new ReactorFormula {
   }
 });
 ```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
 
 ```python
 import basistheory
@@ -301,6 +329,9 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
     ))
 ```
 
+  </TabItem>
+  <TabItem value="go" label="Go">
+
 ```go
 package main
 
@@ -349,7 +380,12 @@ func main() {
 }
 ```
 
-> Response
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [Reactor Formula](#reactor-formula-object) if the Reactor Formula was created. Returns [an error](/docs/api/errors) if there were validation errors, or the Reactor Formula failed to create.
 
 ```json
 {
@@ -394,44 +430,39 @@ func main() {
 }
 ```
 
-<span class="http-method post">
-  <span class="box-method">POST</span>
+## List Reactor Formulas
+
+<span class="http-method get">
+  <span class="box-method">GET</span>
   `https://api.basistheory.com/reactor-formulas`
 </span>
 
-Create a new Reactor Formula for the Tenant.
+Get a list of official Reactor Formulas and private Tenant-specific Reactor Formulas.
 
-### Permissions
+#### Permissions
 
 <p class="scopes">
-  <span class="scope">reactor:create</span>
+  <span class="scope">reactor:read</span>
 </p>
 
-### Request Parameters
+### Request
 
-| Attribute            | Required | Type     | Default | Description                                                                                                                                                                       |
-|----------------------|----------|----------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `name`               | true     | *string* | `null`  | The name of the Reactor Formula. Has a maximum length of `200`                                                                                                                    |
-| `description`        | false    | *string* | `null`  | The description of the Reactor Formula                                                                                                                                            |
-| `type`               | true     | *string* | `null`  | [Type](#reactor-formulas-reactor-formula-types) of the Reactor Formula                                                                                                            |
-| `icon`               | false    | *string* | `null`  | Base64 [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image. Supported image types are: `image/png`, `image/jpg`, and `image/jpeg` |
-| `code`               | true     | *string* | `null`  | [Reactor code](#reactor-formulas-reactor-formula-code) which will be executed when the Reactor Formula is processed                                                               |
-| `configuration`      | true     | *array*  | `[]`    | Array of [configuration](#reactor-formulas-reactor-formula-configuration) options for configuring a Reactor                                                                       |
-| `request_parameters` | true     | *array*  | `[]`    | Array of [request parameters](#reactor-formulas-reactor-formula-request-parameters) which will be passed when executing the Reactor                                               |
+#### Query Parameters
 
-### Response
+| Parameter | Required | Type     | Default | Description                                 |
+| --------- | -------- | -------- | ------- | ------------------------------------------- |
+| `name`    | false    | *string* | `null`  | Wildcard search of Reactor Formulas by name |
 
-Returns a [Reactor Formula](#reactor-formulas-reactor-formula-object) if the Reactor Formula was created. Returns [an error](#errors) if there were validation errors, or the Reactor Formula failed to create.
-
-
-## List Reactor Formulas
-
-> Request
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
 
 ```shell
 curl "https://api.basistheory.com/reactor-formulas" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
 ```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
 
 ```javascript
 import { BasisTheory } from '@basis-theory/basis-theory-js';
@@ -441,6 +472,9 @@ const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
 const reactorFormulas = await bt.reactorFormulas.list();
 ```
 
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
 ```csharp
 using BasisTheory.net.ReactorFormulas;
 
@@ -448,6 +482,9 @@ var client = new ReactorFormulaClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var reactorFormulas = await client.GetAsync();
 ```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
 
 ```python
 import basistheory
@@ -459,6 +496,9 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
     
     reactor_formulas = reactor_formulas_client.get()
 ```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
 
 ```go
 package main
@@ -479,7 +519,12 @@ func main() {
 }
 ```
 
-> Response
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [paginated object](/docs/api/pagination) with the `data` property containing an array of [Reactor Formulas](#reactor-formula-object). Providing any query parameters will filter the results. Returns [an error](/docs/api/errors) if Reactor Formulas could not be retrieved.
 
 ```json
 {
@@ -533,38 +578,39 @@ func main() {
 }
 ```
 
+## Get a Reactor Formula
+
 <span class="http-method get">
   <span class="box-method">GET</span>
-  `https://api.basistheory.com/reactor-formulas`
-</span>
+  `https://api.basistheory.com/reactor-formulas/&#123;id&#125;`
+</span> 
 
-Get a list of official Reactor Formulas and private Tenant-specific Reactor Formulas.
+Get a Reactor Formula by ID in the Tenant.
 
-### Permissions
+#### Permissions
 
 <p class="scopes">
   <span class="scope">reactor:read</span>
 </p>
 
-### Query Parameters
+### Request
 
-| Parameter           | Required | Type     | Default | Description                                                  |
-|---------------------|----------|----------|---------|--------------------------------------------------------------|
-| `name`              | false    | *string* | `null`  | Wildcard search of Reactor Formulas by name                  |
+#### URI Parameters
 
-### Response
+| Parameter | Required | Type   | Default | Description                   |
+| --------- | -------- | ------ | ------- | ----------------------------- |
+| `id`      | true     | *uuid* | `null`  | The ID of the Reactor Formula |
 
-Returns a [paginated object](#pagination) with the `data` property containing an array of [Reactor Formulas](#reactor-formulas-reactor-formula-object). Providing any query parameters will filter the results. Returns [an error](#errors) if Reactor Formulas could not be retrieved.
-
-
-## Get a Reactor Formula
-
-> Request
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
 
 ```shell
 curl "https://api.basistheory.com/reactor-formulas/17069df1-80f4-439e-86a7-4121863e4678" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
 ```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
 
 ```javascript
 import { BasisTheory } from '@basis-theory/basis-theory-js';
@@ -574,6 +620,9 @@ const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
 const reactorFormula = await bt.reactorFormulas.retrieve('17069df1-80f4-439e-86a7-4121863e4678');
 ```
 
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
 ```csharp
 using BasisTheory.net.ReactorFormulas;
 
@@ -581,6 +630,9 @@ var client = new ReactorFormulaClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var reactorFormula = await client.GetByIdAsync("17069df1-80f4-439e-86a7-4121863e4678");
 ```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
 
 ```python
 import basistheory
@@ -592,6 +644,9 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
     
     reactor_formula = reactor_formulas_client.get_by_id("17069df1-80f4-439e-86a7-4121863e4678")
 ```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
 
 ```go
 package main
@@ -612,7 +667,12 @@ func main() {
 }
 ```
 
-> Response
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [Reactor Formula](#reactor-formula-object) with the `id` provided. Returns [an error](/docs/api/errors) if the Reactor Formula could not be retrieved.
 
 ```json
 {
@@ -659,33 +719,43 @@ func main() {
 }
 ```
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/reactor-formulas/{id}`
-</span> 
-
-Get a Reactor Formula by ID in the Tenant.
-
-### Permissions
-
-<p class="scopes">
-  <span class="scope">reactor:read</span>
-</p>
-
-### URI Parameters
-
-| Parameter | Required | Type   | Default | Description                   |
-|-----------|----------|--------|---------|-------------------------------|
-| `id`      | true     | *uuid* | `null`  | The ID of the Reactor Formula |
-
-### Response
-
-Returns a [Reactor Formula](#reactor-formulas-reactor-formula-object) with the `id` provided. Returns [an error](#errors) if the Reactor Formula could not be retrieved.
-
-
 ## Update Reactor Formula
 
-> Request
+<span class="http-method put">
+  <span class="box-method">PUT</span>
+  `https://api.basistheory.com/reactor-formulas/&#123;id&#125;`
+</span>
+
+Update a Reactor Formula by ID in the Tenant.
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">reactor:update</span>
+</p>
+
+### Request
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description                   |
+| --------- | -------- | ------ | ------- | ----------------------------- |
+| `id`      | true     | *uuid* | `null`  | The ID of the Reactor Formula |
+
+#### Request Parameters
+
+| Attribute            | Required | Type     | Default | Description                                                                                                                                                                       |
+| -------------------- | -------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | true     | *string* | `null`  | The name of the Reactor Formula. Has a maximum length of `200`                                                                                                                    |
+| `description`        | false    | *string* | `null`  | The description of the Reactor Formula                                                                                                                                            |
+| `type`               | true     | *string* | `null`  | [Type](#reactor-formula-types) of the Reactor Formula                                                                                                                             |
+| `icon`               | false    | *string* | `null`  | Base64 [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image. Supported image types are: `image/png`, `image/jpg`, and `image/jpeg` |
+| `code`               | true     | *string* | `null`  | [Reactor code](#reactor-formula-code) which will be executed when the Reactor Formula is processed                                                                                |
+| `configuration`      | true     | *array*  | `[]`    | Array of [configuration](#reactor-formula-configuration) options for configuring a Reactor                                                                                        |
+| `request_parameters` | true     | *array*  | `[]`    | Array of [request parameters](#reactor-formula-request-parameters) which will be passed when executing the Reactor                                                                |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
 
 ```shell
 curl "https://api.basistheory.com/reator-formula/17069df1-80f4-439e-86a7-4121863e4678" \
@@ -731,6 +801,9 @@ curl "https://api.basistheory.com/reator-formula/17069df1-80f4-439e-86a7-4121863
   }'
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
 ```javascript
 import { BasisTheory } from '@basis-theory/basis-theory-js';
 
@@ -774,6 +847,9 @@ const reactorFormula = await bt.reactorFormulas.update('17069df1-80f4-439e-86a7-
   ],
 });
 ```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
 
 ```csharp
 using BasisTheory.net.ReactorFormulas;
@@ -820,6 +896,9 @@ var reactorFormula = await client.UpdateAsync("17069df1-80f4-439e-86a7-4121863e4
   }
 );
 ```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
 
 ```python
 import basistheory
@@ -871,6 +950,9 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
 
 ```
 
+  </TabItem>
+  <TabItem value="go" label="Go">
+
 ```go
 package main
 
@@ -920,7 +1002,12 @@ func main() {
 }
 ```
 
-> Response
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [Reactor Formula](#reactor-formula-object) if the Reactor Formula was updated. Returns [an error](/docs/api/errors) if there were validation errors, or the Reactor Formula failed to update.
 
 ```json
 {
@@ -967,51 +1054,40 @@ func main() {
 }
 ```
 
-<span class="http-method put">
-  <span class="box-method">PUT</span>
-  `https://api.basistheory.com/reactor-formulas/{id}`
-</span>
-
-Update a Reactor Formula by ID in the Tenant.
-
-### Permissions
-
-<p class="scopes">
-  <span class="scope">reactor:update</span>
-</p>
-
-### URI Parameters
-
-| Parameter | Required | Type   | Default | Description                   |
-|-----------|----------|--------|---------|-------------------------------|
-| `id`      | true     | *uuid* | `null`  | The ID of the Reactor Formula |
-
-### Request Parameters
-
-| Attribute            | Required | Type     | Default | Description                                                                                                                                                                       |
-|----------------------|----------|----------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `name`               | true     | *string* | `null`  | The name of the Reactor Formula. Has a maximum length of `200`                                                                                                                    |
-| `description`        | false    | *string* | `null`  | The description of the Reactor Formula                                                                                                                                            |
-| `type`               | true     | *string* | `null`  | [Type](#reactor-reactor-types) of the Reactor Formula                                                                                                                             |
-| `icon`               | false    | *string* | `null`  | Base64 [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image. Supported image types are: `image/png`, `image/jpg`, and `image/jpeg` |
-| `code`               | true     | *string* | `null`  | [Reactor code](#reactor-formulas-reactor-formula-code) which will be executed when the Reactor Formula is processed                                                               |
-| `configuration`      | true     | *array*  | `[]`    | Array of [configuration](#reactor-formulas-reactor-formula-configuration) options for configuring a Reactor                                         |
-| `request_parameters` | true     | *array*  | `[]`    | Array of [request parameters](#reactor-formulas-reactor-formula-request-parameters) which will be passed when executing the Reactor                  |
-
-### Response
-
-Returns a [Reactor Formula](#reactor-formulas-reactor-formula-object) if the Reactor Formula was updated. Returns [an error](#errors) if there were validation errors, or the Reactor Formula failed to update.
-
-
 ## Delete Reactor Formula
 
-> Request
+<span class="http-method delete">
+  <span class="box-method">DELETE</span>
+  `https://api.basistheory.com/reactor-formulas/&#123;id&#125;`
+</span>
+
+Delete a Reactor Formula by ID in the Tenant.
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">reactor:delete</span>
+</p>
+
+### Request
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description                   |
+| --------- | -------- | ------ | ------- | ----------------------------- |
+| `id`      | true     | *uuid* | `null`  | The ID of the Reactor Formula |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
 
 ```shell
 curl "https://api.basistheory.com/reactor-formulas/17069df1-80f4-439e-86a7-4121863e4678" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
   -X "DELETE"
 ```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
 
 ```javascript
 import { BasisTheory } from '@basis-theory/basis-theory-js';
@@ -1021,6 +1097,9 @@ const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
 await bt.reactorFormulas.delete('17069df1-80f4-439e-86a7-4121863e4678');
 ```
 
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
 ```csharp
 using BasisTheory.net.ReactorFormulas;
 
@@ -1029,6 +1108,9 @@ var client = new ReactorFormulaClient("key_N88mVGsp3sCXkykyN2EFED");
 await client.DeleteAsync("17069df1-80f4-439e-86a7-4121863e4678");
 ```
 
+  </TabItem>
+  <TabItem value="python" label="Python">
+
 ```python
 with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
     reactor_formulas_client = reactor_formulas_api.ReactorFormulasApi(
@@ -1036,6 +1118,9 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
     
     reactor_formulas = reactor_formulas_client.delete("17069df1-80f4-439e-86a7-4121863e4678")
 ```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
 
 ```go
 package main
@@ -1056,25 +1141,9 @@ func main() {
 }
 ```
 
-<span class="http-method delete">
-  <span class="box-method">DELETE</span>
-  `https://api.basistheory.com/reactor-formulas/{id}`
-</span>
-
-Delete a Reactor Formula by ID in the Tenant.
-
-### Permissions
-
-<p class="scopes">
-  <span class="scope">reactor:delete</span>
-</p>
-
-### URI Parameters
-
-| Parameter | Required | Type   | Default | Description                   |
-|-----------|----------|--------|---------|-------------------------------|
-| `id`      | true     | *uuid* | `null`  | The ID of the Reactor Formula |
+  </TabItem>
+</Tabs>
 
 ### Response
 
-Returns [an error](#errors) if the Reactor Formula failed to delete.
+Returns [an error](/docs/api/errors) if the Reactor Formula failed to delete.
