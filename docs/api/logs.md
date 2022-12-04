@@ -1,0 +1,191 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Logs
+
+## Log Object
+
+| Attribute     | Type     | Description                                                                             |
+|---------------|----------|-----------------------------------------------------------------------------------------|
+| `tenant_id`   | *uuid*   | The [Tenant](#tenants) ID which owns the entity                                         |
+| `actor_id`    | *uuid*   | (Optional) The ID of the actor which performed the operation                            |
+| `actor_type`  | *string* | (Optional) The type of actor which performed the operation (e.g. `user`, `application`) |
+| `entity_type` | *string* | The entity type of the log (e.g. `token`, `card`, `bank`, `application`, `tenant`)      |
+| `entity_id`   | *string* | The unique identifier of the `entity_type`                                              |
+| `operation`   | *string* | The log operation (e.g. create, update, read, delete)                                   |
+| `message`     | *string* | The log message                                                                         |
+| `created_at`  | *date*   | Created date of the token in ISO 8601 format                                            |
+
+### Entity Type Object
+
+| Attribute      | Type     | Description                                                        |
+|----------------|----------|--------------------------------------------------------------------|
+| `display_name` | *string* | A readable string name for the entity type                         |
+| `value`        | *string* | The system name of the entity. Referenced by a log's `entity_type` |
+
+
+## List Logs
+
+<span class="http-method get">
+  <span class="box-method">GET</span>
+  `https://api.basistheory.com/logs`
+</span>
+
+Get a list of logs for the Tenant.
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">log:read</span>
+</p>
+
+### Request
+
+#### Query Parameters
+
+| Parameter     | Required | Type     | Default | Description                                                                                                    |
+|---------------|----------|----------|---------|----------------------------------------------------------------------------------------------------------------|
+| `entity_type` | false    | *string* | `null`  | An optional entity type to filter the list of logs by. (e.g. `token`, `card`, `bank`, `application`, `tenant`) |
+| `entity_id`   | false    | *string* | `null`  | The unique identifier of the `entity_type` to filter the list of logs by.                                      |
+| `start_date`  | false    | *date*   | `null`  | An ISO 8601 formatted date to filter logs where `created_at` is greater than or equal to                       |
+| `end_date`    | false    | *date*   | `null`  | An ISO 8601 formatted date to filter logs where `created_at` is less than                                      |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/logs" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+const logs = await bt.logs.list();
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Logs;
+
+var client = new LogClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var logs = await client.GetAsync();
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import logs_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    logs_client = logs_api.LogsApi(api_client)
+
+    logs = logs_client.get()
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  logs, httpResponse, err := apiClient.LogsApi.Get(contextWithAPIKey).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [paginated object](/docs/api/pagination) with the `data` property containing an array of [logs](#log-object). Providing any query parameters will filter the results. Returns [an error](/docs/api/errors) if logs could not be retrieved.
+
+```json
+{
+  "pagination": {...},
+  "data": [
+    {
+      "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+      "actor_id": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+      "actor_type": "application",
+      "entity_type": "token",
+      "entity_id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+      "operation": "read",
+      "message": "Token retrieved",
+      "created_at": "2021-03-01T08:23:14+00:00"
+    },
+    {...},
+    {...}
+  ]
+}
+```
+
+## List Entity Types
+
+<span class="http-method get">
+  <span class="box-method">GET</span>
+  `https://api.basistheory.com/logs/entity-types`
+</span>
+
+Get a list of entity types that may be referenced from the logs.
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">log:read</span>
+</p>
+
+### Request
+
+```shell
+curl "https://api.basistheory.com/logs/entity-types" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+```
+
+### Response
+
+Returns a non-paginated array of [entity types](#entity-type-object).
+
+```json
+[
+  {
+    "display_name": "Application",
+    "value": "application"
+  },
+  {
+    "display_name": "Bank",
+    "value": "bank"
+  },
+  {
+    "display_name": "Card",
+    "value": "card"
+  },
+  {
+    "display_name": "Proxy",
+    "value": "proxy"
+  },
+  ...
+]
+```

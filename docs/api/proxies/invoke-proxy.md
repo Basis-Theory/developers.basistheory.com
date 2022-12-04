@@ -1,0 +1,227 @@
+# Invoke Proxy
+
+## Proxying Requests
+
+The Basis Theory Proxy provides a simple way to facilitate the transfer of sensitive data via HTTP API calls. This Proxy can be configured to sit in front of your API to tokenize or transform an inbound request and also between you and a 3rd Party, keeping the sensitive data from touching your systems. To learn more, check out our [Proxy Concept](https://developers.basistheory.com/concepts/what-is-the-proxy/).
+
+Basis Theory token identifiers included in the request will be replaced with the raw token data and then the modified request will be forwarded to the destination specified in the `BT-PROXY-URL` request header. The destination will receive the raw data in the request without your system needing to interact with sensitive data on your own servers.
+
+**Some 3rd party services may require whitelisting of Basis Theory IP addresses to allow communication. You can find our IP list [here](/docs/api/ip-addresses).** 
+
+### Proxy Requests
+
+<span class="http-method post">
+  <span class="method-wrapper">
+    <span class="box-method">POST</span>
+  </span>
+  `https://api.basistheory.com/proxy`
+</span>
+
+<span class="http-method put">
+  <span class="method-wrapper">
+    <span class="box-method">PUT</span>
+  </span>
+  `https://api.basistheory.com/proxy`
+</span>
+
+<span class="http-method patch">
+  <span class="method-wrapper">
+    <span class="box-method">PATCH</span>
+  </span>
+  `https://api.basistheory.com/proxy`
+</span>
+
+<span class="http-method delete">
+  <span class="method-wrapper">
+    <span class="box-method">DELETE</span>
+  </span>
+  `https://api.basistheory.com/proxy`
+</span>
+
+<span class="http-method get">
+  <span class="method-wrapper">
+    <span class="box-method">GET</span>
+  </span>
+  `https://api.basistheory.com/proxy`
+</span>
+
+Proxy a request to a third party API.
+
+```shell title="Request with 'BT-PROXY-KEY' header"
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-PROXY-KEY: e29a50980ca5" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
+    "parameter2": "non-sensitive"
+  }'
+```
+
+```shell title="Request with 'bt-proxy-key' query param"
+curl "https://api.basistheory.com/proxy?bt-proxy-key=e29a50980ca5" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
+    "parameter2": "non-sensitive"
+  }'
+```
+
+```shell title="Request with 'BT-PROXY-URL' header"
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-PROXY-URL: https://example.com/api" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
+    "parameter2": "non-sensitive"
+  }'
+```
+
+### Authentication
+
+By default, proxy requests must be authenticated using a `BT-API-KEY` header (see [Authentication](/docs/api/authentication)).
+Alternatively, pre-configured proxies enable unauthenticated requests from any system, provided the caller knows the unique proxy key. This can be useful for accepting inbound requests that originate from third party systems without the need to share a Basis Theory API key with the third party. See the Configuration section below.
+
+Any authentication required by the destination service can be set on the request and will be forwarded through the proxy
+(for example, by setting the `Authorization` header).
+
+### Permissions
+
+<p class="scopes">
+  <span class="scope">token:use</span>
+</p>
+
+The `token:use` permission is required to use the Proxy, and it is required for each
+[Container](https://developers.basistheory.com/concepts/what-are-token-containers) of Tokens you wish to detokenize through the Proxy.
+
+### Configuration
+
+Basis Theory's Proxy provides two ways to configure a request:
+
+1. [Create a pre-configured Proxy](/docs/api/proxies#create-a-proxy) and pass either a `BT-PROXY-KEY` header or a `bt-proxy-key` URL query parameter in your request, which will route traffic to the configured `destination_url`;
+2. Pass the `BT-PROXY-URL` request header. Its value defines the base URL to which the request will be proxied. 
+
+The configured proxy URL must use HTTPS with DNS as the host (explicit IP addresses are not allowed). Destinations must use HTTPS >= TLSv1.2.
+
+The proxy URL will serve as the base URL for the proxied request. Any path and/or query parameters under `/proxy/**` will be appended to the base URL before forwarding the request.
+
+For example, sending a proxy request to `https://api.basistheory.com/proxy/foo/bar?param=value` and including the header `BT-PROXY-URL=https://example.com/api` will result in the request being forwarded to `https://example.com/api/foo/bar?param=value`.
+
+### Proxy Transforms
+
+Basis Theory's Proxy supports executing code to transform the proxy request and response. When pre-configuring a [Proxy](/docs/api/proxies#create-a-proxy), the `request_transform` and `response_transform` properties can optionally be set to an instance of a [Proxy Transform](/docs/api/proxies#proxy-transform-object). When the `request_transform` property is set, this Proxy Transform will be executed on the Proxy request and allow you to transform the request body and headers before sending the payload to the `destination_url`. When the `response_transform` property is set, this Proxy Transform will be executed on the Proxy response and allow you to transform the response body and headers before sending the response to the originator of the request.
+
+The Transform will receive a JSON object with the following payload:
+
+```js
+{
+  args: {
+    body, // detokenized request body
+    headers // request headers
+  }
+}
+```
+
+Within the transform, the headers and body of the proxy request can be changed.
+The Transform must respond with the following object, which defines the request `body` and `headers` to be sent in the request to the proxy `destination_url`:
+
+```js
+{
+  body,
+  headers
+}
+```
+
+<aside class="notice">
+  <span>
+    Request header names can only contain alphanumeric characters, hyphens, and underscores. 
+    Headers names containing other characters will be discarded from the request.
+    Response headers are unrestricted. If you must forward a restricted header to the proxy destination, 
+    as a workaround, you may add this header manually from within a transform.
+  </span>
+</aside>
+
+In some situations, you may want to tokenize or detokenize part of the request body. In order to do this, set the `application.id` property when [creating your Proxy](/docs/api/proxies#create-a-proxy). This will inject a pre-configured Basis Theory JS instance into the request:
+
+```js
+module.exports = async function (req) {
+   const token = await req.bt.tokenize({
+      type: 'token',
+      data: req.args.body.sensitive_value
+  });
+
+  req.args.body.sensitive_value = token.id;
+
+  return {
+    body: req.args.body,
+    headers: req.args.headers
+  }
+}
+```
+
+In the above example, we utilized the injected Basis Theory JS instance to tokenize a property called `sensitive_value` on our request body and passed the token back as the updated `sensitive_value` to be forwarded to the configured `destination_url` on our [Proxy](#proxies).
+
+### Detokenization
+
+The Basis Theory Proxy will attempt to [detokenize](/expressions/#detokenization) any [expressions](/expressions) present in the request and inject the raw token data in the request body before it is sent to the downstream destination.
+
+For example, given a token:
+
+```json
+{
+    "id": "26818785-547b-4b28-b0fa-531377e99f4e",
+    "data": "sensitive data"
+}
+```  
+
+and a proxy request with the body:
+
+```json
+{
+    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
+    "parameter2": "non-sensitive data"
+}
+```  
+
+then the following request body will be sent to the destination:
+
+```json
+{
+    "parameter1": "sensitive data",
+    "parameter2": "non-sensitive data"
+}
+```
+
+The `token:use` permission is required in order to detokenize tokens within a proxy request. 
+At most, 100 tokens may be detokenized within a single proxy request. You can find more information about the supported detokenization expressions [here](/expressions/#detokenization).
+
+:::info
+
+For more detailed examples about how to detokenize within the Proxy, check out our [Detokenization Examples](/docs/expressions/#detokenization-examples).
+
+:::
+
+<aside class="notice">
+  <span></span>
+</aside>
+
+## Proxy Responses
+
+Unless an error occurs within the Basis Theory Proxy, the raw response from the destination will be returned from the proxy.
+
+If an error occurs within the proxy (eg. missing or invalid `BT-PROXY-URL` header), then the following error response will be returned:
+
+| Attribute     | Type  | Description                              |
+|---------------|-------|------------------------------------------|
+| `proxy_error` | *any* | A standard Basis Theory [error](#errors) |
+
+:::note
+
+If you are interested in using the proxy and your use case is not currently supported, please [submit a feature request](mailto:support@basistheory.com?subject=Proxy%20Feature%20Request)!
+
+:::
