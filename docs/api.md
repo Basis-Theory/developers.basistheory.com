@@ -1,4 +1,19 @@
-# Basis Theory API Reference
+# Introduction
+
+<aside class="header-intro-box">
+    <span>
+        <h4>API Reference</h4>
+        <p class="header-intro-body2-font">Explore our API to quickly start tokenizing anything.</p>
+        <h6>QUICK LINKS</h6>
+        <span class="intro-quick-links">
+            <a href="#getting-started">Before You Begin</a>
+            <a href="#tokens">Creating Tokens</a>
+            <a href="#applications">Applications</a>
+            <a href="#permissions">API Keys</a>
+        </span>
+    </span>
+    <img src="/img/welcome.svg"/>
+</aside>
 
 The Basis Theory API is organized around REST. Our API is built with a predictable resource-oriented structure, uses JSON-encoded requests and responses, follows standard HTTP verbs/responses, and uses industry standard authentication.
 
