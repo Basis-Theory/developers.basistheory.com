@@ -1,5 +1,491 @@
----
-sidebar_position: 3
----
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Token Associations
+
+Token associations allow you to associate any two tokens, of any type, together. This allows you to create parent-child relationships between tokens and traverse between tokens.
+
+## Create Token Association
+
+<span class="http-method post">
+  <span class="box-method">POST</span>
+  `https://api.basistheory.com/tokens/&#125;parent_id&#125;/children/&#125;child_id&#125;`
+</span>
+
+Create a new parent/child association between two tokens in the Tenants.
+
+#### Permissions
+
+Creating an association between two existing tokens requires read permission on both the parent and child tokens.
+
+<p class="scopes">
+  <span class="scope">token:read</span>
+</p>
+
+### Request
+
+#### URI Parameters
+
+| Parameter   | Required | Type     | Default | Description                |
+| ----------- | -------- | -------- | ------- | -------------------------- |
+| `parent_id` | true     | *string* | `null`  | The ID of the parent token |
+| `child_id`  | true     | *string* | `null`  | The ID of the child token  |
+
+:::info
+
+Bi-directional associations can be made between two tokens by creating a token association and swapping the `parent_id` and `child_id`.
+
+:::
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1/children/c1e565009-1984-4638-8fca-dce8a82cc2af" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/json" \
+  -X "POST"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+await bt.tokens.createAssociation('c06d0789-0a38-40be-b7cc-c28a718f76f1', 
+  'c1e565009-1984-4638-8fca-dce8a82cc2af');
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+await client.CreateAssociationAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1", 
+  "c1e565009-1984-4638-8fca-dce8a82cc2af");
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    tokens_client = tokens_api.TokensApi(api_client)
+
+    tokens_client.create_association("c06d0789-0a38-40be-b7cc-c28a718f76f1", "c1e565009-1984-4638-8fca-dce8a82cc2af")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  httpResponse, err := apiClient.TokensApi.CreateAssociation(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1", "c1e565009-1984-4638-8fca-dce8a82cc2af").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns [an error](/docs/api/errors) if the token association failed to create.
+
+## Delete Token Association
+
+<span class="http-method delete">
+  <span class="box-method">DELETE</span>
+  `https://api.basistheory.com/tokens/&#125;parent_id&#125;/children/&#125;child_id&#125;`
+</span>
+
+Delete a parent/child association between two tokens in the Tenant.
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">token:delete</span>
+</p>
+
+### Request
+
+#### URI Parameters
+
+| Parameter   | Required | Type     | Default | Description                |
+| ----------- | -------- | -------- | ------- | -------------------------- |
+| `parent_id` | true     | *string* | `null`  | The ID of the parent token |
+| `child_id`  | true     | *string* | `null`  | The ID of the child token  |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1/children/c1e565009-1984-4638-8fca-dce8a82cc2af" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/json" \
+  -X "DELETE"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+await bt.tokens.deleteAssociation('c06d0789-0a38-40be-b7cc-c28a718f76f1', 
+  'c1e565009-1984-4638-8fca-dce8a82cc2af');
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+await client.DeleteAssociationAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1", 
+  "c1e565009-1984-4638-8fca-dce8a82cc2af");
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    tokens_client = tokens_api.TokensApi(api_client)
+
+    tokens_client.delete_association("c06d0789-0a38-40be-b7cc-c28a718f76f1", "c1e565009-1984-4638-8fca-dce8a82cc2af")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  httpResponse, err := apiClient.TokensApi.DeleteAssociation(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1", "c1e565009-1984-4638-8fca-dce8a82cc2af").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns [an error](/docs/api/errors) if the token association failed to delete.
+
+
+## Create Child Token for a Token
+
+<span class="http-method post">
+  <span class="box-method">POST</span>
+  `https://api.basistheory.com/tokens/&#125;parent_id&#125;/children`
+</span>
+
+Create a new child token a token in the Tenant.
+
+#### Permissions
+
+Creating a child token requires the appropriate create permission to the child token and read permission to the parent token.
+
+<p class="scopes">
+  <span class="scope">token:create</span>
+  <span class="scope">token:read</span>
+</p>
+
+### Request
+
+#### URI Parameters
+
+| Parameter   | Required | Type     | Default | Description                |
+| ----------- | -------- | -------- | ------- | -------------------------- |
+| `parent_id` | true     | *string* | `null`  | The ID of the parent token |
+
+#### Request Parameters
+
+See [Create Token](/docs/api/tokens#create-token) for supported request parameters.
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1/children" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "type": "token",
+    "data": "Sensitive Value",
+    "metadata": {
+      "nonSensitiveField": "Non-Sensitive Value"
+    }
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+const token = await bt.tokens.createChild('c06d0789-0a38-40be-b7cc-c28a718f76f1', {
+  type: 'token',
+  data: 'Sensitive Value',
+  metadata: {
+    nonSensitiveField: 'Non-Sensitive Value'
+  }
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var token = await client.CreateChildAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1", 
+  new Token {
+    Type = "token",
+    Data = "Sensitive Value",
+    Metadata = new Dictionary<string, string> {
+      { "nonSensitiveField", "Non-Sensitive Value" }
+    }
+  }
+);
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+from basistheory.model.create_token_request import CreateTokenRequest
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    tokens_client = tokens_api.TokensApi(api_client)
+
+    token = tokens_client.create_child("c06d0789-0a38-40be-b7cc-c28a718f76f1", create_token_request=CreateTokenRequest(
+        type="token",
+        data="Sensitive Value",
+        metadata={
+            "nonSensitiveField": "Non-Sensitive Value"
+        }
+    ))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  createTokenRequest := *basistheory.NewCreateTokenRequest("Sensitive Value")
+  createTokenRequest.SetType("token")
+  createTokenRequest.SetMetadata(map[string]string{
+    "nonSensitiveField": "Non-Sensitive Value",
+  })
+
+  token, httpResposne, err := apiClient.TokensApi.CreateChild(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").CreateTokenRequest(createTokenRequest).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [token](/docs/api/tokens#token-object) if the child token was created for the parent token. Returns [an error](/docs/api/errors) if there were validation errors, or the token failed to create.
+
+```json
+{
+  "id": "c1e565009-1984-4638-8fca-dce8a82cc2af",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "type": "token",
+  "containers": ["/general/high/"],
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "metadata": {
+    "nonSensitiveField": "Non-Sensitive Value"
+  }
+}
+```
+
+## List Child Tokens for a Token
+
+<span class="http-method get">
+  <span class="box-method">GET</span>
+  `https://api.basistheory.com/tokens/&#125;parent_id&#125;/children`
+</span>
+
+Get a list of child tokens for a token in the Tenant.
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">token:read</span>
+</p>
+
+### Request
+
+#### URI Parameters
+
+| Parameter   | Required | Type     | Default | Description                |
+| ----------- | -------- | -------- | ------- | -------------------------- |
+| `parent_id` | true     | *string* | `null`  | The ID of the parent token |
+
+#### Query Parameters
+
+| Parameter | Required | Type    | Default | Description                                                                                            |
+| --------- | -------- | ------- | ------- | ------------------------------------------------------------------------------------------------------ |
+| `id`      | false    | *array* | `[]`    | An optional list of token ID's to filter the list of child tokens by                                   |
+| `type`    | false    | *array* | `[]`    | An optional array of [token types](/docs/api/tokens/token-types) to filter the list of child tokens by |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1/children" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+const tokens = await bt.tokens.listChildren('c06d0789-0a38-40be-b7cc-c28a718f76f1');
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var tokens = await client.GetChildrenAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    tokens_client = tokens_api.TokensApi(api_client)
+
+    tokens = tokens_client.get_children("c06d0789-0a38-40be-b7cc-c28a718f76f1")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  tokens, response, err := apiClient.TokensApi.GetChildren(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [paginated object](/docs/api/pagination) with the `data` property containing an array of [child tokens](/docs/api/tokens#token-object) for the parent token. Providing any query parameters will filter the child tokens. Returns [an error](/docs/api/errors) if tokens could not be retrieved.
+
+```json
+{
+  "pagination": {...},
+  "data": [
+    {
+      "id": "c1e565009-1984-4638-8fca-dce8a82cc2af",
+      "type": "token",
+      "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+      "data": "secret data",
+      "containers": ["/general/high/"],
+      "metadata": {
+        "nonSensitiveField": "Non-Sensitive Value"
+      },
+      "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+      "created_at": "2021-03-01T08:23:14+00:00"
+    },
+    {...},
+    {...}
+  ]
+}
+```

@@ -2,3 +2,804 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Tokens
+
+## Token Object
+
+| Attribute                | Type                  | Description                                                                                                                                                                                                                     |
+| ------------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                     | *string*              | Unique identifier of the token which can be used to [get a token](#get-a-token)                                                                                                                                                 |
+| `tenant_id`              | *uuid*                | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the token                                                                                                                                                           |
+| `type`                   | *string*              | [Token type](#token-types)                                                                                                                                                                                                      |
+| `data`                   | *any*                 | Token data                                                                                                                                                                                                                      |
+| `mask`                   | *any*                 | An [expression](/expressions/masks) defining the mask to apply when retrieving token data with restricted permissions.                                                                                                          |
+| `fingerprint`            | *string*              | Uniquely identifies the contents of this token. See [Token Types](/docs/api/tokens/token-types) for the default expression for each token type.                                                                                 |
+| `containers`             | *array*               | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](https://developers.basistheory.com/concepts/what-are-token-containers/) for details. |
+| `metadata`               | *map<string, string>* | A key-value map of strings containing non-sensitive data.                                                                                                                                                                       |
+| `created_by`             | *uuid*                | The [Application](/docs/api/applications#application-object) ID which created the token                                                                                                                                         |
+| `created_at`             | *date*                | Created date of the token in ISO 8601 format                                                                                                                                                                                    |
+| `modified_by`            | *uuid*                | (Optional) The [Application](/docs/api/applications) ID which last modified the token                                                                                                                                           |
+| `modified_at`            | *date*                | (Optional) Last modified date of the token in ISO 8601 format                                                                                                                                                                   |
+| `search_indexes`         | *array*               | (Optional) Array of search index [expressions](/expressions/search-indexes) used when creating the token.                                                                                                                       |
+| `fingerprint_expression` | *string*              | (Optional) An [expression](/expressions/fingerprints) defining the value to fingerprint when creating the token.                                                                                                                |
+| `expires_at`             | *string*              | (Optional) The [token expiration](#token-expiration) date.                                                                                                                                                                      |
+
+### Token Data Validations
+
+#### Bank Object
+
+| Attribute        | Required | Type     | Default | Description                                               |
+| ---------------- | -------- | -------- | ------- | --------------------------------------------------------- |
+| `routing_number` | true     | *string* | `null`  | Nine-digit ABA routing number. Its checksum is validated. |
+| `account_number` | true     | *string* | `null`  | Account number up to seventeen-digits                     |
+
+#### Card Object
+
+| Attribute          | Required | Type      | Default | Description                                               |
+| ------------------ | -------- | --------- | ------- | --------------------------------------------------------- |
+| `number`           | true     | *string*  | `null`  | The card number without any separators                    |
+| `expiration_month` | false    | *integer* | `null`  | Two-digit number representing the card's expiration month |
+| `expiration_year`  | false    | *integer* | `null`  | Four-digit number representing the card's expiration year |
+| `cvc`              | false    | *string*  | `null`  | Three or four-digit card verification code                |
+
+### Token Expiration 
+
+By default a created token will not expire, however, users can optionally set the `expires_at` property with an ISO8601 `DateTime` when creating a token to determine its expiration date.
+An expired token is **deleted** from the tenant up to **1 hour** after it's expiration time.
+
+### Expiration Date Formats
+| Format                      | Example                     |
+| --------------------------- | --------------------------- |
+| `DateTime` String w/ Offset | 8/26/2030 7:23:57 PM -07:00 |
+| `ShortDate` String          | 9/27/2030                   |
+
+:::info
+
+If an offset is not provided with the `DateTime` string, it's considered that the provided time is in **UTC**.
+
+When using the `ShortDate` format, the expiration time will be set as **12AM UTC**.
+
+:::
+
+## Create Token
+
+<span class="http-method post">
+  <span class="box-method">POST</span>
+  `https://api.basistheory.com/tokens`
+</span>
+
+Create a new token for the Tenant.
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">token:create</span>
+</p>
+
+### Request
+
+#### Request Parameters
+
+| Attribute                | Required | Type                  | Default                                                   | Description                                                                                                                                                                                                                     |
+| ------------------------ | -------- | --------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                     | false    | *string*              | `null`                                                    | A value or [expression](/expressions/aliasing) specifying the token's ID. If not specified, a UUID will be assigned.                                                                                                            |
+| `type`                   | true     | *string*              | `null`                                                    | [Token type](/docs/api/tokens/token-types) of the token                                                                                                                                                                         |
+| `data`                   | true     | *any*                 | `null`                                                    | Token data. Can be an object, array, or any primitive type such as an integer, boolean, or string                                                                                                                               |
+| `mask`                   | false    | *any*                 | Depends on the [token type](/docs/api/tokens/token-types) | Token data mask. Can be an object, array, or any primitive type such as an integer, boolean, or string. See [mask expressions](/expressions/#masks).                                                                            |
+| `containers`             | false    | *array*               | Depends on the [token type](/docs/api/tokens/token-types) | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](https://developers.basistheory.com/concepts/what-are-token-containers/) for details. |
+| `metadata`               | false    | *map<string, string>* | `null`                                                    | A key-value map of strings containing non-sensitive data.                                                                                                                                                                       |
+| `search_indexes`         | false    | *array*               | `null`                                                    | Array of [expressions](/expressions/search-indexes) used to generate indexes to be able to search against.                                                                                                                      |
+| `fingerprint_expression` | false    | *string*              | <code>{{ data &#124; stringify }}</code>                  | [Expressions](/expressions/fingerprints) used to fingerprint your token.                                                                                                                                                        |
+| `deduplicate_token`      | false    | *bool*                | `null`                                                    | Whether the token is deduplicated on creation.                                                                                                                                                                                  |
+| `expires_at`             | false    | *string*              | `null`                                                    | ISO8601 compatible Token expiration DateTime. See [Token Expiration](#token-expiration) for more details.                                                                                                                       |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/tokens" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "type": "token",
+    "data": "Sensitive Value",
+    "mask": "{{ data | reveal_last: 4 }}",
+    "containers": [ "/general/high/" ],
+    "metadata": {
+      "nonSensitiveField": "Non-Sensitive Value"
+    },
+    "search_indexes": [
+      "{{ data }}",
+      "{{ data | last4 }}"
+    ],
+    "fingerprint_expression": "{{ data }}",
+    "deduplicate_token": true,
+    "expires_at": "8/26/2030 7:23:57 PM -07:00"
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+const token = await bt.tokens.create({
+  type: 'token',
+  data: 'Sensitive Value',
+  mask: '{{ data | reveal_last: 4 }}',
+  containers: ['/general/high/'],
+  metadata: {
+    nonSensitiveField: 'Non-Sensitive Value'
+  },
+  searchIndexes: [
+    '{{ data }}',
+    '{{ data | last4 }}'
+  ],
+  fingerprintExpression: '{{ data }}',
+  deduplicateToken: true,
+  expiresAt: '8/26/2030 7:23:57 PM -07:00'
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var token = await client.CreateAsync(new Token {
+  Type = "token",
+  Data = "Sensitive Value",
+  Mask = "{{ data | reveal_last: 4 }}",
+  Containers = new List<string> { "/general/high/" },
+  Metadata = new Dictionary<string, string> {
+    { "nonSensitiveField",  "Non-Sensitive Value" }
+  },
+  SearchIndexes = new List<string> {
+    "{{ data }}",
+    "{{ data | last4 }}"
+  }
+  FingerprintExpression = "{{ data }}",
+  DeduplicateToken = true,
+  ExpiresAt = "8/26/2030 7:23:57 PM -07:00"
+});
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+from basistheory.model.create_token_request import CreateTokenRequest
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    token_client = tokens_api.TokensApi(api_client)
+
+    token = token_client.create(create_token_request=CreateTokenRequest(
+        type="token",
+        data="Sensitive Value",
+        mask="{{ data | reveal_last: 4 }}",
+        metadata={
+            "nonSensitiveField": "Non-Sensitive Value"
+        },
+        containers=["/general/high/"],
+        search_indexes=[
+          "{{ data }}",
+          "{{ data | last4 }}"
+        ],
+        fingerprint_expression="{{ data }}",
+        expires_at="8/26/2030 7:23:57 PM -07:00"
+    ))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  createTokenRequest := *basistheory.NewCreateTokenRequest("Sensitive Value")
+  createTokenRequest.SetMask("{{ data | reveal_last: 4 }}")
+  createTokenRequest.SetType("token")
+  createTokenRequest.SetMetadata(map[string]string{
+    "myMetadata": "myMetadataValue",
+  })
+  createTokenRequest.SetSearchIndexes([]string{"{{ data }}", "{{ data | last4 }}"})
+  createTokenRequest.SetFingerprintExpression("{{ data }}")
+  createTokenRequest.SetDeduplicateToken(true)
+  createTokenRequest.SetContainers([]string{"/general/high/"})
+  createTokenRequest.SetExpiresAt("8/26/2030 7:23:57 PM -07:00")
+
+  createTokenResponse, createTokenHttpResponse, createErr := apiClient.TokensApi.Create(contextWithAPIKey).CreateTokenRequest(createTokenRequest).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+:::caution
+
+Never reveal sensitive information in the <code>id</code> of your token. See the documentation on [Aliasing](/expressions/aliasing-best-practices) to learn more about best practices when specifying your own token ID.
+
+:::
+
+:::caution
+
+Never store sensitive plaintext information in the `metadata` of your token.
+
+:::
+
+### Response
+
+Returns a [token](#token-object) if the token was created. Returns [an error](/docs/api/errors) if there were validation errors, or the token failed to create.
+
+```json
+{
+  "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "type": "token",
+  "data": "XXXXXXXXXXXalue",
+  "mask": "{{ data | reveal_last: 4 }}",
+  "containers": ["/general/high/"],
+  "metadata": {
+    "nonSensitiveField": "Non-Sensitive Value"
+  },
+  "search_indexes": [
+    "{{ data }}",
+    "{{ data | last4 }}"
+  ],
+  "fingerprint_expression": "{{ data }}",
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "expires_at": "2030-08-26T19:23:57-07:00"
+}
+```
+
+## List Tokens
+
+<span class="http-method get">
+  <span class="box-method">GET</span>
+  `https://api.basistheory.com/tokens`
+</span>
+
+Get a list of tokens for the Tenant, supporting basic search criteria. 
+If you need to perform a more advanced token search, see [Search Tokens](/docs/api/tokens/search).
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">token:read</span>
+</p>
+
+### Request
+
+#### Query Parameters
+
+| Parameter        | Required | Type     | Default | Description                                                                                                                                                                                                                                                                                             |
+| ---------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`             | false    | *string* | `null`  | One to many Token IDs to retrieve. Multiple IDs can be passed in the form `?id=<value1>&id=<value2>`.                                                                                                                                                                                                   |
+| `type`           | false    | *string* | `null`  | One to many [token types](/docs/api/tokens/token-types) to filter the list of tokens by. Can be repeated in the form `?type=<value1>&type=<value2>`.                                                                                                                                                    |
+| `metadata.[key]` | false    | *map*    | `{}`    | Map of key-value pairs to filter tokens with matching metadata in the form `?metadata.key1=value1&metadata.key2=value2`. *Note*, `[key]` must be unique and repeated keys will be ignored. Metadata will be searched for a case-insensitive, exact match. Multiple parameters will be `AND`ed together. |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/tokens" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+const tokens = await bt.tokens.list();
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var tokens = await client.GetAsync();
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    token_client = tokens_api.TokensApi(api_client)
+
+    tokens = token_client.get()
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  tokens, httpResponse, err := apiClient.TokensApi.Get(contextWithAPIKey).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [paginated object](/docs/api/pagination) with the `data` property containing an array of [tokens](#token-object).
+Token data will be returned according to the [transform](https://developers.basistheory.com/concepts/access-controls/#transform) 
+applied within the requesting Application's [Access Controls](https://developers.basistheory.com/concepts/access-controls). 
+Providing any query parameters will filter the results. Returns [an error](/docs/api/errors) if tokens could not be retrieved.
+
+```json
+{
+  "pagination": {...},
+  "data": [
+    {
+      "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+      "type": "token",
+      "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+      "data": "secret data",
+      "containers": ["/general/high/"],
+      "metadata": {
+        "nonSensitiveField": "Non-Sensitive Value"
+      },
+      "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+      "created_at": "2021-03-01T08:23:14+00:00"
+    },
+    {...},
+    {...}
+  ]
+}
+```
+
+## Get a Token
+
+<span class="http-method get">
+  <span class="box-method">GET</span>
+  `https://api.basistheory.com/tokens/&#123;id&#125;`
+</span>
+
+Get a token by ID in the Tenant.
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">token:read</span>
+</p>
+
+### Request
+
+#### URI Parameters
+
+| Parameter | Required | Type     | Default | Description         |
+| --------- | -------- | -------- | ------- | ------------------- |
+| `id`      | true     | *string* | `null`  | The ID of the token |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+const token = await bt.tokens.retrieve('c06d0789-0a38-40be-b7cc-c28a718f76f1');
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var token = await client.GetByIdAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    token_client = tokens_api.TokensApi(api_client)
+
+    token = token_client.get_by_id(id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  token, httpResponse, err := apiClient.TokensApi.GetById(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [token](#token-object) with the `id` provided.
+Token data will be returned according to the [transform](https://developers.basistheory.com/concepts/access-controls/#transform)
+applied within the requesting Application's [Access Controls](https://developers.basistheory.com/concepts/access-controls).
+Returns [an error](/docs/api/errors) if the token could not be retrieved.
+
+```json
+{
+  "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+  "type": "token",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "data": "secret data",
+  "containers": ["/general/high/"],
+  "metadata": {
+    "nonSensitiveField": "Non-Sensitive Value"
+  },
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2021-03-01T08:23:14+00:00"
+}
+```
+
+## Update Token
+
+<span class="http-method patch">
+  <span class="box-method">PATCH</span>
+  `https://api.basistheory.com/tokens`
+</span>
+
+Update an existing token for the Tenant.
+
+:::info
+
+The Update Tokens endpoint uses a different content-type to support merge-patch operations. Requests need the `Content-Type` header to be set to `application/merge-patch+json`. Requests made with a different Content-Type header value will receive a `415 Unsupported Media Type` response code. For more information on merge-patch, see [RFC 7386](https://datatracker.ietf.org/doc/html/rfc7386).
+
+:::
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">token:update</span>
+</p>
+
+### Request
+
+#### Request Parameters
+
+| Attribute                | Required | Type                  | Behavior                                                                               | Description                                                                                                                                                                                                                     |
+| ------------------------ | -------- | --------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data`                   | false    | *any*                 | Merge Patch (see <a href="https://datatracker.ietf.org/doc/html/rfc7386">RFC 7386</a>) | Token data. Can be an object, array, or any primitive type such as an integer, boolean, or string                                                                                                                               |
+| `mask`                   | false    | *any*                 | Merge Patch (see <a href="https://datatracker.ietf.org/doc/html/rfc7386">RFC 7386</a>) | Token data mask. Can be an object, array, or any primitive type such as an integer, boolean, or string. See [mask expressions](/expressions/masks).                                                                             |
+| `metadata`               | false    | *map<string, string>* | Merge Patch (see <a href="https://datatracker.ietf.org/doc/html/rfc7386">RFC 7386</a>) | A key-value map of strings containing non-sensitive data.                                                                                                                                                                       |
+| `containers`             | false    | *array*               | Replace                                                                                | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](https://developers.basistheory.com/concepts/what-are-token-containers/) for details. |
+| `search_indexes`         | false    | *array*               | Replace                                                                                | Array of [expressions](/expressions/search-indexes) used to generate indexes to be able to search against.                                                                                                                      |
+| `fingerprint_expression` | false    | *string*              | Replace                                                                                | [Expressions](/expressions/fingerprints) used to fingerprint your token.                                                                                                                                                        |
+| `deduplicate_token`      | false    | *bool*                | Replace                                                                                | Whether the token is deduplicated on creation.                                                                                                                                                                                  |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/merge-patch+json" \
+  -X "PATCH" \
+  -d '{
+    "data": "Sensitive Value",
+    "mask": "{{ data | reveal_last: 4 }}",
+    "metadata": {
+      "nonSensitiveField": "Non-Sensitive Value"
+    },
+    "search_indexes": [
+      "{{ data }}",
+      "{{ data | last4 }}"
+    ],
+    "fingerprint_expression": "{{ data }}",
+    "deduplicate_token": true,
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+const token = await bt.tokens.update('c06d0789-0a38-40be-b7cc-c28a718f76f1', {
+  data: 'Sensitive Value',
+  mask: '{{ data | reveal_last: 4 }}',
+  metadata: {
+    nonSensitiveField: 'Non-Sensitive Value'
+  },
+  searchIndexes: [
+    '{{ data }}',
+    '{{ data | last4 }}'
+  ],
+  fingerprintExpression: "{{ data }}",
+  deduplicateToken: true,
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var token = await client.UpdateAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1", new TokenUpdateRequest {
+  Data = "Sensitive Value",
+  Mask = "{{ data | reveal_last: 4 }}",
+  Metadata = new Dictionary<string, string> {
+    { "nonSensitiveField",  "Non-Sensitive Value" }
+  },
+  SearchIndexes = new List<string> {
+    "{{ data }}",
+    "{{ data | last4 }}"
+  }
+  FingerprintExpression = "{{ data }}",
+  DeduplicateToken = true,
+});
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+from basistheory.model.update_token_request import UpdateTokenRequest
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    token_client = tokens_api.TokensApi(api_client)
+
+    token = token_client.update(id="c06d0789-0a38-40be-b7cc-c28a718f76f1", update_token_request=UpdateTokenRequest(
+        data="Sensitive Value",
+        mask="{{ data | reveal_last: 4 }}",
+        metadata={
+            "nonSensitiveField": "Non-Sensitive Value"
+        },
+        search_indexes=[
+          "{{ data }}",
+          "{{ data | last4 }}"
+        ],
+        fingerprint_expression="{{ data }}"
+    ))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  updateTokenRequest := *basistheory.NewUpdateTokenRequest("Sensitive Value")
+  updateTokenRequest.SetMask("{{ data | reveal_last: 4 }}")
+  updateTokenRequest.SetMetadata(map[string]string{
+    "myMetadata": "myMetadataValue",
+  })
+  updateTokenRequest.SetSearchIndexes([]string{"{{ data }}", "{{ data | last4 }}"})
+  updateTokenRequest.SetFingerprintExpression("{{ data }}")
+
+  updateTokenResponse, updateTokenHttpResponse, createErr := apiClient.TokensApi.Update(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").UpdateTokenRequest(updateTokenRequest).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns the updated [token](#token-object) if successful. Returns [an error](/docs/api/errors) if there were validation errors, or the token failed to create.
+
+```json
+{
+  "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "type": "token",
+  "data": "XXXXXXXXXXXalue",
+  "mask": "{{ data | reveal_last: 4 }}",
+  "containers": ["/general/high/"],
+  "metadata": {
+    "nonSensitiveField": "Non-Sensitive Value"
+  },
+  "search_indexes": [
+    "{{ data }}",
+    "{{ data | last4 }}"
+  ],
+  "fingerprint_expression": "{{ data }}",
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00"
+}
+```
+
+:::info
+
+If the updated token results in a duplicate of an existing token and the application does not have the original token's read permission, the `data`, `metadata`, `fingerprint_expression`, `search_indexes` and `mask` attributes will be redacted.
+
+:::
+
+## Delete Token
+
+<span class="http-method delete">
+  <span class="box-method">DELETE</span>
+  `https://api.basistheory.com/tokens/&#123;id&#125;`
+</span>
+
+Delete a token by ID in the Tenant.
+
+:::caution
+
+The data associated with a deleted token will be removed forever. The reference will still exist for audit purposes.
+
+:::
+
+#### Permissions
+
+<p class="scopes">
+  <span class="scope">token:delete</span>
+</p>
+
+### Request
+
+#### URI Parameters
+
+| Parameter | Required | Type     | Default | Description         |
+| --------- | -------- | -------- | ------- | ------------------- |
+| `id`      | true     | *string* | `null`  | The ID of the token |
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -X "DELETE"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+await bt.tokens.delete('c06d0789-0a38-40be-b7cc-c28a718f76f1');
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+await client.DeleteAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    token_client = tokens_api.TokensApi(api_client)
+
+    token_client.delete(id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  httpResponse, err := apiClient.TokensApi.Delete(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns [an error](/docs/api/errors) if the token failed to delete.

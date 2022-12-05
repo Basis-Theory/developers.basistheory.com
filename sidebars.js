@@ -82,6 +82,7 @@ const sidebars = {
       items: [
         'api/tokens/tokenize',
         'api/tokens/token-types',
+        'api/tokens/search',
         'api/tokens/token-associations'
       ],
     },

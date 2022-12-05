@@ -1,1 +1,84 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Authentication
+
+Basis Theory uses API keys to allow access to the API.
+
+Basis Theory requires the API key to be included in all API requests to the server in a header that looks like the following:
+
+`BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED`
+
+:::info
+
+You must replace `key_N88mVGsp3sCXkykyN2EFED` with your API key supplied when you [created an Application](/docs/api/applications#create-application).
+
+:::
+
+### Request
+
+<Tabs groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl "https://api.basistheory.com" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+// at instance
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+// per call
+const bt = await new BasisTheory().init();
+
+const applications = await bt.applications.list({}, {
+  apiKey: 'key_N88mVGsp3sCXkykyN2EFED'
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp
+using BasisTheory.net.Tokens;
+
+// At service
+var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
+
+// Per call
+var client = new TokenClient();
+
+client.GetAsync(requestOptions: new RequestOptions {
+  ApiKey = "key_N88mVGsp3sCXkykyN2EFED"
+});
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+import basistheory
+from basistheory.api import tokens_api
+
+# At instance
+api_client = basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED"))
+client = tokens_api.TokensApi(api_client)
+
+# Per call
+client.list(request_options=basistheory.RequestOptions(api_key="key_N88mVGsp3sCXkykyN2EFED"))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go
+```
+
+  </TabItem>
+</Tabs>
