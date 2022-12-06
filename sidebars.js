@@ -55,7 +55,6 @@ const sidebars = {
         id: 'api',
       },
       items: [
-        'api/getting-started',
         'api/authentication',
         'api/request-correlation',
         'api/pagination',
