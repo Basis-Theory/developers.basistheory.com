@@ -14,7 +14,23 @@
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   docs: [
-    'index'
+    'index',
+    {
+      type: 'category',
+      label: 'Expressions',
+      link: {
+        type: 'doc',
+        id: 'expressions/index',
+      },
+      items: [
+        'expressions/filters',
+        'expressions/detokenization',
+        'expressions/aliasing',
+        'expressions/fingerprints',
+        'expressions/masks',
+        'expressions/search-indexes',
+      ],
+    },
   ],
   api: [
     {
