@@ -28,7 +28,7 @@ Expressions can be used within many API endpoints, including:
 - [Proxy](https://developers.basistheory.com/concepts/what-is-the-proxy) requests, to [detokenize](./detokenization) and transform tokens
 - [Aliasing](#aliasing) when [creating a token](/docs/api/tokens#create-token) or [tokenizing](/docs/api/tokens/tokenize), to specify the id of the created token 
 - [fingerprint_expression](./fingerprints) when [creating a token](/docs/api/tokens#create-token) or [tokenizing](/docs/api/tokens/tokenize), to define a value used to generate a token fingerprint
-- [mask](./masks) when [creating a token](/api-reference/#tokens-create-token) or [tokenizing](/api-reference/#tokenize), to define the mask applied to the token's data when the actor has restricted permissions
+- [mask](./masks) when [creating a token](/docs/api/tokens#create-token) or [tokenizing](/docs/api/tokens/tokenize), to define the mask applied to the token's data when the actor has restricted permissions
 - [search_indexes](./search-indexes) when [creating a token](/docs/api/tokens#create-token) or [tokenizing](/docs/api/tokens/tokenize), to define indexes to enable [searching tokens](/docs/api/tokens/search)
 
 ## Language
