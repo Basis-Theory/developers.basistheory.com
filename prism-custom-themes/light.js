@@ -50,7 +50,7 @@ module.exports = {
     {
       types: ["comment"],
       style: {
-        color: "rgb(121, 123, 130)",
+        color: "rgb(99, 119, 119)",
       },
     },
     {
