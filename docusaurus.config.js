@@ -6,12 +6,12 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Basis Theory Documentation",
+  title: "Basis Theory Developer Docs",
   url: "https://developers.basistheory.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
+  favicon: "https://cdn.basistheory.com/images/favicons/favicon.ico",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -128,6 +128,16 @@ const config = {
         darkTheme: darkCodeTheme,
         additionalLanguages: ["csharp"],
       },
+      metadata: [{
+        name: 'description', 
+        content: 'API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.'
+      }, {
+        property: 'og:description', 
+        content: 'API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.'
+      }, {
+        property: 'og:image', 
+        content: 'https://cdn.basistheory.com/images/seo/docs-opengraph.png'
+      }],
     }),
 };
 
