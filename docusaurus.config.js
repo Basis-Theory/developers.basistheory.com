@@ -50,10 +50,12 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'Basis Theory Docs',
         logo: {
-          alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          alt: 'Basis Theory Logo',
+          src: 'img/bt-logo-light.svg',
+          srcDark: 'img/bt-logo-dark.svg',
+          href: '/',
+          target: '_self',
         },
         items: [
           {
