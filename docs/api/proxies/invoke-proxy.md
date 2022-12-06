@@ -168,7 +168,7 @@ In the above example, we utilized the injected Basis Theory JS instance to token
 
 ### Detokenization
 
-The Basis Theory Proxy will attempt to [detokenize](/expressions/#detokenization) any [expressions](/expressions) present in the request and inject the raw token data in the request body before it is sent to the downstream destination.
+The Basis Theory Proxy will attempt to [detokenize](#expressions-detokenization) any [expressions](#expressions) present in the request and inject the raw token data in the request body before it is sent to the downstream destination.
 
 For example, given a token:
 
@@ -198,11 +198,11 @@ then the following request body will be sent to the destination:
 ```
 
 The `token:use` permission is required in order to detokenize tokens within a proxy request. 
-At most, 100 tokens may be detokenized within a single proxy request. You can find more information about the supported detokenization expressions [here](/expressions/#detokenization).
+At most, 100 tokens may be detokenized within a single proxy request. You can find more information about the supported detokenization expressions [here](#expressions-detokenization).
 
 :::info
 
-For more detailed examples about how to detokenize within the Proxy, check out our [Detokenization Examples](/docs/expressions/#detokenization-examples).
+For more detailed examples about how to detokenize within the Proxy, check out our [Detokenization Examples](#expressions-detokenization-examples).
 
 :::
 

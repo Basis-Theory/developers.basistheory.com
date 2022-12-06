@@ -265,7 +265,7 @@ If `search_indexes` are not provided when creating a token, then `social_securit
 - `{{ data | remove: '-'}}` which results in the value without delimiters, eg. `123456789`
 - `{{ data | last4 }}` which results in the last 4 digits of the value, eg. `6789`
 
-For generic tokens (type `token`), default indexes are not applied, and you are free to specify any desired indexes within the `search_indexes` property during [token creation](/docs/api/tokens#create-token). The `search_indexes` property supports the use of [expressions](/expressions/#search-indexes), which are based on the [Liquid templating language](https://shopify.github.io/liquid/). Each expression must result in a single value, which cannot be null or empty, otherwise a 400 error will be returned.
+For generic tokens (type `token`), default indexes are not applied, and you are free to specify any desired indexes within the `search_indexes` property during [token creation](/docs/api/tokens#create-token). The `search_indexes` property supports the use of [expressions](#expressions-search-indexes), which are based on the [Liquid templating language](https://shopify.github.io/liquid/). Each expression must result in a single value, which cannot be null or empty, otherwise a 400 error will be returned.
 
 Any expressions contained within `search_indexes` will be evaluated against the token data before generating indexes. Token data searches will only return a token if there is an exact match on one of the evaluated `search_indexes`; full wildcard search is not currently supported.
 
