@@ -22,11 +22,6 @@
   --docusaurus-highlighted-code-line-bg: rgba(0 0 0 0.1);
 
   --ifm-font-color-base: #606376;
-  --ifm-menu-color-background-active: linear-gradient(
-    90deg,
-    #e5e9ff 0%,
-    rgba(229, 233, 255, 0) 100%
-  );
 
   --ifm-font-family-base: Inter, ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
@@ -42,6 +37,9 @@
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
 
+  --ifm-menu-color-background-active: var(--bt-menu-color-background-active);
+  --ifm-menu-color-background-hover: var(--bt-menu-color-background-hover);
+
   /* 
       Basis Theory-specific variables
     */
@@ -51,6 +49,17 @@
   --bt-code-font-family: "Source Code Pro";
   --bt-sidebar-background-color: #f3f5fd;
   --bt-sidebar-border-color: rgba(209, 215, 255, 0.4);
+  --bt-menu-color-background-hover: #e5e9ff;
+  --bt-menu-color-background-active: linear-gradient(
+    90deg,
+    #e5e9ff 0%,
+    rgba(229, 233, 255, 0) 100%
+  );
+  --bt-menu-color-background-active-hover: linear-gradient(
+    90deg,
+    rgba(229, 233, 255, 0.5) 0%,
+    rgba(229, 233, 255, 0) 100%
+  );
 }
 
 /* For readability concerns you should choose a lighter palette in dark mode. */
@@ -64,8 +73,29 @@
   --ifm-color-primary-lightest: #00d5f2;
   --docusaurus-highlighted-code-line-bg: rgba(0 0 0 0.3);
 
+  --ifm-menu-color-background-active: var(--bt-menu-color-background-active);
+  --ifm-menu-color-background-hover: var(--bt-menu-color-background-hover);
+
   --ifm-font-color-base: #fff;
   --ifm-heading-color: #fff;
+
+  --bt-menu-color-background-hover: linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.08)
+  );
+
+  --bt-menu-color-background-active: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+
+  --bt-menu-color-background-active-hover: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 h1 {
@@ -109,7 +139,7 @@ code {
 }
 
 /* 
-* Sidebar nav items selected states
+* Sidebar items hover/selected states
 */
 
 [data-theme="light"] .theme-doc-sidebar-container {
@@ -118,26 +148,18 @@ code {
 }
 
 .theme-doc-sidebar-item-link,
-.menu__list-item-collapsible {
+.theme-doc-sidebar-item-category > div {
   border-radius: 4px;
   margin-top: 0 !important;
   padding: 4px 8px 4px 0px;
 }
 
-[data-theme="light"] .theme-doc-sidebar-item-link:has(> .menu__link--active),
-[data-theme="light"] .menu__list-item-collapsible--active {
-  background: linear-gradient(
-    90deg,
-    #e5e9ff 0%,
-    rgba(229, 233, 255, 0) 100%
-  ) !important;
+.theme-doc-sidebar-item-link > .menu__link--active,
+.theme-doc-sidebar-item-category > .menu__list-item-collapsible--active {
+  background: var(--ifm-menu-color-background-active);
 }
 
-[data-theme="dark"] .theme-doc-sidebar-item-link:has(> .menu__link--active),
-[data-theme="dark"] .menu__list-item-collapsible--active {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0) 100%
-  ) !important;
+.theme-doc-sidebar-item-link > .menu__link--active:hover,
+.theme-doc-sidebar-item-category > .menu__list-item-collapsible--active:hover {
+  background: var(--bt-menu-color-background-active-hover);
 }
