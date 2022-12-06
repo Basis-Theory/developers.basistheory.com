@@ -1,6 +1,6 @@
 # Search Indexes
 
-Several token attributes can be [searched](https://developers.basistheory.com/concepts/what-is-search/) through the [token search](/docs/api/tokens/search) API.
+Several token attributes can be [searched](/docs/concepts/what-is-search/) through the [token search](/docs/api/tokens/search) API.
 A token's data can also be searched, provided that the token has been indexed for search at the time of its creation.
 
 When [creating a token](/docs/api/tokens#create-token), an array of search index expressions can be specified within the request.

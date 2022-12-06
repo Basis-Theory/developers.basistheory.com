@@ -1,10 +1,7 @@
 # Fingerprints
 
-A [fingerprint](https://developers.basistheory.com/concepts/what-are-fingerprints/) can be generated at the time a token is created, 
-which can be used to uniquely identify the contents of a token for its type. You will get different fingerprints for the same content
-across different token types, but the same fingerprints for the same content across the same token types.
-Fingerprints are cryptographically secure and cannot be reversed to recover the original token's data, 
-so they are safe to store in your application and used to compare tokens without retrieving plaintext token data (e.g. for token de-duplication).
+A fingerprint can be generated at the time a token is created, which can be used to uniquely identify the contents of a token for its type. You will get different fingerprints for the same content
+across different token types, but the same fingerprints for the same content across the same token types. Fingerprints are cryptographically secure and cannot be reversed to recover the original token's data, so they are safe to store in your application and used to compare tokens without retrieving plaintext token data (e.g. for token de-duplication).
 
 When [creating a token](/docs/api/tokens#create-token), fingerprint expression can be specified within the request.
 You are able to reference the `data` and `metadata` variable within an [object](/docs/expressions#objects) expression -

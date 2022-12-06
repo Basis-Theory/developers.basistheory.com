@@ -701,7 +701,7 @@ Invoke a reactor by ID.
 </p>
 
 The `token:use` permission is required to use a Reactor, and it is required for each
-[Container](https://developers.basistheory.com/concepts/what-are-token-containers) of Tokens you wish to detokenize in a Reactor.
+[Container](/docs/concepts/what-are-containers) of Tokens you wish to detokenize in a Reactor.
 
 ### Request
 

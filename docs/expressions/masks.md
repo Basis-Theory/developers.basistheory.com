@@ -9,8 +9,8 @@ You are able to reference the `data` property within an [object](/docs/expressio
 `data` will be bound to the provided token data.
 
 When retrieving a token with an Application API Key, token data is returned according to the format specified by the
-[transform](https://developers.basistheory.com/concepts/access-controls/#transform) applied within the Application's
-[Access Controls](https://developers.basistheory.com/concepts/access-controls).
+[transform](/docs/concepts/access-controls#transform) applied within the Application's
+[Access Controls](/docs/concepts/access-controls).
 For tokens that receive a `mask` transform, the token's mask will be evaluated and returned within the `data` property.
 If a mask expression is not defined on the token, the token's data will be redacted.
 

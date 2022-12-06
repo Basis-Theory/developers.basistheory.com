@@ -2,7 +2,7 @@
 
 Basis Theory offers several pre-configured token types for various use-cases and compliance requirements.
 Token Types define the rules around a data type such as validation requirements, default 
-[token containers](https://developers.basistheory.com/concepts/what-are-token-containers), 
+[token containers](/docs/concepts/what-are-containers), 
 fingerprint expressions, and mask expressions.
 
 ## Token

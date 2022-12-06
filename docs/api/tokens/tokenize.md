@@ -19,7 +19,7 @@ Tokenize one to many tokens for the Tenant.
 </p>
 
 The `token:create` permission must be granted on each destination container, and the required scope of this permission 
-is determined by the [containers](https://developers.basistheory.com/concepts/what-are-token-containers) 
+is determined by the [containers](/docs/concepts/what-are-containers) 
 specified in the tokenize request.
 
 ## Create Basic Token

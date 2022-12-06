@@ -4,8 +4,8 @@ import TabItem from '@theme/TabItem';
 # Detokenization
 
 Detokenization refers to the process by which non-sensitive token identifiers are replaced with the original token data represented by those tokens.
-Basis Theory supports detokenization through the use of expressions within our serverless [Reactor](https://developers.basistheory.com/concepts/what-are-reactors) 
-platform and the [Proxy](https://developers.basistheory.com/concepts/what-is-the-proxy).
+Basis Theory supports detokenization through the use of expressions within our serverless [Reactor](/docs/concepts/what-are-reactors) 
+platform and the [Proxy](/docs/concepts/what-is-the-proxy).
 
 Detokenization is performed whenever a **detokenization expression** is identified within a request.
 In their simplest form, these are Liquid [objects](/docs/expressions#objects) of the form `{{<tokenId>}}`. 
@@ -104,7 +104,7 @@ select the appropriate tab at the top of the right-hand column to choose which e
 <Tabs groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-For the examples below, we will [proxy](https://developers.basistheory.com/concepts/what-is-the-proxy) requests to Spreedly using their [Payment Methods API](https://docs.spreedly.com/reference/api/v1/#create-credit-card).
+For the examples below, we will [proxy](/docs/concepts/what-is-the-proxy) requests to Spreedly using their [Payment Methods API](https://docs.spreedly.com/reference/api/v1/#create-credit-card).
 This is the same request that is being made from within the `Spreedly - Card` Reactor Formula.
 
 This API endpoint accepts POST requests with a body of the form:
@@ -131,7 +131,7 @@ replace this with your own authentication credentials if you want to follow alon
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-For the examples below, we will be using a [Reactor](https://developers.basistheory.com/concepts/what-are-reactors) created using the `Spreedly - Card` Reactor Formula.
+For the examples below, we will be using a [Reactor](/docs/concepts/what-are-reactors) created using the `Spreedly - Card` Reactor Formula.
 We will need the `id` of this Reactor in the examples below: `d08bc998-9301-495c-a2e5-04f8dc0916b4`.
 
 This Reactor Formula accepts the following [request parameters](/docs/api/reactors/reactor-formulas#reactor-formula-object):

@@ -40,7 +40,7 @@ Tenants provide a way to logically group your Applications and tokens. Common us
 
 :::info
 
-To learn more about Monthly Active Tokens (MATs), check out [our guide](https://developers.basistheory.com/concepts/what-are-mats/).
+To learn more about Monthly Active Tokens (MATs), check out [our guide](/docs/concepts/what-are-mats/).
 
 :::
 

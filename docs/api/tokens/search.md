@@ -123,12 +123,12 @@ func main() {
 ## Response
 
 Returns a [paginated object](/docs/api/pagination) with the `data` property containing an array of [tokens](/docs/api/tokens#token-object).
-Token data will be returned according to the [transform](https://developers.basistheory.com/concepts/access-controls/#transform)
-applied to the requesting Application's [Access Controls](https://developers.basistheory.com/concepts/access-controls).
+Token data will be returned according to the [transform](/docs/concepts/access-controls#transform)
+applied to the requesting Application's [Access Controls](/docs/concepts/access-controls).
 Returns [an error](/docs/api/errors) if tokens could not be retrieved or when an invalid [query](#query-syntax) is submitted.
 
-Token data will be returned in search results according to the [transform](https://developers.basistheory.com/concepts/access-controls/#transform)
-applied within the requesting Application's [Access Controls](https://developers.basistheory.com/concepts/access-controls).
+Token data will be returned in search results according to the [transform](/docs/concepts/access-controls#transform)
+applied within the requesting Application's [Access Controls](/docs/concepts/access-controls).
 
 ```json
 {

@@ -17,6 +17,19 @@ const sidebars = {
     'index',
     {
       type: 'category',
+      label: 'Concepts',
+      items: [
+        'concepts/what-are-tokens',
+        'concepts/what-is-search',
+        'concepts/what-are-containers',
+        'concepts/access-controls',
+        'concepts/what-is-the-proxy',
+        'concepts/what-are-reactors',
+        'concepts/what-are-mats',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Expressions',
       link: {
         type: 'doc',
