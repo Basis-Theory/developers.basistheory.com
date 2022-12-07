@@ -5,6 +5,12 @@ title: Applications
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+
 # Applications
 
 Your ability to authenticate to the Basis Theory API is granted through an API Key associated with an Application.
@@ -76,18 +82,16 @@ whilst `conditions` is only required for `expiring` ones. They are mutually excl
 
 ## Create Application
 
-<span class="http-method post">
-  <span class="box-method">POST</span>
-  `https://api.basistheory.com/applications`
-</span>
-
 Create a new Application for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/applications"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">application:create</span>
-</p>
+<Permission content="application:create" />
 
 ### Request
 
@@ -229,18 +233,16 @@ Returns an [Application](#application-object) if the application was created. Re
 
 ## List Applications
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/applications`
-</span>
-
 Get a list of applications for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/applications"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">application:read</span>
-</p>
+<Permission content="application:read" />
 
 ### Request
 
@@ -352,18 +354,16 @@ Returns a [paginated object](/docs/api/pagination) with the `data` property cont
 
 ## Get an Application
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/applications/&#123;id&#125;`
-</span>{" "}
-
 Get an application by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/applications/&#123;id&#125;"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">application:read</span>
-</p>
+<Permission content="application:read" />
 
 ### Request
 
@@ -463,18 +463,16 @@ Returns an [Application](#application-object) with the `id` provided. Returns [a
 
 ## Get an Application by Key
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/applications/key`
-</span>
-
 Get an application by key in the Tenant. Will use the `BT-API-KEY` header to lookup the application.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/applications/key"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">application:read</span>
-</p>
+<Permission content="application:read" />
 
 ### Request
 
@@ -566,18 +564,16 @@ Returns an [Application](#application-object) for the provided `BT-API-KEY`. Ret
 
 ## Update Application
 
-<span class="http-method put">
-  <span class="box-method">PUT</span>
-  `https://api.basistheory.com/applications/&#123;id&#125;`
-</span>
-
 Update an application by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.PUT}
+  endpoint="https://api.basistheory.com/applications/&#123;id&#125;"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">application:update</span>
-</p>
+<Permission content="application:update" />
 
 ### Request
 
@@ -722,12 +718,12 @@ Returns an [Application](#application-object) if the application was updated. Re
 
 ## Regenerate API Key
 
-<span class="http-method post">
-  <span class="box-method">POST</span>
-  <pre>https://api.basistheory.com/applications/&#123;id&#125;/regenerate</pre>
-</span>
-
 Regenerate the API key for an application.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/applications/&#123;id&#125;/regenerate"
+/>
 
 :::caution
 
@@ -737,9 +733,7 @@ Regenerating the API key for an application will immediately invalidate the prev
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">application:update</span>
-</p>
+<Permission content="application:update" />
 
 ### Request
 
@@ -841,16 +835,16 @@ Returns an [Application](#application-object) with the new `key` property popula
 
 ## Delete Application
 
-<span class="http-method delete">
-  <span class="box-method">DELETE</span>
-  `https://api.basistheory.com/applications/&#123;id&#125;`
-</span>
-
 Delete an application by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/applications/&#123;id&#125;/regenerate"
+/>
 
 #### Permissions
 
-`application:delete`
+<Permission content="application:delete" />
 
 ### Request
 
