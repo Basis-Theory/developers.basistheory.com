@@ -148,6 +148,10 @@ const config = {
         content: 'https://cdn.basistheory.com/images/seo/docs-opengraph.png'
       }],
     }),
+
+    plugins: [
+      require.resolve("@cmfcmf/docusaurus-search-local")
+    ],
 };
 
 module.exports = config;
