@@ -150,13 +150,7 @@ const config = {
     }),
 
     plugins: [
-      [
-        require.resolve("@cmfcmf/docusaurus-search-local"),
-        {
-          indexDocSidebarParentCategories: 1,
-          indexPages: false,
-        },
-      ],
+      require.resolve('@cmfcmf/docusaurus-search-local')
     ],
 };
 
