@@ -149,9 +149,7 @@ const config = {
       }],
     }),
 
-    plugins: [
-      require.resolve('@cmfcmf/docusaurus-search-local')
-    ],
+    plugins: [require.resolve('docusaurus-lunr-search')],
 };
 
 module.exports = config;
