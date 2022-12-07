@@ -73,18 +73,16 @@ When using the `ShortDate` format, the expiration time will be set as **12AM UTC
 
 ## Create Token
 
-<span class="http-method post">
-  <span class="box-method">POST</span>
-  `https://api.basistheory.com/tokens`
-</span>
-
 Create a new token for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/tokens"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">token:create</span>
-</p>
+<Permission content="token:create" />
 
 ### Request
 
@@ -168,10 +166,7 @@ var token = await client.CreateAsync(new Token {
   Metadata = new Dictionary<string, string> {
     { "nonSensitiveField",  "Non-Sensitive Value" }
   },
-  SearchIndexes = new List<string> {
-    "{{ data }}",
-    "{{ data | last4 }}"
-  }
+  SearchIndexes = new List<string> { "{{ data }}", "{{ data | last4 }}" }
   FingerprintExpression = "{{ data }}",
   DeduplicateToken = true,
   ExpiresAt = "8/26/2030 7:23:57 PM -07:00"
@@ -280,19 +275,16 @@ Returns a [token](#token-object) if the token was created. Returns [an error](/d
 
 ## List Tokens
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/tokens`
-</span>
+Get a list of tokens for the Tenant, supporting basic search criteria. If you need to perform a more advanced token search, see [Search Tokens](/docs/api/tokens/search).
 
-Get a list of tokens for the Tenant, supporting basic search criteria.
-If you need to perform a more advanced token search, see [Search Tokens](/docs/api/tokens/search).
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/tokens"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">token:read</span>
-</p>
+<Permission content="token:read" />
 
 ### Request
 
@@ -403,18 +395,16 @@ Providing any query parameters will filter the results. Returns [an error](/docs
 
 ## Get a Token
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/tokens/&#123;id&#125;`
-</span>
-
 Get a token by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/tokens/{id}"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">token:read</span>
-</p>
+<Permission content="token:read" />
 
 ### Request
 
@@ -516,24 +506,22 @@ Returns [an error](/docs/api/errors) if the token could not be retrieved.
 
 ## Update Token
 
-<span class="http-method patch">
-  <span class="box-method">PATCH</span>
-  `https://api.basistheory.com/tokens`
-</span>
-
 Update an existing token for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.PATCH}
+  endpoint="https://api.basistheory.com/tokens/{id}"
+/>
+
+#### Permissions
+
+<Permission content="token:update" />
 
 :::info
 
 The Update Tokens endpoint uses a different content-type to support merge-patch operations. Requests need the `Content-Type` header to be set to `application/merge-patch+json`. Requests made with a different Content-Type header value will receive a `415 Unsupported Media Type` response code. For more information on merge-patch, see [RFC 7386](https://datatracker.ietf.org/doc/html/rfc7386).
 
 :::
-
-#### Permissions
-
-<p class="scopes">
-  <span class="scope">token:update</span>
-</p>
 
 ### Request
 
@@ -703,24 +691,22 @@ If the updated token results in a duplicate of an existing token and the applica
 
 ## Delete Token
 
-<span class="http-method delete">
-  <span class="box-method">DELETE</span>
-  `https://api.basistheory.com/tokens/&#123;id&#125;`
-</span>
-
 Delete a token by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/tokens/{id}"
+/>
+
+#### Permissions
+
+<Permission content="token:delete" />
 
 :::caution
 
 The data associated with a deleted token will be removed forever. The reference will still exist for audit purposes.
 
 :::
-
-#### Permissions
-
-<p class="scopes">
-  <span class="scope">token:delete</span>
-</p>
 
 ### Request
 

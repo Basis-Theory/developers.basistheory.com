@@ -13,20 +13,18 @@ import { Permission } from "@site/src/components/shared/Permission";
 
 # Search Tokens
 
-<span class="http-method post">
-  <span class="box-method">POST</span>
-  `https://api.basistheory.com/tokens/search`
-</span>
-
 Search for tokens using a Lucene-based [query syntax](#query-syntax).
 Use this endpoint to perform an advanced token search using token data or to build complex searches combining multiple terms with boolean operators.
 For simpler search use cases, see [List Tokens](/docs/api/tokens#list-tokens).
 
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/tokens/search"
+/>
+
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">token:search</span>
-</p>
+<Permission content="token:search" />
 
 ## Request
 
@@ -79,7 +77,8 @@ var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
 var tokens = await client.SearchAsync(new TokenSearchRequest {
   Query = "data:6789 AND type:social_security_number",
   Page = 1,
-  Size = 20);
+  Size = 20
+});
 ```
 
   </TabItem>

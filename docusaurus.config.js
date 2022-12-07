@@ -135,7 +135,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["csharp", "go", "javascript", "python"],
+        additionalLanguages: ["csharp"],
       },
       metadata: [{
         name: 'description', 

@@ -63,18 +63,16 @@ Upon accepting a Tenant Invitation, a new Tenant Member will be created.
 
 ## List Tenant Members
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/tenants/self/members`
-</span>
-
 Get a list of Tenant Members for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/tenants/self/members"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">tenant:member:read</span>
-</p>
+<Permission content="tenant:member:read" />
 
 ### Request
 
@@ -186,16 +184,16 @@ Returns a [paginated object](/docs/api/pagination) with the `data` property cont
 
 ## Delete Tenant Member
 
-<span class="http-method delete">
-  <span class="box-method">DELETE</span>
-  `https://api.basistheory.com/tenants/self/members/&#123;id&#125;`
-</span>
-
 Delete a Tenant Member by ID from the Tenant. Deleting a Tenant Member will revoke all access from the Tenant.
+
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/tenants/self/members/{id}"
+/>
 
 #### Permissions
 
-`tenant:member:delete`
+<Permission content="tenant:member:delete" />
 
 ### Request
 
@@ -280,18 +278,16 @@ Returns [an error](/docs/api/errors) if the Tenant Member could not be deleted.
 
 ## Create Tenant Invitation
 
-<span class="http-method post">
-  <span class="box-method">POST</span>
-  `https://api.basistheory.com/tenants/self/invitations`
-</span>
-
 Invite a new member to join this Tenant. Creating a Tenant Invitation will send an e-mail to the recipient containing a link to accept the invitation.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/tenants/self/invitations"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">tenant:invitation:create</span>
-</p>
+<Permission content="tenant:invitation:create" />
 
 ### Request
 
@@ -402,19 +398,17 @@ Returns a [Tenant Invitation](#tenant-inviation-object) if the Tenant Invitation
 
 ## Resend Tenant Invitation
 
-<span class="http-method post">
-  <span class="box-method">POST</span>
-  `https://api.basistheory.com/tenants/self/invitations/&#123;id&#125;/resend`
-</span>
-
 Resend a pending or expired Tenant Invitation. Resending the invitation will extend the expiration by 72 hours and invalidate any previous invitation link(s) sent to the recipient.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/tenants/self/invitations/{id}/resend"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">tenant:invitation:create</span>
-  <span class="scope">tenant:invitation:update</span>
-</p>
+<Permission content="tenant:invitation:create" />
+<Permission content="tenant:invitation:update" />
 
 ### Request
 
@@ -508,18 +502,16 @@ Returns a [Tenant Invitation](#tenant-inviation-object) if the Tenant Invitation
 
 ## List Tenant Invitations
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/tenants/self/invitations`
-</span>
-
 Get a list of Tenant Invitations for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/tenants/self/invitations"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">tenant:invitation:read</span>
-</p>
+<Permission content="tenant:invitation:read" />
 
 ### Request
 
@@ -625,18 +617,16 @@ Returns [an error](/docs/api/errors) if Tenant Invitations could not be retrieve
 
 ## Get a Tenant Invitation
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/tenants/self/invitations/&#123;id&#125;`
-</span>{" "}
-
 Get a Tenant Invitation by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/tenants/self/invitations/{id}"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">tenant:invitation:read</span>
-</p>
+<Permission content="tenant:invitation:read" />
 
 ### Request
 
@@ -710,6 +700,7 @@ func main() {
   })
 
   invitation, httpResponse, err := apiClient.TenantsApi.GetInvitationById(contextWithAPIKey, "fb32ea26-2185-4ad2-a7bf-2fe69c00ae13").Execute()
+}
 ```
 
   </TabItem>
@@ -733,17 +724,16 @@ Returns a [Tenant Invitation](#tenant-invitation-object) with the `id` provided.
 
 ## Delete Tenant Invitation
 
-<span class="http-method delete">
-  <span class="box-method">DELETE</span>
-  `https://api.basistheory.com/tenants/self/invitations/&#123;id&#125;`
-</span>
+Delete a Tenant Invitation by ID from the Tenant. Deleting a Tenant Invitation will invalidate any outstanding invitation links sent to the recipient.
 
-Delete a Tenant Invitation by ID from the Tenant.
-Deleting a Tenant Invitation will invalidate any outstanding invitation links sent to the recipient.
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/tenants/self/invitations/{id}"
+/>
 
 #### Permissions
 
-`tenant:invitation:delete`
+<Permission content="tenant:invitation:delete" />
 
 ### Request
 
