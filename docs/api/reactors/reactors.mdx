@@ -1,5 +1,5 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Reactors
 
@@ -7,16 +7,16 @@ import TabItem from '@theme/TabItem';
 
 | Attribute       | Type                                                                            | Description                                                                                                                                                                                                                       |
 | --------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`            | *uuid*                                                                          | Unique identifier of the Reactor which can be used to [get a Reactor](/docs/api/reactors#get-a-reactor)                                                                                                                           |
-| `tenant_id`     | *uuid*                                                                          | The [Tenant](/docs/api/tenants) ID which owns the reactor                                                                                                                                                                         |
-| `name`          | *string*                                                                        | The name of the reactor                                                                                                                                                                                                           |
-| `formula`       | *[Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object)* | Reactor Formula this Reactor is configured for                                                                                                                                                                                    |
-| `configuration` | *map*                                                                           | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                     |
-| `application`   | *[Application](/docs/api/applications#application-object)*                      | (Optional) This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Reactor's runtime. |
-| `created_by`    | *uuid*                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Reactor                                                                                                                                   |
-| `created_at`    | *string*                                                                        | (Optional) Created date of the Reactor in ISO 8601 format                                                                                                                                                                         |
-| `modified_by`   | *uuid*                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Reactor                                                                                                                             |
-| `modified_at`   | *date*                                                                          | (Optional) Last modified date of the Reactor in ISO 8601 format                                                                                                                                                                   |
+| `id`            | _uuid_                                                                          | Unique identifier of the Reactor which can be used to [get a Reactor](/docs/api/reactors#get-a-reactor)                                                                                                                           |
+| `tenant_id`     | _uuid_                                                                          | The [Tenant](/docs/api/tenants) ID which owns the reactor                                                                                                                                                                         |
+| `name`          | _string_                                                                        | The name of the reactor                                                                                                                                                                                                           |
+| `formula`       | _[Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object)_ | Reactor Formula this Reactor is configured for                                                                                                                                                                                    |
+| `configuration` | _map_                                                                           | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                     |
+| `application`   | _[Application](/docs/api/applications#application-object)_                      | (Optional) This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Reactor's runtime. |
+| `created_by`    | _uuid_                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Reactor                                                                                                                                   |
+| `created_at`    | _string_                                                                        | (Optional) Created date of the Reactor in ISO 8601 format                                                                                                                                                                         |
+| `modified_by`   | _uuid_                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Reactor                                                                                                                             |
+| `modified_at`   | _date_                                                                          | (Optional) Last modified date of the Reactor in ISO 8601 format                                                                                                                                                                   |
 
 ## Create Reactor
 
@@ -39,10 +39,10 @@ Create a new Reactor from a Reactor Formula for the Tenant.
 
 | Attribute        | Required | Type     | Default | Description                                                                                                                                                   |
 | ---------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`           | true     | *string* | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                        |
-| `configuration`  | true     | *object* | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration) |
-| `formula.id`     | true     | *uuid*   | `null`  | Unique identifier of the [Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object) to configure a Reactor for                             |
-| `application.id` | false    | *uuid*   | `null`  | Unique identifier of the [Application](/docs/api/applications#application-object) to configure a Reactor with                                                 |
+| `name`           | true     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                        |
+| `configuration`  | true     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration) |
+| `formula.id`     | true     | _uuid_   | `null`  | Unique identifier of the [Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object) to configure a Reactor for                             |
+| `application.id` | false    | _uuid_   | `null`  | Unique identifier of the [Application](/docs/api/applications#application-object) to configure a Reactor with                                                 |
 
 The `configuration` object must satisfy the name and type constraints defined by the [Reactor Formula's](/docs/api/reactors/reactor-formulas#reactor-formula-object) `configuration` property.
 
@@ -72,21 +72,21 @@ curl "https://api.basistheory.com/reactors" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const reactor = await bt.reactors.create({
-  name: 'My Reactor',
+  name: "My Reactor",
   configuration: {
-    SERVICE_API_KEY: 'key_abcd1234',
+    SERVICE_API_KEY: "key_abcd1234",
   },
   formula: {
-    id: '17069df1-80f4-439e-86a7-4121863e4678',
+    id: "17069df1-80f4-439e-86a7-4121863e4678",
   },
   application: {
-    id: '45c124e7-6ab2-4899-b4d9-1388b0ba9d04'
-  }
+    id: "45c124e7-6ab2-4899-b4d9-1388b0ba9d04",
+  },
 });
 ```
 
@@ -215,8 +215,8 @@ Get a list of reactors for the Tenant.
 
 | Parameter | Required | Type     | Default | Description                                                        |
 | --------- | -------- | -------- | ------- | ------------------------------------------------------------------ |
-| `id`      | false    | *array*  | `[]`    | An optional list of Reactor ID's to filter the list of reactors by |
-| `name`    | false    | *string* | `null`  | Wildcard search of reactors by name                                |
+| `id`      | false    | _array_  | `[]`    | An optional list of Reactor ID's to filter the list of reactors by |
+| `name`    | false    | _string_ | `null`  | Wildcard search of reactors by name                                |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -230,9 +230,9 @@ curl "https://api.basistheory.com/reactors" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const reactors = await bt.reactors.list();
 ```
@@ -318,7 +318,7 @@ Returns a [paginated object](/docs/api/pagination) with the `data` property cont
 <span class="http-method get">
   <span class="box-method">GET</span>
   `https://api.basistheory.com/reactors/&#123;id&#125;`
-</span> 
+</span>{" "}
 
 Get a Reactor by ID in the Tenant.
 
@@ -334,7 +334,7 @@ Get a Reactor by ID in the Tenant.
 
 | Parameter | Required | Type   | Default | Description           |
 | --------- | -------- | ------ | ------- | --------------------- |
-| `id`      | true     | *uuid* | `null`  | The ID of the reactor |
+| `id`      | true     | _uuid_ | `null`  | The ID of the reactor |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -348,11 +348,13 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13"
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-const reactor = await bt.reactors.retrieve('5b493235-6917-4307-906a-2cd6f1a90b13');
+const reactor = await bt.reactors.retrieve(
+  "5b493235-6917-4307-906a-2cd6f1a90b13"
+);
 ```
 
   </TabItem>
@@ -445,15 +447,15 @@ Update a Reactor by ID in the Tenant.
 
 | Parameter | Required | Type   | Default | Description           |
 | --------- | -------- | ------ | ------- | --------------------- |
-| `id`      | true     | *uuid* | `null`  | The ID of the reactor |
+| `id`      | true     | _uuid_ | `null`  | The ID of the reactor |
 
 #### Request Parameters
 
 | Attribute        | Required | Type     | Default | Description                                                                                                                                                   |
 | ---------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`           | true     | *string* | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                        |
-| `configuration`  | true     | *object* | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration) |
-| `application.id` | false    | *uuid*   | `null`  | Unique identifier of the [Application](/docs/api/applications#application-object) to configure a Reactor with                                                 |
+| `name`           | true     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                        |
+| `configuration`  | true     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration) |
+| `application.id` | false    | _uuid_   | `null`  | Unique identifier of the [Application](/docs/api/applications#application-object) to configure a Reactor with                                                 |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -478,19 +480,22 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13"
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-const reactor = await bt.reactors.update('5b493235-6917-4307-906a-2cd6f1a90b13', {
-  name: 'My Reactor',
-  configuration: {
-    SERVICE_API_KEY: 'key_abcd1234',
-  },
-  application: {
-    id: '45c124e7-6ab2-4899-b4d9-1388b0ba9d04'
+const reactor = await bt.reactors.update(
+  "5b493235-6917-4307-906a-2cd6f1a90b13",
+  {
+    name: "My Reactor",
+    configuration: {
+      SERVICE_API_KEY: "key_abcd1234",
+    },
+    application: {
+      id: "45c124e7-6ab2-4899-b4d9-1388b0ba9d04",
+    },
   }
-});
+);
 ```
 
   </TabItem>
@@ -501,7 +506,7 @@ using BasisTheory.net.Reactors;
 
 var client = new ReactorClient("key_N88mVGsp3sCXkykyN2EFED");
 
-var reactor = await client.UpdateAsync("5b493235-6917-4307-906a-2cd6f1a90b13", 
+var reactor = await client.UpdateAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
   new Reactor {
     Name = "My Reactor",
     Configuration = new Dictionary<string, string> {
@@ -609,7 +614,7 @@ Delete a Reactor by ID in the Tenant.
 
 | Parameter | Required | Type   | Default | Description           |
 | --------- | -------- | ------ | ------- | --------------------- |
-| `id`      | true     | *uuid* | `null`  | The ID of the reactor |
+| `id`      | true     | _uuid_ | `null`  | The ID of the reactor |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -624,11 +629,11 @@ curl "https://api.basistheory.com/reactors/fb124bba-f90d-45f0-9a59-5edca27b3b4a"
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-await bt.reactors.delete('fb124bba-f90d-45f0-9a59-5edca27b3b4a');
+await bt.reactors.delete("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
 ```
 
   </TabItem>
@@ -684,7 +689,6 @@ func main() {
 
 Returns [an error](/docs/api/errors) if the Reactor failed to delete.
 
-
 ## Invoke a Reactor
 
 <span class="http-method post">
@@ -709,15 +713,16 @@ The `token:use` permission is required to use a Reactor, and it is required for 
 
 | Parameter | Required | Type   | Default | Description           |
 | --------- | -------- | ------ | ------- | --------------------- |
-| `id`      | true     | *uuid* | `null`  | The ID of the Reactor |
+| `id`      | true     | _uuid_ | `null`  | The ID of the Reactor |
 
 #### Request Parameters
 
 | Parameter | Required | Type     | Default | Description                                                                                                                                                                                          |
 | --------- | -------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `args`    | false    | *object* | `null`  | Arguments to provide to the reactor. These arguments must contain the declared [request parameters](/docs/api/reactors/reactor-formulas#reactor-formula-request-parameters) for the reactor formula. |
+| `args`    | false    | _object_ | `null`  | Arguments to provide to the reactor. These arguments must contain the declared [request parameters](/docs/api/reactors/reactor-formulas#reactor-formula-request-parameters) for the reactor formula. |
 
 #### Reactor Request Parameters
+
 The reactor will be executed with a `req` object that contains the following properties
 
 | Parameter       | Description                                                                                                                                                          |
@@ -748,16 +753,19 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-const reactResponse = await bt.reactors.react('5b493235-6917-4307-906a-2cd6f1a90b13', {
-  args: {
-    card: '{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}',
-    customer_id: 'myCustomerId1234',
-  },
-});
+const reactResponse = await bt.reactors.react(
+  "5b493235-6917-4307-906a-2cd6f1a90b13",
+  {
+    args: {
+      card: "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      customer_id: "myCustomerId1234",
+    },
+  }
+);
 ```
 
   </TabItem>
@@ -769,7 +777,7 @@ using BasisTheory.net.Reactors.Requests;
 
 var client = new ReactorClient("key_N88mVGsp3sCXkykyN2EFED");
 
-var reactResponse = await client.ReactAsync("5b493235-6917-4307-906a-2cd6f1a90b13", 
+var reactResponse = await client.ReactAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
   new ReactRequest {
     Arguments = new {
       card = "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
@@ -837,10 +845,10 @@ Errors generated from Reactors will be translated to the common Basis Theory Err
 
 | Attribute     | Type     | Description                                                                                                                                                                                   |
 | ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tokens`      | *object* | (Optional) [Token(s)](/docs/api/tokens#token-object) created from the `tokenize` block of the Reactor Formula [response](/docs/api/reactors/reactor-formulas#reactor-formula-response-object) |
-| `raw`         | *object* | (Optional) Raw output returned from the Reactor                                                                                                                                               |
-| `raw.body`    | *object* | (Required if [proxy](/docs/api/proxies/invoke-proxy) request) The `body` forwarded to the destination for the [proxy](/docs/api/proxies/invoke-proxy) request                                 |
-| `raw.headers` | *object* | (Required if [proxy](/docs/api/proxies/invoke-proxy) request) The `headers` forwarded to the destination for the [proxy](/docs/api/proxies/invoke-proxy) request                              |
+| `tokens`      | _object_ | (Optional) [Token(s)](/docs/api/tokens#token-object) created from the `tokenize` block of the Reactor Formula [response](/docs/api/reactors/reactor-formulas#reactor-formula-response-object) |
+| `raw`         | _object_ | (Optional) Raw output returned from the Reactor                                                                                                                                               |
+| `raw.body`    | _object_ | (Required if [proxy](/docs/api/proxies/invoke-proxy) request) The `body` forwarded to the destination for the [proxy](/docs/api/proxies/invoke-proxy) request                                 |
+| `raw.headers` | _object_ | (Required if [proxy](/docs/api/proxies/invoke-proxy) request) The `headers` forwarded to the destination for the [proxy](/docs/api/proxies/invoke-proxy) request                              |
 
 ### Validation
 
@@ -848,16 +856,16 @@ When invoking a reactor, the `args` must satisfy the `request_parameters` contra
 The names of properties passed within `args` must match the names of each of the declared `request_parameters` - this comparison is case-sensitive.
 Additional arguments included within `args` that are not declared as request parameters will be removed from the request.
 
-Nested objects may be passed within `args`, as long as each sub-property is declared as a request parameter, dot-separating levels of the object hierarchy. 
+Nested objects may be passed within `args`, as long as each sub-property is declared as a request parameter, dot-separating levels of the object hierarchy.
 For example, we may have a Reactor Formula with complex request parameters declared as:
 
 | name                 | type     | optional |
 | -------------------- | -------- | -------- |
-| `request_id`         | *string* | false    |
-| `user.first_name`    | *string* | false    |
-| `user.last_name`     | *string* | false    |
-| `user.address.city`  | *string* | true     |
-| `user.address.state` | *string* | true     |
+| `request_id`         | _string_ | false    |
+| `user.first_name`    | _string_ | false    |
+| `user.last_name`     | _string_ | false    |
+| `user.address.city`  | _string_ | true     |
+| `user.address.state` | _string_ | true     |
 
 Then the following arguments would constitute a valid Reactor request:
 
@@ -880,8 +888,8 @@ Then the following arguments would constitute a valid Reactor request:
 All required `request_parameters` must be included within the `args` on each request.
 If a request parameter was defined with `optional: false` and a value for this parameter is not provided within `args`, the request will be rejected with a 400 error.
 
-Each argument must match the `type` on the corresponding request parameter, and if the type does not match, auto casting to the declared type will be attempted. 
-For example, say a request parameter is declared with type `number` but the string value `"123"` is provided. This value can be cast to a number, so the reactor would receive the numeric value `123`. 
+Each argument must match the `type` on the corresponding request parameter, and if the type does not match, auto casting to the declared type will be attempted.
+For example, say a request parameter is declared with type `number` but the string value `"123"` is provided. This value can be cast to a number, so the reactor would receive the numeric value `123`.
 However, if the string value `"non-numeric"` were provided, a 400 error would be returned because the value cannot be cast to a number.
 
 ### Detokenization
@@ -889,17 +897,17 @@ However, if the string value `"non-numeric"` were provided, a 400 error would be
 In order to use tokenized data within a reactor, the `args` parameter may contain one or more [detokenization expressions](/docs/expressions/detokenization).
 When any detokenization expressions are detected, Basis Theory will attempt to detokenize and inject the raw token data into the `args` forwarded to the Reactor function.
 
-Reactor request `args` may contain a mixture of detokenization expressions and raw plaintext data. 
+Reactor request `args` may contain a mixture of detokenization expressions and raw plaintext data.
 
 Tokens containing complex data may be detokenized into a Reactor request, including Bank and Card token types.
-When tokens with complex data are detokenized, the entire JSON data payload will be included within the `args`. 
+When tokens with complex data are detokenized, the entire JSON data payload will be included within the `args`.
 For an example, see [Use Complex Tokens](/docs/expressions/detokenization#examples).
 
 If the `args` passed into a Reactor contain additional properties that have not been declared as request parameters on the Reactor Formula,
 those properties will be automatically removed and not sent on the request to the Reactor function.
 
 Validation is performed on the resulting request after detokenization, so several required request parameters may be supplied by detokenizing
-a single complex token that contains several of the request parameters. 
+a single complex token that contains several of the request parameters.
 
 At most, 100 tokens may be detokenized within a single Reactor request.
 

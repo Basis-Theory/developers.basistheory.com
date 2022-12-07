@@ -1,5 +1,5 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Applications
 
@@ -11,19 +11,19 @@ Application. Below, we describe each Application Type and how to choose between 
 
 | Attribute                          | Type     | Description                                                                                           |
 | ---------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| `id`                               | *uuid*   | Unique identifier of the Application which can be used to [get an Application](#get-an-application)   |
-| `tenant_id`                        | *uuid*   | The [Tenant](/docs/api/tenants) ID which owns the Application                                         |
-| `name`                             | *string* | The name of the Application                                                                           |
-| `key`                              | *string* | The API key which should be used for authenticating against Basis Theory API endpoints                |
-| `type`                             | *string* | [Application type](#application-types) of the Application                                             |
-| `permissions`                      | *array*  | List of [permissions](/docs/api/applications/permissions#permission-types) granted to the Application |
-| `rules`                            | *array*  | List of [access rules](#access-rules) granted to the Application                                      |
-| `created_by`                       | *uuid*   | (Optional) The ID of the user or Application that created the Application                             |
-| `created_at`                       | *date*   | (Optional) Created date of the Application in ISO 8601 format                                         |
-| `modified_by`                      | *uuid*   | (Optional) The ID of the user or Application that last modified the Application                       |
-| `modified_at`                      | *date*   | (Optional) Last modified date of the Application in ISO 8601 format                                   |
-| `expires_at`                       | *date*   | (Optional) Expiring date of the Application in ISO 8601 format                                        |
-| `can_create_expiring_applications` | *bool*   | (Optional) Whether this application can provision Expiring applications                               |
+| `id`                               | _uuid_   | Unique identifier of the Application which can be used to [get an Application](#get-an-application)   |
+| `tenant_id`                        | _uuid_   | The [Tenant](/docs/api/tenants) ID which owns the Application                                         |
+| `name`                             | _string_ | The name of the Application                                                                           |
+| `key`                              | _string_ | The API key which should be used for authenticating against Basis Theory API endpoints                |
+| `type`                             | _string_ | [Application type](#application-types) of the Application                                             |
+| `permissions`                      | _array_  | List of [permissions](/docs/api/applications/permissions#permission-types) granted to the Application |
+| `rules`                            | _array_  | List of [access rules](#access-rules) granted to the Application                                      |
+| `created_by`                       | _uuid_   | (Optional) The ID of the user or Application that created the Application                             |
+| `created_at`                       | _date_   | (Optional) Created date of the Application in ISO 8601 format                                         |
+| `modified_by`                      | _uuid_   | (Optional) The ID of the user or Application that last modified the Application                       |
+| `modified_at`                      | _date_   | (Optional) Last modified date of the Application in ISO 8601 format                                   |
+| `expires_at`                       | _date_   | (Optional) Expiring date of the Application in ISO 8601 format                                        |
+| `can_create_expiring_applications` | _bool_   | (Optional) Whether this application can provision Expiring applications                               |
 
 ### Application Types
 
@@ -38,18 +38,18 @@ Application. Below, we describe each Application Type and how to choose between 
 
 | Attribute     | Type     | Description                                                                                                                                                       |
 | ------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `description` | *string* | A description of this Access Rule                                                                                                                                 |
-| `priority`    | *int*    | The priority of the rule, beginning with `1` and higher values having lower precedence                                                                            |
-| `container`   | *string* | (Optional) The [container](/docs/concepts/what-are-containers) of Tokens this rule is scoped to                                                                   |
-| `conditions`  | *array*  | (Optional) List of [conditions](#applications-access-rules-access-rule-conditions) to be satisfied for the rule to be used. Only apply to `Expiring` applications |
-| `transform`   | *string* | The [transform](#applications-access-rules-access-rule-transforms) to apply to accessed Tokens                                                                    |
-| `permissions` | *array*  | List of [permissions](#permissions-permission-types) to grant on this Access Rule                                                                                 |
+| `description` | _string_ | A description of this Access Rule                                                                                                                                 |
+| `priority`    | _int_    | The priority of the rule, beginning with `1` and higher values having lower precedence                                                                            |
+| `container`   | _string_ | (Optional) The [container](/docs/concepts/what-are-containers) of Tokens this rule is scoped to                                                                   |
+| `conditions`  | _array_  | (Optional) List of [conditions](#applications-access-rules-access-rule-conditions) to be satisfied for the rule to be used. Only apply to `Expiring` applications |
+| `transform`   | _string_ | The [transform](#applications-access-rules-access-rule-transforms) to apply to accessed Tokens                                                                    |
+| `permissions` | _array_  | List of [permissions](#permissions-permission-types) to grant on this Access Rule                                                                                 |
 
 See [Access Rules](/docs/concepts/access-controls#what-are-access-rules) for more information.
 
 :::info
 
-`container` is only required for `public` and `private` applications, 
+`container` is only required for `public` and `private` applications,
 whilst `conditions` is only required for `expiring` ones. They are mutually exclusive.
 
 :::
@@ -66,9 +66,9 @@ whilst `conditions` is only required for `expiring` ones. They are mutually excl
 
 | Attribute   | Type     | Description                                                                   |
 | ----------- | -------- | ----------------------------------------------------------------------------- |
-| `attribute` | *string* | The token attribute the condition is evaluated on. Either `id` or `container` |
-| `operator`  | *string* | The operator used for the evaluation. Either `starts_with` or `equals`        |
-| `value`     | *string* | The value to evaluate against the token attribute                             |
+| `attribute` | _string_ | The token attribute the condition is evaluated on. Either `id` or `container` |
+| `operator`  | _string_ | The operator used for the evaluation. Either `starts_with` or `equals`        |
+| `value`     | _string_ | The value to evaluate against the token attribute                             |
 
 ## Create Application
 
@@ -91,13 +91,12 @@ Create a new Application for the Tenant.
 
 | Attribute                          | Required | Type     | Default                   | Description                                                                                                                             |
 | ---------------------------------- | -------- | -------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                             | true     | *string* | `null`                    | The name of the Application. Has a maximum length of `200`                                                                              |
-| `type`                             | true     | *string* | `null`                    | [Application type](#application-types) of the application                                                                               |
-| `permissions`                      | false    | *array*  | `[]`                      | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application                               |
-| `rules`                            | false    | *array*  | `[]`                      | An array of [Access Rules](#access-rules) granted to the application                                                                    |
-| `expires_at`                       | false    | *string* | `Current date + 1 minute` | ISO8601 compatible DateTime in which the application will be deleted. Only applies for `Expiring` applications and must be within a day |
-| `can_create_expiring_applications` | false    | *bool*   | `null`                    | Whether this application can provision Expiring applications. Only applies for `Private` applications                                   |
-
+| `name`                             | true     | _string_ | `null`                    | The name of the Application. Has a maximum length of `200`                                                                              |
+| `type`                             | true     | _string_ | `null`                    | [Application type](#application-types) of the application                                                                               |
+| `permissions`                      | false    | _array_  | `[]`                      | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application                               |
+| `rules`                            | false    | _array_  | `[]`                      | An array of [Access Rules](#access-rules) granted to the application                                                                    |
+| `expires_at`                       | false    | _string_ | `Current date + 1 minute` | ISO8601 compatible DateTime in which the application will be deleted. Only applies for `Expiring` applications and must be within a day |
+| `can_create_expiring_applications` | false    | _bool_   | `null`                    | Whether this application can provision Expiring applications. Only applies for `Private` applications                                   |
 
 Either `permissions` or `rules` is required to be non-empty when creating an Application.
 
@@ -123,17 +122,14 @@ curl "https://api.basistheory.com/applications" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const application = await bt.applications.create({
-  name: 'My Example App',
-  type: 'private',
-  permissions: [
-    'token:create',
-    'token:read',
-  ],
+  name: "My Example App",
+  type: "private",
+  permissions: ["token:create", "token:read"],
 });
 ```
 
@@ -221,10 +217,7 @@ Returns an [Application](#application-object) if the application was created. Re
   "name": "My Example App",
   "key": "key_FZ8RmaxoGc73lbmF2cpmUJ",
   "type": "private",
-  "permissions": [
-    "token:create",
-    "token:read"
-  ],
+  "permissions": ["token:create", "token:read"],
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00"
 }
@@ -251,7 +244,7 @@ Get a list of applications for the Tenant.
 
 | Parameter | Required | Type    | Default | Description                                                                |
 | --------- | -------- | ------- | ------- | -------------------------------------------------------------------------- |
-| `id`      | false    | *array* | `[]`    | An optional list of application ID's to filter the list of applications by |
+| `id`      | false    | _array_ | `[]`    | An optional list of application ID's to filter the list of applications by |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -266,9 +259,9 @@ curl "https://api.basistheory.com/applications" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const applications = await bt.applications.list();
 ```
@@ -358,7 +351,7 @@ Returns a [paginated object](/docs/api/pagination) with the `data` property cont
 <span class="http-method get">
   <span class="box-method">GET</span>
   `https://api.basistheory.com/applications/&#123;id&#125;`
-</span> 
+</span>{" "}
 
 Get an application by ID in the Tenant.
 
@@ -374,7 +367,7 @@ Get an application by ID in the Tenant.
 
 | Parameter | Required | Type   | Default | Description               |
 | --------- | -------- | ------ | ------- | ------------------------- |
-| `id`      | true     | *uuid* | `null`  | The ID of the application |
+| `id`      | true     | _uuid_ | `null`  | The ID of the application |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -388,11 +381,13 @@ curl "https://api.basistheory.com/applications/fe1f9ba4-474e-44b9-b949-110cdba9d
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-const application = await bt.applications.retrieve('fe1f9ba4-474e-44b9-b949-110cdba9d662');
+const application = await bt.applications.retrieve(
+  "fe1f9ba4-474e-44b9-b949-110cdba9d662"
+);
 ```
 
   </TabItem>
@@ -436,7 +431,7 @@ func main() {
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
     "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
   })
-  
+
   application, httpResponse, err := apiClient.ApplicationsApi.GetById(contextWithAPIKey, "fe1f9ba4-474e-44b9-b949-110cdba9d662").Execute()
 }
 ```
@@ -454,10 +449,7 @@ Returns an [Application](#application-object) with the `id` provided. Returns [a
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Management App",
   "type": "management",
-  "permissions": [
-    "application:create",
-    "application:read"
-  ],
+  "permissions": ["application:create", "application:read"],
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00",
   "modified_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -494,9 +486,9 @@ curl "https://api.basistheory.com/applications/key" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const application = await bt.applications.retrieveByKey();
 ```
@@ -560,10 +552,7 @@ Returns an [Application](#application-object) for the provided `BT-API-KEY`. Ret
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Management App",
   "type": "management",
-  "permissions": [
-    "application:create",
-    "application:read"
-  ],
+  "permissions": ["application:create", "application:read"],
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00",
   "modified_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -592,16 +581,16 @@ Update an application by ID in the Tenant.
 
 | Parameter | Required | Type   | Default | Description               |
 | --------- | -------- | ------ | ------- | ------------------------- |
-| `id`      | true     | *uuid* | `null`  | The ID of the application |
+| `id`      | true     | _uuid_ | `null`  | The ID of the application |
 
 #### Request Parameters
 
 | Attribute                          | Required | Type     | Default | Description                                                                                                         |
 | ---------------------------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
-| `name`                             | true     | *string* | `null`  | The name of the application. Has a maximum length of `200`                                                          |
-| `permissions`                      | false    | *array*  | `[]`    | A non-empty array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application. |
-| `rules`                            | false    | *array*  | `[]`    | An array of [Access Rules](#access-rules) granted to the application.                                               |
-| `can_create_expiring_applications` | false    | *bool*   | `null`  | Whether this application can provision `Expiring` applications. Only applies for `Private` applications             |
+| `name`                             | true     | _string_ | `null`  | The name of the application. Has a maximum length of `200`                                                          |
+| `permissions`                      | false    | _array_  | `[]`    | A non-empty array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application. |
+| `rules`                            | false    | _array_  | `[]`    | An array of [Access Rules](#access-rules) granted to the application.                                               |
+| `can_create_expiring_applications` | false    | _bool_   | `null`  | Whether this application can provision `Expiring` applications. Only applies for `Private` applications             |
 
 Either `permissions` or `rules` is required to be non-empty when updating an Application.
 
@@ -626,17 +615,17 @@ curl "https://api.basistheory.com/applications/fb124bba-f90d-45f0-9a59-5edca27b3
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-const application = await bt.applications.update('fb124bba-f90d-45f0-9a59-5edca27b3b4a', {
-  name: 'My Example App',
-  permissions: [
-    'application:create',
-    'application:read'
-  ],
-});
+const application = await bt.applications.update(
+  "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  {
+    name: "My Example App",
+    permissions: ["application:create", "application:read"],
+  }
+);
 ```
 
   </TabItem>
@@ -647,7 +636,7 @@ using BasisTheory.net.Applications;
 
 var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
 
-var application = await client.UpdateAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a", 
+var application = await client.UpdateAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   new Application {
     Name = "My Example App",
     Permissions = new List<string> {
@@ -719,10 +708,7 @@ Returns an [Application](#application-object) if the application was updated. Re
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Example App",
   "type": "management",
-  "permissions": [
-    "application:create",
-    "application:read"
-  ],
+  "permissions": ["application:create", "application:read"],
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00",
   "modified_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -751,14 +737,13 @@ Regenerating the API key for an application will immediately invalidate the prev
   <span class="scope">application:update</span>
 </p>
 
-
 ### Request
 
 #### URI Parameters
 
 | Parameter | Required | Type   | Default | Description               |
 | --------- | -------- | ------ | ------- | ------------------------- |
-| `id`      | true     | *uuid* | `null`  | The ID of the application |
+| `id`      | true     | _uuid_ | `null`  | The ID of the application |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -773,11 +758,13 @@ curl "https://api.basistheory.com/applications/fb124bba-f90d-45f0-9a59-5edca27b3
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-const application = await bt.applications.regenerateKey('fb124bba-f90d-45f0-9a59-5edca27b3b4a');
+const application = await bt.applications.regenerateKey(
+  "fb124bba-f90d-45f0-9a59-5edca27b3b4a"
+);
 ```
 
   </TabItem>
@@ -840,10 +827,7 @@ Returns an [Application](#application-object) with the new `key` property popula
   "name": "My Example App",
   "key": "key_FZ8RmaxoGc73lbmF2cpmUJ",
   "type": "private",
-  "permissions": [
-    "token:create",
-    "token:read"
-  ],
+  "permissions": ["token:create", "token:read"],
   "created_by": "c57a0d0d-e8e6-495f-9c79-a317cc21996c",
   "created_at": "2020-09-15T15:53:00+00:00",
   "modified_by": "a23699d2-1d55-4927-83f9-e76779f1c1c1",
@@ -870,7 +854,7 @@ Delete an application by ID in the Tenant.
 
 | Parameter | Required | Type   | Default | Description               |
 | --------- | -------- | ------ | ------- | ------------------------- |
-| `id`      | true     | *uuid* | `null`  | The ID of the application |
+| `id`      | true     | _uuid_ | `null`  | The ID of the application |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -885,11 +869,11 @@ curl "https://api.basistheory.com/applications/fb124bba-f90d-45f0-9a59-5edca27b3
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-await bt.applications.delete('fb124bba-f90d-45f0-9a59-5edca27b3b4a');
+await bt.applications.delete("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
 ```
 
   </TabItem>

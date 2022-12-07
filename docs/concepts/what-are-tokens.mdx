@@ -143,16 +143,16 @@ A scenario where masking is useful is in enabling customer service representativ
 ### Containers
 
 [Containers](./what-are-containers) enable you to logically group Tokens and segment data within a Tenant,
-enabling you to organize Tokens based on your unique data governance strategy. By default, tokens are placed into 
+enabling you to organize Tokens based on your unique data governance strategy. By default, tokens are placed into
 containers based on [NIST defined](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.199.pdf#page=6) data classifications
-and impact levels. 
+and impact levels.
 
 Containers allow you to grant scoped access to subsets of Tokens, limiting the amount of
 data accessible by your internal systems. [Access Controls](./access-controls) can be used in conjunction with
-Containers to allow some systems access to highly confidential data while restricting access to only masked or redacted 
+Containers to allow some systems access to highly confidential data while restricting access to only masked or redacted
 Tokens from other systems.
 
-For example, we may want to store a customer’s social security number and only provide access to the last 4 digits 
+For example, we may want to store a customer’s social security number and only provide access to the last 4 digits
 of the SSN to our customer service team.
 
 ### Time to Live (TTL)
@@ -229,16 +229,16 @@ In the above example, we can now perform a search with `john`, `doe`, `111-22-33
 
 ## Deduplication
 
-Duplicate data can be problematic for some systems. This can create data integrity problems in some systems where unique 
-values are required. For example, you may have an accounts payable system and an e-commerce system both accepting 
-credit cards for customers, and you want to ensure duplicate credit cards are not on file for that customer. 
-Deduplication ensures tokens that have the same `fingerprint` return the same token when created. 
-By default, every tokenization request creates a new token, but with deduplication [enabled at the tenant](/docs/api/tenants#tenant-settings-object) 
-or on each [tokenization request](/docs/api/tokens#create-token), tokens will be deduplicated based 
-upon their fingerprint. This ensures that if multiple systems or the same system creates multiple tokens with the same 
+Duplicate data can be problematic for some systems. This can create data integrity problems in some systems where unique
+values are required. For example, you may have an accounts payable system and an e-commerce system both accepting
+credit cards for customers, and you want to ensure duplicate credit cards are not on file for that customer.
+Deduplication ensures tokens that have the same `fingerprint` return the same token when created.
+By default, every tokenization request creates a new token, but with deduplication [enabled at the tenant](/docs/api/tenants#tenant-settings-object)
+or on each [tokenization request](/docs/api/tokens#create-token), tokens will be deduplicated based
+upon their fingerprint. This ensures that if multiple systems or the same system creates multiple tokens with the same
 data, they do not create duplicate tokens.
 
-To deduplicate a token during the tokenization request, we pass the `deduplicate_token` flag to the create token request. 
+To deduplicate a token during the tokenization request, we pass the `deduplicate_token` flag to the create token request.
 This will override the tenant-level deduplicate tokens setting:
 
 ```json
@@ -249,11 +249,11 @@ This will override the tenant-level deduplicate tokens setting:
 }
 ```
 
-In this scenario, if we detect an existing token with the same `fingerprint`, the existing token is returned instead of 
+In this scenario, if we detect an existing token with the same `fingerprint`, the existing token is returned instead of
 creating a new token. When an existing token is matched, its data and metadata will only be returned within the response
 if the requester has `token:read` permission to the matched token. If the requesting Application does not have read
-permission, then the `data`, `metadata`, and other potentially sensitive attributes will be redacted to prevent 
-leaking information to unauthorized parties. Only the following properties will be included in redacted responses: 
+permission, then the `data`, `metadata`, and other potentially sensitive attributes will be redacted to prevent
+leaking information to unauthorized parties. Only the following properties will be included in redacted responses:
 `id`, `type`, `tenant_id`, `fingerprint`, and `containers`.
 
 ### Metadata
@@ -306,10 +306,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
     "expiration_month": "{{ data.expiration_month }}",
     "expiration_year": "{{ data.expiration_year }}"
   },
-  "search_indexes": [
-    "{{ data.number }}",
-    "{{ data.number | last4 }}"
-  ],
+  "search_indexes": ["{{ data.number }}", "{{ data.number | last4 }}"],
   "containers": ["/pci/high/"]
 }
 ```
@@ -330,10 +327,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
     "expiration_month": "{{ data.expiration_month }}",
     "expiration_year": "{{ data.expiration_year }}"
   },
-  "search_indexes": [
-    "{{ data.number }}",
-    "{{ data.number | last4 }}"
-  ],
+  "search_indexes": ["{{ data.number }}", "{{ data.number | last4 }}"],
   "containers": ["/pci/high/"],
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00",

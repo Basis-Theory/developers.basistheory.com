@@ -22,7 +22,6 @@ The following table lists deprecated API endpoints and their respective shutdown
 | `/atomic/cards/{id}`         | `PATCH`        | April 3, 2022   | July 8, 2022   | `PATCH /atomic/cards/{id}` endpoint will be removed in an upcoming release.                                                                                                                                                   |
 | `/atomic/cards/{id}`         | `DELETE`       | April 3, 2022   | July 8, 2022   | `DELETE /atomic/cards/{id}` endpoint will be removed in an upcoming release. Instead, please use [Delete Token](/docs/api/tokens#delete-token).                                                                               |
 
-
 ## Deprecated Features
 
 The following table lists deprecated features and their respective shutdown dates.
@@ -37,19 +36,19 @@ The following table lists deprecated features and their respective shutdown date
 
 ## Migrating From Privacy Settings
 
-Privacy settings were previously used to scope access to Tokens based on their data classification and impact levels. 
-In order to provide a more flexible access control model that can be customized per Application, we have introduced 
-Token [Containers](/docs/concepts/what-are-containers) 
+Privacy settings were previously used to scope access to Tokens based on their data classification and impact levels.
+In order to provide a more flexible access control model that can be customized per Application, we have introduced
+Token [Containers](/docs/concepts/what-are-containers)
 to logically group Tokens according to any data governance requirements. A Token may be explicitly added to a container
-when creating the Token, or if unspecified, a Token will be placed within the container `/<classification>/<impact_level>/` 
-by default. If you were previously customizing a Token's classification or impact level, please update your systems to 
+when creating the Token, or if unspecified, a Token will be placed within the container `/<classification>/<impact_level>/`
+by default. If you were previously customizing a Token's classification or impact level, please update your systems to
 directly set the `containers` attribute instead.
 
-Restriction policies were previously used in conjunction with impact level based read 
-permissions (e.g. `token:general:read:low`) to define how Token data should be transformed when reading Tokens with 
+Restriction policies were previously used in conjunction with impact level based read
+permissions (e.g. `token:general:read:low`) to define how Token data should be transformed when reading Tokens with
 a higher impact level than your permission allows. This model proved to be too inflexible as it was a global setting
-applied at the Token level and could not be customized per actor. Restriction policies no longer have any functional 
-impact, and were replaced by transforms applied via [Access Rules](/docs/concepts/access-controls#what-are-access-rules).  
+applied at the Token level and could not be customized per actor. Restriction policies no longer have any functional
+impact, and were replaced by transforms applied via [Access Rules](/docs/concepts/access-controls#what-are-access-rules).
 
 If your systems are using the `privacy` attribute of the [Token Object](/docs/api/tokens#token-object) in API responses, please
 update your integration to ignore this attribute as it will be removed on February 1, 2023.
@@ -61,8 +60,8 @@ Refer to [Migrating Permissions to Access Rules](#migrating-permissions-to-acces
 ## Migrating Permissions to Access Rules
 
 Permissions on existing Applications have been automatically migrated to equivalent [Access Rules](/docs/concepts/access-controls#what-are-access-rules),
-and no action is required. The table below details how each permission was migrated, with each row representing 
-an Access Rule (i.e. Container, Transform, Permissions). If your authorization requirements have changed, new 
+and no action is required. The table below details how each permission was migrated, with each row representing
+an Access Rule (i.e. Container, Transform, Permissions). If your authorization requirements have changed, new
 rules can be added, or existing rules can be removed or customized through the Portal or the API.
 
 | Legacy Permission             | Container            | Transform | Permission(s)               |

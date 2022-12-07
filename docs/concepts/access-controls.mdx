@@ -4,11 +4,11 @@ sidebar_label: Access Controls
 
 # Access Controls
 
-Basis Theory secures sensitive data as [Tokens](./what-are-tokens) that are stored within an isolated 
+Basis Theory secures sensitive data as [Tokens](./what-are-tokens) that are stored within an isolated
 compliant environment, called a [Tenant](#what-are-tenants).
-Your systems interact with Tokens or Services (e.g. Proxy, Reactors) through the Basis Theory API using an API key that is issued to 
+Your systems interact with Tokens or Services (e.g. Proxy, Reactors) through the Basis Theory API using an API key that is issued to
 an [Application](#what-are-applications).
-Access to your Tenant's data is limited by applying access controls to an Application via 
+Access to your Tenant's data is limited by applying access controls to an Application via
 [Permissions](/docs/api/applications/permissions) and [Access Rules](#what-are-access-rules)
 to ensure services and users only have access to the data they need.
 
@@ -20,7 +20,7 @@ Data is not shared between Tenants, but you’re allowed to create as many Tenan
 You can use multiple Tenants to isolate different domains of data, and to support your Software Development Life Cycle (SDLC).
 
 The user account that was used to create a Tenant in the [Portal](https://portal.basistheory.com)
-will be designated as the Tenant Owner. New members can be invited to an existing Tenant through the 
+will be designated as the Tenant Owner. New members can be invited to an existing Tenant through the
 [Members](https://portal.basistheory.com/members) tab.
 Managing Tenant Members can also be done directly through the [API](/docs/api/tenants/tenant-members).
 
@@ -29,22 +29,21 @@ Managing Tenant Members can also be done directly through the [API](/docs/api/te
 #### Enabling Your Software Development Life Cycle
 
 Companies producing software typically create separate and identical environments to support their development
-and release processes. For example, developers and teams create Production environments to house their actual customer 
-data and multiple non-Production environments to enable quick development and testing of their applications without 
-impacting their Production systems. Basis Theory allows you to create these logical separations of data 
+and release processes. For example, developers and teams create Production environments to house their actual customer
+data and multiple non-Production environments to enable quick development and testing of their applications without
+impacting their Production systems. Basis Theory allows you to create these logical separations of data
 by creating a new Tenant for each environment:
 
 ![Tenant SDLC](/img/concepts/tenant_sdlc.png)
 
 #### Separating Data by Business Unit
 
-Many large enterprise and corporate organizations have multiple business units or properties which have different data needs. 
-Some business units may not want other parts of the organization to have direct access to data they own and manage. 
+Many large enterprise and corporate organizations have multiple business units or properties which have different data needs.
+Some business units may not want other parts of the organization to have direct access to data they own and manage.
 Creating a Tenant for each business unit enables your organization to isolate and limit access to their data by
 issuing an Application with limited access controls to other units within the organization.
 
 ![Tenant Separate Data](/img/concepts/tenant_separate_data.png)
-
 
 ## What are Applications?
 
@@ -71,21 +70,21 @@ A short description of the Application describing its intended use, for example 
 
 ### Access Controls
 
-An Application is granted access to your Tenant's resources in one of two ways: by granting the Application a set of 
+An Application is granted access to your Tenant's resources in one of two ways: by granting the Application a set of
 Permissions, or for more advanced scenarios, by defining one or more Access Rules.
 
 #### Permissions
 
-For basic authorization scenarios, an Application can simply be granted one or more permissions. 
+For basic authorization scenarios, an Application can simply be granted one or more permissions.
 Each Application Type allows a different set of permissions, and you can find a detailed list of them [here](/docs/api/applications/permissions#permission-types).
 
-Token permissions granted to Private or Public applications are applied to all Tokens 
-(i.e. they are not scoped to a particular [Container](./what-are-containers) of Tokens). 
-In order to ensure sensitive data is not inadvertently revealed by an Application, an implicit 
+Token permissions granted to Private or Public applications are applied to all Tokens
+(i.e. they are not scoped to a particular [Container](./what-are-containers) of Tokens).
+In order to ensure sensitive data is not inadvertently revealed by an Application, an implicit
 [transform](#transform) is applied for each operation:
 
 | Permission   | Transform |
-|:-------------|-----------|
+| :----------- | --------- |
 | token:create | `mask`    |
 | token:update | `mask`    |
 | token:read   | `mask`    |
@@ -103,8 +102,8 @@ Please see the section on [What are Access Rules](#what-are-access-rules) below 
 
 ### API Key
 
-Your Application’s API Key is used to authenticate your systems to the Basis Theory platform. 
-The API Key can be used to make authenticated requests to our API directly, using Hosted Elements, 
+Your Application’s API Key is used to authenticate your systems to the Basis Theory platform.
+The API Key can be used to make authenticated requests to our API directly, using Hosted Elements,
 or using the Basis Theory SDK. These API Keys follow a format similar to `key_4qUtg83907AnDem90aJSzcN`.
 API Keys should be regarded as highly sensitive, and should be stored a secret within in your environments.
 
@@ -136,51 +135,49 @@ and can be updated independently.
 If you have a particular use case that is not covered by one of the existing templates, you can also create a custom
 Application to satisfy your specific requirements by choosing the `Create Your Own` option.
 
-
 ### Common Use Cases for Applications
 
-#### Grant Multiple Systems Access Following the Principle of Least Privilege 
+#### Grant Multiple Systems Access Following the Principle of Least Privilege
 
-A common use-case for Applications is to grant minimal access to multiple systems where each system is only authorized 
-to perform necessary operations and access a relevant subset of data within a [Tenant](./access-controls/#what-are-tenants). 
-This could mean that one system is only allowed to collect Tokenized data, another system is allowed to read the data to 
-perform analytics, and a third system is only allowed to [Proxy](./what-is-the-proxy/) the data 
+A common use-case for Applications is to grant minimal access to multiple systems where each system is only authorized
+to perform necessary operations and access a relevant subset of data within a [Tenant](./access-controls/#what-are-tenants).
+This could mean that one system is only allowed to collect Tokenized data, another system is allowed to read the data to
+perform analytics, and a third system is only allowed to [Proxy](./what-is-the-proxy/) the data
 to an integrated 3rd party but never access the raw data.
 
 ![Applications Each System](/img/concepts/access_rules_by_customer.png)
 
 #### Enable partners to use data secured by Basis Theory
 
-Often, businesses need to grant their partners access to their sensitive data — 
-traditionally, these businesses would just export the needed data and send it to their partner. 
+Often, businesses need to grant their partners access to their sensitive data —
+traditionally, these businesses would just export the needed data and send it to their partner.
 With Basis Theory Applications, a business can create an Application that is restricted to ONLY the data that partner needs.
 In some cases, businesses will not allow their partners direct access to the raw data,
-but rather only allow them to [Proxy](./what-is-the-proxy/) the data to 
+but rather only allow them to [Proxy](./what-is-the-proxy/) the data to
 another API or execute serverless workloads on the sensitive data using Reactors.
 
 ![Applications Partners](/img/concepts/applications_partners.png)
 
 #### Manage Basis Theory Assets with Infrastructure as Code
 
-The Management application type allows the Basis Theory platform to be configured entirely via our API. 
-This enables engineers to write scripts or to use IaC (Infrastructure as  Code) tooling such as 
+The Management application type allows the Basis Theory platform to be configured entirely via our API.
+This enables engineers to write scripts or to use IaC (Infrastructure as Code) tooling such as
 [Terraform](https://developers.basistheory.com/guides/manage-applications-with-terraform/) to manage your Tenants and Services without logging into our Portal UI.
 
 ![Applications IaC](/img/concepts/applications_iac.png)
 
-
 ## What are Access Rules?
 
 Access Rules are the building blocks for constructing fine-grained access control policies for an Application.
-When performing an operation through the Basis Theory API, Access Rules are evaluated in priority order until 
-the first rule is found with matching container or conditions. Once a matching rule is identified, 
+When performing an operation through the Basis Theory API, Access Rules are evaluated in priority order until
+the first rule is found with matching container or conditions. Once a matching rule is identified,
 the [transform](#transform) defined on the rule determines
-if and how Token data will be returned from the API. If no matching rules are found, 
+if and how Token data will be returned from the API. If no matching rules are found,
 access to the requested resource is denied with a `403 Forbidden` error.
 
 :::info
 
-Access Rules are currently only supported on Private, Public and Expiring Application types, and only control access to Token resources. Access Rules are not supported on Management Applications at this time. 
+Access Rules are currently only supported on Private, Public and Expiring Application types, and only control access to Token resources. Access Rules are not supported on Management Applications at this time.
 
 :::
 
@@ -192,37 +189,38 @@ A short description of the rule to help you identify its purpose.
 
 ### Container
 
-Access Rules can be scoped to a specific set of Tokens using Containers. 
+Access Rules can be scoped to a specific set of Tokens using Containers.
 [Containers](./what-are-containers) are a Token attribute that enable you to logically
 organize Tokens into hierarchical paths, similar to a UNIX directory structure.
 
 Permissions granted on a Container are inherited on all sub-Containers. For example, having an Access Rule
-granting `token:read` permission on the `/pci/` Container will allow that Application the ability to 
+granting `token:read` permission on the `/pci/` Container will allow that Application the ability to
 read Tokens in the `/pci/low/` and `/pci/high/` Containers.
 
-To specify different access controls on a sub-Container, you may apply another rule with higher priority 
-that is scoped to the sub-Container. For example, given a rule that grants `token:read` permission on the 
+To specify different access controls on a sub-Container, you may apply another rule with higher priority
+that is scoped to the sub-Container. For example, given a rule that grants `token:read` permission on the
 `/pci/high/` Container with a `mask` [transform](#transform)
 and another rule with lower priority grants `token:read` permission on the `/pci/` Container with a `reveal` transform,
-then reading tokens in the `/pci/high/` container will return masked data, and reading tokens in the 
+then reading tokens in the `/pci/high/` container will return masked data, and reading tokens in the
 `/pci/low/` container will return plaintext data.
 
 ### Conditions
-Conditions allow specifying more specific restrictions for the access rule to be matched, such as scoping them to a 
-specific token. For example, having a condition with attribute `ID`, operator `EQUALS` and value `<tokenId>`, will 
+
+Conditions allow specifying more specific restrictions for the access rule to be matched, such as scoping them to a
+specific token. For example, having a condition with attribute `ID`, operator `EQUALS` and value `<tokenId>`, will
 allow the application to only access the token with the given `<tokenId>` ID.
 
 Conditions are mutually exclusive with Container and are currently only available for Expiring applications.
 
 ### Permissions
 
-One or more permissions to be granted on Tokens in the specified Container. 
-Check out our [API docs](/docs/api/applications/permissions#permission-types) 
+One or more permissions to be granted on Tokens in the specified Container.
+Check out our [API docs](/docs/api/applications/permissions#permission-types)
 for a detailed list of supported permissions by Application type.
 
 ### Transform
 
-Transforms are applied to the `data` property of a Token within API responses, allowing you to specify which view of 
+Transforms are applied to the `data` property of a Token within API responses, allowing you to specify which view of
 the data is appropriate to expose to the Application. The following transforms are supported:
 
 - `redact` - redacts the `data` property from Tokens
@@ -231,30 +229,29 @@ the data is appropriate to expose to the Application. The following transforms a
 
 :::caution
 
- Be cautious whenever applying a `reveal` transform. This is especially true when granting the `token:read` or `token:search` permissions, as this will allow your Application to read plaintext data. This may result in your systems being pulled into compliance scope. 
+Be cautious whenever applying a `reveal` transform. This is especially true when granting the `token:read` or `token:search` permissions, as this will allow your Application to read plaintext data. This may result in your systems being pulled into compliance scope.
 
 :::
 
 ### Priority
 
-Each access rule is assigned a unique priority value, which specifies the order in which the rules will be evaluated. 
+Each access rule is assigned a unique priority value, which specifies the order in which the rules will be evaluated.
 Rules are evaluated in ascending priority order, with the lowest numerical value having the highest precedence.
-
 
 ### Common Use Cases for Access Rules
 
 #### Grant Access to a Single Data Classification
 
-Access Rules can be scoped to a specific data classification of Tokens. To enable this use case, first ensure your 
-Tokens are organized into classification-based [Containers](./what-are-containers), 
+Access Rules can be scoped to a specific data classification of Tokens. To enable this use case, first ensure your
+Tokens are organized into classification-based [Containers](./what-are-containers),
 for example `/pci/`, `/pii/`, and `/general/`.
 
 ![Access Rules](/img/concepts/access_rules_by_classification.png)
 
 #### Grant Access to a Single Customer's Data
 
-Your customers' sensitive data can be partitioned within Basis Theory, for example, to enable you to offer your 
-customers single-tenant environments that only have access to a single customer's data. 
+Your customers' sensitive data can be partitioned within Basis Theory, for example, to enable you to offer your
+customers single-tenant environments that only have access to a single customer's data.
 To enable this use case, first ensure your Tokens are organized into [Containers](./what-are-containers)
 by customer, for example `/customer-1/`, `/customer-2/`, etc.
 

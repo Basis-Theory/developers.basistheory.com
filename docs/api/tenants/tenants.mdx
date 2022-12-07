@@ -1,5 +1,5 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Tenants
 
@@ -9,20 +9,20 @@ Tenants provide a way to logically group your Applications and tokens. Common us
 
 | Attribute     | Type                                       | Description                                                                                          |
 | ------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `id`          | *uuid*                                     | Unique identifier of the Tenant                                                                      |
-| `owner_id`    | *uuid*                                     | The user ID which owns the Tenant                                                                    |
-| `name`        | *string*                                   | The name of the Tenant                                                                               |
+| `id`          | _uuid_                                     | Unique identifier of the Tenant                                                                      |
+| `owner_id`    | _uuid_                                     | The user ID which owns the Tenant                                                                    |
+| `name`        | _string_                                   | The name of the Tenant                                                                               |
 | `settings`    | [Tenant Settings](#tenant-settings-object) | The setting for the Tenant                                                                           |
-| `created_by`  | *uuid*                                     | (Optional) The ID of the user that created the Tenant                                                |
-| `created_at`  | *date*                                     | (Optional) Created date of the Tenant in ISO 8601 format                                             |
-| `modified_by` | *uuid*                                     | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Tenant |
-| `modified_at` | *date*                                     | (Optional) Last modified date of the Tenant in ISO 8601 format                                       |
+| `created_by`  | _uuid_                                     | (Optional) The ID of the user that created the Tenant                                                |
+| `created_at`  | _date_                                     | (Optional) Created date of the Tenant in ISO 8601 format                                             |
+| `modified_by` | _uuid_                                     | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Tenant |
+| `modified_at` | _date_                                     | (Optional) Last modified date of the Tenant in ISO 8601 format                                       |
 
 ### Tenant Settings Object
 
 | Attribute            | Type     | Description                                                    |
 | -------------------- | -------- | -------------------------------------------------------------- |
-| `deduplicate_tokens` | *string* | (Bool) Whether tokens are deduplicated on creation and updates |
+| `deduplicate_tokens` | _string_ | (Bool) Whether tokens are deduplicated on creation and updates |
 
 ## Tenant Usage Report Object
 
@@ -34,9 +34,9 @@ Tenants provide a way to logically group your Applications and tokens. Common us
 
 | Attribute                        | Type                                                            | Description                                                                 |
 | -------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `metrics_by_type`                | *map\<string, [TokenTypeMetrics](#token-type-metrics-object)\>* | Token Metrics by [TokenType](/docs/api/tokens/token-types)                  |
-| `included_monthly_active_tokens` | *long*                                                          | Number of included monthly active tokens for the billing plan               |
-| `monthly_active_tokens`          | *long*                                                          | Number of tokens that have been created, read, or used in the current month |
+| `metrics_by_type`                | _map\<string, [TokenTypeMetrics](#token-type-metrics-object)\>_ | Token Metrics by [TokenType](/docs/api/tokens/token-types)                  |
+| `included_monthly_active_tokens` | _long_                                                          | Number of included monthly active tokens for the billing plan               |
+| `monthly_active_tokens`          | _long_                                                          | Number of tokens that have been created, read, or used in the current month |
 
 :::info
 
@@ -48,8 +48,8 @@ To learn more about Monthly Active Tokens (MATs), check out [our guide](/docs/co
 
 | Attribute         | Type   | Description                                     |
 | ----------------- | ------ | ----------------------------------------------- |
-| `count`           | *long* | Number of tokens                                |
-| `last_created_at` | *date* | (Optional) Last created date in ISO 8601 format |
+| `count`           | _long_ | Number of tokens                                |
+| `last_created_at` | _date_ | (Optional) Last created date in ISO 8601 format |
 
 ## Get a Tenant
 
@@ -80,9 +80,9 @@ curl "https://api.basistheory.com/tenants/self" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const tenant = await bt.tenants.retrieve();
 ```
@@ -176,8 +176,8 @@ Update the Tenant associated with the provided `BT-API-KEY`.
 
 | Attribute  | Required | Type     | Default                                    | Description                                           |
 | ---------- | -------- | -------- | ------------------------------------------ | ----------------------------------------------------- |
-| `name`     | true     | *string* | `null`                                     | The name of the Tenant. Has a maximum length of `200` |
-| `settings` | false    | *string* | [Tenant Settings](#tenant-settings-object) | The settings for the Tenant                           |
+| `name`     | true     | _string_ | `null`                                     | The name of the Tenant. Has a maximum length of `200` |
+| `settings` | false    | _string_ | [Tenant Settings](#tenant-settings-object) | The settings for the Tenant                           |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -199,15 +199,15 @@ curl "https://api.basistheory.com/tenants/self" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const tenant = await bt.tenants.update({
-  name: 'My Example Tenant',
+  name: "My Example Tenant",
   settings: {
-    "deduplicate_tokens": "true"
-  }
+    deduplicate_tokens: "true",
+  },
 });
 ```
 
@@ -322,9 +322,9 @@ curl "https://api.basistheory.com/tenants/self" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 await bt.tenants.delete();
 ```
@@ -411,9 +411,9 @@ curl "https://api.basistheory.com/tenants/self/reports/usage" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const tenantUsageReport = await bt.tenants.retrieveUsageReport();
 ```

@@ -6,7 +6,7 @@ The Basis Theory Proxy provides a simple way to facilitate the transfer of sensi
 
 Basis Theory token identifiers included in the request will be replaced with the raw token data and then the modified request will be forwarded to the destination specified in the `BT-PROXY-URL` request header. The destination will receive the raw data in the request without your system needing to interact with sensitive data on your own servers.
 
-**Some 3rd party services may require whitelisting of Basis Theory IP addresses to allow communication. You can find our IP list [here](/docs/api/ip-addresses).** 
+**Some 3rd party services may require whitelisting of Basis Theory IP addresses to allow communication. You can find our IP list [here](/docs/api/ip-addresses).**
 
 ### Proxy Requests
 
@@ -104,7 +104,7 @@ The `token:use` permission is required to use the Proxy, and it is required for 
 Basis Theory's Proxy provides two ways to configure a request:
 
 1. [Create a pre-configured Proxy](/docs/api/proxies#create-a-proxy) and pass either a `BT-PROXY-KEY` header or a `bt-proxy-key` URL query parameter in your request, which will route traffic to the configured `destination_url`;
-2. Pass the `BT-PROXY-URL` request header. Its value defines the base URL to which the request will be proxied. 
+2. Pass the `BT-PROXY-URL` request header. Its value defines the base URL to which the request will be proxied.
 
 The configured proxy URL must use HTTPS with DNS as the host (explicit IP addresses are not allowed). Destinations must use HTTPS >= TLSv1.2.
 
@@ -122,7 +122,7 @@ The Transform will receive a JSON object with the following payload:
 {
   args: {
     body, // detokenized request body
-    headers // request headers
+      headers; // request headers
   }
 }
 ```
@@ -132,17 +132,17 @@ The Transform must respond with the following object, which defines the request 
 
 ```js
 {
-  body,
-  headers
+  body, headers;
 }
 ```
 
 <aside class="notice">
   <span>
-    Request header names can only contain alphanumeric characters, hyphens, and underscores. 
-    Headers names containing other characters will be discarded from the request.
-    Response headers are unrestricted. If you must forward a restricted header to the proxy destination, 
-    as a workaround, you may add this header manually from within a transform.
+    Request header names can only contain alphanumeric characters, hyphens, and
+    underscores. Headers names containing other characters will be discarded
+    from the request. Response headers are unrestricted. If you must forward a
+    restricted header to the proxy destination, as a workaround, you may add
+    this header manually from within a transform.
   </span>
 </aside>
 
@@ -150,18 +150,18 @@ In some situations, you may want to tokenize or detokenize part of the request b
 
 ```js
 module.exports = async function (req) {
-   const token = await req.bt.tokenize({
-      type: 'token',
-      data: req.args.body.sensitive_value
+  const token = await req.bt.tokenize({
+    type: "token",
+    data: req.args.body.sensitive_value,
   });
 
   req.args.body.sensitive_value = token.id;
 
   return {
     body: req.args.body,
-    headers: req.args.headers
-  }
-}
+    headers: req.args.headers,
+  };
+};
 ```
 
 In the above example, we utilized the injected Basis Theory JS instance to tokenize a property called `sensitive_value` on our request body and passed the token back as the updated `sensitive_value` to be forwarded to the configured `destination_url` on our [Proxy](#proxies).
@@ -174,30 +174,30 @@ For example, given a token:
 
 ```json
 {
-    "id": "26818785-547b-4b28-b0fa-531377e99f4e",
-    "data": "sensitive data"
+  "id": "26818785-547b-4b28-b0fa-531377e99f4e",
+  "data": "sensitive data"
 }
-```  
+```
 
 and a proxy request with the body:
 
 ```json
 {
-    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
-    "parameter2": "non-sensitive data"
+  "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
+  "parameter2": "non-sensitive data"
 }
-```  
+```
 
 then the following request body will be sent to the destination:
 
 ```json
 {
-    "parameter1": "sensitive data",
-    "parameter2": "non-sensitive data"
+  "parameter1": "sensitive data",
+  "parameter2": "non-sensitive data"
 }
 ```
 
-The `token:use` permission is required in order to detokenize tokens within a proxy request. 
+The `token:use` permission is required in order to detokenize tokens within a proxy request.
 At most, 100 tokens may be detokenized within a single proxy request. You can find more information about the supported detokenization expressions [here](/docs/expressions/detokenization).
 
 :::info
@@ -217,8 +217,8 @@ Unless an error occurs within the Basis Theory Proxy, the raw response from the 
 If an error occurs within the proxy (eg. missing or invalid `BT-PROXY-URL` header), then the following error response will be returned:
 
 | Attribute     | Type  | Description                              |
-|---------------|-------|------------------------------------------|
-| `proxy_error` | *any* | A standard Basis Theory [error](#errors) |
+| ------------- | ----- | ---------------------------------------- |
+| `proxy_error` | _any_ | A standard Basis Theory [error](#errors) |
 
 :::note
 

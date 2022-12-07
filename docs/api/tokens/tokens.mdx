@@ -1,5 +1,5 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Tokens
 
@@ -7,21 +7,21 @@ import TabItem from '@theme/TabItem';
 
 | Attribute                | Type                  | Description                                                                                                                                                                                  |
 | ------------------------ | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                     | *string*              | Unique identifier of the token which can be used to [get a token](#get-a-token)                                                                                                              |
-| `tenant_id`              | *uuid*                | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the token                                                                                                                        |
-| `type`                   | *string*              | [Token type](#token-types)                                                                                                                                                                   |
-| `data`                   | *any*                 | Token data                                                                                                                                                                                   |
-| `mask`                   | *any*                 | An [expression](/docs/expressions/masks) defining the mask to apply when retrieving token data with restricted permissions.                                                                  |
-| `fingerprint`            | *string*              | Uniquely identifies the contents of this token. See [Token Types](/docs/api/tokens/token-types) for the default expression for each token type.                                              |
-| `containers`             | *array*               | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details. |
-| `metadata`               | *map<string, string>* | A key-value map of strings containing non-sensitive data.                                                                                                                                    |
-| `created_by`             | *uuid*                | The [Application](/docs/api/applications#application-object) ID which created the token                                                                                                      |
-| `created_at`             | *date*                | Created date of the token in ISO 8601 format                                                                                                                                                 |
-| `modified_by`            | *uuid*                | (Optional) The [Application](/docs/api/applications) ID which last modified the token                                                                                                        |
-| `modified_at`            | *date*                | (Optional) Last modified date of the token in ISO 8601 format                                                                                                                                |
-| `search_indexes`         | *array*               | (Optional) Array of search index [expressions](/docs/expressions/search-indexes) used when creating the token.                                                                               |
-| `fingerprint_expression` | *string*              | (Optional) An [expression](/docs/expressions/fingerprints) defining the value to fingerprint when creating the token.                                                                        |
-| `expires_at`             | *string*              | (Optional) The [token expiration](#token-expiration) date.                                                                                                                                   |
+| `id`                     | _string_              | Unique identifier of the token which can be used to [get a token](#get-a-token)                                                                                                              |
+| `tenant_id`              | _uuid_                | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the token                                                                                                                        |
+| `type`                   | _string_              | [Token type](#token-types)                                                                                                                                                                   |
+| `data`                   | _any_                 | Token data                                                                                                                                                                                   |
+| `mask`                   | _any_                 | An [expression](/docs/expressions/masks) defining the mask to apply when retrieving token data with restricted permissions.                                                                  |
+| `fingerprint`            | _string_              | Uniquely identifies the contents of this token. See [Token Types](/docs/api/tokens/token-types) for the default expression for each token type.                                              |
+| `containers`             | _array_               | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details. |
+| `metadata`               | _map<string, string>_ | A key-value map of strings containing non-sensitive data.                                                                                                                                    |
+| `created_by`             | _uuid_                | The [Application](/docs/api/applications#application-object) ID which created the token                                                                                                      |
+| `created_at`             | _date_                | Created date of the token in ISO 8601 format                                                                                                                                                 |
+| `modified_by`            | _uuid_                | (Optional) The [Application](/docs/api/applications) ID which last modified the token                                                                                                        |
+| `modified_at`            | _date_                | (Optional) Last modified date of the token in ISO 8601 format                                                                                                                                |
+| `search_indexes`         | _array_               | (Optional) Array of search index [expressions](/docs/expressions/search-indexes) used when creating the token.                                                                               |
+| `fingerprint_expression` | _string_              | (Optional) An [expression](/docs/expressions/fingerprints) defining the value to fingerprint when creating the token.                                                                        |
+| `expires_at`             | _string_              | (Optional) The [token expiration](#token-expiration) date.                                                                                                                                   |
 
 ### Token Data Validations
 
@@ -29,24 +29,25 @@ import TabItem from '@theme/TabItem';
 
 | Attribute        | Required | Type     | Default | Description                                               |
 | ---------------- | -------- | -------- | ------- | --------------------------------------------------------- |
-| `routing_number` | true     | *string* | `null`  | Nine-digit ABA routing number. Its checksum is validated. |
-| `account_number` | true     | *string* | `null`  | Account number up to seventeen-digits                     |
+| `routing_number` | true     | _string_ | `null`  | Nine-digit ABA routing number. Its checksum is validated. |
+| `account_number` | true     | _string_ | `null`  | Account number up to seventeen-digits                     |
 
 #### Card Object
 
 | Attribute          | Required | Type      | Default | Description                                               |
 | ------------------ | -------- | --------- | ------- | --------------------------------------------------------- |
-| `number`           | true     | *string*  | `null`  | The card number without any separators                    |
-| `expiration_month` | false    | *integer* | `null`  | Two-digit number representing the card's expiration month |
-| `expiration_year`  | false    | *integer* | `null`  | Four-digit number representing the card's expiration year |
-| `cvc`              | false    | *string*  | `null`  | Three or four-digit card verification code                |
+| `number`           | true     | _string_  | `null`  | The card number without any separators                    |
+| `expiration_month` | false    | _integer_ | `null`  | Two-digit number representing the card's expiration month |
+| `expiration_year`  | false    | _integer_ | `null`  | Four-digit number representing the card's expiration year |
+| `cvc`              | false    | _string_  | `null`  | Three or four-digit card verification code                |
 
-### Token Expiration 
+### Token Expiration
 
 By default a created token will not expire, however, users can optionally set the `expires_at` property with an ISO8601 `DateTime` when creating a token to determine its expiration date.
 An expired token is **deleted** from the tenant up to **1 hour** after it's expiration time.
 
 ### Expiration Date Formats
+
 | Format                      | Example                     |
 | --------------------------- | --------------------------- |
 | `DateTime` String w/ Offset | 8/26/2030 7:23:57 PM -07:00 |
@@ -81,16 +82,16 @@ Create a new token for the Tenant.
 
 | Attribute                | Required | Type                  | Default                                                   | Description                                                                                                                                                                                  |
 | ------------------------ | -------- | --------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                     | false    | *string*              | `null`                                                    | A value or [expression](/docs/expressions/aliasing) specifying the token's ID. If not specified, a UUID will be assigned.                                                                    |
-| `type`                   | true     | *string*              | `null`                                                    | [Token type](/docs/api/tokens/token-types) of the token                                                                                                                                      |
-| `data`                   | true     | *any*                 | `null`                                                    | Token data. Can be an object, array, or any primitive type such as an integer, boolean, or string                                                                                            |
-| `mask`                   | false    | *any*                 | Depends on the [token type](/docs/api/tokens/token-types) | Token data mask. Can be an object, array, or any primitive type such as an integer, boolean, or string. See [mask expressions](/docs/expressions/masks).                                     |
-| `containers`             | false    | *array*               | Depends on the [token type](/docs/api/tokens/token-types) | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details. |
-| `metadata`               | false    | *map<string, string>* | `null`                                                    | A key-value map of strings containing non-sensitive data.                                                                                                                                    |
-| `search_indexes`         | false    | *array*               | `null`                                                    | Array of [expressions](/docs/expressions/search-indexes) used to generate indexes to be able to search against.                                                                              |
-| `fingerprint_expression` | false    | *string*              | <code>{{ data &#124; stringify }}</code>                  | [Expressions](/docs/expressions/fingerprints) used to fingerprint your token.                                                                                                                |
-| `deduplicate_token`      | false    | *bool*                | `null`                                                    | Whether the token is deduplicated on creation.                                                                                                                                               |
-| `expires_at`             | false    | *string*              | `null`                                                    | ISO8601 compatible Token expiration DateTime. See [Token Expiration](#token-expiration) for more details.                                                                                    |
+| `id`                     | false    | _string_              | `null`                                                    | A value or [expression](/docs/expressions/aliasing) specifying the token's ID. If not specified, a UUID will be assigned.                                                                    |
+| `type`                   | true     | _string_              | `null`                                                    | [Token type](/docs/api/tokens/token-types) of the token                                                                                                                                      |
+| `data`                   | true     | _any_                 | `null`                                                    | Token data. Can be an object, array, or any primitive type such as an integer, boolean, or string                                                                                            |
+| `mask`                   | false    | _any_                 | Depends on the [token type](/docs/api/tokens/token-types) | Token data mask. Can be an object, array, or any primitive type such as an integer, boolean, or string. See [mask expressions](/docs/expressions/masks).                                     |
+| `containers`             | false    | _array_               | Depends on the [token type](/docs/api/tokens/token-types) | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details. |
+| `metadata`               | false    | _map<string, string>_ | `null`                                                    | A key-value map of strings containing non-sensitive data.                                                                                                                                    |
+| `search_indexes`         | false    | _array_               | `null`                                                    | Array of [expressions](/docs/expressions/search-indexes) used to generate indexes to be able to search against.                                                                              |
+| `fingerprint_expression` | false    | _string_              | <code>{{ data &#124; stringify }}</code>                  | [Expressions](/docs/expressions/fingerprints) used to fingerprint your token.                                                                                                                |
+| `deduplicate_token`      | false    | _bool_                | `null`                                                    | Whether the token is deduplicated on creation.                                                                                                                                               |
+| `expires_at`             | false    | _string_              | `null`                                                    | ISO8601 compatible Token expiration DateTime. See [Token Expiration](#token-expiration) for more details.                                                                                    |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -122,25 +123,22 @@ curl "https://api.basistheory.com/tokens" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const token = await bt.tokens.create({
-  type: 'token',
-  data: 'Sensitive Value',
-  mask: '{{ data | reveal_last: 4 }}',
-  containers: ['/general/high/'],
+  type: "token",
+  data: "Sensitive Value",
+  mask: "{{ data | reveal_last: 4 }}",
+  containers: ["/general/high/"],
   metadata: {
-    nonSensitiveField: 'Non-Sensitive Value'
+    nonSensitiveField: "Non-Sensitive Value",
   },
-  searchIndexes: [
-    '{{ data }}',
-    '{{ data | last4 }}'
-  ],
-  fingerprintExpression: '{{ data }}',
+  searchIndexes: ["{{ data }}", "{{ data | last4 }}"],
+  fingerprintExpression: "{{ data }}",
   deduplicateToken: true,
-  expiresAt: '8/26/2030 7:23:57 PM -07:00'
+  expiresAt: "8/26/2030 7:23:57 PM -07:00",
 });
 ```
 
@@ -262,10 +260,7 @@ Returns a [token](#token-object) if the token was created. Returns [an error](/d
   "metadata": {
     "nonSensitiveField": "Non-Sensitive Value"
   },
-  "search_indexes": [
-    "{{ data }}",
-    "{{ data | last4 }}"
-  ],
+  "search_indexes": ["{{ data }}", "{{ data | last4 }}"],
   "fingerprint_expression": "{{ data }}",
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00",
@@ -280,7 +275,7 @@ Returns a [token](#token-object) if the token was created. Returns [an error](/d
   `https://api.basistheory.com/tokens`
 </span>
 
-Get a list of tokens for the Tenant, supporting basic search criteria. 
+Get a list of tokens for the Tenant, supporting basic search criteria.
 If you need to perform a more advanced token search, see [Search Tokens](/docs/api/tokens/search).
 
 #### Permissions
@@ -295,9 +290,9 @@ If you need to perform a more advanced token search, see [Search Tokens](/docs/a
 
 | Parameter        | Required | Type     | Default | Description                                                                                                                                                                                                                                                                                             |
 | ---------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`             | false    | *string* | `null`  | One to many Token IDs to retrieve. Multiple IDs can be passed in the form `?id=<value1>&id=<value2>`.                                                                                                                                                                                                   |
-| `type`           | false    | *string* | `null`  | One to many [token types](/docs/api/tokens/token-types) to filter the list of tokens by. Can be repeated in the form `?type=<value1>&type=<value2>`.                                                                                                                                                    |
-| `metadata.[key]` | false    | *map*    | `{}`    | Map of key-value pairs to filter tokens with matching metadata in the form `?metadata.key1=value1&metadata.key2=value2`. *Note*, `[key]` must be unique and repeated keys will be ignored. Metadata will be searched for a case-insensitive, exact match. Multiple parameters will be `AND`ed together. |
+| `id`             | false    | _string_ | `null`  | One to many Token IDs to retrieve. Multiple IDs can be passed in the form `?id=<value1>&id=<value2>`.                                                                                                                                                                                                   |
+| `type`           | false    | _string_ | `null`  | One to many [token types](/docs/api/tokens/token-types) to filter the list of tokens by. Can be repeated in the form `?type=<value1>&type=<value2>`.                                                                                                                                                    |
+| `metadata.[key]` | false    | _map_    | `{}`    | Map of key-value pairs to filter tokens with matching metadata in the form `?metadata.key1=value1&metadata.key2=value2`. _Note_, `[key]` must be unique and repeated keys will be ignored. Metadata will be searched for a case-insensitive, exact match. Multiple parameters will be `AND`ed together. |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -311,9 +306,9 @@ curl "https://api.basistheory.com/tokens" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const tokens = await bt.tokens.list();
 ```
@@ -370,8 +365,8 @@ func main() {
 ### Response
 
 Returns a [paginated object](/docs/api/pagination) with the `data` property containing an array of [tokens](#token-object).
-Token data will be returned according to the [transform](/docs/concepts/access-controls#transform) 
-applied within the requesting Application's [Access Controls](/docs/concepts/access-controls). 
+Token data will be returned according to the [transform](/docs/concepts/access-controls#transform)
+applied within the requesting Application's [Access Controls](/docs/concepts/access-controls).
 Providing any query parameters will filter the results. Returns [an error](/docs/api/errors) if tokens could not be retrieved.
 
 ```json
@@ -417,7 +412,7 @@ Get a token by ID in the Tenant.
 
 | Parameter | Required | Type     | Default | Description         |
 | --------- | -------- | -------- | ------- | ------------------- |
-| `id`      | true     | *string* | `null`  | The ID of the token |
+| `id`      | true     | _string_ | `null`  | The ID of the token |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -431,11 +426,11 @@ curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-const token = await bt.tokens.retrieve('c06d0789-0a38-40be-b7cc-c28a718f76f1');
+const token = await bt.tokens.retrieve("c06d0789-0a38-40be-b7cc-c28a718f76f1");
 ```
 
   </TabItem>
@@ -536,13 +531,13 @@ The Update Tokens endpoint uses a different content-type to support merge-patch 
 
 | Attribute                | Required | Type                  | Behavior                                                                               | Description                                                                                                                                                                                  |
 | ------------------------ | -------- | --------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `data`                   | false    | *any*                 | Merge Patch (see <a href="https://datatracker.ietf.org/doc/html/rfc7386">RFC 7386</a>) | Token data. Can be an object, array, or any primitive type such as an integer, boolean, or string                                                                                            |
-| `mask`                   | false    | *any*                 | Merge Patch (see <a href="https://datatracker.ietf.org/doc/html/rfc7386">RFC 7386</a>) | Token data mask. Can be an object, array, or any primitive type such as an integer, boolean, or string. See [mask expressions](/docs/expressions/masks).                                     |
-| `metadata`               | false    | *map<string, string>* | Merge Patch (see <a href="https://datatracker.ietf.org/doc/html/rfc7386">RFC 7386</a>) | A key-value map of strings containing non-sensitive data.                                                                                                                                    |
-| `containers`             | false    | *array*               | Replace                                                                                | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details. |
-| `search_indexes`         | false    | *array*               | Replace                                                                                | Array of [expressions](/docs/expressions/search-indexes) used to generate indexes to be able to search against.                                                                              |
-| `fingerprint_expression` | false    | *string*              | Replace                                                                                | [Expressions](/docs/expressions/fingerprints) used to fingerprint your token.                                                                                                                |
-| `deduplicate_token`      | false    | *bool*                | Replace                                                                                | Whether the token is deduplicated on creation.                                                                                                                                               |
+| `data`                   | false    | _any_                 | Merge Patch (see <a href="https://datatracker.ietf.org/doc/html/rfc7386">RFC 7386</a>) | Token data. Can be an object, array, or any primitive type such as an integer, boolean, or string                                                                                            |
+| `mask`                   | false    | _any_                 | Merge Patch (see <a href="https://datatracker.ietf.org/doc/html/rfc7386">RFC 7386</a>) | Token data mask. Can be an object, array, or any primitive type such as an integer, boolean, or string. See [mask expressions](/docs/expressions/masks).                                     |
+| `metadata`               | false    | _map<string, string>_ | Merge Patch (see <a href="https://datatracker.ietf.org/doc/html/rfc7386">RFC 7386</a>) | A key-value map of strings containing non-sensitive data.                                                                                                                                    |
+| `containers`             | false    | _array_               | Replace                                                                                | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details. |
+| `search_indexes`         | false    | _array_               | Replace                                                                                | Array of [expressions](/docs/expressions/search-indexes) used to generate indexes to be able to search against.                                                                              |
+| `fingerprint_expression` | false    | _string_              | Replace                                                                                | [Expressions](/docs/expressions/fingerprints) used to fingerprint your token.                                                                                                                |
+| `deduplicate_token`      | false    | _bool_                | Replace                                                                                | Whether the token is deduplicated on creation.                                                                                                                                               |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -571,20 +566,17 @@ curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-const token = await bt.tokens.update('c06d0789-0a38-40be-b7cc-c28a718f76f1', {
-  data: 'Sensitive Value',
-  mask: '{{ data | reveal_last: 4 }}',
+const token = await bt.tokens.update("c06d0789-0a38-40be-b7cc-c28a718f76f1", {
+  data: "Sensitive Value",
+  mask: "{{ data | reveal_last: 4 }}",
   metadata: {
-    nonSensitiveField: 'Non-Sensitive Value'
+    nonSensitiveField: "Non-Sensitive Value",
   },
-  searchIndexes: [
-    '{{ data }}',
-    '{{ data | last4 }}'
-  ],
+  searchIndexes: ["{{ data }}", "{{ data | last4 }}"],
   fingerprintExpression: "{{ data }}",
   deduplicateToken: true,
 });
@@ -686,10 +678,7 @@ Returns the updated [token](#token-object) if successful. Returns [an error](/do
   "metadata": {
     "nonSensitiveField": "Non-Sensitive Value"
   },
-  "search_indexes": [
-    "{{ data }}",
-    "{{ data | last4 }}"
-  ],
+  "search_indexes": ["{{ data }}", "{{ data | last4 }}"],
   "fingerprint_expression": "{{ data }}",
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00"
@@ -729,7 +718,7 @@ The data associated with a deleted token will be removed forever. The reference 
 
 | Parameter | Required | Type     | Default | Description         |
 | --------- | -------- | -------- | ------- | ------------------- |
-| `id`      | true     | *string* | `null`  | The ID of the token |
+| `id`      | true     | _string_ | `null`  | The ID of the token |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -744,11 +733,11 @@ curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-await bt.tokens.delete('c06d0789-0a38-40be-b7cc-c28a718f76f1');
+await bt.tokens.delete("c06d0789-0a38-40be-b7cc-c28a718f76f1");
 ```
 
   </TabItem>

@@ -1,19 +1,19 @@
 # Filters
 
 Oftentimes data may be tokenized in one format, but you wish to use this data in a different format within a request.
-Several pieces of data may be stored together in a single token (e.g. a user record containing first and last names and contact information), 
-but you wish to only use a single piece of that data within a Proxy or Reactor request, 
+Several pieces of data may be stored together in a single token (e.g. a user record containing first and last names and contact information),
+but you wish to only use a single piece of that data within a Proxy or Reactor request,
 or you may wish to reformat the data before indexing it for search (e.g. use only the last name, but normalize by uppercasing it).
 
-To allow you complete flexibility, transformation functions called **filters** can be applied within any expression. 
-Generally, a variable's value can be transformed by specifying a filter after the `|` symbol:   
+To allow you complete flexibility, transformation functions called **filters** can be applied within any expression.
+Generally, a variable's value can be transformed by specifying a filter after the `|` symbol:  
 `{{ <variable> | <filter> }}`
 
 You can effectively think of this as "piping" a variable into the filter in the same way you may be familiar with the "pipe" operator from Unix-like systems.
 Multiple filters can be chained together by "piping" the result of each filter into the next, applying in order from left to right:  
 `{{ <variable> | <filter1> | <filter2> | ... }}`
 
-All standard [Liquid filters](https://shopify.github.io/liquid/filters/) are supported within expressions. 
+All standard [Liquid filters](https://shopify.github.io/liquid/filters/) are supported within expressions.
 For example, given a token containing a `name` object containing both first and last name properties:
 
 ```json
@@ -35,21 +35,20 @@ This expression would evaluate to the value `"DOE"`.
 
 In addition to the standard Liquid filters, several custom filters are also available:
 
-
 ## alias_preserve_format
 
-Randomly generates a unique alias that preserves the format of the input string, optionally revealing a specified 
-number of characters from the beginning and end of the value. 
+Randomly generates a unique alias that preserves the format of the input string, optionally revealing a specified
+number of characters from the beginning and end of the value.
 
-Alpha characters are replaced with randomized alpha characters, numeric characters are replaced with randomized numeric 
+Alpha characters are replaced with randomized alpha characters, numeric characters are replaced with randomized numeric
 characters, and special characters and whitespace are preserved.
 
 #### Parameters
 
 | Position | Name                | Type  | Required | Default Value | Description                                                        |
-|----------|---------------------|-------|----------|---------------|--------------------------------------------------------------------|
-| 0        | reveal_first_length | *int* | false    | `0`           | The number of characters to reveal from the beginning of the value |
-| 1        | reveal_last_length  | *int* | false    | `0`           | The number of characters to reveal from the end of the value       |
+| -------- | ------------------- | ----- | -------- | ------------- | ------------------------------------------------------------------ |
+| 0        | reveal_first_length | _int_ | false    | `0`           | The number of characters to reveal from the beginning of the value |
+| 1        | reveal_last_length  | _int_ | false    | `0`           | The number of characters to reveal from the end of the value       |
 
 #### Examples
 
@@ -64,12 +63,11 @@ Given a token with the data:
 ```
 
 | Expression                                                 | Example Result       |
-|------------------------------------------------------------|----------------------|
+| ---------------------------------------------------------- | -------------------- |
 | <code>{{ data &#124; alias_preserve_format }}</code>       | `"xir83203hqn73599"` |
 | <code>{{ data &#124; alias_preserve_format: 3 }}</code>    | `"ABC83203hqn73599"` |
 | <code>{{ data &#124; alias_preserve_format: 0, 5 }}</code> | `"xir83203hqn67890"` |
 | <code>{{ data &#124; alias_preserve_format: 3, 5 }}</code> | `"ABC83203hqn67890"` |
-
 
 ## alias_preserve_length
 
@@ -83,9 +81,9 @@ Special characters and whitespace are not preserved and will be replaced with al
 #### Parameters
 
 | Position | Name                | Type  | Required | Default Value | Description                                                        |
-|----------|---------------------|-------|----------|---------------|--------------------------------------------------------------------|
-| 0        | reveal_first_length | *int* | false    | `0`           | The number of characters to reveal from the beginning of the value |
-| 1        | reveal_last_length  | *int* | false    | `0`           | The number of characters to reveal from the end of the value       |
+| -------- | ------------------- | ----- | -------- | ------------- | ------------------------------------------------------------------ |
+| 0        | reveal_first_length | _int_ | false    | `0`           | The number of characters to reveal from the beginning of the value |
+| 1        | reveal_last_length  | _int_ | false    | `0`           | The number of characters to reveal from the end of the value       |
 
 #### Examples
 
@@ -100,12 +98,11 @@ Given a token with the data:
 ```
 
 | Expression                                                 | Example Result       |
-|------------------------------------------------------------|----------------------|
+| ---------------------------------------------------------- | -------------------- |
 | <code>{{ data &#124; alias_preserve_length }}</code>       | `"v38anr9m2cx0giw7"` |
 | <code>{{ data &#124; alias_preserve_length: 3 }}</code>    | `"ABCanr9m2cx0giw7"` |
 | <code>{{ data &#124; alias_preserve_length: 0, 5 }}</code> | `"v38anr9m2cx67890"` |
 | <code>{{ data &#124; alias_preserve_length: 3, 5 }}</code> | `"ABCanr9m2cx67890"` |
-
 
 ## json
 
@@ -121,8 +118,8 @@ The `json` filter provides further flexibility for evaluating complex JSON Path 
 #### Parameters
 
 | Position | Name                 | Type     | Required | Description            |
-|----------|----------------------|----------|----------|------------------------|
-| 0        | json_path_expression | *string* | true     | A JSON Path expression |
+| -------- | -------------------- | -------- | -------- | ---------------------- |
+| 0        | json_path_expression | _string_ | true     | A JSON Path expression |
 
 #### Examples
 
@@ -132,16 +129,16 @@ Given a token with the data:
 {
   "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
   "type": "token",
-  "data": { 
+  "data": {
     "books": [
-      { 
+      {
         "category": "fiction",
         "author": "Herman Melville",
         "title": "Moby Dick",
         "isbn": "0-553-21311-3",
         "price": 8.99
       },
-      { 
+      {
         "category": "fantasy",
         "author": "J. R. R. Tolkien",
         "title": "The Lord of the Rings",
@@ -158,7 +155,7 @@ Given a token with the data:
 ```
 
 | Expression                                                            | Result                               |
-|-----------------------------------------------------------------------|--------------------------------------|
+| --------------------------------------------------------------------- | ------------------------------------ |
 | <code>{{ data.bicycle.color }}</code>                                 | `"red"`                              |
 | <code>{{ data &#124; json: '$.bicycle.color' }}</code>                | `"red"`                              |
 | <code>{{ data.bicycle }}</code>                                       | `{ "color": "red", "price": 19.95 }` |
@@ -166,7 +163,6 @@ Given a token with the data:
 | <code>{{ data &#124; json: '$.books[?(@.price < 10)].title' }}</code> | `"Moby Dick"`                        |
 | <code>{{ data.nonexistent }}</code>                                   | `null`                               |
 | <code>{{ data &#124; json: '$.book..author' }}</code>                 | `<400 Error>`                        |
-
 
 ## last4
 
@@ -189,7 +185,7 @@ Given a token with the data:
 ```
 
 | Expression                                               | Result   |
-|----------------------------------------------------------|----------|
+| -------------------------------------------------------- | -------- |
 | <code>{{ data &#124; last4 }}</code>                     | `"1667"` |
 | <code>{{ data &#124; slice: 12, 2 &#124; last4 }}</code> | `"67"`   |
 
@@ -202,11 +198,11 @@ the whole value is masked.
 #### Parameters
 
 | Position | Name           | Type     | Required | Default Value | Description                                     |
-|----------|----------------|----------|----------|---------------|-------------------------------------------------|
-| 0        | reveal_first   | *int*    | false    | `0`           | The number of characters to reveal at the start |
-| 1        | reveal_last    | *int*    | false    | `0`           | The number of characters to reveal at the end   |
-| 2        | mask_char      | *char*   | false    | `X`           | A masking character                             |
-| 3        | preserve_chars | *string* | false    | ``            | The characters to preserve                      |
+| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
+| 0        | reveal_first   | _int_    | false    | `0`           | The number of characters to reveal at the start |
+| 1        | reveal_last    | _int_    | false    | `0`           | The number of characters to reveal at the end   |
+| 2        | mask_char      | _char_   | false    | `X`           | A masking character                             |
+| 3        | preserve_chars | _string_ | false    | ``            | The characters to preserve                      |
 
 #### Examples
 
@@ -221,7 +217,7 @@ Given a token with the data:
 ```
 
 | Expression                                            | Result                  |
-|-------------------------------------------------------|-------------------------|
+| ----------------------------------------------------- | ----------------------- |
 | <code>{{ data &#124; reveal: 6 }}</code>              | `"3622-7XXXXXXXXXXXXX"` |
 | <code>{{ data &#124; reveal: 7, 5 }}</code>           | `"3622-72XXXXXXX-5567"` |
 | <code>{{ data &#124; reveal: 7, 5, '#' }}</code>      | `"3622-72#######-5567"` |
@@ -237,9 +233,9 @@ Returns null when provided a null input value.
 #### Parameters
 
 | Position | Name     | Type   | Required | Description                                      |
-|----------|----------|--------|----------|--------------------------------------------------|
-| 0        | length   | *int*  | true     | The number of characters in the resulting string |
-| 1        | pad_char | *char* | true     | A padding character                              |
+| -------- | -------- | ------ | -------- | ------------------------------------------------ |
+| 0        | length   | _int_  | true     | The number of characters in the resulting string |
+| 1        | pad_char | _char_ | true     | A padding character                              |
 
 #### Examples
 
@@ -254,12 +250,11 @@ Given a token with the data:
 ```
 
 | Expression                                      | Result     |
-|-------------------------------------------------|------------|
+| ----------------------------------------------- | ---------- |
 | <code>{{ data &#124; pad_left: 6, '0' }}</code> | `"001234"` |
 | <code>{{ data &#124; pad_left: 6, 'X' }}</code> | `"XX1234"` |
 | <code>{{ data &#124; pad_left: 4, '0' }}</code> | `"1234"`   |
 | <code>{{ data &#124; pad_left: 2, '0' }}</code> | `"1234"`   |
-
 
 ## pad_right
 
@@ -270,9 +265,9 @@ Returns null when provided a null input value.
 #### Parameters
 
 | Position | Name     | Type   | Required | Description                                      |
-|----------|----------|--------|----------|--------------------------------------------------|
-| 0        | length   | *int*  | true     | The number of characters in the resulting string |
-| 1        | pad_char | *char* | true     | A padding character                              |
+| -------- | -------- | ------ | -------- | ------------------------------------------------ |
+| 0        | length   | _int_  | true     | The number of characters in the resulting string |
+| 1        | pad_char | _char_ | true     | A padding character                              |
 
 #### Examples
 
@@ -287,12 +282,11 @@ Given a token with the data:
 ```
 
 | Expression                                       | Result     |
-|--------------------------------------------------|------------|
+| ------------------------------------------------ | ---------- |
 | <code>{{ data &#124; pad_right: 6, '0' }}</code> | `"123400"` |
 | <code>{{ data &#124; pad_right: 6, 'X' }}</code> | `"1234XX"` |
 | <code>{{ data &#124; pad_right: 4, '0' }}</code> | `"1234"`   |
 | <code>{{ data &#124; pad_right: 2, '0' }}</code> | `"1234"`   |
-
 
 ## reveal_last
 
@@ -301,9 +295,9 @@ Returns the last `length` characters of a string. If the string's length is less
 #### Parameters
 
 | Position | Name      | Type   | Required | Default Value | Description                        |
-|----------|-----------|--------|----------|---------------|------------------------------------|
-| 0        | length    | *int*  | true     | `null`        | The number of characters to reveal |
-| 1        | mask_char | *char* | false    | `X`           | A masking character                |
+| -------- | --------- | ------ | -------- | ------------- | ---------------------------------- |
+| 0        | length    | _int_  | true     | `null`        | The number of characters to reveal |
+| 1        | mask_char | _char_ | false    | `X`           | A masking character                |
 
 #### Examples
 
@@ -317,11 +311,10 @@ Given a token with the data:
 }
 ```
 
-| Expression                                               | Result                    |
-|----------------------------------------------------------|---------------------------|
-| <code>{{ data &#124; reveal_last: 6 }}</code>            | `"XXXXXXXX271667"`          |
-| <code>{{ data &#124; reveal_last: 3, '#' }}</code>       | `"###########667"`          |
-
+| Expression                                         | Result             |
+| -------------------------------------------------- | ------------------ |
+| <code>{{ data &#124; reveal_last: 6 }}</code>      | `"XXXXXXXX271667"` |
+| <code>{{ data &#124; reveal_last: 3, '#' }}</code> | `"###########667"` |
 
 ## stringify
 
@@ -341,16 +334,16 @@ Given a token with the data:
 {
   "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
   "type": "token",
-  "data": { 
+  "data": {
     "books": [
-      { 
+      {
         "category": "fiction",
         "author": "Herman Melville",
         "title": "Moby Dick",
         "isbn": "0-553-21311-3",
         "price": 8.99
       },
-      { 
+      {
         "category": "fantasy",
         "author": "J. R. R. Tolkien",
         "title": "The Lord of the Rings",
@@ -358,30 +351,32 @@ Given a token with the data:
         "price": 22.99
       }
     ],
-    "bicycles": [{
-      "color": "red",
-      "price": 19.95
-    }, {
-      "color": "blue",
-      "price": 24.95
-    }]
+    "bicycles": [
+      {
+        "color": "red",
+        "price": 19.95
+      },
+      {
+        "color": "blue",
+        "price": 24.95
+      }
+    ]
   }
 }
 ```
 
 | Expression                                              | Result                                                                         |
-|---------------------------------------------------------|--------------------------------------------------------------------------------|
+| ------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | <code>{{ data.books[0].price &#124; stringify }}</code> | `"8.99"`                                                                       |
 | <code>{{ data.books[1].title &#124; stringify }}</code> | `"The Lord of the Rings"`                                                      |
 | <code>{{ data.bicycles[1] &#124; stringify }}</code>    | `"{\"color\":\"red\",\"price\":19.95}"`                                        |
 | <code>{{ data.bicycles &#124; stringify }}</code>       | `"[{\"color\":\"red\",\"price\":19.95},{\"color\":\"blue\",\"price\":24.95}]"` |
 
-
 ## to_boolean
 
 Casts the input value to a boolean value.
 
-Returns null when provided a null input value. 
+Returns null when provided a null input value.
 Returns an error when the input cannot be cast to a boolean.
 
 #### Parameters
@@ -404,10 +399,9 @@ Given a token with the data:
 ```
 
 | Expression                                             | Result  |
-|--------------------------------------------------------|---------|
+| ------------------------------------------------------ | ------- |
 | <code>{{ data.true_string &#124; to_boolean }}</code>  | `true`  |
 | <code>{{ data.false_string &#124; to_boolean }}</code> | `false` |
-
 
 ## to_number
 
@@ -436,10 +430,9 @@ Given a token with the data:
 ```
 
 | Expression                                              | Result    |
-|---------------------------------------------------------|-----------|
+| ------------------------------------------------------- | --------- |
 | <code>{{ data.int_string &#124; to_number }}</code>     | `42`      |
 | <code>{{ data.decimal_string &#124; to_number }}</code> | `3.14159` |
-
 
 ## to_string
 
@@ -469,7 +462,7 @@ Given a token with the data:
 ```
 
 | Expression                                             | Result      |
-|--------------------------------------------------------|-------------|
+| ------------------------------------------------------ | ----------- |
 | <code>{{ data.numeric_value &#124; to_string }}</code> | `"3.14159"` |
 | <code>{{ data.boolean_value &#124; to_string }}</code> | `"true"`    |
 | <code>{{ data.string_value &#124; to_string }}</code>  | `"foo"`     |
