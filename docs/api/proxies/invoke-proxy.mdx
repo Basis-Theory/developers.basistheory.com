@@ -2,6 +2,12 @@
 title: Invoke Proxy
 ---
 
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+
 # Invoke Proxy
 
 ## Proxying Requests
@@ -14,42 +20,32 @@ Basis Theory token identifiers included in the request will be replaced with the
 
 ### Proxy Requests
 
-<span class="http-method post">
-  <span class="method-wrapper">
-    <span class="box-method">POST</span>
-  </span>
-  `https://api.basistheory.com/proxy`
-</span>
-
-<span class="http-method put">
-  <span class="method-wrapper">
-    <span class="box-method">PUT</span>
-  </span>
-  `https://api.basistheory.com/proxy`
-</span>
-
-<span class="http-method patch">
-  <span class="method-wrapper">
-    <span class="box-method">PATCH</span>
-  </span>
-  `https://api.basistheory.com/proxy`
-</span>
-
-<span class="http-method delete">
-  <span class="method-wrapper">
-    <span class="box-method">DELETE</span>
-  </span>
-  `https://api.basistheory.com/proxy`
-</span>
-
-<span class="http-method get">
-  <span class="method-wrapper">
-    <span class="box-method">GET</span>
-  </span>
-  `https://api.basistheory.com/proxy`
-</span>
-
 Proxy a request to a third party API.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.PUT}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.PATCH}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/proxy"
+/>
 
 ```shell title="Request with 'BT-PROXY-KEY' header"
 curl "https://api.basistheory.com/proxy" \
@@ -96,9 +92,7 @@ Any authentication required by the destination service can be set on the request
 
 ### Permissions
 
-<p class="scopes">
-  <span class="scope">token:use</span>
-</p>
+<Permission content="token:use" />
 
 The `token:use` permission is required to use the Proxy, and it is required for each
 [Container](/docs/concepts/what-are-containers) of Tokens you wish to detokenize through the Proxy.
@@ -209,10 +203,6 @@ At most, 100 tokens may be detokenized within a single proxy request. You can fi
 For more detailed examples about how to detokenize within the Proxy, check out our [Detokenization Examples](/docs/expressions/detokenization#examples).
 
 :::
-
-<aside class="notice">
-  <span></span>
-</aside>
 
 ## Proxy Responses
 

@@ -5,6 +5,11 @@ title: Permissions
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+
 # Permissions
 
 Permissions offer fine-grained control over your Application's access to different resources within your Tenant.
@@ -61,20 +66,20 @@ Every API endpoint will document the required permissions needed to perform the 
 
 ## List Permissions
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/permissions`
-</span>
-
 Gets the list of all supported permissions.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/permissions"
+/>
 
 ### Request
 
 #### Query Parameters
 
-| Parameter          | Required | Type     | Default | Description                                                                  |
-| ------------------ | -------- | -------- | ------- | ---------------------------------------------------------------------------- |
-| `application_type` | false    | _string_ | `null`  | [Application type](#applications-application-types) to filter permissions by |
+| Parameter          | Required | Type     | Default | Description                                                                           |
+| ------------------ | -------- | -------- | ------- | ------------------------------------------------------------------------------------- |
+| `application_type` | false    | _string_ | `null`  | [Application type](/docs/api/applications#application-types) to filter permissions by |
 
 <Tabs groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -146,7 +151,7 @@ func main() {
 
 ### Response
 
-Returns an array of [permission objects](#permissions-permission-object). Returns [an error](#errors) if permissions
+Returns an array of [permission objects](#permission-object). Returns [an error](/docs/api/errors) if permissions
 could not be retrieved.
 
 ```json

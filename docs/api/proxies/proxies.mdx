@@ -5,6 +5,12 @@ title: Proxies
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+
 # Proxies
 
 Proxies provide a way to pre-configure static routes when calling [Basis Theory's Proxy](/docs/api/proxies/invoke-proxy). They require you to set a destination URL for where the request will be forwarded to, require authentication to call the proxy, and configure a [Reactor](/docs/api/reactors) which can be executed as part of the request to transform the request body and headers.
@@ -80,18 +86,16 @@ module.exports = async function (req) {
 
 ## Create a Proxy
 
-<span class="http-method post">
-  <span class="box-method">POST</span>
-  `https://api.basistheory.com/proxies`
-</span>
-
 Creates a new Proxy for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/proxies"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">proxy:create</span>
-</p>
+<Permission content="proxy:create" />
 
 ### Request
 
@@ -261,7 +265,7 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
                 module.exports = async function (req) { \
                   // Do something with `req.configuration.SERVICE_API_KEY` \
 
-                  "return { \
+                  return { \
                     headers: req.args.headers, \
                     body: req.args.body \
                   }; \
@@ -270,9 +274,9 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
         response_transform=ProxyTransform(
             code=" \
                 module.exports = async function (req) { \
-                  // Do something with `req.configuration.SERVICE_API_KEY` \
+                  // Do something with 'req.configuration.SERVICE_API_KEY' \
 
-                  "return { \
+                  return { \
                     headers: req.args.headers, \
                     body: req.args.body \
                   }; \
@@ -393,18 +397,16 @@ Returns a [Proxy](#proxy-object) if the Proxy was created. Returns [an error](/d
 
 ## List Proxies
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/proxies`
-</span>
-
 Get a list of proxies for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/proxies"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">proxy:read</span>
-</p>
+<Permission content="proxy:read" />
 
 ### Request
 
@@ -539,18 +541,16 @@ Returns a [paginated object](/docs/api/pagination) with the `data` property cont
 
 ## Get a Proxy
 
-<span class="http-method get">
-  <span class="box-method">GET</span>
-  `https://api.basistheory.com/proxies/&#123;id&#125;`
-</span>{" "}
-
 Get a Proxy by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/proxies/{id}"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">proxy:read</span>
-</p>
+<Permission content="proxy:read" />
 
 ### Request
 
@@ -678,18 +678,16 @@ Returns a [Proxy](#proxy-object) with the `id` provided. Returns [an error](/doc
 
 ## Update Proxy
 
-<span class="http-method put">
-  <span class="box-method">PUT</span>
-  `https://api.basistheory.com/proxies/&#123;id&#125;`
-</span>
-
 Update a Proxy by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.PUT}
+  endpoint="https://api.basistheory.com/proxies/{id}"
+/>
 
 #### Permissions
 
-<p class="scopes">
-  <span class="scope">proxy:update</span>
-</p>
+<Permission content="proxy:update" />
 
 ### Request
 
@@ -867,7 +865,7 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
                 module.exports = async function (req) { \
                   // Do something with `req.configuration.SERVICE_API_KEY` \
 
-                  "return { \
+                  return { \
                     headers: req.args.headers, \
                     body: req.args.body \
                   }; \
@@ -878,7 +876,7 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
                 module.exports = async function (req) { \
                   // Do something with `req.configuration.SERVICE_API_KEY` \
 
-                  "return { \
+                  return { \
                     headers: req.args.headers, \
                     body: req.args.body \
                   }; \
@@ -1002,16 +1000,16 @@ Returns a [Proxy](#proxy-object) if the Proxy was updated. Returns [an error](/d
 
 ## Delete Proxy
 
-<span class="http-method delete">
-  <span class="box-method">DELETE</span>
-  `https://api.basistheory.com/proxies/&#123;id&#125;`
-</span>
-
 Delete a Proxy by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/proxies/{id}"
+/>
 
 #### Permissions
 
-`proxy:delete`
+<Permission content="proxy:delete" />
 
 ### Request
 
