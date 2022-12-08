@@ -22,7 +22,7 @@ interface Alert {
 }
 
 export const Alert = ({
-  type,
+  type = Alerts.INFO,
   title,
   content,
   children,
