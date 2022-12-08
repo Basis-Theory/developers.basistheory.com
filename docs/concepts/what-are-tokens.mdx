@@ -35,7 +35,7 @@ In some scenarios, you need your token identifier to be in a specific format. Th
 
 Let’s assume you have a social security number you are storing and you want to alias the token identifier to match the SSN format:
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "id": "{{ data | alias_preserve_format }}",
   "type": "token",
@@ -43,7 +43,7 @@ Let’s assume you have a social security number you are storing and you want to
 }
 ```
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "384-28-3948",
   "type": "token"
@@ -52,7 +52,7 @@ Let’s assume you have a social security number you are storing and you want to
 
 Another example may be that you want to format your email and retain the domain on the email while preserving the length of the email identifier so you can search for an instance of the email domain in your database without exposing the actual email addresses:
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "id": "{{ data | split: '@' | first | alias_preserve_length }}@{{ data | split: '@' | last }}",
   "type": "token",
@@ -60,7 +60,7 @@ Another example may be that you want to format your email and retain the domain 
 }
 ```
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "difkelk@basistheory.com",
   "type": "token"
@@ -75,7 +75,7 @@ By default, all tokens are fingerprinted with the contents of the `data` propert
 
 In the following example, we will create a token with user data, but we want to fingerprint on the email address:
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "type": "token",
   "data": {
@@ -87,7 +87,7 @@ In the following example, we will create a token with user data, but we want to 
 }
 ```
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "1e7f0dde-5442-40ab-b244-5e02bcd5f86d",
   "type": "token",
@@ -106,7 +106,7 @@ Masks are computed based on the current value of the token data. [Updating the t
 
 A scenario where masking is useful is in enabling customer service representatives to verify the account information for a customer using the last four of a social security number without having access to the full SSN. In this example, we will mask customer data so representatives can securely and compliantly view only part of the customer record:
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "type": "token",
   "data": {
@@ -124,7 +124,7 @@ A scenario where masking is useful is in enabling customer service representativ
 }
 ```
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "ae164fcd-227d-40ce-b7ec-435faa6a8c73",
   "type": "token",
@@ -164,7 +164,7 @@ The time to live token capability provides the ability to expire your token data
 
 This example shows how to expire a token with card data:
 
-```json
+```json showLineNumbers
 {
   "type": "token",
   "data": {
@@ -182,7 +182,7 @@ In this example, once the expires_at date has passed, the entire token will be p
 
 All activities around tokens are audited, including `create`, `read`, `update`, `delete` and whenever a token is proxied or used in a Reactor. These audit logs are available [via the API](/docs/api/logs) or the web portal. Also, the creator and last modifier of a token is stored on all tokens. This can be used to lookup which application was used to create or update a token.
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "type": "token",
   "data": "John Doe"
@@ -191,7 +191,7 @@ All activities around tokens are audited, including `create`, `read`, `update`, 
 
 **Response**
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
   "type": "token",
@@ -208,7 +208,7 @@ Once data is encrypted, it is difficult to search through the data for business 
 
 In this example, we have a customer account we want to search over parts of the data:
 
-```json
+```json showLineNumbers
 {
   "type": "token",
   "data": {
@@ -244,7 +244,7 @@ data, they do not create duplicate tokens.
 To deduplicate a token during the tokenization request, we pass the `deduplicate_token` flag to the create token request.
 This will override the tenant-level deduplicate tokens setting:
 
-```json
+```json showLineNumbers
 {
   "type": "token",
   "data": "123-45-6789",
@@ -263,7 +263,7 @@ leaking information to unauthorized parties. Only the following properties will 
 
 Being able to tag your tokens with custom attributes is important in many scenarios. For instance, you may want to add a system identifier to your tokens that allows you to reference a record in your own database. Another scenario is you need to tag records that fall into certain compliance requirements (e.g. GDPR). In these scenarios, putting this information in the token data may not be ideal as you want to be able to quickly reference the information or expose it to audiences who do not have access to view the token data. To solve for this, Basis Theory tokens allow you to set your own metadata on any token utilizing key-value pairs.
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "type": "token",
   "data": "John Doe",
@@ -273,7 +273,7 @@ Being able to tag your tokens with custom attributes is important in many scenar
 }
 ```
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "a2f1defa-da99-44e7-b70b-4e6dcfa20ec2",
   "type": "token",
@@ -293,7 +293,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
 
 ## Tokenize Credit Cards
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "id": "{{ data.number | alias_preserve_format }}",
   "type": "card",
@@ -314,7 +314,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
 }
 ```
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "3829018309324938",
   "type": "card",
@@ -348,7 +348,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
 
 ## Tokenize Bank Data
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "type": "token",
   "data": {
@@ -369,7 +369,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
 }
 ```
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "1457aad3-db95-4b34-8e14-b8ffffc305b4",
   "type": "token",
@@ -398,7 +398,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
 
 ## Tokenize User Data
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "type": "token",
   "data": {
@@ -426,7 +426,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
 }
 ```
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "be654efd-f748-4dcf-8640-96a1061e29fe",
   "type": "token",
@@ -462,7 +462,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
 
 ## Tokenize Credentials
 
-```json title=Request
+```json showLineNumbers title=Request
 {
   "type": "token",
   "data": {
@@ -474,7 +474,7 @@ You can easily manage the relationship between a `parent` and `child` token via 
 }
 ```
 
-```json title=Response
+```json showLineNumbers title=Response
 {
   "id": "4bc29335-38fd-4f71-8f36-c63ee8965be7",
   "type": "token",

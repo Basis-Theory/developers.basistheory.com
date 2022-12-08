@@ -34,7 +34,7 @@ Check out the [detokenization examples](./detokenization#examples) below to see 
 Tokens containing primitive data values, such as a single string or numeric value, can be easily detokenized within a
 request just by substituting the token data in place of the detokenization expression. For example, say you have the token:
 
-```json
+```json showLineNumbers
 {
   "id": "1d08babf-456a-4bef-993d-aece3c1a2f66",
   "type": "social_security_number",
@@ -44,7 +44,7 @@ request just by substituting the token data in place of the detokenization expre
 
 Then a request containing the detokenization expression:
 
-```json
+```json showLineNumbers
 {
   "ssn": "{{1d08babf-456a-4bef-993d-aece3c1a2f66}}"
 }
@@ -52,7 +52,7 @@ Then a request containing the detokenization expression:
 
 will be detokenized into the request:
 
-```json
+```json showLineNumbers
 {
   "ssn": "111-22-3333"
 }
@@ -64,7 +64,7 @@ Card, Bank, or generic tokens containing complex JSON objects can all be detoken
 Detokenization of complex token data is performed by embedding the token's JSON data within the request.
 For example, say you have the `card` token:
 
-```json
+```json showLineNumbers
 {
   "id": "5c20545b-52dc-4a60-b9b5-5b7c84f22369",
   "type": "card",
@@ -79,7 +79,7 @@ For example, say you have the `card` token:
 
 Then you can embed the entire [Card](/docs/api/tokens/token-types#card) object within a request with the detokenization expression:
 
-```json
+```json showLineNumbers
 {
   "card": "{{5c20545b-52dc-4a60-b9b5-5b7c84f22369}}"
 }
@@ -87,7 +87,7 @@ Then you can embed the entire [Card](/docs/api/tokens/token-types#card) object w
 
 which will be detokenized into the request:
 
-```json
+```json showLineNumbers
 {
   "card": {
     "number": "4242424242424242",
@@ -113,7 +113,7 @@ This is the same request that is being made from within the `Spreedly - Card` Re
 
 This API endpoint accepts POST requests with a body of the form:
 
-```json
+```json showLineNumbers
 {
   "payment_method": {
     "credit_card": {
@@ -157,7 +157,7 @@ In this example, we show how you can use a [Card](/docs/api/tokens/token-types#c
 
 Say you have created the `card` token:
 
-```json
+```json showLineNumbers
 {
   "id": "815029c2-29ec-4fc2-8cd4-99feb3ee582c",
   "type": "card",
@@ -177,7 +177,7 @@ We have not tokenized the card owner's name, `John Doe`. Assume that we have thi
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
@@ -201,7 +201,7 @@ curl "https://api.basistheory.com/proxy" \
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "Content-Type: application/json" \
@@ -222,7 +222,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```json
+```json showLineNumbers
 {
   "payment_method": {
     "credit_card": {
@@ -240,7 +240,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```json
+```json showLineNumbers
 {
   "args": {
     "card": {
@@ -271,7 +271,7 @@ Here, we will be using the same `card` token and card owner name from the previo
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
@@ -295,7 +295,7 @@ curl "https://api.basistheory.com/proxy" \
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "Content-Type: application/json" \
@@ -321,7 +321,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```shell
+```json showLineNumbers
 {
   "payment_method": {
     "credit_card": {
@@ -339,7 +339,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```shell
+```json showLineNumbers
 {
   "args": {
     "card": {
@@ -362,7 +362,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 In this example, we will show how you can use multiples tokens - a [Card Number](/docs/api/tokens/token-types#card-number) token and a
 generic `PII` token to hold the card owner's name:
 
-```json
+```json showLineNumbers
 {
   "id": "d9939ddc-d7be-423b-a0f5-69f65fec57df",
   "type": "card_number",
@@ -371,7 +371,7 @@ generic `PII` token to hold the card owner's name:
 }
 ```
 
-```json
+```json showLineNumbers
 {
   "id": "f4d86311-1254-4155-b532-b651279a8cc0",
   "type": "token",
@@ -388,7 +388,7 @@ plaintext and forwards them directly into the request.
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
@@ -412,7 +412,7 @@ curl "https://api.basistheory.com/proxy" \
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "Content-Type: application/json" \
@@ -438,7 +438,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```json
+```json showLineNumbers
 {
   "payment_method": {
     "credit_card": {
@@ -456,7 +456,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```json
+```json showLineNumbers
 {
   "args": {
     "card": {
@@ -479,7 +479,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 In this example, we will show how you can combine the data from multiple tokens within a single field on a request. Say we have
 chosen to store the card holder's first and last names as separate tokens:
 
-```json
+```json showLineNumbers
 {
   "id": "523949a9-e32f-4b5b-a0ad-7a435c79deb4",
   "type": "token",
@@ -487,7 +487,7 @@ chosen to store the card holder's first and last names as separate tokens:
 }
 ```
 
-```json
+```json showLineNumbers
 {
   "id": "42af9170-e6ca-4ea7-a43b-730a0b47b6d0",
   "type": "token",
@@ -497,7 +497,7 @@ chosen to store the card holder's first and last names as separate tokens:
 
 Also, we have the `card` token:
 
-```json
+```json showLineNumbers
 {
   "id": "b78b4bee-5499-42dd-8671-f1d23d32355b",
   "type": "card",
@@ -517,7 +517,7 @@ Then we can concatenate the first and last name tokens within the request as sho
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
@@ -541,7 +541,7 @@ curl "https://api.basistheory.com/proxy" \
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "Content-Type: application/json" \
@@ -562,7 +562,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```json
+```json showLineNumbers
 {
   "payment_method": {
     "credit_card": {
@@ -580,7 +580,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```json
+```json showLineNumbers
 {
   "args": {
     "card": {
@@ -602,7 +602,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 
 In this example, we will store our card data within a custom generic token that contains additional fields relevant to our application:
 
-```json
+```json showLineNumbers
 {
   "id": "9a48a051-972b-4569-8fd5-cbe17a604f96",
   "type": "token",
@@ -636,7 +636,7 @@ properties into a single string value.
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
@@ -659,7 +659,7 @@ curl "https://api.basistheory.com/proxy" \
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "Content-Type: application/json" \
@@ -684,7 +684,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```json
+```json showLineNumbers
 {
   "payment_method": {
     "credit_card": {
@@ -701,7 +701,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```json
+```json showLineNumbers
 {
   "args": {
     "card": {
@@ -722,7 +722,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 
 In this example, we will be using the `card` token:
 
-```json
+```json showLineNumbers
 {
   "id": "67d76cd0-bc2a-4a73-be8c-6539c81db465",
   "type": "card",
@@ -743,7 +743,7 @@ and to only provide the last two digits of the expiration year.
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
@@ -766,7 +766,7 @@ curl "https://api.basistheory.com/proxy" \
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
       -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
       -H "Content-Type: application/json" \
@@ -791,7 +791,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-```json
+```json showLineNumbers
 {
   "payment_method": {
     "credit_card": {
@@ -808,7 +808,7 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-```json
+```json showLineNumbers
 {
   "args": {
     "card": {

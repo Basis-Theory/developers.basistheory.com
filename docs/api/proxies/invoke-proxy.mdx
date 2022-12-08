@@ -48,7 +48,7 @@ Proxy a request to a third party API.
   endpoint="https://api.basistheory.com/proxy"
 />
 
-```shell title="Request with 'BT-PROXY-KEY' header"
+```shell title="Request with 'BT-PROXY-KEY' header" showLineNumbers
 curl "https://api.basistheory.com/proxy" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
   -H "BT-PROXY-KEY: e29a50980ca5" \
@@ -60,7 +60,7 @@ curl "https://api.basistheory.com/proxy" \
   }'
 ```
 
-```shell title="Request with 'bt-proxy-key' query param"
+```shell title="Request with 'bt-proxy-key' query param" showLineNumbers
 curl "https://api.basistheory.com/proxy?bt-proxy-key=e29a50980ca5" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
   -H "Content-Type: application/json" \
@@ -71,7 +71,7 @@ curl "https://api.basistheory.com/proxy?bt-proxy-key=e29a50980ca5" \
   }'
 ```
 
-```shell title="Request with 'BT-PROXY-URL' header"
+```shell title="Request with 'BT-PROXY-URL' header" showLineNumbers
 curl "https://api.basistheory.com/proxy" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
   -H "BT-PROXY-URL: https://example.com/api" \
@@ -117,7 +117,7 @@ Basis Theory's Proxy supports executing code to transform the proxy request and 
 
 The Transform will receive a JSON object with the following payload:
 
-```js
+```javascript showLineNumbers
 {
   args: {
     body, // detokenized request body
@@ -129,7 +129,7 @@ The Transform will receive a JSON object with the following payload:
 Within the transform, the headers and body of the proxy request can be changed.
 The Transform must respond with the following object, which defines the request `body` and `headers` to be sent in the request to the proxy `destination_url`:
 
-```js
+```javascript showLineNumbers
 {
   body, headers;
 }
@@ -147,7 +147,7 @@ The Transform must respond with the following object, which defines the request 
 
 In some situations, you may want to tokenize or detokenize part of the request body. In order to do this, set the `application.id` property when [creating your Proxy](/docs/api/proxies#create-a-proxy). This will inject a pre-configured Basis Theory JS instance into the request:
 
-```js
+```javascript showLineNumbers
 module.exports = async function (req) {
   const token = await req.bt.tokenize({
     type: "token",
@@ -171,7 +171,7 @@ The Basis Theory Proxy will attempt to [detokenize](/docs/expressions/detokeniza
 
 For example, given a token:
 
-```json
+```json showLineNumbers
 {
   "id": "26818785-547b-4b28-b0fa-531377e99f4e",
   "data": "sensitive data"
@@ -180,7 +180,7 @@ For example, given a token:
 
 and a proxy request with the body:
 
-```json
+```json showLineNumbers
 {
   "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
   "parameter2": "non-sensitive data"
@@ -189,7 +189,7 @@ and a proxy request with the body:
 
 then the following request body will be sent to the destination:
 
-```json
+```json showLineNumbers
 {
   "parameter1": "sensitive data",
   "parameter2": "non-sensitive data"

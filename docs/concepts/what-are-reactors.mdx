@@ -28,7 +28,7 @@ Formulas provide two different response types, giving the flexibility of securin
 - `raw`
   - Any object passed will be returned from the HTTP request that invoked the Reactor.
 
-```js
+```javascript showLineNumbers
 module.exports = async function (req) {
   // code to execute
   return {
@@ -55,7 +55,7 @@ module.exports = async function (req) {
 
 Reactors are created with our [Create Reactor endpoint](/docs/api/reactors#create-reactor). Once configured each Reactor can be invoked - executing the formula it has been configured with. Creating a new Reactor is as simple as passing in the configuration and Formula to be invoked.
 
-```shell
+```shell showLineNumbers
 curl "https://api.basistheory.com/reactors" \
   -H "BT-API-KEY: <API_KEY_HERE>" \
   -H "Content-Type: application/json" \
@@ -83,7 +83,7 @@ provided in the request `args`. It is recommended that you restrict which tokens
 by only granting `token:use` permission on the most-specific [container](./what-are-containers)
 of tokens that is required.
 
-```bash
+```bash showLineNumbers
 curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
   -X "POST" \
@@ -103,7 +103,7 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
 
 Depending on how complex your use case is a Reactor may provide you with an excellent opportunity to mutate data before forwarding it onto a 3rd Party. In the below example, we call httpbin.org (an echo service) with the last 4 characters of our token:
 
-```js
+```javascript showLineNumbers
 module.exports = async function (req) {
   const fetch = require("node-fetch");
   const { customer_id } = req.args;
@@ -125,7 +125,7 @@ module.exports = async function (req) {
 
 Creating documents out of sensitive data is a primary need for businesses today, especially in fintech where you need to create and submit 1099s for many businesses:
 
-```js
+```javascript showLineNumbers
 module.exports = async function (req) {
   const fetch = require("node-fetch");
   const PDFDocument = require("pdfkit");
@@ -154,7 +154,7 @@ module.exports = async function (req) {
 
 Many legacy business process still rely heavily on comma delimited files (CSV), tab delimited files or space-delimited files to transport data between companies, typically using SFTP servers as the endpoint of this data. For example, engaging with partner banks with ACH files requires you to format your file correctly and drop it on to an SFTP server.
 
-```js
+```javascript showLineNumbers
 module.exports = async function (req) {
   var fs = require("fs");
   var {Client} = require('ssh2');
@@ -186,7 +186,7 @@ module.exports = async function (req) {
 
 When you need to process files of sensitive data without it touching your systems, use a Reactor to desensitize a file before forwarding it on to your systems for your own logic:
 
-```js
+```javascript showLineNumbers
 module.exports = async function (req) {
   const { BasisTheory } = require("@basis-theory/basis-theory-js");
   const { fileString } = req.args; // "name,ssn\nTheory,555445555"
@@ -216,7 +216,7 @@ module.exports = async function (req) {
 
 When our templates and examples aren’t enough, we enable you to build anything you want to with our Reactors. Start with a blank function like the one below and solve any business problem with the data you need:
 
-```js
+```javascript showLineNumbers
 module.exports = async function (req) {
   const { tokens } = req.args;
 
