@@ -46,14 +46,13 @@
   --ifm-menu-color-background-active: var(--bt-menu-color-background-active);
   --ifm-menu-color-background-hover: var(--bt-menu-color-background-hover);
 
-  /* 
-      Basis Theory-specific variables
-  */
+  /* BT variables */
 
   --bt-heading-font-style: normal;
   --bt-heading-letter-spacing: -1px;
   --bt-code-editor-background-color: #fff;
   --bt-code-font-family: "Source Code Pro";
+  --bt-tabs-border-color: #d1d7ff;
 
   /* Sidebar */
   --bt-sidebar-background-color: #f3f5fd;
@@ -117,11 +116,10 @@
   --ifm-background-surface-color: var(--bt-sidebar-background-color);
   --ifm-navbar-background-color: var(--bt-sidebar-background-color);
 
-  /* 
-      Basis Theory-specific variables
-  */
+  /* BT variables */
 
   --bt-code-editor-background-color: #161929;
+  --bt-tabs-border-color: #323649;
 
   /* Sidebar */
   --bt-sidebar-background-color: #111424;
@@ -189,12 +187,19 @@ h3 {
   letter-spacing: var(--bt-heading-letter-spacing);
 }
 
+/* TODO: h4-h6  */
+
 p {
   line-height: 160%;
   letter-spacing: -0.1px;
 }
 
-/* TODO: h4-h6  */
+code {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-family: "Source Code Pro";
+  color: var(--ifm-font-color-base);
+  font-weight: 500;
+}
 
 /* 
 * Sidebar items hover/selected states
@@ -231,25 +236,23 @@ p {
   background: var(--bt-menu-color-background-active-hover);
 }
 
-code {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  font-family: "Source Code Pro";
-  color: var(--ifm-font-color-base);
-  font-weight: 500;
-}
-
-/* code blocks */
+/* tabs */
 
 div:has(> .bt-tabs) {
   --ifm-code-border-radius: 8px;
   border-radius: 8px;
-  box-shadow: var(--ifm-global-shadow-lw);
   background-color: var(--bt-sidebar-background-color);
 }
 
 .bt-tabs {
   border-radius: 8px 8px 0 0;
-  box-shadow: var(--ifm-global-shadow-lw);
+  border-top: 1px solid var(--bt-tabs-border-color);
+  border-left: 1px solid var(--bt-tabs-border-color);
+  border-right: 1px solid var(--bt-tabs-border-color);
+}
+
+.bt-tabs li:first-child {
+  margin-left: 24px;
 }
 
 .bt-tabs + div {
@@ -259,6 +262,27 @@ div:has(> .bt-tabs) {
 .bt-tabs + div * .theme-code-block {
   --prism-background-color: transparent !important;
   background: var(--bt-code-editor-background-color);
+  padding-left: 24px;
   box-shadow: var(--ifm-global-shadow-lw);
   border-radius: 0 0 8px 8px !important;
+}
+
+.bt-tabs > .tabs__item[aria-selected="true"] {
+  color: var(--ifm-heading-color);
+}
+
+.bt-tabs > .tabs__item {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  color: #8c90a4;
+}
+
+.bt-tabs > .tabs__item:hover {
+  background: none;
+  color: var(--ifm-heading-color);
+}
+
+.bt-tabs > .tabs__item--active {
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ifm-tabs-color-active-border);
 }

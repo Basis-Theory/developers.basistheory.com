@@ -35,14 +35,15 @@ const config = {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/basis-theory/developers.basistheory.com/tree/master/",
+          editUrl:
+            "https://github.com/basis-theory/developers.basistheory.com/tree/master/",
           showLastUpdateTime: true,
         },
         theme: {
-          customCss: require.resolve("./src/css/custom.css"),
+          customCss: require.resolve("./src/css/overrides.css"),
         },
         gtag: {
-          trackingID: 'GTM-M56229L',
+          trackingID: "GTM-M56229L",
           anonymizeIP: true,
         },
       }),
@@ -137,19 +138,25 @@ const config = {
         darkTheme: darkCodeTheme,
         additionalLanguages: ["csharp"],
       },
-      metadata: [{
-        name: 'description', 
-        content: 'API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.'
-      }, {
-        property: 'og:description', 
-        content: 'API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.'
-      }, {
-        property: 'og:image', 
-        content: 'https://cdn.basistheory.com/images/seo/docs-opengraph.png'
-      }],
+      metadata: [
+        {
+          name: "description",
+          content:
+            "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
+        },
+        {
+          property: "og:description",
+          content:
+            "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
+        },
+        {
+          property: "og:image",
+          content: "https://cdn.basistheory.com/images/seo/docs-opengraph.png",
+        },
+      ],
     }),
 
-    plugins: [require.resolve('docusaurus-lunr-search')],
+  plugins: [require.resolve("docusaurus-lunr-search")],
 };
 
 module.exports = config;
