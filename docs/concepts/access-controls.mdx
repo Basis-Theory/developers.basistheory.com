@@ -3,6 +3,8 @@ title: Access Controls
 sidebar_label: Access Controls
 ---
 
+import { Callout, Callouts } from "@site/src/components/shared/Callout";
+
 # Access Controls
 
 Basis Theory secures sensitive data as [Tokens](./what-are-tokens) that are stored within an isolated
@@ -17,7 +19,7 @@ to ensure services and users only have access to the data they need.
 
 Everything starts with a Tenant in your Basis Theory account. Tenants represent an isolated environment in which your
 [Tokens](./what-are-tokens) and other resources are defined, managed, and stored.
-Data is not shared between Tenants, but you’re allowed to create as many Tenants as you’d like within Basis Theory.
+Data is not shared between Tenants, but you're allowed to create as many Tenants as you'd like within Basis Theory.
 You can use multiple Tenants to isolate different domains of data, and to support your Software Development Life Cycle (SDLC).
 
 The user account that was used to create a Tenant in the [Portal](https://portal.basistheory.com)
@@ -49,7 +51,7 @@ issuing an Application with limited access controls to other units within the or
 ## What are Applications?
 
 An Application represents an external software system or service that will be integrated with the Basis Theory API.
-Basis Theory’s Applications are not coupled to a specific implementation type or technology.
+Basis Theory's Applications are not coupled to a specific implementation type or technology.
 Applications could be a native app on a mobile device, a single-page application in a browser, or a backend service
 that executes on a server or in a serverless environment.
 
@@ -65,7 +67,7 @@ A short description of the Application describing its intended use, for example 
 
 - **Public**: Used for Browser, Mobile, or Desktop applications running natively on a device (e.g. iOS, Android, Windows, etc) where the application is collecting data for tokenization via an API call or using Basis Theory Elements. Public Applications have limited permissions available to ensure the API Key can be safely used within publicly available code.
 
-- **Management**: Used with scripts or the Basis Theory Terraform ([request access here](https://basistheory.com/contact)) modules to manage your Tenant’s settings and services (Applications, Reactors, Proxy, etc) without logging into our Portal.
+- **Management**: Used with scripts or the Basis Theory Terraform ([request access here](https://basistheory.com/contact)) modules to manage your Tenant's settings and services (Applications, Reactors, Proxy, etc) without logging into our Portal.
 
 - **Expiring**: Used for Browser, Mobile, or Desktop applications running natively on a device (e.g. iOS, Android, Windows, etc) where the application is [revealing sensitive data using Basis Theory Elements](https://docs.basistheory.com/elements/#detokenization). Expiring Applications have limited permissions available and can be scoped to single tokens to ensure the API Key can be safely used within publicly available code.
 
@@ -103,7 +105,7 @@ Please see the section on [What are Access Rules](#what-are-access-rules) below 
 
 ### API Key
 
-Your Application’s API Key is used to authenticate your systems to the Basis Theory platform.
+Your Application's API Key is used to authenticate your systems to the Basis Theory platform.
 The API Key can be used to make authenticated requests to our API directly, using Hosted Elements,
 or using the Basis Theory SDK. These API Keys follow a format similar to `key_4qUtg83907AnDem90aJSzcN`.
 API Keys should be regarded as highly sensitive, and should be stored a secret within in your environments.
@@ -176,11 +178,11 @@ the [transform](#transform) defined on the rule determines
 if and how Token data will be returned from the API. If no matching rules are found,
 access to the requested resource is denied with a `403 Forbidden` error.
 
-:::info
-
-Access Rules are currently only supported on Private, Public and Expiring Application types, and only control access to Token resources. Access Rules are not supported on Management Applications at this time.
-
-:::
+<Callout type={Callouts.WARNING}>
+  Access Rules are currently only supported on Private, Public and Expiring
+  Application types, and only control access to Token resources. Access Rules
+  are not supported on Management Applications at this time.
+</Callout>
 
 Access Rules are comprised of the following properties:
 
@@ -228,11 +230,13 @@ the data is appropriate to expose to the Application. The following transforms a
 - `mask` - returns masked `data` if a `mask` expression is defined on the Token, otherwise `data` is redacted
 - `reveal` - returns the original plaintext `data`
 
-:::caution
-
-Be cautious whenever applying a `reveal` transform. This is especially true when granting the `token:read` or `token:search` permissions, as this will allow your Application to read plaintext data. This may result in your systems being pulled into compliance scope.
-
-:::
+<Callout type={Callouts.WARNING}>
+  Be cautious whenever applying a <code>reveal</code> transform. This is
+  especially true when granting the <code>token:read</code> or{" "}
+  <code>token:search</code> permissions, as this will allow your Application to
+  read plaintext data. This may result in your systems being pulled into
+  compliance scope.
+</Callout>
 
 ### Priority
 
