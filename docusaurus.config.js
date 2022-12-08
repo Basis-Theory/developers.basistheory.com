@@ -40,7 +40,7 @@ const config = {
           showLastUpdateTime: true,
         },
         theme: {
-          customCss: require.resolve("./src/css/overrides.css"),
+          customCss: require.resolve("./src/css/overrides.scss"),
         },
         gtag: {
           trackingID: "GTM-M56229L",
@@ -156,7 +156,10 @@ const config = {
       ],
     }),
 
-  plugins: [require.resolve("docusaurus-lunr-search")],
+  plugins: [
+    require.resolve("docusaurus-lunr-search"),
+    require.resolve("docusaurus-plugin-sass"),
+  ],
 };
 
 module.exports = config;
