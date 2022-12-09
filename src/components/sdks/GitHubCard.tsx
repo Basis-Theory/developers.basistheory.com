@@ -1,30 +1,25 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-import styles from "./GitHubBanner.module.css";
-import { Card } from "../shared/Card";
+import styles from "./GithubCard.module.css";
 import { Button } from "../shared/Button";
 
-import GithubRepo from "@site/static/img/github-banner/repository.svg";
-import Star from "@site/static/img/github-banner/star.svg";
-import Contributor from "@site/static/img/github-banner/contributor.svg";
-import Github from "@site/static/img/github-banner/github.svg";
+import Star from "@site/static/img/github-card/star.svg";
+import Contributor from "@site/static/img/github-card/contributor.svg";
+import Github from "@site/static/img/github-card/github.svg";
+import { SdkCard } from "../shared/SdkCard";
 
-interface GitHubBanner {
+interface GithubCard {
   title: string;
   icon: string;
   organization: string;
   repository: string;
 }
 
-const placeholder = "loading";
+const placeholder = "Loading";
+const placeholderUrl = "https://www.basistheory.com/";
 
-export const GitHubBanner = ({
-  title,
-  icon,
-  organization,
-  repository,
-}: GitHubBanner) => {
+export const GithubCard = ({ title, organization, repository }: GithubCard) => {
   const [githubUrl, setGithubUrl] = useState<string>("");
   const [stargazersCount, setStargazersCount] = useState<number>(null);
   const [releaseName, setReleaseName] = useState<string>(null);
@@ -64,35 +59,28 @@ export const GitHubBanner = ({
   }, [organization, repository]);
 
   return (
-    <Card>
-      <div className={styles.icon}>
-        <p>{icon}</p>
-      </div>
-      <div className={styles.content}>
-        <h3>{title}</h3>
-
-        <div className={styles.repository}>
-          <p>
-            <GithubRepo /> {repository}
-          </p>
-        </div>
+    <SdkCard
+      className={styles.container}
+      title={title}
+      repository={repository}
+      metadata={
         <div className={styles.metadata}>
           <p className={styles.version}>{releaseName ?? placeholder}</p>
           <p>
-            <Star /> {stargazersCount ?? placeholder} Stars{" "}
+            <Star /> {stargazersCount ?? placeholder} Stars
           </p>
           <p>
             <Contributor /> {contributors ?? placeholder} Contributors
           </p>
         </div>
-      </div>
-      <div>
-        <a href={githubUrl ?? placeholder} target="_blank">
+      }
+      cta={
+        <a href={githubUrl ?? placeholderUrl} target="_blank">
           <Button>
             <Github /> See it in GitHub
           </Button>
         </a>
-      </div>
-    </Card>
+      }
+    />
   );
 };
