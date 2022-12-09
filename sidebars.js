@@ -142,6 +142,7 @@ const sidebars = {
             'sdks/web/elements/types',
             'sdks/web/elements/lifecycle',
             'sdks/web/elements/options',
+            'sdks/web/elements/methods',
           ],
         },
         'sdks/web/react-elements'
