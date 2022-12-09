@@ -138,6 +138,9 @@ const config = {
         darkTheme: darkCodeTheme,
         additionalLanguages: ["csharp", "hcl"],
       },
+      colorMode: {
+        defaultMode: 'dark'
+      },
       metadata: [
         {
           name: "description",
