@@ -1,0 +1,98 @@
+import { 
+  CardElement,
+  CardExpirationDateElement,
+  CardNumberElement,
+  CardVerificationCodeElement,
+  TextElement
+} from '@basis-theory/basis-theory-react';
+import { BasisTheoryComponentDisplay } from '@site/src/components/sdks/BasisTheoryComponentDisplay';
+
+# Element Types
+
+## Card Element
+
+The `"card"` element type features a one-liner credit card collector containing the following inputs:
+
+- *cardNumber*
+- *expirationDate*
+- *cvc*
+
+<BasisTheoryComponentDisplay>
+  <CardElement id="types-card-element" />
+</BasisTheoryComponentDisplay>
+
+```javascript showLineNumbers
+  const cardElement = BasisTheory.createElement('card');
+
+  cardElement.mount('#card-element');  
+```
+
+## Text Element
+
+The `"text"` element type is a secure replacement for the `<input>` tag and enables collecting user `string` data.
+
+<BasisTheoryComponentDisplay>
+  <TextElement id="types-text-element" placeholder="John Doe" />
+</BasisTheoryComponentDisplay>
+
+```javascript showLineNumbers
+  const textElement = BasisTheory.createElement('text', {
+    targetId: 'elementTypesTextElement',
+    placeholder: 'John Doe',
+  });
+
+  textElement.mount('#text-element');  
+```
+
+## Card Number Element
+
+The `"cardNumber"` element type renders a card number input and an optional card icon, featuring automatic brand detection, input validation
+and masking.
+
+<BasisTheoryComponentDisplay>
+  <CardNumberElement id="types-card-number-element" />
+</BasisTheoryComponentDisplay>
+
+```javascript showLineNumbers
+  const cardNumberElement = BasisTheory.createElement('cardNumber', {
+      targetId: 'elementTypesCardNumberElement',
+    });
+
+  cardNumberElement.mount('#card-number-element');
+
+  cardNumberElement.on('change', ({ cardBrand }) => {
+    window.cardVerificationCodeElement?.update({ cardBrand });
+  });
+```
+
+## Card Expiration Date Element
+
+The `"cardExpirationDate"` element type features a month/year formatted input with validation. The date must be between current month and 20 years in the future.
+
+<BasisTheoryComponentDisplay>
+  <CardExpirationDateElement id="types-card-expiration-date-element" />
+</BasisTheoryComponentDisplay>
+
+```javascript showLineNumbers
+  const cardExpirationDateElement = BasisTheory.createElement('cardExpirationDate', {
+    targetId: 'elementTypesCardExpirationDateElement',
+  });
+
+  cardExpirationDateElement.mount('#types-card-expiration-date-element');  
+```
+
+## Card Verification Code Element
+
+The `"cardVerificationCode"` element type is used to collect the card security code.
+
+<BasisTheoryComponentDisplay>
+  <CardVerificationCodeElement id="types-card-verification-code-element" />
+</BasisTheoryComponentDisplay>
+
+```javascript showLineNumbers
+  const cardVerificationCodeElement = BasisTheory.createElement('cardVerificationCode', {
+    targetId: 'elementTypesCardVerificationCodeElement',
+  });
+
+  cardVerificationCodeElement.mount('#card-verification-code-element');  
+```

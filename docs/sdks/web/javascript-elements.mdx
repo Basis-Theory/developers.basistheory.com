@@ -1,0 +1,107 @@
+---
+title: JavaScript Elements SDK
+sidebar_label: JavaScript Elements
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# JavaScript Elements SDK
+
+## Before You Begin
+
+Basis Theory Elements require the use of an API Key associated with a **Public Application**, which only allows the use of `token:create` and `token:update` permissions, removing any risk that your API keys are stolen and used to access data.
+
+To create one, login into our [Portal](https://portal.basistheory.com) and create a new "Public" Application with the permissions you require.
+
+## Installation
+
+To install **BasisTheory.js** you can choose either our ES module or CDN hosted bundle through a `script` tag.
+
+<Tabs className="bt-tabs">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npm install --save @basis-theory/basis-theory-js
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn add @basis-theory/basis-theory-js
+```
+
+  </TabItem>
+  <TabItem value="cdn" label="CDN">
+
+```html showLineNumbers
+<!-- Including this tag will export a global/window "BasisTheory" variable -->
+<script src="https://js.basistheory.com"></script>
+```
+
+  </TabItem>
+</Tabs>
+
+## Initialization
+
+Initialize `BasisTheory` with `elements: true` to dynamically loads **Elements** module.
+
+| Parameter | Required | Type                     | Description                                                                        |
+| --------- | -------- | ------------------------ | ---------------------------------------------------------------------------------- |
+| `apiKey`  | true     | _string_                 | The API Key used to identify an [Application](/docs/api/applications).             |
+| `options` | false    | _BasisTheoryInitOptions_ | [Options](#basis-theory-init-options) for initializing the `BasisTheory` instance. |
+
+#### Basis Theory Init Options
+
+| Attribute  | Required | Type      | Description                                                                                  |
+| ---------- | -------- | --------- | -------------------------------------------------------------------------------------------- |
+| `elements` | false    | _boolean_ | Boolean used to indicate whether the `BasisTheory` instance will have Elements capabilities. |
+
+<Tabs className="bt-tabs">
+  <TabItem value="module" label="ES Module">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+// In this context BasisTheory is a class
+const bt = await new BasisTheory().init("test_1234567890", { elements: true });
+// use Elements
+```
+
+  </TabItem>
+  <TabItem value="cdn" label="CDN">
+
+```html showLineNumbers
+<script>
+  // you can initialize it wherever it suits your workflow best
+  // here we are waiting for the window to load, to make sure BasisTheory instance
+  // has been injected in the window variable
+  window.addEventListener('load', async () => {
+    try {
+      // global/window variable BasisTheory is an instance, but requires initialization
+      await BasisTheory.init('test_1234567890', { elements: true });
+      // use Elements
+    } catch (e) {
+      // handle errors that could happen while loading elements script
+    }
+  });
+</script>
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert type={Alerts.WARNING}>
+  Elements are meant to be used in browser environments only. If you installed <code>BasisTheory.js</code> as a module, make sure the instance that loads elements runs on the browser-side code.
+</Alert>
+
+<Alert type={Alerts.WARNING}>
+  If you try to to use any Elements feature before calling <code>BasisTheory.init</code>, or before its Promise has been fulfilled, you will get an error.
+</Alert>
+
+## Usage with TypeScript
+
+Starting at `1.14.0`, [BasisTheory.js](https://www.npmjs.com/package/@basis-theory/basis-theory-js) bundles all TypeScript definitions for Elements features. You don't have to take any extra steps in order to use it.
