@@ -12,9 +12,9 @@ interface GitHubBanner {
 
 export const GitHubBanner = ({ title, icon, organization, repository }: GitHubBanner) => {
   const [githubUrl, setGithubUrl] = useState<string>("");
-  const [stargazersCount, setStargazersCount] = useState<number>(0);
-  const [releaseName, setReleaseName] = useState<string>("");
-  const [contributors, setContributors] = useState<number>(0);
+  const [stargazersCount, setStargazersCount] = useState<number>(null);
+  const [releaseName, setReleaseName] = useState<string>(null);
+  const [contributors, setContributors] = useState<number>(null);
 
   const loadMetadata = async () => {
     const { data } = await axios.get(`https://api.github.com/repos/${organization}/${repository}`);
