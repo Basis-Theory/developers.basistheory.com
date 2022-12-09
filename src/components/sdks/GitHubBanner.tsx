@@ -5,10 +5,10 @@ import styles from "./GitHubBanner.module.css";
 import { Card } from "../shared/Card";
 import { Button } from "../shared/Button";
 
-import GithubRepo from "../../../static/img/github-banner/repository.svg";
-import Star from "../../../static/img/github-banner/Star.svg";
-import Contributor from "../../../static/img/github-banner/Contributor.svg";
-import Github from "../../../static/img/github-banner/Github.svg";
+import GithubRepo from "@site/static/img/github-banner/repository.svg";
+import Star from "@site/static/img/github-banner/Star.svg";
+import Contributor from "@site/static/img/github-banner/Contributor.svg";
+import Github from "@site/static/img/github-banner/Github.svg";
 
 interface GitHubBanner {
   title: string;
