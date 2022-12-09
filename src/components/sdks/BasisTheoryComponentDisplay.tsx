@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { 
   BasisTheoryProvider,
   useBasisTheory
@@ -6,7 +6,11 @@ import {
 
 import styles from "./BasisTheoryComponentDisplay.module.css";
 
-export const BasisTheoryComponentDisplay = ({ children }) => {
+interface ComponentDisplay {
+  title: string;
+}
+
+export const BasisTheoryComponentDisplay = ({ title, children }: PropsWithChildren<ComponentDisplay>) => {
   const { bt } = useBasisTheory('key_XVB48UzHJ57TdPtmLhJa9e', { elements: true });
 
   return (
@@ -19,7 +23,7 @@ export const BasisTheoryComponentDisplay = ({ children }) => {
               <div className={styles.action}></div>
               <div className={styles.action}></div>
             </div>
-            <span>Live Card Element</span>
+            <span>{title}</span>
           </div>
           <div className={styles.formWrapper}>
             <div className={styles.element}>
