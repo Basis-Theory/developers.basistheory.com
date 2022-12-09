@@ -9,30 +9,7 @@ import TabItem from "@theme/TabItem";
 
 All `List` endpoints support pagination to allow bulk fetching multiple items. Each `List` endpoint shares a common response structure. Examples of these requests can be seen in [List Applications](/docs/api/applications#list-applications) and [List Tokens](/docs/api/tokens#list-tokens).
 
-## Pagination Object
-
-| Attribute    | Type                                                                              | Description                                                                             |
-| ------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `pagination` | _[pagination metadata](#pagination-pagination-object-pagination-metadata-object)_ | Pagination metadata for the response                                                    |
-| `data`       | _array_                                                                           | Query results of the request. See list endpoint resource for response schema definition |
-
-### Pagination Metadata Object
-
-| Attribute     | Type      | Description                                                 |
-| ------------- | --------- | ----------------------------------------------------------- |
-| `total_items` | _integer_ | Total number of items in the Tenant                         |
-| `page_number` | _integer_ | Current page number. Should match `page` query parameter.   |
-| `page_size`   | _integer_ | The size of each page. Should match `size` query parameter. |
-| `total_pages` | _integer_ | The total number of pages.                                  |
-
 ## Request
-
-#### Query Parameters
-
-| Parameter | Required | Type      | Default | Description                                                        |
-| --------- | -------- | --------- | ------- | ------------------------------------------------------------------ |
-| `page`    | false    | _integer_ | 1       | Page number of the results to return.                              |
-| `size`    | false    | _integer_ | 20      | Number of results per page to return. Maximum size of 100 results. |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -108,6 +85,13 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### Query Parameters
+
+| Parameter | Required | Type      | Default | Description                                                        |
+| --------- | -------- | --------- | ------- | ------------------------------------------------------------------ |
+| `page`    | false    | _integer_ | 1       | Page number of the results to return.                              |
+| `size`    | false    | _integer_ | 20      | Number of results per page to return. Maximum size of 100 results. |
+
 ## Response
 
 ```json showLineNumbers
@@ -125,3 +109,19 @@ func main() {
   ]
 }
 ```
+
+## Pagination Object
+
+| Attribute    | Type                                                                              | Description                                                                             |
+| ------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `pagination` | _[pagination metadata](#pagination-pagination-object-pagination-metadata-object)_ | Pagination metadata for the response                                                    |
+| `data`       | _array_                                                                           | Query results of the request. See list endpoint resource for response schema definition |
+
+### Pagination Metadata Object
+
+| Attribute     | Type      | Description                                                 |
+| ------------- | --------- | ----------------------------------------------------------- |
+| `total_items` | _integer_ | Total number of items in the Tenant                         |
+| `page_number` | _integer_ | Current page number. Should match `page` query parameter.   |
+| `page_size`   | _integer_ | The size of each page. Should match `size` query parameter. |
+| `total_pages` | _integer_ | The total number of pages.                                  |
