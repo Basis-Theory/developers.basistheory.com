@@ -16,51 +16,6 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 Tenants provide a way to logically group your Applications and tokens. Common use cases for Tenants may be to create one per environment such as development, QA, and production or to isolate business domains from each other. Tenant data is isolated from other tenants unless explicitly shared.
 
-## Tenant Object
-
-| Attribute     | Type                                       | Description                                                                                          |
-| ------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `id`          | _uuid_                                     | Unique identifier of the Tenant                                                                      |
-| `owner_id`    | _uuid_                                     | The user ID which owns the Tenant                                                                    |
-| `name`        | _string_                                   | The name of the Tenant                                                                               |
-| `settings`    | [Tenant Settings](#tenant-settings-object) | The setting for the Tenant                                                                           |
-| `created_by`  | _uuid_                                     | (Optional) The ID of the user that created the Tenant                                                |
-| `created_at`  | _date_                                     | (Optional) Created date of the Tenant in ISO 8601 format                                             |
-| `modified_by` | _uuid_                                     | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Tenant |
-| `modified_at` | _date_                                     | (Optional) Last modified date of the Tenant in ISO 8601 format                                       |
-
-### Tenant Settings Object
-
-| Attribute            | Type     | Description                                                    |
-| -------------------- | -------- | -------------------------------------------------------------- |
-| `deduplicate_tokens` | _string_ | (Bool) Whether tokens are deduplicated on creation and updates |
-
-## Tenant Usage Report Object
-
-| Attribute      | Type                                         | Description                   |
-| -------------- | -------------------------------------------- | ----------------------------- |
-| `token_report` | [Token Report](#tenants-token-report-object) | Token Usage Report for Tenant |
-
-### Token Report Object
-
-| Attribute                        | Type                                                            | Description                                                                 |
-| -------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `metrics_by_type`                | _map\<string, [TokenTypeMetrics](#token-type-metrics-object)\>_ | Token Metrics by [TokenType](/docs/api/tokens/token-types)                  |
-| `included_monthly_active_tokens` | _long_                                                          | Number of included monthly active tokens for the billing plan               |
-| `monthly_active_tokens`          | _long_                                                          | Number of tokens that have been created, read, or used in the current month |
-
-<Alert>
-  To learn more about Monthly Active Tokens (MATs), check out{" "}
-  <a href="/docs/concepts/what-are-mats/">our guide</a>.
-</Alert>
-
-### Token Type Metrics Object
-
-| Attribute         | Type   | Description                                     |
-| ----------------- | ------ | ----------------------------------------------- |
-| `count`           | _long_ | Number of tokens                                |
-| `last_created_at` | _date_ | (Optional) Last created date in ISO 8601 format |
-
 ## Get a Tenant
 
 Retrieves the Tenant associated with the provided `BT-API-KEY`.
@@ -178,13 +133,6 @@ Update the Tenant associated with the provided `BT-API-KEY`.
 
 ### Request
 
-#### Request Parameters
-
-| Attribute  | Required | Type     | Default                                    | Description                                           |
-| ---------- | -------- | -------- | ------------------------------------------ | ----------------------------------------------------- |
-| `name`     | true     | _string_ | `null`                                     | The name of the Tenant. Has a maximum length of `200` |
-| `settings` | false    | _string_ | [Tenant Settings](#tenant-settings-object) | The settings for the Tenant                           |
-
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
@@ -278,6 +226,13 @@ func main() {
 
   </TabItem>
 </Tabs>
+
+#### Request Parameters
+
+| Attribute  | Required | Type     | Default                                    | Description                                           |
+| ---------- | -------- | -------- | ------------------------------------------ | ----------------------------------------------------- |
+| `name`     | true     | _string_ | `null`                                     | The name of the Tenant. Has a maximum length of `200` |
+| `settings` | false    | _string_ | [Tenant Settings](#tenant-settings-object) | The settings for the Tenant                           |
 
 ### Response
 
@@ -495,3 +450,48 @@ Returns a [Tenant Usage Report](#tenant-usage-report-object) for the provided `B
   }
 }
 ```
+
+## Tenant Object
+
+| Attribute     | Type                                       | Description                                                                                          |
+| ------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `id`          | _uuid_                                     | Unique identifier of the Tenant                                                                      |
+| `owner_id`    | _uuid_                                     | The user ID which owns the Tenant                                                                    |
+| `name`        | _string_                                   | The name of the Tenant                                                                               |
+| `settings`    | [Tenant Settings](#tenant-settings-object) | The setting for the Tenant                                                                           |
+| `created_by`  | _uuid_                                     | (Optional) The ID of the user that created the Tenant                                                |
+| `created_at`  | _date_                                     | (Optional) Created date of the Tenant in ISO 8601 format                                             |
+| `modified_by` | _uuid_                                     | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Tenant |
+| `modified_at` | _date_                                     | (Optional) Last modified date of the Tenant in ISO 8601 format                                       |
+
+### Tenant Settings Object
+
+| Attribute            | Type     | Description                                                    |
+| -------------------- | -------- | -------------------------------------------------------------- |
+| `deduplicate_tokens` | _string_ | (Bool) Whether tokens are deduplicated on creation and updates |
+
+## Tenant Usage Report Object
+
+| Attribute      | Type                                         | Description                   |
+| -------------- | -------------------------------------------- | ----------------------------- |
+| `token_report` | [Token Report](#tenants-token-report-object) | Token Usage Report for Tenant |
+
+### Token Report Object
+
+| Attribute                        | Type                                                            | Description                                                                 |
+| -------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `metrics_by_type`                | _map\<string, [TokenTypeMetrics](#token-type-metrics-object)\>_ | Token Metrics by [TokenType](/docs/api/tokens/token-types)                  |
+| `included_monthly_active_tokens` | _long_                                                          | Number of included monthly active tokens for the billing plan               |
+| `monthly_active_tokens`          | _long_                                                          | Number of tokens that have been created, read, or used in the current month |
+
+<Alert>
+  To learn more about Monthly Active Tokens (MATs), check out{" "}
+  <a href="/docs/concepts/what-are-mats/">our guide</a>.
+</Alert>
+
+### Token Type Metrics Object
+
+| Attribute         | Type   | Description                                     |
+| ----------------- | ------ | ----------------------------------------------- |
+| `count`           | _long_ | Number of tokens                                |
+| `last_created_at` | _date_ | (Optional) Last created date in ISO 8601 format |

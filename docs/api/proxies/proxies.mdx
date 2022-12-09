@@ -17,73 +17,6 @@ Proxies provide a way to pre-configure static routes when calling [Basis Theory'
 
 Proxies can be utilized for both inbound and outbound calls for things such as webhooks, enabling 3rd parties to call your API or making API calls to 3rd party partners and providers.
 
-## Proxy Object
-
-| Attribute            | Type                                         | Description                                                                                                                                                                                                                             |
-| -------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                 | _uuid_                                       | Unique identifier of the Proxy which can be used to [get a Proxy](/docs/api/proxies#get-a-proxy)                                                                                                                                        |
-| `key`                | _string_                                     | Auto-generated key used to [invoke a particular Proxy](/docs/api/proxies/invoke-proxy#proxying-requests)                                                                                                                                |
-| `name`               | _string_                                     | The name of the Proxy                                                                                                                                                                                                                   |
-| `destination_url`    | _string_                                     | The URL to proxy requests to                                                                                                                                                                                                            |
-| `tenant_id`          | _uuid_                                       | The [Tenant](/docs/api/tenants) ID which owns the Proxy                                                                                                                                                                                 |
-| `require_auth`       | _boolean_                                    | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                              |
-| `request_transform`  | _[Proxy Transform](#proxy-transform-object)_ | (Optional) Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                         |
-| `response_transform` | _[Proxy Transform](#proxy-transform-object)_ | (Optional) Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                |
-| `application_id`     | _string_                                     | (Optional) This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Proxy Transform runtime. |
-| `configuration`      | _map_                                        | (Optional) A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                        |
-| `created_by`         | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Proxy                                                                                                                                           |
-| `created_at`         | _string_                                     | (Optional) Created date of the Proxy in ISO 8601 format                                                                                                                                                                                 |
-| `modified_by`        | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Proxy                                                                                                                                     |
-| `modified_at`        | _date_                                       | (Optional) Last modified date of the Proxy in ISO 8601 format                                                                                                                                                                           |
-
-### Proxy Transform Object
-
-| Attribute | Type     | Description                                                                                    |
-| --------- | -------- | ---------------------------------------------------------------------------------------------- |
-| `code`    | _string_ | [Transform code](#transform-code) which will be executed when the Proxy transform is processed |
-
-### Transform Code
-
-All transform code snippets must export a function which takes in a [request object](#transform-request-object) and returns a [response object](#transform-response-object).
-
-#### Transform Request Object
-
-This is the object passed as a parameter to the transform function.
-
-| Attribute       | Type     | Description                                                                                                               |
-| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `args`          | _object_ | The arguments containing the `body` and `headers` attributes                                                              |
-| `configuration` | _object_ | The configuration defined for the [Proxy object](#proxies-proxy-object)                                                   |
-| `bt`            | _object_ | A pre-configured Basis Theory JS instance if an `application` was configured on the [Proxy object](#proxies-proxy-object) |
-
-#### Transform Response Object
-
-This is the object that must be returned by the transform function.
-
-| Attribute | Type     | Description                                      |
-| --------- | -------- | ------------------------------------------------ |
-| `body`    | _object_ | Processed body for the proxy request/response    |
-| `headers` | _object_ | Processed headers for the proxy request/response |
-
-Transform Code is written in Javascript (targeting Node.js v16) and generally follows the structure:
-
-```javascript showLineNumbers
-module.exports = async function (req) {
-  const { bt, args } = req;
-  const { body, headers } = args; // access any args provided with the transform request
-  const { MY_CONFIG } = req.configuration; // access any static config defined on the Proxy
-
-  // do anything here!
-  const processedBody = ...; // do something with body
-  const processedHeaders = ...; // do something with headers
-
-  return {
-      body: processedBody, // Proxy request/response body
-      headers: processedHeaders // Proxy request/response headers
-  };
-};
-```
-
 ## Create a Proxy
 
 Creates a new Proxy for the Tenant.
@@ -98,18 +31,6 @@ Creates a new Proxy for the Tenant.
 <Permission content="proxy:create" />
 
 ### Request
-
-#### Request Parameters
-
-| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                  |
-| -------------------- | -------- | ---------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                         |
-| `destination_url`    | true     | _string_                                                   | `null`  | The URL to proxy requests to                                                                                                                                                                                                 |
-| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                         |
-| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                |
-| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Proxy Transform runtime. |
-| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                        |
-| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                   |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -350,6 +271,18 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### Request Parameters
+
+| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                  |
+| -------------------- | -------- | ---------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                         |
+| `destination_url`    | true     | _string_                                                   | `null`  | The URL to proxy requests to                                                                                                                                                                                                 |
+| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                         |
+| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                |
+| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Proxy Transform runtime. |
+| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                        |
+| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                   |
+
 ### Response
 
 Returns a [Proxy](#proxy-object) if the Proxy was created. Returns [an error](/docs/api/errors) if there were validation errors, or the Proxy failed to create.
@@ -409,13 +342,6 @@ Get a list of proxies for the Tenant.
 <Permission content="proxy:read" />
 
 ### Request
-
-#### Query Parameters
-
-| Parameter | Required | Type     | Default | Description                                                     |
-| --------- | -------- | -------- | ------- | --------------------------------------------------------------- |
-| `id`      | false    | _array_  | `[]`    | An optional list of Proxy ID's to filter the list of proxies by |
-| `name`    | false    | _string_ | `null`  | Wildcard search of proxies by name                              |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -484,6 +410,13 @@ func main() {
 
   </TabItem>
 </Tabs>
+
+#### Query Parameters
+
+| Parameter | Required | Type     | Default | Description                                                     |
+| --------- | -------- | -------- | ------- | --------------------------------------------------------------- |
+| `id`      | false    | _array_  | `[]`    | An optional list of Proxy ID's to filter the list of proxies by |
+| `name`    | false    | _string_ | `null`  | Wildcard search of proxies by name                              |
 
 ### Response
 
@@ -554,12 +487,6 @@ Get a Proxy by ID in the Tenant.
 
 ### Request
 
-#### URI Parameters
-
-| Parameter | Required | Type   | Default | Description         |
-| --------- | -------- | ------ | ------- | ------------------- |
-| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
-
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
@@ -629,6 +556,12 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description         |
+| --------- | -------- | ------ | ------- | ------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
+
 ### Response
 
 Returns a [Proxy](#proxy-object) with the `id` provided. Returns [an error](/docs/api/errors) if the Proxy could not be retrieved.
@@ -690,24 +623,6 @@ Update a Proxy by ID in the Tenant.
 <Permission content="proxy:update" />
 
 ### Request
-
-#### URI Parameters
-
-| Parameter | Required | Type   | Default | Description         |
-| --------- | -------- | ------ | ------- | ------------------- |
-| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
-
-#### Request Parameters
-
-| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                  |
-| -------------------- | -------- | ---------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                         |
-| `destination_url`    | true     | _string_                                                   | `null`  | The URL to proxy requests to                                                                                                                                                                                                 |
-| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                         |
-| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                |
-| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Proxy Transform runtime. |
-| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                        |
-| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                   |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -950,6 +865,24 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description         |
+| --------- | -------- | ------ | ------- | ------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
+
+#### Request Parameters
+
+| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                  |
+| -------------------- | -------- | ---------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                         |
+| `destination_url`    | true     | _string_                                                   | `null`  | The URL to proxy requests to                                                                                                                                                                                                 |
+| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                         |
+| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                |
+| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Proxy Transform runtime. |
+| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                        |
+| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                   |
+
 ### Response
 
 Returns a [Proxy](#proxy-object) if the Proxy was updated. Returns [an error](/docs/api/errors) if there were validation errors, or the Proxy failed to update.
@@ -1012,12 +945,6 @@ Delete a Proxy by ID in the Tenant.
 <Permission content="proxy:delete" />
 
 ### Request
-
-#### URI Parameters
-
-| Parameter | Required | Type   | Default | Description         |
-| --------- | -------- | ------ | ------- | ------------------- |
-| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -1088,6 +1015,79 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description         |
+| --------- | -------- | ------ | ------- | ------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
+
 ### Response
 
 Returns [an error](/docs/api/errors) if the Proxy failed to delete.
+
+## Proxy Object
+
+| Attribute            | Type                                         | Description                                                                                                                                                                                                                             |
+| -------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                 | _uuid_                                       | Unique identifier of the Proxy which can be used to [get a Proxy](/docs/api/proxies#get-a-proxy)                                                                                                                                        |
+| `key`                | _string_                                     | Auto-generated key used to [invoke a particular Proxy](/docs/api/proxies/invoke-proxy#proxying-requests)                                                                                                                                |
+| `name`               | _string_                                     | The name of the Proxy                                                                                                                                                                                                                   |
+| `destination_url`    | _string_                                     | The URL to proxy requests to                                                                                                                                                                                                            |
+| `tenant_id`          | _uuid_                                       | The [Tenant](/docs/api/tenants) ID which owns the Proxy                                                                                                                                                                                 |
+| `require_auth`       | _boolean_                                    | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                              |
+| `request_transform`  | _[Proxy Transform](#proxy-transform-object)_ | (Optional) Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                         |
+| `response_transform` | _[Proxy Transform](#proxy-transform-object)_ | (Optional) Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                |
+| `application_id`     | _string_                                     | (Optional) This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Proxy Transform runtime. |
+| `configuration`      | _map_                                        | (Optional) A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                        |
+| `created_by`         | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Proxy                                                                                                                                           |
+| `created_at`         | _string_                                     | (Optional) Created date of the Proxy in ISO 8601 format                                                                                                                                                                                 |
+| `modified_by`        | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Proxy                                                                                                                                     |
+| `modified_at`        | _date_                                       | (Optional) Last modified date of the Proxy in ISO 8601 format                                                                                                                                                                           |
+
+### Proxy Transform Object
+
+| Attribute | Type     | Description                                                                                    |
+| --------- | -------- | ---------------------------------------------------------------------------------------------- |
+| `code`    | _string_ | [Transform code](#transform-code) which will be executed when the Proxy transform is processed |
+
+### Transform Code
+
+All transform code snippets must export a function which takes in a [request object](#transform-request-object) and returns a [response object](#transform-response-object).
+
+#### Transform Request Object
+
+This is the object passed as a parameter to the transform function.
+
+| Attribute       | Type     | Description                                                                                                               |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `args`          | _object_ | The arguments containing the `body` and `headers` attributes                                                              |
+| `configuration` | _object_ | The configuration defined for the [Proxy object](#proxies-proxy-object)                                                   |
+| `bt`            | _object_ | A pre-configured Basis Theory JS instance if an `application` was configured on the [Proxy object](#proxies-proxy-object) |
+
+#### Transform Response Object
+
+This is the object that must be returned by the transform function.
+
+| Attribute | Type     | Description                                      |
+| --------- | -------- | ------------------------------------------------ |
+| `body`    | _object_ | Processed body for the proxy request/response    |
+| `headers` | _object_ | Processed headers for the proxy request/response |
+
+Transform Code is written in Javascript (targeting Node.js v16) and generally follows the structure:
+
+```javascript showLineNumbers
+module.exports = async function (req) {
+  const { bt, args } = req;
+  const { body, headers } = args; // access any args provided with the transform request
+  const { MY_CONFIG } = req.configuration; // access any static config defined on the Proxy
+
+  // do anything here!
+  const processedBody = ...; // do something with body
+  const processedHeaders = ...; // do something with headers
+
+  return {
+      body: processedBody, // Proxy request/response body
+      headers: processedHeaders // Proxy request/response headers
+  };
+};
+```

@@ -17,50 +17,6 @@ Tenant Members enable user management operations within the context of a Tenant.
 New members can be invited via e-mail to join an existing tenant.
 Upon accepting a Tenant Invitation, a new Tenant Member will be created.
 
-## Tenant Member Object
-
-| Attribute     | Type                          | Description                                                                                                 |
-| ------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `id`          | _uuid_                        | Unique identifier of the Tenant Member                                                                      |
-| `tenant_id`   | _uuid_                        | The [Tenant](/docs/api/tenants#tenant-object) ID that the membership is attached                            |
-| `role`        | _string_                      | The [Role](#roles) assigned to the Tenant Member                                                            |
-| `user`        | _[user object](#user-object)_ | The User which this membership is attached to                                                               |
-| `created_by`  | _uuid_                        | (Optional) The ID of the User or [Application](/docs/api/applications) that created the Tenant Member       |
-| `created_at`  | _date_                        | (Optional) Created date of the Tenant Member in ISO 8601 format                                             |
-| `modified_by` | _uuid_                        | (Optional) The ID of the User or [Application](/docs/api/applications) that last modified the Tenant Member |
-| `modified_at` | _date_                        | (Optional) Last modified date of the Tenant Member in ISO 8601 format                                       |
-
-### Roles
-
-| Role    | Description                                                                                                                                  |
-| ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `OWNER` | The `OWNER` role is automatically assigned to the Tenant Owner and grants full access to all features. The Tenant `OWNER` cannot be deleted. |
-| `ADMIN` | The `ADMIN` role is assigned by default to all members and grants full access to all features.                                               |
-
-### User Object
-
-| Attribute    | Type     | Description                                     |
-| ------------ | -------- | ----------------------------------------------- |
-| `id`         | _uuid_   | Unique identifier of the User                   |
-| `email`      | _string_ | (Optional) The e-mail address of the User       |
-| `first_name` | _string_ | (Optional) The User's first name                |
-| `last_name`  | _string_ | (Optional) The User's last name                 |
-| `picture`    | _string_ | (Optional) A URI pointing to the User's picture |
-
-## Tenant Invitation Object
-
-| Attribute     | Type     | Description                                                                                                                                                                                                                                                            |
-| ------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`          | _uuid_   | Unique identifier of the Tenant Invitation                                                                                                                                                                                                                             |
-| `tenant_id`   | _uuid_   | The [Tenant](/docs/api/tenants#tenant-object) ID that the invitation is tied to. When the invitation is accepted, a new Tenant Member will be created in this Tenant.                                                                                                  |
-| `email`       | _string_ | The invitee's e-mail address                                                                                                                                                                                                                                           |
-| `status`      | _string_ | The status of the invitation (i.e. `PENDING` or `EXPIRED`)                                                                                                                                                                                                             |
-| `expires_at`  | _date_   | The expiration date of the invitation is ISO 8601 format. By default, the invitation expires 72 hours from the time it was created. Invitations can be resent to extend the expiration, but doing so will invalidate the previous invitation link sent to the invitee. |
-| `created_by`  | _uuid_   | (Optional) The ID of the User or [Application](/docs/api/applications) that created the Tenant Invitation                                                                                                                                                              |
-| `created_at`  | _date_   | (Optional) Created date of the Tenant Invitation in ISO 8601 format                                                                                                                                                                                                    |
-| `modified_by` | _uuid_   | (Optional) The ID of the User or [Application](/docs/api/applications) that last modified the Tenant Invitation                                                                                                                                                        |
-| `modified_at` | _date_   | (Optional) Last modified date of the Tenant Invitation in ISO 8601 format                                                                                                                                                                                              |
-
 ## List Tenant Members
 
 Get a list of Tenant Members for the Tenant.
@@ -75,14 +31,6 @@ Get a list of Tenant Members for the Tenant.
 <Permission content="tenant:member:read" />
 
 ### Request
-
-#### Query Parameters
-
-| Parameter | Required | Type      | Default | Description                                                                                                     |
-| --------- | -------- | --------- | ------- | --------------------------------------------------------------------------------------------------------------- |
-| `user_id` | false    | _uuid_    | `null`  | One to many User IDs to query for. Multiple IDs can be passed in the form `?user_id=<value1>&user_id=<value2>`. |
-| `page`    | false    | _integer_ | `1`     | Page number of the results to return.                                                                           |
-| `size`    | false    | _integer_ | `20`    | Number of the results to return per page. Maximum size of 50 results.                                           |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -152,6 +100,14 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### Query Parameters
+
+| Parameter | Required | Type      | Default | Description                                                                                                     |
+| --------- | -------- | --------- | ------- | --------------------------------------------------------------------------------------------------------------- |
+| `user_id` | false    | _uuid_    | `null`  | One to many User IDs to query for. Multiple IDs can be passed in the form `?user_id=<value1>&user_id=<value2>`. |
+| `page`    | false    | _integer_ | `1`     | Page number of the results to return.                                                                           |
+| `size`    | false    | _integer_ | `20`    | Number of the results to return per page. Maximum size of 50 results.                                           |
+
 ### Response
 
 Returns a [paginated object](/docs/api/pagination) with the `data` property containing an array of [Tenant Members](#tenant-member-object). Providing any query parameters will filter the results. Returns [an error](/docs/api/errors) if Tenant Members could not be retrieved.
@@ -196,12 +152,6 @@ Delete a Tenant Member by ID from the Tenant. Deleting a Tenant Member will revo
 <Permission content="tenant:member:delete" />
 
 ### Request
-
-#### URI Parameters
-
-| Parameter | Required | Type   | Default | Description                 |
-| --------- | -------- | ------ | ------- | --------------------------- |
-| `id`      | true     | _uuid_ | `null`  | The ID of the Tenant Member |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -272,6 +222,12 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description                 |
+| --------- | -------- | ------ | ------- | --------------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the Tenant Member |
+
 ### Response
 
 Returns [an error](/docs/api/errors) if the Tenant Member could not be deleted.
@@ -290,12 +246,6 @@ Invite a new member to join this Tenant. Creating a Tenant Invitation will send 
 <Permission content="tenant:invitation:create" />
 
 ### Request
-
-#### Request Parameters
-
-| Attribute | Required | Type     | Default | Description                                                                                                                       |
-| --------- | -------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `email`   | true     | _string_ | `null`  | The invitee's e-mail address. Has to be a well-formed e-mail address ([RFC 5322](https://datatracker.ietf.org/doc/html/rfc5322)). |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -379,6 +329,12 @@ func main() {
 
   </TabItem>
 </Tabs>
+
+#### Request Parameters
+
+| Attribute | Required | Type     | Default | Description                                                                                                                       |
+| --------- | -------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `email`   | true     | _string_ | `null`  | The invitee's e-mail address. Has to be a well-formed e-mail address ([RFC 5322](https://datatracker.ietf.org/doc/html/rfc5322)). |
 
 ### Response
 
@@ -484,6 +440,12 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description                     |
+| --------- | -------- | ------ | ------- | ------------------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the Tenant Invitation |
+
 ### Response
 
 Returns a [Tenant Invitation](#tenant-inviation-object) if the Tenant Invitation was resent. Returns [an error](/docs/api/errors) if there were validation errors, or the Tenant Invitation failed to resend.
@@ -514,13 +476,6 @@ Get a list of Tenant Invitations for the Tenant.
 <Permission content="tenant:invitation:read" />
 
 ### Request
-
-#### Query Parameters
-
-| Parameter | Required | Type      | Default | Description                                                            |
-| --------- | -------- | --------- | ------- | ---------------------------------------------------------------------- |
-| `page`    | false    | _integer_ | `1`     | Page number of the results to return.                                  |
-| `size`    | false    | _integer_ | `20`    | Number of the results to return per page. Maximum size of 100 results. |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -590,6 +545,13 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### Query Parameters
+
+| Parameter | Required | Type      | Default | Description                                                            |
+| --------- | -------- | --------- | ------- | ---------------------------------------------------------------------- |
+| `page`    | false    | _integer_ | `1`     | Page number of the results to return.                                  |
+| `size`    | false    | _integer_ | `20`    | Number of the results to return per page. Maximum size of 100 results. |
+
 ### Response
 
 Returns a [paginated object](/docs/api/pagination) with the `data` property containing an array of [Tenant Invitations](#tenant-invitation-object).
@@ -629,12 +591,6 @@ Get a Tenant Invitation by ID in the Tenant.
 <Permission content="tenant:invitation:read" />
 
 ### Request
-
-#### URI Parameters
-
-| Parameter | Required | Type   | Default | Description                     |
-| --------- | -------- | ------ | ------- | ------------------------------- |
-| `id`      | true     | _uuid_ | `null`  | The ID of the Tenant Invitation |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -706,6 +662,12 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description                     |
+| --------- | -------- | ------ | ------- | ------------------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the Tenant Invitation |
+
 ### Response
 
 Returns a [Tenant Invitation](#tenant-invitation-object) with the `id` provided. Returns [an error](/docs/api/errors) if the Tenant Invitation could not be retrieved.
@@ -736,12 +698,6 @@ Delete a Tenant Invitation by ID from the Tenant. Deleting a Tenant Invitation w
 <Permission content="tenant:invitation:delete" />
 
 ### Request
-
-#### URI Parameters
-
-| Parameter | Required | Type   | Default | Description                     |
-| --------- | -------- | ------ | ------- | ------------------------------- |
-| `id`      | true     | _uuid_ | `null`  | The ID of the Tenant Invitation |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -812,6 +768,56 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description                     |
+| --------- | -------- | ------ | ------- | ------------------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the Tenant Invitation |
+
 ### Response
 
 Returns [an error](/docs/api/errors) if the Tenant Invitation could not be deleted.
+
+## Tenant Member Object
+
+| Attribute     | Type                          | Description                                                                                                 |
+| ------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `id`          | _uuid_                        | Unique identifier of the Tenant Member                                                                      |
+| `tenant_id`   | _uuid_                        | The [Tenant](/docs/api/tenants#tenant-object) ID that the membership is attached                            |
+| `role`        | _string_                      | The [Role](#roles) assigned to the Tenant Member                                                            |
+| `user`        | _[user object](#user-object)_ | The User which this membership is attached to                                                               |
+| `created_by`  | _uuid_                        | (Optional) The ID of the User or [Application](/docs/api/applications) that created the Tenant Member       |
+| `created_at`  | _date_                        | (Optional) Created date of the Tenant Member in ISO 8601 format                                             |
+| `modified_by` | _uuid_                        | (Optional) The ID of the User or [Application](/docs/api/applications) that last modified the Tenant Member |
+| `modified_at` | _date_                        | (Optional) Last modified date of the Tenant Member in ISO 8601 format                                       |
+
+### Roles
+
+| Role    | Description                                                                                                                                  |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `OWNER` | The `OWNER` role is automatically assigned to the Tenant Owner and grants full access to all features. The Tenant `OWNER` cannot be deleted. |
+| `ADMIN` | The `ADMIN` role is assigned by default to all members and grants full access to all features.                                               |
+
+### User Object
+
+| Attribute    | Type     | Description                                     |
+| ------------ | -------- | ----------------------------------------------- |
+| `id`         | _uuid_   | Unique identifier of the User                   |
+| `email`      | _string_ | (Optional) The e-mail address of the User       |
+| `first_name` | _string_ | (Optional) The User's first name                |
+| `last_name`  | _string_ | (Optional) The User's last name                 |
+| `picture`    | _string_ | (Optional) A URI pointing to the User's picture |
+
+## Tenant Invitation Object
+
+| Attribute     | Type     | Description                                                                                                                                                                                                                                                            |
+| ------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`          | _uuid_   | Unique identifier of the Tenant Invitation                                                                                                                                                                                                                             |
+| `tenant_id`   | _uuid_   | The [Tenant](/docs/api/tenants#tenant-object) ID that the invitation is tied to. When the invitation is accepted, a new Tenant Member will be created in this Tenant.                                                                                                  |
+| `email`       | _string_ | The invitee's e-mail address                                                                                                                                                                                                                                           |
+| `status`      | _string_ | The status of the invitation (i.e. `PENDING` or `EXPIRED`)                                                                                                                                                                                                             |
+| `expires_at`  | _date_   | The expiration date of the invitation is ISO 8601 format. By default, the invitation expires 72 hours from the time it was created. Invitations can be resent to extend the expiration, but doing so will invalidate the previous invitation link sent to the invitee. |
+| `created_by`  | _uuid_   | (Optional) The ID of the User or [Application](/docs/api/applications) that created the Tenant Invitation                                                                                                                                                              |
+| `created_at`  | _date_   | (Optional) Created date of the Tenant Invitation in ISO 8601 format                                                                                                                                                                                                    |
+| `modified_by` | _uuid_   | (Optional) The ID of the User or [Application](/docs/api/applications) that last modified the Tenant Invitation                                                                                                                                                        |
+| `modified_at` | _date_   | (Optional) Last modified date of the Tenant Invitation in ISO 8601 format                                                                                                                                                                                              |

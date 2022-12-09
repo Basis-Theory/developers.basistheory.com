@@ -33,18 +33,6 @@ Creating an association between two existing tokens requires read permission on 
 
 ### Request
 
-#### URI Parameters
-
-| Parameter   | Required | Type     | Default | Description                |
-| ----------- | -------- | -------- | ------- | -------------------------- |
-| `parent_id` | true     | _string_ | `null`  | The ID of the parent token |
-| `child_id`  | true     | _string_ | `null`  | The ID of the child token  |
-
-<Alert>
-  Bi-directional associations can be made between two tokens by creating a token
-  association and swapping the <code>parent_id</code> and <code>child_id</code>.
-</Alert>
-
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
@@ -119,6 +107,18 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter   | Required | Type     | Default | Description                |
+| ----------- | -------- | -------- | ------- | -------------------------- |
+| `parent_id` | true     | _string_ | `null`  | The ID of the parent token |
+| `child_id`  | true     | _string_ | `null`  | The ID of the child token  |
+
+<Alert>
+  Bi-directional associations can be made between two tokens by creating a token
+  association and swapping the <code>parent_id</code> and <code>child_id</code>.
+</Alert>
+
 ### Response
 
 Returns [an error](/docs/api/errors) if the token association failed to create.
@@ -137,13 +137,6 @@ Delete a parent/child association between two tokens in the Tenant.
 <Permission content="token:delete" />
 
 ### Request
-
-#### URI Parameters
-
-| Parameter   | Required | Type     | Default | Description                |
-| ----------- | -------- | -------- | ------- | -------------------------- |
-| `parent_id` | true     | _string_ | `null`  | The ID of the parent token |
-| `child_id`  | true     | _string_ | `null`  | The ID of the child token  |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -219,6 +212,13 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter   | Required | Type     | Default | Description                |
+| ----------- | -------- | -------- | ------- | -------------------------- |
+| `parent_id` | true     | _string_ | `null`  | The ID of the parent token |
+| `child_id`  | true     | _string_ | `null`  | The ID of the child token  |
+
 ### Response
 
 Returns [an error](/docs/api/errors) if the token association failed to delete.
@@ -240,16 +240,6 @@ Create a new child token a token in the Tenant.
 Creating a child token requires the appropriate create permission to the child token and read permission to the parent token.
 
 ### Request
-
-#### URI Parameters
-
-| Parameter   | Required | Type     | Default | Description                |
-| ----------- | -------- | -------- | ------- | -------------------------- |
-| `parent_id` | true     | _string_ | `null`  | The ID of the parent token |
-
-#### Request Parameters
-
-See [Create Token](/docs/api/tokens#create-token) for supported request parameters.
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -358,6 +348,16 @@ func main() {
   </TabItem>
 </Tabs>
 
+#### URI Parameters
+
+| Parameter   | Required | Type     | Default | Description                |
+| ----------- | -------- | -------- | ------- | -------------------------- |
+| `parent_id` | true     | _string_ | `null`  | The ID of the parent token |
+
+#### Request Parameters
+
+See [Create Token](/docs/api/tokens#create-token) for supported request parameters.
+
 ### Response
 
 Returns a [token](/docs/api/tokens#token-object) if the child token was created for the parent token. Returns [an error](/docs/api/errors) if there were validation errors, or the token failed to create.
@@ -390,19 +390,6 @@ Get a list of child tokens for a token in the Tenant.
 <Permission content="token:read" />
 
 ### Request
-
-#### URI Parameters
-
-| Parameter   | Required | Type     | Default | Description                |
-| ----------- | -------- | -------- | ------- | -------------------------- |
-| `parent_id` | true     | _string_ | `null`  | The ID of the parent token |
-
-#### Query Parameters
-
-| Parameter | Required | Type    | Default | Description                                                                                            |
-| --------- | -------- | ------- | ------- | ------------------------------------------------------------------------------------------------------ |
-| `id`      | false    | _array_ | `[]`    | An optional list of token ID's to filter the list of child tokens by                                   |
-| `type`    | false    | _array_ | `[]`    | An optional array of [token types](/docs/api/tokens/token-types) to filter the list of child tokens by |
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -473,6 +460,19 @@ func main() {
 
   </TabItem>
 </Tabs>
+
+#### URI Parameters
+
+| Parameter   | Required | Type     | Default | Description                |
+| ----------- | -------- | -------- | ------- | -------------------------- |
+| `parent_id` | true     | _string_ | `null`  | The ID of the parent token |
+
+#### Query Parameters
+
+| Parameter | Required | Type    | Default | Description                                                                                            |
+| --------- | -------- | ------- | ------- | ------------------------------------------------------------------------------------------------------ |
+| `id`      | false    | _array_ | `[]`    | An optional list of token ID's to filter the list of child tokens by                                   |
+| `type`    | false    | _array_ | `[]`    | An optional array of [token types](/docs/api/tokens/token-types) to filter the list of child tokens by |
 
 ### Response
 
