@@ -6,9 +6,9 @@ import { Card } from "../shared/Card";
 import { Button } from "../shared/Button";
 
 import GithubRepo from "@site/static/img/github-banner/repository.svg";
-import Star from "@site/static/img/github-banner/Star.svg";
-import Contributor from "@site/static/img/github-banner/Contributor.svg";
-import Github from "@site/static/img/github-banner/Github.svg";
+import Star from "@site/static/img/github-banner/star.svg";
+import Contributor from "@site/static/img/github-banner/contributor.svg";
+import Github from "@site/static/img/github-banner/github.svg";
 
 interface GitHubBanner {
   title: string;
