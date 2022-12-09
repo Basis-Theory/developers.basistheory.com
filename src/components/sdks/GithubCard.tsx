@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 
-import styles from "./GithubCard.module.css";
 import { Button } from "../shared/Button";
+import styles from "./GithubCard.module.css";
 
-import Star from "@site/static/img/github-card/star.svg";
 import Contributor from "@site/static/img/github-card/contributor.svg";
 import Github from "@site/static/img/github-card/github.svg";
+import Star from "@site/static/img/github-card/star.svg";
 import { SdkCard } from "../shared/SdkCard";
+import { SDK } from "../types";
 
 interface GithubCard {
   title: string;
-  icon: string;
+  icon: SDK | `${SDK}`;
   organization: string;
   repository: string;
 }
@@ -19,7 +20,12 @@ interface GithubCard {
 const placeholder = "Loading";
 const placeholderUrl = "https://www.basistheory.com/";
 
-export const GithubCard = ({ title, organization, repository }: GithubCard) => {
+export const GithubCard = ({
+  title,
+  organization,
+  repository,
+  icon,
+}: GithubCard) => {
   const [githubUrl, setGithubUrl] = useState<string>("");
   const [stargazersCount, setStargazersCount] = useState<number>(null);
   const [releaseName, setReleaseName] = useState<string>(null);
@@ -60,6 +66,7 @@ export const GithubCard = ({ title, organization, repository }: GithubCard) => {
 
   return (
     <SdkCard
+      icon={icon}
       className={styles.container}
       title={title}
       repository={repository}

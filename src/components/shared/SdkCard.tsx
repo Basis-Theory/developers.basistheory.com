@@ -1,20 +1,22 @@
 import React, { ReactNode } from "react";
 
-import styles from "./SdkCard.module.css";
 import { Card } from "../shared/Card";
+import styles from "./SdkCard.module.css";
 
-import Package from "@site/static/img/sdk-card/package.svg";
 import Android from "@site/static/img/sdk-card/android.svg";
 import DotNet from "@site/static/img/sdk-card/dotNet.svg";
 import Go from "@site/static/img/sdk-card/go.svg";
 import Ios from "@site/static/img/sdk-card/ios.svg";
 import Node from "@site/static/img/sdk-card/node.svg";
+import Package from "@site/static/img/sdk-card/package.svg";
 import Python from "@site/static/img/sdk-card/python.svg";
 import ReactSvg from "@site/static/img/sdk-card/react.svg";
 import Terraform from "@site/static/img/sdk-card/terraform.svg";
 import clsx from "clsx";
+import { isValidSdk, SDK } from "../types";
 
 interface SdkCard {
+  icon: SDK | `${SDK}`;
   title: string;
   repository: string;
   metadata?: ReactNode;
@@ -23,22 +25,26 @@ interface SdkCard {
 }
 
 export const SdkCard = ({
+  icon,
   title,
   repository,
   metadata,
   cta,
   className,
 }: SdkCard) => {
+  if (!icon) throw Error("Missing SDK icon");
+  if (!isValidSdk(icon)) throw Error("Invalid SDK.");
+
   const Icon = {
-    ".NET SDK": DotNet,
-    "Go SDK": Go,
-    "Python SDK": Python,
-    "Terraform SDK": Terraform,
-    "Node.js SDK": Node,
-    "React SDK": ReactSvg,
-    "Android SDK": Android,
-    "iOS SDK": Ios,
-  }[title];
+    [SDK.DOT_NET]: DotNet,
+    [SDK.GO]: Go,
+    [SDK.PYTHON]: Python,
+    [SDK.TERRAFORM]: Terraform,
+    [SDK.NODE]: Node,
+    [SDK.REACT]: ReactSvg,
+    [SDK.ANDROID]: Android,
+    [SDK.IOS]: Ios,
+  }[icon];
 
   return (
     <Card className={clsx([className, styles.container])}>
