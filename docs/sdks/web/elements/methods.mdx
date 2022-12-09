@@ -2,6 +2,8 @@
 sidebar_label: Methods & Events
 ---
 
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
 # Elements Method & Events
 
 Basis Theory Elements offers several methods and events to listen to changes to your components and interact with the underlying data.
@@ -43,7 +45,7 @@ var subscription = cardElement.on("event-type", (event) => {
 subscription.unsubscribe(); // stops listening to the event type
 ```
 
-## On Ready
+### On Ready
 
 This event is triggered when the element has rendered and user is able to start interacting with it.
 
@@ -53,7 +55,7 @@ cardElement.on("ready", () => {
 });
 ```
 
-## On Change
+### On Change
 
 This event is triggered whenever element's value(s) change. For example, if the user types data that doesn't change the state of a field between valid/invalid or empty/filled, you shouldn't expect the event to trigger.
 
@@ -73,7 +75,7 @@ cardElement.on("change", (changeEvent) => {
 | `event`   | true     | _"change"_ | The event type to listen to.                                                                    |
 | `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [ChangeEvent](#changeevent). |
 
-### ChangeEvent
+#### ChangeEvent
 
 ```json showLineNumbers
 {
@@ -96,7 +98,7 @@ cardElement.on("change", (changeEvent) => {
 | `cardBrand` | _string_  | [card](./types#card-element)<br/>[cardNumber](./types#card-number-element) | (Optional) The credit card [brand](./options#card-brands) (e.g. `'american-express'`, `'visa'`, `'unknown'`). The value defaults to `'unknown'` until a card brand is recognized. |
 | `cardLast4` | _string_  | [card](./types#card-element)<br/>[cardNumber](./types#card-number-element) | (Optional) The credit card's last 4 digits. The value is not provided until a complete card number is entered.                                                                    |
 
-### FieldError
+#### FieldError
 
 ```json showLineNumbers
 {
@@ -110,7 +112,7 @@ cardElement.on("change", (changeEvent) => {
 | `targetId` | _string_                      | Input ID that triggered the error. Values vary per [element type](./types). |
 | `type`     | _"invalid"_ or _"incomplete"_ | Type of the error.                                                          |
 
-## On Focus
+### On Focus
 
 Triggered when an element input is focused.
 
@@ -123,7 +125,7 @@ cardElement.on("focus", (focusEvent) => {});
 | `event`   | true     | _"focus"_  | The event type to listen to.                                                                  |
 | `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [FocusEvent](#focusevent). |
 
-### FocusEvent
+#### FocusEvent
 
 ```json showLineNumbers
 {
@@ -135,7 +137,7 @@ cardElement.on("focus", (focusEvent) => {});
 | ---------- | -------- | --------------------------------------------------------------------------- |
 | `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](./types). |
 
-## On Blur
+### On Blur
 
 Triggered when an element input focus is lost.
 
@@ -148,7 +150,7 @@ cardElement.on("blur", (blurEvent) => {});
 | `event`   | true     | _"blur"_   | The event type to listen to.                                                                |
 | `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [BlurEvent](#blurevent). |
 
-### BlurEvent
+#### BlurEvent
 
 ```json showLineNumbers
 {
@@ -160,7 +162,7 @@ cardElement.on("blur", (blurEvent) => {});
 | ---------- | -------- | --------------------------------------------------------------------------- |
 | `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](./types). |
 
-## On Keydown
+### On Keydown
 
 Triggered when user hits a special key inside an element input.
 
@@ -173,7 +175,7 @@ cardElement.on("keydown", (keydownEvent) => {});
 | `event`   | true     | _"keydown"_ | The event type to listen to.                                                                      |
 | `handler` | true     | _function_  | Callback function to be called when the event is fired. Takes in a [KeydownEvent](#keydownevent). |
 
-### KeydownEvent
+#### KeydownEvent
 
 ```json showLineNumbers
 {
@@ -194,3 +196,292 @@ cardElement.on("keydown", (keydownEvent) => {});
 | `altKey`   | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/altKey" target="_blank">`alt` key</a> was pressed when the event occurred.      |
 | `shiftKey` | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/shiftKey" target="_blank">`shift` key</a> was pressed when the event occurred.  |
 | `metaKey`  | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey" target="_blank">`meta` key</a> was pressed when the event occurred.    |
+
+## Tokenization
+
+Elements' values can be securely tokenized using [`tokens.create`](/#tokens-create-token) and [`tokenize`](/#tokenize)
+services. To do that, simply pass the Element instance (or one of its [data parsing methods](#element-methods)) in the payload.
+
+You can fetch this same data later with [Get a Token API](/api-reference#tokens-get-a-token)
+
+```javascript showLineNumbers title="Create generic token"
+BasisTheory.tokens
+  .create({
+    type: "token",
+    data: {
+      sensitiveData: sensitiveDataElement,
+      nonSensitiveData: "plainText", // see warning on plain text data
+      otherData: {
+        someInteger: 20,
+        someBoolean: false,
+      },
+      someOtherData: ["plainText1", "plainText2"],
+    },
+    metadata: {
+      nonSensitiveField: "nonSensitiveValue",
+    },
+  })
+  .then((token) => {
+    console.log(token.id); // token to store
+    console.log(JSON.stringify(token)); // full response
+  });
+```
+
+```javascript showLineNumbers title="Create card token"
+BasisTheory.tokens
+  .create({
+    type: "card",
+    data: cardElement,
+  })
+  .then((token) => {
+    console.log(token.id); // token to store
+    console.log(JSON.stringify(token.data)); // redacted card data
+  });
+```
+
+```javascript showLineNumbers title="Create bank token"
+BasisTheory.tokens
+  .create({
+    type: "bank",
+    data: {
+      routingNumber: routingNumberElement,
+      accountNumber: accountNumberElement,
+    },
+  })
+  .then((token) => {
+    console.log(token.id); // token to store
+    console.log(JSON.stringify(token.data)); // redacted bank data
+  });
+```
+
+```javascript showLineNumbers title="Tokenize data"
+BasisTheory.tokenize({
+  card1: {
+    type: "card",
+    data: cardElement,
+  },
+  card2: {
+    type: "card",
+    data: {
+      number: cardNumberElement,
+      expiration_month: cardExpirationDateElement.month(),
+      expiration_year: cardExpirationDateElement.year(),
+      cvc: cardVerificationCodeElement,
+    },
+  },
+  sensitiveData: sensitiveDataElement,
+  nonSensitiveData: "plainText", // see warning on plain text data
+  otherData: {
+    someInteger: 20,
+    someBoolean: false,
+  },
+  someOtherData: ["plainText1", "plainText2"],
+}).then((tokens) => {
+  console.log(tokens.card1.id, tokens.card2.id, tokens.sensitiveData); // token to store
+  console.log(JSON.stringify(tokens)); // full response
+});
+```
+
+<Alert>
+  The actual input data never leaves the element (iframe) other than to hit our
+  secure API endpoints.
+</Alert>
+
+<Alert type={Alerts.WARNING}>
+  When submitting <code>plainText</code> values, data will be HTML encoded
+  before storage for security reasons.
+</Alert>
+
+### Errors
+
+Elements services could throw an error based on client-side validations or if the server rejects the request.
+
+```javascript showLineNumbers title="Handling services errors"
+import {
+  BasisTheoryApiError,
+  BasisTheoryValidationError,
+} from "@basis-theory/basis-theory-js/common";
+
+BasisTheory.tokenize({
+  card1: {
+    type: "card",
+    data: cardElement1,
+  },
+  card2: {
+    type: "card",
+    data: cardElement2,
+  },
+  ssn: textElement,
+}).catch((error) => {
+  if (error instanceof BasisTheoryValidationError) {
+    // check error details
+  } else if (error instanceof BasisTheoryApiError) {
+    // check error data or status
+  }
+});
+```
+
+#### BasisTheoryValidationError
+
+```javascript showLineNumbers
+{
+  details: {
+    card1: {
+      number: {
+        type: 'invalid'
+      },
+      cvc: {
+        type: 'incomplete'
+      }
+    },
+    card2: {
+    }
+  },
+  validation: [] // deprecated
+}
+```
+
+| Attribute | Type     | Description                                                                |
+| --------- | -------- | -------------------------------------------------------------------------- |
+| `name`    | string   | Error name, always `'BasisTheoryValidationError'`.                         |
+| `details` | _object_ | Maps payload properties to their respective element's validation problems. |
+
+#### BasisTheoryApiError
+
+```javascript showLineNumbers
+{
+  data: {
+    // API response body
+  },
+  status: 400
+}
+```
+
+| Attribute | Type     | Description                                             |
+| --------- | -------- | ------------------------------------------------------- |
+| `name`    | string   | Error name, always `'BasisTheoryApiError'`.             |
+| `data`    | _object_ | Response body [sent from the server](/docs/api/errors). |
+| `status`  | _number_ | Response HTTP status.                                   |
+
+<Alert>
+  Error <code>name</code> property may be used instead of checking its instance
+  type.
+</Alert>
+
+## Detokenization
+
+Elements' values can be securely revealed using the [`tokens.retrieve`](/docs/api/tokens#get-a-token) service and the Elements' [`setValue`](#methods)
+method. When `retrieve` is called from a Basis Theory instance configured with `elements: true`, the API request is made from inside a Basis Theory hosted `iframe` and the returned data remains within it.
+
+```javascript showLineNumbers title="Retrieve 'string' token data and set value into TextElement"
+const textElement = BasisTheory.createElement("text", {
+  targetId: "text-element",
+});
+
+BasisTheory.tokens
+  .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
+    apiKey: "key_N88mVGsp3sCXkykyN2EFED", // api key is required and should belong to an 'expiring' application
+  })
+  .then((token) => {
+    textElement.setValue(token.data);
+  });
+```
+
+```javascript showLineNumbers title="Retrieve card token and set value into CardElement"
+const cardElement = BasisTheory.createElement("card");
+
+BasisTheory.tokens
+  .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
+    apiKey: "key_N88mVGsp3sCXkykyN2EFED", // api key is required and should belong to an 'expiring' application
+  })
+  .then((token) => {
+    cardElement.setValue(token.data);
+  });
+
+// or
+
+BasisTheory.tokens
+  .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
+    apiKey: "key_N88mVGsp3sCXkykyN2EFED", // api key is required and should belong to an 'expiring' application
+  })
+  .then((token) => {
+    cardElement.setValue({
+      number: token.data.number, // expects string
+      expiration_month: token.data.expiration_month, // expects number
+      expiration_year: token.data.expiration_year, // expects number
+    });
+  });
+```
+
+```javascript showLineNumbers title="Retrieve card token and set value into split card elements"
+const cardNumberElement = BasisTheory.createElement("cardNumber", {
+  targetId: "card-number",
+});
+const cardExpirationDateElement = BasisTheory.createElement(
+  "cardExpirationDate",
+  { targetId: "card-expiration-date" }
+);
+
+BasisTheory.tokens
+  .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
+    apiKey: "key_N88mVGsp3sCXkykyN2EFED", // api key is required and should belong to an 'expiring' application
+  })
+  .then((token) => {
+    cardNumberElement.setValue(token.data.number);
+    cardExpirationDateElement.setValue({
+      month: token.data.expiration_month,
+      year: token.data.expiration_year,
+    });
+  });
+```
+
+<Alert type={Alerts.WARNING}>
+  The <code>data</code> attribute in the token returned by the{" "}
+  <code>retrieve</code> method is not the actual data, but a a synthetic
+  representation of the sensitive detokenized data.
+</Alert>
+
+<Alert>
+  Token attributes such as <code>metadata</code> are directly accessible from
+  the <code>retrieve</code> response as they are considered non-sensitive.
+</Alert>
+
+### Errors
+
+Elements services will throw an error if the server rejects the request.
+
+```javascript showLineNumbers title="Handling service errors"
+import { BasisTheoryApiError } from "@basis-theory/basis-theory-js/common";
+
+BasisTheory.tokens
+  .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
+    apiKey: "key_N88mVGsp3sCXkykyN2EFED", // api key is required and should belong to an 'expiring' application
+  })
+  .catch((error) => {
+    if (error instanceof BasisTheoryApiError) {
+      // check error details
+    }
+  });
+```
+
+#### BasisTheoryApiError
+
+```javascript showLineNumbers
+{
+  data: {
+    // API response body
+  },
+  status: 400
+}
+```
+
+| Attribute | Type     | Description                                             |
+| --------- | -------- | ------------------------------------------------------- |
+| `name`    | string   | Error name, always `'BasisTheoryApiError'`.             |
+| `data`    | _object_ | Response body [sent from the server](/docs/api/errors). |
+| `status`  | _number_ | Response HTTP status.                                   |
+
+<Alert>
+  Error <code>name</code> property may be used instead of checking its instance
+  type.
+</Alert>
