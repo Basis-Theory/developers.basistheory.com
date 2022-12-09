@@ -141,6 +141,7 @@ const sidebars = {
             'sdks/web/elements/content-security-policy',
             'sdks/web/elements/types',
             'sdks/web/elements/lifecycle',
+            'sdks/web/elements/options',
           ],
         },
         'sdks/web/react-elements'
