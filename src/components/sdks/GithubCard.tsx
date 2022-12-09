@@ -9,6 +9,7 @@ import Github from "@site/static/img/github-card/github.svg";
 import Star from "@site/static/img/github-card/star.svg";
 import { SdkCard } from "../shared/SdkCard";
 import { SDK } from "../types";
+import { Version } from "../shared/Version";
 
 interface GithubCard {
   title: string;
@@ -72,7 +73,7 @@ export const GithubCard = ({
       repository={repository}
       metadata={
         <div className={styles.metadata}>
-          <p className={styles.version}>{releaseName ?? placeholder}</p>
+          <Version>{releaseName ?? placeholder}</Version>
           <p>
             <Star /> {stargazersCount ?? placeholder} Stars
           </p>
