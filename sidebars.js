@@ -145,7 +145,17 @@ const sidebars = {
             'sdks/web/elements/methods',
           ],
         },
-        'sdks/web/react-elements'
+        {
+          type: 'category',
+          label: 'React Elements',
+          link: {
+            type: 'doc',
+            id: 'sdks/web/react-elements',
+          },
+          items: [
+            'sdks/web/react/components',
+          ],
+        },
       ],
     },
     // {

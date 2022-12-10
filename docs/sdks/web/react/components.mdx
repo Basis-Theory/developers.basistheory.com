@@ -1,0 +1,262 @@
+---
+sidebar_label: Components
+---
+
+import {
+  CardElement,
+  CardExpirationDateElement,
+  CardNumberElement,
+  CardVerificationCodeElement,
+  TextElement,
+} from "@basis-theory/basis-theory-react";
+import { BasisTheoryComponentDisplay } from "@site/src/components/sdks/BasisTheoryComponentDisplay";
+
+# Elements Components
+
+## CardElement
+
+The `CardElement` [component](https://reactjs.org/docs/components-and-props.html) features a full credit card form, wrapping the [Card Element type](../elements/types#card-element) functionality and taking care of the React lifecycle.
+
+<BasisTheoryComponentDisplay title="Live Card Element">
+  <CardElement id="types-card-element" />
+</BasisTheoryComponentDisplay>
+
+```javascript showLineNumbers
+import {
+  BasisTheoryProvider,
+  CardElement,
+  useBasisTheory,
+} from "@basis-theory/basis-theory-react";
+
+const App = () => {
+  // creates a new instance of BasisTheory class
+  const { bt } = useBasisTheory("test_1234567890", { elements: true });
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <MyComponent />
+    </BasisTheoryProvider>
+  );
+};
+
+const MyComponent = () => {
+  return <CardElement id="myCard" />; // Element will grab instance from the Context
+};
+```
+
+### Properties
+
+| Property       | Required | Type                 | Updatable | Description                                                                                                                                                                                |
+| -------------- | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`           | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization.                                                                                                                  |
+| `bt`           | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react-elements#basistheoryprovider) if configured.                                             |
+| `style`        | false    | _object_             | true      | [Object](../elements/options#style) used to customize the element appearance                                                                                                               |
+| `disabled`     | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete` | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `onReady`      | false    | _function_           | true      | Event Listener. See [On Ready](../elements/methods#on-ready)                                                                                                                               |
+| `onChange`     | false    | _function_           | true      | Event Listener. See [On Change](../elements/methods#on-change)                                                                                                                             |
+| `onFocus`      | false    | _function_           | true      | Event Listener. See [On Focus](../elements/methods#on-focus)                                                                                                                               |
+| `onBlur`       | false    | _function_           | true      | Event Listener. See [On Blur](../elements/methods#on-blur)                                                                                                                                 |
+| `onKeyDown`    | false    | _function_           | true      | Event Listener. See [On Keydown](../elements/methods#on-keydown)                                                                                                                           |
+| `ref`          | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react-elements#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                      |
+
+## TextElement
+
+The `TextElement` [component](https://reactjs.org/docs/components-and-props.html) features a regular text input for collecting any input data, by wrapping the [Text Element type](../elements/types#text-element) functionality and taking care of the React lifecycle.
+
+<BasisTheoryComponentDisplay title="Live Text Element">
+  <TextElement id="types-text-element" placeholder="John Doe" />
+</BasisTheoryComponentDisplay>
+
+```javascript showLineNumbers
+import {
+  BasisTheoryProvider,
+  TextElement,
+  useBasisTheory,
+} from "@basis-theory/basis-theory-react";
+
+const App = () => {
+  // creates a new instance of BasisTheory class
+  const { bt } = useBasisTheory("test_1234567890", { elements: true });
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <MyComponent />
+    </BasisTheoryProvider>
+  );
+};
+
+const MyComponent = () => {
+  return <TextElement id="myInput" placeholder="John Doe" />; // Element will grab instance from the Context
+};
+```
+
+### Properties
+
+| Property       | Required | Type                 | Updatable | Description                                                                                                                                                                                |
+| -------------- | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`           | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
+| `bt`           | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react-elements#basistheoryprovider) if configured.                                             |
+| `style`        | false    | _object_             | true      | [Object](../elements/options#style) used to customize the element appearance                                                                                                               |
+| `disabled`     | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete` | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `mask`         | false    | _array_              | false     | [Array](../elements/options#mask) used to restrict and fill user input using regex and static strings                                                                                      |
+| `transform`    | false    | _RegExp_             | true      | `RegExp` object or [array](../elements/options#transform) used to modify user input before [tokenization](../elements/methods#tokenization)                                                |
+| `placeholder`  | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
+| `aria-label`   | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
+| `password`     | false    | _boolean_            | true      | Boolean used to set the text element input type as [password](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password)                                                    |
+| `onReady`      | false    | _function_           | true      | Event listener. See [On Ready](../elements/methods#on-ready)                                                                                                                               |
+| `onChange`     | false    | _function_           | true      | Event listener. See [On Change](../elements/methods#on-change)                                                                                                                             |
+| `onFocus`      | false    | _function_           | true      | Event listener. See [On Focus](../elements/methods#on-focus)                                                                                                                               |
+| `onBlur`       | false    | _function_           | true      | Event listener. See [On Blur](../elements/methods#on-blur)                                                                                                                                 |
+| `onKeyDown`    | false    | _function_           | true      | Event listener. See [On Keydown](../elements/methods#on-keydown)                                                                                                                           |
+| `ref`          | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react-elements#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                      |
+
+## CardNumberElement
+
+The `CardNumberElement` [component](https://reactjs.org/docs/components-and-props.html) features a card number input, by wrapping the [Card Number Element type](../elements/types#card-number-element) functionality and taking care of the React lifecycle.
+
+<BasisTheoryComponentDisplay title="Live Card Number Element">
+  <CardNumberElement id="types-card-number-element" />
+</BasisTheoryComponentDisplay>
+
+```javascript showLineNumbers
+import {
+  BasisTheoryProvider,
+  CardNumberElement,
+  useBasisTheory,
+} from "@basis-theory/basis-theory-react";
+
+const App = () => {
+  // creates a new instance of BasisTheory class
+  const { bt } = useBasisTheory("test_1234567890", { elements: true });
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <MyComponent />
+    </BasisTheoryProvider>
+  );
+};
+
+const MyComponent = () => {
+  return <CardNumberElement id="cardNumber" />; // Element will grab instance from the Context
+};
+```
+
+### Properties
+
+| Property       | Required | Type                 | Updatable | Description                                                                                                                                                                                |
+| -------------- | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`           | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
+| `bt`           | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react-elements#basistheoryprovider) if configured.                                             |
+| `style`        | false    | _object_             | true      | [Object](../elements/options#style) used to customize the element appearance                                                                                                               |
+| `disabled`     | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete` | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `iconPosition` | false    | _string_             | true      | String used to determine the position of the card brand icon. Expected values are: `left` (default), `right` or `none`.                                                                    |
+| `placeholder`  | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
+| `aria-label`   | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
+| `onReady`      | false    | _function_           | true      | Event listener. See [On Ready](../elements/methods#on-ready)                                                                                                                               |
+| `onChange`     | false    | _function_           | true      | Event listener. See [On Change](../elements/methods#on-change)                                                                                                                             |
+| `onFocus`      | false    | _function_           | true      | Event listener. See [On Focus](../elements/methods#on-focus)                                                                                                                               |
+| `onBlur`       | false    | _function_           | true      | Event listener. See [On Blur](../elements/methods#on-blur)                                                                                                                                 |
+| `onKeyDown`    | false    | _function_           | true      | Event listener. See [On Keydown](../elements/methods#on-keydown)                                                                                                                           |
+| `ref`          | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react-elements#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                      |
+
+## CardExpirationDateElement
+
+The `CardExpirationDateElement` [component](https://reactjs.org/docs/components-and-props.html) features a card expiration date input, by wrapping the [Card Expiration Date Element type](../elements/types#card-expiration-date-element) functionality and taking care of the React lifecycle.
+
+<BasisTheoryComponentDisplay title="Live Card Expiration Date Element">
+  <CardExpirationDateElement id="types-card-expiration-date-element" />
+</BasisTheoryComponentDisplay>
+
+```javascript showLineNumbers
+import {
+  BasisTheoryProvider,
+  CardExpirationDateElement,
+  useBasisTheory,
+} from "@basis-theory/basis-theory-react";
+
+const App = () => {
+  // creates a new instance of BasisTheory class
+  const { bt } = useBasisTheory("test_1234567890", { elements: true });
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <MyComponent />
+    </BasisTheoryProvider>
+  );
+};
+
+const MyComponent = () => {
+  return <CardExpirationDateElement id="cardExpirationDate" />; // Element will grab instance from the Context
+};
+```
+
+### Properties
+
+| Property       | Required | Type                 | Updatable | Description                                                                                                                                                                                |
+| -------------- | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`           | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
+| `bt`           | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react-elements#basistheoryprovider) if configured.                                             |
+| `style`        | false    | _object_             | true      | [Object](../elements/options#style) used to customize the element appearance                                                                                                               |
+| `disabled`     | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete` | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `placeholder`  | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
+| `aria-label`   | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
+| `onReady`      | false    | _function_           | true      | Event listener. See [On Ready](../elements/methods#on-ready)                                                                                                                               |
+| `onChange`     | false    | _function_           | true      | Event listener. See [On Change](../elements/methods#on-change)                                                                                                                             |
+| `onFocus`      | false    | _function_           | true      | Event listener. See [On Focus](../elements/methods#on-focus)                                                                                                                               |
+| `onBlur`       | false    | _function_           | true      | Event listener. See [On Blur](../elements/methods#on-blur)                                                                                                                                 |
+| `onKeyDown`    | false    | _function_           | true      | Event listener. See [On Keydown](../elements/methods#on-keydown)                                                                                                                           |
+| `ref`          | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react-elements#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                      |
+
+## CardVerificationCodeElement
+
+The `CardVerificationCodeElement` [component](https://reactjs.org/docs/components-and-props.html) features a card security code input, by wrapping the [Card Verification Code Element type](../elements/types#card-verification-code-element) functionality and taking care of the React lifecycle.
+
+<BasisTheoryComponentDisplay title="Live Card Verification Code Element">
+  <CardVerificationCodeElement id="types-card-verification-code-element" />
+</BasisTheoryComponentDisplay>
+
+```tsx
+import {
+  BasisTheoryProvider,
+  CardVerificationCodeElement,
+  useBasisTheory,
+} from "@basis-theory/basis-theory-react";
+
+const App = () => {
+  // creates a new instance of BasisTheory class
+  const { bt } = useBasisTheory("test_1234567890", { elements: true });
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <MyComponent />
+    </BasisTheoryProvider>
+  );
+};
+
+const MyComponent = () => {
+  return <CardVerificationCodeElement id="cardVerificationCode" />; // Element will grab instance from the Context
+};
+```
+
+### Properties
+
+| Property       | Required | Type                 | Updatable | Description                                                                                                                                                                                |
+| -------------- | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`           | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
+| `bt`           | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react-elements#basistheoryprovider) if configured.                                             |
+| `style`        | false    | _object_             | true      | [Object](../elements/options#style) used to customize the element appearance                                                                                                               |
+| `disabled`     | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete` | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `cardBrand`    | false    | _string_             | true      | [String](../elements/options#card-brands) used to determine proper input format and default placeholder/aria-label                                                                         |
+| `placeholder`  | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
+| `aria-label`   | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
+| `onReady`      | false    | _function_           | true      | Event listener. See [On Ready](../elements/methods#on-ready)                                                                                                                               |
+| `onChange`     | false    | _function_           | true      | Event listener. See [On Change](../elements/methods#on-change)                                                                                                                             |
+| `onFocus`      | false    | _function_           | true      | Event listener. See [On Focus](../elements/methods#on-focus)                                                                                                                               |
+| `onBlur`       | false    | _function_           | true      | Event listener. See [On Blur](../elements/methods#on-blur)                                                                                                                                 |
+| `onKeyDown`    | false    | _function_           | true      | Event listener. See [On Keydown](../elements/methods#on-keydown)                                                                                                                           |
+| `ref`          | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react-elements#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                      |
