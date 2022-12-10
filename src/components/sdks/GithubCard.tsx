@@ -83,11 +83,9 @@ export const GithubCard = ({
         </div>
       }
       cta={
-        <a href={githubUrl ?? placeholderUrl} target="_blank">
-          <Button>
-            <Github /> See it in GitHub
-          </Button>
-        </a>
+        <Button href={githubUrl ?? placeholderUrl} target="_blank">
+          <Github /> See it in GitHub
+        </Button>
       }
     />
   );

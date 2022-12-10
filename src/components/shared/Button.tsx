@@ -1,20 +1,31 @@
 import clsx from "clsx";
-import React, {
-  ButtonHTMLAttributes,
-  DetailedHTMLProps,
-  PropsWithChildren,
-} from "react";
+import React, { PropsWithChildren } from "react";
 
 import styles from "./Button.module.css";
 
 export const Button = ({
   children,
   className,
-  ...otherProps
-}: PropsWithChildren<
-  DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
->) => (
-  <button {...otherProps} className={clsx([styles.button, className])}>
-    {children}
-  </button>
-);
+  variant = "primary",
+  ...other
+}: PropsWithChildren<{
+  variant?: "primary" | "secondary";
+  href?: string;
+  className?: string;
+  target?: string;
+  rel?: string;
+}>) => {
+  const variantClass = clsx({
+    [styles.primary]: variant == "primary",
+    [styles.secondary]: variant == "secondary",
+  });
+
+  const defaultElement = other.href ? "a" : "button";
+  const Root: React.ElementType = defaultElement;
+
+  return (
+    <Root {...other} className={clsx([styles.button, variantClass, className])}>
+      {children}
+    </Root>
+  );
+};
