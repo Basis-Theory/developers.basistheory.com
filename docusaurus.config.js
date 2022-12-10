@@ -81,6 +81,10 @@ const config = {
             label: "SDKs",
           },
           {
+            type: "custom-SignInButton",
+            position: "right",
+          },
+          {
             href: "https://github.com/basis-theory",
             label: "GitHub",
             position: "right",
@@ -139,7 +143,7 @@ const config = {
         additionalLanguages: ["csharp", "hcl"],
       },
       colorMode: {
-        defaultMode: 'dark'
+        defaultMode: "dark",
       },
       metadata: [
         {
