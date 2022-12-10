@@ -3,6 +3,7 @@ export enum SDK {
   GO = "go",
   PYTHON = "python",
   REACT = "react",
+  JAVASCRIPT = "javascript",
   TERRAFORM = "terraform",
   NODE = "node",
   ANDROID = "android",

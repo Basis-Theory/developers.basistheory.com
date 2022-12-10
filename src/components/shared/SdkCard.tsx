@@ -42,6 +42,7 @@ export const SdkCard = ({
     [SDK.TERRAFORM]: Terraform,
     [SDK.NODE]: Node,
     [SDK.REACT]: ReactSvg,
+    [SDK.JAVASCRIPT]: ReactSvg,
     [SDK.ANDROID]: Android,
     [SDK.IOS]: Ios,
   }[icon];
