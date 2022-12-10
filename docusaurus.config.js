@@ -85,8 +85,7 @@ const config = {
             position: "right",
           },
           {
-            href: "https://github.com/basis-theory",
-            label: "GitHub",
+            type: "custom-GithubButton",
             position: "right",
           },
         ],
