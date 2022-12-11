@@ -17,6 +17,38 @@ const sidebars = {
     'index',
     {
       type: 'category',
+      label: 'Collect Data',
+      items: [
+        'guides/collect/web',
+        'guides/collect/api'
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Share Data',
+      items: [
+        'guides/share/send-data'
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Blueprints',
+      items: [
+        {
+          type: 'category',
+          label: 'Cards',
+          link: {
+            type: 'doc',
+            id: 'blueprints/cards/index',
+          },
+          items: [
+            'blueprints/cards/collect-and-process-cards',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
       label: 'Concepts',
       items: [
         'concepts/what-are-tokens',
