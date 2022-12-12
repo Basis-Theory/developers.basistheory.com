@@ -37,6 +37,10 @@ const sidebars = {
         {
           type: 'category',
           label: 'Cards',
+          link: {
+            type: 'doc',
+            id: 'blueprints/cards/index',
+          },
           items: [
             'blueprints/cards/collect-and-process-cards',
           ],
