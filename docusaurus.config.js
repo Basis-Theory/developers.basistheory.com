@@ -81,11 +81,15 @@ const config = {
             label: "SDKs",
           },
           {
-            type: "custom-SignInButton",
+            type: "custom-GithubButton",
             position: "right",
           },
           {
-            type: "custom-GithubButton",
+            type: "custom-ColorModeToggle",
+            position: "right",
+          },
+          {
+            type: "custom-SignInButton",
             position: "right",
           },
         ],
