@@ -1,7 +1,9 @@
-import React, { ReactNode } from "react";
+import React, { PropsWithChildren, ReactNode, useState } from "react";
 
 import { Card } from "../shared/Card";
 import styles from "./SdkCard.module.css";
+
+import { useHistory } from "@docusaurus/router";
 
 import Android from "@site/static/img/sdk-card/android.svg";
 import DotNet from "@site/static/img/sdk-card/dotNet.svg";
@@ -22,8 +24,13 @@ interface SdkCard {
   repository: string;
   metadata?: ReactNode;
   cta?: ReactNode;
-  className: string;
+  className?: string;
+  href?: string;
 }
+
+export const TwoColumnLayout = ({ children }: PropsWithChildren) => (
+  <div className={styles["card-container"]}>{children}</div>
+);
 
 export const SdkCard = ({
   icon,
@@ -32,9 +39,12 @@ export const SdkCard = ({
   metadata,
   cta,
   className,
+  href,
 }: SdkCard) => {
   if (!icon) throw Error("Missing SDK icon");
   if (!isValidSdk(icon)) throw Error("Invalid SDK.");
+
+  const history = useHistory();
 
   const Icon = {
     [SDK.DOT_NET]: DotNet,
@@ -48,8 +58,22 @@ export const SdkCard = ({
     [SDK.IOS]: Ios,
   }[icon];
 
+  const clickable = clsx({
+    [styles.clickable]: href != undefined,
+  });
+
+  const onClick = href
+    ? (e) => {
+        e.preventDefault();
+        history.push(href);
+      }
+    : undefined;
+
   return (
-    <Card className={clsx([className, styles.container])}>
+    <Card
+      className={clsx([className, styles.card, clickable])}
+      onClick={onClick}
+    >
       <div className={styles.icon}>
         <Icon />
       </div>

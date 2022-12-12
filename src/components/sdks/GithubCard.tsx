@@ -68,7 +68,7 @@ export const GithubCard = ({
   return (
     <SdkCard
       icon={icon}
-      className={styles.container}
+      className={styles["gh-card"]}
       title={title}
       repository={repository}
       metadata={
