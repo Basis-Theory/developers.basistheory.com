@@ -1,21 +1,19 @@
-import React, { PropsWithChildren, ReactNode, useState } from "react";
+import React, { PropsWithChildren, ReactNode } from "react";
 
-import { Card } from "../shared/Card";
 import styles from "./SdkCard.module.css";
-
-import { useHistory } from "@docusaurus/router";
 
 import Android from "@site/static/img/sdk-card/android.svg";
 import DotNet from "@site/static/img/sdk-card/dotNet.svg";
 import Go from "@site/static/img/sdk-card/go.svg";
 import Ios from "@site/static/img/sdk-card/ios.svg";
-import Node from "@site/static/img/sdk-card/node.svg";
 import JavaScript from "@site/static/img/sdk-card/javascript.svg";
+import Node from "@site/static/img/sdk-card/node.svg";
 import Package from "@site/static/img/sdk-card/package.svg";
 import Python from "@site/static/img/sdk-card/python.svg";
 import ReactSvg from "@site/static/img/sdk-card/react.svg";
 import Terraform from "@site/static/img/sdk-card/terraform.svg";
 import clsx from "clsx";
+import { Card } from "../shared/Card/Card";
 import { isValidSdk, SDK } from "../types";
 
 interface SdkCard {
@@ -28,11 +26,7 @@ interface SdkCard {
   href?: string;
 }
 
-export const TwoColumnLayout = ({ children }: PropsWithChildren) => (
-  <div className={styles["card-container"]}>{children}</div>
-);
-
-export const SdkCard = ({
+const SdkCard = ({
   icon,
   title,
   repository,
@@ -43,8 +37,6 @@ export const SdkCard = ({
 }: SdkCard) => {
   if (!icon) throw Error("Missing SDK icon");
   if (!isValidSdk(icon)) throw Error("Invalid SDK.");
-
-  const history = useHistory();
 
   const Icon = {
     [SDK.DOT_NET]: DotNet,
@@ -58,22 +50,8 @@ export const SdkCard = ({
     [SDK.IOS]: Ios,
   }[icon];
 
-  const clickable = clsx({
-    [styles.clickable]: href != undefined,
-  });
-
-  const onClick = href
-    ? (e) => {
-        e.preventDefault();
-        history.push(href);
-      }
-    : undefined;
-
   return (
-    <Card
-      className={clsx([className, styles.card, clickable])}
-      onClick={onClick}
-    >
+    <Card className={clsx([className, styles.card])} href={href}>
       <div className={styles.icon}>
         <Icon />
       </div>
@@ -90,3 +68,7 @@ export const SdkCard = ({
     </Card>
   );
 };
+
+SdkCard.TwoColumnLayout = Card.TwoColumnLayout;
+
+export { SdkCard };
