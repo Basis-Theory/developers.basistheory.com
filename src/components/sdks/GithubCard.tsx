@@ -7,7 +7,7 @@ import styles from "./GithubCard.module.css";
 import Contributor from "@site/static/img/github-card/contributor.svg";
 import Github from "@site/static/img/github-card/github.svg";
 import Star from "@site/static/img/github-card/star.svg";
-import { SdkCard } from "../shared/SdkCard";
+import { SdkCard } from "./SdkCard";
 import { SDK } from "../types";
 import { Version } from "../shared/Version";
 
@@ -68,7 +68,7 @@ export const GithubCard = ({
   return (
     <SdkCard
       icon={icon}
-      className={styles.container}
+      className={styles["gh-card"]}
       title={title}
       repository={repository}
       metadata={

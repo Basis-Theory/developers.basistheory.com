@@ -18,16 +18,24 @@ const sidebars = {
     {
       type: 'category',
       label: 'Collect Data',
+      link: {
+        type: 'doc',
+        id: 'guides/collect/index',
+      },
       items: [
-        'guides/collect/web',
-        'guides/collect/api'
+        'guides/collect/collect-data-from-web',
+        'guides/collect/collect-data-in-an-api'
       ],
     },
     {
       type: 'category',
       label: 'Share Data',
+      link: {
+        type: 'doc',
+        id: 'guides/share/index',
+      },
       items: [
-        'guides/share/send-data'
+        'guides/share/send-data-to-third-party'
       ],
     },
     {
