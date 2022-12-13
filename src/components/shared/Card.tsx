@@ -15,24 +15,33 @@ const TwoColumnLayout = ({ children }: PropsWithChildren) => (
 const Card = ({
   children,
   className,
+  img,
   href,
+  body,
+  heading,
+  cta,
   ...otherProps
 }: PropsWithChildren<
   DetailedHTMLProps<HtmlHTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
     href?: string;
+    img?: React.ReactNode;
+    heading?: React.ReactNode;
+    body?: React.ReactNode;
+    cta?: React.ReactNode;
   }
 >) => {
   const history = useHistory();
 
-  const onClick = href
-    ? (e) => {
-        e.preventDefault();
-        history.push(href);
-      }
-    : undefined;
+  const onClick =
+    href && !cta
+      ? (e) => {
+          e.preventDefault();
+          history.push(href);
+        }
+      : undefined;
 
   const clickable = clsx({
-    [styles.clickable]: href != undefined,
+    [styles.clickable]: href != undefined && !cta,
   });
 
   return (
@@ -41,7 +50,14 @@ const Card = ({
       {...otherProps}
       className={clsx([className, styles.card, clickable])}
     >
-      {children}
+      {img && <div className={styles.img}>{img}</div>}
+      <div className={styles.body}>
+        <div>
+          {heading && <h3 className={styles.heading}>{heading}</h3>}
+          {body ?? children}
+        </div>
+      </div>
+      {cta && <div>{cta}</div>}
     </div>
   );
 };

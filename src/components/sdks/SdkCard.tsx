@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 import styles from "./SdkCard.module.css";
 
@@ -13,7 +13,7 @@ import Python from "@site/static/img/sdk-card/python.svg";
 import ReactSvg from "@site/static/img/sdk-card/react.svg";
 import Terraform from "@site/static/img/sdk-card/terraform.svg";
 import clsx from "clsx";
-import { Card } from "../shared/Card/Card";
+import { Card } from "../shared/Card";
 import { isValidSdk, SDK } from "../types";
 
 interface SdkCard {
@@ -51,20 +51,19 @@ const SdkCard = ({
   }[icon];
 
   return (
-    <Card className={clsx([className, styles.card])} href={href}>
-      <div className={styles.icon}>
-        <Icon />
-      </div>
-      <div className={styles.content}>
-        <h3>{title}</h3>
+    <Card
+      className={clsx([className, styles.card])}
+      href={href}
+      img={<Icon width="100" height="100" />}
+      cta={cta}
+      heading={title}
+    >
+      <>
         <div className={styles.repository}>
-          <p>
-            <Package /> {repository}
-          </p>
+          <Package /> {repository}
         </div>
         {metadata && <div className={styles.metadata}>{metadata}</div>}
-      </div>
-      {cta && <div>{cta}</div>}
+      </>
     </Card>
   );
 };
