@@ -169,6 +169,33 @@ const config = {
   plugins: [
     require.resolve("docusaurus-lunr-search"),
     require.resolve("docusaurus-plugin-sass"),
+    // https://github.com/facebook/docusaurus/issues/8297
+    // https://github.com/svg/svgo/issues/1714
+    // @ts-ignore
+    function svgFix() {
+      return {
+        name: "svg-fix",
+        configureWebpack(config) {
+          const svgRuleIndex = config.module.rules.findIndex((r) =>
+            // @ts-ignore
+            r.test.test("file.svg")
+          );
+          const svgrConfigIndex = config.module.rules[
+            svgRuleIndex
+            // @ts-ignore
+          ].oneOf.findIndex((r) => {
+            if (!Array.isArray(r.use) || r.use.length === 0) return false;
+            return r.use[0].loader.indexOf("@svgr/webpack") !== -1;
+          });
+          if (svgRuleIndex === -1 || svgrConfigIndex === -1) return;
+
+          // @ts-ignore
+          config.module.rules[svgRuleIndex].oneOf[
+            svgrConfigIndex
+          ].use[0].options.svgoConfig.plugins[0].params.overrides.cleanupIDs = false;
+        },
+      };
+    },
   ],
 };
 
