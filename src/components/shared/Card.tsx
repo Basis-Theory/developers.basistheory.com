@@ -12,6 +12,25 @@ const TwoColumnLayout = ({ children }: PropsWithChildren) => (
   <div className={styles["card-container"]}>{children}</div>
 );
 
+const PrimaryHeader = ({ children }) => (
+  <p className={clsx([styles.header, styles["primary-header"]])}>{children}</p>
+);
+
+const SecondaryHeader = ({ children }) => (
+  <p className={clsx([styles.header, styles["secondary-header"]])}>
+    {children}
+  </p>
+);
+
+interface Card {
+  href?: string;
+  img?: React.ReactNode;
+  heading?: React.ReactNode;
+  body?: React.ReactNode;
+  hoverable?: boolean;
+  cta?: React.ReactNode;
+}
+
 const Card = ({
   children,
   className,
@@ -20,15 +39,10 @@ const Card = ({
   body,
   heading,
   cta,
+  hoverable = true,
   ...otherProps
 }: PropsWithChildren<
-  DetailedHTMLProps<HtmlHTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
-    href?: string;
-    img?: React.ReactNode;
-    heading?: React.ReactNode;
-    body?: React.ReactNode;
-    cta?: React.ReactNode;
-  }
+  DetailedHTMLProps<HtmlHTMLAttributes<HTMLDivElement>, HTMLDivElement> & Card
 >) => {
   const history = useHistory();
 
@@ -42,8 +56,10 @@ const Card = ({
 
   const clickable = clsx({
     [styles.clickable]: href != undefined && !cta,
+    [styles.hoverable]: hoverable,
   });
 
+  console.log(typeof heading);
   return (
     <div
       onClick={onClick}
@@ -53,8 +69,14 @@ const Card = ({
       {img && <div className={styles.img}>{img}</div>}
       <div className={styles.body}>
         <div>
-          {heading && <h3 className={styles.heading}>{heading}</h3>}
-          {body ?? children}
+          <div>
+            {typeof heading === "string" ? (
+              <SecondaryHeader>{heading}</SecondaryHeader>
+            ) : (
+              heading
+            )}
+          </div>
+          <div>{body ?? children}</div>
         </div>
       </div>
       {cta && <div>{cta}</div>}
@@ -63,5 +85,6 @@ const Card = ({
 };
 
 Card.TwoColumnLayout = TwoColumnLayout;
+Card.PrimaryHeader = PrimaryHeader;
 
 export { Card };

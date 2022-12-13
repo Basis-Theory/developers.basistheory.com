@@ -7,12 +7,14 @@ import styles from "./GithubCard.module.css";
 import Contributor from "@site/static/img/github-card/contributor.svg";
 import Github from "@site/static/img/github-card/github.svg";
 import Star from "@site/static/img/github-card/star.svg";
-import { SdkCard } from "./SdkCard";
-import { SDK } from "../types";
+import Package from "@site/static/img/sdk-card/package.svg";
+import { Card } from "../shared/Card";
+import { isValidSdk, SDK } from "../types";
 import { Version } from "../shared/Version";
+import { getSdkIcon } from "./utils";
 
 interface GithubCard {
-  title: string;
+  heading: string;
   icon: SDK | `${SDK}`;
   organization: string;
   repository: string;
@@ -22,11 +24,14 @@ const placeholder = "Loading";
 const placeholderUrl = "https://www.basistheory.com/";
 
 export const GithubCard = ({
-  title,
+  heading,
   organization,
   repository,
   icon,
 }: GithubCard) => {
+  if (!icon) throw Error("Missing SDK icon");
+  if (!isValidSdk(icon)) throw Error("Invalid SDK.");
+
   const [githubUrl, setGithubUrl] = useState<string>("");
   const [stargazersCount, setStargazersCount] = useState<number>(null);
   const [releaseName, setReleaseName] = useState<string>(null);
@@ -65,13 +70,25 @@ export const GithubCard = ({
     }
   }, [organization, repository]);
 
+  const Icon = getSdkIcon(icon);
+
   return (
-    <SdkCard
-      icon={icon}
+    <Card
+      hoverable={false}
+      img={<Icon />}
       className={styles["gh-card"]}
-      title={title}
-      repository={repository}
-      metadata={
+      heading={<Card.PrimaryHeader>{heading}</Card.PrimaryHeader>}
+      cta={
+        <Button href={githubUrl ?? placeholderUrl} target="_blank">
+          <Github /> See it in GitHub
+        </Button>
+      }
+    >
+      <>
+        <div className={styles.repository}>
+          <Package /> {repository}
+        </div>
+
         <div className={styles.metadata}>
           <Version>{releaseName ?? placeholder}</Version>
           <p>
@@ -81,12 +98,7 @@ export const GithubCard = ({
             <Contributor /> {contributors ?? placeholder} Contributors
           </p>
         </div>
-      }
-      cta={
-        <Button href={githubUrl ?? placeholderUrl} target="_blank">
-          <Github /> See it in GitHub
-        </Button>
-      }
-    />
+      </>
+    </Card>
   );
 };
