@@ -36,25 +36,10 @@ To get started, you will need a Basis Theory account.
 Next you will need a [Public Application](/docs/api/applications#application-types) in order to initialize [JavaScript Elements](/docs/sdks/web/javascript-elements) for your web page.
 
 Login to your Basis Theory account and [create a new Application](https://portal.basistheory.com/applications) with the following settings:
+
 * Name - Collect Data from Web Guide
 * Application Type - Public
 * Permissions - `token:create`
-
-You can also [create an application](/docs/api/applications#create-application) from your terminal:
-
-```shell showLineNumbers
-curl "https://api.basistheory.com/applications" \
-  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "name": "Collect Data from Web Guide",
-    "type": "public",
-    "permissions": [ "token:create" ]
-  }'
-```
-
-Ensure you replace the `<MANAGEMENT_API_KEY>` with a Management Application API Key.
 
 <Alert>
   Save the API Key from the created Public APplication as it will be used later in this guide to initialize the form.
@@ -77,7 +62,7 @@ Open the resulting `index.html` file in an IDE or text editor of your choice.
 
 We will need to install Basis Theory's [JavaScript Elements SDK](/docs/sdks/web/javascript-elements), which will render a secure iFrame for capturing the data. 
 
-To install the SDK you can choose either our ES module or CDN hosted bundle through a `script` tag.
+To install the SDK you can choose either our ES module or CDN hosted bundle through a `script` tag. In this guide, we will utilize the CDN hosted bundle.
 
 ```html showLineNumbers title=index.js
 <!-- Including this tag will export a global/window "BasisTheory" variable -->
@@ -161,7 +146,7 @@ This will create a new instance of a Text Element and when mounted to your `<div
 
 Now we need to tokenize the value within the Text Element without exposing it to our web application.
 
-We will add a submit button for submitting the form and a `<div>` to hold the resulting token identifier.
+We will add a submit button for submitting the form and a `<pre>` to hold the resulting token.
 
 ```html showLineNumbers title=index.js
 <html>
