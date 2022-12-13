@@ -30,8 +30,12 @@ const sidebars = {
     {
       type: 'category',
       label: 'Share Data',
+      link: {
+        type: 'doc',
+        id: 'guides/share/index',
+      },
       items: [
-        'guides/share/send-data'
+        'guides/share/send-data-to-third-party'
       ],
     },
     {
