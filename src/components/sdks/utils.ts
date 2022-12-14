@@ -1,7 +1,7 @@
 import { SDK } from "../types";
 
 import Android from "@site/static/img/sdk/logos/android.svg";
-import DotNet from "@site/static/img/sdk/logos/dotNet.svg";
+import DotNet from "@site/static/img/sdk/logos/dotnet.svg";
 import Go from "@site/static/img/sdk/logos/go.svg";
 import Apple from "@site/static/img/sdk/logos/Apple.svg";
 import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
