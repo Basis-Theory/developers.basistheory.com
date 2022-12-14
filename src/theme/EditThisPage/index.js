@@ -1,9 +1,9 @@
-import React from "react";
-import Translate from "@docusaurus/Translate";
 import { ThemeClassNames } from "@docusaurus/theme-common";
-import Github from "@site/static/img/github-card/github.svg";
-import styles from "./index.module.css";
+import Translate from "@docusaurus/Translate";
+import Github from "@site/static/img/shared/github.svg";
 import clsx from "clsx";
+import React from "react";
+import styles from "./index.module.css";
 
 export default function EditThisPage({ editUrl }) {
   return (

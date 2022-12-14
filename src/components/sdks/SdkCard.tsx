@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { Card } from "../shared/Card";
 import { isValidSdk, SDK } from "../types";
 
-import Package from "@site/static/img/sdk-card/package.svg";
+import Package from "@site/static/img/sdk/package.svg";
 import { getSdkIcon } from "./utils";
 
 interface SdkCard
