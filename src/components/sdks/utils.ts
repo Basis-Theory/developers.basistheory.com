@@ -3,7 +3,7 @@ import { SDK } from "../types";
 import Android from "@site/static/img/sdk/logos/android.svg";
 import DotNet from "@site/static/img/sdk/logos/dotnet.svg";
 import Go from "@site/static/img/sdk/logos/go.svg";
-import Apple from "@site/static/img/sdk/logos/Apple.svg";
+import Apple from "@site/static/img/sdk/logos/apple.svg";
 import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
 import Node from "@site/static/img/sdk/logos/nodejs.svg";
 import Python from "@site/static/img/sdk/logos/python.svg";
