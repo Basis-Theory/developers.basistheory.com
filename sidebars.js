@@ -14,199 +14,211 @@
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   docs: [
-    'index',
+    "index",
     {
-      type: 'category',
-      label: 'Collect Data',
+      type: "category",
+      label: "Collect Data",
       link: {
-        type: 'doc',
-        id: 'guides/collect/index',
+        type: "doc",
+        id: "guides/collect/index",
       },
       items: [
-        'guides/collect/collect-data-from-web',
-        'guides/collect/collect-data-in-an-api'
+        "guides/collect/collect-data-from-web",
+        "guides/collect/collect-data-in-an-api",
       ],
     },
     {
-      type: 'category',
-      label: 'Share Data',
+      type: "category",
+      label: "Share Data",
       link: {
-        type: 'doc',
-        id: 'guides/share/index',
+        type: "doc",
+        id: "guides/share/index",
       },
-      items: [
-        'guides/share/send-data-to-third-party'
-      ],
+      items: ["guides/share/send-data-to-third-party"],
     },
     {
-      type: 'category',
-      label: 'Blueprints',
+      type: "category",
+      label: "Blueprints",
       items: [
         {
-          type: 'category',
-          label: 'Cards',
+          type: "category",
+          label: "Cards",
           link: {
-            type: 'doc',
-            id: 'blueprints/cards/index',
+            type: "doc",
+            id: "blueprints/cards/index",
           },
-          items: [
-            'blueprints/cards/collect-and-process-cards',
-          ],
+          items: ["blueprints/cards/collect-and-process-cards"],
         },
       ],
     },
     {
-      type: 'category',
-      label: 'Concepts',
+      type: "category",
+      label: "Concepts",
       items: [
-        'concepts/what-are-tokens',
-        'concepts/what-is-search',
-        'concepts/what-are-containers',
-        'concepts/access-controls',
-        'concepts/what-is-the-proxy',
-        'concepts/what-are-reactors',
-        'concepts/what-are-mats',
+        "concepts/what-are-tokens",
+        "concepts/what-is-search",
+        "concepts/what-are-containers",
+        "concepts/access-controls",
+        "concepts/what-is-the-proxy",
+        "concepts/what-are-reactors",
+        "concepts/what-are-mats",
       ],
     },
     {
-      type: 'category',
-      label: 'Expressions',
+      type: "category",
+      label: "Expressions",
       link: {
-        type: 'doc',
-        id: 'expressions/index',
+        type: "doc",
+        id: "expressions/index",
       },
       items: [
-        'expressions/filters',
-        'expressions/detokenization',
-        'expressions/aliasing',
-        'expressions/fingerprints',
-        'expressions/masks',
-        'expressions/search-indexes',
+        "expressions/filters",
+        "expressions/detokenization",
+        "expressions/aliasing",
+        "expressions/fingerprints",
+        "expressions/masks",
+        "expressions/search-indexes",
       ],
     },
   ],
   api: [
     {
-      type: 'category',
-      label: 'Overview',
+      type: "category",
+      label: "Overview",
       collapsed: false,
       link: {
-        type: 'doc',
-        id: 'api',
+        type: "doc",
+        id: "api",
       },
       items: [
-        'api/authentication',
-        'api/request-correlation',
-        'api/pagination',
-        'api/errors',
-        'api/ip-addresses',
-        'api/rate-limits',
+        "api/authentication",
+        "api/request-correlation",
+        "api/pagination",
+        "api/errors",
+        "api/ip-addresses",
+        "api/rate-limits",
       ],
     },
     {
-      type: 'category',
-      label: 'Applications',
+      type: "category",
+      label: "Applications",
       link: {
-        type: 'doc',
-        id: 'api/applications/applications',
+        type: "doc",
+        id: "api/applications/applications",
       },
-      items: ['api/applications/permissions'],
+      items: ["api/applications/permissions"],
     },
-    'api/logs',
+    "api/logs",
     {
-      type: 'category',
-      label: 'Proxies',
+      type: "category",
+      label: "Proxies",
       link: {
-        type: 'doc',
-        id: 'api/proxies/proxies',
+        type: "doc",
+        id: "api/proxies/proxies",
       },
-      items: ['api/proxies/invoke-proxy'],
-    },
-    {
-      type: 'category',
-      label: 'Reactors',
-      link: {
-        type: 'doc',
-        id: 'api/reactors/reactors',
-      },
-      items: ['api/reactors/reactor-formulas'],
+      items: ["api/proxies/invoke-proxy"],
     },
     {
-      type: 'category',
-      label: 'Tenants',
+      type: "category",
+      label: "Reactors",
       link: {
-        type: 'doc',
-        id: 'api/tenants/tenants',
+        type: "doc",
+        id: "api/reactors/reactors",
       },
-      items: ['api/tenants/tenant-members'],
+      items: ["api/reactors/reactor-formulas"],
     },
     {
-      type: 'category',
-      label: 'Tokens',
+      type: "category",
+      label: "Tenants",
       link: {
-        type: 'doc',
-        id: 'api/tokens/tokens',
+        type: "doc",
+        id: "api/tenants/tenants",
+      },
+      items: ["api/tenants/tenant-members"],
+    },
+    {
+      type: "category",
+      label: "Tokens",
+      link: {
+        type: "doc",
+        id: "api/tokens/tokens",
       },
       items: [
-        'api/tokens/tokenize',
-        'api/tokens/token-types',
-        'api/tokens/search',
-        'api/tokens/token-associations'
+        "api/tokens/tokenize",
+        "api/tokens/token-types",
+        "api/tokens/search",
+        "api/tokens/token-associations",
       ],
     },
-    'api/deprecations'
+    "api/deprecations",
   ],
   sdk: [
-    'sdks',
+    "sdks",
     {
-      type: 'category',
-      label: 'Server-side SDKs',
-      items: [{
-        type: 'autogenerated',
-        dirName: 'sdks/server-side',
-      }],
-    },
-    {
-      type: 'category',
-      label: 'Web SDKs',
+      type: "category",
+      label: "Server-side SDKs",
       items: [
         {
-          type: 'category',
-          label: 'JavaScript Elements',
-          link: {
-            type: 'doc',
-            id: 'sdks/web/javascript-elements',
-          },
-          items: [
-            'sdks/web/elements/content-security-policy',
-            'sdks/web/elements/types',
-            'sdks/web/elements/lifecycle',
-            'sdks/web/elements/options',
-            'sdks/web/elements/methods',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'React Elements',
-          link: {
-            type: 'doc',
-            id: 'sdks/web/react-elements',
-          },
-          items: [
-            'sdks/web/react/components',
-          ],
+          type: "autogenerated",
+          dirName: "sdks/server-side",
         },
       ],
     },
-    // {
-    //   type: 'category',
-    //   label: 'Mobile SDKs',
-    //   items: [{
-    //     type: 'autogenerated',
-    //     dirName: 'sdks/mobile',
-    //   }],
-    // },
-  ]
+    {
+      type: "category",
+      label: "Web SDKs",
+      items: [
+        {
+          type: "category",
+          label: "JavaScript Elements",
+          link: {
+            type: "doc",
+            id: "sdks/web/javascript-elements",
+          },
+          items: [
+            "sdks/web/elements/content-security-policy",
+            "sdks/web/elements/types",
+            "sdks/web/elements/lifecycle",
+            "sdks/web/elements/options",
+            "sdks/web/elements/methods",
+          ],
+        },
+        {
+          type: "category",
+          label: "React Elements",
+          link: {
+            type: "doc",
+            id: "sdks/web/react-elements",
+          },
+          items: ["sdks/web/react/components"],
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Mobile SDKs",
+      items: [
+        {
+          type: "category",
+          label: "iOS Elements",
+          link: {
+            type: "doc",
+            id: "sdks/mobile/ios",
+          },
+          items: ["sdks/mobile/elements/types"],
+        },
+        {
+          type: "category",
+          label: "Android",
+          link: {
+            type: "doc",
+            id: "sdks/mobile/android",
+          },
+          items: ["sdks/mobile/android"],
+        },
+      ],
+    },
+  ],
 };
 
 module.exports = sidebars;
