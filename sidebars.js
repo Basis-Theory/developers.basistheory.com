@@ -25,6 +25,7 @@ const sidebars = {
       items: [
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-in-an-api",
+        "guides/collect/customize-web-form",
       ],
     },
     {

@@ -1,6 +1,8 @@
 import clsx from "clsx";
 import React, { PropsWithChildren } from "react";
 
+import Link from "@docusaurus/Link";
+
 import styles from "./Button.module.css";
 
 export const Button = ({
@@ -20,7 +22,7 @@ export const Button = ({
     [styles.secondary]: variant == "secondary",
   });
 
-  const defaultElement = other.href ? "a" : "button";
+  const defaultElement = other.href ? Link : "button";
   const Root: React.ElementType = defaultElement;
 
   return (
