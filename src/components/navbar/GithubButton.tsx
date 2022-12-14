@@ -1,5 +1,5 @@
+import Github from "@site/static/img/shared/github.svg";
 import React from "react";
-import Github from "@site/static/img/github-card/github.svg";
 
 import styles from "./GithubButton.module.css";
 
