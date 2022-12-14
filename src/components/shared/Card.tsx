@@ -59,7 +59,6 @@ const Card = ({
     [styles.hoverable]: hoverable,
   });
 
-  console.log(typeof heading);
   return (
     <div
       onClick={onClick}
