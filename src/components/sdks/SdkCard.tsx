@@ -1,12 +1,13 @@
 import React, { ReactNode } from "react";
 
 import styles from "./SdkCard.module.css";
+import utils from "./utils.module.css";
 
 import clsx from "clsx";
 import { Card } from "../shared/Card";
 import { isValidSdk, SDK } from "../types";
 
-import Package from "@site/static/img/sdk-card/package.svg";
+import Package from "@site/static/img/sdk/package.svg";
 import { getSdkIcon } from "./utils";
 
 interface SdkCard
@@ -38,12 +39,16 @@ const SdkCard = ({
       hoverable={hoverable}
       className={clsx([className, styles.card])}
       href={href}
-      img={<Icon width="100" height="100" />}
+      img={
+        <div className={utils["round-border"]}>
+          <Icon />
+        </div>
+      }
       cta={cta}
       heading={heading}
     >
       <>
-        <div className={styles.repository}>
+        <div className={clsx([utils.repository, styles.repository])}>
           <Package /> {repository}
         </div>
       </>

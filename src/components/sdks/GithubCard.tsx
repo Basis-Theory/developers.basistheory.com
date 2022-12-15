@@ -3,15 +3,17 @@ import React, { useEffect, useState } from "react";
 
 import { Button } from "../shared/Button";
 import styles from "./GithubCard.module.css";
+import utils from "./utils.module.css";
 
-import Contributor from "@site/static/img/github-card/contributor.svg";
-import Github from "@site/static/img/github-card/github.svg";
-import Star from "@site/static/img/github-card/star.svg";
-import Package from "@site/static/img/sdk-card/package.svg";
+import Contributor from "@site/static/img/sdk/github-card/contributor.svg";
+import Star from "@site/static/img/sdk/github-card/star.svg";
+import Package from "@site/static/img/sdk/package.svg";
+import Github from "@site/static/img/shared/github.svg";
 import { Card } from "../shared/Card";
-import { isValidSdk, SDK } from "../types";
 import { Version } from "../shared/Version";
+import { isValidSdk, SDK } from "../types";
 import { getSdkIcon } from "./utils";
+import clsx from "clsx";
 
 interface GithubCard {
   heading: string;
@@ -75,7 +77,11 @@ export const GithubCard = ({
   return (
     <Card
       hoverable={false}
-      img={<Icon />}
+      img={
+        <div className={clsx([styles["gh-card--logo"], utils["round-border"]])}>
+          <Icon />
+        </div>
+      }
       className={styles["gh-card"]}
       heading={<Card.PrimaryHeader>{heading}</Card.PrimaryHeader>}
       cta={
@@ -85,7 +91,7 @@ export const GithubCard = ({
       }
     >
       <>
-        <div className={styles.repository}>
+        <div className={utils.repository}>
           <Package /> {repository}
         </div>
 

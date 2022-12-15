@@ -23,67 +23,63 @@ To get started, you will need a Basis Theory account.
 
 Next you will need a [Public Application](/docs/api/applications#application-types) in order to initialize [JavaScript Elements](/docs/sdks/web/javascript-elements) for your web page.
 
-Login to your Basis Theory account and [create a new Application](https://portal.basistheory.com/applications) with the following settings:
+[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20Web%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
 
 - Name - Collect Data from Web Guide
 - Application Type - Public
 - Permissions - `token:create`
 
 <Alert>
-  Save the API Key from the created Public APplication as it will be used later
+  Save the API Key from the created Public Application as it will be used later
   in this guide to initialize the form.
 </Alert>
 
-## Create a New HTML File
+## Setup the Project
 
-We are going to create a `index.html` file for the contents of this guide.
+We need to create a new directory and add a few files to get started.
 
-Create a new file in your preferred IDE or text editor called `index.html` or you can create the file via your terminal with the command:
+Run the following in your terminal:
 
 ```shell showLineNumbers
+mkdir collect-guide
+cd collect-guide
 touch index.html
+touch index.js
+npm init
 ```
 
-Open the resulting `index.html` file in an IDE or text editor of your choice.
+Accept all of the default npm options when prompted.
 
-## Install the Web SDK
+This will create a new directory called `collect-guide`, create two new files (`index.html`, `index.js`), and setup npm packages.
+
+Open the contents of the directory in a text editor or IDE of your choice.
+
+## Install the JavaScript Elements SDK
 
 We will need to install Basis Theory's [JavaScript Elements SDK](/docs/sdks/web/javascript-elements), which will render a secure iFrame for capturing the data.
 
-To install the SDK you can choose either our ES module or CDN hosted bundle through a `script` tag. In this guide, we will utilize the CDN hosted bundle.
+To install the SDK you can choose either our ES module or CDN hosted bundle through a `script` tag. In this guide, we will utilize our ES Module:
 
-```html showLineNumbers title=index.js
-<!-- Including this tag will export a global/window "BasisTheory" variable -->
-<html>
-  <head>
-    <script src="https://js.basistheory.com"></script>
-  </head>
-</html>
+```shell
+npm install --save @basis-theory/basis-theory-js
 ```
 
 <Alert>
-  If you are building a React application, be sure to check out our{" "}
-  <a href="/docs/sdks/web/react-elements">React Elements SDK</a>.
+  If you are building a React application, be sure to check out our <a href="/docs/guides/collect/collect-data-with-react">Collect Data with React guide</a>.
 </Alert>
 
 ## Initialize the Web SDK
 
-Now we need to initialize Basis Theory JavaScript Elements. To do this, we will create an instance of `BasisTheory` with `elements: true` to dynamically loads **Elements** module.
+Now we need to initialize Basis Theory JavaScript Elements. To do this, we will create an instance of `BasisTheory` with `elements: true` to dynamically loads **Elements** module in `index.js`:
 
-```html showLineNumbers title=index.js
-<script>
-  // you can initialize it wherever it suits your workflow best
-  // here we are waiting for the window to load, to make sure BasisTheory instance
-  // has been injected in the window variable
-  window.addEventListener("load", async () => {
-    try {
-      // global/window variable BasisTheory is an instance, but requires initialization
-      await BasisTheory.init("test_1234567890", { elements: true });
-    } catch (e) {
-      // handle errors that could happen while loading elements script
-    }
-  });
-</script>
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+
+(async () => {
+  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+})();
 ```
 
 <Alert>
@@ -91,55 +87,137 @@ Now we need to initialize Basis Theory JavaScript Elements. To do this, we will 
   created in the <a href="#getting-started">Getting Started</a> step.
 </Alert>
 
+Next we need to import our JavaScript file as a module within `index.html`:
+
+```html showLineNumbers title=index.html
+<html>
+  <body>
+    <!-- highlight-next-line -->
+    <script type="module" src="index.js"></script>
+  </body>
+</html>
+```
+
 ## Add Your Form Components
 
 This step will add a [Text Element](/docs/sdks/web/elements/types#text-element) component to our page.
 
 First let's add a `div` to be the placeholder for where the Basis Theory Element will be injected:
 
-```html showLineNumbers title=index.js
+```html showLineNumbers title=index.html
 <html>
-  <head>
-    <script src="https://js.basistheory.com"></script>
-  </head>
   <body>
+    <!-- highlight-next-line -->
     <div id="example-element">
+
+    <script type="module" src="index.js"></script>
   </body>
 </html>
 ```
 
 Next, we need to create a new Text Element and mount it to our `div`:
 
-```html showLineNumbers title=index.js
-<script>
-  let textElement;
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
 
-  window.addEventListener("load", async () => {
-    await BasisTheory.init("test_1234567890", { elements: true });
+let bt;
+// highlight-next-line
+let textElement;
 
-    textElement = BasisTheory.createElement("text", {
-      targetId: "exampleTextElement",
-      placeholder: "Input text",
-    });
+(async () => {
+  bt = await new BasisTheory().init('test_1234567890', { elements: true });
 
-    textElement.mount("#example-element");
+  // highlight-start
+  textElement = bt.createElement('text', {
+    targetId: 'exampleTextElement',
+    placeholder: 'Input text'
   });
-</script>
+
+  textElement.mount('#example-element'); 
+  // highlight-end
+})();
 ```
 
 This will create a new instance of a Text Element and when mounted to your `<div>`, it will inject an iFrame that is rendered by Basis Theory. The Basis Theory SDK will hold a reference to the Text Element which enables interactions with the underlying data without direct access to the value.
 
+Let's verify our form now loads. We can leverage a tool like [Parcel](https://parceljs.org/getting-started/webapp/) which will compile and launch our application:
+
+```shell showLineNumbers
+npx parcel index.html
+```
+
+Open [http://localhost:1234/](http://localhost:1234/) in your browser.
+
 ## Tokenize the Text Value
 
-Now we need to tokenize the value within the Text Element without exposing it to our web application.
+We want to be able to tokenize the value within the Text Element without exposing it to our web application. We will add a submit button for submitting the form and a `<pre>` element to hold the resulting token:
 
-We will add a submit button for submitting the form and a `<pre>` to hold the resulting token.
-
-```html showLineNumbers title=index.js
+```html showLineNumbers title=index.html
 <html>
-  <head>
-    <script src="https://js.basistheory.com"></script>
-  </head>
+  <body>
+    <!-- highlight-start -->
+    <div id="example-element">
+
+    <button type="button" onclick="submit()">
+      Submit
+    </button>
+
+    <pre id="result"></pre>
+    <!-- highlight-end -->
+
+    <script type="module" src="index.js"></script>
+  </body>
+</html>
+```
+
+Within our JavaScript code, let's add a new submit function to tokenize the value of our Text Element.
+
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let textElement;
+
+(async () => {
+  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+
+  textElement = bt.createElement('text', {
+    targetId: 'exampleTextElement',
+    placeholder: 'Input text'
+  });
+
+  textElement.mount('#example-element'); 
+})();
+
+// highlight-start
+window.submit = async function submit() {
+  try {
+    const token = await bt.tokens.create({
+      type: 'token',
+      data: textElement
+    });
+
+    const result = document.querySelector('#result');
+
+    result.innerHTML = JSON.stringify(token, null, 4);
+  } catch (error) {
+    console.error(error);
+  }
+}
+// highlight-end
+```
+
+When our form is submitted, Basis Theory's SDK will pass the value for the element reference. This will be securely submitted directly to the [Create Token Endpoint](/docs/api/tokens#create-token). The resulting token is then surfaced to the client device.
+
+## Running the Example
+
+Following this guide, your resulting application should look like the following:
+
+<Tabs className="bt-tabs">
+  <TabItem value="index.html" label="index.html">
+
+```html showLineNumbers
+<html>
   <body>
     <div id="example-element">
 
@@ -148,104 +226,58 @@ We will add a submit button for submitting the form and a `<pre>` to hold the re
     </button>
 
     <pre id="result"></pre>
+
+    <script type="module" src="index.js"></script>
   </body>
 </html>
 ```
 
-Within our JavaScript code, let's add a new submit function to tokenize the value of our Text Element.
+  </TabItem>
+  <TabItem value="index.js" label="index.js">
 
-```html showLineNumbers title=index.js
-<script>
-  let textElement;
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
 
-  window.addEventListener("load", async () => {
-    await BasisTheory.init("test_1234567890", { elements: true });
+let bt;
+let textElement;
 
-    textElement = BasisTheory.createElement("text", {
-      targetId: "exampleTextElement",
-      placeholder: "Input text",
-    });
+(async () => {
+  bt = await new BasisTheory().init('test_1234567890', { elements: true });
 
-    textElement.mount("#example-element");
+  textElement = bt.createElement('text', {
+    targetId: 'exampleTextElement',
+    placeholder: 'Input text'
   });
 
-  async function submit() {
-    try {
-      const token = await BasisTheory.tokens.create({
-        type: "token",
-        data: textElement,
-      });
+  textElement.mount('#example-element'); 
+})();
 
-      const result = document.querySelector("#result");
+window.submit = async function submit() {
+  try {
+    const token = await bt.tokens.create({
+      type: 'token',
+      data: textElement
+    });
 
-      result.innerHTML = JSON.stringify(token, null, 4);
-    } catch (error) {
-      console.error(error);
-    }
+    const result = document.querySelector('#result');
+
+    result.innerHTML = JSON.stringify(token, null, 4);
+  } catch (error) {
+    console.error(error);
   }
-</script>
+}
 ```
 
-When our form is submitted, Basis Theory's SDK will pass the value for the element reference. This will be securely submitted directly to the [Create Token Endpoint](/docs/api/tokens#create-token). The resulting token is then surfaced to the client device.
+  </TabItem>
+</Tabs>
 
-## Running the Example
-
-Following this guide, your resulting page should look like the following:
-
-```html showLineNumbers title=index.js
-<html>
-  <head>
-    <script src="https://js.basistheory.com"></script>
-  </head>
-  <body>
-    <div id="example-element"></div>
-
-    <button type="button" onclick="submit()">Submit</button>
-
-    <pre id="result"></pre>
-
-    <script>
-      let textElement;
-
-      window.addEventListener("load", async () => {
-        await BasisTheory.init("key_3aYBJ6NbEvyU5FN9n1Xbvw", {
-          elements: true,
-        });
-
-        textElement = BasisTheory.createElement("text", {
-          targetId: "exampleTextElement",
-          placeholder: "Input text",
-        });
-
-        textElement.mount("#example-element");
-      });
-
-      async function submit() {
-        try {
-          const token = await BasisTheory.tokens.create({
-            type: "token",
-            data: textElement,
-          });
-
-          const result = document.querySelector("#result");
-
-          result.innerHTML = JSON.stringify(token, null, 4);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    </script>
-  </body>
-</html>
-```
-
-To run the example, we will utilize [`http-server`](https://www.npmjs.com/package/http-server) to run our file in a local server. In the same directory as your `index.html` file, run the following command:
+We will now run the application again with Parcel:
 
 ```shell showLineNumbers
-npx http-server -o
+npx parcel index.html
 ```
 
-A browser will open to your page running on `http://localhost:8080/`.
+Open [http://localhost:1234/](http://localhost:1234/) in your browser to use the application.
 
 ## Conclusion
 
@@ -255,7 +287,6 @@ Try typing a value and clicking the submit button will securely send the data di
 
 ## Learn More
 
-- [What are tokens?](/docs/concepts/what-are-tokens)
 - [Customize your web form](/docs/guides/collect/customize-web-form)
-- [Collect data in your web application with React Elements](/docs/sdks/web/react-elements)
+- [What are tokens?](/docs/concepts/what-are-tokens)
 - [Collect and process cards](/docs/blueprints/cards/collect-and-process-cards)
