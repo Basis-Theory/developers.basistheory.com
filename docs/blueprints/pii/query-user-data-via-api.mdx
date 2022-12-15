@@ -1,0 +1,271 @@
+---
+toc_max_heading_level: 2
+---
+
+import { Alert } from "@site/src/components/shared/Alert";
+import SequenceDiagram from "@site/static/img/docs/blueprint-query-user-data-via-api-sequence-diagram.svg";
+
+# Query User Data via API
+
+This blueprint provides a guide to securely share Personal Identifiable Information (PII) with Clients querying your Server API, without having to store sensitive data on your own database.
+
+We will use [Terraform](https://www.terraform.io/) to provision Basis Theory resources and `https://echo.basistheory.com` to represent the API. If you are not using Terraform, you can call [Basis Theory APIs](/docs/api) directly.
+
+<Alert>
+  Don't want to complete this guide? View the completed example project <a href="https://github.com/Basis-Theory-Labs/inbound-detokenization-example">here</a>.
+</Alert>
+
+## Creating the Inbound Proxy
+
+In order to listen to API requests, we will create a Proxy that sits between the Client and your Server. We will assume these requests don't contain any sensitive information, so we will pass them through to the Server, which will respond with tokenized data. The Proxy will then [transform](/docs/api/proxies/#proxy-transform-object) the Server response to detokenize it and respond to the Client with the plaintext data.
+
+<SequenceDiagram width="100%" height="auto" />
+
+### Create a Management Application
+
+[Management Applications](/docs/concepts/access-controls#application-type) are used to manage Basis Theory Tenants settings and services. We will create a new Application and pass its key to the Terraform provider. If you want to make direct API calls for these purposes, you can use that application key to [authenticate](/docs/api/authentication) your requests.
+
+[Click here to create one](https://portal.basistheory.com/applications/create?permissions=application%3Acreate&permissions=application%3Aread&permissions=application%3Aupdate&permissions=application%3Adelete&permissions=proxy%3Acreate&permissions=proxy%3Aread&permissions=proxy%3Aupdate&permissions=proxy%3Adelete&type=management). This will create an application capable of managing Applications and Proxies, using the following [Access Controls](/docs/concepts/access-controls):
+* Permissions: `application:*`, `proxy:*`
+
+Copy the API Key to be used in the next step.
+
+### Install Basis Theory Terraform Provider
+
+Add `basistheory` provider to your Terraform configuration:
+
+```hcl title="main.tf"
+terraform {
+  required_providers {
+    basistheory = {
+      source = "Basis-Theory/basistheory"
+      version = ">= 0.7.0"
+    }
+  }
+}
+
+variable "management_api_key" {}
+
+provider "basistheory" {
+  api_key = var.management_api_key
+}
+```
+
+Paste the API key to your `terraform.tfvars` file:
+
+```hcl title="terraform.tfvars"
+management_api_key = "test_1234567890"
+```
+
+Initialize Terraform:
+
+```bash showLineNumbers
+terraform init
+```
+
+### Add Terraform Resources
+
+Now that we have Terraform set up, let's add the required resources to start proxying requests to our Server.
+
+#### Private Application Resource
+
+We need a [Private Application](/docs/concepts/access-controls#application-type) to grant the right [Access Controls](/docs/concepts/access-controls/) to the Proxy, so it can interact with our tokens:
+* Permissions: `token:read`
+* Containers: `/pii/high/`
+* Transform: `reveal`
+
+Add the Private Application resource to your Terraform configuration:
+
+```hcl title="main.tf"
+resource "basistheory_application" "proxy_application" {
+  name        = "Proxy Application"
+  type        = "private"
+  rule {
+    description = "Read PII Tokens"
+    priority    = 1
+    container   = "/pii/high/"
+    transform   = "reveal"
+    permissions = [
+      "token:read",
+    ]
+  }
+}
+```
+
+#### Proxy Resource
+
+Next, we will create a Proxy capable of passing Client requests to a certain destination URL (Server), listen to the response and detokenize part of its `body`, and respond with the transformed content back to the Client.
+
+Create a `detokenize.js` file with the following code:
+
+```javascript title="detokenize.js" showLineNumbers
+const {
+    BadRequestError,
+} = require("@basis-theory/basis-theory-reactor-formulas-sdk-js");
+
+module.exports = async function (req) {
+    const { bt, args } = req;
+    const { body, headers } = args;
+
+    try {
+        const { json } = body; // format returned by echo Server
+        const { ssn } = json; // look for the token to detokenize
+        const token = await bt.tokens.retrieve(ssn); // detokenization step
+        return {
+            body: { // transformed body
+                ssn: token.data, // replace token id with plaintext data
+            },
+            headers, // original headers are not altered
+        };
+    } catch (e) {
+        if (typeof e.status === "number") {
+            // if there is a status code in the error
+            // throwing this exception will cause Client to receive a 400
+            throw new BadRequestError(e);
+        }
+        // otherwise, serialize the error back to the requester
+        return {
+            body: {
+                error: JSON.stringify(e)
+            },
+            headers,
+        };
+    }
+};
+```
+
+Now let's add our Proxy resource to Terraform configuration:
+
+```hcl title="main.tf"
+resource "basistheory_proxy" "inbound_proxy" {
+  name               = "Inbound Proxy"
+  destination_url    = "https://echo.basistheory.com/anything"
+  application_id     = basistheory_application.proxy_application.id
+  response_transform = {
+    code = file("./detokenize.js")
+  }
+  require_auth = false
+}
+
+output "inbound_proxy_key" {
+  value       = basistheory_proxy.inbound_proxy.key
+  description = "Inbound Proxy Key"
+  sensitive   = true
+}
+```
+
+A few things to notice:
+- The `name` attribute is arbitrary - something to help us track the nature of the resource;
+- The value of `destination_url` can be any API endpoint;
+- The Private Application specified before is linked to the proxy using `application_id`. It's `key` is used to inject `req.bt`, an instance of [Basis Theory Node.js SDK](/docs/sdks/server-side/node);
+- Passing `require_auth = false` allows any Client to invoke the Proxy without using [Basis Theory Authentication](/docs/api/authentication) - meaning that Client AuthN/AuthZ should be handled by the Server.
+
+Finally, instruct Terraform to create the resources:
+
+```bash showLineNumbers
+terraform apply
+```
+
+Save the `inbound_proxy_key` [output](https://developer.hashicorp.com/terraform/language/values/outputs) for later invoking the Proxy.
+
+## Using the Inbound Proxy
+
+Our scenario is a typical Inbound Detokenization setup. This means that by the time the Client queries the Server for User Data, it should exist already in the form of tokens. In the following steps, we will create a [Social Security Number](/docs/api/tokens/token-types#social-security-number) token and use the Proxy to retrieve its value.
+
+### Create a Token
+
+There are many ways of [collecting data](/docs/guides/collect/) with Basis Theory. Since our goal is to share data using the Proxy, we will take the easy route to create new tokens.
+
+#### Public Application
+
+To securely create PII tokens, you'll need a [Public Application](/docs/concepts/access-controls#application-type) using our template `Collect PII Data`. [Click here to create one](https://portal.basistheory.com/applications/create?application_template_id=da06cf91-caf4-44f4-886a-ab3d71d9ca5f).
+
+This will create a application with the following [Access Controls](/docs/concepts/access-controls):
+* Permissions: `token:create`, `token:update`
+* Containers: `/pii/`
+* Transform: `mask`
+
+Copy the API Key to be used in the next step.
+
+#### Tokenization
+
+Call the [Create Token](/docs/api/tokens/#create-token) token endpoint, using the key from the previous step:
+
+```bash showLineNumbers
+curl --location --request POST 'https://api.basistheory.com/tokens' \
+--header 'BT-API-KEY: test_1234567890' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "type": "social_security_number",
+    "data": "123456789"
+}'
+```
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+    "id": "f4867f40-a772-44d4-937a-1bb8c6dd322b",
+    "type": "social_security_number",
+    "tenant_id": "88b4fab9-eb9c-494f-a8fa-9e4847eac788",
+    "data": "XXXXX6789",
+    "created_by": "8b8fbf07-2f1e-4b45-bf0f-f2e651b112e0",
+    "created_at": "2022-12-15T13:09:25.9869097+00:00",
+    "fingerprint": "JE2WHCSeKCZUF5WMVavMZSvqQ61xf2zhCpYMieLoz9AD",
+    "fingerprint_expression": "{{ data | remove: '-' }}",
+    "mask": "{{ data | reveal_last: 4 }}",
+    "privacy": {
+        "classification": "pii",
+        "impact_level": "high",
+        "restriction_policy": "mask"
+    },
+    "search_indexes": [
+        "{{ data }}",
+        "{{ data | replace: '-' }}",
+        "{{ data | last4 }}"
+    ],
+    "containers": [
+        "/pii/high/"
+    ]
+}
+```
+
+Copy the `id` to use in the next step.
+
+### Invoking the Proxy
+
+Now it is time to finally test the Proxy with our recently created token. We will use the token `id` as part of our request payload, so it is echoed back from our destination Server and detokenized at the Proxy response transform code.
+
+<Alert>
+  In a real world scenario, the data used to query the User Data may be different, such as the User id stored in the Server database.
+</Alert>
+
+Invoke the Proxy using the `inbound_proxy_key` created previously:
+
+```bash showLineNumbers
+curl --location --request POST 'https://api.basistheory.com/proxy?bt-proxy-key=inbound_proxy_key' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "ssn": "f4867f40-a772-44d4-937a-1bb8c6dd322b"
+}'
+```
+
+You should see a JSON response like:
+
+```json showLineNumbers
+{
+    "ssn": "123456789"
+}
+```
+
+### What is Happening?
+
+A secure HTTPS request is made to Basis Theory's Proxy endpoint. Basis Theory forwards the request to the specified destination URL, the [Echo Server](https://echo.basistheory.com/). Once the Server responds with a full echo body, the Proxy's transform response code looks for the token `id` to detokenize under `req.args.body.json.ssn` path. The Proxy detokenizes the SSN by [retrieving](/docs/api/tokens/#get-a-token) the token `data` and passing it in the response body to the Client.
+
+This allows you to share sensitive PII data to any Client, without touching the data and, therefore, keeping your systems out of PII regulation scope.
+
+## Conclusion
+
+Following this Blueprint enables you to meet regulatory requirements for storing and sharing sensitive PII by using Tokenization. This approach reliefs the burden of having to implement your own data encryption to protect customers privacy.
+
+Have feedback or questions? Join us in our [Slack community](https://community.basistheory.com).

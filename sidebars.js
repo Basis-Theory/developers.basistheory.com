@@ -54,6 +54,17 @@ const sidebars = {
             'blueprints/cards/collect-and-process-cards',
           ],
         },
+        {
+          type: 'category',
+          label: 'PII',
+          link: {
+            type: 'doc',
+            id: 'blueprints/pii/index',
+          },
+          items: [
+            'blueprints/pii/query-user-data-via-api',
+          ],
+        },
       ],
     },
     {
