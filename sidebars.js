@@ -59,6 +59,17 @@ const sidebars = {
             'blueprints/cards/collect-and-process-cards',
           ],
         },
+        {
+          type: 'category',
+          label: 'Personal Information',
+          link: {
+            type: 'doc',
+            id: 'blueprints/personal-information/index',
+          },
+          items: [
+            'blueprints/personal-information/query-user-data-from-api',
+          ],
+        },
       ],
     },
     {
