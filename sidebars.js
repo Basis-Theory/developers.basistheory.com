@@ -43,6 +43,10 @@ const sidebars = {
     {
       type: 'category',
       label: 'Blueprints',
+      link: {
+        type: 'doc',
+        id: 'blueprints/index',
+      },
       items: [
         {
           type: 'category',
