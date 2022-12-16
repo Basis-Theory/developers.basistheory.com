@@ -61,13 +61,13 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'PII',
+          label: 'Personal Information',
           link: {
             type: 'doc',
-            id: 'blueprints/pii/index',
+            id: 'blueprints/personal-information/index',
           },
           items: [
-            'blueprints/pii/query-user-data-via-api',
+            'blueprints/personal-information/query-user-data-from-api',
           ],
         },
       ],
