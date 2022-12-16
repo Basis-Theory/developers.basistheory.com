@@ -1,1 +1,355 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 # Customize the Web Form
+
+This guide will show you how to customize the look and behavior of your Basis Theory Elements.
+
+Key concepts in this guide:
+
+- [Expressions](/docs/expressions)
+- [Elements Options](/docs/sdks/web/elements/options)
+- [Elements Methods and Events](/docs/sdks/web/elements/methods)
+
+## Getting Started
+
+This guide presumes you have completed either the [Collect Data from Web](/docs/guides/collect/collect-data-from-web) or [Collect Data with React](/docs/guides/collect/collect-data-with-react) guide.
+
+In this guide, we are going to make our text element input accept a formatted phone number, remove special characters before tokenizing the value, and style our input. We also want to set focus on our text element when the control loads to prompt our users to input a value and enable the submit button when the form is complete.
+
+## Adding Input Mask to the Form
+
+The first step is we want to provide an input mask to our form. This will ensure that a phone number is properly formatted and complete. The Text Element component support an [input `mask`](/docs/sdks/web/elements/options#mask) property to be able to control the user input.
+
+<Tabs className="bt-tabs" groupId="customize-group">
+  <TabItem value="javascript" label="JavaScript Elements">
+
+```javascript showLineNumbers
+textElement = bt.createElement('text', {
+  targetId: 'exampleTextElement',
+  placeholder: 'Input phone number',
+  // highlight-next-line
+  mask: ["(", /\d/, /\d/, /\d/, ")", " ", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/]
+});
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```tsx showLineNumbers
+import { useRef } from 'react';
+
+import {
+  BasisTheoryProvider,
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const textRef = useRef(null);
+  // highlight-next-line
+  const inputMask = ["(", /\d/, /\d/, /\d/, ")", " ", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/];
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement 
+        id="exampleTextElement" 
+        ref={textRef} 
+        placeholder="Input phone number"
+        // highlight-next-line
+        mask={inputMask} 
+      />
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+
+  </TabItem>
+</Tabs>
+
+This will add an input mask to our form that matches the phone number pattern `(XXX) XXX-XXXX`.
+
+## Transform Input before Tokenizing
+
+With our mask, we can type in a phone number of `(555) 123-4567`, however, we want to ultimately tokenize the value as `5551234567` we can control formatting later for display purposes or forwarning to a third-party.
+
+The Text Element component also supports a [`transform`](/docs/sdks/web/elements/options#transform) property, which will modify the input value prior to tokenizing it. We can update our previous example to the following:
+
+<Tabs className="bt-tabs" groupId="customize-group">
+  <TabItem value="javascript" label="JavaScript Elements">
+
+```javascript showLineNumbers
+textElement = bt.createElement('text', {
+  targetId: 'exampleTextElement',
+  placeholder: 'Input phone number',
+  mask: ["(", /\d/, /\d/, /\d/, ")", " ", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/],
+  // highlight-next-line
+  transform: /[\s()-]/
+});
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```tsx showLineNumbers
+import { useRef } from 'react';
+
+import {
+  BasisTheoryProvider,
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const textRef = useRef(null);
+  const inputMask = ["(", /\d/, /\d/, /\d/, ")", " ", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/];
+  // highlight-next-line
+  const inputTransform = /[\s()-]/;
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement 
+        id="exampleTextElement" 
+        ref={textRef} 
+        placeholder="Input phone number"
+        mask={inputMask} 
+        // highlight-next-line
+        transform={inputTransform}
+      />
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+
+  </TabItem>
+</Tabs>
+
+When we make a call to tokenize the value of the Text Element, the input will be intercepted on the client side and run the `transform` regular expression. The resulting value in this scenario will have the `(`, `)`, `-`, and space characters stripped out prior to submitting to Basis Theory.
+
+## Styling the Text Element
+
+Being able to customize the styles of the various Elements components is important to have them match the look and feel of our existing website design. All of the Elements components support a [`style`](/docs/sdks/web/elements/options#style) property to customize most CSS properties on the input.
+
+First, let's add some new styles for this application. We are going to create a dark theme by adding the following styles:
+
+```css showLineNumbers title=index.css
+body {
+  margin: 0;
+  color: #fff;
+  background: #1e233b;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#exampleTextElement {
+  padding: 11px 15px;
+  border-radius: 2px;
+  border: 1px solid #545a78;
+  background-color: #323856;
+  box-shadow: 0 6px 9px rgba(50, 50, 93, 0.06), 0 2px 5px rgba(0, 0, 0, 0.08);
+  min-width: 50vw;
+  margin: 30px;
+}
+
+button {
+  background-color: #1ad1db;
+  box-shadow: 0 6px 9px rgba(50, 50, 93, 0.06), 0 2px 5px rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+  color: #070a1b;
+  border: none;
+  font-size: 16px;
+  padding: 11px 15px;
+}
+```
+
+<Tabs className="bt-tabs" groupId="customize-group">
+  <TabItem value="javascript" label="JavaScript Elements">
+
+```javascript showLineNumbers
+// highlight-start
+const style = {
+  fonts: [
+    "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap"
+  ],
+  base: {
+    color: "#fff",
+    fontWeight: 500,
+    fontFamily: "'Source Sans Pro'",
+    fontSize: "16px",
+    fontSmooth: "antialiased",
+    "::placeholder": {
+      color: "#6b7294"
+    }
+  },
+  invalid: {
+    color: "#ffc7ee"
+  },
+  complete: {
+    color: "#1ad1db"
+  }
+};
+// highlight-end
+
+textElement = bt.createElement('text', {
+  targetId: 'exampleTextElement',
+  placeholder: 'Input phone number',
+  mask: ["(", /\d/, /\d/, /\d/, ")", " ", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/],
+  transform: /[\s()-]/,
+  // highlight-next-line
+  style
+});
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```tsx showLineNumbers
+import { useRef } from 'react';
+
+import {
+  BasisTheoryProvider,
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const textRef = useRef(null);
+  const inputMask = ["(", /\d/, /\d/, /\d/, ")", " ", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/];
+  const inputTransform = /[\s()-]/;
+  // highlight-start
+  const style = {
+    fonts: [
+      "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap"
+    ],
+    base: {
+      color: "#fff",
+      fontWeight: 500,
+      fontFamily: "'Source Sans Pro'",
+      fontSize: "16px",
+      fontSmooth: "antialiased",
+      "::placeholder": {
+        color: "#6b7294"
+      }
+    },
+    invalid: {
+      color: "#ffc7ee"
+    },
+    complete: {
+      color: "#1ad1db"
+    }
+  };
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement 
+        id="exampleTextElement" 
+        ref={textRef} 
+        placeholder="Input phone number"
+        mask={inputMask} 
+        transform={inputTransform}
+        // highlight-next-line
+        style={style}
+      />
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+
+  </TabItem>
+</Tabs>
+
+Following these steps, your application will now look like this:
+
+<img src="/img/guides/styled-text-element.png" width="100%" />
+
+## Handle Input Events
+
+Finally, we want to be able to set focus to our Text Element input when the form loads and block clicking the submit button until the phone number input is complete. Basis Theory offers several [events and methods](/docs/sdks/web/elements/methods) to assist with these types of operations.
+
+<Tabs className="bt-tabs" groupId="customize-group">
+  <TabItem value="javascript" label="JavaScript Elements">
+
+```javascript showLineNumbers
+textElement = bt.createElement('text', {
+  targetId: 'exampleTextElement',
+  placeholder: 'Input phone number'
+});
+
+// highlight-start
+textElement.on('ready', () => {
+  textElement.focus();
+});
+
+textElement.on('change', (changeEvent) => {
+  const submitButton = document.getElementsByTagName('button')[0];
+  submitButton.disabled = !changeEvent.complete;
+});
+// highlight-end
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```tsx showLineNumbers
+// highlight-next-line
+import { useEffect, useRef, useState } from 'react';
+
+import {
+  BasisTheoryProvider,
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const textRef = useRef(null);
+  // highlight-next-line
+  const [isDisabled, setDisabled] = useState(true);
+
+  // highlight-start
+  useEffect(() => {
+    if (textRef.current) {
+      textRef.current.on('ready', () => {
+        textRef.current.focus();
+      });
+
+      textRef.current.on('change', (changeEvent) => {
+        setDisabled(!changeEvent.complete);
+      });
+    }
+  });
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement 
+        id="exampleTextElement" 
+        ref={textRef} 
+        placeholder="Input phone number"
+      />
+
+      // highlight-next-line
+      <button disabled={isDisabled} onClick={submit}>Submit</button>
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+
+  </TabItem>
+</Tabs>
