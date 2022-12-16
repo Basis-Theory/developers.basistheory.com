@@ -6,19 +6,21 @@ import clsx from "clsx";
 import { Card } from "../shared/Card";
 
 interface BlueprintCard
-  extends Pick<React.ComponentProps<typeof Card>, "img" | "heading"> {}
+  extends Pick<React.ComponentProps<typeof Card>, "img" | "heading" | "href"> {}
 
 const BlueprintCard = ({
   img,
   heading,
   children,
+  href,
 }: PropsWithChildren<BlueprintCard>) => {
   return (
     <Card
+      column
       className={clsx([styles.card])}
       img={img}
+      href={href}
       heading={<Card.PrimaryHeader>{heading}</Card.PrimaryHeader>}
-      hoverable={false}
     >
       <>{children}</>
     </Card>
