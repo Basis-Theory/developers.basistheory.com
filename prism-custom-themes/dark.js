@@ -1,7 +1,7 @@
 module.exports = {
   plain: {
     color: "#ffffff",
-    backgroundColor: "#161929",
+    backgroundColor: "#070A1B",
   },
   styles: [
     {
@@ -56,7 +56,7 @@ module.exports = {
     {
       types: ["attr-name"],
       style: {
-        color: "rgb(241, 250, 140)",
+        color: "rgb(80, 250, 123)",
       },
     },
   ],
