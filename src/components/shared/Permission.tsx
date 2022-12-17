@@ -10,7 +10,7 @@ interface Permission {
 
 export const Permission = ({
   content,
-  variant,
+  variant = "secondary",
   children,
 }: PropsWithChildren<Permission>) => {
   const classNames = clsx({
