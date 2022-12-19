@@ -37,7 +37,32 @@ const sidebars = {
         id: 'guides/share/index',
       },
       items: [
-        'guides/share/send-data-to-third-party'
+        'guides/share/send-data-to-third-party',
+        'guides/share/show-masked-data'
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Process Data',
+      link: {
+        type: 'doc',
+        id: 'guides/process/index',
+      },
+      items: [
+        'guides/process/search-data',
+        'guides/process/execute-zero-knowledge-workflows',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Govern Data',
+      link: {
+        type: 'doc',
+        id: 'guides/govern/index',
+      },
+      items: [
+        'guides/govern/control-data-access',
+        'guides/govern/query-audit-logs'
       ],
     },
     {
