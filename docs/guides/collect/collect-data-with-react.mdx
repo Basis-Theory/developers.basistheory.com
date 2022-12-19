@@ -1,1 +1,202 @@
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+
 # Collect Data with React
+
+This guide will show you how to collect data in a React application without touching the data.
+
+Key concepts in this guide:
+
+- [Tokens](/docs/concepts/what-are-tokens)
+- [Applications](/docs/api/applications)
+- [React Elements](/docs/sdks/web/react-elements)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+Next you will need a [Public Application](/docs/api/applications#application-types) in order to initialize [JavaScript Elements](/docs/sdks/web/javascript-elements) for your web page.
+
+[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20Web%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Collect Data from Web Guide
+- Application Type - Public
+- Permissions - `token:create`
+
+<Alert>
+  Save the API Key from the created Public Application as it will be used later
+  in this guide to initialize the form.
+</Alert>
+
+## Setup the Project
+
+We will create a new React application using the [`create-react-app`](https://reactjs.org/docs/create-a-new-react-app.html#create-react-app) template.
+
+Run the following in your terminal:
+
+```shell showLineNumbers
+npx create-react-app collect-react-guide
+cd collect-react-guide
+npm start
+```
+
+This will scaffoled a new React app called `collect-react-guide` and will launch the new application when completed.
+
+## Install the React Elements SDK
+
+We will need to install Basis Theory's [React Elements SDK](/docs/sdks/web/react-elements), which will render a secure iFrame for capturing the data.
+
+Run the following in a terminal to install the React SDK:
+
+```shell
+npm install --save @basis-theory/basis-theory-react
+```
+
+## Initialize the Web SDK
+
+Now we need to initialize Basis Theory React Elements.
+
+Open the `App.js` file in the `src` directory and replace the contents with the following to initialize Basis Theory React:
+
+```tsx showLineNumbers title="src/App.js"
+import {
+  BasisTheoryProvider,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      Hello World!
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+
+This code is importing the Basis Theory React SDK, initializing the SDK via `useBasisTheory`, and adding the [BasisTheoryProvider](/docs/sdks/web/react-elements#basistheoryprovider) context provider.
+
+## Add Your Form Components
+
+Now we need to add a Basis Theory React component to our page. We will add the [Text Element](/docs/sdks/web/react/components#textelement) component.
+
+We will import the `TextElement` and add it inside of our `BasisTheoryProvider`:
+
+```tsx showLineNumbers title="src/App.js"
+// highlight-next-line
+import { useRef } from 'react';
+
+import {
+  BasisTheoryProvider,
+  // highlight-next-line
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  // highlight-next-line
+  const textRef = useRef(null);
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      // highlight-start
+      <TextElement 
+        id="exampleTextElement" 
+        ref={textRef} 
+        placeholder="Input text" 
+      />
+      // highlight-end
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+
+This will create a new instance of a Text Element will inject an iFrame that is rendered by Basis Theory. The Basis Theory SDK will hold a reference to the Text Element which enables interactions with the underlying data without direct access to the value.
+
+We are also leveraging [Refs](https://reactjs.org/docs/refs-and-the-dom.html) to hold a reference to our TextElement.
+
+## Tokenize the Text Value
+
+We want to be able to tokenize the value within the Text Element without exposing it to our web application. 
+
+We need to add a submit button and a handler for the submit event which will tokenize the underlying data. Also, we want to display the resulting token by adding state to hold the token and a `<pre>` element to display the value.
+
+```tsx showLineNumbers title="src/App.js"
+// highlight-next-line
+import { useRef, useState } from 'react';
+
+import {
+  BasisTheoryProvider,
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const textRef = useRef(null);
+  // highlight-start
+  const [token, setToken] = useState('');
+
+  const submit = async () => {
+    const response = await bt.tokens.create({
+      type: 'token',
+      data: textRef.current,
+    });
+
+    setToken(response);
+  };
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement 
+        id="exampleTextElement" 
+        ref={textRef} 
+        placeholder="Input text" 
+      />
+
+      // highlight-start
+      <button onClick={submit}>Submit</button>
+
+      {token &&
+        <pre>{JSON.stringify(token, undefined, 2)}</pre>
+      }
+      // highlight-end
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+
+When our form is submitted, Basis Theory's SDK will pass the value for the element reference. This will be securely submitted directly to the [Create Token Endpoint](/docs/api/tokens#create-token). The resulting token is then surfaced to the client device.
+
+## Running the Example
+
+We can run our resulting application by running the following in a terminal:
+
+```shell showLineNumbers
+npm start
+```
+
+This will open the React application in our browser to [http://localhost:3000/](http://localhost:3000/)
+
+## Conclusion
+
+You can now capture any data without your application accessing the underlying value drastically reducing compliance and regulatory scope.
+
+Try typing a value and clicking the submit button will securely send the data directly to Basis Theory and return you a [token](/docs/concepts/what-are-tokens). The resulting token is displayed directly on the page.
+
+## Learn More
+
+- [Customize your web form](/docs/guides/collect/customize-web-form)
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [Collect and process cards](/docs/blueprints/cards/collect-and-process-cards)

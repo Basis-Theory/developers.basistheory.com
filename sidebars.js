@@ -25,7 +25,7 @@ const sidebars = {
       items: [
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-with-react",
-        "guides/collect/collect-data-in-an-api",
+        "guides/collect/collect-inbound-data-to-api",
         "guides/collect/customize-web-form",
       ],
     },
@@ -36,11 +36,42 @@ const sidebars = {
         type: "doc",
         id: "guides/share/index",
       },
-      items: ["guides/share/send-data-to-third-party"],
+      items: [
+        "guides/share/send-data-to-third-party",
+        "guides/share/show-masked-data",
+      ],
+    },
+    {
+      type: "category",
+      label: "Process Data",
+      link: {
+        type: "doc",
+        id: "guides/process/index",
+      },
+      items: [
+        "guides/process/search-data",
+        "guides/process/execute-zero-knowledge-workflows",
+      ],
+    },
+    {
+      type: "category",
+      label: "Govern Data",
+      link: {
+        type: "doc",
+        id: "guides/govern/index",
+      },
+      items: [
+        "guides/govern/control-data-access",
+        "guides/govern/query-audit-logs",
+      ],
     },
     {
       type: "category",
       label: "Blueprints",
+      link: {
+        type: "doc",
+        id: "blueprints/index",
+      },
       items: [
         {
           type: "category",
@@ -50,6 +81,15 @@ const sidebars = {
             id: "blueprints/cards/index",
           },
           items: ["blueprints/cards/collect-and-process-cards"],
+        },
+        {
+          type: "category",
+          label: "Personal Information",
+          link: {
+            type: "doc",
+            id: "blueprints/personal-information/index",
+          },
+          items: ["blueprints/personal-information/query-user-data-from-api"],
         },
       ],
     },

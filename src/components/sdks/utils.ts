@@ -1,14 +1,14 @@
 import { SDK } from "../types";
 
-import Android from "@site/static/img/sdk/sdk-card/android.svg";
-import DotNet from "@site/static/img/sdk/sdk-card/dotNet.svg";
-import Go from "@site/static/img/sdk/sdk-card/go.svg";
-import Ios from "@site/static/img/sdk/sdk-card/ios.svg";
-import JavaScript from "@site/static/img/sdk/sdk-card/javascript.svg";
-import Node from "@site/static/img/sdk/sdk-card/node.svg";
-import Python from "@site/static/img/sdk/sdk-card/python.svg";
-import ReactSvg from "@site/static/img/sdk/sdk-card/react.svg";
-import Terraform from "@site/static/img/sdk/sdk-card/terraform.svg";
+import Android from "@site/static/img/sdk/logos/android.svg";
+import DotNet from "@site/static/img/sdk/logos/dotnet.svg";
+import Go from "@site/static/img/sdk/logos/go.svg";
+import Apple from "@site/static/img/sdk/logos/apple.svg";
+import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
+import Node from "@site/static/img/sdk/logos/nodejs.svg";
+import Python from "@site/static/img/sdk/logos/python.svg";
+import ReactSvg from "@site/static/img/sdk/logos/react.svg";
+import Terraform from "@site/static/img/sdk/logos/terraform.svg";
 
 export const getSdkIcon = (icon: SDK) =>
   ({
@@ -20,5 +20,5 @@ export const getSdkIcon = (icon: SDK) =>
     [SDK.REACT]: ReactSvg,
     [SDK.JAVASCRIPT]: JavaScript,
     [SDK.ANDROID]: Android,
-    [SDK.IOS]: Ios,
+    [SDK.IOS]: Apple,
   }[icon]);

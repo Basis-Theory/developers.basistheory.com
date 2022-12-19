@@ -24,7 +24,7 @@ export const Intro = ({ title, caption, img }: Intro) => {
       <div className={styles["img-container"]}>
         {hasSources(img) ? (
           <ThemedImage
-            alt="Docusaurus themed image"
+            alt="Section icon"
             sources={{
               light: useBaseUrl(img.light),
               dark: useBaseUrl(img.dark),

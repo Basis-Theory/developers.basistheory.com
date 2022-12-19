@@ -1,9 +1,22 @@
-import React from "react";
+import clsx from "clsx";
+import React, { PropsWithChildren } from "react";
 
 import styles from "./Permission.module.css";
 
-export const Permission = ({ content }) => (
-  <p className={styles.container}>
-    <span className={styles.content}>{content}</span>
-  </p>
-);
+interface Permission {
+  content?: React.ReactNode;
+  variant?: "primary" | "secondary";
+}
+
+export const Permission = ({
+  content,
+  variant = "secondary",
+  children,
+}: PropsWithChildren<Permission>) => {
+  const classNames = clsx({
+    [styles.primary]: variant == "primary",
+    [styles.secondary]: variant == "secondary",
+  });
+
+  return <code className={classNames}>{content ?? children}</code>;
+};

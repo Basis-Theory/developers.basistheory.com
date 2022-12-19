@@ -1,0 +1,183 @@
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+
+# Collect Inbound Data to API
+
+This guide will show you how to collect data in your API without touching the data.
+
+Key concepts in this guide:
+
+- [Tokens](/docs/concepts/what-are-tokens)
+- [Applications](/docs/api/applications)
+- [Proxy](/docs/concepts/what-is-the-proxy)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+Next you will need a [Management Application](/docs/api/applications#application-types) in order to provision the components in this guide.
+
+[Click here](https://portal.basistheory.com/applications/create?application_template_id=931b306f-6be7-405d-9a8d-1442a99dd2d7) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application from the **Full Management Access** template.
+
+<Alert>
+  Save the API Key from the created Management Application as it will be used in this guide to provision everything.
+</Alert>
+
+## Create a Public Application
+
+We need a [Public Application](/docs/concepts/access-controls#application-type) to [create tokens](/docs/api/tokens#create-token) from the inbound data before it reaches our API:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "Collect Public App",
+    "type": "public",
+    "permissions": [ "token:create" ]
+  }'
+```
+
+<Alert>
+  Save the application <code>id</code> from the created Public Application as it will be used to <a href="#create-the-proxy">create the proxy</a>.
+</Alert>
+
+## Create the Proxy
+
+We will [create a Proxy](/docs/api/proxies#create-a-proxy) capable of intercepting inbound calls to our API, tokenize part of the request, and send the modified request to our API.
+
+The Basis Theory Proxy leverages a [request transform](/docs/api/proxies/#proxy-transform-object), which is executed in a Node.js 16 runtime. The following code will handle tokenizing the request:
+
+```javascript showLineNumbers
+module.exports = async function (req) {
+  const socialSecurityNumber = req.args.body.socialSecurityNumber;
+
+  const token = await req.bt.tokens.create({
+    type: "token",
+    data: socialSecurityNumber
+  });
+
+  return {
+    headers: req.args.headers,
+    body: {
+      ...req.args.body,
+      socialSecurityNumber: token.id
+    }
+  };
+};
+```
+
+This code will read in the `socialSecurityNumber` property from the request body, tokenize it with a pre-configured [Basis Theory JS SDK](/docs/sdks/server-side/node) instance, and update the request body replacing the original `socialSecurityNumber` value with `id` of the token.
+
+We need to create an instance of a Proxy with the previous code as a `request_transform`.
+
+First, let's store the JavaScript code as a variable. In your terminal, run the following:
+
+```shell showLineNumbers
+javascript='module.exports = async function (req) {
+  const socialSecurityNumber = req.args.body.socialSecurityNumber;
+
+  const token = await req.bt.tokens.create({
+    type: "token",
+    data: socialSecurityNumber
+  });
+
+  return {
+    headers: req.args.headers,
+    body: {
+      ...req.args.body,
+      socialSecurityNumber: token.id
+    }
+  };
+};'
+```
+
+Next, we need to create an instance of a Proxy, with the variable we created:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "Inbound Proxy Example",
+    "destination_url": "https://echo.basistheory.com/anything",
+    "request_transform": {
+      "code": '$(echo $javascript | jq -Rsa .)'
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    },
+    "require_auth": false
+  }'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Management API Key you created in the <a href="#getting-started">Getting Started</a> step and replace <code>45c124e7-6ab2-4899-b4d9-1388b0ba9d04</code> with the <code>id</code> of the Public Application you created in the <a href="#create-a-public-application">Getting Started</a> step.
+</Alert>
+
+<Alert>
+  Save the proxy <code>key</code> from the response as it will be used to <a href="#invoke-the-proxy">invoke the proxy</a>.
+</Alert>
+
+This is using `jq` to replace the JavaScript code as a JSON escaped string value. It will create a new Proxy instance where we will run the `request_transform` on the inbound Proxy request against the body and headers of the request. The proxy will then send the request to our `destination_url`, which should be your API URL. In this guide, we are going to use [https://echo.basistheory.com/anything](https://echo.basistheory.com/anything) so we can see the tokenized `socialSecurityNumber`.
+
+## Invoke the Proxy
+
+Now that we have our Proxy created, we need to invoke it. In your terminal run the following:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "socialSecurityNumber": "123-45-6789"
+  }'
+```
+
+<Alert>
+  Be sure to replace <code>TDEyQmkhQMpGiZd13FSRQ9</code> with the <code>key</code> of the Proxy you created in the <a href="#create-the-proxy">Create the Proxy</a> step.
+</Alert>
+
+If successful, you should see an output similar to this:
+
+```json showLineNumbers
+{
+  "args": {},
+  "data": "{\"socialSecurityNumber\":\"8b4f3aab-abc6-423f-86b9-c368919bdc65\"}",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip",
+    "Bt-Trace-Id": "0us+cYwAAAACCDkUl9kKnRY3yEEMzpsZ/Q0hHRURHRTE2MTkAMTYzY2E1ODMtNjQ3MS00MTc3LTg0ZGItZTA4MzBlZGFiODUw",
+    "Content-Length": "63",
+    "Content-Type": "application/json",
+    "Disguised-Host": "echo.basistheory.com",
+    "Host": "echo.basistheory.com",
+    "User-Agent": "curl/7.85.0",
+    "X-Forwarded-Tlsversion": "1.2",
+    "X-Original-Url": "/anything",
+    "X-Waws-Unencoded-Url": "/anything"
+  },
+  "json": {
+    "socialSecurityNumber": "8b4f3aab-abc6-423f-86b9-c368919bdc65"
+  },
+  "method": "POST",
+  "url": "https://echo.basistheory.com/anything"
+}
+```
+
+Notice that the `socialSecurityNumber` was successfully replaced with our tokenized value.
+
+Now that you have your token, check out our guide on how to [send data to a third-party](/docs/guides/share/send-data-to-third-party)!
+
+## Learn More
+
+- [Send Date to 3rd Party](/docs/guides/share/send-data-to-third-party)
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [Collect and process cards](/docs/blueprints/cards/collect-and-process-cards)

@@ -29,6 +29,7 @@ interface Card {
   body?: React.ReactNode;
   hoverable?: boolean;
   cta?: React.ReactNode;
+  column?: boolean;
 }
 
 const Card = ({
@@ -40,6 +41,7 @@ const Card = ({
   heading,
   cta,
   hoverable = true,
+  column = false,
   ...otherProps
 }: PropsWithChildren<
   DetailedHTMLProps<HtmlHTMLAttributes<HTMLDivElement>, HTMLDivElement> & Card
@@ -54,7 +56,8 @@ const Card = ({
         }
       : undefined;
 
-  const clickable = clsx({
+  const classNames = clsx({
+    [styles["flex-direction"]]: column,
     [styles.clickable]: href != undefined && !cta,
     [styles.hoverable]: hoverable,
   });
@@ -63,7 +66,7 @@ const Card = ({
     <div
       onClick={onClick}
       {...otherProps}
-      className={clsx([className, styles.card, clickable])}
+      className={clsx([className, styles.card, classNames])}
     >
       {img && <div className={styles.img}>{img}</div>}
       <div className={styles.body}>
