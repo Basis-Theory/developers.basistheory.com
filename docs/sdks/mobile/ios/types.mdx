@@ -1,0 +1,209 @@
+---
+sidebar_label: Types
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Mobile Elements Types
+
+## TextElementUITextField
+
+The `TextElementUITextField` element type enables collecting user String data. [Mask](./options/#mask) and [transform](./options/#transform) capabilities are available to be configured on these elements.
+
+```swift showLineNumbers
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class TokenizeName: UIViewController {
+
+    @IBOutlet weak var nameTextField: TextElementUITextField!
+    @IBOutlet weak var output: UITextView!
+
+    @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            "data": [
+                "name": self.nameTextField,
+            ],
+            "type": "token"
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { data, error in
+            guard error == nil else {
+                self.output.text = "There was an error!"
+                print(error)
+                return
+            }
+
+            let stringifiedData = String(data: try! JSONSerialization.data(withJSONObject: data!.value as! [String: Any], options: .prettyPrinted), encoding: .utf8)!
+
+            self.output.text = stringifiedData
+            print(stringifiedData)
+        }
+    }
+}
+```
+
+## CardNumberUITextField
+
+The `CardNumberUITextField` element type renders a card number input featuring automatic brand detection, input validation, and masking. The input must be Luhn valid and be an acceptable length for the card brand.
+
+```swift showLineNumbers
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class TokenizeCardNumber: UIViewController {
+
+    @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
+    @IBOutlet weak var output: UITextView!
+
+    @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            "data": [
+                "number": self.cardNumberTextField,
+            ],
+            "type": "card_number"
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { data, error in
+            guard error == nil else {
+                self.output.text = "There was an error!"
+                print(error)
+                return
+            }
+
+            let stringifiedData = String(data: try! JSONSerialization.data(withJSONObject: data!.value as! [String: Any], options: .prettyPrinted), encoding: .utf8)!
+
+            self.output.text = stringifiedData
+            print(stringifiedData)
+        }
+    }
+}
+```
+
+## CardExpirationDateUITextField
+
+The `CardExpirationDateUITextField` element type features a month and year formatted input with validation. The input must be the current month and year or later.
+
+```swift showLineNumbers
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class TokenizeCardExpirationDate: UIViewController {
+
+    @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
+    @IBOutlet weak var output: UITextView!
+
+    @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            "data": [
+                "expiration_month": self.expirationDateTextField.month(),
+                "expiration_year": self.expirationDateTextField.year(),
+            ],
+            "type": "token"
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { data, error in
+            guard error == nil else {
+                self.output.text = "There was an error!"
+                print(error)
+                return
+            }
+
+            let stringifiedData = String(data: try! JSONSerialization.data(withJSONObject: data!.value as! [String: Any], options: .prettyPrinted), encoding: .utf8)!
+
+            self.output.text = stringifiedData
+            print(stringifiedData)
+        }
+    }
+}
+```
+
+## CardVerificationCodeUITextField
+
+The `CardVerificationCodeUITextField` element type is used to collect the card verification code.
+
+```swift showLineNumbers
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class TokenizeCVC: UIViewController {
+
+    @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
+    @IBOutlet weak var output: UITextView!
+
+    @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            "data": [
+                "cvc": self.cvcTextField,
+            ],
+            "type": "token"
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { data, error in
+            guard error == nil else {
+                self.output.text = "There was an error!"
+                print(error)
+                return
+            }
+
+            let stringifiedData = String(data: try! JSONSerialization.data(withJSONObject: data!.value as! [String: Any], options: .prettyPrinted), encoding: .utf8)!
+
+            self.output.text = stringifiedData
+            print(stringifiedData)
+        }
+    }
+}
+```
+
+See below for an example that uses all of the card-related mobile elements, `CardNumberUITextField`, `CardExpirationDateUITextField`, and `CardVerificationCodeUITextField`, together.
+
+```swift showLineNumbers
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class TokenizeBillingInformation: UIViewController {
+
+    @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
+    @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
+    @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
+    @IBOutlet weak var output: UITextView!
+
+    @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            "data": [
+                "number": self.cardNumberTextField,
+                "expiration_month": self.expirationDateTextField.month(),
+                "expiration_year": self.expirationDateTextField.year(),
+                "cvc": self.cvcTextField
+            ],
+            "type": "card"
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { data, error in
+            guard error == nil else {
+                self.output.text = "There was an error!"
+                print(error)
+                return
+            }
+
+            let stringifiedData = String(data: try! JSONSerialization.data(withJSONObject: data!.value as! [String: Any], options: .prettyPrinted), encoding: .utf8)!
+
+            self.output.text = stringifiedData
+            print(stringifiedData)
+        }
+    }
+}
+```
