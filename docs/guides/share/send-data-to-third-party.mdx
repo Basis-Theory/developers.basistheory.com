@@ -1,1 +1,147 @@
+---
+toc_max_heading_level: 2
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+
 # Send Data to a 3rd Party
+
+This guide will show you how to send data to a third-party service without touching the data.
+
+Key concepts in this guide:
+
+- [Tokens](/docs/concepts/what-are-tokens)
+- [Expressions](/docs/expressions)
+- [Proxy](/docs/concepts/what-is-the-proxy)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+Next you will need a [Private Application](/docs/api/applications#application-types) in order to create a new token and use the token with the Proxy.
+
+[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&permissions=token%3Ause&type=private&name=Send%20Data%to%20Third%20Party%20Guide) to create a Private Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Send Data to Third Party Guide
+- Application Type - Private
+- Permissions - `token:create`, `token:use`
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used later in this guide to capture the data and send it to a third-party.
+</Alert>
+
+## Create a Token
+
+We will need to [create a token](/docs/api/tokens#create-token) to contain our data. Basis Theory offers several ways to capture this information [from your web application](/docs/guides/collect/collect-data-from-web) or [inbound to your API](/docs/guides/collect/collect-inbound-data-to-api) without touching the information, but for this guide, we will create the token directly against the Basis Theory API.
+
+Run the following in your terminal to create a token containing a phone number:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokens" \
+-X "POST" \
+-H "BT-API-KEY: test_1234567890" \
+-H "Content-Type: application/json" \
+-d '{
+    "type": "token",
+    "data": "(555) 687-5309"
+}'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Private API Key you created in the <a href="#getting-started">Getting Started</a> step.
+</Alert>
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+    "id": "adb7ef72-73ca-4166-bc68-b77949a55f75",
+    "type": "token",
+    "tenant_id": "4d228c59-13e9-4d26-9ff3-883336579d35",
+    "created_by": "59929b69-1282-43e1-8b26-8cf655964f9b",
+    "created_at": "2022-12-19T19:20:43.7334616+00:00",
+    "fingerprint": "4CCkxuF2Gp5a5fnnc1Esxe1eANXao1g3ASMqHsTV9Adr",
+    "fingerprint_expression": "{{ data | stringify }}",
+    "containers": [
+        "/general/high/"
+    ]
+}
+```
+
+Copy the `id` to use in the next step.
+
+## Send the Data
+
+We can leverage the [Basis Theory Proxy](/docs/concepts/what-is-the-proxy) to be able to detokenize the stored data before forwarding it to a third-party. To do this, we will utilize [Expressions](/docs/expressions), which is based on the [Liquid template language](https://shopify.github.io/liquid).
+
+```bash showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+-X "POST" \
+-H "BT-API-KEY: test_1234567890" \
+-H "BT-PROXY-URL: https://echo.basistheory.com/anything" \
+-H "Content-Type: application/json" \
+-d '{
+      "phoneNumber": {
+        "full": "+1 {{ adb7ef72-73ca-4166-bc68-b77949a55f75 }}",
+        "countryCode": "+1",
+        "areaCode": "{{ adb7ef72-73ca-4166-bc68-b77949a55f75 | split: \" \" | first | remove: \"(\" | remove: \")\" }}",
+        "exchangeCode": "{{ adb7ef72-73ca-4166-bc68-b77949a55f75  | split: \"-\" | last }}",
+        "lineNumber": "{{ adb7ef72-73ca-4166-bc68-b77949a55f75 | split: \" \" | last | split: \"-\" | first }}"
+      }
+    }'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Private API Key you created in the <a href="#getting-started">Getting Started</a> step and replace 
+  <code>adb7ef72-73ca-4166-bc68-b77949a55f75</code> with the token <code>id</code> you created in the <a href="#create-a-token">Create a Token</a> step.
+</Alert>
+
+You should see a response similar to:
+
+```json showLineNumbers
+{
+  "args": {},
+  "data": "{\"phoneNumber\":{\"full\":\"+1 8675309\",\"countryCode\":\"+1\",\"areaCode\":\"8675309\",\"exchangeCode\":\"8675309\",\"lineNumber\":\"8675309\"}}",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip",
+    "Bt-Trace-Id": "0kr2gYwAAAACKcnGsnP/NTrEa4nIHenpYQ0hHRURHRTE1MTAAMTYzY2E1ODMtNjQ3MS00MTc3LTg0ZGItZTA4MzBlZGFiODUw",
+    "Content-Length": "125",
+    "Content-Type": "application/json",
+    "Disguised-Host": "echo.basistheory.com",
+    "Host": "echo.basistheory.com",
+    "Max-Forwards": "10",
+    "User-Agent": "curl/7.85.0"
+  },
+  "json": {
+    "phoneNumber": {
+      "areaCode": "8675309",
+      "countryCode": "+1",
+      "exchangeCode": "8675309",
+      "full": "+1 8675309",
+      "lineNumber": "8675309"
+    }
+  },
+  "method": "POST",
+  "url": "https://echo.basistheory.com/anything"
+}
+```
+
+## Conclusion
+
+Basis Theory's Proxy will intercept the sent request and [evaluate and detokenize](/docs/expressions/detokenization) the request body. Basis Theory will then forward the request onto the configured `BT-PROXY-URL`, in this example is [https://echo.basistheory.com/anything](https://echo.basistheory.com/).
+
+[Creating a pre-configured Proxy](/docs/api/proxies#create-a-proxy) provides additional capabilities such as the ability to execute custom transforms on the request and response bodies.
+
+You can use this guide as an example on how to easily forward any piece of information and transform the request prior to sending to the destination.
+
+## Learn More
+
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [What is the Proxy](/docs/concepts/what-is-the-proxy)
+- [Collect and process cards](/docs/blueprints/cards/collect-and-process-cards)
