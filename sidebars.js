@@ -249,15 +249,15 @@ const sidebars = {
           },
           items: ['sdks/mobile/elements/types', 'sdks/mobile/elements/options'],
         },
-        {
-          type: 'category',
-          label: 'Android',
-          link: {
-            type: 'doc',
-            id: 'sdks/mobile/android',
-          },
-          items: ['sdks/mobile/android'],
-        },
+        // {
+        //   type: 'category',
+        //   label: 'Android',
+        //   link: {
+        //     type: 'doc',
+        //     id: 'sdks/mobile/android',
+        //   },
+        //   items: ['sdks/mobile/android'],
+        // },
       ],
     },
   ],
