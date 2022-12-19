@@ -245,9 +245,9 @@ const sidebars = {
           label: 'iOS Elements',
           link: {
             type: 'doc',
-            id: 'sdks/mobile/ios',
+            id: 'sdks/mobile/ios/index',
           },
-          items: ['sdks/mobile/elements/types', 'sdks/mobile/elements/options'],
+          items: ['sdks/mobile/ios/types', 'sdks/mobile/ios/options'],
         },
         // {
         //   type: 'category',
