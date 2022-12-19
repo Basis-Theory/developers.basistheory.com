@@ -38,7 +38,7 @@ const sidebars = {
       },
       items: [
         'guides/share/send-data-to-third-party',
-        'guides/share/show-masked-data',
+        'guides/share/display-masked-data',
       ],
     },
     {
@@ -62,7 +62,7 @@ const sidebars = {
       },
       items: [
         'guides/govern/control-data-access',
-        'guides/govern/query-audit-logs',
+        'guides/govern/audit-data-access',
       ],
     },
     {
