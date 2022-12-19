@@ -9,17 +9,11 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Mobile Elements Types
 
-## Text Element UI Text Field
+## TextElementUITextField
 
-The `TextElementUITextField` element type enables collecting user String data. [Mask](#mask) and [transform](#transform) capabilities are available to be configured on these elements.
+The `TextElementUITextField` element type enables collecting user String data. [Mask](./options/#mask) and [transform](./options/#transform) capabilities are available to be configured on these elements.
 
-| Configuration | Overridable | Defaults              |
-| ------------- | ----------- | --------------------- |
-| `validation`  | ❌          | No default validation |
-| `mask`        | ✅          | No default mask       |
-| `transform`   | ✅          | No default transform  |
-
-```showLineNumbers
+```swift showLineNumbers
 import Foundation
 import UIKit
 import BasisTheoryElements
@@ -28,6 +22,7 @@ import Combine
 class TokenizeName: UIViewController {
 
     @IBOutlet weak var nameTextField: TextElementUITextField!
+    @IBOutlet weak var output: UITextView!
 
     @IBAction func tokenize(_ sender: Any) {
         let body: [String: Any] = [
@@ -53,39 +48,21 @@ class TokenizeName: UIViewController {
 }
 ```
 
-## Card Number UI Text Field
+## CardNumberUITextField
 
-The `CardNumberUITextField` element type renders a card number input featuring automatic brand detection, input validation, and masking.
+The `CardNumberUITextField` element type renders a card number input featuring automatic brand detection, input validation, and masking. The input must be Luhn valid and be an acceptable length for the card brand.
 
-| Configuration | Overridable | Defaults                                                                                                                                             |
-| ------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `validation`  | ❌          | Input must be Luhn valid and be an acceptable length for the card brand.                                                                             |
-| `mask`        | ❌          | The `mask` changes depending on the card brand identified for this input. Most commonly it will contain a space every 4 digits up to the 16th digit. |
-| `transform`   | ❌          | All spaces set by the mask above will be removed before tokenization.                                                                                |
+## CardExpirationDateUITextField
 
-## Card Expiration Date UI Text Field
+The `CardExpirationDateUITextField` element type features a month and year formatted input with validation. The input must be the current month and year or later.
 
-The `CardExpirationDateUITextField` element type features a month and year formatted input with validation.
-
-| Configuration | Overridable | Defaults                                                                           |
-| ------------- | ----------- | ---------------------------------------------------------------------------------- |
-| `validation`  | ❌          | Input must be the current month and year or later.                                 |
-| `mask`        | ❌          | Two digits followed by a forward slash followed by two more digits (eg. `MM/YY` ). |
-| `transform`   | ❌          | No default `transform`.                                                            |
-
-## Card Verification Code UI Text Field
+## CardVerificationCodeUITextField
 
 The `CardVerificationCodeUITextField` element type is used to collect the card verification code.
 
-| Configuration | Overridable | Defaults                                                                                                                                                                            |
-| ------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `validation`  | ❌          | No default `validation`. Always valid in ElementEvent.                                                                                                                              |
-| `mask`        | ❌          | If not associated with a `CardNumberUITextField`, the `mask` is a 4 digit number. If it is, the mask changes depending on the card brand identified by the `CardNumberUITextField`. |
-| `transform`   | ❌          | No default `transform`.                                                                                                                                                             |
-
 See below for an example using `CardNumberUITextField`, `CardExpirationDateUITextField`, and `CardVerificationCodeUITextField`.
 
-```showLineNumbers
+```swift showLineNumbers
 import Foundation
 import UIKit
 import BasisTheoryElements
@@ -109,7 +86,6 @@ class TokenizeBillingInformation: UIViewController {
             "type": "card"
         ]
 
-        BasisTheoryElements.basePath = "https://api-dev.basistheory.com"
         BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { data, error in
             guard error == nil else {
                 self.output.text = "There was an error!"
@@ -125,73 +101,3 @@ class TokenizeBillingInformation: UIViewController {
     }
 }
 ```
-
-## Mask
-
-A [`TextElementUITextField`](#text-element-ui-text-field) can restrict and fill user input by using the mask attribute.
-It consists of an array of NSRegularExpression objects and Strings, used to restrict and fill input, respectively.
-The position of each item in the mask array corresponds to the restriction or fill used for that input's position.
-The length of the array determines how long an input is allowed to be.
-For example, the mask for a US based phone number shown below will have the following rules:
-
-```showLineNumbers
-let regexDigit = try! NSRegularExpression(pattern: "\\d")
-
-let phoneMask = [ //(123)456-7890
-	"(",
-  regexDigit,
-  regexDigit,
-  regexDigit,
-  ")",
-  regexDigit,
-  regexDigit,
-  regexDigit,
-  "-",
-  regexDigit,
-  regexDigit,
-  regexDigit,
-  regexDigit
-] as [Any]
-
-myTextElement.setConfig(options: TextElementOptions(mask: phoneMask))
-```
-
-- The input must be at most 13 characters long
-- Only digits are allowed in the 2-4, 6-8, 10-13 positions
-- `(` will be filled in position 1
-- `)` will be filled in position 5
-- `-` will be filled in position 8
-
-The mask will be displayed as the user is typing, and will be used as the value for tokenization performed with that text element. If the value does not satisfy the mask in its entirety, the field is considered incomplete. This is reflected in the element events and will fail validation before tokenization.
-
-## Transform
-
-A [`TextElementUITextField`](#text-element-ui-text-field) allows you to modify user input before tokenization through the `transform` attribute. It’s a struct that takes in an `NSRegularExpression` and a `String`. It works by making use of the [stringByReplacingMatches](https://developer.apple.com/documentation/foundation/nsregularexpression/1413740-stringbyreplacingmatches) function on the `NSRegularExpression` provided. If no string is defined, an empty string will be used as the argument for `withTemplate`. For instance, the mask for a US based phone number shown below will modify user input to look like this: `(123)456-7890`.
-The `transform` setting set below, in this case, will modify the user input to remove `(`, `)`, and `-` from the input. The resulting value is `1234567890`, which will be the value that gets tokenized.
-
-```showLineNumbers
-let regexDigit = try! NSRegularExpression(pattern: "\\d")
-
-let phoneMask = [ //(123)456-7890
-  "(",
-  regexDigit,
-  regexDigit,
-  regexDigit,
-  ")",
-  regexDigit,
-  regexDigit,
-  regexDigit,
-  "-",
-  regexDigit,
-  regexDigit,
-  regexDigit,
-  regexDigit
-] as [Any]
-
-textElementUITextField.setConfig(options: TextElementOptions(mask: phoneMask, transform: ElementTransform(matcher: transformMatcher))
-```
-
-<Alert>
-  If no transform is set, the value is sent to be tokenized as is, including the
-  mask, if set.
-</Alert>

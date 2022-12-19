@@ -1,0 +1,77 @@
+---
+sidebar_label: Options
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Options
+
+## Mask
+
+A [`TextElementUITextField`](./types/#text-element-ui-text-field) can restrict and fill user input by using the mask attribute.
+It consists of an array of `NSRegularExpression` objects and Strings, used to restrict and fill input, respectively.
+The position of each item in the mask array corresponds to the restriction or fill used for that input's position.
+The length of the array determines how long an input is allowed to be.
+For example, the mask for a US based phone number shown below will have the following rules:
+
+```swift showLineNumbers
+let regexDigit = try! NSRegularExpression(pattern: "\\d")
+
+let phoneMask = [ //(123)456-7890
+	"(",
+  regexDigit,
+  regexDigit,
+  regexDigit,
+  ")",
+  regexDigit,
+  regexDigit,
+  regexDigit,
+  "-",
+  regexDigit,
+  regexDigit,
+  regexDigit,
+  regexDigit
+] as [Any]
+
+myTextElement.setConfig(options: TextElementOptions(mask: phoneMask))
+```
+
+- The input must be at most 13 characters long
+- Only digits are allowed in the 2-4, 6-8, 10-13 positions
+- `(` will be filled in the 1 position
+- `)` will be filled in the 5 position
+- `-` will be filled in the 8 position
+
+The mask will be displayed as the user is typing, and will be used as the value for tokenization performed with that text element. If the value does not satisfy the mask in its entirety, the field is considered incomplete. This is reflected in the element events and will fail validation before tokenization.
+
+## Transform
+
+A [`TextElementUITextField`](./types/#text-element-ui-text-field) allows you to modify user input before tokenization through the `transform` attribute. It’s a struct that takes in an `NSRegularExpression` and a `String`. It works by making use of the [stringByReplacingMatches](https://developer.apple.com/documentation/foundation/nsregularexpression/1413740-stringbyreplacingmatches) function on the `NSRegularExpression` provided. If no string is defined, an empty string will be used as the argument for `withTemplate`. For instance, the mask for a US based phone number shown below will modify user input to look like this: `(123)456-7890`.
+The `transform` setting set below, in this case, will modify the user input to remove `(`, `)`, and `-` from the input. The resulting value is `1234567890`, which will be the value that gets tokenized.
+
+```swift showLineNumbers
+let regexDigit = try! NSRegularExpression(pattern: "\\d")
+
+let phoneMask = [ //(123)456-7890
+  "(",
+  regexDigit,
+  regexDigit,
+  regexDigit,
+  ")",
+  regexDigit,
+  regexDigit,
+  regexDigit,
+  "-",
+  regexDigit,
+  regexDigit,
+  regexDigit,
+  regexDigit
+] as [Any]
+
+textElementUITextField.setConfig(options: TextElementOptions(mask: phoneMask, transform: ElementTransform(matcher: transformMatcher))
+```
+
+<Alert>
+  If no transform is set, the value is sent to be tokenized as is, including the
+  mask, if set.
+</Alert>
