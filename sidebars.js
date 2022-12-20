@@ -77,7 +77,7 @@ const sidebars = {
       },
       items: [
         "guides/process/search-data",
-        "guides/process/execute-zero-knowledge-workflows",
+        "guides/process/analyze-data",
       ],
     },
     {
