@@ -194,8 +194,8 @@ const config = {
   ],
   stylesheets: ["/css/iubenda.css"],
   scripts: [
+    { src: "/scripts/iubenda.js" },
     { src: "https://cdn.iubenda.com/cs/iubenda_cs.js" },
-    { src: "/scripts/iubenda.js", async: true }, 
   ],
 };
 
