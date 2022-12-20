@@ -189,7 +189,7 @@ const sidebars = {
       collapsed: false,
       link: {
         type: "doc",
-        id: "api",
+        id: "api/index",
       },
       items: [
         "api/authentication",
@@ -254,7 +254,7 @@ const sidebars = {
     "api/deprecations",
   ],
   sdk: [
-    "sdks",
+    "sdks/index",
     {
       type: "category",
       label: "Server-side SDKs",

@@ -70,13 +70,13 @@ const config = {
           },
           {
             type: "doc",
-            docId: "api",
+            docId: "api/index",
             position: "left",
             label: "API",
           },
           {
             type: "doc",
-            docId: "sdks",
+            docId: "sdks/index",
             position: "left",
             label: "SDKs",
           },
