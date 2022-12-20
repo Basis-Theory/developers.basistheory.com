@@ -145,6 +145,10 @@ const sidebars = {
           dark: "/img/sidebar/dark/info.svg",
         },
       },
+      link: {
+        type: "doc",
+        id: "concepts/index",
+      },
       items: [
         "concepts/what-are-tokens",
         "concepts/what-is-search",
