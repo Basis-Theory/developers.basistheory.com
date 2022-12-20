@@ -1,0 +1,71 @@
+---
+sidebar_label: iOS
+sidebar_position: 0
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# iOS Elements SDK
+
+Basis Theory iOS Elements are simple, secure, developer-friendly inputs that empower consumers to collect sensitive data from their users directly to Basis Theory’s certified vault.
+
+Think about it as an isolated sandbox within your mobile application that your end users are able to seamlessly
+interact with, and which securely communicates with the Basis Theory Vault. Sensitive data is not directly exposed to
+your application code, which keeps your mobile application out of compliance scope.
+
+Here is how we make this possible:
+
+- Own your UX, by fully customizing how iOS Elements are styled
+- Use inputs and forms with ease
+- Interact with iOS Elements just like native elements
+
+## Collect Sensitive Data
+
+Data entered by your end users into **iOS Elements** is tokenized and secured within Basis Theory's certified Vault.
+
+Our SDKs provide several types of inputs to collect various types of data, such as the [TextElementUITextField](./types##text-element-ui-text-field)
+for collecting arbitrary textual data and [CardNumberUITextField](./types##card-number-ui-text-field) for collecting a credit card number.
+
+Elements can be configured to support custom input [masking](./options/#mask), validation, and [transformation](./options/#transform) rules to satisfy your use cases.
+
+## Before You Begin
+
+Basis Theory iOS Elements require the use of an API Key associated with a **Public Application**, which only allows `token:create` and `token:update` permissions, removing any risk that your API keys are stolen and used to access data.
+
+To create one, login into our [Portal](https://portal.basistheory.com) and create a new "Public" Application with the permissions you require.
+
+## Installation
+
+Add the Basis Theory iOS package using [Swift Package Manager](https://www.swift.org/package-manager/) via [XCode](https://developer.apple.com/xcode/). To do this, follow these steps.
+
+1. Via File -> Add Packages, search for "https://github.com/Basis-Theory/basistheory-ios" and click on "Copy Dependency".
+
+2. Add the following line under `dependencies` to `Package.swift`.
+
+```swift showLineNumbers
+.package(url: "https://github.com/Basis-Theory/basistheory-ios", from: "X.X.X")
+```
+
+3. Then, add `BasisTheoryElements` as a dependency to your target.
+
+```swift showLineNumbers
+dependencies: [
+    .product(name: "BasisTheoryElements", package: "basistheory-ios"),
+    ...
+]
+```
+
+4. Add the following line to your Podfile under your target.
+
+```swift showLineNumbers
+pod 'BasisTheoryElements'
+```
+
+## Initialization
+
+To initialize our elements, you’ll need to set a custom class on each of the `UITextField`s that need to be configured as one of our secure elements.
+Below is an example of a UITextField set as `TextElementUITextField`.
+
+Below is an example of a UITextField set as `TextElementUITextField`.
+
+![](/img/iOS/ios-initialization.jpg)

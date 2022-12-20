@@ -56,10 +56,10 @@ const config = {
       navbar: {
         logo: {
           alt: "Basis Theory Logo",
-          src: "img/bt-logo-light.svg",
-          srcDark: "img/bt-logo-dark.svg",
           href: "/",
           target: "_self",
+          //go to src/theme/Logo for the img paths
+          src: "-",
         },
         items: [
           {
@@ -138,7 +138,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["csharp", "hcl"],
+        additionalLanguages: ["csharp", "hcl", "swift"],
       },
       colorMode: {
         defaultMode: "dark",
