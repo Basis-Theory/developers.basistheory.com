@@ -274,14 +274,14 @@ const sidebars = {
           label: "JavaScript Elements",
           link: {
             type: "doc",
-            id: "sdks/web/javascript-elements",
+            id: "sdks/web/javascript/index",
           },
           items: [
-            "sdks/web/elements/content-security-policy",
-            "sdks/web/elements/types",
-            "sdks/web/elements/lifecycle",
-            "sdks/web/elements/options",
-            "sdks/web/elements/methods",
+            "sdks/web/javascript/content-security-policy",
+            "sdks/web/javascript/types",
+            "sdks/web/javascript/lifecycle",
+            "sdks/web/javascript/options",
+            "sdks/web/javascript/methods",
           ],
         },
         {
@@ -289,7 +289,7 @@ const sidebars = {
           label: "React Elements",
           link: {
             type: "doc",
-            id: "sdks/web/react-elements",
+            id: "sdks/web/react/index",
           },
           items: ["sdks/web/react/components"],
         },

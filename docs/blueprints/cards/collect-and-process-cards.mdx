@@ -11,7 +11,7 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 This blueprint provides a complete guide to securely collect cardholder data and send it to a third party service.
 
-This blueprint assumes you are using a [React](https://reactjs.org/) frontend and [Node.js](https://nodejs.org/en/) API. The blueprint can be modified for your specific framework or language by leveraging our [JavaScript Elements implementation](/docs/sdks/web/javascript-elements) or one of our many language-specific SDKs.
+This blueprint assumes you are using a [React](https://reactjs.org/) frontend and [Node.js](https://nodejs.org/en/) API. The blueprint can be modified for your specific framework or language by leveraging our [JavaScript Elements implementation](/docs/sdks/web/javascript) or one of our many language-specific SDKs.
 
 <Alert>
   Don't want to complete this guide? View the completed example application <a href="https://github.com/Basis-Theory-Labs/pci-blueprint-example/">here</a>.
@@ -19,7 +19,7 @@ This blueprint assumes you are using a [React](https://reactjs.org/) frontend an
 
 ## Collect Credit Cards
 
-The first step to reducing your PCI scope is to securely collect cardholder information without your application touching the data. To do this, we will leverage [Basis Theory Elements](/docs/sdks/web/react-elements). These secure form inputs for your web or mobile application collect sensitive cardholder data without directly interacting with the values.
+The first step to reducing your PCI scope is to securely collect cardholder information without your application touching the data. To do this, we will leverage [Basis Theory Elements](/docs/sdks/web/react). These secure form inputs for your web or mobile application collect sensitive cardholder data without directly interacting with the values.
 
 ### Install Basis Theory Package
 
@@ -112,7 +112,7 @@ This will initialize Basis Theory JS and add your new card form.
 
 ### Add Card Element
 
-Now, we need to add a [`CardElement`](/docs/sdks/web/elements/types#card-element) component to our form. This Element type renders a single line containing input fields to capture the card number, expiration date, and CVC.
+Now, we need to add a [`CardElement`](/docs/sdks/web/javascript/types#card-element) component to our form. This Element type renders a single line containing input fields to capture the card number, expiration date, and CVC.
 
 Add the `CardElement` to our inputs:
 
@@ -154,7 +154,7 @@ export const CardForm = () => {
 }
 ```
 
-You can fully customize the [look and feel](#guides/style-elements-for-my-brand) to match your existing site and even listen to common [events](/docs/sdks/web/elements/methods#events) on all Elements components.
+You can fully customize the [look and feel](#guides/style-elements-for-my-brand) to match your existing site and even listen to common [events](/docs/sdks/web/javascript/methods#events) on all Elements components.
 
 ## Store Cards
 
@@ -182,7 +182,7 @@ const submit = async () => {
 
 ### What is Happening?
 
-When a user submits their payment information, we will tokenize the underlying value of the [CardElement](/docs/sdks/web/elements/types#card-element). This will instruct Basis Theory Elements to submit this sensitive card data directly to [Basis Theory's Tokenize endpoint](/docs/api/tokens/tokenize) and return the resulting token identifiers to our front end, all without our application having accessed the sensitive card data directly.
+When a user submits their payment information, we will tokenize the underlying value of the [CardElement](/docs/sdks/web/javascript/types#card-element). This will instruct Basis Theory Elements to submit this sensitive card data directly to [Basis Theory's Tokenize endpoint](/docs/api/tokens/tokenize) and return the resulting token identifiers to our front end, all without our application having accessed the sensitive card data directly.
 
 We are also creating a [`card` Token Type](/docs/api/tokens/token-types#card). This is a PCI-compliant token type that will validate the card number using the [LUHN algorithm](https://en.wikipedia.org/wiki/Luhn_algorithm) and automatically expire the `cvc` property after one hour.
 
