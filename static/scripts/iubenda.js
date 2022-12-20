@@ -45,7 +45,7 @@ _iub.csConfiguration = {
     textColor: "#e5e6ec",
     acceptButtonCaption: "Accept All",
     content:
-      '<link rel="preconnect" href="https://fonts.googleapis.com" />\n<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />\n<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />\n<div id="iubenda-cs-title">&#x1f36a;  &nbsp;Cookie Notice</div><div id="iubenda-cs-paragraph">\n\nBy clicking "Accept All", you agree to the storing of cookies on your device to enhance site navigation, analyze site usage, and assist in our marketing efforts. View our <a href="https://basistheory.com/privacy-policy" target="_blank">Cookie Policy</a> for more information.\n</div>',
+      '<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" /><link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" /><div id="iubenda-cs-title">&#x1f36a;  &nbsp;Cookie Notice</div><div id="iubenda-cs-paragraph">By clicking "Accept All", you agree to the storing of cookies on your device to enhance site navigation, analyze site usage, and assist in our marketing efforts. View our <a href="https://basistheory.com/privacy-policy" target="_blank">Cookie Policy</a> for more information.</div>',
     rejectButtonCaption: "",
   },
 };

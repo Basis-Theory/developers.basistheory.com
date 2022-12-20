@@ -192,9 +192,11 @@ const config = {
       };
     },
   ],
-  stylesheets: ["css/iubenda.css"],
-  scripts: [{src: "scripts/iubenda.js", async: true}, {src: "https://cdn.iubenda.com/cs/iubenda_cs.js", async: true}],
-
+  stylesheets: ["/css/iubenda.css"],
+  scripts: [
+    { src: "https://cdn.iubenda.com/cs/iubenda_cs.js" },
+    { src: "/scripts/iubenda.js", async: true }, 
+  ],
 };
 
 module.exports = config;
