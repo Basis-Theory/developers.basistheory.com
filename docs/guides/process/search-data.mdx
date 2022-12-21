@@ -2,4 +2,494 @@
 title: Search Data
 ---
 
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+
 # Search Your Data
+
+This guide will show you how to search your data without decrypting it.
+
+Key concepts in this guide:
+
+- [Token Search Indexes](/docs/concepts/what-are-tokens#search-indexes)
+- [Expressions](/docs/expressions)
+- [Token Search](/docs/concepts/what-is-search)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+Next you will need a [Private Application](/docs/api/applications#application-types) in order to create and search tokens.
+
+[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&permissions=token%3Asearch&type=private&name=Search%20Data%20Guide) to create a Private Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Search Data Guide
+- Application Type - Private
+- Permissions - `token:create`, `token:search`
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used later in this guide to create and search the tokens.
+</Alert>
+
+## Create Tokens
+
+Basis Theory utilizes the concept of a Blind Index, which is a cryptographic hash of some data, to empower fast searches of encrypted data. 
+When you [create a token](/docs/api/tokens#create-token), you can supply one or more [Search Indexes](/docs/concepts/what-are-tokens#search-indexes), which are [Expressions](/docs/expressions) based on the [Liquid template language](https://shopify.github.io/liquid). 
+These Search Indexes are computed at the time of token creation to generate the Blind Indexes needed to enable searching.
+
+Run the following in your terminal to create some tokens:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokenize" \
+-X "POST" \
+-H "BT-API-KEY: test_1234567890" \
+-H "Content-Type: application/json" \
+-d '[{
+    "type": "token",
+    "data": {
+      "first_name": "Luke",
+      "last_name": "Skywalker",
+      "social_security_number": "111-22-3333",
+      "email_address": "luke@skywalkerranch.com"
+    },
+    "mask": {
+      "first_name": "{{ data.first_name }}",
+      "last_name": "{{ data.last_name | slice: 0 }}",
+      "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+      "email_address": "{{ data.email_address | split: '\''@'\'' | last }}"
+    },
+    "metadata": {
+      "customper_type": "vip"
+    },
+    "containers": [
+      "/customers/skywalkers/"
+    ],
+    "search_indexes": [
+      "{{ data.first_name | downcase }}",
+      "{{ data.last_name | downcase }}",
+      "{{ data.social_security_number }}",
+      "{{ data.social_security_number | last4 }}",
+      "{{ data.email_address | downcase }}",
+      "{{ data.email_address | split: '\''@'\'' | last }}"
+    ]
+}, {
+    "type": "token",
+    "data": {
+      "first_name": "Han",
+      "last_name": "Solo",
+      "social_security_number": "444-55-6666",
+      "email_address": "han.solo@skypilots.com"
+    },
+    "mask": {
+      "first_name": "{{ data.first_name }}",
+      "last_name": "{{ data.last_name | slice: 0 }}",
+      "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+      "email_address": "{{ data.email_address | split: '\''@'\'' | last }}"
+    },
+    "metadata": {
+      "customper_type": "vip"
+    },
+    "containers": [
+      "/customers/solo/"
+    ],
+    "search_indexes": [
+      "{{ data.first_name | downcase }}",
+      "{{ data.last_name | downcase }}",
+      "{{ data.social_security_number }}",
+      "{{ data.social_security_number | last4 }}",
+      "{{ data.email_address | downcase }}",
+      "{{ data.email_address | split: '\''@'\'' | last }}"
+    ]
+}, {
+    "type": "token",
+    "data": {
+      "first_name": "Leia",
+      "last_name": "Organa",
+      "social_security_number": "777-88-9999",
+      "email_address": "leia@skywalkerranch.com"
+    },
+    "mask": {
+      "first_name": "{{ data.first_name }}",
+      "last_name": "{{ data.last_name | slice: 0 }}",
+      "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+      "email_address": "{{ data.email_address | split: '\''@'\'' | last }}"
+    },
+    "metadata": {
+      "customper_type": "standard"
+    },
+    "containers": [
+      "/customers/skywalkers/"
+    ],
+    "search_indexes": [
+      "{{ data.first_name | downcase }}",
+      "{{ data.last_name | downcase }}",
+      "{{ data.social_security_number }}",
+      "{{ data.social_security_number | last4 }}",
+      "{{ data.email_address | downcase }}",
+      "{{ data.email_address | split: '\''@'\'' | last }}"
+    ]
+}]'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Private API Key you created in the <a href="#getting-started">Getting Started</a> step.
+</Alert>
+
+This will create several search indexes:
+- Lowercase first name
+- Lowercase last name
+- Full social security number
+- Last four of the social security number
+- Lowercase email address
+- Domain of the email address
+
+## Search Tokens
+
+Now that we have some data tokenized, we can demonstrate several possible ways to search over the data. Basis Theory uses a [Lucene-based query syntax](http://www.lucenetutorial.com/lucene-query-syntax.html) to power the
+search engine.
+
+### Search by Data
+
+Run the following in your terminal to create some tokens:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokens/search" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "query": "data:3333",
+    "page": 1,
+    "size": 20
+  }'
+```
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+  "pagination": {
+    "total_items": 1,
+    "page_number": 1,
+    "page_size": 20,
+    "total_pages": 1
+  },
+  "data": [
+    {
+      "id": "5855f821-a207-4f07-8204-4b7c96cb2bbc",
+      "type": "token",
+      "tenant_id": "dd19bffb-db97-4ef7-8630-54834a7c1243",
+      "data": {
+        "first_name": "Luke",
+        "last_name": "S",
+        "social_security_number": "XXX-XX-3333",
+        "email_address": "skywalkerranch.com"
+      },
+      "metadata": {
+        "customper_type": "vip"
+      },
+      "created_by": "f1d47dd9-34ac-407c-bb0c-99ad786f9167",
+      "created_at": "2022-12-21T20:49:11.6884577+00:00",
+      "fingerprint": "4wPsbGizTkqeh3ZGXFEbPep5zmf6ffokX37SDEAw9m2S",
+      "fingerprint_expression": "{{ data | stringify }}",
+      "mask": {
+        "first_name": "{{ data.first_name }}",
+        "last_name": "{{ data.last_name | slice: 0 }}",
+        "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+        "email_address": "{{ data.email_address | split: '@' | last }}"
+      },
+      "search_indexes": [
+        "{{ data.social_security_number }}",
+        "{{ data.email_address | split: '@' | last }}",
+        "{{ data.social_security_number | last4 }}",
+        "{{ data.last_name | downcase }}",
+        "{{ data.email_address | downcase }}",
+        "{{ data.first_name | downcase }}"
+      ],
+      "containers": [
+        "/customers/skywalkers/"
+      ]
+    }
+  ]
+}
+```
+
+### Search by Metadata
+
+Run the following in your terminal to create some tokens:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokens/search" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "query": "metadata.customper_type:vip",
+    "page": 1,
+    "size": 20
+  }'
+```
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+  "pagination": {
+    "total_items": 2,
+    "page_number": 1,
+    "page_size": 20,
+    "total_pages": 1
+  },
+  "data": [
+    {
+      "id": "400394da-79d3-41f6-a45f-4e60c3e5b0a0",
+      "type": "token",
+      "tenant_id": "dd19bffb-db97-4ef7-8630-54834a7c1243",
+      "data": {
+        "first_name": "Han",
+        "last_name": "S",
+        "social_security_number": "XXX-XX-6666",
+        "email_address": "skypilots.com"
+      },
+      "metadata": {
+        "customper_type": "vip"
+      },
+      "created_by": "f1d47dd9-34ac-407c-bb0c-99ad786f9167",
+      "created_at": "2022-12-21T20:49:11.6884577+00:00",
+      "fingerprint": "Hi9TgzHi2otCqBeHKM5v9eAroGtUGUzTPFUCX3akRAEM",
+      "fingerprint_expression": "{{ data | stringify }}",
+      "mask": {
+        "first_name": "{{ data.first_name }}",
+        "last_name": "{{ data.last_name | slice: 0 }}",
+        "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+        "email_address": "{{ data.email_address | split: '@' | last }}"
+      },
+      "search_indexes": [
+        "{{ data.social_security_number | last4 }}",
+        "{{ data.last_name | downcase }}",
+        "{{ data.email_address | downcase }}",
+        "{{ data.social_security_number }}",
+        "{{ data.email_address | split: '@' | last }}",
+        "{{ data.first_name | downcase }}"
+      ],
+      "containers": [
+        "/customers/solo/"
+      ]
+    },
+    {
+      "id": "5855f821-a207-4f07-8204-4b7c96cb2bbc",
+      "type": "token",
+      "tenant_id": "dd19bffb-db97-4ef7-8630-54834a7c1243",
+      "data": {
+        "first_name": "Luke",
+        "last_name": "S",
+        "social_security_number": "XXX-XX-3333",
+        "email_address": "skywalkerranch.com"
+      },
+      "metadata": {
+        "customper_type": "vip"
+      },
+      "created_by": "f1d47dd9-34ac-407c-bb0c-99ad786f9167",
+      "created_at": "2022-12-21T20:49:11.6884577+00:00",
+      "fingerprint": "4wPsbGizTkqeh3ZGXFEbPep5zmf6ffokX37SDEAw9m2S",
+      "fingerprint_expression": "{{ data | stringify }}",
+      "mask": {
+        "first_name": "{{ data.first_name }}",
+        "last_name": "{{ data.last_name | slice: 0 }}",
+        "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+        "email_address": "{{ data.email_address | split: '@' | last }}"
+      },
+      "search_indexes": [
+        "{{ data.social_security_number }}",
+        "{{ data.email_address | split: '@' | last }}",
+        "{{ data.social_security_number | last4 }}",
+        "{{ data.last_name | downcase }}",
+        "{{ data.email_address | downcase }}",
+        "{{ data.first_name | downcase }}"
+      ],
+      "containers": [
+        "/customers/skywalkers/"
+      ]
+    }
+  ]
+}
+```
+
+### Search by Containers
+
+Run the following in your terminal to create some tokens:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokens/search" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "query": "container:\"/customers/skywalkers/\"",
+    "page": 1,
+    "size": 20
+  }'
+```
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+  "pagination": {
+    "total_items": 2,
+    "page_number": 1,
+    "page_size": 20,
+    "total_pages": 1
+  },
+  "data": [
+    {
+      "id": "017f3513-87df-4734-88a2-22c5a0fb6972",
+      "type": "token",
+      "tenant_id": "dd19bffb-db97-4ef7-8630-54834a7c1243",
+      "data": {
+        "first_name": "Leia",
+        "last_name": "O",
+        "social_security_number": "XXX-XX-9999",
+        "email_address": "skywalkerranch.com"
+      },
+      "metadata": {
+        "customper_type": "standard"
+      },
+      "created_by": "f1d47dd9-34ac-407c-bb0c-99ad786f9167",
+      "created_at": "2022-12-21T20:49:11.6884577+00:00",
+      "fingerprint": "EqHKkaC3bwd4sEBovWt6eaLcRi4D4G1yTSMe7D8RG837",
+      "fingerprint_expression": "{{ data | stringify }}",
+      "mask": {
+        "first_name": "{{ data.first_name }}",
+        "last_name": "{{ data.last_name | slice: 0 }}",
+        "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+        "email_address": "{{ data.email_address | split: '@' | last }}"
+      },
+      "search_indexes": [
+        "{{ data.first_name | downcase }}",
+        "{{ data.last_name | downcase }}",
+        "{{ data.email_address | split: '@' | last }}",
+        "{{ data.social_security_number | last4 }}",
+        "{{ data.social_security_number }}",
+        "{{ data.email_address | downcase }}"
+      ],
+      "containers": [
+        "/customers/skywalkers/"
+      ]
+    },
+    {
+      "id": "5855f821-a207-4f07-8204-4b7c96cb2bbc",
+      "type": "token",
+      "tenant_id": "dd19bffb-db97-4ef7-8630-54834a7c1243",
+      "data": {
+        "first_name": "Luke",
+        "last_name": "S",
+        "social_security_number": "XXX-XX-3333",
+        "email_address": "skywalkerranch.com"
+      },
+      "metadata": {
+        "customper_type": "vip"
+      },
+      "created_by": "f1d47dd9-34ac-407c-bb0c-99ad786f9167",
+      "created_at": "2022-12-21T20:49:11.6884577+00:00",
+      "fingerprint": "4wPsbGizTkqeh3ZGXFEbPep5zmf6ffokX37SDEAw9m2S",
+      "fingerprint_expression": "{{ data | stringify }}",
+      "mask": {
+        "first_name": "{{ data.first_name }}",
+        "last_name": "{{ data.last_name | slice: 0 }}",
+        "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+        "email_address": "{{ data.email_address | split: '@' | last }}"
+      },
+      "search_indexes": [
+        "{{ data.social_security_number }}",
+        "{{ data.email_address | split: '@' | last }}",
+        "{{ data.social_security_number | last4 }}",
+        "{{ data.last_name | downcase }}",
+        "{{ data.email_address | downcase }}",
+        "{{ data.first_name | downcase }}"
+      ],
+      "containers": [
+        "/customers/skywalkers/"
+      ]
+    }
+  ]
+}
+```
+
+### Perform Compound Search
+
+Run the following in your terminal to create some tokens:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokens/search" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "query": "metadata.customper_type:vip AND data:skywalkerranch.com",
+    "page": 1,
+    "size": 20
+  }'
+```
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+  "pagination": {
+    "total_items": 1,
+    "page_number": 1,
+    "page_size": 20,
+    "total_pages": 1
+  },
+  "data": [
+    {
+      "id": "5855f821-a207-4f07-8204-4b7c96cb2bbc",
+      "type": "token",
+      "tenant_id": "dd19bffb-db97-4ef7-8630-54834a7c1243",
+      "data": {
+        "first_name": "Luke",
+        "last_name": "S",
+        "social_security_number": "XXX-XX-3333",
+        "email_address": "skywalkerranch.com"
+      },
+      "metadata": {
+        "customper_type": "vip"
+      },
+      "created_by": "f1d47dd9-34ac-407c-bb0c-99ad786f9167",
+      "created_at": "2022-12-21T20:49:11.6884577+00:00",
+      "fingerprint": "4wPsbGizTkqeh3ZGXFEbPep5zmf6ffokX37SDEAw9m2S",
+      "fingerprint_expression": "{{ data | stringify }}",
+      "mask": {
+        "first_name": "{{ data.first_name }}",
+        "last_name": "{{ data.last_name | slice: 0 }}",
+        "social_security_number": "{{ data.social_security_number | reveal_last: 4 }}",
+        "email_address": "{{ data.email_address | split: '@' | last }}"
+      },
+      "search_indexes": [
+        "{{ data.social_security_number }}",
+        "{{ data.email_address | split: '@' | last }}",
+        "{{ data.social_security_number | last4 }}",
+        "{{ data.last_name | downcase }}",
+        "{{ data.email_address | downcase }}",
+        "{{ data.first_name | downcase }}"
+      ],
+      "containers": [
+        "/customers/skywalkers/"
+      ]
+    }
+  ]
+}
+```
+
+## Conclusion
+
+Utilizing Search Indexes empowers you a way to provide business functionality against your encrypted data without the need to decrypt it, enabling things like reporting and customer service operations.
+
+## Learn More
+
+- [What is Token Search?](/docs/concepts/what-is-search)
+- [Access Controls](/docs/concepts/access-controls)
+- [Display Masked Data](/docs/guides/share/display-masked-data)
