@@ -96,7 +96,7 @@ export const GithubCard = ({
         </div>
 
         <div className={styles.metadata}>
-          <Version>{releaseName ?? placeholder}</Version>
+          {releaseName && <Version>{releaseName ?? placeholder}</Version>}
           <p>
             <Star /> {stargazersCount ?? placeholder} Stars
           </p>

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, ComponentProps } from "react";
 
 import styles from "./SdkCard.module.css";
 import utils from "./utils.module.css";
@@ -9,15 +9,18 @@ import { isValidSdk, SDK } from "../types";
 
 import Package from "@site/static/img/sdk/package.svg";
 import { getSdkIcon } from "./utils";
+import ThemedImage from "@theme/ThemedImage";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 interface SdkCard
   extends Pick<
-    React.ComponentProps<typeof Card>,
+    ComponentProps<typeof Card>,
     "img" | "heading" | "cta" | "href" | "className" | "hoverable"
   > {
-  icon: SDK | `${SDK}`;
+  icon?: SDK | `${SDK}`;
   repository: string;
   metadata?: ReactNode;
+  sources?: ComponentProps<typeof ThemedImage>["sources"];
 }
 
 const SdkCard = ({
@@ -28,11 +31,12 @@ const SdkCard = ({
   className,
   href,
   hoverable,
+  sources,
 }: SdkCard) => {
-  if (!icon) throw Error("Missing SDK icon");
-  if (!isValidSdk(icon)) throw Error("Invalid SDK.");
+  if (!icon && !sources) throw Error("Missing SDK icon/icon sources");
+  if (!isValidSdk(icon) && !sources) throw Error("Invalid SDK.");
 
-  const Icon = getSdkIcon(icon);
+  const Icon = sources ? null : getSdkIcon(icon);
 
   return (
     <Card
@@ -41,7 +45,18 @@ const SdkCard = ({
       href={href}
       img={
         <div className={utils["round-border"]}>
-          <Icon />
+          {sources ? (
+            <ThemedImage
+              width="100%"
+              height="100%"
+              sources={{
+                light: useBaseUrl(sources.light),
+                dark: useBaseUrl(sources.dark),
+              }}
+            />
+          ) : (
+            <Icon />
+          )}
         </div>
       }
       cta={cta}

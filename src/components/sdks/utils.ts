@@ -10,7 +10,7 @@ import Python from "@site/static/img/sdk/logos/python.svg";
 import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 import Terraform from "@site/static/img/sdk/logos/terraform.svg";
 
-export const getSdkIcon = (icon: SDK) =>
+export const getSdkIcon = (icon: SDK | `${SDK}`) =>
   ({
     [SDK.DOT_NET]: DotNet,
     [SDK.GO]: Go,
