@@ -52,6 +52,8 @@ const Card = ({
     href && !cta
       ? (e) => {
           e.preventDefault();
+
+          if (href.startsWith("https")) window.open(href, "__blank");
           history.push(href);
         }
       : undefined;
