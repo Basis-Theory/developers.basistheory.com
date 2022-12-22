@@ -53,8 +53,11 @@ const Card = ({
       ? (e) => {
           e.preventDefault();
 
-          if (href.startsWith("https")) window.open(href, "__blank");
-          history.push(href);
+          if (href.startsWith("https")) {
+            window.open(href, "__blank");
+          } else {
+            history.push(href);
+          }
         }
       : undefined;
 
