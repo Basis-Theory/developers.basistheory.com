@@ -106,10 +106,10 @@ export default function Home(): JSX.Element {
         </header>
         <main>
           <div className={styles["quickstarts"]}>
-            <h2>Quickstarts</h2>
+            <h2>SDKs</h2>
             <div className={styles["quickstarts-container"]}>
               <div>
-                Web Applications
+                Server-side SDKs
                 <div className={styles["quickstart-column"]}>
                   <Card
                     href="/docs/sdks/server-side/dotnet"
@@ -149,15 +149,8 @@ export default function Home(): JSX.Element {
                 </div>
               </div>
               <div>
-                Single Page Applications
+                Web SDKs
                 <div className={styles["quickstart-column"]}>
-                  <Card
-                    href="/docs/sdks/web/react/"
-                    img={<ReactSvg />}
-                    className={styles.quickstart}
-                  >
-                    React
-                  </Card>
                   <Card
                     href="/docs/sdks/web/javascript/"
                     img={<JavaScript />}
@@ -165,10 +158,17 @@ export default function Home(): JSX.Element {
                   >
                     Javascript
                   </Card>
+                  <Card
+                    href="/docs/sdks/web/react/"
+                    img={<ReactSvg />}
+                    className={styles.quickstart}
+                  >
+                    React
+                  </Card>
                 </div>
               </div>
               <div className={styles["quickstart-column"]}>
-                Mobile
+                Mobile SDKs
                 <div className={styles["quickstart-column"]}>
                   <Card
                     href="/docs/sdks/mobile/android/"

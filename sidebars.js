@@ -308,15 +308,11 @@ const sidebars = {
           },
           items: ["sdks/mobile/ios/types", "sdks/mobile/ios/options"],
         },
-        // {
-        //   type: 'category',
-        //   label: 'Android',
-        //   link: {
-        //     type: 'doc',
-        //     id: 'sdks/mobile/android',
-        //   },
-        //   items: ['sdks/mobile/android'],
-        // },
+        {
+          type: 'doc',
+          label: 'Android Elements',
+          id: 'sdks/mobile/android/index'
+        },
       ],
     },
   ],
