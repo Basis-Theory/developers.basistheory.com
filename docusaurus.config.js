@@ -126,16 +126,22 @@ const config = {
     [
       '@docusaurus/plugin-client-redirects',
       {
-        redirects: [
-          { from: '/api-reference', to: '/docs/api' },
-          { from: '/elements', to: '/docs/sdks/web/javascript' },
-          { from: '/concepts', to: '/docs/concepts' },
-          { from: '/getting-started', to: '/docs/' },
-          { from: '/blueprints', to: '/docs/blueprints/' },
-        ],
         createRedirects(existingPath) {
+          console.log(existingPath);
           if (existingPath.startsWith('/guides') || existingPath.startsWith('/getting-started')) {
-            return '/docs';
+            return ['/docs'];
+          }
+          if (existingPath.startsWith('/api-reference')) {
+            return [existingPath.replace('/api-reference', '/docs/api')];
+          }
+          if (existingPath.startsWith('/concepts')) {
+            return [existingPath.replace('/concepts', '/docs/concepts')];
+          }
+          if (existingPath.startsWith('/blueprints')) {
+            return [existingPath.replace('/blueprints', '/docs/blueprints')];
+          }
+          if (existingPath.startsWith('/elements')) {
+            return ['/docs/sdks/web/javascript'];
           }
           return undefined; // Return a falsy value: no redirect created
         },
