@@ -15,7 +15,7 @@ import Info from "@site/static/img/homepage/info.svg";
 import Package from "@site/static/img/homepage/package.svg";
 import Question from "@site/static/img/homepage/question.svg";
 import Star from "@site/static/img/homepage/star.svg";
-import Arrow from "@site/static/img/homepage/Arrow.svg";
+import Arrow from "@site/static/img/homepage/arrow.svg";
 
 import Android from "@site/static/img/sdk/logos/android.svg";
 import DotNet from "@site/static/img/sdk/logos/dotnet.svg";
