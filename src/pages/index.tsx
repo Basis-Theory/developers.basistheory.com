@@ -14,10 +14,6 @@ import Package from "@site/static/img/homepage/package.svg";
 import Question from "@site/static/img/homepage/question.svg";
 import Star from "@site/static/img/homepage/star.svg";
 import Arrow from "@site/static/img/homepage/arrow.svg";
-import Collect from "@site/static/img/homepage/collect-data.svg";
-import Share from "@site/static/img/homepage/share-data.svg";
-import Process from "@site/static/img/homepage/process-data.svg";
-import Govern from "@site/static/img/homepage/govern-data.svg";
 
 import Android from "@site/static/img/sdk/logos/android.svg";
 import DotNet from "@site/static/img/sdk/logos/dotnet.svg";
