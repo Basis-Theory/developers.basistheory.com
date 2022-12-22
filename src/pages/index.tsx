@@ -118,7 +118,7 @@ export default function Home(): JSX.Element {
                 Securely collect data in your web browser.
               </Card>
               <Card
-                href="/docs/guides/collect/collect-data-from-web"
+                href="/docs/guides/collect/collect-inbound-data-to-api"
                 img={<Collect />}
                 heading="Collect Inbound Data to API"
                 column
