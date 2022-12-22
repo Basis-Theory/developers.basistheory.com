@@ -123,6 +123,24 @@ const config = {
   plugins: [
     require.resolve("docusaurus-lunr-search"),
     require.resolve("docusaurus-plugin-sass"),
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          { from: '/api-reference', to: '/docs/api' },
+          { from: '/elements', to: '/docs/sdks/web/javascript' },
+          { from: '/concepts', to: '/docs/concepts' },
+          { from: '/getting-started', to: '/docs/' },
+          { from: '/blueprints', to: '/docs/blueprints/' },
+        ],
+        createRedirects(existingPath) {
+          if (existingPath.startsWith('/guides') || existingPath.startsWith('/getting-started')) {
+            return '/docs';
+          }
+          return undefined; // Return a falsy value: no redirect created
+        },
+      }
+    ],
     // https://github.com/facebook/docusaurus/issues/8297
     // https://github.com/svg/svgo/issues/1714
     // @ts-ignore
