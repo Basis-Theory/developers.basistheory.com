@@ -54,7 +54,7 @@ const Card = ({
           e.preventDefault();
 
           if (href.startsWith("https")) {
-            window.open(href, "__blank");
+            window.open(href, "_blank");
           } else {
             history.push(href);
           }
