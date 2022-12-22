@@ -1,1 +1,96 @@
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+
 # Audit Data Access
+
+This guide will show you how to search audit logs to govern data access.
+
+Key concepts in this guide:
+
+- [Audit Logs](/docs/api/logs)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+Next you will need a [Management Application](/docs/api/applications#application-types) in order to provision the components in this guide.
+
+[Click here](https://portal.basistheory.com/applications/create?application_template_id=931b306f-6be7-405d-9a8d-1442a99dd2d7) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application from the **Full Management Access** template.
+
+<Alert>
+  Save the API Key from the created Management Application as it will be used in this guide to query audit logs.
+</Alert>
+
+## Query Audit Logs
+
+Basis Theory audits all activity within the system. This includes interactions with tokens, users, applications, and proxies. These logs can be valuable for auditors and security individuals who need to validate system and data access requirements.
+
+### Retrieve All Logs
+
+We can list all audit logs by running the following your terminal:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/logs" \
+  -H "BT-API-KEY: test_1234567890"
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Management API Key you created in the <a href="#getting-started">Getting Started</a> step.
+</Alert>
+
+You should see a JSON response similar to:
+
+```json showLineNumbers
+{
+  "pagination": {...},
+  "data": [
+    {
+      "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+      "actor_id": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+      "actor_type": "application",
+      "entity_type": "token",
+      "entity_id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+      "operation": "read",
+      "message": "Token retrieved",
+      "created_at": "2021-03-01T08:23:14+00:00"
+    },
+    {...},
+    {...}
+  ]
+}
+```
+
+The resulting logs shows several important pieces of information:
+
+- `tenant_id`: This is the ID of the tenant. All data and actions are contained within a tenant which is setup when creating a new account
+- `actor_type`: This identifies the actor type, typically a user or application
+- `actor_id`: This is the identifier of the actor, typically a user or application ID
+- `entity_type`: An entity is a `application`, `tenant`, `token`, etc. It is the resource type that was interacted with
+- `entity_id`: The entity identifier. This would be the application ID if the `entity_type` is `application`
+- `operation`: This is the operation taken on the resource. Typically it is `create`, `read`, `update`, and `delete`
+- `message`: This is helpful information about the action that can be used to help with troubleshooting or provide context
+- `created_at`: This is an ISO-8601 formatted timestamp of when the action occurred
+
+### Filter Audit Logs
+
+We can apply [filters to the Audit Logs query](/docs/api/logs#query-parameters) to refine the results.
+
+Run the following in your terminal:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/logs?entity_type=token&start_date=2021-03-01" \
+  -H "BT-API-KEY: test_1234567890"
+```
+
+This will filter the audit logs down by the entity type `token` and retrieve logs after `2021-03-01`. You can play with the other [log filters](/docs/api/logs#query-parameters) to refine your results.
+
+## Conclusion
+
+Using [Audit Logs](/docs/api/logs) and [log filters](/docs/api/logs#query-parameters), you can pull information and generate reports which can be provided to auditors and security individuals who need to govern data access for compliance and regulatory requirements.
+
+## Learn More
+
+- [Control Data Access](/docs/guides/govern/control-data-access)
+- [Access Controls](/docs/concepts/access-controls)
