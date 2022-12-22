@@ -2,10 +2,13 @@ import React from "react";
 import { useNavbarMobileSidebar } from "@docusaurus/theme-common/internal";
 import { translate } from "@docusaurus/Translate";
 import NavbarColorModeToggle from "@theme/Navbar/ColorModeToggle";
-import IconClose from "@theme/Icon/Close";
 import NavbarLogo from "@theme/Navbar/Logo";
-import { SignInButton } from "@site/src/components/navbar/SignInButton";
-import { GithubButton } from "@site/src/components/navbar/GithubButton";
+
+import Close from "@site/static/img/sidebar/close.svg";
+
+import styles from "./index.module.css";
+import clsx from "clsx";
+
 function CloseButton() {
   const mobileSidebar = useNavbarMobileSidebar();
   return (
@@ -16,10 +19,10 @@ function CloseButton() {
         message: "Close navigation bar",
         description: "The ARIA label for close button of mobile sidebar",
       })}
-      className="clean-btn navbar-sidebar__close"
+      className={clsx(["clean-btn", styles["close-btn"]])}
       onClick={() => mobileSidebar.toggle()}
     >
-      <IconClose color="var(--ifm-color-emphasis-600)" />
+      <Close className={styles.close} />
     </button>
   );
 }
@@ -27,9 +30,7 @@ export default function NavbarMobileSidebarHeader() {
   return (
     <div className="navbar-sidebar__brand">
       <NavbarLogo />
-      <NavbarColorModeToggle className="margin-right--md" />
-      <GithubButton className="margin-right--md" />
-      <SignInButton />
+      <NavbarColorModeToggle className="margin-right--md  navbar-sidebar__close" />
       <CloseButton />
     </div>
   );
