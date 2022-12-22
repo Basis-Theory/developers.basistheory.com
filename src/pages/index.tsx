@@ -16,6 +16,7 @@ import Package from "@site/static/img/homepage/package.svg";
 import Question from "@site/static/img/homepage/question.svg";
 import Star from "@site/static/img/homepage/star.svg";
 import Arrow from "@site/static/img/homepage/arrow.svg";
+import Blueprint from "@site/static/img/homepage/blueprint.svg";
 
 import Android from "@site/static/img/sdk/logos/android.svg";
 import DotNet from "@site/static/img/sdk/logos/dotnet.svg";
@@ -247,7 +248,7 @@ export default function Home(): JSX.Element {
               </Card>
               <Card
                 href="/docs/blueprints/"
-                img={<Star />}
+                img={<Blueprint />}
                 heading="Blueprints"
                 column
               >

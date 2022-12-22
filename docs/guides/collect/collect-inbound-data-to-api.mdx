@@ -53,7 +53,7 @@ curl "https://api.basistheory.com/applications" \
 
 We will [create a Proxy](/docs/api/proxies#create-a-proxy) capable of intercepting inbound calls to our API, tokenize part of the request, and send the modified request to our API.
 
-The Basis Theory Proxy leverages a [request transform](/docs/api/proxies/#proxy-transform-object), which is executed in a Node.js 16 runtime. The following code will handle tokenizing the request:
+The Basis Theory Proxy leverages a [request transform](/docs/api/proxies/#proxy-transform-object), which is executed in a secure Node.js 16 runtime. The following code will handle tokenizing the request:
 
 ```javascript showLineNumbers
 module.exports = async function (req) {
@@ -110,7 +110,7 @@ curl "https://api.basistheory.com/proxies" \
     "name": "Inbound Proxy Example",
     "destination_url": "https://echo.basistheory.com/anything",
     "request_transform": {
-      "code": '$(echo $javascript | jq -Rsa .)'
+      "code": '"$(echo $javascript | jq -Rsa .)"'
     },
     "application": {
       "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
