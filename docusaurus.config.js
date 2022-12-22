@@ -126,25 +126,38 @@ const config = {
     [
       '@docusaurus/plugin-client-redirects',
       {
-        createRedirects(existingPath) {
-          console.log(existingPath);
-          if (existingPath.startsWith('/guides') || existingPath.startsWith('/getting-started')) {
-            return ['/docs'];
-          }
-          if (existingPath.startsWith('/api-reference')) {
-            return [existingPath.replace('/api-reference', '/docs/api')];
-          }
-          if (existingPath.startsWith('/concepts')) {
-            return [existingPath.replace('/concepts', '/docs/concepts')];
-          }
-          if (existingPath.startsWith('/blueprints')) {
-            return [existingPath.replace('/blueprints', '/docs/blueprints')];
-          }
-          if (existingPath.startsWith('/elements')) {
-            return ['/docs/sdks/web/javascript'];
-          }
-          return undefined; // Return a falsy value: no redirect created
-        },
+        redirects: [
+          { from: '/getting-started', to: '/docs' },
+          { from: '/api-reference', to: '/docs/api' },
+          { from: '/elements', to: '/docs/sdks/web/javascript' },
+          { from: '/expressions', to: '/docs/expressions' },
+          { from: '/labs', to: '/docs' },
+
+          { from: '/concepts/access-controls', to: '/docs/concepts/access-controls' },
+          { from: '/concepts/what-are-containers', to: '/docs/concepts/what-are-containers' },
+          { from: '/concepts/what-are-mats', to: '/docs/concepts/what-are-mats' },
+          { from: '/concepts/what-are-reactors', to: '/docs/concepts/what-are-reactors' },
+          { from: '/concepts/what-are-tokens', to: '/docs/concepts/what-are-tokens' },
+          { from: '/concepts/what-is-search', to: '/docs/concepts/what-is-search' },
+          { from: '/concepts/what-is-the-proxy', to: '/docs/concepts/what-is-the-proxy' },
+
+          { from: '/guides/collect-pii-js', to: '/docs/guides/collect/collect-data-from-web' },
+          { from: '/guides/collect-pii-react', to: '/docs/guides/collect/collect-data-with-react' },
+          { from: '/guides/collect-cards-with-elements-react', to: '/docs/guides/collect/collect-data-with-react' },
+          { from: '/guides/style-elements-for-my-brand', to: '/docs/guides/collect/customize-web-form' },
+          { from: '/guides/encrypt-us-banks-in-your-applications', to: '/docs/guides/collect' },
+          
+          { from: '/guides/collect-cards-with-elements', to: '/docs/blueprints/cards/collect-and-process-cards' },
+          { from: '/guides/use-us-bank-accounts-without-touching-them', to: '/docs/guides/share/send-data-to-third-party' },
+          { from: '/guides/reveal-cards-with-react/', to: '/docs' },
+          { from: '/guides/use-token-data-in-reactors', to: '/docs/guides/process/analyze-data' },
+          { from: '/guides/use-token-data-in-http-requests', to: '/docs/guides/share/send-data-to-third-party' },
+          { from: '/guides/run-your-own-code-in-a-reactor', to: '/docs/guides/process/analyze-data' },
+          { from: '/guides/collect-cards-with-proxies', to: '/docs/blueprints/cards/collect-and-process-cards' },
+          { from: '/guides/migrating-off-basis-theory', to: '/docs/guides/share/send-data-to-third-party' },
+          
+          { from: '/blueprints/pci', to: '/docs/blueprints/cards/collect-and-process-cards' },
+        ]
       }
     ],
     // https://github.com/facebook/docusaurus/issues/8297
