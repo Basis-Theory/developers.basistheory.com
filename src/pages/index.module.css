@@ -1,3 +1,11 @@
+:root {
+  --bt-card-text-color: var(--ifm-font-color-base);
+}
+
+[data-theme="dark"] {
+  --bt-card-text-color: var(--ifm-heading-color);
+}
+
 .container {
   width: var(--ifm-container-width);
   margin: 48px auto;
@@ -23,7 +31,8 @@
   align-items: center;
 }
 
-.card-body > div {
+.card-body > a {
+  text-decoration: none;
   font-weight: 600;
   font-size: 16px;
   line-height: 150%;
@@ -33,6 +42,7 @@
 
 .card-body p {
   margin: 0;
+  color: var(--bt-card-text-color);
 }
 
 .quickstarts {
@@ -41,7 +51,7 @@
   font-weight: 600;
   font-size: 16px;
   line-height: 150%;
-  color: var(--ifm-heading-color);
+  color: var(--bt-card-text-color);
 }
 
 .quickstarts-container {
@@ -69,7 +79,7 @@
 
 .quickstart {
   border-radius: 8px;
-  padding: 10px 20px 10px 15px;
+  padding: 6px 12px 6px 12px;
 }
 
 .quickstart * {
@@ -95,7 +105,7 @@
 
 .explore-cards {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   flex-flow: row wrap;
 }
 
@@ -104,35 +114,70 @@
 }
 
 @media only screen and (max-width: 600px) {
+  .quickstart {
+    width: 100% !important;
+  }
+}
+
+@media only screen and (max-width: 770px) {
+  .card {
+    align-items: flex-start;
+    padding: inherit;
+  }
+
+  .card-body {
+    padding: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-body img {
+    margin-right: 16px;
+    width: 56px;
+  }
+
+  .card-body div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .card-body a:not(:first-child) {
+    margin-top: 24px;
+  }
+
+  .arrow {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 800px) {
   .quickstarts-container {
     flex-direction: column;
   }
-  .quickstarts-container > div {
-    width: 100%;
+
+  .quickstart-column {
+    gap: 16px;
   }
 
-  .quickstart {
-    flex: auto !important;
-    width: 100%;
-    padding: 10px 20px 10px 20px;
-  }
-
-  .quickstart div:not(:has(svg)) {
-    display: none;
+  .quickstart-column > div {
+    flex: 0 0;
+    flex-flow: row nowrap;
   }
   .quickstart div:has(svg),
   .quickstart div:has(img) {
-    display: contents;
-  }
-
-  .quickstart div:has(svg) {
     margin: 0px;
+    margin-right: 8px;
   }
 
   .quickstart svg,
   .quickstart img {
-    height: 100px;
-    width: 100px;
+    height: 42px;
+    width: 42px;
+  }
+
+  .explore-cards > div {
+    flex: 1 1 auto;
   }
 }
 

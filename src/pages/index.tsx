@@ -15,7 +15,7 @@ import Info from "@site/static/img/homepage/info.svg";
 import Package from "@site/static/img/homepage/package.svg";
 import Question from "@site/static/img/homepage/question.svg";
 import Star from "@site/static/img/homepage/star.svg";
-import Arrow from "@site/static/img/homepage/arrow.svg";
+import Arrow from "@site/static/img/homepage/Arrow.svg";
 
 import Android from "@site/static/img/sdk/logos/android.svg";
 import DotNet from "@site/static/img/sdk/logos/dotnet.svg";
@@ -39,8 +39,8 @@ export default function Home(): JSX.Element {
           </p>
           <Card className={styles.card}>
             <div className={styles["card-body"]}>
-              <div>
-                <Link to="/docs/">
+              <Link to="/docs/">
+                <div>
                   <ThemedImage
                     sources={{
                       light: useBaseUrl(
@@ -51,58 +51,57 @@ export default function Home(): JSX.Element {
                       ),
                     }}
                   />
-                </Link>
-                <p>Get Started</p>
-              </div>
-              <Arrow />
-              <div>
-                <Link to="/docs/guides/collect/">
+                  <p>Get Started</p>
+                </div>
+              </Link>
+              <Arrow className={styles.arrow} />
+              <Link to="/docs/guides/collect/">
+                <div>
                   <ThemedImage
                     sources={{
                       light: useBaseUrl("/img/homepage/light/collect-data.svg"),
                       dark: useBaseUrl("/img/homepage/dark/collect-data.svg"),
                     }}
                   />
-                </Link>
-                <p>Collect Data</p>
-              </div>
-
-              <Arrow />
-              <div>
-                <Link to="/docs/guides/share/">
+                  <p>Collect Data</p>
+                </div>
+              </Link>
+              <Arrow className={styles.arrow} />
+              <Link to="/docs/guides/share/">
+                <div>
                   <ThemedImage
                     sources={{
                       light: useBaseUrl("/img/homepage/light/share-data.svg"),
                       dark: useBaseUrl("/img/homepage/dark/share-data.svg"),
                     }}
                   />
-                </Link>
-                <p>Share Data</p>
-              </div>
-              <Arrow />
-              <div>
-                <Link to="/docs/guides/process/">
+                  <p>Share Data</p>
+                </div>
+              </Link>
+              <Arrow className={styles.arrow} />
+              <Link to="/docs/guides/process/">
+                <div>
                   <ThemedImage
                     sources={{
                       light: useBaseUrl("/img/homepage/light/process-data.svg"),
                       dark: useBaseUrl("/img/homepage/dark/process-data.svg"),
                     }}
                   />
-                </Link>
-                <p>Process Data</p>
-              </div>
-              <Arrow />
-              <div>
-                <Link to="/docs/guides/govern/">
+                  <p>Process Data</p>
+                </div>
+              </Link>
+              <Arrow className={styles.arrow} />
+              <Link to="/docs/guides/govern/">
+                <div>
                   <ThemedImage
                     sources={{
                       light: useBaseUrl("/img/homepage/light/govern-data.svg"),
                       dark: useBaseUrl("/img/homepage/dark/govern-data.svg"),
                     }}
                   />
-                </Link>
-                <p>Govern Data</p>
-              </div>
+                  <p>Govern Data</p>
+                </div>
+              </Link>
             </div>
           </Card>
         </header>
@@ -118,10 +117,10 @@ export default function Home(): JSX.Element {
               >
                 Securely collect data in your web browser.
               </Card>
-              <Card 
-                href="/docs/guides/collect/collect-data-from-web" 
-                img={<Collect />} 
-                heading="Collect Inbound Data to API" 
+              <Card
+                href="/docs/guides/collect/collect-data-from-web"
+                img={<Collect />}
+                heading="Collect Inbound Data to API"
                 column
               >
                 Tokenize sensitive data before it touches your API.
@@ -231,10 +230,12 @@ export default function Home(): JSX.Element {
                 heading="API Reference"
                 column
               >
-                API endpoints to manage the full lifecycle of your data and Basis Theory instance.
+                API endpoints to manage the full lifecycle of your data and
+                Basis Theory instance.
               </Card>
               <Card href="/docs/sdks/" img={<Package />} heading="SDKs" column>
-                Libraries and tools for interacting with your Basis Theory integration.
+                Libraries and tools for interacting with your Basis Theory
+                integration.
               </Card>
               <Card
                 href="/docs/concepts/"
@@ -250,10 +251,17 @@ export default function Home(): JSX.Element {
                 heading="Blueprints"
                 column
               >
-                Explore end-to-end guides for your regulatory and compliance use cases.
+                Explore end-to-end guides for your regulatory and compliance use
+                cases.
               </Card>
-              <Card href="https://support.basistheory.com/" img={<Question />} heading="Support" column>
-                Have a question or problem with your integration? Reach out to get support from one of our engineers.
+              <Card
+                href="https://support.basistheory.com/"
+                img={<Question />}
+                heading="Support"
+                column
+              >
+                Have a question or problem with your integration? Reach out to
+                get support from one of our engineers.
               </Card>
             </div>
           </div>
