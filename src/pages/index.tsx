@@ -8,6 +8,8 @@ import { Card } from "../components/shared/Card";
 
 import styles from "./index.module.css";
 
+import Collect from "@site/static/img/getting-started/icons/collect.svg";
+
 import ApiReference from "@site/static/img/homepage/console.svg";
 import Info from "@site/static/img/homepage/info.svg";
 import Package from "@site/static/img/homepage/package.svg";
@@ -105,6 +107,28 @@ export default function Home(): JSX.Element {
           </Card>
         </header>
         <main>
+          <div className={styles["explore-cards-container"]}>
+            <h2>Start Building</h2>
+            <div className={styles["explore-cards"]}>
+              <Card
+                href="/docs/guides/collect/collect-data-from-web"
+                img={<Collect />}
+                heading="Collect Data from Web"
+                column
+              >
+                Securely collect data in your web browser.
+              </Card>
+              <Card 
+                href="/docs/guides/collect/collect-data-from-web" 
+                img={<Collect />} 
+                heading="Collect Inbound Data to API" 
+                column
+              >
+                Tokenize sensitive data before it touches your API.
+              </Card>
+            </div>
+          </div>
+
           <div className={styles["quickstarts"]}>
             <h2>SDKs</h2>
             <div className={styles["quickstarts-container"]}>
@@ -171,13 +195,6 @@ export default function Home(): JSX.Element {
                 Mobile SDKs
                 <div className={styles["quickstart-column"]}>
                   <Card
-                    href="/docs/sdks/mobile/android/"
-                    img={<Android />}
-                    className={styles.quickstart}
-                  >
-                    Android
-                  </Card>
-                  <Card
                     href="/docs/sdks/mobile/ios/"
                     img={
                       <ThemedImage
@@ -193,10 +210,18 @@ export default function Home(): JSX.Element {
                   >
                     iOS
                   </Card>
+                  <Card
+                    href="/docs/sdks/mobile/android/"
+                    img={<Android />}
+                    className={styles.quickstart}
+                  >
+                    Android
+                  </Card>
                 </div>
               </div>
             </div>
           </div>
+
           <div className={styles["explore-cards-container"]}>
             <h2>Explore Basis Theory</h2>
             <div className={styles["explore-cards"]}>
@@ -206,10 +231,10 @@ export default function Home(): JSX.Element {
                 heading="API Reference"
                 column
               >
-                Meatloaf shoulder ground round jerky chuck, ham filet mignon.
+                API endpoints to manage the full lifecycle of your data and Basis Theory instance.
               </Card>
               <Card href="/docs/sdks/" img={<Package />} heading="SDKs" column>
-                Meatloaf shoulder ground round jerky chuck, ham filet mignon.
+                Libraries and tools for interacting with your Basis Theory integration.
               </Card>
               <Card
                 href="/docs/concepts/"
@@ -217,18 +242,18 @@ export default function Home(): JSX.Element {
                 heading="Concepts"
                 column
               >
-                Meatloaf shoulder ground round jerky chuck, ham filet mignon.
+                Learn about key concepts of Basis Theory's platform.
               </Card>
               <Card
-                href="/docs/"
+                href="/docs/blueprints/"
                 img={<Star />}
-                heading="Migration Guides"
+                heading="Blueprints"
                 column
               >
-                Meatloaf shoulder ground round jerky chuck, ham filet mignon.
+                Explore end-to-end guides for your regulatory and compliance use cases.
               </Card>
-              <Card href="/docs/" img={<Question />} heading="Support" column>
-                Meatloaf shoulder ground round jerky chuck, ham filet mignon.
+              <Card href="https://support.basistheory.com/" img={<Question />} heading="Support" column>
+                Have a question or problem with your integration? Reach out to get support from one of our engineers.
               </Card>
             </div>
           </div>
