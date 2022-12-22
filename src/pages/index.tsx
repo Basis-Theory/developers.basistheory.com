@@ -27,6 +27,7 @@ import Node from "@site/static/img/sdk/logos/nodejs.svg";
 import Python from "@site/static/img/sdk/logos/python.svg";
 import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 import Terraform from "@site/static/img/sdk/logos/terraform.svg";
+import Link from "@docusaurus/Link";
 
 export default function Home(): JSX.Element {
   return (
@@ -41,55 +42,67 @@ export default function Home(): JSX.Element {
           <Card className={styles.card}>
             <div className={styles["card-body"]}>
               <div>
-                <ThemedImage
-                  sources={{
-                    light: useBaseUrl(
-                      "/img/homepage/light/getting-started.svg"
-                    ),
-                    dark: useBaseUrl("/img/homepage/dark/getting-started.svg"),
-                  }}
-                />
+                <Link to="/docs/">
+                  <ThemedImage
+                    sources={{
+                      light: useBaseUrl(
+                        "/img/homepage/light/getting-started.svg"
+                      ),
+                      dark: useBaseUrl(
+                        "/img/homepage/dark/getting-started.svg"
+                      ),
+                    }}
+                  />
+                </Link>
                 <p>Get Started</p>
               </div>
               <Arrow />
               <div>
-                <ThemedImage
-                  sources={{
-                    light: useBaseUrl("/img/homepage/light/collect-data.svg"),
-                    dark: useBaseUrl("/img/homepage/dark/collect-data.svg"),
-                  }}
-                />
+                <Link to="/docs/guides/collect/">
+                  <ThemedImage
+                    sources={{
+                      light: useBaseUrl("/img/homepage/light/collect-data.svg"),
+                      dark: useBaseUrl("/img/homepage/dark/collect-data.svg"),
+                    }}
+                  />
+                </Link>
                 <p>Collect Data</p>
               </div>
 
               <Arrow />
               <div>
-                <ThemedImage
-                  sources={{
-                    light: useBaseUrl("/img/homepage/light/share-data.svg"),
-                    dark: useBaseUrl("/img/homepage/dark/share-data.svg"),
-                  }}
-                />
+                <Link to="/docs/guides/share/">
+                  <ThemedImage
+                    sources={{
+                      light: useBaseUrl("/img/homepage/light/share-data.svg"),
+                      dark: useBaseUrl("/img/homepage/dark/share-data.svg"),
+                    }}
+                  />
+                </Link>
                 <p>Share Data</p>
               </div>
               <Arrow />
               <div>
-                <ThemedImage
-                  sources={{
-                    light: useBaseUrl("/img/homepage/light/process-data.svg"),
-                    dark: useBaseUrl("/img/homepage/dark/process-data.svg"),
-                  }}
-                />
+                <Link to="/docs/guides/process/">
+                  <ThemedImage
+                    sources={{
+                      light: useBaseUrl("/img/homepage/light/process-data.svg"),
+                      dark: useBaseUrl("/img/homepage/dark/process-data.svg"),
+                    }}
+                  />
+                </Link>
                 <p>Process Data</p>
               </div>
               <Arrow />
               <div>
-                <ThemedImage
-                  sources={{
-                    light: useBaseUrl("/img/homepage/light/govern-data.svg"),
-                    dark: useBaseUrl("/img/homepage/dark/govern-data.svg"),
-                  }}
-                />
+                <Link to="/docs/guides/govern/">
+                  <ThemedImage
+                    sources={{
+                      light: useBaseUrl("/img/homepage/light/govern-data.svg"),
+                      dark: useBaseUrl("/img/homepage/dark/govern-data.svg"),
+                    }}
+                  />
+                </Link>
                 <p>Govern Data</p>
               </div>
             </div>
@@ -102,19 +115,39 @@ export default function Home(): JSX.Element {
               <div>
                 Web Applications
                 <div className={styles["quickstart-column"]}>
-                  <Card img={<DotNet />} className={styles.quickstart}>
+                  <Card
+                    href="/docs/sdks/server-side/dotnet"
+                    img={<DotNet />}
+                    className={styles.quickstart}
+                  >
                     .NET
                   </Card>
-                  <Card img={<Go />} className={styles.quickstart}>
+                  <Card
+                    href="/docs/sdks/server-side/go"
+                    img={<Go />}
+                    className={styles.quickstart}
+                  >
                     Go
                   </Card>
-                  <Card img={<Node />} className={styles.quickstart}>
+                  <Card
+                    href="/docs/sdks/server-side/node"
+                    img={<Node />}
+                    className={styles.quickstart}
+                  >
                     NodeJS
                   </Card>
-                  <Card img={<Python />} className={styles.quickstart}>
+                  <Card
+                    href="/docs/sdks/server-side/python"
+                    img={<Python />}
+                    className={styles.quickstart}
+                  >
                     Python
                   </Card>
-                  <Card img={<Terraform />} className={styles.quickstart}>
+                  <Card
+                    href="/docs/sdks/server-side/terraform"
+                    img={<Terraform />}
+                    className={styles.quickstart}
+                  >
                     Terraform
                   </Card>
                 </div>
@@ -122,10 +155,18 @@ export default function Home(): JSX.Element {
               <div>
                 Single Page Applications
                 <div className={styles["quickstart-column"]}>
-                  <Card img={<ReactSvg />} className={styles.quickstart}>
+                  <Card
+                    href="/docs/sdks/web/react/"
+                    img={<ReactSvg />}
+                    className={styles.quickstart}
+                  >
                     React
                   </Card>
-                  <Card img={<JavaScript />} className={styles.quickstart}>
+                  <Card
+                    href="/docs/sdks/web/javascript/"
+                    img={<JavaScript />}
+                    className={styles.quickstart}
+                  >
                     Javascript
                   </Card>
                 </div>
@@ -133,10 +174,15 @@ export default function Home(): JSX.Element {
               <div className={styles["quickstart-column"]}>
                 Mobile
                 <div className={styles["quickstart-column"]}>
-                  <Card img={<Android />} className={styles.quickstart}>
+                  <Card
+                    href="/docs/sdks/mobile/android/"
+                    img={<Android />}
+                    className={styles.quickstart}
+                  >
                     Android
                   </Card>
                   <Card
+                    href="/docs/sdks/mobile/ios/"
                     img={
                       <ThemedImage
                         width="100%"
@@ -158,19 +204,34 @@ export default function Home(): JSX.Element {
           <div className={styles["explore-cards-container"]}>
             <h2>Explore Basis Theory</h2>
             <div className={styles["explore-cards"]}>
-              <Card img={<ApiReference />} heading="API Reference" column>
+              <Card
+                href="/docs/api/"
+                img={<ApiReference />}
+                heading="API Reference"
+                column
+              >
                 Meatloaf shoulder ground round jerky chuck, ham filet mignon.
               </Card>
-              <Card img={<Package />} heading="SDKs" column>
+              <Card href="/docs/sdks/" img={<Package />} heading="SDKs" column>
                 Meatloaf shoulder ground round jerky chuck, ham filet mignon.
               </Card>
-              <Card img={<Info />} heading="Concepts" column>
+              <Card
+                href="/docs/concepts/"
+                img={<Info />}
+                heading="Concepts"
+                column
+              >
                 Meatloaf shoulder ground round jerky chuck, ham filet mignon.
               </Card>
-              <Card img={<Star />} heading="Migration Guides" column>
+              <Card
+                href="/docs/"
+                img={<Star />}
+                heading="Migration Guides"
+                column
+              >
                 Meatloaf shoulder ground round jerky chuck, ham filet mignon.
               </Card>
-              <Card img={<Question />} heading="Support" column>
+              <Card href="/docs/" img={<Question />} heading="Support" column>
                 Meatloaf shoulder ground round jerky chuck, ham filet mignon.
               </Card>
             </div>
