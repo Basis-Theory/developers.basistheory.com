@@ -38,7 +38,7 @@ export default function Home(): JSX.Element {
             Basis Theory will guide you on how to safely collect, share, process
             and govern your data in your applications.
           </p>
-          <Card className={styles.card}>
+          <Card className={styles.card} hoverable={false}>
             <div className={styles["card-body"]}>
               <Link to="/docs/">
                 <div>
