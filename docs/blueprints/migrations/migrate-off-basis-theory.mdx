@@ -1,0 +1,104 @@
+---
+toc_max_heading_level: 2
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Migrate off Basis Theory
+
+We know business goals and technical needs change over time. We get it. More importantly, we want to make sure you have what you need to move off of Basis Theory and just as quickly as we've helped you safely build your products and protect your data. This guide will walk you through moving your PCI compliant data to another compliant service provider and options to move all of your non-PCI data into your database or another vault.
+
+If you need help with your migration plan - [please reach out](https://basistheory.com/contact).
+
+<Alert type={Alerts.WARNING}>
+  <b>Warning: Moving your compliant data</b><br/>
+  Before migrating data out of Basis Theory's systems, you should confirm that the desired location meets all requirements for the underlying data type. For example, moving your card data off of Basis Theory will require you or your new provider to be Payments Card Institute (PCI) Level 1 compliant. 
+</Alert>
+
+## Create an Application
+
+To move all of your data quickly, you'll want to create a Private Application with all permissions within the Tenant you're looking to migrate. Keep in mind this Application will have the highest level of access to your data, so you'll want to secure the API Key with the highest level of security possible as you migrate.
+
+[Click here to create an Application with all permissions.](https://portal.basistheory.com/applications/create?application_template_id=6f486ec1-ddf4-4040-b7f1-3ddca4209495)
+
+## Migrate Data
+
+There are three recommended ways to migrate your existing Basis Theory data to a new location.
+
+1. [Proxy](#proxy)
+2. [Export](#export)
+3. [Reactor](#reactors)
+
+Read each section carefully, as certain methods may not be ideal for certain types of data or situations.
+
+### 1. Proxy {#proxy}
+
+Using our Proxy is the simplest path to migrating your data to another API-based service provider. Proxy enables you to forward your tokens to a new provider without the plaintext data touching your systems.
+
+The following example provides a pattern for proxying your plaintext data to a new provider and storing your new provider's identifiers in your database. _The array of tokens is an example of data you've stored in your database - replace this by querying your database._
+
+```javascript showLineNumbers
+import axios from 'axios';
+
+async function migration() {
+
+  const rowsFromDatabase = [
+    {name: 'test', ssn: 'fc88408b-d031-49c6-abd9-9e53589a6091'},
+    {name: 'test', ssn: 'c35f271e-0338-45fb-a036-c36a0e290ab7'},
+    // .. more rows of data 
+  ];
+
+  rowsFromDatabase.forEach(async (row, i) => {
+    const token = await axios.post('https://api.basistheory.com/proxy',
+      {
+        value: `{{${row.ssn}}}`,
+        format: 'UUID'
+      },
+      {
+        headers: {
+          'BT-PROXY-URL': '<https://api.new.provider/secure>',
+          'BT-API-KEY': 'key_here',
+        }
+      });
+
+    rowsFromDatabase[i].ssn = token.aliases[0].alias;
+  });
+
+  //save rowsFromDatabase to save the raw values back into your database
+}
+```
+
+### 2. Export all of your data {#export}
+
+<Alert type={Alerts.WARNING}>
+  For Card data (PCI), you can only export if you are PCI Level 1 compliant and have submitted your Report on Compliance to Basis Theory. Please <a href="https://basistheory.com/contact">reach out</a> for help submitting your ROC. If you're looking to move to another PCI Level 1 provider, please view our Proxy or Reactor solution. 
+</Alert>
+
+Depending on your situation, you may want to export your data directly into your database instead of moving directly to a new Tokenization provider. When you do this, you'll want to consider encrypting the data you're exporting to keep the security of your data at the same level Basis Theory has provided you.
+
+The following example shows how you can use the [Retrieve a Token](/docs/api/tokens#get-a-token) endpoint to pull back tokens you have stored within your database. _The array of tokens is an example of data you've stored in your database - replace this by querying your database._
+
+```javascript showLineNumbers
+import {BasisTheory} from '@basis-theory/basis-theory-js';
+
+async function migration() {
+  const bt = await new BasisTheory().init('key_here');
+
+  const rowsFromDatabase = [
+    {name: 'test', ssn: 'fc88408b-d031-49c6-abd9-9e53589a6091'},
+    {name: 'test', ssn: 'c35f271e-0338-45fb-a036-c36a0e290ab7'},
+    // .. more rows of data 
+  ];
+
+  rowsFromDatabase.forEach(async (row, i) => {
+    const token = await bt.tokens.retrieve(row.ssn);
+    rowsFromDatabase[i].ssn = token.data;
+  });
+
+  //save rowsFromDatabase to save the raw values back into your database
+}
+```
+
+### 3. Reactors to move your data to a new provider {#reactors}
+
+If the above two examples don't provide the flexibility you're needing as you switch providers, you can take advantage of our [Reactors](/docs/api/reactors). Reactors are serverless compute services allowing Node.js code (Reactor Formula) hosted in Basis Theory to be executed against your tokens completely isolated away from your existing application and systems.

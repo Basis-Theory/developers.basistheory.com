@@ -154,7 +154,7 @@ const config = {
           { from: '/guides/use-token-data-in-http-requests', to: '/docs/guides/share/send-data-to-third-party' },
           { from: '/guides/run-your-own-code-in-a-reactor', to: '/docs/guides/process/analyze-data' },
           { from: '/guides/collect-cards-with-proxies', to: '/docs/blueprints/cards/collect-and-process-cards' },
-          { from: '/guides/migrating-off-basis-theory', to: '/docs/guides/share/send-data-to-third-party' },
+          { from: '/guides/migrating-off-basis-theory', to: '/docs/blueprints/migrations/migrate-off-basis-theory' },
           
           { from: '/blueprints/pci', to: '/docs/blueprints/cards/collect-and-process-cards' },
         ]

@@ -134,6 +134,15 @@ const sidebars = {
           },
           items: ["blueprints/personal-information/query-user-data-from-api"],
         },
+        {
+          type: "category",
+          label: "Migrations",
+          link: {
+            type: "doc",
+            id: "blueprints/migrations/index",
+          },
+          items: ["blueprints/migrations/migrate-off-basis-theory"],
+        },
       ],
     },
     {
