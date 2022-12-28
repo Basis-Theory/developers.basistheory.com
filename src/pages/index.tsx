@@ -27,38 +27,42 @@ import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 import Terraform from "@site/static/img/sdk/logos/terraform.svg";
 import Link from "@docusaurus/Link";
 
-interface Image {
+interface Step {
   id: string;
   sources: ComponentProps<typeof ThemedImage>["sources"];
+  text: string;
 }
 
-const Image = ({ sources, id }: Image) => {
+const Step = ({ sources, id, text }: Step) => {
   const [hover, setHover] = useState(false);
-  const [step, setStep] = useState(null);
 
-  const toggleState = (e) => {
-    setStep(e.target.id);
-    setHover(!hover);
-  };
+  const toggleState = () => setHover(!hover);
 
   return (
     <div
       onMouseEnter={toggleState}
       onMouseLeave={toggleState}
       className={clsx({
-        [styles[`${step}-img--hover`]]: hover && step,
-        [styles["img-container--hover"]]: hover,
-        [styles[`${id}-img-container`]]: !!id,
-        [styles["img-container"]]: true,
+        [styles.step]: hover,
       })}
     >
-      <ThemedImage
-        id={id}
-        sources={{
-          light: useBaseUrl(sources.light),
-          dark: useBaseUrl(sources.dark),
-        }}
-      />
+      <div
+        className={clsx({
+          [styles[`${id}-img--hover`]]: hover,
+          [styles["img-container--hover"]]: hover,
+          [styles[`${id}-img-container`]]: true,
+          [styles["img-container"]]: true,
+        })}
+      >
+        <ThemedImage
+          id={id}
+          sources={{
+            light: useBaseUrl(sources.light),
+            dark: useBaseUrl(sources.dark),
+          }}
+        />
+      </div>
+      <p>{text}</p>
     </div>
   );
 };
@@ -77,66 +81,66 @@ export default function Home(): JSX.Element {
             <div className={styles["card-body"]}>
               <Link to="/docs/">
                 <div>
-                  <Image
+                  <Step
+                    text="Get Started"
                     id="getting-started"
                     sources={{
                       light: "/img/homepage/light/getting-started.png",
                       dark: "/img/homepage/dark/getting-started.png",
                     }}
                   />
-                  <p>Get Started</p>
                 </div>
               </Link>
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/collect/">
                 <div>
-                  <Image
+                  <Step
+                    text="Collect Data"
                     id="collect-data"
                     sources={{
                       light: "/img/homepage/light/collect-data.png",
                       dark: "/img/homepage/dark/collect-data.png",
                     }}
                   />
-                  <p>Collect Data</p>
                 </div>
               </Link>
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/share/">
                 <div>
-                  <Image
+                  <Step
+                    text="Share Data"
                     id="share-data"
                     sources={{
                       light: "/img/homepage/light/share-data.png",
                       dark: "/img/homepage/dark/share-data.png",
                     }}
                   />
-                  <p>Share Data</p>
                 </div>
               </Link>
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/process/">
                 <div>
-                  <Image
+                  <Step
+                    text="Process Data"
                     id="process-data"
                     sources={{
                       light: "/img/homepage/light/process-data.png",
                       dark: "/img/homepage/dark/process-data.png",
                     }}
                   />
-                  <p>Process Data</p>
                 </div>
               </Link>
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/govern/">
                 <div>
-                  <Image
+                  <Step
+                    text="Govern Data"
                     id="govern-data"
                     sources={{
                       light: "/img/homepage/light/govern-data.png",
                       dark: "/img/homepage/dark/govern-data.png",
                     }}
                   />
-                  <p>Govern Data</p>
                 </div>
               </Link>
             </div>
