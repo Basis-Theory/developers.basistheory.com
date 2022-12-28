@@ -9,7 +9,7 @@ Key concepts in this guide:
 
 - [Tokens](/docs/concepts/what-are-tokens)
 - [Applications](/docs/api/applications)
-- [iOS Elements](/docs/sdks/web/react)
+- [iOS Elements](/docs/sdks/mobile/ios)
 
 ## Getting Started
 
@@ -17,11 +17,11 @@ To get started, you will need a Basis Theory account.
 
 <AuthButtons />
 
-Next you will need a [Public Application](/docs/api/applications#application-types) in order to initialize [JavaScript Elements](/docs/sdks/web/javascript) for your web page.
+Next you will need a [Public Application](/docs/api/applications#application-types) in order to use [iOS Elements](/docs/sdks/mobile/ios) for your app.
 
-[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20Web%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20iOS%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
 
-- Name - Collect Data from Web Guide
+- Name - Collect Data from iOS Guide
 - Application Type - Public
 - Permissions - `token:create`
 
@@ -32,54 +32,21 @@ Next you will need a [Public Application](/docs/api/applications#application-typ
 
 ## Setup the Project
 
-We will create a new React application using the [`create-react-app`](https://reactjs.org/docs/create-a-new-react-app.html#create-react-app) template.
+We will create a new iOS application through Xcode. If you don't have Xcode, download it through the Mac App Store.
 
-Run the following in your terminal:
+1. Launch Xcode, then click “Create a new Xcode project”. In the sheet that appears, select "iOS" for the target operating system and the "App" template under Application, then click Next.
 
-```shell showLineNumbers
-npx create-react-app collect-react-guide
-cd collect-react-guide
-npm start
-```
+2. For the Product Name enter "Collect iOS Guide", and for the Organization enter your own name. Ensure StoryBoard and Swift is selected for the Interface and Language, then click Next.
 
-This will scaffoled a new React app called `collect-react-guide` and will launch the new application when completed.
+3. On the next screen save the project, where you'd like.
 
-## Install the React Elements SDK
+This will launch Xcode with the newly created project.
 
-We will need to install Basis Theory's [React Elements SDK](/docs/sdks/web/react), which will render a secure iFrame for capturing the data.
+## Install the iOS Elements SDK
 
-Run the following in a terminal to install the React SDK:
+We will need to install Basis Theory's [iOS Elements SDK](/docs/sdks/mobile/ios), which will render a secure UITextField for capturing the data.
 
-```shell
-npm install --save @basis-theory/basis-theory-react
-```
-
-## Initialize the Web SDK
-
-Now we need to initialize Basis Theory React Elements.
-
-Open the `App.js` file in the `src` directory and replace the contents with the following to initialize Basis Theory React:
-
-```tsx showLineNumbers title="src/App.js"
-import {
-  BasisTheoryProvider,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
-
-function App() {
-  const { bt } = useBasisTheory('test_1234567890', { elements: true });
-
-  return (
-    <BasisTheoryProvider bt={bt}>
-      Hello World!
-    </BasisTheoryProvider>
-  );
-}
-
-export default App;
-```
-
-This code is importing the Basis Theory React SDK, initializing the SDK via `useBasisTheory`, and adding the [BasisTheoryProvider](/docs/sdks/web/react#basistheoryprovider) context provider.
+Select File > Add Packages, enter "https://github.com/Basis-Theory/basistheory-ios" in the search field on the top right, then click Add Package on this screen and the next prompts.
 
 ## Add Your Form Components
 
