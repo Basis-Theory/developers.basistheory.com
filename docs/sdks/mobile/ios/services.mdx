@@ -1,0 +1,86 @@
+---
+sidebar_label: Services
+---
+
+# Services
+
+## tokenize
+
+Elements' values can be securely tokenized utilizing our [tokenize](/docs/api/tokens/tokenize) services. To accomplish this, simply pass the Element instance in the payload.
+
+```swift showLineNumbers
+let body: [String: Any] = [
+  "data": [
+    "property": <BasisTheory Element instance>,
+    "myProp": "myValue"
+  ],
+  "search_indexes": ["{{ data.property }}"],
+  "type": "token"
+]
+
+BasisTheoryElements.tokenize(body: body, apiKey: "<YOUR PUBLIC API KEY>")
+	{ data, error in ... }
+```
+
+The callback provided calls your function with a `data` of type `AnyCodable`, and an `error` of type `Error`.
+
+## createToken
+
+Elements' values can be securely tokenized utilizing our [createToken](https://docs.basistheory.com/#tokens-create-token) services. To accomplish this, simply pass the Element instance in the payload.
+
+```swift showLineNumbers
+let body: CreateToken = CreateToken(type: "token", data: [
+  "property": <BasisTheory Element instance>,
+  "myProp": "myValue",
+], searchIndexes: ["{{ data.property }}"])
+
+BasisTheoryElements.createToken(body: body, apiKey: "<YOUR PUBLIC API KEY>")
+	{ data, error in ... }
+```
+
+The callback provided calls your function with a `data` of type `CreateTokenResponse`, and an `error` of type `Error`.
+
+## proxy
+
+Proxy provides a simple way to retrieve data back into an element utilizing our [proxy](https://docs.basistheory.com/#proxy) service. To accomplish this, simply construct your proxy request like this:
+
+```swift showLineNumbers
+let proxyHttpRequest = ProxyHttpRequest(method: .post, body: [
+    "testProp": "testValue",
+    "objProp": [
+        "nestedTestProp": "nestedTestValue"
+    ]
+], headers: [
+    "X-My-Custom-Header": "headerValue",
+])
+
+BasisTheoryElements.proxy(
+    apiKey: "<YOUR EXPIRING API KEY>",
+    proxyKey: "<YOUR PROXY KEY>",
+    proxyHttpRequest: proxyHttpRequest)
+{ response, data, error in ... }
+```
+
+The callback provided calls your function with a:
+* `response` of type `URLResponse`
+* `error` of type `Error`
+* `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a response from a proxy without giving you access to read any sensitive proxy response data, which means you stay compliant. To tokenize a JSON property from a proxy response, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference`. As of now, only numbers, booleans, and strings can be retrieved using this method. Below is an example of how you can use a response from a proxy with our elements.
+
+```swift showLineNumbers
+@IBOutlet private weak var myTextElement: TextElementUITextField!
+...
+
+BasisTheoryElements.proxy(
+    apiKey: "<YOUR EXPIRING API KEY>",
+    proxyKey: "<YOUR PROXY KEY>",
+    proxyHttpRequest: proxyHttpRequest)
+{ response, data, error in
+    myTextElement.setValue(elementValueReference: data.my?.nested?.property?.elementValueReference)
+
+    let body: CreateToken = CreateToken(type: "token", data: [
+        "myProxyResponse": textElement,
+    ])
+    BasisTheoryElements.createToken(body: body, apiKey: "<YOUR PUBLIC API KEY>")
+    { data, error in print(data) }
+}
+```
