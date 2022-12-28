@@ -1,5 +1,5 @@
 import Layout from "@theme/Layout";
-import React from "react";
+import React, { ComponentProps, useEffect, useState } from "react";
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import ThemedImage from "@theme/ThemedImage";
@@ -14,7 +14,6 @@ import ApiReference from "@site/static/img/homepage/console.svg";
 import Info from "@site/static/img/homepage/info.svg";
 import Package from "@site/static/img/homepage/package.svg";
 import Question from "@site/static/img/homepage/question.svg";
-import Star from "@site/static/img/homepage/star.svg";
 import Arrow from "@site/static/img/homepage/arrow.svg";
 import Blueprint from "@site/static/img/homepage/blueprint.svg";
 
@@ -27,6 +26,42 @@ import Python from "@site/static/img/sdk/logos/python.svg";
 import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 import Terraform from "@site/static/img/sdk/logos/terraform.svg";
 import Link from "@docusaurus/Link";
+
+interface Image {
+  id: string;
+  sources: ComponentProps<typeof ThemedImage>["sources"];
+}
+
+const Image = ({ sources, id }: Image) => {
+  const [hover, setHover] = useState(false);
+  const [step, setStep] = useState(null);
+
+  const toggleState = (e) => {
+    setStep(e.target.id);
+    setHover(!hover);
+  };
+
+  return (
+    <div
+      onMouseEnter={toggleState}
+      onMouseLeave={toggleState}
+      className={clsx({
+        [styles[`${step}-img--hover`]]: hover && step,
+        [styles["img-container--hover"]]: hover,
+        [styles[`${id}-img-container`]]: !!id,
+        [styles["img-container"]]: true,
+      })}
+    >
+      <ThemedImage
+        id={id}
+        sources={{
+          light: useBaseUrl(sources.light),
+          dark: useBaseUrl(sources.dark),
+        }}
+      />
+    </div>
+  );
+};
 
 export default function Home(): JSX.Element {
   return (
@@ -42,14 +77,11 @@ export default function Home(): JSX.Element {
             <div className={styles["card-body"]}>
               <Link to="/docs/">
                 <div>
-                  <ThemedImage
+                  <Image
+                    id="getting-started"
                     sources={{
-                      light: useBaseUrl(
-                        "/img/homepage/light/getting-started.svg"
-                      ),
-                      dark: useBaseUrl(
-                        "/img/homepage/dark/getting-started.svg"
-                      ),
+                      light: "/img/homepage/light/getting-started.png",
+                      dark: "/img/homepage/dark/getting-started.png",
                     }}
                   />
                   <p>Get Started</p>
@@ -58,10 +90,11 @@ export default function Home(): JSX.Element {
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/collect/">
                 <div>
-                  <ThemedImage
+                  <Image
+                    id="collect-data"
                     sources={{
-                      light: useBaseUrl("/img/homepage/light/collect-data.svg"),
-                      dark: useBaseUrl("/img/homepage/dark/collect-data.svg"),
+                      light: "/img/homepage/light/collect-data.png",
+                      dark: "/img/homepage/dark/collect-data.png",
                     }}
                   />
                   <p>Collect Data</p>
@@ -70,10 +103,11 @@ export default function Home(): JSX.Element {
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/share/">
                 <div>
-                  <ThemedImage
+                  <Image
+                    id="share-data"
                     sources={{
-                      light: useBaseUrl("/img/homepage/light/share-data.svg"),
-                      dark: useBaseUrl("/img/homepage/dark/share-data.svg"),
+                      light: "/img/homepage/light/share-data.png",
+                      dark: "/img/homepage/dark/share-data.png",
                     }}
                   />
                   <p>Share Data</p>
@@ -82,10 +116,11 @@ export default function Home(): JSX.Element {
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/process/">
                 <div>
-                  <ThemedImage
+                  <Image
+                    id="process-data"
                     sources={{
-                      light: useBaseUrl("/img/homepage/light/process-data.svg"),
-                      dark: useBaseUrl("/img/homepage/dark/process-data.svg"),
+                      light: "/img/homepage/light/process-data.png",
+                      dark: "/img/homepage/dark/process-data.png",
                     }}
                   />
                   <p>Process Data</p>
@@ -94,10 +129,11 @@ export default function Home(): JSX.Element {
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/govern/">
                 <div>
-                  <ThemedImage
+                  <Image
+                    id="govern-data"
                     sources={{
-                      light: useBaseUrl("/img/homepage/light/govern-data.svg"),
-                      dark: useBaseUrl("/img/homepage/dark/govern-data.svg"),
+                      light: "/img/homepage/light/govern-data.png",
+                      dark: "/img/homepage/dark/govern-data.png",
                     }}
                   />
                   <p>Govern Data</p>
