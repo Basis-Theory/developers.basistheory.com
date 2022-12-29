@@ -1,0 +1,74 @@
+---
+sidebar_label: Services
+---
+
+# Services
+
+## BasisTheoryElements
+
+The `BasisTheoryElements` class contains methods for interacting with the Basis Theory API using element references.
+
+### Initialization
+
+A new instance of the `BasisTheoryElements` service can be configured using the builder pattern:
+
+```kotlin showLineNumbers
+val bt = BasisTheoryElements.builder()
+    .apiUrl("https://api.basistheory.com") // optional
+    .apiKey(myApiKey)
+    .ioDispatcher(myDispatcher) // optional
+    .build()
+```
+
+The following values are used by default if not specified when constructing an instance of the service:
+- `apiUrl`: `https://api.basistheory.com`
+- `apiKey`: `null`
+- `ioDispatcher`: `Dispatchers.IO`
+
+Note that `BasisTheoryElements` requires the use of a public API key during initialization
+(an API key issued to a `public` [Application](/docs/concepts/access-controls#what-are-applications)).
+Click [here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public.)
+to create one in the Basis Theory portal.
+
+### tokenize
+
+This function wraps the [tokenize API endpoint](/docs/api/tokens/tokenize)
+providing added support for referencing instances of elements within your request payload.
+
+```kotlin showLineNumbers
+val tokenizeResponse = bt.tokenize(object {
+    val type = "token"
+    val data = object {
+        val name = nameElement // an instance of TextElement
+        val phoneNumber = phoneNumberElement // an instance of TextElement
+        val note = "Non sensitive value" // plaintext strings can also be included in the token body
+    }
+    val expires_at = "2022-11-03T19:14:21.4333333Z" // all standard token attributes are supported
+})
+```
+
+As you can see from this example, the `tokenize` function is capable of resolving the raw data
+from references to Element inputs. This enables your application to tokenize sensitive data values without
+needing to touch the raw data directly.
+
+### createToken
+
+This function wraps the [create token API endpoint](/docs/api/tokens/tokenize#create-token) to
+be able to create a single strongly typed token. It also provides added support for referencing
+instances of Elements within your request payload.
+
+```kotlin showLineNumbers
+val createTokenResponse = bt.createToken(CreateTokenRequest().apply {
+    this.type = "token"
+    this.data = object {
+        val name = nameElement // an instance of TextElement
+        val phoneNumber = phoneNumberElement // an instance of TextElement
+        val note = "Non sensitive value" // plaintext strings can also be included in the token body
+    }
+    this.expires_at = "2022-11-03T19:14:21.4333333Z" // all standard token attributes are supported
+})
+```
+
+As you can see from this example, the `createToken` function is capable of resolving the raw data
+from references to Element inputs. This enables your application to tokenize sensitive data values without
+needing to touch the raw data directly.

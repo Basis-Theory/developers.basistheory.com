@@ -97,7 +97,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["csharp", "hcl", "swift"],
+        additionalLanguages: ["csharp", "hcl", "kotlin", "swift"],
       },
       colorMode: {
         defaultMode: "dark",
@@ -115,7 +115,7 @@ const config = {
         },
         {
           property: "og:image",
-          content: "https://cdn.basistheory.com/images/seo/docs-opengraph.png",
+          content: "/img/seo/opengraph.png",
         },
       ],
     }),
@@ -127,11 +127,19 @@ const config = {
       '@docusaurus/plugin-client-redirects',
       {
         redirects: [
-          { from: '/getting-started', to: '/docs' },
           { from: '/api-reference', to: '/docs/api' },
           { from: '/elements', to: '/docs/sdks/web/javascript' },
           { from: '/expressions', to: '/docs/expressions' },
           { from: '/labs', to: '/docs' },
+
+          { from: '/getting-started', to: '/docs' },
+          { from: '/getting-started/quickstart-with-curl', to: '/docs' },
+          { from: '/getting-started/quickstart-with-dotnet', to: '/docs' },
+          { from: '/getting-started/quickstart-with-go', to: '/docs' },
+          { from: '/getting-started/quickstart-with-java', to: '/docs' },
+          { from: '/getting-started/quickstart-with-nodejs', to: '/docs' },
+          { from: '/getting-started/quickstart-with-ruby', to: '/docs' },
+          { from: '/getting-started/quickstart-with-python', to: '/docs' },
 
           { from: '/concepts/access-controls', to: '/docs/concepts/access-controls' },
           { from: '/concepts/what-are-containers', to: '/docs/concepts/what-are-containers' },
@@ -146,7 +154,7 @@ const config = {
           { from: '/guides/collect-cards-with-elements-react', to: '/docs/guides/collect/collect-data-with-react' },
           { from: '/guides/style-elements-for-my-brand', to: '/docs/guides/collect/customize-web-form' },
           { from: '/guides/encrypt-us-banks-in-your-applications', to: '/docs/guides/collect' },
-          
+
           { from: '/guides/collect-cards-with-elements', to: '/docs/blueprints/cards/collect-and-process-cards' },
           { from: '/guides/use-us-bank-accounts-without-touching-them', to: '/docs/guides/share/send-data-to-third-party' },
           { from: '/guides/reveal-cards-with-react/', to: '/docs' },
@@ -155,7 +163,7 @@ const config = {
           { from: '/guides/run-your-own-code-in-a-reactor', to: '/docs/guides/process/analyze-data' },
           { from: '/guides/collect-cards-with-proxies', to: '/docs/blueprints/cards/collect-and-process-cards' },
           { from: '/guides/migrating-off-basis-theory', to: '/docs/blueprints/migrations/migrate-off-basis-theory' },
-          
+
           { from: '/blueprints/pci', to: '/docs/blueprints/cards/collect-and-process-cards' },
         ]
       }

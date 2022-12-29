@@ -96,6 +96,33 @@ var reactor = await client.CreateAsync(new Reactor {
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        CreateReactorRequest createReactorRequest = new CreateReactorRequest(); // CreateReactorRequest |
+        Reactor reactor = apiInstance.create(createReactorRequest
+                .name("My Reactor")
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd134"))
+                .formula(ReactorFormula.fromJson("17069df1-80f4-439e-86a7-4121863e4678"))
+                .application(Application.fromJson("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -160,12 +187,12 @@ func main() {
 
 #### Request Parameters
 
-| Attribute        | Required | Type     | Default | Description                                                                                                                                                   |
-| ---------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`           | true     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                        |
-| `configuration`  | true     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration) |
-| `formula.id`     | true     | _uuid_   | `null`  | Unique identifier of the [Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object) to configure a Reactor for                             |
-| `application.id` | false    | _uuid_   | `null`  | Unique identifier of the [Application](/docs/api/applications#application-object) to configure a Reactor with                                                 |
+| Attribute        | Required | Type     | Default | Description                                                                                                                                                                                                                                                                               |
+| ---------------- | -------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`           | true     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                                                                                                                                                    |
+| `configuration`  | true     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                                                                             |
+| `formula.id`     | true     | _uuid_   | `null`  | Unique identifier of the [Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object) to configure a Reactor for                                                                                                                                                         |
+| `application.id` | false    | _uuid_   | `null`  | This Application's API key is injected into a pre-configured [Node.js BasisTheory](https://www.npmjs.com/package/@basis-theory/basis-theory-js) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
 
 The `configuration` object must satisfy the name and type constraints defined by the [Reactor Formula's](/docs/api/reactors/reactor-formulas#reactor-formula-object) `configuration` property.
 
@@ -231,6 +258,36 @@ using BasisTheory.net.Reactors;
 var client = new ReactorClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var reactors = await client.GetAsync();
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        List<UUID> id = Arrays.asList();
+        String name = "";
+        Integer page = 1;
+        Integer size = 56;
+        ReactorPaginatedList result = apiInstance.get(id, name, page, size);
+    }
+}
 ```
 
   </TabItem>
@@ -350,6 +407,28 @@ using BasisTheory.net.Reactors;
 var client = new ReactorClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var reactor = await client.GetByIdAsync("5b493235-6917-4307-906a-2cd6f1a90b13");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        Reactor result = apiInstance.getById(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"));
+    }
+}
 ```
 
   </TabItem>
@@ -492,7 +571,32 @@ var reactor = await client.UpdateAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
   }
 );
 ```
+  </TabItem>
+  <TabItem value="java" label="Java">
 
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        UpdateReactorRequest updateReactorRequest = new UpdateReactorRequest(); // CreateReactorRequest |
+        Reactor reactor = apiInstance.update(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"),updateReactorRequest
+                .name("My Reactor")
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd134"))
+                .application(Application.fromJson("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")));
+    }
+}
+```
   </TabItem>
   <TabItem value="python" label="Python">
 
@@ -557,11 +661,11 @@ func main() {
 
 #### Request Parameters
 
-| Attribute        | Required | Type     | Default | Description                                                                                                                                                   |
-| ---------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`           | true     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                        |
-| `configuration`  | true     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration) |
-| `application.id` | false    | _uuid_   | `null`  | Unique identifier of the [Application](/docs/api/applications#application-object) to configure a Reactor with                                                 |
+| Attribute        | Required | Type     | Default | Description                                                                                                                                                                                                                                                                               |
+| ---------------- | -------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`           | true     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                                                                                                                                                    |
+| `configuration`  | true     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                                                                             |
+| `application.id` | false    | _uuid_   | `null`  | This Application's API key is injected into a pre-configured [Node.js BasisTheory](https://www.npmjs.com/package/@basis-theory/basis-theory-js) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
 
 ### Response
 
@@ -627,6 +731,28 @@ using BasisTheory.net.Reactors;
 var client = new ReactorClient("key_N88mVGsp3sCXkykyN2EFED");
 
 await client.DeleteAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        apiInstance.delete(UUID.fromString("45c124e7-6ab2-4899-b4d9-1388b0ba9d04"));
+    }
+}
 ```
 
   </TabItem>
@@ -746,6 +872,34 @@ var reactResponse = await client.ReactAsync("5b493235-6917-4307-906a-2cd6f1a90b1
       customer_id = "myCustomerId1234"
     }
   });
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        ReactRequest reactRequest = new ReactRequest();
+        ReactResponse result = apiInstance.react(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"),
+                reactRequest.args(
+                        Map.of("card","{{fe7c0a36-eb45-4f68-b0a0-791de}}",
+                                "customer_id", "myCustomerId1234")));
+        System.out.println(result);
+    }
+}
 ```
 
   </TabItem>
@@ -908,15 +1062,15 @@ At most, 100 tokens may be detokenized within a single Reactor request.
 
 ## Reactor Object
 
-| Attribute       | Type                                                                            | Description                                                                                                                                                                                                                       |
-| --------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`            | _uuid_                                                                          | Unique identifier of the Reactor which can be used to [get a Reactor](/docs/api/reactors#get-a-reactor)                                                                                                                           |
-| `tenant_id`     | _uuid_                                                                          | The [Tenant](/docs/api/tenants) ID which owns the reactor                                                                                                                                                                         |
-| `name`          | _string_                                                                        | The name of the reactor                                                                                                                                                                                                           |
-| `formula`       | _[Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object)_ | Reactor Formula this Reactor is configured for                                                                                                                                                                                    |
-| `configuration` | _map_                                                                           | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                     |
-| `application`   | _[Application](/docs/api/applications#application-object)_                      | (Optional) This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Reactor's runtime. |
-| `created_by`    | _uuid_                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Reactor                                                                                                                                   |
-| `created_at`    | _string_                                                                        | (Optional) Created date of the Reactor in ISO 8601 format                                                                                                                                                                         |
-| `modified_by`   | _uuid_                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Reactor                                                                                                                             |
-| `modified_at`   | _date_                                                                          | (Optional) Last modified date of the Reactor in ISO 8601 format                                                                                                                                                                   |
+| Attribute       | Type                                                                            | Description                                                                                                                                                                                                                                                                                          |
+| --------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`            | _uuid_                                                                          | Unique identifier of the Reactor which can be used to [get a Reactor](/docs/api/reactors#get-a-reactor)                                                                                                                                                                                              |
+| `tenant_id`     | _uuid_                                                                          | The [Tenant](/docs/api/tenants) ID which owns the reactor                                                                                                                                                                                                                                            |
+| `name`          | _string_                                                                        | The name of the reactor                                                                                                                                                                                                                                                                              |
+| `formula`       | _[Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object)_ | Reactor Formula this Reactor is configured for                                                                                                                                                                                                                                                       |
+| `configuration` | _map_                                                                           | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                                                                                        |
+| `application`   | _[Application](/docs/api/applications#application-object)_                      | (Optional) This Application's API key is injected into a pre-configured [Node.js BasisTheory](https://www.npmjs.com/package/@basis-theory/basis-theory-js) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+| `created_by`    | _uuid_                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Reactor                                                                                                                                                                                                      |
+| `created_at`    | _string_                                                                        | (Optional) Created date of the Reactor in ISO 8601 format                                                                                                                                                                                                                                            |
+| `modified_by`   | _uuid_                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Reactor                                                                                                                                                                                                |
+| `modified_at`   | _date_                                                                          | (Optional) Last modified date of the Reactor in ISO 8601 format                                                                                                                                                                                                                                      |

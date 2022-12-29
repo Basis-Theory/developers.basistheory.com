@@ -1,5 +1,5 @@
 import Layout from "@theme/Layout";
-import React from "react";
+import React, { ComponentProps, useEffect, useState } from "react";
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import ThemedImage from "@theme/ThemedImage";
@@ -14,7 +14,6 @@ import ApiReference from "@site/static/img/homepage/console.svg";
 import Info from "@site/static/img/homepage/info.svg";
 import Package from "@site/static/img/homepage/package.svg";
 import Question from "@site/static/img/homepage/question.svg";
-import Star from "@site/static/img/homepage/star.svg";
 import Arrow from "@site/static/img/homepage/arrow.svg";
 import Blueprint from "@site/static/img/homepage/blueprint.svg";
 
@@ -26,7 +25,48 @@ import Node from "@site/static/img/sdk/logos/nodejs.svg";
 import Python from "@site/static/img/sdk/logos/python.svg";
 import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 import Terraform from "@site/static/img/sdk/logos/terraform.svg";
+import Java from "@site/static/img/sdk/logos/java.svg";
 import Link from "@docusaurus/Link";
+
+interface Step {
+  id: string;
+  sources: ComponentProps<typeof ThemedImage>["sources"];
+  text: string;
+}
+
+const Step = ({ sources, id, text }: Step) => {
+  const [hover, setHover] = useState(false);
+
+  const toggleState = () => setHover(!hover);
+
+  return (
+    <div
+      onMouseEnter={toggleState}
+      onMouseLeave={toggleState}
+      className={clsx({
+        [styles.step]: hover,
+      })}
+    >
+      <div
+        className={clsx({
+          [styles[`${id}-img--hover`]]: hover,
+          [styles["img-container--hover"]]: hover,
+          [styles[`${id}-img-container`]]: true,
+          [styles["img-container"]]: true,
+        })}
+      >
+        <ThemedImage
+          id={id}
+          sources={{
+            light: useBaseUrl(sources.light),
+            dark: useBaseUrl(sources.dark),
+          }}
+        />
+      </div>
+      <p>{text}</p>
+    </div>
+  );
+};
 
 export default function Home(): JSX.Element {
   return (
@@ -42,65 +82,66 @@ export default function Home(): JSX.Element {
             <div className={styles["card-body"]}>
               <Link to="/docs/">
                 <div>
-                  <ThemedImage
+                  <Step
+                    text="Get Started"
+                    id="getting-started"
                     sources={{
-                      light: useBaseUrl(
-                        "/img/homepage/light/getting-started.svg"
-                      ),
-                      dark: useBaseUrl(
-                        "/img/homepage/dark/getting-started.svg"
-                      ),
+                      light: "/img/homepage/light/getting-started.png",
+                      dark: "/img/homepage/dark/getting-started.png",
                     }}
                   />
-                  <p>Get Started</p>
                 </div>
               </Link>
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/collect/">
                 <div>
-                  <ThemedImage
+                  <Step
+                    text="Collect Data"
+                    id="collect-data"
                     sources={{
-                      light: useBaseUrl("/img/homepage/light/collect-data.svg"),
-                      dark: useBaseUrl("/img/homepage/dark/collect-data.svg"),
+                      light: "/img/homepage/light/collect-data.png",
+                      dark: "/img/homepage/dark/collect-data.png",
                     }}
                   />
-                  <p>Collect Data</p>
                 </div>
               </Link>
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/share/">
                 <div>
-                  <ThemedImage
+                  <Step
+                    text="Share Data"
+                    id="share-data"
                     sources={{
-                      light: useBaseUrl("/img/homepage/light/share-data.svg"),
-                      dark: useBaseUrl("/img/homepage/dark/share-data.svg"),
+                      light: "/img/homepage/light/share-data.png",
+                      dark: "/img/homepage/dark/share-data.png",
                     }}
                   />
-                  <p>Share Data</p>
                 </div>
               </Link>
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/process/">
                 <div>
-                  <ThemedImage
+                  <Step
+                    text="Process Data"
+                    id="process-data"
                     sources={{
-                      light: useBaseUrl("/img/homepage/light/process-data.svg"),
-                      dark: useBaseUrl("/img/homepage/dark/process-data.svg"),
+                      light: "/img/homepage/light/process-data.png",
+                      dark: "/img/homepage/dark/process-data.png",
                     }}
                   />
-                  <p>Process Data</p>
                 </div>
               </Link>
               <Arrow className={styles.arrow} />
               <Link to="/docs/guides/govern/">
                 <div>
-                  <ThemedImage
+                  <Step
+                    text="Govern Data"
+                    id="govern-data"
                     sources={{
-                      light: useBaseUrl("/img/homepage/light/govern-data.svg"),
-                      dark: useBaseUrl("/img/homepage/dark/govern-data.svg"),
+                      light: "/img/homepage/light/govern-data.png",
+                      dark: "/img/homepage/dark/govern-data.png",
                     }}
                   />
-                  <p>Govern Data</p>
                 </div>
               </Link>
             </div>
@@ -141,6 +182,13 @@ export default function Home(): JSX.Element {
                     className={styles.quickstart}
                   >
                     .NET
+                  </Card>
+                  <Card
+                    href="/docs/sdks/server-side/java"
+                    img={<Java />}
+                    className={styles.quickstart}
+                  >
+                    Java
                   </Card>
                   <Card
                     href="/docs/sdks/server-side/go"

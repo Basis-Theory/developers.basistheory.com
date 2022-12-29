@@ -8,6 +8,7 @@ export enum SDK {
   NODE = "node",
   ANDROID = "android",
   IOS = "ios",
+  Java = "java",
 }
 
 export const isValidSdk = (val: unknown): val is SDK =>

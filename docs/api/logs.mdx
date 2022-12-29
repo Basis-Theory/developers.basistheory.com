@@ -59,6 +59,36 @@ var logs = await client.GetAsync();
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        LogsApi apiInstance = new LogsApi(defaultClient);
+        String entityType = "";
+        String entityId = "";
+        OffsetDateTime startDate = OffsetDateTime.now().minusDays(7);
+        OffsetDateTime endDate = OffsetDateTime.now();
+        Integer page = 1;
+        Integer size = 56;
+        LogPaginatedList result = apiInstance.get(entityType, entityId, startDate, endDate, page, size);
+        System.out.println(result);
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers

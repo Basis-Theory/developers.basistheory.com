@@ -9,6 +9,7 @@ import Node from "@site/static/img/sdk/logos/nodejs.svg";
 import Python from "@site/static/img/sdk/logos/python.svg";
 import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 import Terraform from "@site/static/img/sdk/logos/terraform.svg";
+import Java from "@site/static/img/sdk/logos/java.svg";
 
 export const getSdkIcon = (icon: SDK | `${SDK}`) =>
   ({
@@ -16,6 +17,7 @@ export const getSdkIcon = (icon: SDK | `${SDK}`) =>
     [SDK.GO]: Go,
     [SDK.PYTHON]: Python,
     [SDK.TERRAFORM]: Terraform,
+    [SDK.Java]: Java,
     [SDK.NODE]: Node,
     [SDK.REACT]: ReactSvg,
     [SDK.JAVASCRIPT]: JavaScript,

@@ -2,16 +2,14 @@
 sidebar_label: Types
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
-
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Alert } from "@site/src/components/shared/Alert";
+import CardBrands from "@site/docs/sdks/_card-brands.mdx";
 
 # Mobile Elements Types
 
 ## TextElementUITextField
 
-The `TextElementUITextField` element type enables collecting user String data. [Mask](./options/#mask) and [transform](./options/#transform) capabilities are available to be configured on these elements.
+The `TextElementUITextField` element type enables collecting user String data. [Mask](/docs/sdks/mobile/ios/options#mask) and [transform](/docs/sdks/mobile/ios/options#transform) capabilities are available to be configured on these elements.
 
 ```swift showLineNumbers
 import Foundation
@@ -20,7 +18,6 @@ import BasisTheoryElements
 import Combine
 
 class TokenizeName: UIViewController {
-
     @IBOutlet weak var nameTextField: TextElementUITextField!
     @IBOutlet weak var output: UITextView!
 
@@ -48,6 +45,12 @@ class TokenizeName: UIViewController {
 }
 ```
 
+| Configuration | Defaults |
+| --- | --- |
+| validation | No default validation. Always valid in [ElementEvent](/docs/sdks/mobile/ios/events#elementevent). |
+| mask | No default [mask](/docs/sdks/mobile/ios/options#mask). [Mask](/docs/sdks/mobile/ios/options#mask) can be overridden. |
+| transform | No default [transform](/docs/sdks/mobile/ios/options#transform). [Transform](/docs/sdks/mobile/ios/options#transform) can be overriden. |
+
 ## CardNumberUITextField
 
 The `CardNumberUITextField` element type renders a card number input featuring automatic brand detection, input validation, and masking. The input must be Luhn valid and be an acceptable length for the card brand.
@@ -59,7 +62,6 @@ import BasisTheoryElements
 import Combine
 
 class TokenizeCardNumber: UIViewController {
-
     @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
     @IBOutlet weak var output: UITextView!
 
@@ -87,6 +89,21 @@ class TokenizeCardNumber: UIViewController {
 }
 ```
 
+| Configuration | Defaults |
+| --- | --- |
+| validation | Input must be Luhn valid and be an acceptable length for the card brand. |
+| mask | The [mask](/docs/sdks/mobile/ios/options#mask) changes depending on the card brand identified for this input according to the [card brand](#card-brands). |
+| transform | The [transform](/docs/sdks/mobile/ios/options#transform) removes all spaces set by the [mask](/docs/sdks/mobile/ios/options#mask) before tokenization. |
+
+### Card Brands
+
+The first several digits of the card number are analyzed as the user is typing to determine the card brand.
+The brand is used to automatically set a [mask](/docs/sdks/mobile/ios/options#mask) to a brand-specific format.
+If the [CardNumberUITextField](#cardnumberuitextfield) is bound to a [CardVerificationCodeUITextField](#cardverificationcodeuitextfield),
+a `mask` is also automatically set on the `CardVerificationCodeElement` based on the brand's CVC length requirements.
+
+<CardBrands />
+
 ## CardExpirationDateUITextField
 
 The `CardExpirationDateUITextField` element type features a month and year formatted input with validation. The input must be the current month and year or later.
@@ -98,7 +115,6 @@ import BasisTheoryElements
 import Combine
 
 class TokenizeCardExpirationDate: UIViewController {
-
     @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
     @IBOutlet weak var output: UITextView!
 
@@ -127,6 +143,28 @@ class TokenizeCardExpirationDate: UIViewController {
 }
 ```
 
+| Configuration | Defaults |
+| --- | --- |
+| validation | Input must be the current month and year or later. |
+| mask | The [mask](/docs/sdks/mobile/ios/options#mask) is two digits followed by a forward slash followed by two more digits (eg. `MM/YY` ). |
+| transform | No default [transform](/docs/sdks/mobile/ios/options#transform). |
+
+#### Month and Year
+
+Both the month and year values need to be retrieved from a `CardExpirationDateUITextField` with the `month()` and `year()` functions, respectively. Below is an example:
+
+```swift
+let body: [String: Any] = [
+  "data": [
+    "number": self.cardNumberTextField,
+    "expiration_month": self.expirationDateTextField.month(),
+    "expiration_year": self.expirationDateTextField.year(),
+    "cvc": self.cvcTextField
+  ],
+  "type": "card"
+]
+```
+
 ## CardVerificationCodeUITextField
 
 The `CardVerificationCodeUITextField` element type is used to collect the card verification code.
@@ -138,7 +176,6 @@ import BasisTheoryElements
 import Combine
 
 class TokenizeCVC: UIViewController {
-
     @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
     @IBOutlet weak var output: UITextView!
 
@@ -166,10 +203,31 @@ class TokenizeCVC: UIViewController {
 }
 ```
 
-See below for an example that uses all of the card-related mobile elements, `CardNumberUITextField`, `CardExpirationDateUITextField`, and `CardVerificationCodeUITextField`, together.
+| Configuration | Defaults |
+| --- | --- |
+| validation | No default validation. Always valid in [ElementEvent](/docs/sdks/mobile/ios/events#elementevent). |
+| mask | If not associated with a `CardNumberUITextField`, the [mask](/docs/sdks/mobile/ios/options#mask) is a 4 digit number. If it is, the [mask](/docs/sdks/mobile/ios/options#mask) changes depending on the [card brand](#card-brands) identified by the `CardNumberUITextField`. Refer to the [section below](#associating-a-cardnumberuitextfield). |
+| transform | No default [transform](/docs/sdks/mobile/ios/options#transform). |
+
+### Associating a CardNumberUITextField
+
+Associating a `CardNumberUITextField` with a `CardVerificationCodeUITextField` will enhance masking capabilities of the CVC element. By default, a `CardVerificationCodeUITextField` `mask` is a 4-digit number.
+But when associated with a `CardNumberUITextField`, the `mask` will change to match the [card brand](#card-brands) identified by the `CardNumberUITextField`. Below is an example of how to make that association:
+
+```swift
+cvcTextField.setConfig(
+  options: CardVerificationCodeOptions(
+    cardNumberUITextField: cardNumberTextField
+  )
+)
+```
+
+## Collecting Card Data Example
+
+See below for an example that uses all the card-related mobile elements, `CardNumberUITextField`, `CardExpirationDateUITextField`, and `CardVerificationCodeUITextField` together.
 
 <Alert>
-  Note that when these card-related elements are grouped together in an array, as shown in the value of <code>data</code> below, the token <code>type</code> of <code>card</code> should be used.
+  Note that when these card-related elements are grouped together in a dictionary, as shown in the value of <code>data</code> below, the token <code>type</code> of <code>card</code> should be used.
 </Alert>
 
 ```swift showLineNumbers
@@ -178,12 +236,13 @@ import UIKit
 import BasisTheoryElements
 import Combine
 
-class TokenizeBillingInformation: UIViewController {
-
+class TokenizeBillingInformationViewController: UIViewController {
     @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
     @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
     @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
     @IBOutlet weak var output: UITextView!
+
+    private var cancellables = Set<AnyCancellable>()
 
     @IBAction func tokenize(_ sender: Any) {
         let body: [String: Any] = [
@@ -208,6 +267,34 @@ class TokenizeBillingInformation: UIViewController {
             self.output.text = stringifiedData
             print(stringifiedData)
         }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let cvcOptions = CardVerificationCodeOptions(cardNumberUITextField: cardNumberTextField)
+        cvcTextField.setConfig(options: cvcOptions)
+
+        cardNumberTextField.subject.sink { completion in
+            print(completion)
+        } receiveValue: { message in
+            print("cardNumberTextField:")
+            print(message)
+        }.store(in: &cancellables)
+
+        expirationDateTextField.subject.sink { completion in
+            print(completion)
+        } receiveValue: { message in
+            print("expirationDateTextField:")
+            print(message)
+        }.store(in: &cancellables)
+
+        cvcTextField.subject.sink { completion in
+            print(completion)
+        } receiveValue: { message in
+            print("cvcTextField:")
+            print(message)
+        }.store(in: &cancellables)
     }
 }
 ```

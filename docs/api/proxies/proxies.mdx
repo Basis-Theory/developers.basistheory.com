@@ -168,6 +168,55 @@ var proxy = await client.CreateAsync(new ProxyCreateRequest {
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        CreateProxyRequest createProxyRequest = new CreateProxyRequest();
+        Proxy result = apiInstance.create(createProxyRequest
+                .name("My Proxy")
+                .destinationUrl("https://example.com/api")
+                .requestTransform(new ProxyTransform().code("""
+                        module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                .responseTransform(new ProxyTransform().code("""
+                         module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd1234"))
+                .application(new Application().id(UUID.fromString("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")))
+                .requireAuth(true));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -273,15 +322,15 @@ func main() {
 
 #### Request Parameters
 
-| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                  |
-| -------------------- | -------- | ---------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                         |
-| `destination_url`    | true     | _string_                                                   | `null`  | The URL to proxy requests to                                                                                                                                                                                                 |
-| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                         |
-| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                |
-| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Proxy Transform runtime. |
-| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                        |
-| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                   |
+| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                                                                               |
+| -------------------- | -------- | ---------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                                                                                      |
+| `destination_url`    | true     | _string_                                                   | `null`  | The URL to proxy requests to                                                                                                                                                                                                                                                              |
+| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                                                                                      |
+| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                                                                             |
+| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured [Node.js BasisTheory](https://www.npmjs.com/package/@basis-theory/basis-theory-js) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                                                                                     |
+| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                                                                |
 
 ### Response
 
@@ -371,6 +420,34 @@ using BasisTheory.net.Proxies;
 var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var proxies = await client.GetAsync();
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        List<UUID> id = Arrays.asList();
+        String name = "name_example";
+        Integer page = 1;
+        Integer size = 50;
+        ProxyPaginatedList result = apiInstance.get(id, name, page, size);
+    }
+}
 ```
 
   </TabItem>
@@ -515,6 +592,30 @@ using BasisTheory.net.Proxies;
 var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var proxy = await client.GetByIdAsync("5b493235-6917-4307-906a-2cd6f1a90b13");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```csharp showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        Proxy result = apiInstance.getById(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"));
+    }
+}
 ```
 
   </TabItem>
@@ -762,6 +863,55 @@ var proxy = await client.UpdateAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        CreateProxyRequest createProxyRequest = new CreateProxyRequest();
+        Proxy result = apiInstance.create(createProxyRequest
+                .name("My Proxy")
+                .destinationUrl("https://example.com/api")
+                .requestTransform(new ProxyTransform().code("""
+                        module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                .responseTransform(new ProxyTransform().code("""
+                         module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd1234"))
+                .application(new Application().id(UUID.fromString("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")))
+                .requireAuth(true));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -873,15 +1023,15 @@ func main() {
 
 #### Request Parameters
 
-| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                  |
-| -------------------- | -------- | ---------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                         |
-| `destination_url`    | true     | _string_                                                   | `null`  | The URL to proxy requests to                                                                                                                                                                                                 |
-| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                         |
-| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                |
-| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Proxy Transform runtime. |
-| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                        |
-| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                   |
+| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                                                                               |
+| -------------------- | -------- | ---------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                                                                                      |
+| `destination_url`    | true     | _string_                                                   | `null`  | The URL to proxy requests to                                                                                                                                                                                                                                                              |
+| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                                                                                      |
+| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                                                                             |
+| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured [Node.js BasisTheory](https://www.npmjs.com/package/@basis-theory/basis-theory-js) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                                                                                     |
+| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                                                                |
 
 ### Response
 
@@ -978,6 +1128,28 @@ await client.DeleteAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6");
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        apiInstance.delete(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -1027,22 +1199,22 @@ Returns [an error](/docs/api/errors) if the Proxy failed to delete.
 
 ## Proxy Object
 
-| Attribute            | Type                                         | Description                                                                                                                                                                                                                             |
-| -------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                 | _uuid_                                       | Unique identifier of the Proxy which can be used to [get a Proxy](/docs/api/proxies#get-a-proxy)                                                                                                                                        |
-| `key`                | _string_                                     | Auto-generated key used to [invoke a particular Proxy](/docs/api/proxies/invoke-proxy#proxying-requests)                                                                                                                                |
-| `name`               | _string_                                     | The name of the Proxy                                                                                                                                                                                                                   |
-| `destination_url`    | _string_                                     | The URL to proxy requests to                                                                                                                                                                                                            |
-| `tenant_id`          | _uuid_                                       | The [Tenant](/docs/api/tenants) ID which owns the Proxy                                                                                                                                                                                 |
-| `require_auth`       | _boolean_                                    | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                              |
-| `request_transform`  | _[Proxy Transform](#proxy-transform-object)_ | (Optional) Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                         |
-| `response_transform` | _[Proxy Transform](#proxy-transform-object)_ | (Optional) Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                |
-| `application_id`     | _string_                                     | (Optional) This Application's API key is injected into a pre-configured <a href="https://www.npmjs.com/package/@basis-theory/basis-theory-js" target="_blank">Node.js BasisTheory</a> instance passed into the Proxy Transform runtime. |
-| `configuration`      | _map_                                        | (Optional) A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                        |
-| `created_by`         | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Proxy                                                                                                                                           |
-| `created_at`         | _string_                                     | (Optional) Created date of the Proxy in ISO 8601 format                                                                                                                                                                                 |
-| `modified_by`        | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Proxy                                                                                                                                     |
-| `modified_at`        | _date_                                       | (Optional) Last modified date of the Proxy in ISO 8601 format                                                                                                                                                                           |
+| Attribute            | Type                                         | Description                                                                                                                                                                                                                                                                                          |
+| -------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                 | _uuid_                                       | Unique identifier of the Proxy which can be used to [get a Proxy](/docs/api/proxies#get-a-proxy)                                                                                                                                                                                                     |
+| `key`                | _string_                                     | Auto-generated key used to [invoke a particular Proxy](/docs/api/proxies/invoke-proxy#proxying-requests)                                                                                                                                                                                             |
+| `name`               | _string_                                     | The name of the Proxy                                                                                                                                                                                                                                                                                |
+| `destination_url`    | _string_                                     | The URL to proxy requests to                                                                                                                                                                                                                                                                         |
+| `tenant_id`          | _uuid_                                       | The [Tenant](/docs/api/tenants) ID which owns the Proxy                                                                                                                                                                                                                                              |
+| `require_auth`       | _boolean_                                    | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                                                                           |
+| `request_transform`  | _[Proxy Transform](#proxy-transform-object)_ | (Optional) Transform code which will be executed against the proxy's request before sending to the destination.                                                                                                                                                                                      |
+| `response_transform` | _[Proxy Transform](#proxy-transform-object)_ | (Optional) Transform code which will be executed against the destination's response before returning the proxy response.                                                                                                                                                                             |
+| `application_id`     | _string_                                     | (Optional) This Application's API key is injected into a pre-configured [Node.js BasisTheory](https://www.npmjs.com/package/@basis-theory/basis-theory-js) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+| `configuration`      | _map_                                        | (Optional) A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                                                                                     |
+| `created_by`         | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Proxy                                                                                                                                                                                                        |
+| `created_at`         | _string_                                     | (Optional) Created date of the Proxy in ISO 8601 format                                                                                                                                                                                                                                              |
+| `modified_by`        | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Proxy                                                                                                                                                                                                  |
+| `modified_at`        | _date_                                       | (Optional) Last modified date of the Proxy in ISO 8601 format                                                                                                                                                                                                                                        |
 
 ### Proxy Transform Object
 

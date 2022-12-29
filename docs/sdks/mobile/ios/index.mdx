@@ -3,7 +3,7 @@ sidebar_label: iOS
 sidebar_position: 0
 ---
 
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Alert } from "@site/src/components/shared/Alert";
 import { GithubCard } from "@site/src/components/sdks/GithubCard";
 import { SDK } from "@site/src/components/types";
 
@@ -24,24 +24,36 @@ Think about it as an isolated sandbox within your mobile application that your e
 interact with, and which securely communicates with the Basis Theory Vault. Sensitive data is not directly exposed to
 your application code, which keeps your mobile application out of compliance scope.
 
-Here is how we make this possible:
+Here's how we make this possible:
 
-- Own your UX, by fully customizing how iOS Elements are styled
-- Use inputs and forms with ease
-- Interact with iOS Elements just like native elements
+- [Install](#installation) our iOS SDK into your mobile application
+- Build forms using our **[Element](/docs/sdks/mobile/ios/types)** input components
+- [Interact](/docs/sdks/mobile/ios/services#tokenize) with the Basis Theory API using **Element** references, not plaintext data
+- Own your UI/UX by fully customizing how **Elements** are [styled](#styling-elements)
 
 ## Collect Sensitive Data
 
 Data entered by your end users into **iOS Elements** is tokenized and secured within Basis Theory's certified Vault.
 
-Our SDKs provide several types of inputs to collect various types of data, such as the [TextElementUITextField](./types##text-element-ui-text-field)
-for collecting arbitrary textual data and [CardNumberUITextField](./types##card-number-ui-text-field) for collecting a credit card number.
+Our SDKs provide several types of inputs to collect various types of data, such as the [TextElementUITextField](/docs/sdks/mobile/ios/types##text-element-ui-text-field)
+for collecting arbitrary textual data and [CardNumberUITextField](/docs/sdks/mobile/ios/types##card-number-ui-text-field) for collecting a credit card number.
 
-Elements can be configured to support custom input [masking](./options/#mask), validation, and [transformation](./options/#transform) rules to satisfy your use cases.
+Elements can be configured to support custom input [masking](/docs/sdks/mobile/ios/options#mask), validation, and [transformation](/docs/sdks/mobile/ios/options#transform) rules to satisfy your use cases.
+
+## Reveal Sensitive Data
+
+Tokens stored within the Basis Theory Vault can be securely revealed to end users without accessing the plaintext
+data directly within your application code.
+
+<Alert>
+  The ability to reveal sensitive data on iOS is not yet generally available. If you are interested in using this feature on iOS,
+  please email us at <a href="mailto:info@basistheory.com?subject=iOS SDK - Reveal">info@basistheory.com</a> to
+  join our early access program.
+</Alert>
 
 ## Before You Begin
 
-Basis Theory iOS Elements require the use of an API Key associated with a **Public Application**, which only allows `token:create` and `token:update` permissions, removing any risk that your API keys are stolen and used to access data.
+Basis Theory iOS Elements require the use of an API Key associated with a **Public Application**, which only allows `token:create` and `token:update` permissions to mitigate the risk that these API keys may be publicly exposed within your frontend applications.
 
 To create one, login into our [Portal](https://portal.basistheory.com) and create a new "Public" Application with the permissions you require.
 
@@ -68,7 +80,7 @@ dependencies: [
 
 4. Add the following line to your Podfile under your target.
 
-```swift showLineNumbers
+```ruby showLineNumbers
 pod 'BasisTheoryElements'
 ```
 
@@ -80,3 +92,27 @@ Below is an example of a UITextField set as `TextElementUITextField`.
 Below is an example of a UITextField set as `TextElementUITextField`.
 
 ![](/img/iOS/ios-initialization.jpg)
+
+## Styling Elements
+
+All of our elements have been designed to take advantage of the pre-existing native properties and customizations built directly into the [UIKit framework](https://developer.apple.com/documentation/uikit). Utilizing this framework means you’re able to customize the styling of your elements as you would with any other `UITextField`. For example:
+
+```swift showLineNumbers
+@IBOutlet weak var myTextElement: TextElementUITextField!
+...
+
+myTextElement.layer.cornerRadius = 15.0
+myTextElement.placeholder = placeholder
+myTextElement.backgroundColor = UIColor( red: 240/255, green: 240/255, blue: 240/255, alpha: 1.0 )
+```
+
+## Modified and Additional Fields
+
+`BasisTheoryElements` package’s elements are a simple wrapper for the native [UIKit](https://developer.apple.com/documentation/uikit) UITextField. Due to this developers can take full advantage of existing native customization, but we restrict and enable access to the underlying data in the following ways:
+
+| Field | Description |
+| --- | --- |
+| text | We restrict the getter for this value; it always returns nil. The setter works as is. |
+| subject | An instance of [PassThroughSubject](https://developer.apple.com/documentation/combine/passthroughsubject) that allows you to subscribe to [ElementEvents](/docs/sdks/mobile/ios/events). |
+| setValue | A function that recieves an `ElementValueReference` parameter to set the value of the element. Note: `ElementValueReference` instances can only be retrieved from [proxy](/docs/sdks/mobile/ios/services#proxy) responses. |
+| setValueRef | Binds the provided [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield) instance as a value source for this element, keeping the value of this element in sync with any changes made to the other element. This makes the caller element read-only. Any iOS element type can be provided as an instance into this function. |

@@ -10,7 +10,7 @@ Basis Theory Elements offers several methods and events to listen to changes to 
 
 ## Methods
 
-Once you have [created](./lifecycle#create-element) and [mounted](./lifecycle#mount-element) an element instance, you can invoke the methods below:
+Once you have [created](/docs/sdks/web/javascript/lifecycle#create-element) and [mounted](/docs/sdks/web/javascript/lifecycle#mount-element) an element instance, you can invoke the methods below:
 
 ```html showLineNumbers
 <div id="my-card"></div>
@@ -23,14 +23,14 @@ Once you have [created](./lifecycle#create-element) and [mounted](./lifecycle#mo
 </script>
 ```
 
-| Name       | Resulting Type | Eligible Elements                                          | Description                                                                                  |
-| ---------- | -------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `clear`    | _void_         | All                                                        | Clears the element input(s) value.                                                           |
-| `focus`    | _void_         | All                                                        | Focuses on the element input.                                                                |
-| `blur`     | _void_         | All                                                        | Blurs the element input.                                                                     |
-| `month`    | _number_       | [cardExpirationDate](./types#card-expiration-date-element) | Data-parsing method that resolves to the month value of the input date, where "January" = 1. |
-| `year`     | _number_       | [cardExpirationDate](./types#card-expiration-date-element) | Data-parsing method that resolves to the four-digit year value of the input date.            |
-| `setValue` | _void_         | All                                                        | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.  |
+| Name       | Resulting Type | Eligible Elements                                                                  | Description                                                                                  |
+|------------|----------------|------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| `clear`    | _void_         | All                                                                                | Clears the element input(s) value.                                                           |
+| `focus`    | _void_         | All                                                                                | Focuses on the element input.                                                                |
+| `blur`     | _void_         | All                                                                                | Blurs the element input.                                                                     |
+| `month`    | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the month value of the input date, where "January" = 1. |
+| `year`     | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the four-digit year value of the input date.            |
+| `setValue` | _void_         | All                                                                                | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.  |
 
 ## Events
 
@@ -71,7 +71,7 @@ cardElement.on("change", (changeEvent) => {
 ```
 
 | Parameter | Required | Type       | Description                                                                                     |
-| --------- | -------- | ---------- | ----------------------------------------------------------------------------------------------- |
+|-----------|----------|------------|-------------------------------------------------------------------------------------------------|
 | `event`   | true     | _"change"_ | The event type to listen to.                                                                    |
 | `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [ChangeEvent](#changeevent). |
 
@@ -90,13 +90,13 @@ cardElement.on("change", (changeEvent) => {
 }
 ```
 
-| Attribute   | Type      | Eligible Elements                                                          | Description                                                                                                                                                                       |
-| ----------- | --------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`  | _boolean_ | All                                                                        | If the element value is well-formed and is ready to be submitted.                                                                                                                 |
-| `empty`     | _boolean_ | All                                                                        | Whether the element is empty. Multi-input Elements will be `empty` only if all inputs are.                                                                                        |
-| `errors`    | _array_   | All                                                                        | Array of [FieldError](#fielderror).                                                                                                                                               |
-| `cardBrand` | _string_  | [card](./types#card-element)<br/>[cardNumber](./types#card-number-element) | (Optional) The credit card [brand](./options#card-brands) (e.g. `'american-express'`, `'visa'`, `'unknown'`). The value defaults to `'unknown'` until a card brand is recognized. |
-| `cardLast4` | _string_  | [card](./types#card-element)<br/>[cardNumber](./types#card-number-element) | (Optional) The credit card's last 4 digits. The value is not provided until a complete card number is entered.                                                                    |
+| Attribute   | Type      | Eligible Elements                                                                                                          | Description                                                                                                                                                                                               |
+|-------------|-----------|----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `complete`  | _boolean_ | All                                                                                                                        | Whether this element satisfies the mask and is valid, i.e. it is ready to be tokenized.                                                                                                                   |
+| `empty`     | _boolean_ | All                                                                                                                        | Whether the element is empty. Multi-input Elements will be `empty` only if all inputs are.                                                                                                                |
+| `errors`    | _array_   | All                                                                                                                        | Array of [FieldError](#fielderror).                                                                                                                                                                       |
+| `cardBrand` | _string_  | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | (Optional) The credit card [brand](/docs/sdks/web/javascript/options#card-brands) (e.g. `'american-express'`, `'visa'`, `'unknown'`). The value defaults to `'unknown'` until a card brand is recognized. |
+| `cardLast4` | _string_  | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | (Optional) The credit card's last 4 digits. The value is not provided until a complete card number is entered.                                                                                            |
 
 #### FieldError
 
@@ -107,10 +107,10 @@ cardElement.on("change", (changeEvent) => {
 }
 ```
 
-| Attribute  | Type                          | Description                                                                 |
-| ---------- | ----------------------------- | --------------------------------------------------------------------------- |
-| `targetId` | _string_                      | Input ID that triggered the error. Values vary per [element type](./types). |
-| `type`     | _"invalid"_ or _"incomplete"_ | Type of the error.                                                          |
+| Attribute  | Type                          | Description                                                                                         |
+|------------|-------------------------------|-----------------------------------------------------------------------------------------------------|
+| `targetId` | _string_                      | Input ID that triggered the error. Values vary per [element type](/docs/sdks/web/javascript/types). |
+| `type`     | _"invalid"_ or _"incomplete"_ | Type of the error.                                                                                  |
 
 ### On Focus
 
@@ -121,7 +121,7 @@ cardElement.on("focus", (focusEvent) => {});
 ```
 
 | Parameter | Required | Type       | Description                                                                                   |
-| --------- | -------- | ---------- | --------------------------------------------------------------------------------------------- |
+|-----------|----------|------------|-----------------------------------------------------------------------------------------------|
 | `event`   | true     | _"focus"_  | The event type to listen to.                                                                  |
 | `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [FocusEvent](#focusevent). |
 
@@ -133,9 +133,9 @@ cardElement.on("focus", (focusEvent) => {});
 }
 ```
 
-| Attribute  | Type     | Description                                                                 |
-| ---------- | -------- | --------------------------------------------------------------------------- |
-| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](./types). |
+| Attribute  | Type     | Description                                                                                         |
+|------------|----------|-----------------------------------------------------------------------------------------------------|
+| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](/docs/sdks/web/javascript/types). |
 
 ### On Blur
 
@@ -146,7 +146,7 @@ cardElement.on("blur", (blurEvent) => {});
 ```
 
 | Parameter | Required | Type       | Description                                                                                 |
-| --------- | -------- | ---------- | ------------------------------------------------------------------------------------------- |
+|-----------|----------|------------|---------------------------------------------------------------------------------------------|
 | `event`   | true     | _"blur"_   | The event type to listen to.                                                                |
 | `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [BlurEvent](#blurevent). |
 
@@ -158,9 +158,9 @@ cardElement.on("blur", (blurEvent) => {});
 }
 ```
 
-| Attribute  | Type     | Description                                                                 |
-| ---------- | -------- | --------------------------------------------------------------------------- |
-| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](./types). |
+| Attribute  | Type     | Description                                                                                         |
+|------------|----------|-----------------------------------------------------------------------------------------------------|
+| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](/docs/sdks/web/javascript/types). |
 
 ### On Keydown
 
@@ -171,7 +171,7 @@ cardElement.on("keydown", (keydownEvent) => {});
 ```
 
 | Parameter | Required | Type        | Description                                                                                       |
-| --------- | -------- | ----------- | ------------------------------------------------------------------------------------------------- |
+|-----------|----------|-------------|---------------------------------------------------------------------------------------------------|
 | `event`   | true     | _"keydown"_ | The event type to listen to.                                                                      |
 | `handler` | true     | _function_  | Callback function to be called when the event is fired. Takes in a [KeydownEvent](#keydownevent). |
 
@@ -189,8 +189,8 @@ cardElement.on("keydown", (keydownEvent) => {});
 ```
 
 | Attribute  | Type                | Description                                                                                                                                                             |
-| ---------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `targetId` | _string_            | Input targetId that triggered the event. Values vary per [element type](./types).                                                                                       |
+|------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `targetId` | _string_            | Input targetId that triggered the event. Values vary per [element type](/docs/sdks/web/javascript/types).                                                               |
 | `key`      | _Escape_ or _Enter_ | Key pressed by the user.                                                                                                                                                |
 | `ctrlKey`  | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/ctrlKey" target="_blank">`control` key</a> was pressed when the event occurred. |
 | `altKey`   | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/altKey" target="_blank">`alt` key</a> was pressed when the event occurred.      |

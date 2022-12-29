@@ -1,0 +1,70 @@
+---
+sidebar_label: Events
+---
+
+# Element Events
+
+Each element type supports a standard set of events that can be subscribed to in order to receive
+callbacks within your application.
+
+## ChangeEvent
+
+Raised whenever the element's value is changed, upon each keypress and after pasting multiple characters into the element.
+
+
+### Schema
+
+| Property        | Type                 | Description                                                                                                                                                                                   |
+|-----------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| isComplete      | `Boolean`            | Whether this element satisfies the mask and validator, i.e. it is ready to be tokenized.                                                                                                      |
+| isEmpty         | `Boolean`            | Whether this element is empty.                                                                                                                                                                |
+| isMaskSatisfied | `Boolean`            | Whether this element satisfies the length and format requirements of the [mask](/docs/sdks/mobile/android/options#mask), if defined. Defaults to `true` if this element does not have a mask. |
+| isValid         | `Boolean`            | The result of this element's [validator](/docs/sdks/mobile/android/options#validator), if defined. Defaults to `true` if this element does not have a validator.                              |
+| details         | `List<EventDetails>` | A list of [EventDetails](#eventdetails) included with this event                                                                                                                              |
+
+### EventDetails
+
+| Property | Type     | Description                                        |
+|----------|----------|----------------------------------------------------|
+| type     | `String` | The type of data represented by this detail object |
+| message  | `String` | The content of this detail object                  |
+
+### Usage
+
+```kotlin
+myElement.addChangeEventListener {
+    // handle event
+}
+```
+
+## FocusEvent
+
+Raised whenever the element receives focus.
+
+### Schema
+
+*Empty*
+
+### Usage
+
+```kotlin
+myElement.addFocusEventListener {
+    // handle event
+}
+```
+
+## BlurEvent
+
+Raised whenever the element loses focus.
+
+### Schema
+
+*Empty*
+
+### Usage
+
+```kotlin
+myElement.addBlurEventListener {
+    // handle event
+}
+```
