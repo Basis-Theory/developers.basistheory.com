@@ -79,6 +79,35 @@ var application = await client.CreateAsync(new Application {
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.ApiClient;
+import com.basistheory.ApiException;
+import com.basistheory.Configuration;
+import com.basistheory.auth.*;
+import com.basistheory.models.*;
+import com.basistheory.ApplicationsApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
+        CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest(); // CreateApplicationRequest |
+        var application = apiInstance.create(createApplicationRequest
+                .name("ApplicationName123123")
+                .type("private")
+                .permissions(Arrays.asList("token:create", "token:read")));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -120,7 +149,6 @@ func main() {
   application, httpResponse, err := apiClient.ApplicationsApi.Create(contextWithAPIKey).CreateApplicationRequest(createApplicationRequest).Execute()
 }
 ```
-
   </TabItem>
 </Tabs>
 
@@ -187,7 +215,6 @@ const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const applications = await bt.applications.list();
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -197,6 +224,33 @@ using BasisTheory.net.Applications;
 var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var applications = await client.GetAsync();
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+    import com.basistheory.*;
+    import com.basistheory.auth.*;
+    import java.util.Arrays;
+    import java.util.List;
+    import java.util.UUID;
+
+    public class Example {
+    public static void main(String[] args) throws Exception {
+      ApiClient defaultClient = Configuration.getDefaultApiClient();
+      defaultClient.setBasePath("https://api.basistheory.com");
+
+      ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+      ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+      ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
+      List<UUID> id = Arrays.asList();
+      List<String> type = Arrays.asList();
+      Integer page = 1;
+      Integer size = 38;
+      ApplicationPaginatedList result = apiInstance.get(id, type, page, size);
+  }
 ```
 
   </TabItem>
@@ -319,6 +373,27 @@ var application = await client.GetByIdAsync("fe1f9ba4-474e-44b9-b949-110cdba9d66
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
+        Application result = apiInstance.getById("9b806250-d507-46e7-9dc0-de0f89a91a92");
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -423,6 +498,27 @@ using BasisTheory.net.Applications;
 var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var application = await client.GetByKeyAsync();
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
+        Application result = apiInstance.getByKey();
+    }
+}
 ```
 
   </TabItem>
@@ -544,6 +640,32 @@ var application = await client.UpdateAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a
     Permissions = new List<string> { "application:create", "application:read" }
   }
 );
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
+        UpdateApplicationRequest updateApplicationRequest = new UpdateApplicationRequest();
+        Application application = apiInstance.update("f7c90548-ea08-4757-bb2d-a5cfe3fb4782", updateApplicationRequest
+              .name("ApplicationName")
+              .permissions(Arrays.asList("token:create")));
+    }
+}
 ```
 
   </TabItem>
@@ -680,6 +802,27 @@ var application = await client.RegenerateKeyAsync("fb124bba-f90d-45f0-9a59-5edca
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
+        Application result = apiInstance.regenerateKey("f7c90548-ea08-4757-bb2d-a5cfe3fb4782");
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -786,6 +929,28 @@ using BasisTheory.net.Applications;
 var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
 
 await client.DeleteAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
+        apiInstance.delete("f7c90548-ea08-4757-bb2d-a5cfe3fb4782");
+    }
+}
 ```
 
   </TabItem>

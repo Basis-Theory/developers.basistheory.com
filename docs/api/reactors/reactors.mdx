@@ -96,6 +96,33 @@ var reactor = await client.CreateAsync(new Reactor {
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        CreateReactorRequest createReactorRequest = new CreateReactorRequest(); // CreateReactorRequest |
+        Reactor reactor = apiInstance.create(createReactorRequest
+                .name("My Reactor")
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd134"))
+                .formula(ReactorFormula.fromJson("17069df1-80f4-439e-86a7-4121863e4678"))
+                .application(Application.fromJson("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -234,6 +261,36 @@ var reactors = await client.GetAsync();
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        List<UUID> id = Arrays.asList();
+        String name = "";
+        Integer page = 1;
+        Integer size = 56;
+        ReactorPaginatedList result = apiInstance.get(id, name, page, size);
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -350,6 +407,28 @@ using BasisTheory.net.Reactors;
 var client = new ReactorClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var reactor = await client.GetByIdAsync("5b493235-6917-4307-906a-2cd6f1a90b13");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        Reactor result = apiInstance.getById(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"));
+    }
+}
 ```
 
   </TabItem>
@@ -492,7 +571,32 @@ var reactor = await client.UpdateAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
   }
 );
 ```
+  </TabItem>
+  <TabItem value="java" label="Java">
 
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        UpdateReactorRequest updateReactorRequest = new UpdateReactorRequest(); // CreateReactorRequest |
+        Reactor reactor = apiInstance.update(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"),updateReactorRequest
+                .name("My Reactor")
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd134"))
+                .application(Application.fromJson("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")));
+    }
+}
+```
   </TabItem>
   <TabItem value="python" label="Python">
 
@@ -630,6 +734,28 @@ await client.DeleteAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        apiInstance.delete(UUID.fromString("45c124e7-6ab2-4899-b4d9-1388b0ba9d04"));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -746,6 +872,34 @@ var reactResponse = await client.ReactAsync("5b493235-6917-4307-906a-2cd6f1a90b1
       customer_id = "myCustomerId1234"
     }
   });
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        ReactRequest reactRequest = new ReactRequest();
+        ReactResponse result = apiInstance.react(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"),
+                reactRequest.args(
+                        Map.of("card","{{fe7c0a36-eb45-4f68-b0a0-791de}}",
+                                "customer_id", "myCustomerId1234")));
+        System.out.println(result);
+    }
+}
 ```
 
   </TabItem>
