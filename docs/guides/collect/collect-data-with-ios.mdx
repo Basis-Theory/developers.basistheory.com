@@ -37,23 +37,23 @@ We will create a new iOS application through Xcode. If you don't have Xcode, dow
 
 1. Launch Xcode, then click “Create a new Xcode project”. In the sheet that appears, select "iOS" for the target operating system and the "App" template under Application, then click Next.
 
-2. For the Product Name enter "Collect iOS Guide", and for the Organization enter your own name. Ensure StoryBoard and Swift is selected for the Interface and Language, then click Next.
+2. For the Product Name enter "Collect iOS Guide", and for the Organization enter your own name. Ensure StoryBoard and Swift are selected for the Interface and Language, then click Next.
 
-3. On the next screen save the project, where you'd like.
+3. On the next screen save the project, wherever you'd like.
 
 This will launch Xcode with the newly created project.
 
 ## Install the iOS Elements SDK
 
-We will need to install Basis Theory's [iOS Elements SDK](/docs/sdks/mobile/ios), which will render a secure UITextField for capturing the data.
+We will need to install Basis Theory's [iOS Elements SDK](/docs/sdks/mobile/ios), which will render a secure `UITextField` for capturing the data.
 
-Select File > Add Packages, enter "https://github.com/Basis-Theory/basistheory-ios" in the search field on the top right, then click Add Package on this screen and the next prompts.
+With the Xcode window in focus, select File > Add Packages. In the dialog that appears, enter "https://github.com/Basis-Theory/basistheory-ios" in the search field on the top right, then click Add Package on this screen and the next prompts.
 
 ## Add Your Form Components
 
-Now we need to add a Basis Theory element component to our app. We will add the [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield) component.
+Now we need to add [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield) iOS element component to our app.
 
-The easiest way to add one of iOS elements is to first drop a `UITextField` onto your `Main.storyboard` file. To this open the `Main.storyboard` file, and click on plus button on the top right and search for "UITextField" in
+The easiest way to add a [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield) is to first drop a `UITextField` onto your `Main.storyboard` file. To do this open the `Main.storyboard` file, and click on plus button on the top right and search for "UITextField" in
 the dialog that appears. Now drag and drop the Text Field component anywhere on the iPhone screen. Feel free to size the `UITextField` to your liking.
 
 With the new `UITextField` selected, open up the Identity Inspector on the right and select "TextElementUITextField" from the class drop down, similar to the image below.
@@ -64,15 +64,18 @@ With the new `UITextField` selected, open up the Identity Inspector on the right
 
 Now it's time to style our new `TextElementUITextField`. We'll be styling our element programmatically, but feel free to style it through the GUI on Xcode, or even try implementing your own styles!
 
-First we need to add an outlet to our `ViewController.swift` so that we're able to manipulate the field programmatically. To do this, ensure your `Main.storyboard` file is open and click on the "Add Editor to the Right" button
-on the top right. This will open the `Main.storyboard` on a new pane on the right.
+First we need to add an outlet to our `ViewController.swift` so that we're able to manipulate the text field programmatically. To do this, ensure your `Main.storyboard` file is open and click on the "Add Editor to the Right" button
+on the top right. Here's a helpful image below:
 
-Now in the Project Navigator on the left, click on the `ViewController.swift` file. This should replace the `Main.storyboard` file on the right pane.
+TODO: RADIFY IMAGE
+![](/img/iOS/ios-add-editor-to-the-right.png)
 
-Next, we control-drag from the `TextElementUITextField` on `Main.storyboard` to the top of our `ViewController` class in the `ViewController.swift` file on the right. In the window that appears, type in "ssnTextElement" for the
-Name and click Connect. Xcode should suggest you import BasisTheoryElements, so let's go ahead and do that now.
+Clicking on the button above will open the `Main.storyboard` on a new pane on the right. Now in the Project Navigator on the left, click on the `ViewController.swift` file. This should replace the `Main.storyboard` file on the right pane.
 
-You should have something similar to the following after these steps.
+Next, we control-drag from the `TextElementUITextField` in `Main.storyboard` to the top of our `ViewController` class in the `ViewController.swift` file on the right. In the window that appears, type in "ssnTextElement" for the
+Name and click Connect. Then Xcode should suggest you import BasisTheoryElements, so let's go ahead and do that now.
+
+You should have something similar to the following for `ViewController.swift` after these steps.
 
 ``` swift showLineNumbers title="Collect iOS Guide/ViewController.swift"
 //
@@ -129,11 +132,12 @@ class ViewController: UIViewController {
 
 ```
 
-As you can see above, we take advantage of the existing `UITextField` API to style our component. All of our iOS elements extend `UITextField` to take advantage of the existing API's for ease of use and speed to production.
+As you can see above, we take advantage of the existing [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) API to style our component. All of our iOS elements extend
+[UITextField](https://developer.apple.com/documentation/uikit/uitextfield) for ease of use and speed to production.
 
 ## Add a Mask to Text Element
 
-Let's add some masking to format the input as the user types in the text field. The following sets a mask that looks like a social security number (ie. ###-##-####).
+Let's add a `mask` to format the input as the user types in the text field. The following sets a mask that looks like a social security number (ie. ###-##-####).
 
 ``` swift showLineNumbers title="Collect iOS Guide/ViewController.swift"
 //
@@ -188,10 +192,10 @@ class ViewController: UIViewController {
 We want to be able to tokenize the value within `TextElementUITextField` without exposing it to our iOS app.
 
 We need to add a tokenize `UIButton` and a function to handle the tokenization request. Open the `Main.storyboard` file, and click on plus button on the top right and search for "UIButton" in the dialog that appears and drag
-and drop the Filled Button component anywhere under the Text Field. Let's change the name of this button to "Tokenize" by double-clicking on the new UIButton.
+and drop the Filled Button component anywhere under our `TextElementUITextField`. Let's change the name of this button to "Tokenize" by double-clicking on the new UIButton.
 
-Now we need to add an action for this new button. Follow the steps from [Style Your Form Components](#style-your-form-components) to add an action to the new UIButton in the `ViewController.swift` file. When control-dragging
-the UIButton into `ViewController.swift` choose Action for the Connection and "tokenize" for the Name.
+Now we need to add an action for this new button. Follow the previous steps from [Style Your Form Components](#style-your-form-components) to get `Main.storyboard` and `ViewController.swift` files side-by-side. Control-drag
+the "Tokenize" UIButton into `ViewController.swift`, then choose Action for the Connection and "tokenize" for the Name.
 
 Now we'll add the following code to tokenize the data with Basis Theory.
 
@@ -209,8 +213,8 @@ import BasisTheoryElements
 class ViewController: UIViewController {
     @IBOutlet weak var ssnTextElement: TextElementUITextField!
 
-    // highlight-start
     @IBAction func tokenize(_ sender: Any) {
+        // highlight-start
         let body = CreateToken(type: "token", data: [
             "ssn": self.ssnTextElement,
         ])
@@ -223,8 +227,8 @@ class ViewController: UIViewController {
 
             print(data)
         }
+        // highlight-end
     }
-    // highlight-end
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -258,7 +262,7 @@ class ViewController: UIViewController {
 
 ```
 
-Replace "YOUR PUBLIC BT API KEY HERE" with the public API key created from the [Getting Started](#getting-started) step.
+Replace "YOUR PUBLIC BT API KEY HERE" with the public API key created from the previous [Getting Started](#getting-started) step.
 
 🎉 The code above is the last bit that we need to tokenize! Now let's run the app by clicking on the play button on the top left. The screen should look something like this:
 
@@ -269,11 +273,11 @@ TODO: RADIFY IMAGE
 
 You can now capture any data without your iOS app accessing the underlying value drastically reducing compliance and regulatory scope.
 
-Try typing in a fake social security number in the field and tap on Tokenize. Basis Theory's iOS SDK will pass the value for the element reference. This will be securely submitted directly to the
-[Create Token Endpoint](/docs/api/tokens#create-token). The resulting [token](/docs/concepts/what-are-tokens) is printed to the Xcode console.
+Try typing in a social security number in the [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield) and tap on Tokenize. Basis Theory's iOS SDK will pass the value for the element reference. This will
+be securely submitted directly to the [Create Token Endpoint](/docs/api/tokens#create-token). The resulting [token](/docs/concepts/what-are-tokens) is printed to the Xcode console.
 
 ## Learn More
 
-- [Customize your web form](/docs/guides/collect/customize-web-form)
+- [Query User Data from an API](/docs/blueprints/personal-information/query-user-data-from-api)
 - [What are tokens?](/docs/concepts/what-are-tokens)
-- [Collect and process cards](/docs/blueprints/cards/collect-and-process-cards)
+- [Access Controls](/docs/concepts/access-controls)
