@@ -19,7 +19,8 @@ To get started, you will need a Basis Theory account.
 
 Next you will need a [Public Application](/docs/api/applications#application-types) in order to use [iOS Elements](/docs/sdks/mobile/ios) for your app.
 
-[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20iOS%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20iOS%20Guide) to create a Public Application or
+[login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
 
 - Name - Collect Data from iOS Guide
 - Application Type - Public
@@ -50,117 +51,226 @@ Select File > Add Packages, enter "https://github.com/Basis-Theory/basistheory-i
 
 ## Add Your Form Components
 
-Now we need to add a Basis Theory React component to our page. We will add the [Text Element](/docs/sdks/web/react/components#textelement) component.
+Now we need to add a Basis Theory element component to our app. We will add the [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield) component.
 
-We will import the `TextElement` and add it inside of our `BasisTheoryProvider`:
+The easiest way to add one of iOS elements is to first drop a `UITextField` onto your `Main.storyboard` file. To this open the `Main.storyboard` file, and click on plus button on the top right and search for "UITextField" in
+the dialog that appears. Now drag and drop the Text Field component anywhere on the iPhone screen. Feel free to size the `UITextField` to your liking.
 
-```tsx showLineNumbers title="src/App.js"
-// highlight-next-line
-import { useRef } from 'react';
+With the new `UITextField` selected, open up the Identity Inspector on the right and select "TextElementUITextField" from the class drop down, similar to the image below.
 
-import {
-  BasisTheoryProvider,
-  // highlight-next-line
-  TextElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+![](/img/iOS/ios-initialization.jpg)
 
-function App() {
-  const { bt } = useBasisTheory('test_1234567890', { elements: true });
-  // highlight-next-line
-  const textRef = useRef(null);
+## Style Your Form Components
 
-  return (
-    <BasisTheoryProvider bt={bt}>
-      // highlight-start
-      <TextElement
-        id="exampleTextElement"
-        ref={textRef}
-        placeholder="Input text"
-      />
-      // highlight-end
-    </BasisTheoryProvider>
-  );
+Now it's time to style our new `TextElementUITextField`. We'll be styling our element programmatically, but feel free to style it through the GUI on Xcode, or even try implementing your own styles!
+
+First we need to add an outlet to our `ViewController.swift` so that we're able to manipulate the field programmatically. To do this, ensure your `Main.storyboard` file is open and click on the "Add Editor to the Right" button
+on the top right. This will open the `Main.storyboard` on a new pane on the right.
+
+Now in the Project Navigator on the left, click on the `ViewController.swift` file. This should replace the `Main.storyboard` file on the right pane.
+
+Next, we control-drag from the `TextElementUITextField` on `Main.storyboard` to the top of our `ViewController` class in the `ViewController.swift` file on the right. In the window that appears, type in "ssnTextElement" for the
+Name and click Connect. Xcode should suggest you import BasisTheoryElements, so let's go ahead and do that now.
+
+You should have something similar to the following after these steps.
+
+``` swift showLineNumbers title="Collect iOS Guide/ViewController.swift"
+//
+//  ViewController.swift
+//  Collect iOS Guide
+//
+//  Created by Brian Gonzalez on 12/28/22.
+//
+
+import UIKit
+import BasisTheoryElements
+
+class ViewController: UIViewController {
+    @IBOutlet weak var ssnTextElement: TextElementUITextField!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+    }
 }
 
-export default App;
 ```
 
-This will create a new instance of a Text Element will inject an iFrame that is rendered by Basis Theory. The Basis Theory SDK will hold a reference to the Text Element which enables interactions with the underlying data without direct access to the value.
+We'll use the new `ssnTextElement` outlet to style our new element. Let's write some statements to style our component.
 
-We are also leveraging [Refs](https://reactjs.org/docs/refs-and-the-dom.html) to hold a reference to our TextElement.
+``` swift showLineNumbers title="Collect iOS Guide/ViewController.swift"
+//
+//  ViewController.swift
+//  Collect iOS Guide
+//
+//  Created by Brian Gonzalez on 12/28/22.
+//
+
+import UIKit
+import BasisTheoryElements
+
+class ViewController: UIViewController {
+    @IBOutlet weak var ssnTextElement: TextElementUITextField!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+
+        // highlight-start
+        ssnTextElement.layer.cornerRadius = 15.0
+        ssnTextElement.layer.borderWidth = 1.0
+        ssnTextElement.layer.borderColor = UIColor.blue.cgColor
+        ssnTextElement.layer.masksToBounds = true
+        ssnTextElement.placeholder = "Enter SSN"
+        ssnTextElement.backgroundColor = UIColor( red: 200/255, green: 200/255, blue: 200/255, alpha: 1.0 )
+        // highlight-end
+    }
+}
+
+```
+
+As you can see above, we take advantage of the existing `UITextField` API to style our component. All of our iOS elements extend `UITextField` to take advantage of the existing API's for ease of use and speed to production.
+
+## Add a Mask to Text Element
+
+Let's add some masking to format the input as the user types in the text field. The following sets a mask that looks like a social security number (ie. ###-##-####).
+
+``` swift showLineNumbers title="Collect iOS Guide/ViewController.swift"
+//
+//  ViewController.swift
+//  Collect iOS Guide
+//
+//  Created by Brian Gonzalez on 12/28/22.
+//
+
+import UIKit
+import BasisTheoryElements
+
+class ViewController: UIViewController {
+    @IBOutlet weak var ssnTextElement: TextElementUITextField!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+
+        // highlight-start
+        let regexDigit = try! NSRegularExpression(pattern: "\\d")
+        let ssnMask: [Any] = [
+            regexDigit,
+            regexDigit,
+            regexDigit,
+            "-",
+            regexDigit,
+            regexDigit,
+            "-",
+            regexDigit,
+            regexDigit,
+            regexDigit,
+            regexDigit,
+        ]
+
+        try! ssnTextElement.setConfig(options: TextElementOptions(mask: ssnMask))
+        // highlight-end
+
+        ssnTextElement.layer.cornerRadius = 15.0
+        ssnTextElement.layer.borderWidth = 1.0
+        ssnTextElement.layer.borderColor = UIColor.blue.cgColor
+        ssnTextElement.layer.masksToBounds = true
+        ssnTextElement.placeholder = "Enter SSN"
+        ssnTextElement.backgroundColor = UIColor( red: 200/255, green: 200/255, blue: 200/255, alpha: 1.0 )
+    }
+}
+
+```
 
 ## Tokenize the Text Value
 
-We want to be able to tokenize the value within the Text Element without exposing it to our web application.
+We want to be able to tokenize the value within `TextElementUITextField` without exposing it to our iOS app.
 
-We need to add a submit button and a handler for the submit event which will tokenize the underlying data. Also, we want to display the resulting token by adding state to hold the token and a `<pre>` element to display the value.
+We need to add a tokenize `UIButton` and a function to handle the tokenization request. Open the `Main.storyboard` file, and click on plus button on the top right and search for "UIButton" in the dialog that appears and drag
+and drop the Filled Button component anywhere under the Text Field. Let's change the name of this button to "Tokenize" by double-clicking on the new UIButton.
 
-```tsx showLineNumbers title="src/App.js"
-// highlight-next-line
-import { useRef, useState } from 'react';
+Now we need to add an action for this new button. Follow the steps from [Style Your Form Components](#style-your-form-components) to add an action to the new UIButton in the `ViewController.swift` file. When control-dragging
+the UIButton into `ViewController.swift` choose Action for the Connection and "tokenize" for the Name.
 
-import {
-  BasisTheoryProvider,
-  TextElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+Now we'll add the following code to tokenize the data with Basis Theory.
 
-function App() {
-  const { bt } = useBasisTheory('test_1234567890', { elements: true });
-  const textRef = useRef(null);
-  // highlight-start
-  const [token, setToken] = useState('');
+```swift showLineNumbers title="Collect iOS Guide/ViewController.swift"
+//
+//  ViewController.swift
+//  Collect iOS Guide
+//
+//  Created by Brian Gonzalez on 12/28/22.
+//
 
-  const submit = async () => {
-    const response = await bt.tokens.create({
-      type: 'token',
-      data: textRef.current,
-    });
+import UIKit
+import BasisTheoryElements
 
-    setToken(response);
-  };
-  // highlight-end
+class ViewController: UIViewController {
+    @IBOutlet weak var ssnTextElement: TextElementUITextField!
 
-  return (
-    <BasisTheoryProvider bt={bt}>
-      <TextElement
-        id="exampleTextElement"
-        ref={textRef}
-        placeholder="Input text"
-      />
+    // highlight-start
+    @IBAction func tokenize(_ sender: Any) {
+        let body = CreateToken(type: "token", data: [
+            "ssn": self.ssnTextElement,
+        ])
 
-      // highlight-start
-      <button onClick={submit}>Submit</button>
+        BasisTheoryElements.createToken(body: body, apiKey: "YOUR PUBLIC BT API KEY HERE") { data, error in
+            guard error == nil else {
+                print(error)
+                return
+            }
 
-      {token &&
-        <pre>{JSON.stringify(token, undefined, 2)}</pre>
-      }
-      // highlight-end
-    </BasisTheoryProvider>
-  );
+            print(data)
+        }
+    }
+    // highlight-end
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+
+        let regexDigit = try! NSRegularExpression(pattern: "\\d")
+        let ssnMask: [Any] = [
+            regexDigit,
+            regexDigit,
+            regexDigit,
+            "-",
+            regexDigit,
+            regexDigit,
+            "-",
+            regexDigit,
+            regexDigit,
+            regexDigit,
+            regexDigit,
+        ]
+
+        try! ssnTextElement.setConfig(options: TextElementOptions(mask: ssnMask))
+
+        ssnTextElement.layer.cornerRadius = 15.0
+        ssnTextElement.layer.borderWidth = 1.0
+        ssnTextElement.layer.borderColor = UIColor.blue.cgColor
+        ssnTextElement.layer.masksToBounds = true
+        ssnTextElement.placeholder = "Enter SSN"
+        ssnTextElement.backgroundColor = UIColor( red: 200/255, green: 200/255, blue: 200/255, alpha: 1.0 )
+    }
 }
 
-export default App;
 ```
 
-When our form is submitted, Basis Theory's SDK will pass the value for the element reference. This will be securely submitted directly to the [Create Token Endpoint](/docs/api/tokens#create-token). The resulting token is then surfaced to the client device.
+Replace "YOUR PUBLIC BT API KEY HERE" with the public API key created from the [Getting Started](#getting-started) step.
 
-## Running the Example
+🎉 The code above is the last bit that we need to tokenize! Now let's run the app by clicking on the play button on the top left. The screen should look something like this:
 
-We can run our resulting application by running the following in a terminal:
-
-```shell showLineNumbers
-npm start
-```
-
-This will open the React application in our browser to [http://localhost:3000/](http://localhost:3000/)
+TODO: RADIFY IMAGE
+![](/img/iOS/ios-collect-data-iphone-screenshot.png)
 
 ## Conclusion
 
-You can now capture any data without your application accessing the underlying value drastically reducing compliance and regulatory scope.
+You can now capture any data without your iOS app accessing the underlying value drastically reducing compliance and regulatory scope.
 
-Try typing a value and clicking the submit button will securely send the data directly to Basis Theory and return you a [token](/docs/concepts/what-are-tokens). The resulting token is displayed directly on the page.
+Try typing in a fake social security number in the field and tap on Tokenize. Basis Theory's iOS SDK will pass the value for the element reference. This will be securely submitted directly to the
+[Create Token Endpoint](/docs/api/tokens#create-token). The resulting [token](/docs/concepts/what-are-tokens) is printed to the Xcode console.
 
 ## Learn More
 
