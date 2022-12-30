@@ -75,6 +75,31 @@ var token = await client.Tokenize(new {
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+    package org.example;
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TokenizeApi apiInstance = new TokenizeApi(defaultClient);
+        Object result = apiInstance.tokenize(Map.of(
+                "first_name", "John",
+                "last_name", "Doe"));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -188,6 +213,35 @@ var token = await client.Tokenize(new Token {
   },
   FingerprintExpression = "{{ data }}"
 });
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+import java.util.Arrays;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TokenizeApi apiInstance = new TokenizeApi(defaultClient);
+        Object result = apiInstance.tokenize(new Token()
+                .type("token")
+                .data("Sensitive Value")
+                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value"))
+                .searchIndexes(Arrays.asList("{{ data }}"))
+                .fingerprintExpression("{{ data }}"));
+    }
+}
 ```
 
   </TabItem>
@@ -332,6 +386,34 @@ var token = await client.Tokenize(new Token {
     { "nonSensitiveField",  "Non-Sensitive Value" }
   }
 });
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TokenizeApi apiInstance = new TokenizeApi(defaultClient);
+        Object result = apiInstance.tokenize(new Token()
+                .type("card")
+                .data(Map.of("number", "4242424242424242",
+                "expiration_month", 12,
+                "expiration_year", 2025,
+                "cvc", "123"))
+                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value")));
+    }
+}
 ```
 
   </TabItem>
@@ -502,6 +584,42 @@ var token = await client.Tokenize(new object[
     Data = "Sensitive Value"
   }
 ]);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+package org.example;
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+import java.util.Arrays;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TokenizeApi apiInstance = new TokenizeApi(defaultClient);
+        Object result = apiInstance.tokenize(Arrays.asList(
+                Arrays.asList("John", "Doe"),
+                new Token()
+                .type("card")
+                .data(Map.of("number", "4242424242424242",
+                "expiration_month", 12,
+                "expiration_year", 2025,
+                "cvc", "123"))
+                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value")),
+                new Token()
+                .type("token")
+                .data("Sensitive Value")));
+    }
+}
 ```
 
   </TabItem>

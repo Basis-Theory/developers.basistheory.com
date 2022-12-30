@@ -102,6 +102,40 @@ var token = await client.CreateAsync(new Token {
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TokensApi apiInstance = new TokensApi(defaultClient);
+        CreateTokenRequest createTokenRequest = new CreateTokenRequest();
+        CreateTokenResponse result = apiInstance.create(createTokenRequest
+                .type("token")
+                .data("Sensitive Value")
+                .mask("{{ data | reveal_last: 4 }}")
+                .containers(Arrays.asList("/general/high/"))
+                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value"))
+                .searchIndexes(Arrays.asList("{{ data }}", "{{ data | last4 }}"))
+                .fingerprintExpression("{{ data }}")
+                .deduplicateToken(true)
+                .expiresAt("8/26/2030 7:23:57 PM -07:00"));
+        System.out.println(result);
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -262,6 +296,37 @@ var tokens = await client.GetAsync();
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TokensApi apiInstance = new TokensApi(defaultClient);
+        List<String> type = Arrays.asList();
+        List<String> id = Arrays.asList();
+        Map<String, String> metadata = new HashMap();
+        Integer page = 1;
+        Integer size = 56;
+        TokenPaginatedList result = apiInstance.get(type, id, metadata, page, size);
+        System.out.println(result);
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -379,6 +444,27 @@ using BasisTheory.net.Tokens;
 var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var token = await client.GetByIdAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TokensApi apiInstance = new TokensApi(defaultClient);
+        Token result = apiInstance.getById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+    }
+}
 ```
 
   </TabItem>
@@ -546,6 +632,38 @@ var token = await client.UpdateAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1", new
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TokensApi apiInstance = new TokensApi(defaultClient);
+        UpdateTokenRequest updateTokenRequest = new UpdateTokenRequest();
+        Token result = apiInstance.update("c06d0789-0a38-40be-b7cc-c28a718f76f1", updateTokenRequest
+                .data("Sensitive Value")
+                .mask("{{ data | reveal_last: 4 }}")
+                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value"))
+                .searchIndexes(Arrays.asList("{{ data }}", "{{ data | last4 }}"))
+                .fingerprintExpression("{{ data }}")
+                .deduplicateToken(true)
+                .expiresAt("8/26/2030 7:23:57 PM -07:00"));
+        System.out.println(result);
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -693,6 +811,28 @@ using BasisTheory.net.Tokens;
 var client = new TokenClient("key_N88mVGsp3sCXkykyN2EFED");
 
 await client.DeleteAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+package org.example;
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class App {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TokensApi apiInstance = new TokensApi(defaultClient);
+        apiInstance.delete("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+    }
+}
 ```
 
   </TabItem>
