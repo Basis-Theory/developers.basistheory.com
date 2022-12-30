@@ -115,7 +115,7 @@ const config = {
         },
         {
           property: "og:image",
-          content: "https://cdn.basistheory.com/images/seo/docs-opengraph.png",
+          content: "/img/seo/opengraph.png",
         },
       ],
     }),
@@ -146,7 +146,7 @@ const config = {
           { from: '/guides/collect-cards-with-elements-react', to: '/docs/guides/collect/collect-data-with-react' },
           { from: '/guides/style-elements-for-my-brand', to: '/docs/guides/collect/customize-web-form' },
           { from: '/guides/encrypt-us-banks-in-your-applications', to: '/docs/guides/collect' },
-          
+
           { from: '/guides/collect-cards-with-elements', to: '/docs/blueprints/cards/collect-and-process-cards' },
           { from: '/guides/use-us-bank-accounts-without-touching-them', to: '/docs/guides/share/send-data-to-third-party' },
           { from: '/guides/reveal-cards-with-react/', to: '/docs' },
@@ -155,7 +155,7 @@ const config = {
           { from: '/guides/run-your-own-code-in-a-reactor', to: '/docs/guides/process/analyze-data' },
           { from: '/guides/collect-cards-with-proxies', to: '/docs/blueprints/cards/collect-and-process-cards' },
           { from: '/guides/migrating-off-basis-theory', to: '/docs/blueprints/migrations/migrate-off-basis-theory' },
-          
+
           { from: '/blueprints/pci', to: '/docs/blueprints/cards/collect-and-process-cards' },
         ]
       }
