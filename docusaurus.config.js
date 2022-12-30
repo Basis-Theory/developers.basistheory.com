@@ -127,11 +127,19 @@ const config = {
       '@docusaurus/plugin-client-redirects',
       {
         redirects: [
-          { from: '/getting-started', to: '/docs' },
           { from: '/api-reference', to: '/docs/api' },
           { from: '/elements', to: '/docs/sdks/web/javascript' },
           { from: '/expressions', to: '/docs/expressions' },
           { from: '/labs', to: '/docs' },
+
+          { from: '/getting-started', to: '/docs' },
+          { from: '/getting-started/quickstart-with-curl', to: '/docs' },
+          { from: '/getting-started/quickstart-with-dotnet', to: '/docs' },
+          { from: '/getting-started/quickstart-with-go', to: '/docs' },
+          { from: '/getting-started/quickstart-with-java', to: '/docs' },
+          { from: '/getting-started/quickstart-with-nodejs', to: '/docs' },
+          { from: '/getting-started/quickstart-with-ruby', to: '/docs' },
+          { from: '/getting-started/quickstart-with-python', to: '/docs' },
 
           { from: '/concepts/access-controls', to: '/docs/concepts/access-controls' },
           { from: '/concepts/what-are-containers', to: '/docs/concepts/what-are-containers' },
