@@ -1,0 +1,150 @@
+---
+sidebar_label: Options
+---
+
+# Options
+
+## Mask
+
+Element masks enable user input to be restricted and formatted to meet a pre-defined format. A mask
+can be defined programmatically using the `ElementMask` class, or in an XML layout file as a pattern `String`.
+
+```xml showLineNumbers
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bt="http://schemas.android.com/apk/res-auto">
+
+  <com.basistheory.android.view.TextElement
+      android:id="@+id/masked_value"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      bt:mask="###-##-####" />
+
+</layout>
+```
+
+When setting a mask programmatically, the `ElementMask` class supports two constructors:
+
+1. `ElementMask(characterMasks: List<Any>)`: a list of character-wise values defining the allowable input for each character position.
+Each character position either defines a static value in the mask (specified as a `Char` or single
+character `String`) or a range of allowable characters (specified as a `Regex` object).
+
+  For example, to support US Social Security Numbers of the form `123-45-6789`, you can specify the mask as:
+
+  ```kotlin showLineNumbers
+  val digit = Regex("""\d""")
+  element.mask = ElementMask(listOf(digit, digit, digit, "-", digit, digit, "-", digit, digit, digit, digit))
+  ```
+
+2. `ElementMask(pattern: String)`: specifies a range of allowable characters using the wildcard characters:
+    - `#`: numeric value, equivalent to `Regex("""\d""")`
+    - `x`: alphabetic value, equivalent to `Regex("[A-Za-z]")`
+    - `*`: any value, equivalent to `Regex(".")`
+
+  For example, to support US Social Security Numbers of the form `123-45-6789`, you can specify the
+  mask as:
+
+  ```kotlin showLineNumbers
+  element.mask = ElementMask("###-##-####")
+  ```
+
+## Transform
+
+Element transforms define functions that mutate the value of the element prior to tokenization and
+when computing properties published within [ChangeEvents](./events/#changeevent).
+
+The following types of transforms are supported:
+
+### RegexReplaceElementTransform
+
+Replaces all matches of the given regular expression with the replacement text.
+
+```kotlin showLineNumbers
+// removes all non-numeric characters
+element.transform = RegexReplaceElementTransform(
+    regex = Regex("[^\\d]"),
+    replacement = ""
+)
+```
+
+## Validator
+
+Element validators define functions to determine whether the value of the Element is considered valid.
+Validators are executed on the [transformed](#transform) Element value.
+
+The validation state of an Element is only used when computing [ChangeEvents](./events/#changeevent)
+and all invalid state behavior (e.g. styling changes, displaying validation errors,
+disabling submit buttons) are expected to be implemented within your application in response to `ChangeEvents`.
+
+The following types of validators are supported:
+
+### RegexValidator
+
+Matches the input value against the given regular expression.
+
+```kotlin
+// validates that the value only contains 3-4 digits
+element.validator = RegexValidator(
+    regex = Regex("^\\d{3,4}$")
+)
+```
+
+### LuhnValidator
+
+Validates that the input value is a [Luhn-valid](https://en.wikipedia.org/wiki/Luhn_algorithm)
+credit card number. This is the default validator for the [CardNumberElement](./types/#cardnumberelement).
+
+```kotlin showLineNumbers
+element.validator = LuhnValidator()
+```
+
+### FutureDateValidator
+
+Validates that the input value is a future date of the form `MM/yy`. This is the default
+validator for the [CardExpirationDateElement](./types/#cardexpirationdateelement).
+
+```kotlin showLineNumbers
+element.validator = FutureDateValidator()
+```
+
+## Styling
+
+Elements have been designed to take advantage of all pre-existing native layout properties
+available on a [FrameLayout](https://developer.android.com/reference/android/widget/FrameLayout),
+as well as several additional styling customizations typically available to a native
+[EditText](https://developer.android.com/reference/android/widget/EditText) view.
+
+### Styling in XML
+
+```xml showLineNumbers
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bt="http://schemas.android.com/apk/res-auto">
+
+    <com.basistheory.android.TextElement
+        android:id="@+id/my_text_element"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/my_custom_background"
+        android:padding="5dp"
+        bt:text="Initial Value"
+        bt:hint="Placeholder"
+        bt:removeDefaultStyles="true"
+        bt:textColor="@color/my_color" />
+
+</layout>
+```
+
+See [TextElement](./types/#xml-attributes) for an exhaustive list of supported XML attributes.
+
+### Styling Programmatically
+
+```kotlin showLineNumbers
+val textElement = binding.myTextElement // or findViewById<TextElement>(R.id.my_text_element)
+textElement.setPadding(5, 5, 5, 5)
+textElement.hint = "Placeholder"
+textElement.textColor = Color.CYAN
+textElement.background = Color.WHITE.toDrawable()
+```
+
+See [TextElement](./types/#properties) for an exhaustive list of supported properties.

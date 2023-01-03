@@ -309,6 +309,15 @@ const sidebars = {
       label: "Mobile SDKs",
       items: [
         {
+          type: 'category',
+          label: 'Android Elements',
+          link: {
+            type: "doc",
+            id: "sdks/mobile/android/index",
+          },
+          items: ["sdks/mobile/android/types", "sdks/mobile/android/options", "sdks/mobile/android/classes", "sdks/mobile/android/events"],
+        },
+        {
           type: "category",
           label: "iOS Elements",
           link: {
@@ -316,11 +325,6 @@ const sidebars = {
             id: "sdks/mobile/ios/index",
           },
           items: ["sdks/mobile/ios/types", "sdks/mobile/ios/options"],
-        },
-        {
-          type: 'doc',
-          label: 'Android Elements',
-          id: 'sdks/mobile/android/index'
         },
       ],
     },

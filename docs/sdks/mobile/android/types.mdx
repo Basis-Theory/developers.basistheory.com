@@ -1,0 +1,283 @@
+---
+sidebar_label: Types
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Android Element Types
+
+## TextElement
+
+The `TextElement` can be used to collect any text data within your mobile application.
+This component allows you to fully customize the look and feel to match your brand, and it does
+not allow direct access the underlying plaintext values entered by a user, keeping your mobile application
+out of compliance scope.
+
+### Basic Usage
+
+To use the `TextElement` within your Android application, simply include the view within one of your
+Android application’s layouts.
+
+```xml showLineNumbers
+<com.basistheory.android.view.TextElement
+    android:id="@+id/name"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+Properties can be programmatically initialized within your views within either the
+`onCreate` or `onCreateView` lifecycle methods.
+
+### Configuration
+
+The `TextElement` extends the native [FrameLayout](https://developer.android.com/reference/android/widget/FrameLayout)
+view, so all standard properties and attributes supported by
+[FrameLayout](https://developer.android.com/reference/android/widget/FrameLayout#xml-attributes)
+are supported by `TextElement`.
+
+#### Properties
+
+The following additional properties are supported when programmatically interacting with a `TextElement`:
+
+| Name                | Type               | Description                                                                                                                                                                                                               |
+|---------------------|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| text                | `String`           | Sets the text value for the element. Note that a getter is not exposed on the TextElement to retrieve the underlying text value.                                                                                          |
+| textColor           | `Int`              | A color value in the form `0xAARRGGBB`. Do not pass a resource ID. To get a color value from a resource ID, call [getColor](https://developer.android.com/reference/android/content/res/TypedArray#getColor(int,%20int)). |
+| hint                | `String`           | Placeholder text to display within the element when empty.                                                                                                                                                                |
+| removeDefaultStyles | `Boolean`          | Removes the default Android styling on the underlying EditText.                                                                                                                                                           |
+| mask                | `ElementMask`      | Restricts and formats input entered into this Element. See the [Mask](./options/#mask) options for details.                                                                                                               |
+| transform           | `ElementTransform` | Transforms the value of this Element prior to tokenization. See the [Transform](./options/#transform) options for details.                                                                                                |
+| validator           | `ElementValidator` | Validates the value of this Element within ChangeEvents. See the [Validator](./options/#validator) options for details.                                                                                                   |
+
+#### XML Attributes
+
+The following additional XML attributes are also supported when defining a `TextElement` in a layout XML file:
+
+| Name                | Type                     | Description                                                                                                                                                                                                                                                            |
+|---------------------|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| text                | `String`                 | Sets the text value for the element. Note that a getter is not exposed on the TextElement to retrieve the underlying text value.                                                                                                                                       |
+| textColor           | `reference`&vert;`color` | The text color. <br/><br/>May be a reference to another resource, in the form `"@[+][package:]type/name"` or a theme attribute in the form `"?[package:]type/name"`. <br/><br/>May be a color value, in the form of `"#rgb"`, `"#argb"`, `"#rrggbb"`, or `"#aarrggbb"` |
+| hint                | `String`                 | Placeholder text to display within the Element.                                                                                                                                                                                                                        |
+| removeDefaultStyles | `Boolean`                | Removes the default Android styling on the underlying EditText.                                                                                                                                                                                                        |
+| mask                | `String`                 | A string defining the [mask](./options/#mask) applied to this Element, e.g. (`###-##-####`).                                                                                                                                                                           |
+
+## CardNumberElement
+
+The `CardNumberElement` can be used to securely collect credit card numbers within your application.
+This element will render a text input within your view to accept a card number entered by your
+end users.
+
+This element was designed to be used in conjunction with the [CardExpirationDateElement](#cardexpirationdateelement)
+and [CardVerificationCodeElement](#cardverificationcodeelement) to collect and tokenize a
+[card](/docs/api/tokens/token-types#card) token.
+
+### Basic Usage
+
+To use the `CardNumberElement` within your Android application, simply include the view
+within one of your Android application’s layouts.
+
+```xml showLineNumbers
+<com.basistheory.android.view.CardNumberElement
+    android:id="@+id/card_number"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+This element can be referenced directly when tokenizing through the
+[BasisTheoryElements](./classes/#basistheoryelements) service class:
+
+```kotlin showLineNumbers
+val cardNumberElement = findViewById<CardNumberElement>(R.id.card_number)
+...
+
+val tokenizeResponse = bt.tokenize(object {
+    val type = "card"
+    val data = object {
+        val number = cardNumberElement
+        val expiration_month = cardExpirationDateElement.month()
+        val expiration_year = cardExpirationDateElement.year()
+        val cvc = cardVerificationCodeElement
+    }
+})
+```
+
+The element serves as a reference that can only be resolved back to the
+original value by the `BasisTheoryElements` service when tokenizing. Your application is not given
+direct access to the underlying plaintext value.
+
+### Configuration
+
+The `CardNumberElement` extends the `TextElement` view, so all
+properties and attributes supported by [TextElement](#textelement) are also supported here.
+
+By default, this element is configured with:
+
+- The keyboard is configured to only allow numeric input
+- A [mask](./options/#mask) is applied to format input values according to the [card brand](#card-brands)
+- The [LuhnValidator](./options/#luhnvalidator) is applied to restrict input to [Luhn-valid](https://en.wikipedia.org/wiki/Luhn_algorithm) cards
+
+This component fully supports the same [style customizations](./options/#styling) to match your branding
+that are supported on the base [TextElement](#textelement).
+
+### Card Brands
+
+The first digits of the card number are analyzed to determine the card brand, which is made available
+to your application via the property:
+
+| Name         | Type           | Description                                            |
+|--------------|----------------|--------------------------------------------------------|
+| cardMetadata | `CardMetadata` | Gets metadata about the card, derived from user input. |
+
+#### CardMetadata
+
+| Name       | Type      | Description                                           |
+|------------|-----------|-------------------------------------------------------|
+| brand      | `String`  | The card [brand identifier](#brand-identifiers)       |
+| cardMask   | `String`  | The card number mask corresponding to this card brand |
+| cvcMask    | `String`  | The CVC mask corresponding to this card brand         |
+| isComplete | `Boolean` | Whether this card number is complete for this brand   |
+
+#### ChangeEvent
+
+The card brand is also included within [ChangeEvents](./events/#changeevent) published by the `CardNumberElement`
+within an [EventDetails](./events/#eventdetails) record of the form:
+
+| Property | Type     | Value                |
+|----------|----------|----------------------|
+| type     | `String` | `cardBrand`          |
+| message  | `String` | The brand identifier |
+
+#### Brand Identifiers
+
+- `visa`
+- `mastercard`
+- `americanExpress`
+- `dinersClub`
+- `discover`
+- `jcb`
+- `unionPay`
+- `maestro`
+- `elo`
+- `mir`
+- `hiper`
+- `hipercard`
+
+## CardExpirationDateElement
+
+The `CardExpirationDateElement` can be used to securely collect credit card expiration dates within
+your application. This element will render a text input within your view that accepts input in the form `MM/yy`.
+
+This element was designed to be used in conjunction with the [CardNumberElement](#cardnumberelement)
+and [CardVerificationCodeElement](#cardverificationcodeelement) to collect and tokenize a
+[card](/docs/api/tokens/token-types#card) token.
+
+### Basic Usage
+
+To use the `CardExpirationDateElement` within your Android application, simply include the view
+within one of your Android application’s layouts.
+
+```xml showLineNumbers
+<com.basistheory.android.view.CardExpirationDateElement
+    android:id="@+id/expiration_date"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+The month and year values can be referenced separately when tokenizing through the
+[BasisTheoryElements](./classes/#basistheoryelements) service class:
+
+```kotlin showLineNumbers
+val tokenizeResponse = bt.tokenize(object {
+    val type = "card"
+    val data = object {
+        val number = cardNumberElement
+        val expiration_month = cardExpirationDateElement.month()
+        val expiration_year = cardExpirationDateElement.year()
+        val cvc = cardVerificationCodeElement
+    }
+})
+```
+
+The `month()` and `year()` functions expose a reference object that can only be resolved back to the
+original values by the `BasisTheoryElements` service when tokenizing. These methods do not
+provide your application with direct access to the underlying plaintext values.
+
+### Configuration
+
+The `CardExpirationDateElement` extends the `TextElement` view, so all
+properties and attributes supported by [TextElement](#textelement) are also supported here.
+
+By default, this element is configured with:
+
+- The keyboard is configured to only allow numeric input
+- A [mask](./options/#mask) is applied to format input values as `MM/yy`
+- The [FutureDateValidator](./options/#futuredatevalidator) is applied to restrict input to future dates
+
+This component fully supports the same [style customizations](./options/#styling) to match your branding
+that are supported on the base [TextElement](#textelement).
+
+## CardVerificationCodeElement
+
+The `CardVerificationCodeElement` can be used to securely collect credit card CVC values within
+your application. This element will render a text input within your view that accepts either a 3 or 4
+digit CVC (the length is determined by the [card brand](#card-brands)).
+
+This element was designed to be used in conjunction with the [CardNumberElement](#cardnumberelement)
+and [CardExpirationDateElement](#cardexpirationdateelement) to collect and tokenize a
+[card](/docs/api/tokens/token-types#card) token.
+
+### Basic Usage
+
+To use the `CardVerificationCodeElement` within your Android application, simply include the view
+within one of your Android application’s layouts.
+
+```xml showLineNumbers
+<com.basistheory.android.view.CardVerificationCodeElement
+    android:id="@+id/cvc"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+You can optionally bind a `CardNumberElement` to your `CardVerificationCodeElement`
+to automatically enforce the CVC length validation corresponding to the entered [card brand](#card-brands).
+
+```kotlin
+val cardNumberElement = findViewById<CardNumberElement>(R.id.card_number)
+val cvcElement = findViewById<CardVerificationCodeElement>(R.id.cvc)
+cvcElement.cardNumberElement = cardNumberElement // optional binding between these two elements
+```
+
+This element can be referenced directly when tokenizing through the
+[BasisTheoryElements](./classes/#basistheoryelements) service class:
+
+```kotlin showLineNumbers
+val tokenizeResponse = bt.tokenize(object {
+    val type = "card"
+    val data = object {
+        val number = cardNumberElement
+        val expiration_month = cardExpirationDateElement.month()
+        val expiration_year = cardExpirationDateElement.year()
+        val cvc = cardVerificationCodeElement
+    }
+})
+```
+
+The element serves as a reference that can only be resolved back to the
+original value by the `BasisTheoryElements` service when tokenizing. Your application is not given
+direct access to the underlying plaintext value.
+
+### Configuration
+
+The `CardVerificationCodeElement` extends the `TextElement` view, so all
+properties and attributes supported by [TextElement](#textelement) are also supported here.
+
+By default, this element is configured with:
+
+- The keyboard is configured to only allow numeric input
+- A 3 digit [mask](./options/#mask) is applied by default, but this may be automatically changed to a 4 digit mask based on the card brand
+
+This component fully supports the same [style customizations](./options/#styling) to match your branding
+that are supported on the base [TextElement](#textelement).
