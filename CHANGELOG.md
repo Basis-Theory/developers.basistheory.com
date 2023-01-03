@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.3.0...v1.3.1) (2023-01-03)
+
+
+### Bug Fixes
+
+* fix broken concepts link ([#17](https://github.com/Basis-Theory/developers.basistheory.com/issues/17)) ([3e5cde1](https://github.com/Basis-Theory/developers.basistheory.com/commit/3e5cde1486d12e537a3e05ac63c0a3d672d4ec78))
+
 # [1.3.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.2.0...v1.3.0) (2022-12-30)
 
 
