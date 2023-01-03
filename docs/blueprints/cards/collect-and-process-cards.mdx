@@ -64,7 +64,7 @@ touch card-form.js
 In your editor, update your App component with the following code:
 
 ```javascript showLineNumbers
-import { 
+import {
   useBasisTheory,
   BasisTheoryProvider
 } from '@basis-theory/basis-theory-react';
@@ -89,7 +89,7 @@ export default function App() {
 Next, add the following code to your new Card Form component:
 
 ```javascript showLineNumbers
-import { 
+import {
   useBasisTheory
 } from '@basis-theory/basis-theory-react';
 
@@ -117,7 +117,7 @@ Now, we need to add a [`CardElement`](/docs/sdks/web/javascript/types#card-eleme
 Add the `CardElement` to our inputs:
 
 ```javascript showLineNumbers
-import { 
+import {
   useBasisTheory,
   CardElement
 } from '@basis-theory/basis-theory-react';
@@ -132,7 +132,7 @@ And inside of our `<form>` tag, add the following code:
 Your card component should now look like this:
 
 ```javascript showLineNumbers
-import { 
+import {
   useBasisTheory,
   CardElement
 } from '@basis-theory/basis-theory-react';
@@ -158,7 +158,7 @@ You can fully customize the [look and feel](/docs/guides/collect/customize-web-f
 
 ## Store Cards
 
-Now that we have securely captured the card information, we need to securely store the card. 
+Now that we have securely captured the card information, we need to securely store the card.
 
 To do this, we will tokenize the data with Basis Theory. Basis Theory handles all of the secure encryption and storage of the cardholder data and returns a non-sensitive token identifier that can be stored in your database.
 
@@ -188,7 +188,7 @@ We are also creating a [`card` Token Type](/docs/api/tokens/token-types#card). T
 
 The resulting token ID is safe to pass between your systems and store in plaintext within your preferred database.
 
-You can fully customize your card token, such as the alias, mask, and metadata by leveraging all of our [token capabilities](/docs//concepts/what-are-tokens) using [Expressions](/docs/expressions).
+You can fully customize your card token, such as the alias, mask, and metadata by leveraging all of our [token capabilities](/docs/concepts/what-are-tokens) using [Expressions](/docs/expressions).
 
 <Alert type={Alerts.WARNING}>
   To not take on additional PCI scope, you cannot reveal more than the first six digits or last four digits of the card number via a combination of the alias and mask on your card token.
@@ -196,7 +196,7 @@ You can fully customize your card token, such as the alias, mask, and metadata b
 
 ## Process Cards
 
-Now that we have our card token, we need to be able to send the cardholder data to a PCI-compliant payment service provider (PSP) such as Stripe or Braintree. 
+Now that we have our card token, we need to be able to send the cardholder data to a PCI-compliant payment service provider (PSP) such as Stripe or Braintree.
 
 In order to do this, we will send the data without touching the tokenized value. To accomplish this, we will use [Basis Theory's Proxy](/docs/concepts/what-is-the-proxy).
 
@@ -219,13 +219,13 @@ Add the following code to your API, replacing `PRIVATE_API_KEY` with the API Key
 
 ```javascript showLineNumbers
 const { data }  = await axios.post(
-  'https://api.basistheory.com/proxy', 
+  'https://api.basistheory.com/proxy',
   {
     card_number: `{%raw%}{{ ${cardTokenId} | json: '$.number' }}{%endraw%}`,
     exp_month: `{%raw%}{{ ${cardTokenId} | json: '$.expiration_month' | to_number }}{%endraw%}`,
     exp_year: `{%raw%}{{ ${cardTokenId} | json: '$.expiration_year' | to_number }}{%endraw%}`,
     cvc: `{%raw%}{{ ${cardTokenId} | json: '$.cvc' }}{%endraw%}`
-  }, 
+  },
   {
     headers: {
       'BT-API-KEY': 'PRIVATE_API_KEY',
@@ -254,12 +254,12 @@ The detokenized request is then forwarded to the destination URL defined by the 
 This allows you to send the sensitive PCI cardholder data to any PCI-compliant third-party without touching the data and, therefore, keeping your systems out of PCI scope.
 
 <Alert type={Alerts.WARNING}>
-  You should ensure that any PCI cardholder data is only sent to PCI-certified third-parties. All PCI-certified services are required to maintain an up-to-date Attestation of Compliance (AOC) to accept and store cardholder information. 
+  You should ensure that any PCI cardholder data is only sent to PCI-certified third-parties. All PCI-certified services are required to maintain an up-to-date Attestation of Compliance (AOC) to accept and store cardholder information.
 </Alert>
 
 More advanced Proxy scenarios can be configured via the [Proxies endpoint](/docs/api/proxies), such as tokenizing inbound cardholder data before it touches your API or encrypting outbound API calls with an encryption key.
 
 ## Conclusion
-Following the PCI Blueprint enables you to remove 95% of the PCI compliance requirements by removing the need to touch the cardholder data when collecting, storing, and processing sensitive information. 
+Following the PCI Blueprint enables you to remove 95% of the PCI compliance requirements by removing the need to touch the cardholder data when collecting, storing, and processing sensitive information.
 
-Have feedback or questions? Join us in our [Slack community](https://community.basistheory.com). 
+Have feedback or questions? Join us in our [Slack community](https://community.basistheory.com).
