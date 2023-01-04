@@ -19,7 +19,7 @@ We will use [Terraform](https://www.terraform.io/) to provision Basis Theory res
 
 ## Creating the Inbound Proxy
 
-In order to listen to API requests, we will create a Proxy that sits between the Client and your Server. We will assume these requests don't contain any sensitive information, so we will pass them through to the Server, which will respond with tokenized data. The Proxy will then [transform](/docs/api/proxies/#proxy-transform-object) the Server response to detokenize it and respond to the Client with the plaintext data.
+In order to listen to API requests, we will create a Proxy that sits between the Client and your Server. We will assume these requests don't contain any sensitive information, so we will pass them through to the Server, which will respond with tokenized data. The Proxy will then [transform](/docs/api/proxies#proxy-transform-object) the Server response to detokenize it and respond to the Client with the plaintext data.
 
 <SequenceDiagram width="100%" height="auto" />
 
@@ -253,7 +253,7 @@ This will create a application with the following [Access Controls](/docs/concep
 
 #### Tokenization
 
-Call the [Create Token](/docs/api/tokens/#create-token) token endpoint, using the key from the previous step:
+Call the [Create Token](/docs/api/tokens#create-token) token endpoint, using the key from the previous step:
 
 ```bash showLineNumbers
 curl "https://api.basistheory.com/tokens" \
@@ -326,7 +326,7 @@ You should see a JSON response like:
 
 ### What is Happening?
 
-A secure HTTPS request is made to Basis Theory's Proxy endpoint. Basis Theory forwards the request to the specified destination URL, the [Echo Server](https://echo.basistheory.com/). Once the Server responds with a full echo body, the Proxy's transform response code looks for the token `id` to detokenize under `req.args.body.json.ssn` path. The Proxy detokenizes the SSN by [retrieving](/docs/api/tokens/#get-a-token) the token `data` and passing it in the response body to the Client.
+A secure HTTPS request is made to Basis Theory's Proxy endpoint. Basis Theory forwards the request to the specified destination URL, the [Echo Server](https://echo.basistheory.com/). Once the Server responds with a full echo body, the Proxy's transform response code looks for the token `id` to detokenize under `req.args.body.json.ssn` path. The Proxy detokenizes the SSN by [retrieving](/docs/api/tokens#get-a-token) the token `data` and passing it in the response body to the Client.
 
 This allows you to share sensitive PII data to any Client, without touching the data and, therefore, keeping your systems out of PII regulation scope.
 

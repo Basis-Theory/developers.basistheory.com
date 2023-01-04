@@ -1,8 +1,9 @@
 ---
 sidebar_label: Android Elements
+sidebar_position: 0
 ---
 
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Alert } from "@site/src/components/shared/Alert";
 import { GithubCard } from "@site/src/components/sdks/GithubCard";
 import { SDK } from "@site/src/components/types";
 
@@ -23,8 +24,109 @@ Think about it as an isolated sandbox within your mobile application that your e
 interact with, and which securely communicates with the Basis Theory Vault. Sensitive data is not directly exposed to
 your application code, which keeps your mobile application out of compliance scope.
 
-Here is how we make this possible:
+Here's how we make this possible:
 
-- Own your UX, by fully customizing how Android Elements are styled
-- Use inputs and forms with ease
-- Interact with Android Elements just like native elements
+- [Install](#installation) our Android SDK into your mobile application
+- Build forms using our **[Element](./types)** input components
+- [Interact](./services#basistheoryelements) with the Basis Theory API using **Element** references, not plaintext data
+- Own your UI/UX by fully customizing how **Elements** are [styled](./options#styling)
+
+## Collect Sensitive Data
+
+Data entered by your end users into **Elements** is tokenized and secured within Basis Theory's certified Vault.
+
+Our SDKs provide several types of inputs to collect various types of data, such as the [CardNumberElement](./types#cardnumberelement)
+for collecting credit card data and [TextElement](./types#textelement) for collecting arbitrary textual data.
+
+Elements can be configured to support custom input masking, validation, and transformation rules to satisfy your use cases.
+
+## Reveal Sensitive Data
+
+Tokens stored within the Basis Theory Vault can be securely revealed to end users without accessing the plaintext
+data directly within your application code.
+
+<Alert>
+  The ability to reveal sensitive data on Android is not yet generally available. If you are interested in using this feature on Android,
+  please email us at <a href="mailto:info@basistheory.com?subject=Android SDK - Reveal">info@basistheory.com</a> to
+  join our early access program.
+</Alert>
+
+## Before You Begin
+
+Basis Theory Android Elements require the use of an API Key associated with a **Public Application**, which only allows `token:create` and `token:update` permissions to mitigate the risk that these API keys may be publicly exposed within your frontend applications.
+
+To create one, login into our [Portal](https://portal.basistheory.com) and create a new "Public" Application with the permissions you require.
+
+## Installation
+
+### Requirements
+
+- Android 5.0+ (API level 21+)
+- AndroidX
+
+### Gradle
+
+Add this dependency to your project's build file:
+
+```groovy
+  repositories {
+      maven { url 'https://jitpack.io' }
+  }
+
+  dependencies {
+      implementation 'com.github.basis-theory.basistheory-android:lib:<version>'
+  }
+```
+
+The latest release version can be found in [GitHub](https://github.com/Basis-Theory/basistheory-android/tags).
+
+## Basic Usage
+
+Simply include one or more elements within your application's views:
+
+```xml showLineNumbers
+<com.basistheory.android.view.CardNumberElement
+    android:id="@+id/card_number"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+
+<com.basistheory.android.view.CardExpirationDateElement
+    android:id="@+id/expiration_date"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+
+<com.basistheory.android.view.CardVerificationCodeElement
+    android:id="@+id/cvc"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+Then tokenize the user input by referencing these elements. This can be wired up in response to a
+button click, or any other user action.
+
+```kotlin showLineNumbers
+val cardNumberElement = findViewById(R.id.card_number)
+val cardExpirationDateElement = findViewById(R.id.expiration_date)
+val cardVerificationCodeElement = findViewById(R.id.cvc)
+
+val bt = BasisTheoryElements.builder()
+    .apiKey(myPublicApiKey)
+    .build()
+
+runBlocking {
+    val tokenizeResponse = bt.tokenize(object {
+        val type = "card"
+        val data = object {
+            val number = cardNumberElement
+            val expiration_month = cardExpirationDateElement.month()
+            val expiration_year = cardExpirationDateElement.year()
+            val cvc = cardVerificationCodeElement
+        }
+    })
+
+    // send the tokens within tokenizeResponse to your backend
+}
+```
+
+A full example Android app is included within the [example](https://github.com/Basis-Theory/basistheory-android/tree/master/example)
+module within the GitHub repo or explore all the supported [Element Types](./types).
