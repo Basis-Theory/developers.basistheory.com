@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.3.1...v1.4.0) (2023-01-04)
+
+
+### Features
+
+* adds iOS collect guide ([#18](https://github.com/Basis-Theory/developers.basistheory.com/issues/18)) ([6542023](https://github.com/Basis-Theory/developers.basistheory.com/commit/6542023b3371e13264a0ef40258ed6daf8dc42fd))
+
 ## [1.3.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.3.0...v1.3.1) (2023-01-03)
 
 
