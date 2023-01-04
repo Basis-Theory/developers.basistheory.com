@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.4.0...v1.5.0) (2023-01-04)
+
+
+### Features
+
+* Adds Android SDK docs ([#19](https://github.com/Basis-Theory/developers.basistheory.com/issues/19)) ([9d36210](https://github.com/Basis-Theory/developers.basistheory.com/commit/9d362101fd94817c08ee0d8cbbe0cb604c8075cb))
+
 # [1.4.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.3.1...v1.4.0) (2023-01-04)
 
 
