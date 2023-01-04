@@ -316,7 +316,7 @@ const sidebars = {
             type: "doc",
             id: "sdks/mobile/android/index",
           },
-          items: ["sdks/mobile/android/types", "sdks/mobile/android/options", "sdks/mobile/android/classes", "sdks/mobile/android/events"],
+          items: ["sdks/mobile/android/types", "sdks/mobile/android/options", "sdks/mobile/android/events", "sdks/mobile/android/services"],
         },
         {
           type: "category",

@@ -48,9 +48,9 @@ The following additional properties are supported when programmatically interact
 | textColor           | `Int`              | A color value in the form `0xAARRGGBB`. Do not pass a resource ID. To get a color value from a resource ID, call [getColor](https://developer.android.com/reference/android/content/res/TypedArray#getColor(int,%20int)). |
 | hint                | `String`           | Placeholder text to display within the element when empty.                                                                                                                                                                |
 | removeDefaultStyles | `Boolean`          | Removes the default Android styling on the underlying EditText.                                                                                                                                                           |
-| mask                | `ElementMask`      | Restricts and formats input entered into this Element. See the [Mask](./options/#mask) options for details.                                                                                                               |
-| transform           | `ElementTransform` | Transforms the value of this Element prior to tokenization. See the [Transform](./options/#transform) options for details.                                                                                                |
-| validator           | `ElementValidator` | Validates the value of this Element within ChangeEvents. See the [Validator](./options/#validator) options for details.                                                                                                   |
+| mask                | `ElementMask`      | Restricts and formats input entered into this Element. See the [Mask](./options#mask) options for details.                                                                                                               |
+| transform           | `ElementTransform` | Transforms the value of this Element prior to tokenization. See the [Transform](./options#transform) options for details.                                                                                                |
+| validator           | `ElementValidator` | Validates the value of this Element within ChangeEvents. See the [Validator](./options#validator) options for details.                                                                                                   |
 
 #### XML Attributes
 
@@ -62,7 +62,7 @@ The following additional XML attributes are also supported when defining a `Text
 | textColor           | `reference`&vert;`color` | The text color. <br/><br/>May be a reference to another resource, in the form `"@[+][package:]type/name"` or a theme attribute in the form `"?[package:]type/name"`. <br/><br/>May be a color value, in the form of `"#rgb"`, `"#argb"`, `"#rrggbb"`, or `"#aarrggbb"` |
 | hint                | `String`                 | Placeholder text to display within the Element.                                                                                                                                                                                                                        |
 | removeDefaultStyles | `Boolean`                | Removes the default Android styling on the underlying EditText.                                                                                                                                                                                                        |
-| mask                | `String`                 | A string defining the [mask](./options/#mask) applied to this Element, e.g. (`###-##-####`).                                                                                                                                                                           |
+| mask                | `String`                 | A string defining the [mask](./options#mask) applied to this Element, e.g. (`###-##-####`).                                                                                                                                                                           |
 
 ## CardNumberElement
 
@@ -87,7 +87,7 @@ within one of your Android application’s layouts.
 ```
 
 This element can be referenced directly when tokenizing through the
-[BasisTheoryElements](./classes/#basistheoryelements) service class:
+[BasisTheoryElements](./services#basistheoryelements) service class:
 
 ```kotlin showLineNumbers
 val cardNumberElement = findViewById<CardNumberElement>(R.id.card_number)
@@ -116,10 +116,10 @@ properties and attributes supported by [TextElement](#textelement) are also supp
 By default, this element is configured with:
 
 - The keyboard is configured to only allow numeric input
-- A [mask](./options/#mask) is applied to format input values according to the [card brand](#card-brands)
-- The [LuhnValidator](./options/#luhnvalidator) is applied to restrict input to [Luhn-valid](https://en.wikipedia.org/wiki/Luhn_algorithm) cards
+- A [mask](./options#mask) is applied to format input values according to the [card brand](#card-brands)
+- The [LuhnValidator](./options#luhnvalidator) is applied to restrict input to [Luhn-valid](https://en.wikipedia.org/wiki/Luhn_algorithm) cards
 
-This component fully supports the same [style customizations](./options/#styling) to match your branding
+This component fully supports the same [style customizations](./options#styling) to match your branding
 that are supported on the base [TextElement](#textelement).
 
 ### Card Brands
@@ -142,8 +142,8 @@ to your application via the property:
 
 #### ChangeEvent
 
-The card brand is also included within [ChangeEvents](./events/#changeevent) published by the `CardNumberElement`
-within an [EventDetails](./events/#eventdetails) record of the form:
+The card brand is also included within [ChangeEvents](./events#changeevent) published by the `CardNumberElement`
+within an [EventDetails](./events#eventdetails) record of the form:
 
 | Property | Type     | Value                |
 |----------|----------|----------------------|
@@ -187,7 +187,7 @@ within one of your Android application’s layouts.
 ```
 
 The month and year values can be referenced separately when tokenizing through the
-[BasisTheoryElements](./classes/#basistheoryelements) service class:
+[BasisTheoryElements](./services#basistheoryelements) service class:
 
 ```kotlin showLineNumbers
 val tokenizeResponse = bt.tokenize(object {
@@ -213,10 +213,10 @@ properties and attributes supported by [TextElement](#textelement) are also supp
 By default, this element is configured with:
 
 - The keyboard is configured to only allow numeric input
-- A [mask](./options/#mask) is applied to format input values as `MM/yy`
-- The [FutureDateValidator](./options/#futuredatevalidator) is applied to restrict input to future dates
+- A [mask](./options#mask) is applied to format input values as `MM/yy`
+- The [FutureDateValidator](./options#futuredatevalidator) is applied to restrict input to future dates
 
-This component fully supports the same [style customizations](./options/#styling) to match your branding
+This component fully supports the same [style customizations](./options#styling) to match your branding
 that are supported on the base [TextElement](#textelement).
 
 ## CardVerificationCodeElement
@@ -251,7 +251,7 @@ cvcElement.cardNumberElement = cardNumberElement // optional binding between the
 ```
 
 This element can be referenced directly when tokenizing through the
-[BasisTheoryElements](./classes/#basistheoryelements) service class:
+[BasisTheoryElements](./services#basistheoryelements) service class:
 
 ```kotlin showLineNumbers
 val tokenizeResponse = bt.tokenize(object {
@@ -277,7 +277,7 @@ properties and attributes supported by [TextElement](#textelement) are also supp
 By default, this element is configured with:
 
 - The keyboard is configured to only allow numeric input
-- A 3 digit [mask](./options/#mask) is applied by default, but this may be automatically changed to a 4 digit mask based on the card brand
+- A 3 digit [mask](./options#mask) is applied by default, but this may be automatically changed to a 4 digit mask based on the card brand
 
-This component fully supports the same [style customizations](./options/#styling) to match your branding
+This component fully supports the same [style customizations](./options#styling) to match your branding
 that are supported on the base [TextElement](#textelement).
