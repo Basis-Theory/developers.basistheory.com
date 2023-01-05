@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.5.1...v1.6.0) (2023-01-05)
+
+
+### Features
+
+* Documents bin/last4 in Android SDK ([#21](https://github.com/Basis-Theory/developers.basistheory.com/issues/21)) ([e897385](https://github.com/Basis-Theory/developers.basistheory.com/commit/e8973852eaa2189944744e84aa7300a85624a4df))
+
 ## [1.5.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.5.0...v1.5.1) (2023-01-05)
 
 
