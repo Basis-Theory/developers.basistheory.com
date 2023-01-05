@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.5.0...v1.5.1) (2023-01-05)
+
+
+### Bug Fixes
+
+* remove legacy template ([#20](https://github.com/Basis-Theory/developers.basistheory.com/issues/20)) ([c0297bd](https://github.com/Basis-Theory/developers.basistheory.com/commit/c0297bd13caabf99cb8bed82359ed729c7112ddb))
+
 # [1.5.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.4.0...v1.5.0) (2023-01-04)
 
 
