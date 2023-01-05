@@ -128,22 +128,14 @@ to your application via the property:
 
 #### CardMetadata
 
-| Name       | Type      | Description                                           |
-|------------|-----------|-------------------------------------------------------|
-| brand      | `String`  | The card [brand identifier](#brand-identifiers)       |
-| cardMask   | `String`  | The card number mask corresponding to this card brand |
-| cvcMask    | `String`  | The CVC mask corresponding to this card brand         |
-| isComplete | `Boolean` | Whether this card number is complete for this brand   |
-
-#### ChangeEvent
-
-The card brand is also included within [ChangeEvents](./events#changeevent) published by the `CardNumberElement`
-within an [EventDetails](./events#eventdetails) record of the form:
-
-| Property | Type     | Value                |
-|----------|----------|----------------------|
-| type     | `String` | `cardBrand`          |
-| message  | `String` | The brand identifier |
+| Name       | Type      | Description                                                       |
+|------------|-----------|-------------------------------------------------------------------|
+| brand      | `String`  | The card [brand identifier](#brand-identifiers)                   |
+| cardMask   | `String`  | The card number mask corresponding to this card brand             |
+| cvcMask    | `String`  | The CVC mask corresponding to this card brand                     |
+| isComplete | `Boolean` | Whether this card number is complete for this brand               |
+| bin        | `String`  | The first 6 digits of the card number if complete, otherwise null |
+| last4      | `String`  | The last 4 digits of the card number if complete, otherwise null  |
 
 #### Brand Identifiers
 
@@ -159,6 +151,14 @@ within an [EventDetails](./events#eventdetails) record of the form:
 - `mir`
 - `hiper`
 - `hipercard`
+
+### ChangeEvent Details
+
+The `CardNumberElement` emits [ChangeEvents](./events#changeevent) that may contain several types of [EventDetail](./events#eventdetails) records.
+
+- `cardBrand`: Contains the [brand identifier](#brand-identifiers) for the card brand. Only included once enough digits are entered to determine a card brand.
+- `bin`: Contains the first 6 digits of the card number. Only included for complete card numbers satisfying the brand-specific mask.
+- `last4`: Contains the last 4 digits of the card number. Only included for complete card numbers satisfying the brand-specific mask.
 
 ## CardExpirationDateElement
 
