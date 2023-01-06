@@ -2,6 +2,8 @@
 sidebar_label: Services
 ---
 
+import { Alert } from "@site/src/components/shared/Alert";
+
 # Services
 
 ## tokenize
@@ -22,6 +24,13 @@ BasisTheoryElements.tokenize(body: body, apiKey: "<YOUR PUBLIC API KEY>")
 	{ data, error in ... }
 ```
 
+<Alert>
+  Note that <code>tokenize</code> requires the use of a public API key during initialization
+  (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>).
+  Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
+  to create one in the Basis Theory portal.
+</Alert>
+
 The callback provided calls your function with a `data` of type `AnyCodable`, and an `error` of type `Error`.
 
 ## createToken
@@ -37,6 +46,13 @@ let body: CreateToken = CreateToken(type: "token", data: [
 BasisTheoryElements.createToken(body: body, apiKey: "<YOUR PUBLIC API KEY>")
 	{ data, error in ... }
 ```
+
+<Alert>
+  Note that <code>createToken</code> requires the use of a public API key during initialization
+  (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>).
+  Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
+  to create one in the Basis Theory portal.
+</Alert>
 
 The callback provided calls your function with a `data` of type `CreateTokenResponse`, and an `error` of type `Error`.
 
@@ -55,7 +71,7 @@ let proxyHttpRequest = ProxyHttpRequest(method: .post, body: [
 ])
 
 BasisTheoryElements.proxy(
-    apiKey: "<YOUR EXPIRING API KEY>",
+    apiKey: "<YOUR BT API KEY>",
     proxyKey: "<YOUR PROXY KEY>",
     proxyHttpRequest: proxyHttpRequest)
 { response, data, error in ... }
@@ -71,7 +87,7 @@ The callback provided calls your function with a:
 ...
 
 BasisTheoryElements.proxy(
-    apiKey: "<YOUR EXPIRING API KEY>",
+    apiKey: "<YOUR BT API KEY>",
     proxyKey: "<YOUR PROXY KEY>",
     proxyHttpRequest: proxyHttpRequest)
 { response, data, error in
