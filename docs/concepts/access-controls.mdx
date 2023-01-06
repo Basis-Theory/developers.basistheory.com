@@ -7,7 +7,7 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Access Controls
 
-Basis Theory secures sensitive data as [Tokens](./what-are-tokens) that are stored within an isolated
+Basis Theory secures sensitive data as [Tokens](/docs/concepts/what-are-tokens) that are stored within an isolated
 compliant environment, called a [Tenant](#what-are-tenants).
 Your systems interact with Tokens or Services (e.g. Proxy, Reactors) through the Basis Theory API using an API key that is issued to
 an [Application](#what-are-applications).
@@ -18,7 +18,7 @@ to ensure services and users only have access to the data they need.
 ## What are Tenants?
 
 Everything starts with a Tenant in your Basis Theory account. Tenants represent an isolated environment in which your
-[Tokens](./what-are-tokens) and other resources are defined, managed, and stored.
+[Tokens](/docs/concepts/what-are-tokens) and other resources are defined, managed, and stored.
 Data is not shared between Tenants, but you're allowed to create as many Tenants as you'd like within Basis Theory.
 You can use multiple Tenants to isolate different domains of data, and to support your Software Development Life Cycle (SDLC).
 
@@ -82,7 +82,7 @@ For basic authorization scenarios, an Application can simply be granted one or m
 Each Application Type allows a different set of permissions, and you can find a detailed list of them [here](/docs/api/applications/permissions#permission-types).
 
 Token permissions granted to Private or Public applications are applied to all Tokens
-(i.e. they are not scoped to a particular [Container](./what-are-containers) of Tokens).
+(i.e. they are not scoped to a particular [Container](/docs/concepts/what-are-containers) of Tokens).
 In order to ensure sensitive data is not inadvertently revealed by an Application, an implicit
 [transform](#transform) is applied for each operation:
 
@@ -143,9 +143,9 @@ Application to satisfy your specific requirements by choosing the `Create Your O
 #### Grant Multiple Systems Access Following the Principle of Least Privilege
 
 A common use-case for Applications is to grant minimal access to multiple systems where each system is only authorized
-to perform necessary operations and access a relevant subset of data within a [Tenant](./access-controls#what-are-tenants).
+to perform necessary operations and access a relevant subset of data within a [Tenant](/docs/concepts/access-controls#what-are-tenants).
 This could mean that one system is only allowed to collect Tokenized data, another system is allowed to read the data to
-perform analytics, and a third system is only allowed to [Proxy](./what-is-the-proxy/) the data
+perform analytics, and a third system is only allowed to [Proxy](/docs/concepts/what-is-the-proxy/) the data
 to an integrated 3rd party but never access the raw data.
 
 ![Applications Each System](/img/concepts/access_rules_by_customer.png)
@@ -156,7 +156,7 @@ Often, businesses need to grant their partners access to their sensitive data â€
 traditionally, these businesses would just export the needed data and send it to their partner.
 With Basis Theory Applications, a business can create an Application that is restricted to ONLY the data that partner needs.
 In some cases, businesses will not allow their partners direct access to the raw data,
-but rather only allow them to [Proxy](./what-is-the-proxy/) the data to
+but rather only allow them to [Proxy](/docs/concepts/what-is-the-proxy/) the data to
 another API or execute serverless workloads on the sensitive data using Reactors.
 
 ![Applications Partners](/img/concepts/applications_partners.png)
@@ -193,7 +193,7 @@ A short description of the rule to help you identify its purpose.
 ### Container
 
 Access Rules can be scoped to a specific set of Tokens using Containers.
-[Containers](./what-are-containers) are a Token attribute that enable you to logically
+[Containers](/docs/concepts/what-are-containers) are a Token attribute that enable you to logically
 organize Tokens into hierarchical paths, similar to a UNIX directory structure.
 
 Permissions granted on a Container are inherited on all sub-Containers. For example, having an Access Rule
@@ -248,7 +248,7 @@ Rules are evaluated in ascending priority order, with the lowest numerical value
 #### Grant Access to a Single Data Classification
 
 Access Rules can be scoped to a specific data classification of Tokens. To enable this use case, first ensure your
-Tokens are organized into classification-based [Containers](./what-are-containers),
+Tokens are organized into classification-based [Containers](/docs/concepts/what-are-containers),
 for example `/pci/`, `/pii/`, and `/general/`.
 
 ![Access Rules](/img/concepts/access_rules_by_classification.png)
@@ -257,7 +257,7 @@ for example `/pci/`, `/pii/`, and `/general/`.
 
 Your customers' sensitive data can be partitioned within Basis Theory, for example, to enable you to offer your
 customers single-tenant environments that only have access to a single customer's data.
-To enable this use case, first ensure your Tokens are organized into [Containers](./what-are-containers)
+To enable this use case, first ensure your Tokens are organized into [Containers](/docs/concepts/what-are-containers)
 by customer, for example `/customer-1/`, `/customer-2/`, etc.
 
 ![Access Rules](/img/concepts/access_rules_by_customer.png)
