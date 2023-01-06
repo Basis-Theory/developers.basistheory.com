@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.6.0...v1.7.0) (2023-01-06)
+
+
+### Features
+
+* Documenting Android setValueRef and isEditable properties ([#22](https://github.com/Basis-Theory/developers.basistheory.com/issues/22)) ([3bb7667](https://github.com/Basis-Theory/developers.basistheory.com/commit/3bb766756b77e44558ef107981b8b4f7e48646a5))
+
 # [1.6.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.5.1...v1.6.0) (2023-01-05)
 
 
