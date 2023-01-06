@@ -168,6 +168,55 @@ var proxy = await client.CreateAsync(new ProxyCreateRequest {
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        CreateProxyRequest createProxyRequest = new CreateProxyRequest();
+        Proxy result = apiInstance.create(createProxyRequest
+                .name("My Proxy")
+                .destinationUrl("https://example.com/api")
+                .requestTransform(new ProxyTransform().code("""
+                        module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                .responseTransform(new ProxyTransform().code("""
+                         module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd1234"))
+                .application(new Application().id(UUID.fromString("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")))
+                .requireAuth(true));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -374,6 +423,34 @@ var proxies = await client.GetAsync();
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        List<UUID> id = Arrays.asList();
+        String name = "name_example";
+        Integer page = 1;
+        Integer size = 50;
+        ProxyPaginatedList result = apiInstance.get(id, name, page, size);
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -515,6 +592,30 @@ using BasisTheory.net.Proxies;
 var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
 
 var proxy = await client.GetByIdAsync("5b493235-6917-4307-906a-2cd6f1a90b13");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```csharp showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        Proxy result = apiInstance.getById(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"));
+    }
+}
 ```
 
   </TabItem>
@@ -762,6 +863,55 @@ var proxy = await client.UpdateAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
 ```
 
   </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        CreateProxyRequest createProxyRequest = new CreateProxyRequest();
+        Proxy result = apiInstance.create(createProxyRequest
+                .name("My Proxy")
+                .destinationUrl("https://example.com/api")
+                .requestTransform(new ProxyTransform().code("""
+                        module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                .responseTransform(new ProxyTransform().code("""
+                         module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd1234"))
+                .application(new Application().id(UUID.fromString("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")))
+                .requireAuth(true));
+    }
+}
+```
+
+  </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
@@ -975,6 +1125,28 @@ using BasisTheory.net.Proxies;
 var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
 
 await client.DeleteAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```javascript showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        apiInstance.delete(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"));
+    }
+}
 ```
 
   </TabItem>
