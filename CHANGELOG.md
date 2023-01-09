@@ -1,3 +1,17 @@
+## [1.7.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.7.0...v1.7.1) (2023-01-06)
+
+
+### Bug Fixes
+
+* Changes all relative links to absolute ([#23](https://github.com/Basis-Theory/developers.basistheory.com/issues/23)) ([a0a4e50](https://github.com/Basis-Theory/developers.basistheory.com/commit/a0a4e5017980370e920cb7fdae70300ec3b3ca51))
+
+# [1.7.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.6.0...v1.7.0) (2023-01-06)
+
+
+### Features
+
+* Documenting Android setValueRef and isEditable properties ([#22](https://github.com/Basis-Theory/developers.basistheory.com/issues/22)) ([3bb7667](https://github.com/Basis-Theory/developers.basistheory.com/commit/3bb766756b77e44558ef107981b8b4f7e48646a5))
+
 # [1.6.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.5.1...v1.6.0) (2023-01-05)
 
 
