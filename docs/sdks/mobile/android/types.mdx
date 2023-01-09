@@ -42,14 +42,18 @@ The following additional properties are supported when programmatically interact
 | Name                | Type               | Description                                                                                                                                                                                                               |
 |---------------------|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | hint                | `String`           | Placeholder text to display within the element when empty.                                                                                                                                                                |
+| isComplete          | `Boolean`          | Whether this element satisfies the mask and validator, i.e. it is ready to be tokenized.                                                                                                                                  |
 | isEditable          | `Boolean`          | Whether this element is editable or readonly.                                                                                                                                                                             |
+| isEmpty             | `Boolean`          | Whether this element is empty.                                                                                                                                                                                            |
+| isMaskSatisfied     | `Boolean`          | Whether this element satisfies the length and format requirements of the [mask](/docs/sdks/mobile/android/options#mask), if defined. Defaults to `true` if this element does not have a mask.                             |
+| isValid             | `Boolean`          | The result of this element's [validator](/docs/sdks/mobile/android/options#validator), if defined. Defaults to `true` if this element does not have a validator.                                                          |
 | keyboardType        | `KeyboardType`     | The type of keyboard to display when editing. Supported values are `KeyboardType.TEXT` and `KeyboardType.NUMBER`.                                                                                                         |
 | mask                | `ElementMask`      | Restricts and formats input entered into this Element. See the [Mask](/docs/sdks/mobile/android/options#mask) options for details.                                                                                        |
 | removeDefaultStyles | `Boolean`          | Removes the default Android styling on the underlying EditText. Defaults to `true`.                                                                                                                                       |
 | textColor           | `Int`              | A color value in the form `0xAARRGGBB`. Do not pass a resource ID. To get a color value from a resource ID, call [getColor](https://developer.android.com/reference/android/content/res/TypedArray#getColor(int,%20int)). |
 | textSize            | `Float`            | The font size, in pixels.                                                                                                                                                                                                 |
 | transform           | `ElementTransform` | Transforms the value of this Element prior to tokenization. See the [Transform](/docs/sdks/mobile/android/options#transform) options for details.                                                                         |
-| validator           | `ElementValidator` | Validates the value of this Element within ChangeEvents. See the [Validator](/docs/sdks/mobile/android/options#validator) options for details.                                                                            |
+| validator           | `ElementValidator` | Validates the value of this Element. See the [Validator](/docs/sdks/mobile/android/options#validator) options for details.                                                                                                |
 
 #### Methods
 
@@ -141,23 +145,49 @@ that are supported on the base [TextElement](#textelement).
 
 ### Card Brands
 
-The first digits of the card number are analyzed to determine the card brand, which is made available
-to your application via the property:
+The first several digits of the card number are analyzed as the user is typing to determine the card brand.
+The brand is used to automatically set a [mask](/docs/sdks/mobile/android/options#mask) to a brand-specific format.
+If the [CardNumberElement](/docs/sdks/mobile/android/types#CardNumberElement) is bound to a [CardVerificationCodeElement](/docs/sdks/mobile/android/types#CardVerificationCodeElement),
+a mask is also automatically set on the `CardVerificationCodeElement` based on the brand's CVC length requirements.
+
+Supported card brands are defined in the table below:
+
+| Brand            | Identifier         | Card Number Digits | CVC Digits |
+|------------------|--------------------|--------------------|------------|
+| American Express | `american-express` | 15                 | 4          |
+| Diners Club      | `diners-club`      | 14, 16, 19         | 3          |
+| Discover         | `discover`         | 16, 19             | 3          |
+| Elo              | `elo`              | 16                 | 3          |
+| Hiper            | `hiper`            | 16                 | 3          |
+| HiperCard        | `hipercard`        | 16                 | 3          |
+| JCB              | `jcb`              | 16-19              | 3          |
+| Maestro          | `maestro`          | 12-19              | 3          |
+| Mastercard       | `mastercard`       | 16                 | 3          |
+| MIR              | `mir`              | 16-19              | 3          |
+| UnionPay         | `unionpay`         | 14-19              | 3          |
+| Visa             | `visa`             | 16, 18, 19         | 3          |
+
+<Alert>
+  Some card brands have issued card numbers with multiple lengths. The <code>Card Number Digits</code> column
+  documents all acceptable card number lengths for the brand (in number of digits, excluding formatting characters).
+</Alert>
+
+#### CardMetadata
+
+The brand details and other card metadata are made available to your application within the
+`cardMetadata` property on the `CardNumberElement`:
 
 | Name         | Type           | Description                                            |
 |--------------|----------------|--------------------------------------------------------|
 | cardMetadata | `CardMetadata` | Gets metadata about the card, derived from user input. |
 
-#### CardMetadata
+The `CardMetadata` object contains the properties:
 
-| Name       | Type      | Description                                                       |
-|------------|-----------|-------------------------------------------------------------------|
-| brand      | `String`  | The card [brand identifier](#brand-identifiers)                   |
-| cardMask   | `String`  | The card number mask corresponding to this card brand             |
-| cvcMask    | `String`  | The CVC mask corresponding to this card brand                     |
-| isComplete | `Boolean` | Whether this card number is complete for this brand               |
-| bin        | `String`  | The first 6 digits of the card number if complete, otherwise null |
-| last4      | `String`  | The last 4 digits of the card number if complete, otherwise null  |
+| Name  | Type     | Description                                                       |
+|-------|----------|-------------------------------------------------------------------|
+| brand | `String` | The card [brand identifier](#card-brands)                         |
+| bin   | `String` | The first 6 digits of the card number if complete, otherwise null |
+| last4 | `String` | The last 4 digits of the card number if complete, otherwise null  |
 
 #### Brand Identifiers
 
@@ -178,9 +208,9 @@ to your application via the property:
 
 The `CardNumberElement` emits [ChangeEvents](/docs/sdks/mobile/android/events#changeevent) that may contain several types of [EventDetail](/docs/sdks/mobile/android/events#eventdetails) records.
 
-- `cardBrand`: Contains the [brand identifier](#brand-identifiers) for the card brand. Only included once enough digits are entered to determine a card brand.
-- `bin`: Contains the first 6 digits of the card number. Only included for complete card numbers satisfying the brand-specific mask.
-- `last4`: Contains the last 4 digits of the card number. Only included for complete card numbers satisfying the brand-specific mask.
+- `cardBrand`: Contains the card [brand identifier](#card-brands). Only included once enough digits are entered to determine a card brand.
+- `cardBin`: Contains the first 6 digits of the card number. Only included for complete card numbers satisfying the brand-specific mask.
+- `cardLast4`: Contains the last 4 digits of the card number. Only included for complete card numbers satisfying the brand-specific mask.
 
 ## CardExpirationDateElement
 
