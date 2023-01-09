@@ -27,18 +27,18 @@ your application code, which keeps your mobile application out of compliance sco
 Here's how we make this possible:
 
 - [Install](#installation) our iOS SDK into your mobile application
-- Build forms using our **[Element](./types)** input components
-- [Interact](./services#tokenize) with the Basis Theory API using **Element** references, not plaintext data
+- Build forms using our **[Element](/docs/sdks/mobile/ios/types)** input components
+- [Interact](/docs/sdks/mobile/ios/services#tokenize) with the Basis Theory API using **Element** references, not plaintext data
 - Own your UI/UX by fully customizing how **Elements** are [styled](#styling-elements)
 
 ## Collect Sensitive Data
 
 Data entered by your end users into **iOS Elements** is tokenized and secured within Basis Theory's certified Vault.
 
-Our SDKs provide several types of inputs to collect various types of data, such as the [TextElementUITextField](./types##text-element-ui-text-field)
-for collecting arbitrary textual data and [CardNumberUITextField](./types##card-number-ui-text-field) for collecting a credit card number.
+Our SDKs provide several types of inputs to collect various types of data, such as the [TextElementUITextField](/docs/sdks/mobile/ios/types##text-element-ui-text-field)
+for collecting arbitrary textual data and [CardNumberUITextField](/docs/sdks/mobile/ios/types##card-number-ui-text-field) for collecting a credit card number.
 
-Elements can be configured to support custom input [masking](./options#mask), validation, and [transformation](./options#transform) rules to satisfy your use cases.
+Elements can be configured to support custom input [masking](/docs/sdks/mobile/ios/options#mask), validation, and [transformation](/docs/sdks/mobile/ios/options#transform) rules to satisfy your use cases.
 
 ## Reveal Sensitive Data
 
@@ -110,8 +110,9 @@ myTextElement.backgroundColor = UIColor( red: 240/255, green: 240/255, blue: 240
 
 `BasisTheoryElements` package’s elements are a simple wrapper for the native [UIKit](https://developer.apple.com/documentation/uikit) UITextField. Due to this developers can take full advantage of existing native customization, but we restrict and enable access to the underlying data in the following ways:
 
-| Fields | Description |
-| --- | --- |
+| Field | Description |
+| --- |--- |
 | text | We restrict the getter for this value; it always returns nil. The setter works as is. |
 | subject | An instance of PassThroughSubject that allows you to subscribe to [ElementEvents](/docs/sdks/mobile/ios/events). |
 | setValue | A function that recieves an `ElementValueReference` parameter to set the value of the element. Note: `ElementValueReference` instances can only be retrieved from [proxy](/docs/sdks/mobile/ios/services#proxy) responses. |
+| setValueRef | Binds the provided `TextElementUITextField` instance as a value source for this element, keeping the value of this element in sync with any changes made to the other element. This makes the caller element read-only. Any iOS element type can be provided as an instance into this function. |
