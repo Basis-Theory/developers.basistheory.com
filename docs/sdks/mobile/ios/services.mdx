@@ -2,9 +2,13 @@
 sidebar_label: Services
 ---
 
+import { Alert } from "@site/src/components/shared/Alert";
+
 # Services
 
-## tokenize
+## Methods
+
+### tokenize
 
 Elements' values can be securely tokenized utilizing our [tokenize](/docs/api/tokens/tokenize) services. To accomplish this, simply pass the Element instance in the payload.
 
@@ -19,12 +23,19 @@ let body: [String: Any] = [
 ]
 
 BasisTheoryElements.tokenize(body: body, apiKey: "<YOUR PUBLIC API KEY>")
-	{ data, error in ... }
+  { data, error in ... }
 ```
+
+<Alert>
+  Note that <code>tokenize</code> requires the use of a public API key during initialization
+  (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>).
+  Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
+  to create one in the Basis Theory portal.
+</Alert>
 
 The callback provided calls your function with a `data` of type `AnyCodable`, and an `error` of type `Error`.
 
-## createToken
+### createToken
 
 Elements' values can be securely tokenized utilizing our [createToken](/docs/api/tokens/tokenize#create-token) services. To accomplish this, simply pass the Element instance in the payload.
 
@@ -35,12 +46,19 @@ let body: CreateToken = CreateToken(type: "token", data: [
 ], searchIndexes: ["{{ data.property }}"])
 
 BasisTheoryElements.createToken(body: body, apiKey: "<YOUR PUBLIC API KEY>")
-	{ data, error in ... }
+  { data, error in ... }
 ```
+
+<Alert>
+  Note that <code>createToken</code> requires the use of a public API key during initialization
+  (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>).
+  Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
+  to create one in the Basis Theory portal.
+</Alert>
 
 The callback provided calls your function with a `data` of type `CreateTokenResponse`, and an `error` of type `Error`.
 
-## proxy
+### proxy
 
 Proxy provides a simple way to retrieve data back into an element utilizing our [proxy](/docs/api/proxies/invoke-proxy) service. To accomplish this, simply construct your proxy request like this:
 
@@ -55,7 +73,7 @@ let proxyHttpRequest = ProxyHttpRequest(method: .post, body: [
 ])
 
 BasisTheoryElements.proxy(
-    apiKey: "<YOUR EXPIRING API KEY>",
+    apiKey: "<YOUR BT API KEY>",
     proxyKey: "<YOUR PROXY KEY>",
     proxyHttpRequest: proxyHttpRequest)
 { response, data, error in ... }
@@ -71,7 +89,7 @@ The callback provided calls your function with a:
 ...
 
 BasisTheoryElements.proxy(
-    apiKey: "<YOUR EXPIRING API KEY>",
+    apiKey: "<YOUR BT API KEY>",
     proxyKey: "<YOUR PROXY KEY>",
     proxyHttpRequest: proxyHttpRequest)
 { response, data, error in
@@ -84,3 +102,25 @@ BasisTheoryElements.proxy(
     { data, error in print(data) }
 }
 ```
+
+## Errors
+
+| Error | Description |
+| --- |--- |
+| TokenizingError.applicationTypeNotPublic | The [Application](/docs/api/applications) API key used is not of type `public`. Create a `public` API key through this [link](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public). |
+| TokenizingError.invalidInput | An element instance used in a tokenization request is invalid. Check the element events on each element to determine which one is invalid. |
+| ProxyError.invalidRequest | The [proxy](#proxy) request is malformed. Revise the [proxy](#proxy) request being attempted. |
+| ErrorResponse.error | An instance of [ErrorResponse enum](#errorresponse-enum) gets returned when there's an error from the BasisTheory API. |
+
+### ErrorResponse enum
+
+| Order | Associated Value Name | Description |
+| --- | --- |--- |
+| 1 | status | An `Int` describing the response status code |
+| 2 | data | A `Data?` instance describing the response body |
+| 3 | urlResponse | The raw `UrlResponse?` instance |
+| 4 | error | The raw `Error` instance |
+
+<Alert>
+  The <code>ErrorResponse</code> enum can be imported from the BasisTheory Swift SDK through <code>import BasisTheory</code>.
+</Alert>
