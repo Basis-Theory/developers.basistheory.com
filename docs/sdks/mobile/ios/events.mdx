@@ -4,18 +4,56 @@ sidebar_label: Events
 
 # Events
 
+## ElementEvent
+
 iOS Element events are triggered whenever a user types into an element text field. An `ElementEvent` is the struct that gets passed into the [subject](/docs/sdks/mobile/ios#modified-and-additional-fields)’s `receiveValue` function. The following are properties on the `ElementEvent` struct:
 
-| Property | Description                                                                                                |
-|----------|------------------------------------------------------------------------------------------------------------|
-| type     | The event type for the `ElementEvent`.                                                                     |
-| complete | Whether the input is `valid` and the `mask` is satisfied.                                                  |
-| valid    | Whether the input is `valid` according to `validation` for each element.                                   |
-| details  | An array of [ElementEventDetail](#elementeventdetail) describing more information about the element event. |
+| Property      | Description                                                                                                |
+| ------------- |------------------------------------------------------------------------------------------------------------|
+| type          | The event [type](#elementevent-types) for the `ElementEvent`.                                              |
+| complete      | Whether the input `valid` and `maskSatisfied` properties are `true`.                                       |
+| valid         | Whether the input is `valid` according to `validation` for each element.                                   |
+| maskSatisfied | Whether the input satisfies the `mask` length requirements.                                                |
+| details       | An array of [ElementEventDetail](#elementeventdetail) describing more information about the element event. |
+
+### ElementEvent Types
+
+The following are the available element event types and their descriptions.
+
+| Type | Description |
+|--------------|--- |
+| textChange | All elements emit this event when a user changes an element's value. |
+| maskChange | `CardVerificationCodeUITextField` elements emit this event when its mask has changed. |
 
 ### ElementEventDetail
 
-| Property | Description                                       |
-|----------|---------------------------------------------------|
-| type     | A `String` describing the type of detail.         |
-| message  | A `String` containing the message for the detail. |
+| Property | Description                                                            |
+|----------|------------------------------------------------------------------------|
+| type     | A `String` describing the [type](#elementeventdetail-types) of detail. |
+| message  | A `String` containing the message for the detail.                      |
+
+#### ElementEventDetail Types
+
+The following are the available element event detail types and their descriptions.
+
+| Type | Description |
+| --- |--- |
+| cardBrand | `CardNumberUITextField` elements emit this event when a card number can be identified. |
+| cardLast4 | `CardNumberUITextField` elements emit the last 4 digits of a card number when the input is considered `complete`. |
+| cardBin | `CardNumberUITextField` elements emit the first 6 digits of a card number when the input is considered `complete`. |
+
+## Usage
+
+You can observe element events through the [PassThroughSubject](https://developer.apple.com/documentation/combine/passthroughsubject) [subject](/docs/sdks/mobile/ios#modified-and-additional-fields) field on every element.
+
+```swift showLineNumbers
+private var cancellables = Set<AnyCancellable>()
+...
+
+myTextField.subject.sink { completion in
+    ...
+} receiveValue: { elementEvent in
+    ...
+}.store(in: &cancellables)
+```
+>>>>>>> 7771b5cb2eb9083a7120ad545d6d8e6781db11c4

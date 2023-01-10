@@ -1,3 +1,24 @@
+## [1.9.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.9.0...v1.9.1) (2023-01-10)
+
+
+### Bug Fixes
+
+* fixes indention and typos on iOS docs ([#28](https://github.com/Basis-Theory/developers.basistheory.com/issues/28)) ([e8284e2](https://github.com/Basis-Theory/developers.basistheory.com/commit/e8284e2d5126efe7775169ed9eef2ca480f42f49))
+
+# [1.9.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.8.0...v1.9.0) (2023-01-10)
+
+
+### Features
+
+* adds maskSatisified, setValueRef, and errors to iOS docs ([#24](https://github.com/Basis-Theory/developers.basistheory.com/issues/24)) ([7b334e3](https://github.com/Basis-Theory/developers.basistheory.com/commit/7b334e34ad3033d54c8d334e14cee2a70ec67dfc))
+
+# [1.8.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.7.1...v1.8.0) (2023-01-10)
+
+
+### Features
+
+* Updates Android SDK docs and adds card brand details ([#27](https://github.com/Basis-Theory/developers.basistheory.com/issues/27)) ([dec6ce7](https://github.com/Basis-Theory/developers.basistheory.com/commit/dec6ce7e547719a7d18d7c22ceaca286d5e3724d))
+
 ## [1.7.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.7.0...v1.7.1) (2023-01-06)
 
 

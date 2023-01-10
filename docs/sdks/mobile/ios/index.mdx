@@ -29,7 +29,7 @@ Here's how we make this possible:
 - [Install](#installation) our iOS SDK into your mobile application
 - Build forms using our **[Element](/docs/sdks/mobile/ios/types)** input components
 - [Interact](/docs/sdks/mobile/ios/services#tokenize) with the Basis Theory API using **Element** references, not plaintext data
-- Own your UI/UX by fully customizing how **Elements** are styled
+- Own your UI/UX by fully customizing how **Elements** are [styled](#styling-elements)
 
 ## Collect Sensitive Data
 
@@ -93,7 +93,7 @@ Below is an example of a UITextField set as `TextElementUITextField`.
 
 ![](/img/iOS/ios-initialization.jpg)
 
-## Customizing Elements
+## Styling Elements
 
 All of our elements have been designed to take advantage of the pre-existing native properties and customizations built directly into the [UIKit framework](https://developer.apple.com/documentation/uikit). Utilizing this framework means you’re able to customize the styling of your elements as you would with any other `UITextField`. For example:
 
@@ -110,8 +110,9 @@ myTextElement.backgroundColor = UIColor( red: 240/255, green: 240/255, blue: 240
 
 `BasisTheoryElements` package’s elements are a simple wrapper for the native [UIKit](https://developer.apple.com/documentation/uikit) UITextField. Due to this developers can take full advantage of existing native customization, but we restrict and enable access to the underlying data in the following ways:
 
-| Fields | Description |
+| Field | Description |
 | --- | --- |
 | text | We restrict the getter for this value; it always returns nil. The setter works as is. |
-| subject | An instance of PassThroughSubject that allows you to subscribe to [ElementEvents](/docs/sdks/mobile/ios/events). |
+| subject | An instance of [PassThroughSubject](https://developer.apple.com/documentation/combine/passthroughsubject) that allows you to subscribe to [ElementEvents](/docs/sdks/mobile/ios/events). |
 | setValue | A function that recieves an `ElementValueReference` parameter to set the value of the element. Note: `ElementValueReference` instances can only be retrieved from [proxy](/docs/sdks/mobile/ios/services#proxy) responses. |
+| setValueRef | Binds the provided [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield) instance as a value source for this element, keeping the value of this element in sync with any changes made to the other element. This makes the caller element read-only. Any iOS element type can be provided as an instance into this function. |
