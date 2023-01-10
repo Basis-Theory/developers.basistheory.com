@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.7.1...v1.8.0) (2023-01-10)
+
+
+### Features
+
+* Updates Android SDK docs and adds card brand details ([#27](https://github.com/Basis-Theory/developers.basistheory.com/issues/27)) ([dec6ce7](https://github.com/Basis-Theory/developers.basistheory.com/commit/dec6ce7e547719a7d18d7c22ceaca286d5e3724d))
+
 ## [1.7.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.7.0...v1.7.1) (2023-01-06)
 
 
