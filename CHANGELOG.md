@@ -26,7 +26,6 @@
 
 * Changes all relative links to absolute ([#23](https://github.com/Basis-Theory/developers.basistheory.com/issues/23)) ([a0a4e50](https://github.com/Basis-Theory/developers.basistheory.com/commit/a0a4e5017980370e920cb7fdae70300ec3b3ca51))
 
-
 # [1.7.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.6.0...v1.7.0) (2023-01-06)
 
 
