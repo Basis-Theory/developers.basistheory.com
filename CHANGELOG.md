@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.9.0...v1.9.1) (2023-01-10)
+
+
+### Bug Fixes
+
+* fixes indention and typos on iOS docs ([#28](https://github.com/Basis-Theory/developers.basistheory.com/issues/28)) ([e8284e2](https://github.com/Basis-Theory/developers.basistheory.com/commit/e8284e2d5126efe7775169ed9eef2ca480f42f49))
+
 # [1.9.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.8.0...v1.9.0) (2023-01-10)
 
 
