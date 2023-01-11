@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.10.0...v1.11.0) (2023-01-11)
+
+
+### Features
+
+* documenting sessions ([#31](https://github.com/Basis-Theory/developers.basistheory.com/issues/31)) ([d732633](https://github.com/Basis-Theory/developers.basistheory.com/commit/d7326335095f8a7f1f342ccdaf03b4e6cf5e416a))
+
 # [1.10.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.9.1...v1.10.0) (2023-01-11)
 
 
