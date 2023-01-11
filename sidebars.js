@@ -219,7 +219,7 @@ const sidebars = {
       },
       items: [
         "api/applications/permissions",
-        "api/sessions"
+        "api/applications/sessions"
       ],
     },
     "api/logs",
