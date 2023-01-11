@@ -217,7 +217,10 @@ const sidebars = {
         type: "doc",
         id: "api/applications/applications",
       },
-      items: ["api/applications/permissions"],
+      items: [
+        "api/applications/permissions",
+        "api/sessions"
+      ],
     },
     "api/logs",
     {
@@ -261,7 +264,6 @@ const sidebars = {
         "api/tokens/token-associations",
       ],
     },
-    "api/sessions",
     "api/deprecations",
   ],
   sdk: [
