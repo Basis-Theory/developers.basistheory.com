@@ -217,7 +217,10 @@ const sidebars = {
         type: "doc",
         id: "api/applications/applications",
       },
-      items: ["api/applications/permissions"],
+      items: [
+        "api/applications/permissions",
+        "api/applications/sessions"
+      ],
     },
     "api/logs",
     {

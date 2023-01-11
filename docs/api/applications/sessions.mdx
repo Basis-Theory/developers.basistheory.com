@@ -1,0 +1,233 @@
+---
+title: Sessions
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Sessions
+
+## Create Session
+
+Create a new Session for a Public Application.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/sessions"
+/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/sessions" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -X "POST"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+
+const session = await bt.sessions.createSession();
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Sessions;
+
+var client = new SessionClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var session = await client.CreateAsync();
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import sessions_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    session_client = sessions_api.SessionsApi(api_client)
+
+    session = session_client.create()
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  session, httpResponse, err := apiClient.SessionsApi.Create(contextWithAPIKey).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [CreateSessionResponse](#create-session-response-object) if the session was created. Returns [an error](/docs/api/errors) if there were validation errors, or the session failed to create.
+
+```json showLineNumbers
+{
+  "session_key": "key_sess_9A8skE7MhJi9HnaSGyTDZY",
+  "nonce": "4J7SiRvfADwJ9ZqwviJJs8",
+  "expires_at": "2023-01-09T20:14:55.2130891+00:00"
+}
+```
+
+<Alert>
+  The <code>session_key</code> should not be shared with any other application. It should only be used by the one creating it.
+  The session will not have any access until it is authorized.
+</Alert>
+
+## Authorize Session
+
+Authorize a created session with permissions or access rules.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/sessions/authorize"
+/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/sessions/authorize" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "nonce": "4J7SiRvfADwJ9ZqwviJJs8",
+    "rules": [ "token:create", "token:read" ]
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+
+const authorizedSession = await bt.sessions.authorize({
+  nonce: "4J7SiRvfADwJ9ZqwviJJs8",
+  permissions: ["token:create", "token:read"],
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Sessions;
+
+var client = new SessionClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var authorizedSession = await client.CreateAsync(new AuthorizeSessionRequest {
+  Nonce = "4J7SiRvfADwJ9ZqwviJJs8",
+  Permissions = new List<string> { "token:create", "token:read" }
+});
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import sessions_api
+from basistheory.model.authorize_session_request import AuthorizeSessionRequest
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    session_client = sessions_api.SessionsApi(api_client)
+
+    authorizedSession = session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
+        nonce="4J7SiRvfADwJ9ZqwviJJs8",
+        permissions=[ "token:create", "token:read" ]
+    ))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  authorizeSessionRequest := *basistheory.NewAuthorizeSessionRequest("4J7SiRvfADwJ9ZqwviJJs8")
+  authorizeSessionRequest.SetPermissions([]string{ "token:create", "token:read" })
+
+  authorizedSession, httpResponse, err := apiClient.SessionsApi.Authorize(contextWithAPIKey).AuthorizeSessionRequest(authorizeSessionRequest).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute                          | Required | Type     | Default                   | Description                                                                                                                             |
+| ---------------------------------- | -------- | -------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `nonce`                            | true     | _string_ | `null`                    | A one time unique code to authorize the session                                                                                         |
+| `permissions`                      | false    | _array_  | `[]`                      | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application tied to the session           |
+| `rules`                            | false    | _array_  | `[]`                      | An array of [Access Rules](#access-rules) granted to the application tied to the session                                                |
+| `expires_at`                       | false    | _string_ | `null`                    | ISO8601 compatible DateTime in which the session will be deleted. By default it is 3 minutes from the session creation date             |
+
+Either `permissions` or `rules` is required to be non-empty when authorizing a Session.
+
+### Response
+
+Returns no payload. Returns [an error](/docs/api/errors) if there were validation errors, or the session authorization failed.
+
+## Create Session Response Object
+
+| Attribute                          | Type     | Description                                                                                           |
+| ---------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| `session_key`                      | _string_ | The Session API key which should be used for authenticating against Basis Theory API endpoints        |
+| `nonce`                            | _string_ | A one time unique code to authorize the session                                                       |
+| `expires_at`                       | _date_   | Expiring date of the Session in ISO 8601 format. Defaults to 3 minutes after the creation date        |
