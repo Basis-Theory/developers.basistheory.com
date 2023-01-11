@@ -132,8 +132,7 @@ func main() {
 | `type`                             | true     | _string_ | `null`                    | [Application type](#application-types) of the application                                                                               |
 | `permissions`                      | false    | _array_  | `[]`                      | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application                               |
 | `rules`                            | false    | _array_  | `[]`                      | An array of [Access Rules](#access-rules) granted to the application                                                                    |
-| `expires_at`                       | false    | _string_ | `Current date + 1 minute` | ISO8601 compatible DateTime in which the application will be deleted. Only applies for `Expiring` applications and must be within a day |
-| `can_create_expiring_applications` | false    | _bool_   | `null`                    | Whether this application can provision Expiring applications. Only applies for `Private` applications                                   |
+| `expires_at`                       | false    | _string_ | `null`                    | ISO8601 compatible DateTime in which the application will be deleted                                                                    |
 
 Either `permissions` or `rules` is required to be non-empty when creating an Application.
 
@@ -604,7 +603,6 @@ func main() {
 | `name`                             | true     | _string_ | `null`  | The name of the application. Has a maximum length of `200`                                                          |
 | `permissions`                      | false    | _array_  | `[]`    | A non-empty array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application. |
 | `rules`                            | false    | _array_  | `[]`    | An array of [Access Rules](#access-rules) granted to the application.                                               |
-| `can_create_expiring_applications` | false    | _bool_   | `null`  | Whether this application can provision `Expiring` applications. Only applies for `Private` applications             |
 
 Either `permissions` or `rules` is required to be non-empty when updating an Application.
 
@@ -852,7 +850,6 @@ Returns [an error](/docs/api/errors) if the application failed to delete.
 | `modified_by`                      | _uuid_   | (Optional) The ID of the user or Application that last modified the Application                       |
 | `modified_at`                      | _date_   | (Optional) Last modified date of the Application in ISO 8601 format                                   |
 | `expires_at`                       | _date_   | (Optional) Expiring date of the Application in ISO 8601 format                                        |
-| `can_create_expiring_applications` | _bool_   | (Optional) Whether this application can provision Expiring applications                               |
 
 ### Application Types
 
@@ -861,7 +858,6 @@ Returns [an error](/docs/api/errors) if the application failed to delete.
 | Private    | `private`    | Used for tokenizing, retrieving, and decrypting data within backend services where the `API key` can be secured   |
 | Public     | `public`     | Used for tokenizing data directly within your mobile or browser application                                       |
 | Management | `management` | Used for managing all aspects of your token infrastructure such as [creating an Application](#create-application) |
-| Expiring   | `expiring`   | Used for revealing sensitive data using elements within your mobile or browser application                        |
 
 ### Access Rules
 
@@ -870,7 +866,7 @@ Returns [an error](/docs/api/errors) if the application failed to delete.
 | `description` | _string_ | A description of this Access Rule                                                                                                                                 |
 | `priority`    | _int_    | The priority of the rule, beginning with `1` and higher values having lower precedence                                                                            |
 | `container`   | _string_ | (Optional) The [container](/docs/concepts/what-are-containers) of Tokens this rule is scoped to                                                                   |
-| `conditions`  | _array_  | (Optional) List of [conditions](#applications-access-rules-access-rule-conditions) to be satisfied for the rule to be used. Only apply to `Expiring` applications |
+| `conditions`  | _array_  | (Optional) List of [conditions](#applications-access-rules-access-rule-conditions) to be satisfied for the rule to be used. Only apply to sessions                |
 | `transform`   | _string_ | The [transform](#applications-access-rules-access-rule-transforms) to apply to accessed Tokens                                                                    |
 | `permissions` | _array_  | List of [permissions](#permissions-permission-types) to grant on this Access Rule                                                                                 |
 
@@ -880,8 +876,8 @@ See [Access Rules](/docs/concepts/access-controls#what-are-access-rules) for mor
   <code>container</code> is only required for <code>public</code> and{" "}
   <code>private</code>
   applications, whilst <code>conditions</code> is only required for <code>
-    expiring
-  </code> ones. They are mutually exclusive.
+    sessions
+  </code>. They are mutually exclusive.
 </Alert>
 
 #### Access Rule Transforms

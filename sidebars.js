@@ -261,6 +261,7 @@ const sidebars = {
         "api/tokens/token-associations",
       ],
     },
+    "api/sessions",
     "api/deprecations",
   ],
   sdk: [
