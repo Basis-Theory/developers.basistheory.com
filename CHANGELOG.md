@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.9.1...v1.10.0) (2023-01-11)
+
+
+### Features
+
+* adds createSession service method on iOS ([#30](https://github.com/Basis-Theory/developers.basistheory.com/issues/30)) ([bb575d4](https://github.com/Basis-Theory/developers.basistheory.com/commit/bb575d4954286d890093b2c877cf32a74f7f04ee))
+
 ## [1.9.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.9.0...v1.9.1) (2023-01-10)
 
 
