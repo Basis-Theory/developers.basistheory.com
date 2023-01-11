@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.11.0...v1.12.0) (2023-01-11)
+
+
+### Features
+
+* add metadata and cardMetadata to ios docs ([#32](https://github.com/Basis-Theory/developers.basistheory.com/issues/32)) ([2d94707](https://github.com/Basis-Theory/developers.basistheory.com/commit/2d94707419abb9c90d69d8033e6c6c1fe9070275))
+
 # [1.11.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.10.0...v1.11.0) (2023-01-11)
 
 
