@@ -6,6 +6,21 @@ import { Alert } from "@site/src/components/shared/Alert";
 
 # Services
 
+## Static Fields
+
+You can set your API key globally for `BasisTheoryElements` through the static `apiKey` field.
+
+```swift showLineNumbers
+BasisTheoryElements.apiKey = "<YOUR PUBLIC BT API KEY>"
+```
+
+All [service method](#methods) calls take an optional `apiKey` should you need to override the globally set `apiKey`.
+
+<Alert>
+  The <a href="/docs/sdks/mobile/ios/services#proxy">proxy</a> service call does not use this globally set <code>apiKey</code> since its use case is different from the other
+  services and requires a <a href="#createsession">session API key</a> for requests.
+</Alert>
+
 ## Methods
 
 ### tokenize
@@ -27,13 +42,13 @@ BasisTheoryElements.tokenize(body: body, apiKey: "<YOUR PUBLIC API KEY>")
 ```
 
 <Alert>
-  Note that <code>tokenize</code> requires the use of a public API key during initialization
+  Note that <code>tokenize</code> requires the use of a public API key
   (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>).
   Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
   to create one in the Basis Theory portal.
 </Alert>
 
-The callback provided calls your function with a `data` of type `AnyCodable`, and an `error` of type `Error`.
+The callback provided calls your function with a `data` of type [AnyCodable](https://github.com/Flight-School/AnyCodable#anycodable-1), and an `error` of type [Error](#errors).
 
 ### createToken
 
@@ -50,17 +65,29 @@ BasisTheoryElements.createToken(body: body, apiKey: "<YOUR PUBLIC API KEY>")
 ```
 
 <Alert>
-  Note that <code>createToken</code> requires the use of a public API key during initialization
+  Note that <code>createToken</code> requires the use of a public API key
   (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>).
   Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
   to create one in the Basis Theory portal.
 </Alert>
 
-The callback provided calls your function with a `data` of type `CreateTokenResponse`, and an `error` of type `Error`.
+The callback provided calls your function with a `data` of type [CreateTokenResponse](https://github.com/Basis-Theory/basistheory-swift/blob/master/docs/CreateTokenResponse.md), and an `error` of type [Error](#errors).
+
+### createSession
+
+To retrieve sensitive data on iOS, you'll need to create a `session` and use its `sessionKey` for making requests securely. To accomplish this, simply construct your `createSession` request like this:
+
+```swift showLineNumbers
+BasisTheoryElements.createSession(
+    apiKey: "<YOUR SESSION BT API KEY>"
+) { data, error in ... }
+```
+
+The callback provided calls your function with a `data` of type [CreateSessionResponse](https://github.com/Basis-Theory/basistheory-swift/blob/master/docs/CreateSessionResponse.md), and an `error` of type [Error](#errors).
 
 ### proxy
 
-Proxy provides a simple way to retrieve data back into an element utilizing our [proxy](/docs/api/proxies/invoke-proxy) service. To accomplish this, simply construct your proxy request like this:
+Proxy provides a simple way to retrieve data back into an element utilizing our [proxy](/docs/api/proxies/invoke-proxy) service. To accomplish this, simply construct your `proxy` request like this:
 
 ```swift showLineNumbers
 let proxyHttpRequest = ProxyHttpRequest(method: .post, body: [
@@ -73,30 +100,34 @@ let proxyHttpRequest = ProxyHttpRequest(method: .post, body: [
 ])
 
 BasisTheoryElements.proxy(
-    apiKey: "<YOUR BT API KEY>",
+    apiKey: "<YOUR SESSION BT API KEY>",
     proxyKey: "<YOUR PROXY KEY>",
-    proxyHttpRequest: proxyHttpRequest)
-{ response, data, error in ... }
+    proxyHttpRequest: proxyHttpRequest
+) { response, data, error in ... }
 ```
 
+<Alert>
+  Note that <code>proxy</code> requires the use of a <code>sessionKey</code> (an API key issued via <a href="#createsession">createSession</a>).
+</Alert>
+
 The callback provided calls your function with a:
-* `response` of type `URLResponse`
-* `error` of type `Error`
-* `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a response from a proxy without giving you access to read any sensitive proxy response data, which means you stay compliant. To tokenize a JSON property from a proxy response, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference`. As of now, only numbers, booleans, and strings can be retrieved using this method. Below is an example of how you can use a response from a proxy with our elements.
+* `response` of type [URLResponse](https://developer.apple.com/documentation/foundation/urlresponse)
+* `error` of type [Error](#errors)
+* `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a response from a `proxy` without giving you access to read any sensitive `proxy` response data, which means you stay compliant. To tokenize a JSON property from a `proxy` response, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference` property. As of now, only numbers, booleans, and strings can be retrieved using this method. Below is an example of how you can use a response from a `proxy` with our elements.
 
 ```swift showLineNumbers
 @IBOutlet private weak var myTextElement: TextElementUITextField!
 ...
 
 BasisTheoryElements.proxy(
-    apiKey: "<YOUR BT API KEY>",
+    apiKey: "<YOUR SESSION BT API KEY>",
     proxyKey: "<YOUR PROXY KEY>",
     proxyHttpRequest: proxyHttpRequest)
 { response, data, error in
     myTextElement.setValue(elementValueReference: data.my?.nested?.property?.elementValueReference)
 
     let body: CreateToken = CreateToken(type: "token", data: [
-        "myProxyResponse": textElement,
+        "myNestedProxyResponseProperty": myTextElement,
     ])
     BasisTheoryElements.createToken(body: body, apiKey: "<YOUR PUBLIC API KEY>")
     { data, error in print(data) }
@@ -112,7 +143,7 @@ BasisTheoryElements.proxy(
 | ProxyError.invalidRequest | The [proxy](#proxy) request is malformed. Revise the [proxy](#proxy) request being attempted. |
 | ErrorResponse.error | An instance of [ErrorResponse enum](#errorresponse-enum) gets returned when there's an error from the BasisTheory API. |
 
-### ErrorResponse enum
+### ErrorResponse Enum
 
 | Order | Associated Value Name | Description |
 | --- | --- |--- |
@@ -122,5 +153,5 @@ BasisTheoryElements.proxy(
 | 4 | error | The raw `Error` instance |
 
 <Alert>
-  The <code>ErrorResponse</code> enum can be imported from the BasisTheory Swift SDK through <code>import BasisTheory</code>.
+  The <code>ErrorResponse</code> enum can be imported from the BasisTheory Swift SDK through the <code>BasisTheory</code> package, which is a dependency of the iOS <code>BasisTheoryElements</code> package.
 </Alert>
