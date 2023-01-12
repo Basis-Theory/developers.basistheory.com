@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.12.0...v1.13.0) (2023-01-12)
+
+
+### Features
+
+* fix curl examples with code and detokenization expressions ([#33](https://github.com/Basis-Theory/developers.basistheory.com/issues/33)) ([1aca0e5](https://github.com/Basis-Theory/developers.basistheory.com/commit/1aca0e53b0731e5a3bec387190f56a396c82dde3))
+
 # [1.12.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.11.0...v1.12.0) (2023-01-11)
 
 
