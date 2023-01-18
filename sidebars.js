@@ -304,7 +304,10 @@ const sidebars = {
             type: "doc",
             id: "sdks/web/react/index",
           },
-          items: ["sdks/web/react/components"],
+          items: [
+            "sdks/web/react/components",
+            "sdks/web/react/deprecations",
+          ],
         },
       ],
     },
