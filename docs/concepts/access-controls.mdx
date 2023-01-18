@@ -69,6 +69,12 @@ A short description of the Application describing its intended use, for example 
 
 - **Management**: Used with scripts or the [Basis Theory Terraform Provider](https://registry.terraform.io/providers/Basis-Theory/basistheory) to manage your Tenant's settings and services (Applications, Reactors, Proxy, etc) without logging into our Portal.
 
+<Alert>
+  There are some <a href="#why-use-sessions">inherent risks</a> associated with embedding a public API key within a public-facing frontend application.
+  Take the time to understand these <a href="#why-use-sessions">risks</a> and consider using <a href="#what-are-sessions">sessions</a> within
+  your frontend applications to mitigate these risks.
+</Alert>
+
 ### Access Controls
 
 An Application is granted access to your Tenant's resources in one of two ways: by granting the Application a set of
@@ -163,6 +169,49 @@ This enables engineers to write scripts or to use IaC (Infrastructure as Code) t
 
 ![Applications IaC](/img/concepts/applications_iac.png)
 
+## What are Sessions?
+
+Sessions provide an alternative mechanism to grant temporary elevated access to your public applications.
+
+Generally speaking, sessions are created by and issued to a public application (within your frontend) and authorized by a private application (within your backend).
+Sessions can be authorized to only access specific tokens or containers, and to perform a limited set of operations on those tokens.
+You can learn more about how to create and authorize sessions in the guide [Access Data Using Sessions](/docs/guides/govern/sessions) or
+continue reading below to learn more about when to consider using sessions.
+
+### Why Use Sessions?
+
+Sessions can help you achieve improved security by limiting the access granted to a public application and its API key.
+Since public API keys are used within frontend applications, they can potentially be accessed by untrusted parties
+who inspect or decompile your web or mobile application source code, or by inspecting network traffic in their browser or device. Because of these risks,
+Basis Theory only allows public applications to be granted permission to create or update tokens to support [collecting data](/docs/guides/collect/),
+and never to read or use tokens.
+
+However, even granting access to create or update tokens introduces risk, as unauthorized third parties could
+potentially gain access to your public API key and perform malicious actions:
+
+- Tokens could be created within your tenant by unauthorized third parties, increasing your MAT count and potentially incurring charges
+- If a token ID were exposed or guessed, that token could be updated by an unauthorized actor without your consent
+
+Using sessions within a public application fully mitigates these risks and offers the following benefits over a public API key-only approach:
+
+- **Prevent Anonymous Use**: Since sessions are authorized by a private application in a backend service that you own, you are able to authenticate all requests for a session.
+- **User-Specific Access Controls**: You can apply your own custom authorization logic to limit access to only the tokens that should be accessible by each user.
+- **Ability to Read or Use Tokens**: Sessions can be authorized to perform any token operation, not only creating or updating tokens.
+- **Limited Lifetime**: Sessions are created just-in-time and are intended to be short-lived - by default, sessions expire after 3 minutes.
+
+### Use Cases for Sessions
+
+Sessions enable you to fully mitigate many of the [risks](#why-use-sessions) associated with exposing public API keys, while also enabling use cases
+beyond collecting data within your frontend applications.
+
+Sessions are a good fit for the following use cases:
+
+- Revealing tokens in a front end application in plaintext (see [reveal sensitive data with Elements](/docs/sdks/web/javascript#reveal-sensitive-data))
+- Calling the proxy or reactors from your frontend application
+- Restricting the access granted to public API keys to prevent unauthorized use
+  - Only allow tokens to be created by authenticated users in your system
+  - Only allow tokens to be updated by authenticated and authorized users in your system
+
 ## What are Access Rules?
 
 Access Rules are the building blocks for constructing fine-grained access control policies for an Application.
@@ -204,7 +253,7 @@ then reading tokens in the `/pci/high/` container will return masked data, and r
 ### Conditions
 
 Conditions allow specifying more specific restrictions for the access rule to be matched, such as scoping them to a
-specific token. For example, having a condition with attribute `ID`, operator `EQUALS` and value `<tokenId>`, will
+specific token. For example, having a condition with attribute `id`, operator `equals` and value `<tokenId>`, will
 allow the application to only access the token with the given `<tokenId>` ID.
 
 Conditions are mutually exclusive with Container and are currently only available for Sessions.
