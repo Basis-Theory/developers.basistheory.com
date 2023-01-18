@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.13.0...v1.14.0) (2023-01-18)
+
+
+### Features
+
+* Add guide for creating and authorizing sessions ([#36](https://github.com/Basis-Theory/developers.basistheory.com/issues/36)) ([b634a73](https://github.com/Basis-Theory/developers.basistheory.com/commit/b634a737ee8e0964eee0f129c3557b5022517b55))
+
 # [1.13.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.12.0...v1.13.0) (2023-01-12)
 
 
