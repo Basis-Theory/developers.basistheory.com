@@ -12,6 +12,7 @@ Key concepts in this guide:
 
 - [Applications](/docs/concepts/access-controls#what-are-applications)
 - [Sessions](/docs/concepts/access-controls#what-are-sessions)
+- [Tokens](/docs/concepts/what-are-tokens)
 
 ## Getting Started
 
@@ -23,7 +24,7 @@ To get started, you will need a Basis Theory account.
 
 Next you will need a [Public Application](/docs/api/applications#application-types) that will be used within our frontend web or mobile application.
 We will be granting this Public Application just-in-time access to read a token within our frontend application using [Sessions](/docs/concepts/access-controls#what-are-sessions) -
-so the permissions granted to this Public Application are not important for the purposes of this guide.
+the permissions granted to this Public Application are not important for the purposes of this guide.
 
 If you do not already have a Public Application, [click here](https://portal.basistheory.com/applications/create?name=My%20Public%20Application&type=public&permissions=token%3Acreate) to create one.
 
@@ -37,7 +38,7 @@ Next you will need a [Private Application](/docs/api/applications#application-ty
 be used within our backend service. We will be using this private application to create a token and authorize a session to read this token,
 so ensure that you have granted at least the `token:create` and `token:read` permissions.
 
-If you do not already have a private application with these permissions, [click here](https://portal.basistheory.com/applications/create?name=My%20Private%20Application&type=private&permissions=token%3Acreate&permissions=token%3Aread) to create one.
+If you do not already have a Private Application with these permissions, [click here](https://portal.basistheory.com/applications/create?name=My%20Private%20Application&type=private&permissions=token%3Acreate&permissions=token%3Aread) to create one.
 
 <Alert>
   Save the API Key from the created Private Application as it will be used later in this guide.
@@ -76,9 +77,9 @@ curl "https://api.basistheory.com/tokenize" \
 
 The first step in the session authorization flow begins with [creating a session](/docs/api/applications/sessions#create-session)
 in the frontend application. This endpoint returns a `session_key`, which can later be used within the `BT-API-KEY` header
-to authenticate against the Basis Theory API, and a `nonce`, which is a one-time use code that can be used to authorize this session.
+to authenticate against the Basis Theory API, and a `nonce`, which is a one-time use code that will be used to authorize this session.
 
-The following examples illustrate how to create a session through the Elements SDKs.
+The following examples illustrate how to create a session through the Elements SDKs, but you can also call [the API](/docs/api/applications/sessions#create-session) directly.
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="web" label="Web">
@@ -130,13 +131,13 @@ To do this, we will create a secure server-side endpoint to authorize our sessio
 
 ### Creating a Server-Side Endpoint
 
-For illustrative purposes, we show an example of an HTTP-based API using JSON payloads, written in Node.js + Express
+For illustrative purposes, we show an example of an HTTP-based API with JSON content, written in Node.js + Express
 and using the <a href="/docs/sdks/server-side/node">Node.js SDK</a>, but you are free to implement this step in any
 language and technology of your choice. You could even integrate the [authorize session](/docs/api/applications/sessions#authorize-session)
 operation into another existing API endpoint, if desired.
 
-The key point is that your frontend application will need to provide the one-time use `nonce` to this endpoint
-so that it can be forwarded to the Basis Theory [authorize session](/docs/api/applications/sessions#authorize-session) endpoint
+The key point is that your frontend application will need to provide the one-time use `nonce` to this server-side endpoint
+so that it can be forwarded to the Basis Theory [authorize session](/docs/api/applications/sessions#authorize-session) API
 using the Private API Key [created earlier](#create-a-private-application) to authenticate.
 
 ```javascript showLineNumbers
@@ -155,6 +156,7 @@ app.post('/authorize-session', (request, response) => {
 
   const bt = await new BasisTheory().init('test_priv_1234567890');
 
+  // authorizing a session returns an empty 200 response
   await bt.sessions.authorize({
     nonce: nonce,
     rules: [{
@@ -170,8 +172,9 @@ app.post('/authorize-session', (request, response) => {
     }]
   });
 
+  // this response is arbitrary and not required
   response.json({
-    // your response can go here
+    result: 'success'
   });
 });
 ```
@@ -181,9 +184,9 @@ app.post('/authorize-session', (request, response) => {
   and <code>token_id_1234567890</code> with the id of the token created in the <a href="#create-a-token">Create a Token</a> step.
 </Alert>
 
-### Calling the API
+### Passing the nonce to the Server-Side Endpoint
 
-This step is entirely up to you to implement in your framework of choice based on how you typically interact with your APIs.
+This step is entirely up to you to implement in your frontend framework of choice based on how you typically interact with your APIs.
 
 The following example shows how to call our example `/authorize-session` endpoint within a JavaScript environment using [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
 
@@ -206,10 +209,10 @@ await fetch('/authorize-session', {
 
 ### Notes and Best Practices
 
-- You must implement some server-side method for authorizing sessions in order to access the Private API Key - only Private Applications can authorize sessions
-- Your backend application should use some form of authentication to guarantee that sessions are only authorized for known users in your system
-- Your backend application should apply some form of authorization logic to ensure that sessions are only granted access to tokens that should be accessible to the authenticated user
-- Follow the principle of least privilege. In particular, try to only grant `token:read` or `token:use` access to specific tokens using [conditions](/docs/api/applications#access-rule-conditions), and avoid granting access to entire containers of tokens
+- You must implement some server-side method for authorizing sessions in order to access the Private API Key - only **Private Applications** can authorize sessions.
+- Your server-side endpoint should use some form of authentication to guarantee that sessions are only authorized for known users in your system.
+- Your server-side endpoint should apply some form of authorization logic to ensure that sessions are only granted access to tokens that should be accessible to the authenticated user.
+- Follow the [principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege). In particular, try to only grant `token:read` or `token:use` access to specific tokens using [conditions](/docs/api/applications#access-rule-conditions), and avoid granting access to entire containers of tokens.
 
 ## Read the Token
 
@@ -223,8 +226,9 @@ curl "https://api.basistheory.com/tokens/token_id_1234567890" \
 ```
 
 <Alert>
-  Be sure to replace <code>test_sess_1234567890</code> with the Session Key you received when <a href="#create-a-session">creating a session</a> and
-  <code>token_id_1234567890</code> with the id of the token created in the <a href="#create-a-token">Create a Token</a> step.
+  Be sure to replace <code>test_sess_1234567890</code> with the Session Key you received
+  when <a href="#create-a-session">creating a session</a> and <code>token_id_1234567890</code> with the id
+  of the token created in the <a href="#create-a-token">Create a Token</a> step.
 </Alert>
 
 You should see a JSON response similar to:
@@ -249,14 +253,17 @@ You should see a JSON response similar to:
 Notice that plaintext token data was returned from the API, and if this API call were performed directly in your frontend code,
 it would result in your frontend application being pulled into compliance scope.
 
-To securely display sensitive data within a frontend application while keeping your code out of compliance scope, you can use
+To securely display sensitive data within a frontend application while keeping your code out of compliance scope, you should use
 [Elements](/docs/sdks/web/javascript) to [reveal sensitive data](/docs/sdks/web/javascript/#reveal-sensitive-data) that was retrieved using a session.
 
 [//]: # (todo: Check out our guide to learn more.)
 
 ## Conclusion
 
-You can implement an endpoint to authorize sessions
+:tada: You now know how to implement a session authorization flow within your system to start using sessions within your frontend applications!
+
+Sessions enable you to securely retrieve tokens within your frontend applications to reveal data within [Elements](/docs/sdks/web/javascript),
+or they can be used enhance the security within Public Applications when performing any token operation.
 
 ## Learn More
 
