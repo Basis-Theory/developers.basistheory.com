@@ -97,6 +97,7 @@ const sidebars = {
       items: [
         "guides/govern/control-data-access",
         "guides/govern/audit-data-access",
+        "guides/govern/sessions",
       ],
     },
     {
