@@ -296,12 +296,13 @@ val plaintextTokenData = token.data
 // using the basistheory-swift SDK
 TokensAPI.getByIdWithRequestBuilder(id: tokenId)
     .addHeader(name: "BT-API-KEY", value: sessionKey)
-    .execute() { (response, error) in
-        guard error == nil else {
-            // handle the error
+    .execute { result in
+        do {
+            let plaintextToken = try result.get().body
+        } catch {
+            // do something with `error`
+            print(error)
         }
-
-        let plaintextTokenData = response.data
     }
 ```
 
@@ -316,8 +317,6 @@ TokensAPI.getByIdWithRequestBuilder(id: tokenId)
 If you would like to securely display sensitive data within a frontend application while keeping your code out of compliance scope, you should use
 [Elements](/docs/sdks/web/javascript) to [reveal sensitive data](/docs/sdks/web/javascript/#reveal-sensitive-data) that was retrieved using a session.
 Check out our guide to learn more!
-
-[//]: # (todo: )
 
 ## Conclusion
 
