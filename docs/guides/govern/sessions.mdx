@@ -85,9 +85,8 @@ The following examples illustrate how to create a session through the Elements S
   <TabItem value="web" label="Web">
 
 ```javascript showLineNumbers
-import { BasisTheory } from '@basis-theory/basis-theory-js';
-
-const bt = await new BasisTheory().init('test_pub_1234567890');
+// using the CDN-based version of the basis-theory-js SDK
+const bt = await BasisTheory.init('test_pub_1234567890');
 
 const { sessionKey, nonce } = await bt.sessions.create();
 ```
@@ -148,13 +147,16 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const { BasisTheory } = require('@basis-theory/basis-theory-js');
+let bt;
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-app.post('/authorize-session', (request, response) => {
+app.post('/authorize-session', async (request, response) => {
+  if (!bt) {
+    bt = await new BasisTheory().init('test_priv_1234567890');
+  }
+
   const { nonce } = request.body;
-
-  const bt = await new BasisTheory().init('test_priv_1234567890');
 
   // authorizing a session returns an empty 200 response
   await bt.sessions.authorize({
@@ -191,14 +193,12 @@ This step is entirely up to you to implement in your frontend framework of choic
 The following example shows how to call our example `/authorize-session` endpoint within a JavaScript environment using [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
 
 ```javascript showLineNumbers
-import { BasisTheory } from '@basis-theory/basis-theory-js';
-
-const bt = await new BasisTheory().init('test_pub_1234567890');
+const bt = await BasisTheory.init('test_pub_1234567890');
 
 const { sessionKey, nonce } = await bt.sessions.create();
 
 // note: you would typically also provide some form of authentication on this request to your backend
-await fetch('/authorize-session', {
+await fetch('https://my-api-is-hosted-here.com/authorize-session', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -214,11 +214,13 @@ await fetch('/authorize-session', {
 - Your server-side endpoint should apply some form of authorization logic to ensure that sessions are only granted access to tokens that should be accessible to the authenticated user.
 - Follow the [principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege). In particular, try to only grant `token:read` or `token:use` access to specific tokens using [conditions](/docs/api/applications#access-rule-conditions), and avoid granting access to entire containers of tokens.
 
-## Read the Token
+## Retrieve the Token
 
-Finally, let's retrieve our token from the API using our newly authorized session key.
+Finally, let's retrieve our token using our newly authorized Session Key.
 
-Run the following in your terminal to simulate an API call made by your frontend application:
+### Retrieving the Token from the API
+
+First, let's run the following curl command in your terminal to inspect the raw HTTP response returned from the API:
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/tokens/token_id_1234567890" \
@@ -250,13 +252,72 @@ You should see a JSON response similar to:
 }
 ```
 
-Notice that plaintext token data was returned from the API, and if this API call were performed directly in your frontend code,
-it would result in your frontend application being pulled into compliance scope.
+Notice that plaintext token data is returned from the API since we authorized this session to have the
+`token:read` [permission](/docs/api/applications/permissions#permission-types) and a `reveal` [transform](/docs/concepts/access-controls#transform).
+If we were to make this same request with the original Public API Key instead of the Session Key, the request would have
+failed with a 403 error since the Public Application was not permitted to read tokens.
 
-To securely display sensitive data within a frontend application while keeping your code out of compliance scope, you should use
+### Retrieving the Token in the Frontend
+
+Next, we will illustrate how the frontend application could use the Session Key to natively retrieve the token in plaintext.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="web" label="Web">
+
+```javascript showLineNumbers
+// using the basis-theory-js SDK initialized with elements: false
+const token = await bt.tokens.retrieve(tokenId, {
+    apiKey: sessionKey
+});
+
+const plaintextTokenData = token.data;
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers
+// using the basistheory-java SDK
+val tokensClient = Configuration.getDefaultApiClient().let {
+    (it.getAuthentication("ApiKey") as ApiKeyAuth).also { auth ->
+        auth.apiKey = sessionKey
+    }
+    TokensApi(it)
+}
+
+val token = tokensClient.getById(tokenId)
+val plaintextTokenData = token.data
+```
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers
+// using the basistheory-swift SDK
+TokensAPI.getByIdWithRequestBuilder(id: tokenId)
+    .addHeader(name: "BT-API-KEY", value: sessionKey)
+    .execute() { (response, error) in
+        guard error == nil else {
+            // handle the error
+        }
+
+        let plaintextTokenData = response.data
+    }
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert>
+  The code shown above retrieves the plaintext token data so that it is directly accessible within your frontend code.
+  This will result in your frontend application being pulled into compliance scope!
+</Alert>
+
+If you would like to securely display sensitive data within a frontend application while keeping your code out of compliance scope, you should use
 [Elements](/docs/sdks/web/javascript) to [reveal sensitive data](/docs/sdks/web/javascript/#reveal-sensitive-data) that was retrieved using a session.
+Check out our guide to learn more!
 
-[//]: # (todo: Check out our guide to learn more.)
+[//]: # (todo: )
 
 ## Conclusion
 
