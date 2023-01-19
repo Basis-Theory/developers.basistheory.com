@@ -132,6 +132,7 @@ And inside of our `<form>` tag, add the following code:
 Your card component should now look like this:
 
 ```javascript showLineNumbers
+import { useRef } from 'react';
 import {
   useBasisTheory,
   CardElement
@@ -139,12 +140,13 @@ import {
 
 export const CardForm = () => {
   const { bt } = useBasisTheory();
+  const cardRef = useRef(null);
 
   const submit = async () => {};
 
   return (
     <form onSubmit={submit}>
-      <CardElement id="card" />
+      <CardElement id="card" ref={cardRef} />
 
       <button type="button" onClick={submit} >
         Submit
@@ -171,7 +173,7 @@ const submit = async () => {
   // Tokenize card with Basis Theory
   const token = await bt.tokenize({
     type: 'card',
-    data: bt.getElement('card'),
+    data: cardRef.current,
   });
 
   // Submit card token to our Next.js app's API

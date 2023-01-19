@@ -109,6 +109,7 @@ Returns a [Tenants](#tenant-object) for the provided `BT-API-KEY`. Returns [an e
   "owner_id": "97cec6e8-a143-4fb4-9ab0-cf7e49242d21",
   "name": "My Tenant",
   "settings": {
+    "fingerprint_tokens": "false",
     "deduplicate_tokens": "false"
   },
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -144,6 +145,7 @@ curl "https://api.basistheory.com/tenants/self" \
   -d '{
     "name": "My Example Tenant",
     "settings": {
+      "fingerprint_tokens": "true",
       "deduplicate_tokens": "true"
     }
   }'
@@ -160,6 +162,7 @@ const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 const tenant = await bt.tenants.update({
   name: "My Example Tenant",
   settings: {
+    fingerprint_tokens: "true",
     deduplicate_tokens: "true",
   },
 });
@@ -176,7 +179,8 @@ var client = new TenantClient("key_N88mVGsp3sCXkykyN2EFED");
 var tenant = await client.UpdateAsync(new Tenant {
   Name = "My Example Tenant"
   Settings = new Dictionary<string, string> {
-    { "deduplicate_tokens",  "true" }
+    { "fingerprint_tokens", "true" },
+    { "deduplicate_tokens",  "true" },
   },
 });
 ```
@@ -217,6 +221,7 @@ func main() {
 
   updateTenantRequest := *basistheory.NewUpdateTenantRequest("My Example Tenant")
   updateTenantRequest.SetSettings(map[string]string{
+    "fingerprint_tokens": "true",
     "deduplicate_tokens": "true",
   })
 
@@ -244,6 +249,7 @@ Returns a [tenant](#tenant-object) if the Tenant was updated. Returns [an error]
   "owner_id": "97cec6e8-a143-4fb4-9ab0-cf7e49242d21",
   "name": "My Example Tenant",
   "settings": {
+    "fingerprint_tokens": "true",
     "deduplicate_tokens": "true"
   },
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -466,9 +472,10 @@ Returns a [Tenant Usage Report](#tenant-usage-report-object) for the provided `B
 
 ### Tenant Settings Object
 
-| Attribute            | Type     | Description                                                    |
-| -------------------- | -------- | -------------------------------------------------------------- |
-| `deduplicate_tokens` | _string_ | (Bool) Whether tokens are deduplicated on creation and updates |
+| Attribute            | Type     | Description                                                                                                                                        |
+| -------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fingerprint_tokens` | _string_ | (Bool) Whether the [default fingerprint expression](/docs/api/tokens/token-types) is applied if no fingerprint expression is provided on the token |
+| `deduplicate_tokens` | _string_ | (Bool) Whether tokens are deduplicated on creation and updates                                                                                     |
 
 ## Tenant Usage Report Object
 
