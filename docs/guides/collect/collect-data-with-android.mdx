@@ -4,7 +4,7 @@ import AndroidResultImage from "@site/static/img/android/android_collect_guide_r
 
 # Collect Data with Android
 
-This guide will show you how to collect data in an Android application without touching the data. We will collect card numbers.
+This guide will show you how to collect data in an Android application without touching the data. In this example, we will be collecting credit card numbers.
 
 Key concepts in this guide:
 
@@ -32,7 +32,7 @@ Next you will need a [Public Application](/docs/api/applications#application-typ
   in this guide to initialize the form.
 </Alert>
 
-## Setup the Project
+## Set Up the Project
 
 We will create a new Android application through Android Studio. If you don't have Android Studio, download it [here](https://developer.android.com/studio).
 
@@ -44,8 +44,8 @@ This will launch Android Studio with the newly created project. Wait a bit for i
 
 ## Install the Android Elements SDK
 
-We will need to install Basis Theory's [Android Elements SDK](/docs/sdks/mobile/android), which will render a secure
-[EditText](https://developer.android.com/reference/android/widget/EditText) View for capturing the data.
+We will need to install Basis Theory's [Android Elements SDK](/docs/sdks/mobile/android), which will be used to render a View
+for securely capturing the data.
 
 In the settings.gradle file add this repository:
 
@@ -65,7 +65,7 @@ Then in the build.gradle add this dependency specifying the correct version:
 
 ## Add Your Form Elements
 
-Now we need to add [CardNumberElement](/docs/sdks/mobile/android/types#cardnumberelement) component to our application.
+Now we need to add the [CardNumberElement](/docs/sdks/mobile/android/types#cardnumberelement) component to our application.
 
 To do so, open the `res/layout/activity_main.xml` file and add the following code:
 
@@ -155,9 +155,9 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-## Tokenize the card number
+## Tokenize the Card Number
 
-We want to be able to tokenize the value within `CardNumberElement` without exposing it to our Android application.
+We want to be able to tokenize the value within the `CardNumberElement` without exposing it to our Android application.
 
 Just like we did with the card number element, let's declare and initialize a variable to reference the button we added to our layout in the <a href="#add-your-form-elements">Add Your Form Elements</a> step.
 
@@ -228,14 +228,14 @@ class MainActivity : AppCompatActivity() {
 
     // highlight-start
     private fun tokenize() {
-        runBlocking {
-            val tokenizeResponse = bt.tokenize(object {
+        val tokenizeResponse = runBlocking {
+            bt.tokenize(object {
                 val type = "card_number"
                 val data = cardNumberElement
             })
-
-            println(tokenizeResponse)
         }
+
+        println(tokenizeResponse)
     }
     // highlight-end
 }
