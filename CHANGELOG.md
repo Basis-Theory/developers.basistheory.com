@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.15.1...v1.16.0) (2023-01-19)
+
+
+### Features
+
+* add fingerprint default changes, update card blueprint example to use refs, and add react deprecations page ([#38](https://github.com/Basis-Theory/developers.basistheory.com/issues/38)) ([84d23cf](https://github.com/Basis-Theory/developers.basistheory.com/commit/84d23cffa290748fe819e824e107eeaa429d2c5f))
+
 ## [1.15.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.15.0...v1.15.1) (2023-01-19)
 
 
