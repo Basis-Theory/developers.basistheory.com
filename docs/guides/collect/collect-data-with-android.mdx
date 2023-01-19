@@ -1,0 +1,267 @@
+import { Alert } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+import AndroidResultImage from "@site/static/img/android/android_collect_guide_result.png"
+
+# Collect Data with Android
+
+This guide will show you how to collect data in an Android application without touching the data. In this example, we will be collecting credit card numbers.
+
+Key concepts in this guide:
+
+- [Tokens](/docs/concepts/what-are-tokens)
+- [Applications](/docs/api/applications)
+- [Android Elements](/docs/sdks/mobile/android)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+Next you will need a [Public Application](/docs/api/applications#application-types) in order to use [Android Elements](/docs/sdks/mobile/android) for your application.
+
+[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20Android%20Guide) to create a Public Application or
+[login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Collect Data from Android Guide
+- Application Type - Public
+- Permissions - `token:create`
+
+<Alert>
+  Save the API Key from the created Public Application as it will be used later
+  in this guide to initialize the form.
+</Alert>
+
+## Set Up the Project
+
+We will create a new Android application through Android Studio. If you don't have Android Studio, download it [here](https://developer.android.com/studio).
+
+1. Launch Android Studio, then click `New Project`. On the `Phone and Tablet` tab select `Empty Activity` and click `Next`.
+
+2. For the `Name` enter "Android Collect Guide", and for the `Package name` use your organization's name. Leave the remaining settings as is and click `Finish`.
+
+This will launch Android Studio with the newly created project. Wait a bit for it to set up and Gradle sync to finish.
+
+## Install the Android Elements SDK
+
+We will need to install Basis Theory's [Android Elements SDK](/docs/sdks/mobile/android), which will be used to render a View
+for securely capturing the data.
+
+In the settings.gradle file add this repository:
+
+```groovy
+  repositories {
+      maven { url 'https://jitpack.io' }
+  }
+```
+
+Then in the build.gradle add this dependency specifying the correct version:
+
+```groovy
+  dependencies {
+      implementation 'com.github.basis-theory:basistheory-android:<version>'
+  }
+```
+
+## Add Your Form Elements
+
+Now we need to add the [CardNumberElement](/docs/sdks/mobile/android/types#cardnumberelement) component to our application.
+
+To do so, open the `res/layout/activity_main.xml` file and add the following code:
+
+```xml showLineNumbers
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    // highlight-start
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.basistheory.android.view.CardNumberElement
+            android:id="@+id/card_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/tokenize_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#00A4BA"
+            android:text="Tokenize" />
+    </LinearLayout>
+    // highlight-end
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+This adds a `LinearLayout` which contains the card number element and a button used to tokenize the card number.
+
+## Style Your Form Elements
+
+Now it's time to style our new `CardNumberElement`. We'll be styling our element programmatically, but feel free to style it through the activity's XML or the GUI on Android Studio.
+
+Open your main activity class file which should be called `MainActivity.kt`. Now we need to declare and initialize a variable to reference the card number element we defined on the layout.
+
+```kotlin showLineNumbers
+class MainActivity : AppCompatActivity() {
+
+    // highlight-start
+    private lateinit var cardNumberElement: CardNumberElement
+    // highlight-end
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // highlight-start
+        cardNumberElement = findViewById(R.id.card_number)
+        // highlight-end
+    }
+}
+```
+
+With the card number element reference declared, we can now style it with the following code:
+
+```kotlin showLineNumbers
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var cardNumberElement: CardNumberElement
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        cardNumberElement = findViewById(R.id.card_number)
+
+        // highlight-start
+        cardNumberElement.setPadding(5, 5, 5, 5)
+        cardNumberElement.hint = "Placeholder"
+        cardNumberElement.textColor = Color.WHITE
+        cardNumberElement.background = Color.LTGRAY.toDrawable()
+        // highlight-end
+    }
+}
+```
+
+## Tokenize the Card Number
+
+We want to be able to tokenize the value within the `CardNumberElement` without exposing it to our Android application.
+
+Just like we did with the card number element, let's declare and initialize a variable to reference the button we added to our layout in the <a href="#add-your-form-elements">Add Your Form Elements</a> step.
+
+```kotlin showLineNumbers
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var cardNumberElement: CardNumberElement
+    // highlight-start
+    private lateinit var button: Button
+    // highlight-end
+
+    private val bt = BasisTheoryElements.builder()
+        .apiKey("key_2GCwkhf6ZkJDtoUZmeXWWk")
+        .build()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        cardNumberElement = findViewById(R.id.card_number)
+        // highlight-start
+        button = findViewById(R.id.tokenize_button)
+        // highlight-end
+
+        cardNumberElement.setPadding(5, 5, 5, 5)
+        cardNumberElement.hint = "Placeholder"
+        cardNumberElement.textColor = Color.WHITE
+        cardNumberElement.background = Color.LTGRAY.toDrawable()
+    }
+}
+```
+
+Now let's add a listener to tokenize the value once the button is clicked.
+
+We first need an instance of [BasisTheoryElements](/docs/sdks/mobile/android/services#basistheoryelements) to be able to interact with the Basis Theory API. Then we can call the
+`tokenize` function on this service to tokenize the card number as shown below:
+
+```kotlin showLineNumbers
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var cardNumberElement: CardNumberElement
+    private lateinit var button: Button
+
+    // highlight-start
+    private val bt = BasisTheoryElements.builder()
+        .apiKey("test_1234567890")
+        .build()
+    // highlight-end
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        cardNumberElement = findViewById(R.id.card_number)
+        button = findViewById(R.id.tokenize_button)
+
+        cardNumberElement.setPadding(5, 5, 5, 5)
+        cardNumberElement.hint = "Placeholder"
+        cardNumberElement.textColor = Color.WHITE
+        cardNumberElement.background = Color.LTGRAY.toDrawable()
+
+        // highlight-start
+        button.setOnClickListener {
+            tokenize()
+        }
+       // highlight-end
+    }
+
+    // highlight-start
+    private fun tokenize() {
+        val tokenizeResponse = runBlocking {
+            bt.tokenize(object {
+                val type = "card_number"
+                val data = cardNumberElement
+            })
+        }
+
+        println(tokenizeResponse)
+    }
+    // highlight-end
+}
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Public API Key you
+  created in the <a href="#getting-started">Getting Started</a> step.
+</Alert>
+
+🎉 The code above is the last bit that we need to tokenize! Now let's run the application by clicking on the play button on the top right. The screen should look something like this:
+
+<img src={AndroidResultImage} alt="Android Screenshot" style={{width: 300}} />
+
+## Conclusion
+
+You can now capture any data without your Android application accessing the underlying value, drastically reducing compliance and regulatory scope.
+
+Try typing in a card number in the [CardNumberElement](/docs/sdks/mobile/android/types#cardnumberelement) and tap on `Tokenize`. Basis Theory's Android SDK will pass the value for the element reference. This will
+be securely submitted directly to the [Tokenize Endpoint](/docs/api/tokens#tokenize). The resulting [token](/docs/concepts/what-are-tokens) is printed to the Android Studio console.
+
+## Learn More
+
+A full example Android application is included within the [example](https://github.com/Basis-Theory/basistheory-android/tree/master/example)
+module within the GitHub repository or explore all the supported [Element Types](/docs/sdks/mobile/android/types).
+
+- [Send Data to a 3rd Party](/docs/guides/share/send-data-to-third-party)
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [Access Controls](/docs/concepts/access-controls)
