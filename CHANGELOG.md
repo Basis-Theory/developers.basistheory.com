@@ -1,3 +1,10 @@
+## [1.15.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.15.0...v1.15.1) (2023-01-19)
+
+
+### Bug Fixes
+
+* Updates image on android collect guide ([#39](https://github.com/Basis-Theory/developers.basistheory.com/issues/39)) ([6339b34](https://github.com/Basis-Theory/developers.basistheory.com/commit/6339b34b31478b3d50decc09e5659f1d23565cbe))
+
 # [1.15.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.14.0...v1.15.0) (2023-01-19)
 
 
