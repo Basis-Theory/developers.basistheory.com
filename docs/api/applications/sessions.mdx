@@ -42,7 +42,7 @@ import { BasisTheory } from "@basis-theory/basis-theory-js";
 
 const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
-const session = await bt.sessions.createSession();
+const session = await bt.sessions.create();
 ```
 
   </TabItem>
@@ -213,9 +213,9 @@ func main() {
 
 | Attribute                          | Required | Type     | Default                   | Description                                                                                                                             |
 | ---------------------------------- | -------- | -------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `nonce`                            | true     | _string_ | `null`                    | A one time unique code to authorize the session                                                                                         |
+| `nonce`                            | true     | _string_ | `null`                    | A one-time use code to authorize the session                                                                                            |
 | `permissions`                      | false    | _array_  | `[]`                      | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application tied to the session           |
-| `rules`                            | false    | _array_  | `[]`                      | An array of [Access Rules](#access-rules) granted to the application tied to the session                                                |
+| `rules`                            | false    | _array_  | `[]`                      | An array of [Access Rules](/docs/api/applications#access-rules) granted to the application tied to the session                          |
 | `expires_at`                       | false    | _string_ | `null`                    | ISO8601 compatible DateTime in which the session will be deleted. By default it is 3 minutes from the session creation date             |
 
 Either `permissions` or `rules` is required to be non-empty when authorizing a Session.
@@ -229,5 +229,5 @@ Returns no payload. Returns [an error](/docs/api/errors) if there were validatio
 | Attribute                          | Type     | Description                                                                                           |
 | ---------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
 | `session_key`                      | _string_ | The Session API key which should be used for authenticating against Basis Theory API endpoints        |
-| `nonce`                            | _string_ | A one time unique code to authorize the session                                                       |
+| `nonce`                            | _string_ | A one-time use code to authorize the session                                                          |
 | `expires_at`                       | _date_   | Expiring date of the Session in ISO 8601 format. Defaults to 3 minutes after the creation date        |
