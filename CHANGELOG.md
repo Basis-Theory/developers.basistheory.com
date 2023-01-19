@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.14.0...v1.15.0) (2023-01-19)
+
+
+### Features
+
+* adding android collect guide ([#35](https://github.com/Basis-Theory/developers.basistheory.com/issues/35)) ([03c40c2](https://github.com/Basis-Theory/developers.basistheory.com/commit/03c40c2bb6a6d5fe9560418b8326e24bea888070))
+
 # [1.14.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.13.0...v1.14.0) (2023-01-18)
 
 
