@@ -97,7 +97,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["csharp", "hcl", "kotlin", "swift"],
+        additionalLanguages: ["csharp", "hcl", "kotlin", "swift", "java"],
       },
       colorMode: {
         defaultMode: "dark",
