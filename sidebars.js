@@ -40,6 +40,7 @@ const sidebars = {
       items: [
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-with-react",
+        "guides/collect/collect-data-with-android",
         "guides/collect/collect-data-with-ios",
         "guides/collect/collect-inbound-data-to-api",
         "guides/collect/customize-web-form",
@@ -97,6 +98,7 @@ const sidebars = {
       items: [
         "guides/govern/control-data-access",
         "guides/govern/audit-data-access",
+        "guides/govern/sessions",
       ],
     },
     {
@@ -217,7 +219,10 @@ const sidebars = {
         type: "doc",
         id: "api/applications/applications",
       },
-      items: ["api/applications/permissions"],
+      items: [
+        "api/applications/permissions",
+        "api/applications/sessions"
+      ],
     },
     "api/logs",
     {
@@ -301,7 +306,10 @@ const sidebars = {
             type: "doc",
             id: "sdks/web/react/index",
           },
-          items: ["sdks/web/react/components"],
+          items: [
+            "sdks/web/react/components",
+            "sdks/web/react/deprecations",
+          ],
         },
       ],
     },

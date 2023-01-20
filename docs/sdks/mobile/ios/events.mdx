@@ -38,7 +38,7 @@ The following are the available element event detail types and their description
 
 | Type | Description |
 | --- |--- |
-| cardBrand | `CardNumberUITextField` elements emit this event when a card number can be identified. |
+| cardBrand | `CardNumberUITextField` elements emit a [card brand](/docs/sdks/mobile/ios/types#card-brands) name when a card number can be identified. |
 | cardLast4 | `CardNumberUITextField` elements emit the last 4 digits of a card number when the input is considered `complete`. |
 | cardBin | `CardNumberUITextField` elements emit the first 6 digits of a card number when the input is considered `complete`. |
 
@@ -56,3 +56,25 @@ myTextField.subject.sink { completion in
     ...
 }.store(in: &cancellables)
 ```
+
+## Using Metadata for Event Values
+
+Instead of subscribing to events, the same properties can be accessed at any time from the `metadata` property on all elements.
+
+Additionally, the card related event [details](#elementeventdetail-types) can be accessed from the `cardMetadata` property only on [`CardNumberUITextField`](/docs/sdks/mobile/ios/types#cardnumberuitextfield).
+
+The following are the available properties accessible from `metadata`.
+
+| Property      | Type   | Description                                                                                                |
+| ------------- |--------|------------------------------------------------------------------------------------------------------------|
+| complete      | _Bool_ | Whether the input `valid` and `maskSatisfied` properties are `true`.                                       |
+| valid         | _Bool_ | Whether the input is `valid` according to `validation` for each element.                                   |
+| maskSatisfied | _Bool_ | Whether the input satisfies the `mask` length requirements.                                                |
+
+The following are the available properties accessible from `cardMetadata`.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| cardBrand | _String_ | [Card brand](/docs/sdks/mobile/ios/types#card-brands) name when a card number can be identified. |
+| cardLast4 | _String_ | Last 4 digits of a card number when the input is considered `complete`. |
+| cardBin   | _String_ | First 6 digits of a card number when the input is considered `complete`. |

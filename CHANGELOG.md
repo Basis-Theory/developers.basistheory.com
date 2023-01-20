@@ -1,3 +1,59 @@
+# [1.16.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.15.1...v1.16.0) (2023-01-19)
+
+
+### Features
+
+* add fingerprint default changes, update card blueprint example to use refs, and add react deprecations page ([#38](https://github.com/Basis-Theory/developers.basistheory.com/issues/38)) ([84d23cf](https://github.com/Basis-Theory/developers.basistheory.com/commit/84d23cffa290748fe819e824e107eeaa429d2c5f))
+
+## [1.15.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.15.0...v1.15.1) (2023-01-19)
+
+
+### Bug Fixes
+
+* Updates image on android collect guide ([#39](https://github.com/Basis-Theory/developers.basistheory.com/issues/39)) ([6339b34](https://github.com/Basis-Theory/developers.basistheory.com/commit/6339b34b31478b3d50decc09e5659f1d23565cbe))
+
+# [1.15.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.14.0...v1.15.0) (2023-01-19)
+
+
+### Features
+
+* adding android collect guide ([#35](https://github.com/Basis-Theory/developers.basistheory.com/issues/35)) ([03c40c2](https://github.com/Basis-Theory/developers.basistheory.com/commit/03c40c2bb6a6d5fe9560418b8326e24bea888070))
+
+# [1.14.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.13.0...v1.14.0) (2023-01-18)
+
+
+### Features
+
+* Add guide for creating and authorizing sessions ([#36](https://github.com/Basis-Theory/developers.basistheory.com/issues/36)) ([b634a73](https://github.com/Basis-Theory/developers.basistheory.com/commit/b634a737ee8e0964eee0f129c3557b5022517b55))
+
+# [1.13.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.12.0...v1.13.0) (2023-01-12)
+
+
+### Features
+
+* fix curl examples with code and detokenization expressions ([#33](https://github.com/Basis-Theory/developers.basistheory.com/issues/33)) ([1aca0e5](https://github.com/Basis-Theory/developers.basistheory.com/commit/1aca0e53b0731e5a3bec387190f56a396c82dde3))
+
+# [1.12.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.11.0...v1.12.0) (2023-01-11)
+
+
+### Features
+
+* add metadata and cardMetadata to ios docs ([#32](https://github.com/Basis-Theory/developers.basistheory.com/issues/32)) ([2d94707](https://github.com/Basis-Theory/developers.basistheory.com/commit/2d94707419abb9c90d69d8033e6c6c1fe9070275))
+
+# [1.11.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.10.0...v1.11.0) (2023-01-11)
+
+
+### Features
+
+* documenting sessions ([#31](https://github.com/Basis-Theory/developers.basistheory.com/issues/31)) ([d732633](https://github.com/Basis-Theory/developers.basistheory.com/commit/d7326335095f8a7f1f342ccdaf03b4e6cf5e416a))
+
+# [1.10.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.9.1...v1.10.0) (2023-01-11)
+
+
+### Features
+
+* adds createSession service method on iOS ([#30](https://github.com/Basis-Theory/developers.basistheory.com/issues/30)) ([bb575d4](https://github.com/Basis-Theory/developers.basistheory.com/commit/bb575d4954286d890093b2c877cf32a74f7f04ee))
+
 ## [1.9.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.9.0...v1.9.1) (2023-01-10)
 
 

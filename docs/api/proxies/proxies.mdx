@@ -36,6 +36,15 @@ Creates a new Proxy for the Tenant.
   <TabItem value="shell" label="cURL">
 
 ```shell showLineNumbers
+transform='module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
+
+  return {
+    headers: req.args.headers,
+    body: req.args.body
+  };
+};'
+
 curl "https://api.basistheory.com/proxies" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
   -H "Content-Type: application/json" \
@@ -44,28 +53,10 @@ curl "https://api.basistheory.com/proxies" \
     "name": "My Proxy",
     "destination_url": "https://example.com/api",
     "request_transform": {
-      "code": "
-        module.exports = async function (req) {
-          // Do something with `req.configuration.SERVICE_API_KEY`
-
-          return {
-            headers: req.args.headers,
-            body: req.args.body
-          };
-        };
-      "
+      "code": '"$(echo $transform | jq -Rsa .)"',
     },
     "response_transform": {
-      "code": "
-        module.exports = async function (req) {
-          // Do something with `req.configuration.SERVICE_API_KEY`
-
-          return {
-            headers: req.args.headers,
-            body: req.args.body
-          };
-        };
-      "
+      "code": '"$(echo $transform | jq -Rsa .)"',
     },
     "configuration": {
       "SERVICE_API_KEY": "key_abcd1234"
@@ -91,7 +82,7 @@ const proxy = await bt.proxies.create({
   requestTransform: {
     code: '
       module.exports = async function (req) {
-        // Do something with `req.configuration.SERVICE_API_KEY`
+        // Do something with req.configuration.SERVICE_API_KEY
 
         return {
           headers: req.args.headers,
@@ -103,7 +94,7 @@ const proxy = await bt.proxies.create({
   responseTransform: {
     code: '
       module.exports = async function (req) {
-        // Do something with `req.configuration.SERVICE_API_KEY`
+        // Do something with req.configuration.SERVICE_API_KEY
 
         return {
           headers: req.args.headers,
@@ -136,7 +127,7 @@ var proxy = await client.CreateAsync(new ProxyCreateRequest {
   RequestTransform = new RequestTransform {
     Code = @"
       module.exports = async function (req) {
-        // Do something with `req.configuration.SERVICE_API_KEY`
+        // Do something with req.configuration.SERVICE_API_KEY
 
         return {
           headers: req.args.headers,
@@ -148,7 +139,7 @@ var proxy = await client.CreateAsync(new ProxyCreateRequest {
   ResponseTransform = new RequestTransform {
     Code = @"
       module.exports = async function (req) {
-        // Do something with `req.configuration.SERVICE_API_KEY`
+        // Do something with req.configuration.SERVICE_API_KEY
 
         return {
           headers: req.args.headers,
@@ -233,7 +224,7 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
         requeset_transform=ProxyTransform(
             code=" \
                 module.exports = async function (req) { \
-                  // Do something with `req.configuration.SERVICE_API_KEY` \
+                  // Do something with req.configuration.SERVICE_API_KEY \
 
                   return { \
                     headers: req.args.headers, \
@@ -729,6 +720,15 @@ Update a Proxy by ID in the Tenant.
   <TabItem value="shell" label="cURL">
 
 ```shell showLineNumbers
+transform='module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
+
+  return {
+    headers: req.args.headers,
+    body: req.args.body
+  };
+};'
+
 curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
   -H "Content-Type: application/json" \
@@ -737,28 +737,10 @@ curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" 
     "name": "My Proxy",
     "destination_url": "https://example.com/api",
     "request_transform": {
-      "code": "
-        module.exports = async function (req) {
-          // Do something with `req.configuration.SERVICE_API_KEY`
-
-          return {
-            headers: req.args.headers,
-            body: req.args.body
-          };
-        };
-      "
+      "code": '"$(echo $transform | jq -Rsa .)"',
     },
     "response_transform": {
-      "code": "
-        module.exports = async function (req) {
-          // Do something with `req.configuration.SERVICE_API_KEY`
-
-          return {
-            headers: req.args.headers,
-            body: req.args.body
-          };
-        };
-      "
+      "code": '"$(echo $transform | jq -Rsa .)"',
     },
     "configuration": {
       "SERVICE_API_KEY": "key_abcd1234"
@@ -784,7 +766,7 @@ const proxy = await bt.proxies.update('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
   requestTransform: {
     code: '
       module.exports = async function (req) {
-        // Do something with `req.configuration.SERVICE_API_KEY`
+        // Do something with req.configuration.SERVICE_API_KEY
 
         return {
           headers: req.args.headers,
@@ -796,7 +778,7 @@ const proxy = await bt.proxies.update('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
   responseTransform: {
     code: '
       module.exports = async function (req) {
-        // Do something with `req.configuration.SERVICE_API_KEY`
+        // Do something with req.configuration.SERVICE_API_KEY
 
         return {
           headers: req.args.headers,
@@ -830,7 +812,7 @@ var proxy = await client.UpdateAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
     RequestTransform = new RequestTransform {
       Code = @"
         module.exports = async function (req) {
-          // Do something with `req.configuration.SERVICE_API_KEY`
+          // Do something with req.configuration.SERVICE_API_KEY
 
           return {
             headers: req.args.headers,
@@ -842,7 +824,7 @@ var proxy = await client.UpdateAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
     ResponseTransform = new RequestTransform {
       Code = @"
         module.exports = async function (req) {
-          // Do something with `req.configuration.SERVICE_API_KEY`
+          // Do something with req.configuration.SERVICE_API_KEY
 
           return {
             headers: req.args.headers,
@@ -928,7 +910,7 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
         requeset_transform=ProxyTransform(
             code=" \
                 module.exports = async function (req) { \
-                  // Do something with `req.configuration.SERVICE_API_KEY` \
+                  // Do something with req.configuration.SERVICE_API_KEY \
 
                   return { \
                     headers: req.args.headers, \
@@ -939,7 +921,7 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_
         response_transform=ProxyTransform(
             code=" \
                 module.exports = async function (req) { \
-                  // Do something with `req.configuration.SERVICE_API_KEY` \
+                  // Do something with req.configuration.SERVICE_API_KEY \
 
                   return { \
                     headers: req.args.headers, \

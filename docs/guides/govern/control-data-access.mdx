@@ -1,4 +1,4 @@
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Alert } from "@site/src/components/shared/Alert";
 import { AuthButtons } from "@site/src/components/docs/AuthButtons";
 
 # Control Data Access
@@ -9,7 +9,7 @@ Key concepts in this guide:
 
 - [Applications](/docs/api/applications)
 - [Access Controls](/docs/concepts/access-controls)
-- [Token Containers?](/docs/concepts/what-are-containers)
+- [Token Containers](/docs/concepts/what-are-containers)
 
 ## Getting Started
 
@@ -37,44 +37,42 @@ curl "https://api.basistheory.com/applications" \
   -d '{
     "name": "Control Access Private App",
     "type": "private",
-    "rules": [
-        {
-            "container": "/",
-            "description": "Create Tokens",
-            "permissions": [
-                "token:create"
-            ],
-            "priority": 1,
-            "transform": "mask"
-        },
-        {
-            "container": "/users/government/",
-            "description": "Read Redacted Users",
-            "permissions": [
-                "token:read"
-            ],
-            "priority": 2,
-            "transform": "redact"
-        },
-        {
-            "container": "/users/employees/",
-            "description": "Read Revealed Users",
-            "permissions": [
-                "token:read"
-            ],
-            "priority": 3,
-            "transform": "reveal"
-        },
-        {
-            "container": "/users/",
-            "description": "Read Masked Users",
-            "permissions": [
-                "token:read"
-            ],
-            "priority": 4,
-            "transform": "mask"
-        }
-    ]
+    "rules": [{
+      "container": "/",
+      "description": "Create Tokens",
+      "permissions": [
+        "token:create"
+      ],
+      "priority": 1,
+      "transform": "mask"
+    },
+    {
+      "container": "/users/government/",
+      "description": "Read Redacted Users",
+      "permissions": [
+        "token:read"
+      ],
+      "priority": 2,
+      "transform": "redact"
+    },
+    {
+      "container": "/users/employees/",
+      "description": "Read Revealed Users",
+      "permissions": [
+        "token:read"
+      ],
+      "priority": 3,
+      "transform": "reveal"
+    },
+    {
+      "container": "/users/",
+      "description": "Read Masked Users",
+      "permissions": [
+        "token:read"
+      ],
+      "priority": 4,
+      "transform": "mask"
+    }]
   }'
 ```
 
