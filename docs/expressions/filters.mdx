@@ -10,11 +10,11 @@ but you wish to only use a single piece of that data within a Proxy or Reactor r
 or you may wish to reformat the data before indexing it for search (e.g. use only the last name, but normalize by uppercasing it).
 
 To allow you complete flexibility, transformation functions called **filters** can be applied within any expression.
-Generally, a variable's value can be transformed by specifying a filter after the `|` symbol:  
+Generally, a variable's value can be transformed by specifying a filter after the `|` symbol:
 `{{ <variable> | <filter> }}`
 
 You can effectively think of this as "piping" a variable into the filter in the same way you may be familiar with the "pipe" operator from Unix-like systems.
-Multiple filters can be chained together by "piping" the result of each filter into the next, applying in order from left to right:  
+Multiple filters can be chained together by "piping" the result of each filter into the next, applying in order from left to right:
 `{{ <variable> | <filter1> | <filter2> | ... }}`
 
 All standard [Liquid filters](https://shopify.github.io/liquid/filters/) are supported within expressions.
@@ -162,6 +162,7 @@ Given a token with the data:
 | --------------------------------------------------------------------- | ------------------------------------ |
 | <code>{{ data.bicycle.color }}</code>                                 | `"red"`                              |
 | <code>{{ data &#124; json: '$.bicycle.color' }}</code>                | `"red"`                              |
+| <code>{{ data &#124; json: '$.bicycle.price' }}</code>                | `"19.95"`                            |
 | <code>{{ data.bicycle }}</code>                                       | `{ "color": "red", "price": 19.95 }` |
 | <code>{{ data &#124; json: '$.books[0].author' }}</code>              | `"Herman Melville"`                  |
 | <code>{{ data &#124; json: '$.books[?(@.price < 10)].title' }}</code> | `"Moby Dick"`                        |
