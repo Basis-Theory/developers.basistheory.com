@@ -1,3 +1,17 @@
+# [1.18.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.17.0...v1.18.0) (2023-01-20)
+
+
+### Features
+
+* add cardBin to js change events ([#41](https://github.com/Basis-Theory/developers.basistheory.com/issues/41)) ([7ac3e49](https://github.com/Basis-Theory/developers.basistheory.com/commit/7ac3e49318b6d8b1c69494e1d57d406fc6f6b9d4))
+
+# [1.17.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.16.0...v1.17.0) (2023-01-20)
+
+
+### Features
+
+* add error handling section to react sdk components ([#40](https://github.com/Basis-Theory/developers.basistheory.com/issues/40)) ([b35de28](https://github.com/Basis-Theory/developers.basistheory.com/commit/b35de2856484a0f48ae8cba83b5ff6905ae411f9))
+
 # [1.16.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.15.1...v1.16.0) (2023-01-19)
 
 
