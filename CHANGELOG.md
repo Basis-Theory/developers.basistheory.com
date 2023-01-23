@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.18.0...v1.19.0) (2023-01-23)
+
+
+### Features
+
+* Eng 4024 java sdk re ([#29](https://github.com/Basis-Theory/developers.basistheory.com/issues/29)) ([22e0d14](https://github.com/Basis-Theory/developers.basistheory.com/commit/22e0d14783e4db36dbba4f5efd4d783caab63b63))
+
 # [1.18.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.17.0...v1.18.0) (2023-01-20)
 
 
