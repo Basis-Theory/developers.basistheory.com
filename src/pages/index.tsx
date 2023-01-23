@@ -25,6 +25,7 @@ import Node from "@site/static/img/sdk/logos/nodejs.svg";
 import Python from "@site/static/img/sdk/logos/python.svg";
 import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 import Terraform from "@site/static/img/sdk/logos/terraform.svg";
+import Java from "@site/static/img/sdk/logos/java.svg";
 import Link from "@docusaurus/Link";
 
 interface Step {
@@ -181,6 +182,13 @@ export default function Home(): JSX.Element {
                     className={styles.quickstart}
                   >
                     .NET
+                  </Card>
+                  <Card
+                    href="/docs/sdks/server-side/java"
+                    img={<Java />}
+                    className={styles.quickstart}
+                  >
+                    Java
                   </Card>
                   <Card
                     href="/docs/sdks/server-side/go"

@@ -1,0 +1,111 @@
+---
+title: Java SDK
+sidebar_label: Java
+---
+
+import { GithubCard } from "@site/src/components/sdks/GithubCard";
+import { SDK } from "@site/src/components/types";
+
+# Java SDK
+
+<GithubCard
+  heading="Java SDK"
+  icon={SDK.Java}
+  organization="basis-theory"
+  repository="basistheory-java"
+/>
+
+## Getting Started
+* Sign-in to [Basis Theory](https://portal.basistheory.com) and go to [Applications](https://portal.basistheory.com/applications)
+* Create an Application using the Full Access template
+* Use the API Key issued for this application when initializing an `ApiClient`
+
+## Requirements
+
+Building the API client library requires:
+1. Java 8+
+2. Maven (3.8.3+)/Gradle (7.2+)
+
+## Installation
+
+### Gradle users
+
+Add this dependency to your project's build file:
+
+```groovy
+  repositories {
+      maven { url 'https://jitpack.io' }
+  }
+
+  dependencies {
+     implementation 'com.basistheory:basistheory-java:[version]'
+  }
+```
+
+The latest release version can be found in [GitHub](https://github.com/Basis-Theory/basistheory-java/tags).
+
+### Maven users
+
+Add the JitPack repository to your build file:
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+
+Then add the following dependency to your project's POM:
+
+```xml
+<dependency>
+    <groupId>com.github.Basis-Theory</groupId>
+    <artifactId>basistheory-java</artifactId>
+    <version>[version]</version>
+</dependency>
+```
+
+The latest release version can be found in [GitHub](https://github.com/Basis-Theory/basistheory-java/tags).
+
+## Initialization
+
+Please follow the [installation](#installation) instruction and execute the following Java code:
+
+```java
+
+// Import classes:
+import com.basistheory.ApiClient;
+import com.basistheory.ApiException;
+import com.basistheory.Configuration;
+import com.basistheory.auth.*;
+import com.basistheory.models.*;
+import com.basistheory.ApplicationsApi;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.basistheory.com");
+
+    // Configure API key authorization: ApiKey
+    ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+    ApiKey.setApiKey("YOUR API KEY");
+    // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+    //ApiKey.setApiKeyPrefix("Token");
+
+    ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
+    CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest(); // CreateApplicationRequest |
+    try {
+      Application result = apiInstance.create(createApplicationRequest);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling ApplicationsApi#create");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+```
