@@ -1,3 +1,10 @@
+## [1.19.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.19.1...v1.19.2) (2023-01-23)
+
+
+### Bug Fixes
+
+* document ability to update expires_at on patch /tokens endpoint ([#45](https://github.com/Basis-Theory/developers.basistheory.com/issues/45)) ([acdfe8a](https://github.com/Basis-Theory/developers.basistheory.com/commit/acdfe8ac31118d97863d316da520f3cfd908f5f0))
+
 ## [1.19.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.19.0...v1.19.1) (2023-01-23)
 
 # [1.19.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.18.0...v1.19.0) (2023-01-23)
