@@ -1,3 +1,5 @@
+## [1.19.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.19.0...v1.19.1) (2023-01-23)
+
 # [1.19.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.18.0...v1.19.0) (2023-01-23)
 
 
