@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.19.2...v1.20.0) (2023-01-24)
+
+
+### Features
+
+* adds metadata property details for web elements ([#47](https://github.com/Basis-Theory/developers.basistheory.com/issues/47)) ([6016780](https://github.com/Basis-Theory/developers.basistheory.com/commit/60167801b827b9a05e0c654ffe91cbcaaec1ba38))
+
 ## [1.19.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.19.1...v1.19.2) (2023-01-23)
 
 
