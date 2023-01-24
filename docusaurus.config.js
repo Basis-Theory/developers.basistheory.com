@@ -148,6 +148,7 @@ const config = {
           { from: '/concepts/what-are-tokens', to: '/docs/concepts/what-are-tokens' },
           { from: '/concepts/what-is-search', to: '/docs/concepts/what-is-search' },
           { from: '/concepts/what-is-the-proxy', to: '/docs/concepts/what-is-the-proxy' },
+          { form: '/concepts/understanding-permissions/', to: '/docs/api/applications/permissions' },
 
           { from: '/guides/collect-pii-js', to: '/docs/guides/collect/collect-data-from-web' },
           { from: '/guides/collect-pii-react', to: '/docs/guides/collect/collect-data-with-react' },
