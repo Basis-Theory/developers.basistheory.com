@@ -1,3 +1,10 @@
+## [1.20.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.20.0...v1.20.1) (2023-01-25)
+
+
+### Bug Fixes
+
+* updates type of API key used for creating sessions ([#49](https://github.com/Basis-Theory/developers.basistheory.com/issues/49)) ([bb07a41](https://github.com/Basis-Theory/developers.basistheory.com/commit/bb07a41ba195f86f6512123f9445f6187447b34a))
+
 # [1.20.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.19.2...v1.20.0) (2023-01-24)
 
 
