@@ -1,3 +1,10 @@
+## [1.20.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.20.1...v1.20.2) (2023-01-26)
+
+
+### Bug Fixes
+
+* components colors and csp ([#42](https://github.com/Basis-Theory/developers.basistheory.com/issues/42)) ([bf96b25](https://github.com/Basis-Theory/developers.basistheory.com/commit/bf96b25aacd4178eff61b37d4f8cd9ff5a374a2b))
+
 ## [1.20.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.20.0...v1.20.1) (2023-01-25)
 
 
