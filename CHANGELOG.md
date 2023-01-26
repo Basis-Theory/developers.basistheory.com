@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.20.2...v1.21.0) (2023-01-26)
+
+
+### Features
+
+* documenting android proxy and retrieve token services ([#50](https://github.com/Basis-Theory/developers.basistheory.com/issues/50)) ([9222cf4](https://github.com/Basis-Theory/developers.basistheory.com/commit/9222cf4b2fa6284eb3c3858bed342042da2d29fe))
+
 ## [1.20.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.20.1...v1.20.2) (2023-01-26)
 
 
