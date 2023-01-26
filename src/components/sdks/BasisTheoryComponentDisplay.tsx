@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import { 
+import {
   BasisTheoryProvider,
   useBasisTheory
 } from '@basis-theory/basis-theory-react';
@@ -11,7 +11,7 @@ interface ComponentDisplay {
 }
 
 export const BasisTheoryComponentDisplay = ({ title, children }: PropsWithChildren<ComponentDisplay>) => {
-  const { bt } = useBasisTheory('key_XVB48UzHJ57TdPtmLhJa9e', { elements: true });
+  const { bt } = useBasisTheory( '.', { elements: true });
 
   return (
     <BasisTheoryProvider bt={bt}>
