@@ -54,7 +54,7 @@ needing to touch the raw data directly.
 ### createToken
 
 This function wraps the [create token API endpoint](/docs/api/tokens/tokenize#create-token) to
-be able to create a single strongly typed token. It also provides added support for referencing
+create a single strongly typed token. It also provides added support for referencing
 instances of Elements within your request payload.
 
 ```kotlin showLineNumbers
@@ -85,12 +85,14 @@ val session = bt.createSession()
 This returns a [CreateSessionResponse](/docs/api/applications/sessions#create-session-response-object)
 which contains a `nonce` that needs to be used to [authorize the session](/docs/api/applications/sessions#authorize-session) before using it.
 
+To learn more about how to authorize a session, read our guide [Access Data Using Sessions](/docs/guides/govern/sessions).
+
 ### getToken
 
 This function wraps the [get a token API endpoint](/docs/api/tokens/#get-a-token) to
-be able to get a single strongly typed token. It then transforms the token's data to
+retrieve a single strongly typed token. It then transforms the token's data to
 value references which you can use to [set the value](/docs/sdks/mobile/android/types#methods) of your elements without touching
-the plaintext value and getting into compliance scope.
+the plaintext value and pulling your application into compliance scope.
 
 ```kotlin showLineNumbers
 val getTokenResponse = bt.getToken("<tokenId>")
@@ -99,9 +101,9 @@ val getTokenResponse = bt.getToken("<tokenId>")
 ### proxy
 
 This function receives a [ProxyRequest](/docs/sdks/mobile/android/services#proxyrequest) and wraps the [proxy API endpoint](/docs/api/proxies/invoke-proxy) to
-be able to proxy a request to a third party API. It then transforms the response to
+proxy a request to a third party API. It then transforms the response to
 value references which you can then use to [set the value](/docs/sdks/mobile/android/types#methods) of your elements without touching
-the plaintext value and getting into compliance scope.
+the plaintext value and pulling your application into compliance scope.
 
 ```kotlin showLineNumbers
 val proxyResponse = bt.proxy.post(proxyRequest)
