@@ -9,20 +9,34 @@ import CardBrands from "@site/docs/sdks/_card-brands.mdx";
 
 You can customize the behavior of your Elements using the following options:
 
-| Attribute      | Required | Type      | Updatable | Eligible Elements                                                                                                                                                                                                                                                                                                    | Description                                                                                                                                                                                |
-|----------------|----------|-----------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `style`        | false    | _object_  | true      | All                                                                                                                                                                                                                                                                                                                  | [Object](#style) used to customize the element appearance                                                                                                                                  |
-| `disabled`     | false    | _boolean_ | true      | All                                                                                                                                                                                                                                                                                                                  | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
-| `autoComplete` | false    | _string_  | true      | All                                                                                                                                                                                                                                                                                                                  | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
-| `targetId`     | true     | _string_  | false     | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element) | String used to identify your element                                                                                                                                                       |
-| `placeholder`  | false    | _string_  | true      | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element) | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
-| `aria-label`   | false    | _string_  | true      | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#ard-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)  | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
-| `mask`         | false    | _array_   | false     | [`text`](/docs/sdks/web/javascript/types#text-element)                                                                                                                                                                                                                                                               | [Array](#mask) used to restrict and fill user input using regex and static strings                                                                                                         |
-| `transform`    | false    | _RegExp_  | true      | [`text`](/docs/sdks/web/javascript/types#text-element)                                                                                                                                                                                                                                                               | [`RegExp` object or array](#transform) used to modify user input before [tokenization](/docs/sdks/web/javascript/methods#tokenization)                                                     |
-| `password`     | false    | _boolean_ | true      | [`text`](/docs/sdks/web/javascript/types#text-element)                                                                                                                                                                                                                                                               | Boolean used to set the text element input type as [password](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password)                                                    |
-| `iconPosition` | false    | _string_  | true      | [`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)                                                                                                                                                                                                                                                  | String used to determine the position of the card element icon. Expected values are: `left` (default), `right` or `none`.                                                                  |
-| `cardBrand`    | false    | _string_  | true      | [`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)                                                                                                                                                                                                                             | [Brand identifier](#card-brands) used to determine proper input format and default placeholder/aria-label                                                                                  |
-| `value`        | false    | _string_  | true      | All                                                                                                                                                                                                                                                                                                                  | Sets a static value for the element input.                                                                                                                                                 |
+| Attribute          | Required | Type      | Updatable | Eligible Elements                                                                                                                                                                                                                                                                                                           | Description                                                                                                                                                                                |
+| ------------------ | -------- | --------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `style`            | false    | _object_  | true      | All                                                                                                                                                                                                                                                                                                                         | [Object](#style) used to customize the element appearance                                                                                                                                  |
+| `disabled`         | false    | _boolean_ | true      | All                                                                                                                                                                                                                                                                                                                         | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete`     | false    | _string_  | true      | All                                                                                                                                                                                                                                                                                                                         | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `targetId`         | true     | _string_  | false     | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)        | String used to identify your element                                                                                                                                                       |
+| `placeholder`      | false    | _string_  | true      | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)        | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
+| `aria-label`       | false    | _string_  | true      | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#ard-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)         | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
+| `mask`             | false    | _array_   | false     | [`text`](/docs/sdks/web/javascript/types#text-element)                                                                                                                                                                                                                                                                      | [Array](#mask) used to restrict and fill user input using regex and static strings                                                                                                         |
+| `transform`        | false    | _RegExp_  | true      | [`text`](/docs/sdks/web/javascript/types#text-element)                                                                                                                                                                                                                                                                      | [`RegExp` object or array](#transform) used to modify user input before [tokenization](/docs/sdks/web/javascript/methods#tokenization)                                                     |
+| `password`         | false    | _boolean_ | true      | [`text`](/docs/sdks/web/javascript/types#text-element)                                                                                                                                                                                                                                                                      | Boolean used to set the text element input type as [password](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password)                                                    |
+| `iconPosition`     | false    | _string_  | true      | [`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)                                                                                                                                                                                                                                                         | String used to determine the position of the card element icon. Expected values are: `left` (default), `right` or `none`.                                                                  |
+| `cardBrand`        | false    | _string_  | true      | [`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)                                                                                                                                                                                                                                    | [Brand identifier](#card-brands) used to determine proper input format and default placeholder/aria-label                                                                                  |
+| `validateOnChange` | false    | _string_  | true      | [`cardNumber`](/docs/sdks/web/javascript/types#ard-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardElement`](/docs/sdks/web/javascript/types#card-element) <br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element) | Switches from default validation `onBlur` to `onChange`.                                                                                                                                   |
+| `value`            | false    | _string_  | true      | All                                                                                                                                                                                                                                                                                                                         | Sets a static value for the element input.                                                                                                                                                 |
+
+<Alert type={Alerts.WARNING}>
+  Switching the validation strategy from <code>onBlur</code> to{" "}
+  <code>onChange</code> will change the sequence and increase the number of
+  events. When running validations <code>onChange</code>, elements emit events
+  whenever an <code>error</code> occurs or if the input's <code>value</code>{" "}
+  changes. Default validation <code>onBlur</code> triggers an event every time
+  one of the properties in the{" "}
+  <a href="/docs/sdks/web/javascript/methods#changeevent">
+    <code>changeEvent</code>
+  </a>{" "}
+  changes.
+</Alert>
 
 <Alert type={Alerts.WARNING}>
   The <code>mask</code> option cannot be used when the <code>password</code>{" "}
@@ -73,7 +87,7 @@ var cardElement = BasisTheory.createElement("card", {
 ```
 
 | Attribute  | Required | Type     | Description                                                                        |
-|------------|----------|----------|------------------------------------------------------------------------------------|
+| ---------- | -------- | -------- | ---------------------------------------------------------------------------------- |
 | `fonts`    | false    | _array_  | Array of <a href="https://fonts.google.com/" target="_blank">Google Fonts</a> URLs |
 | `base`     | false    | _object_ | Base variant style - all other variant styles inherit from this one                |
 | `complete` | false    | _object_ | Variant style applied when the element input is complete                           |
@@ -215,7 +229,21 @@ before [tokenization](/docs/sdks/web/javascript/methods#tokenization).
 ```javascript showLineNumbers
 var phoneNumberElement = BasisTheory.createElement("text", {
   targetId: "myPhoneNumberElement",
-  mask: ["(", /\d/, /\d/, /\d/, ")", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/]
+  mask: [
+    "(",
+    /\d/,
+    /\d/,
+    /\d/,
+    ")",
+    /\d/,
+    /\d/,
+    /\d/,
+    "-",
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+  ],
 });
 ```
 
@@ -246,7 +274,21 @@ attribute, in this case, will modify the user input to remove `(`, `)`, and `-` 
 ```javascript showLineNumbers
 var phoneNumberElement = BasisTheory.createElement("text", {
   targetId: "myPhoneNumberElement",
-  mask: ["(", /\d/, /\d/, /\d/, ")", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/],
+  mask: [
+    "(",
+    /\d/,
+    /\d/,
+    /\d/,
+    ")",
+    /\d/,
+    /\d/,
+    /\d/,
+    "-",
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+  ],
   transform: /[()-]/,
 });
 ```

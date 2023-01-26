@@ -2,9 +2,9 @@
 sidebar_label: Methods & Events
 ---
 
-import {Alert, Alerts} from "@site/src/components/shared/Alert";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
-# Elements Method & Events
+# Elements Methods & Events
 
 Basis Theory Elements offers several methods and events to listen to changes to your components and interact with the underlying data.
 
@@ -77,16 +77,25 @@ cardElement.on("change", (changeEvent) => {
 
 #### ChangeEvent
 
+`ChangeEvent`s are emitted depending on the validation strategy set for each element; by default, validations run `onBlur`. You can change this behavior by setting the boolean flag [`validateOnChange`](/docs/sdks/web/javascript/options) to `true`.
+
+When running validations <code>onChange</code>, elements emit events
+whenever an <code>error</code> occurs or if the input's <code>value</code>
+changes. Default validation (`onBlur`) triggers an event every time one of the values below changes:
+
 ```json showLineNumbers
 {
   "complete": false,
+  "valid": false,
+  "maskSatisfid": false,
   "empty": false,
   "errors": [
     {...},
     {...}
   ],
   "cardBrand": "american-express",
-  "cardLast4": "8431"
+  "cardLast4": "8431",
+  "cardBin": "341212"
 }
 ```
 
