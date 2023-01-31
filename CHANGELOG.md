@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.21.0...v1.22.0) (2023-01-31)
+
+
+### Features
+
+* Adds Elements concept page ([#55](https://github.com/Basis-Theory/developers.basistheory.com/issues/55)) ([c915033](https://github.com/Basis-Theory/developers.basistheory.com/commit/c9150334f668ecd6bd2928f09de358f49ee2437b))
+
 # [1.21.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.20.2...v1.21.0) (2023-01-26)
 
 
