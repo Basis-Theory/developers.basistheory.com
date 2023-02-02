@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.22.0...v1.23.0) (2023-02-02)
+
+
+### Features
+
+* add more details around events and validateOnChange ([#53](https://github.com/Basis-Theory/developers.basistheory.com/issues/53)) ([ba7112a](https://github.com/Basis-Theory/developers.basistheory.com/commit/ba7112a565894d45d22bd7a1ed387b7b73a3babb))
+
 # [1.22.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.21.0...v1.22.0) (2023-01-31)
 
 
