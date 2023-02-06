@@ -278,7 +278,7 @@ func main() {
 #### Request Parameters
 
 | Attribute  | Required | Type     | Default                                    | Description                                           |
-| ---------- | -------- | -------- | ------------------------------------------ | ----------------------------------------------------- |
+|------------|----------|----------|--------------------------------------------|-------------------------------------------------------|
 | `name`     | true     | _string_ | `null`                                     | The name of the Tenant. Has a maximum length of `200` |
 | `settings` | false    | _string_ | [Tenant Settings](#tenant-settings-object) | The settings for the Tenant                           |
 
@@ -545,7 +545,7 @@ Returns a [Tenant Usage Report](#tenant-usage-report-object) for the provided `B
 ## Tenant Object
 
 | Attribute     | Type                                       | Description                                                                                          |
-| ------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+|---------------|--------------------------------------------|------------------------------------------------------------------------------------------------------|
 | `id`          | _uuid_                                     | Unique identifier of the Tenant                                                                      |
 | `owner_id`    | _uuid_                                     | The user ID which owns the Tenant                                                                    |
 | `name`        | _string_                                   | The name of the Tenant                                                                               |
@@ -557,21 +557,21 @@ Returns a [Tenant Usage Report](#tenant-usage-report-object) for the provided `B
 
 ### Tenant Settings Object
 
-| Attribute            | Type     | Description                                                                                                                                        |
-| -------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fingerprint_tokens` | _string_ | (Bool) Whether the [default fingerprint expression](/docs/api/tokens/token-types) is applied if no fingerprint expression is provided on the token |
-| `deduplicate_tokens` | _string_ | (Bool) Whether tokens are deduplicated on creation and updates                                                                                     |
+| Attribute            | Type     | Description                                                                                                                                                                                                                                                                                   |
+|----------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `fingerprint_tokens` | _string_ | (Bool) Whether all tokens will be fingerprinted using the [default fingerprint expression](/docs/api/tokens/token-types) for its token type. When disabled, fingerprinting can still be enabled per token by setting a [fingerprint expression](/docs/expressions/fingerprints) on the token. |
+| `deduplicate_tokens` | _string_ | (Bool) Whether tokens are [deduplicated](/docs/concepts/what-are-tokens#deduplication) on creation and updates                                                                                                                                                                                |
 
 ## Tenant Usage Report Object
 
 | Attribute      | Type                                         | Description                   |
-| -------------- | -------------------------------------------- | ----------------------------- |
+|----------------|----------------------------------------------|-------------------------------|
 | `token_report` | [Token Report](#tenants-token-report-object) | Token Usage Report for Tenant |
 
 ### Token Report Object
 
 | Attribute                        | Type                                                            | Description                                                                 |
-| -------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
+|----------------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------|
 | `metrics_by_type`                | _map\<string, [TokenTypeMetrics](#token-type-metrics-object)\>_ | Token Metrics by [TokenType](/docs/api/tokens/token-types)                  |
 | `included_monthly_active_tokens` | _long_                                                          | Number of included monthly active tokens for the billing plan               |
 | `monthly_active_tokens`          | _long_                                                          | Number of tokens that have been created, read, or used in the current month |
@@ -584,6 +584,6 @@ Returns a [Tenant Usage Report](#tenant-usage-report-object) for the provided `B
 ### Token Type Metrics Object
 
 | Attribute         | Type   | Description                                     |
-| ----------------- | ------ | ----------------------------------------------- |
+|-------------------|--------|-------------------------------------------------|
 | `count`           | _long_ | Number of tokens                                |
 | `last_created_at` | _date_ | (Optional) Last created date in ISO 8601 format |
