@@ -211,6 +211,7 @@ const sidebars = {
         "api/errors",
         "api/ip-addresses",
         "api/rate-limits",
+        "api/idempotency"
       ],
     },
     {
