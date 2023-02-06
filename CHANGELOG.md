@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.23.0...v1.24.0) (2023-02-06)
+
+
+### Features
+
+* support idempotency ([#58](https://github.com/Basis-Theory/developers.basistheory.com/issues/58)) ([df7649c](https://github.com/Basis-Theory/developers.basistheory.com/commit/df7649c9e32231c2befcbe39f75a8240c717a387))
+
 # [1.23.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.22.0...v1.23.0) (2023-02-02)
 
 
