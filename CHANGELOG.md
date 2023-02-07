@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.24.0...v1.25.0) (2023-02-07)
+
+
+### Features
+
+* Updates fingerprinting and deduplication docs ([#61](https://github.com/Basis-Theory/developers.basistheory.com/issues/61)) ([b5edb07](https://github.com/Basis-Theory/developers.basistheory.com/commit/b5edb07371462fe93b8328577addce076e65830b))
+
 # [1.24.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.23.0...v1.24.0) (2023-02-06)
 
 
