@@ -69,9 +69,11 @@ Another example may be that you want to format your email and retain the domain 
 
 ### Fingerprinting
 
-Fingerprinting provides a way to correlate multiple tokens together that contain the same data without needing access to the underlying data. Creating multiple tokens with the same token type, data, and [fingerprint expression](/docs/expressions/fingerprints) will result in the same fingerprint. This can be useful for correlating purchases with the same credit card for multiple members of the same household or helping with master data management of multiple user accounts.
-
-By default, all tokens are fingerprinted with the contents of the `data` property using the default fingerprint expression of `{% raw %}{{ data | stringify }}{% endraw %}`, however you can customize this fingerprint expression to meet your needs of what should uniquely identify a token.
+Fingerprinting provides a way to correlate multiple tokens together that contain the same data without needing access to the underlying data.
+Creating multiple tokens in a tenant with the same token type, data, and [fingerprint expression](/docs/expressions/fingerprints) will result in the same fingerprint.
+This can be useful for correlating purchases with the same credit card for multiple members of the same household or helping with
+master data management of multiple user accounts. Token fingerprints are also used for automatic [deduplication](#deduplication) of tokens within a tenant.
+For more details about fingerprinting, check out the [docs](/docs/expressions/fingerprints).
 
 In the following example, we will create a token with user data, but we want to fingerprint on the email address:
 
@@ -230,19 +232,22 @@ In this example, we have a customer account we want to search over parts of the 
 
 In the above example, we can now perform a search with `john`, `doe`, `111-22-3333`, `3333`, `johndoe@[basistheory.com](http://basistheory.com)` or `basistheory.com` and get back the token. To see all additional capabilities of search, see our [API documentation](/docs/api/tokens/search).
 
-## Deduplication
+### Deduplication
 
-Duplicate data can be problematic for some systems. This can create data integrity problems in some systems where unique
-values are required. For example, you may have an accounts payable system and an e-commerce system both accepting
-credit cards for customers, and you want to ensure duplicate credit cards are not on file for that customer.
-Deduplication ensures tokens that have the same `fingerprint` return the same token when created.
+Duplicate data can be problematic for some systems. It can potentially lead to data consistency problems as multiple copies of the data
+need to be kept in sync. For example, you may have an accounts payable system and an e-commerce system both accepting credit cards for customers,
+and you want to ensure a single credit card is on file for that customer as the source of truth.
+Deduplication may also be required within some business domains; for example, a system may collect sensitive user information and wish to
+match or correlate user accounts having identical information.
+
+Token deduplication can help solve these use cases by ensuring that only one copy of equivalent tokenized data can exist within a Basis Theory tenant.
 By default, every tokenization request creates a new token, but with deduplication [enabled at the tenant](/docs/api/tenants#tenant-settings-object)
-or on each [tokenization request](/docs/api/tokens#create-token), tokens will be deduplicated based
-upon their fingerprint. This ensures that if multiple systems or the same system creates multiple tokens with the same
-data, they do not create duplicate tokens.
+or on each tokenization request, tokens will be deduplicated based
+upon their [fingerprint](/docs/concepts/what-are-tokens#fingerprinting). This ensures that if multiple systems or
+the same system creates multiple tokens containing the same data, they do not create duplicate tokens.
 
-To deduplicate a token during the tokenization request, we pass the `deduplicate_token` flag to the create token request.
-This will override the tenant-level deduplicate tokens setting:
+To deduplicate a token during tokenization, pass the `deduplicate_token` flag to the [create token request](/docs/api/tokens#create-token).
+This will override the tenant-level deduplicate tokens setting for this request:
 
 ```json showLineNumbers
 {
@@ -252,7 +257,7 @@ This will override the tenant-level deduplicate tokens setting:
 }
 ```
 
-In this scenario, if we detect an existing token with the same `fingerprint`, the existing token is returned instead of
+If an existing token is found with the same `fingerprint`, the existing token is returned instead of
 creating a new token. When an existing token is matched, its data and metadata will only be returned within the response
 if the requester has `token:read` permission to the matched token. If the requesting Application does not have read
 permission, then the `data`, `metadata`, and other potentially sensitive attributes will be redacted to prevent
