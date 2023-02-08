@@ -1,3 +1,10 @@
+## [1.25.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.25.0...v1.25.1) (2023-02-08)
+
+
+### Bug Fixes
+
+* reactor code ([#62](https://github.com/Basis-Theory/developers.basistheory.com/issues/62)) ([75fc24c](https://github.com/Basis-Theory/developers.basistheory.com/commit/75fc24c6ff157c7577323a713ea914a6bd5860d2))
+
 # [1.25.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.24.0...v1.25.0) (2023-02-07)
 
 
