@@ -52,7 +52,7 @@ Check the [Collect Data](/docs/guides/collect/) section of our documentation for
 
 To reveal data, you will need a [Private Application](docs/api/applications#application-types).
 
-[Click here](http://todo.com) to create a Private Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+[Login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
 
 - Name - Reveal Data from iOS Guide
 - Application Type - Private
@@ -98,7 +98,7 @@ the dialog that appears. Now drag and drop the Text Field component anywhere on 
 With the new `UITextField` selected, open up the Identity Inspector on the right and select `CardNumberUITextField`, `CardExpirationDateUITextField` or `CardVerificationCodeUITextField` accordingly from the class drop down, similar to the image below.
 Repeat this process until you have a form component for each of the three iOS card elements.
 
-![](/img/iOS/ios-initialization.jpg)
+![](/img/iOS/ios-reveal-initialization.png)
 
 ## Style Your Form Components
 
@@ -107,7 +107,7 @@ Now it's time to style our new card text fields. We'll be styling our elements p
 First we need to add an outlet to our `ViewController.swift` for each field so that we're able to manipulate them programmatically. To do this, ensure your `Main.storyboard` file is open and click on the "Add Editor to the Right" button
 on the top right. Here's a helpful image below:
 
-![](/img/iOS/ios-add-editor-to-the-right.png)
+![](/img/iOS/ios-reveal-add-editor-to-the-right.png)
 
 Clicking on the button above will open the `Main.storyboard` on a new pane on the right. Now in the Project Navigator on the left, click on the `ViewController.swift` file. This should replace the `Main.storyboard` file on the right pane.
 
@@ -169,7 +169,7 @@ class ViewController: UIViewController {
 As you can see above, we take advantage of the existing [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) API to style our component. All of our iOS elements extend
 [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) for ease of use and speed to production.
 
-## Create a Session
+## Creating a Session
 
 Sessions provide an alternative mechanism to grant temporary elevated access to your public applications. We will use a session to safely retrieve the data from a token and to invoke our proxy to Lithic.
 
@@ -225,7 +225,7 @@ class ViewController: UIViewController {
   created in the <a href="#getting-started">Getting Started</a> step.
 </Alert>
 
-## Setup a Backend to Authorize the Session
+## Setting Up a Backend to Authorize the Session
 
 A session needs to be authorized by a Private Application first before usage. This step <b>SHOULD</b> be done on the backend as to not expose the Private Application's API Key publicly. 
 
@@ -285,7 +285,7 @@ node backend.js
 ```
 
 <Alert>
-  Be sure to replace <code>test_priv_1234567890</code> with the Public API Key you
+  Be sure to replace <code>test_priv_1234567890</code> with the Private API Key you
   created in the <a href="#creating-a-private-application">Creating a Private Application</a> step.
 </Alert>
 
@@ -302,15 +302,53 @@ class ViewController: UIViewController {
     @IBOutlet weak var cardExpirationDateElement: CardExpirationDateUITextField!
     @IBOutlet weak var cardVerificationCodeElement: CardVerificationCodeUITextField!
 
+    //highlight-start
+    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
+        let parameters = ["nonce": nonce]
+        
+        let url = URL(string: "http://localhost:3000/authorize")!
+        let session = URLSession.shared
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        } catch let error {
+            completion(nil, error)
+        }
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+            
+            do {
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
+                completion(json, nil)
+            } catch let error {
+                completion(nil, error)
+            }
+        })
+        
+        task.resume()
+    }
+    //highlight-end
+
     @IBAction func reveal(_ sender: Any) {
         BasisTheoryElements.createSession(apiKey: "test_1234567890") { data, error in
             let sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
 
             //highlight-start
-            TODO AUTHORIZE SESSION
+            self.authorizeSession(nonce: nonce) { result, error in
+                
+            }
             //highlight-end
-
         }
     }
 
@@ -333,7 +371,7 @@ class ViewController: UIViewController {
 }
 ```
 
-## Retrieve a Token
+## Retrieving a Token
 
 With the authorized session, we can now use the `sessionKey` to retrieve the card token from the Basis Theory backend.
 
@@ -348,19 +386,58 @@ class ViewController: UIViewController {
     @IBOutlet weak var cardExpirationDateElement: CardExpirationDateUITextField!
     @IBOutlet weak var cardVerificationCodeElement: CardVerificationCodeUITextField!
 
+    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
+        let parameters = ["nonce": nonce]
+        
+        let url = URL(string: "http://localhost:3000/authorize")!
+        let session = URLSession.shared
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        } catch let error {
+            completion(nil, error)
+        }
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+            
+            do {
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
+                completion(json, nil)
+            } catch let error {
+                completion(nil, error)
+            }
+        })
+        
+        task.resume()
+    }
+
     @IBAction func reveal(_ sender: Any) {
         BasisTheoryElements.createSession(apiKey: "test_1234567890") { data, error in
             let sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
 
-            //highlight-start
-            TODO AUTHORIZE SESSION
-            //highlight-end
-
-            //highlight-start
-            TODO RETRIEVE TOKEN
-            //highlight-end
-
+            self.authorizeSession(nonce: nonce) { result, error in
+                //highlight-start
+                BasisTheoryElements.getTokenById(id: "card_token_id", apiKey: sessionKey) { data, error in
+                    self.cardNumberElement.setValue(elementValueReference: data!.data!.number!.elementValueReference)
+                    
+                    self.cardExpirationDateElement.setValue(
+                        month: data!.data!.expiration_month!.elementValueReference,
+                        year: data!.data!.expiration_year!.elementValueReference
+                    )
+                }
+                //highlight-end
+            }
         }
     }
 
@@ -382,19 +459,59 @@ class ViewController: UIViewController {
     }
 }
 ```
+## Creating a Management Application
 
-## Create a Proxy to Lithic
+To create a proxy, you will need a [Management Application](docs/api/applications#application-types).
+
+[Click here](https://portal.basistheory.com/applications/create?permissions=proxy%3Acreate&type=management&name=Create%20Proxy%20from%20iOS%20Guide) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Create Proxy from iOS Guide
+- Application Type - Management
+- Permissions: `proxy: create`
+
+## Creating a Proxy to Lithic
 
 Card verification codes collected with Basis Theory are expunged from the platform 1 hour after its creation due to security and compliance reasons.
 In order to show the CVC number to a customer, we can use the Basis Theory Proxy to proxy a call to the card issuer (in this case Lithic) and retrieve the CVC safely and in compliance.
 
-A proxy can be created using one of our SDKs or through our API. In the example below we'll use `curl` to call our API.
+A proxy can be created [using one of our SDKs or through our API](/docs/api/proxies). In the example below we'll use `curl` to call our API from the terminal.
+Notice that we are using a [request transform](/docs/api/proxies/invoke-proxy#proxy-transforms) to add our Lithic API key to the header on every proxy request.
 
 ```bash
-TODO
+transform='module.exports = async function (req) {
+  req.args.headers["Authorization"] = "lithic_key_123456789";
+
+  return {
+    headers: req.args.headers,
+    body: req.args.body
+  };
+}'
+
+
+curl "https://api-dev.basistheory.com/proxies" \
+  -H "BT-API-KEY: test_mgmt_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "Lithic Cards Proxy",
+    "destination_url": "https://api.lithic.com/v1/cards",
+    "request_transform": {
+        "code": '"$(echo $transform | jq -Rsa .)"',
+    }
+    "require_auth": true
+  }'
 ```
 
-## Retrieve CVC Value from Lithic
+<Alert>
+  Be sure to replace <code>test_mgmt_1234567890</code> with the Management API Key you
+  created in the <a href="#creating-a-management-application">Creating a Management Application</a> step, and <code>lithic_key_123456789</code> with your Lithic API Key.
+</Alert>
+
+<Alert>
+    Write down the <code>key</code> value returned from the proxy as its going to be used in the next step.
+</Alert>
+
+## Retrieving CVC Value from Lithic
 
 With the proxy created, we'll add the following code to call it using our previously authorized `sessionKey`, retrieve the CVC number, and then set it onto our element.
 
@@ -407,23 +524,69 @@ class ViewController: UIViewController {
     @IBOutlet weak var cardExpirationDateElement: CardExpirationDateUITextField!
     @IBOutlet weak var cardVerificationCodeElement: CardVerificationCodeUITextField!
 
+    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
+        let parameters = ["nonce": nonce]
+        
+        let url = URL(string: "http://localhost:3000/authorize")!
+        let session = URLSession.shared
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        } catch let error {
+            completion(nil, error)
+        }
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+            
+            do {
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
+                completion(json, nil)
+            } catch let error {
+                completion(nil, error)
+            }
+        })
+        
+        task.resume()
+    }
+
     @IBAction func reveal(_ sender: Any) {
         BasisTheoryElements.createSession(apiKey: "test_1234567890") { data, error in
             let sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
 
-            //highlight-start
-            TODO AUTHORIZE SESSION
-            //highlight-end
+            self.authorizeSession(nonce: nonce) { result, error in
+                BasisTheoryElements.getTokenById(id: "card_token_id", apiKey: sessionKey) { data, error in
+                    self.cardNumberElement.setValue(elementValueReference: data!.data!.number!.elementValueReference)
+                    
+                    self.cardExpirationDateElement.setValue(
+                        month: data!.data!.expiration_month!.elementValueReference,
+                        year: data!.data!.expiration_year!.elementValueReference
+                    )
 
-            //highlight-start
-            TODO RETRIEVE TOKEN
-            //highlight-end
-
-            //highlight-start
-            TODO RETRIEVE CVC
-            //highlight-end
-
+                    //highlight-start
+                    let lithicCardTokenPath = "/lithic_token_id"
+                    let proxyKey = "test_proxy_123456789"
+                    let proxyHttpRequest = ProxyHttpRequest(method: .get, path: lithicCardTokenPath)
+                    BasisTheoryElements.proxy(
+                        apiKey: sessionKey,
+                        proxyKey: proxyKey,
+                        proxyHttpRequest: proxyHttpRequest)
+                    { response, data, error in
+                        self.cvcTextField.setValue(elementValueReference: data!.cvv!.elementValueReference)
+                    }
+                    //highlight-end
+                }
+            }
         }
     }
 
@@ -446,9 +609,14 @@ class ViewController: UIViewController {
 }
 ```
 
+<Alert>
+  Be sure to replace <code>lithic_token_id</code> with the ID for the Card on Lithic, and /a> step, 
+  and <code>test_proxy_123456789</code> with the proxy <code>key</code> created in the <a href="#creating-a-proxy-to-lithic">Creating a Proxy to Lithic</a> step.
+</Alert>
+
 🎉 The code above is the last bit that we need to reveal a full credit card! Now let's run the app by clicking on the play button on the top left. The screen should look something like this:
 
-![](/img/iOS/ios-collect-data-iphone-screenshot.png)
+![](/img/iOS/ios-reveal-data-iphone-screenshot.png)
 
 ## Conclusion
 
