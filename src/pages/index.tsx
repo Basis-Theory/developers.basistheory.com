@@ -170,51 +170,51 @@ export default function Home(): JSX.Element {
             </div>
           </div>
 
-          <div className={styles["quickstarts"]}>
+          <div className={styles["sdks"]}>
             <h2>SDKs</h2>
-            <div className={styles["quickstarts-container"]}>
+            <div className={styles["sdks-container"]}>
               <div>
                 Server-side SDKs
-                <div className={styles["quickstart-column"]}>
+                <div className={styles["sdk-column"]}>
                   <Card
                     href="/docs/sdks/server-side/dotnet"
                     img={<DotNet />}
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     .NET
                   </Card>
                   <Card
                     href="/docs/sdks/server-side/java"
                     img={<Java />}
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     Java
                   </Card>
                   <Card
                     href="/docs/sdks/server-side/go"
                     img={<Go />}
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     Go
                   </Card>
                   <Card
                     href="/docs/sdks/server-side/node"
                     img={<Node />}
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     NodeJS
                   </Card>
                   <Card
                     href="/docs/sdks/server-side/python"
                     img={<Python />}
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     Python
                   </Card>
                   <Card
                     href="/docs/sdks/server-side/terraform"
                     img={<Terraform />}
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     Terraform
                   </Card>
@@ -222,46 +222,48 @@ export default function Home(): JSX.Element {
               </div>
               <div>
                 Web SDKs
-                <div className={styles["quickstart-column"]}>
+                <div className={styles["sdk-column"]}>
                   <Card
                     href="/docs/sdks/web/javascript/"
                     img={<JavaScript />}
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     Javascript
                   </Card>
                   <Card
                     href="/docs/sdks/web/react/"
                     img={<ReactSvg />}
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     React
                   </Card>
                 </div>
               </div>
-              <div className={styles["quickstart-column"]}>
+              <div className={styles["sdk-column"]}>
                 Mobile SDKs
-                <div className={styles["quickstart-column"]}>
+                <div className={styles["sdk-column"]}>
                   <Card
                     href="/docs/sdks/mobile/ios/"
                     img={
-                      <ThemedImage
-                        width="100%"
-                        height="100%"
-                        sources={{
-                          light: useBaseUrl("/img/sdk/logos/apple.svg"),
-                          dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
-                        }}
-                      />
+                      <div className={styles["logo-container"]}>
+                        <ThemedImage
+                          width="100%"
+                          height="100%"
+                          sources={{
+                            light: useBaseUrl("/img/sdk/logos/apple.svg"),
+                            dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
+                          }}
+                        />
+                      </div>
                     }
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     iOS
                   </Card>
                   <Card
                     href="/docs/sdks/mobile/android/"
                     img={<Android />}
-                    className={styles.quickstart}
+                    className={styles.sdk}
                   >
                     Android
                   </Card>
