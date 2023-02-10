@@ -1,3 +1,10 @@
+## [1.25.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.25.1...v1.25.2) (2023-02-10)
+
+
+### Bug Fixes
+
+* drop usage of :has selector ([#64](https://github.com/Basis-Theory/developers.basistheory.com/issues/64)) ([8bc8788](https://github.com/Basis-Theory/developers.basistheory.com/commit/8bc8788dc349f9325f797405e05f1f346e71a452))
+
 ## [1.25.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.25.0...v1.25.1) (2023-02-08)
 
 
