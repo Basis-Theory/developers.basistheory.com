@@ -166,6 +166,8 @@ const config = {
           { from: '/guides/migrating-off-basis-theory', to: '/docs/blueprints/migrations/migrate-off-basis-theory' },
 
           { from: '/blueprints/pci', to: '/docs/blueprints/cards/collect-and-process-cards' },
+
+          { from: '/docs/guides/collect/collect-inbound-data-to-api', to: '/docs/guides/collect/collect-inbound-sensitive-data' },
         ]
       }
     ],

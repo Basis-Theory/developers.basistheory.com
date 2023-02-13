@@ -1261,6 +1261,9 @@ Any authentication required by the destination service can be set on the request
 The `token:use` permission is required for each [Container](/docs/concepts/what-are-containers) of Tokens you wish to detokenize through the Proxy.
 This permission is required to use authenticated proxies, even if there are no tokens being detokenized within your request.
 
+It is recommended that you restrict which tokens the Proxy can detokenize by only granting `token:use`
+permission on the most-specific [container](/docs/concepts/what-are-containers) of tokens that is required.
+
 ### Request
 
 The unique key for a pre-configured proxy can either be supplied in a request header or a query string parameter.
@@ -1292,7 +1295,12 @@ curl "https://api.basistheory.com/proxy?bt-proxy-key=e29a50980ca5" \
 
 Pre-configured proxies allow you to optionally define request or response transforms, which allow custom Node.js code to be
 executed before and after the HTTP request is forwarded to the destination URL. When a transform is defined on a proxy,
-  your custom Node.js code will execute in Basis Theory's secure [serverless reactor](/docs/concepts/what-are-reactors) environment.
+your custom Node.js code will execute in Basis Theory's secure [serverless reactor](/docs/concepts/what-are-reactors) environment.
+
+<Alert>
+  Transforms are only currently supported for requests with content type <code>application/json</code> or <code>application/x-www-form-urlencoded</code>.
+  Please <a href="https://basistheory.com/contact">let us know</a> if you would like to use proxy transforms with other content types.
+</Alert>
 
 ### Request Transforms
 
