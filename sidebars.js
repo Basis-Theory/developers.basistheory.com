@@ -234,7 +234,7 @@ const sidebars = {
         type: "doc",
         id: "api/proxies/proxies",
       },
-      items: ["api/proxies/invoke-proxy"],
+      items: ["api/proxies/ephemeral-proxies", "api/proxies/pre-configured-proxies"],
     },
     {
       type: "category",

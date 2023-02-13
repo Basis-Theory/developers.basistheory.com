@@ -1,0 +1,89 @@
+---
+title: Ephemeral Proxies
+---
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Ephemeral Proxies
+
+The Basis Theory Proxy can be used to share tokenized data with trusted third parties via outbound HTTP requests.
+Some outbound proxy requests simply need to [detokenize](/docs/expressions/detokenization) some tokens in the request and forward
+the plaintext data to a destination API over HTTP. Ephemeral proxies are a good fit for this use case,
+as they don't require any up-front setup, and all configuration is self-contained within the proxy request.
+
+## Invoke the Proxy
+
+Detokenize and forward an HTTP request through the proxy.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.PUT}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.PATCH}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+### Authentication
+
+Ephemeral proxy requests require a `BT-API-KEY` header (see [Authentication](/docs/api/authentication)) containing an API key for an authorized `private` application.
+
+Any authentication required by the destination service can be set on the request and it will be forwarded through the proxy
+(for example, by setting an `Authorization` header).
+
+### Permissions
+
+<Permission content="token:use" />
+<br/><br/>
+
+The `token:use` permission is required for each [Container](/docs/concepts/what-are-containers) of Tokens you wish to detokenize through the Proxy.
+This permission is required to use the Proxy, even if there are no tokens being detokenized within your request.
+
+### Request
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-PROXY-URL: https://example.com/api" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
+    "parameter2": "non-sensitive"
+  }'
+```
+
+A `BT-PROXY-URL` request header is required - its value defines the base URL to which the request will be proxied.
+See [Destination URLs](/docs/api/proxies/#destination-urls) for more information.
+
+
+### Response
+
+The raw response from the destination will be returned from the proxy, unless an error occurs within the Basis Theory Proxy while processing the request.
+
+If an error occurs within the proxy (e.g. an invalid detokenization expression was found), then the following error response will be returned:
+
+| Attribute     | Type  | Description                                       |
+|---------------|-------|---------------------------------------------------|
+| `proxy_error` | _any_ | A standard Basis Theory [error](/docs/api/errors) |
