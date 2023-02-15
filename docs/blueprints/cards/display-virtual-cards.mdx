@@ -10,7 +10,7 @@ import { AuthButtons } from "@site/src/components/docs/AuthButtons";
 
 # Display Virtual Cards
 
-This blueprint provides a complete end-to-end guide on how to securely reveal credit card data from Basis Theory and from a third party issuer.
+This blueprint provides a complete end-to-end guide on how to securely reveal credit card data from Basis Theory and from a third party issuer without needing to touch the data.
 
 For this blueprint, we are going to use iOS as our client application and [Express.Js](https://expressjs.com/) for our backend, but
 the blueprint can be modified for your specific framework or language by leveraging any one of our many language-specific [SDKs](/docs/sdks).
@@ -28,6 +28,8 @@ If you are already familar with the Basis Theory platform and already created yo
 To get started, you will need a Basis Theory account.
 
 <AuthButtons />
+
+### Creating a Public Application
 
 Next you will need a [Public Application](/docs/api/applications#application-types) in order to create tokens, sessions and initialize our Elements libraries.
 
@@ -149,7 +151,7 @@ As you can see above, we take advantage of the existing [UITextField](https://de
 
 ## Creating a Session
 
-Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide an alternative mechanism to grant temporary elevated access to your public applications,  so we'll will use it to safely retrieve the data from the token and to invoke a proxy to an issuer.
+Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide temporary elevated access to your public applications, and we'll will use it to safely retrieve the data from the token and to invoke a proxy to an issuer.
 
 As creating a session is part of the lifecycle of revealing a token value safely, we need to add a reveal `UIButton` and a function to handle all steps for revealing, including creating the session.
 Open the `Main.storyboard` file, and click on plus button on the top right and search for "UIButton" in the dialog that appears and drag
@@ -230,11 +232,14 @@ First, lets create the [Private Application](docs/api/applications#application-t
 
 ### Authorizing in the Backend
 
-A session needs to be authorized by a Private Application first before usage. This step <b>SHOULD</b> be done on the backend as to not expose the Private Application's API Key publicly. 
+A session needs to be authorized by a Private Application first before usage. 
+Using the Private Application API Key, the `nonce` from our session, and [Condition](/docs/concepts/access-controls#conditions) we ensure we are only granting authorization for the desired token.
+
+<Alert type={Alerts.WARNING}>
+The <b>only way</b> to ensure your private API keys are not publically accessible is for this step to execute in your backend service.
+</Alert>
 
 For this example, we will use [Express.js](https://expressjs.com/) as our backend and the [Node.js SDK](/docs/sdks/server-side/node) to authorize the session.
-[Conditions](/docs/concepts/access-controls#conditions) will be use to restrict the session authorization to only our desired token `id`.
-
 We'll create a `backend.js` file and add the following code to start the Express.js backend and authorize an incoming session.
 
 ``` javascript showLineNumbers title="backend.js"
@@ -693,7 +698,7 @@ class ViewController: UIViewController {
 
 ## Conclusion
 
-You can now reveal any data to a customer without your iOS app accessing the underlying value, drastically reducing compliance and regulatory scope.
+You can now reveal any data to a customer without your iOS app accessing the underlying value, reducing compliance and regulatory scope.
 
 Try to tap the Reveal button and watch the card values appear on screen.
 
