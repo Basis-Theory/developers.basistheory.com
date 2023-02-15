@@ -1,3 +1,10 @@
+## [1.25.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.25.2...v1.25.3) (2023-02-15)
+
+
+### Bug Fixes
+
+* fixes installation steps for iOS ([#73](https://github.com/Basis-Theory/developers.basistheory.com/issues/73)) ([3919890](https://github.com/Basis-Theory/developers.basistheory.com/commit/39198903d67a003ced562e7a6d7f520644410d19))
+
 ## [1.25.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.25.1...v1.25.2) (2023-02-10)
 
 
