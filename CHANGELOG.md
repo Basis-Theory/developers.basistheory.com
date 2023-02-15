@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.25.3...v1.26.0) (2023-02-15)
+
+
+### Features
+
+* add reveal guide ([#71](https://github.com/Basis-Theory/developers.basistheory.com/issues/71)) ([1f8bc45](https://github.com/Basis-Theory/developers.basistheory.com/commit/1f8bc45e9ceebb42d3053f4dcb482c7d55285640))
+
 ## [1.25.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.25.2...v1.25.3) (2023-02-15)
 
 
