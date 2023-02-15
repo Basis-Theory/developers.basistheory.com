@@ -126,7 +126,7 @@ const sidebars = {
             type: "doc",
             id: "blueprints/cards/index",
           },
-          items: ["blueprints/cards/collect-and-process-cards"],
+          items: ["blueprints/cards/collect-and-process-cards", "blueprints/cards/display-virtual-cards"],
         },
         {
           type: "category",
