@@ -1,0 +1,882 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+import { Card } from "@site/src/components/shared/Card"
+
+import styles from "@site/src/pages/index.module.css";
+import ThemedImage from "@theme/ThemedImage";
+
+import Android from "@site/static/img/sdk/logos/android.svg";
+import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
+import ReactSvg from "@site/static/img/sdk/logos/react.svg";
+
+
+# Reveal Tokenized Data
+
+This guide will show you how to reveal sensitive data back to a customer without your frontend or backend code ever needing to touch the actual raw data.
+
+Key concepts in this guide:
+
+- [Tokens](/docs/concepts/what-are-tokens)
+- [Applications](/docs/api/applications)
+- [Sessions](/docs/api/applications/sessions)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+### Creating a Public Application
+Next you will need a [Public Application](/docs/api/applications#application-types) in order to create tokens, sessions and initialize our Elements libraries.
+
+[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20Web%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Public App
+- Application Type - Public
+- Permissions - `token:create`
+
+<Alert>
+  Save the API Key from the created Public Application as it will be used later in this guide.
+</Alert>
+
+## Creating a Token
+
+To reveal tokenized data, you must have a token already created and stored with Basis Theory.
+If you haven't done it yet, head over to the [Collect Data](/docs/guides/collect/) section of our docs for detailed guides on how to safely collect and tokenize data.
+
+## Configuring Basis Theory Elements
+
+[Basis Theory Elements](/docs/concepts/elements) is available for the following technologies. Click below for detailed instructions on how to install and configure it.
+
+<div className={styles["sdk-column"]}>
+<Card
+href="/docs/sdks/web/javascript/"
+img={<JavaScript />}
+className={styles.sdk}
+>
+Javascript
+</Card>
+
+<Card
+href="/docs/sdks/web/react/"
+img={<ReactSvg />}
+className={styles.sdk}
+>
+React
+</Card>
+
+<Card
+href="/docs/sdks/mobile/ios/"
+img={
+<div className={styles["logo-container"]}>
+<ThemedImage
+width="100%"
+height="100%"
+sources={{
+light: useBaseUrl("/img/sdk/logos/apple.svg"),
+dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
+}}
+/>
+</div>
+}
+className={styles.sdk}
+>
+iOS
+</Card>
+
+<Card
+href="/docs/sdks/mobile/android/"
+img={<Android />}
+className={styles.sdk}
+>
+Android
+</Card>
+</div>
+
+## Creating a Text Element
+
+To safely reveal tokenized data back to a customer, we must create an Element that will hold and display the data.
+In this example we'll create a Text Element, which can hold any `string` value.
+
+<Tabs className="bt-tabs" groupId="clients">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+//highlight-start
+let textElement;
+//highlight-end
+
+(async () => {
+  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+
+  //highlight-start
+  textElement = bt.createElement('text', {
+    targetId: 'exampleTextElement',
+  });
+
+  // here #exampleTextElement is a DOM selector
+  // example: <div id="exampleTextElement"></div>
+  await textElement.mount('#exampleTextElement'); 
+  //highlight-end
+})();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```tsx showLineNumbers
+// highlight-next-line
+import { useRef } from 'react';
+
+import {
+  BasisTheoryProvider,
+  // highlight-next-line
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  // highlight-next-line
+  const textRef = useRef(null);
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      // highlight-start
+      <TextElement
+        id="exampleTextElement"
+        ref={textRef}
+      />
+      // highlight-end
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```text
+To add a Text Element to your iOS app, you just have to follow these three steps:
+
+1. Drop a UITextField onto your Main.storyboard file and select it.
+2. Select TextElementUITextField as the class for the UITextField.
+3. Add an outlet for your text field to your ViewController.
+```
+
+```swift showLineNumbers title="ViewController.swift"
+import UIKit
+import BasisTheoryElements
+
+class ViewController: UIViewController {
+    // highlight-next-line
+    @IBOutlet weak var exampleTextElement: TextElementUITextField!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+    }
+}
+```
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```text
+To add a Text Element to your Android app, you just have to follow these two steps:
+
+1. Add the XML below to your MainActivity layout.
+2. Reference your XML element in the MainActivity class. 
+````
+
+```xml title="res/layout/activity_main.xml"
+<com.basistheory.android.view.TextElement
+    android:id="@+id/example_text_element"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+```kotlin showLineNumbers title="MainActivity.kt"
+class MainActivity : AppCompatActivity() {
+    // highlight-next-line
+    private lateinit var exampleTextElement: TextElement
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // highlight-next-line
+        exampleTextElement = findViewById(R.id.exampleTextElement)
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Public API Key you
+  created in <a href="#getting-started">Getting Started</a>.
+</Alert>
+
+## Creating a Session
+
+Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide temporary elevated access to your public applications, 
+and we'll will use it to safely retrieve the data from the token. Add the following code to create a session:
+
+<Tabs className="bt-tabs" groupId="clients">
+  <TabItem value="javascript" label="JavaScript">
+
+
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let textElement;
+
+(async () => {
+  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+
+  textElement = bt.createElement('text', {
+    targetId: 'exampleTextElement',
+  });
+
+  // here #exampleTextElement is a DOM selector
+  // example: <div id="exampleTextElement"></div>
+  await textElement.mount('#exampleTextElement'); 
+
+  // this is just an example method that'll have the full lifecycle for revealing
+  const reveal = async () => {
+    // highlight-next-line
+    const session = await bt.sessions.create();
+  }
+
+})();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```tsx showLineNumbers
+
+import { useRef } from 'react';
+
+import {
+  BasisTheoryProvider,
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const textRef = useRef(null);
+
+  // this is just an example method that'll have the full lifecycle for revealing
+  const reveal = async () => {
+    // highlight-next-line
+    const session = await bt.sessions.create();
+  }
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement
+        id="exampleTextElement"
+        ref={textRef}
+      />
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers
+import UIKit
+import BasisTheoryElements
+
+class ViewController: UIViewController {
+    @IBOutlet weak var exampleTextElement: TextElementUITextField!
+
+    // this is just an example method that'll have the full lifecycle for revealing
+    func reveal() {
+      //highlight-start
+      BasisTheoryElements.createSession(apiKey: btPublicKey) { data, error in
+            let sessionKey = data!.sessionKey!
+            let nonce = data!.nonce!
+
+      }
+      //highlight-end
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+    }
+}
+```
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var exampleTextElement: TextElement
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        exampleTextElement = findViewById(R.id.example_text_element)
+    }
+
+    // this is just an example method that'll have the full lifecycle for revealing
+    private fun reveal() {
+      // highlight-next-line
+      val session = bt.createSession()
+    }
+}
+```
+  </TabItem>
+</Tabs>
+
+## Authorizing a Session
+
+In order to use the session to retrieve data, we need to authorize it with a Private Application.
+
+### Creating a Private Application
+
+First, lets create the [Private Application](docs/api/applications#application-types). To do so, [Login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Reveal Data
+- Application Type - Private
+- Access Rule (Use the `Advanced Rule Builder` option)
+  - Description - Reveal Data
+  - Container - `/`
+  - Permissions - `token:read`
+  - Transform - `reveal`
+
+<Alert>
+    The Private Application must be in the same <a href="/docs/concepts/access-controls#what-are-tenants">Tenant</a> as the token to be revealed.
+</Alert>
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used later in this guide.
+</Alert>
+
+### Authorizing In the Backend
+
+Using the Private Application API Key, the `nonce` from our session, and a [Condition](/docs/concepts/access-controls#conditions) we ensure we are only granting authorization for the desired token.
+
+<Alert type={Alerts.WARNING}>
+The <b>only way</b> to ensure your private API keys are not publically accessible is for this step to execute in your backend service.
+</Alert>
+
+In this guide, we'll use [Express.js](https://expressjs.com/) as our backend but [docs](docs/api/applications/sessions#authorize-session) are available for different technologies.
+We'll create a `backend.js` file and add the following code to start the Express.js backend and authorize an incoming session.
+
+```javascript showLineNumbers title="backend.js"
+const express = require("express");
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+
+const app = express();
+const port = 4242;
+
+app.post("/authorize", async (request, response) => {
+  const bt = await new BasisTheory().init("test_priv_1234567890");
+  const { nonce } = request.body;
+  // authorizing a session returns an empty 200 response
+  await bt.sessions.authorize({
+    nonce: nonce,
+    rules: [
+      {
+        description: "Reveal Token",
+        priority: 1,
+        conditions: [
+          {
+            attribute: "id",
+            operator: "equals",
+            value: "token_id_1234567890",
+          },
+        ],
+        permissions: ["token:read", "token:use"],
+        transform: "reveal",
+      },
+    ],
+  });
+  // this response is arbitrary and not required
+  response.json({
+    result: "success",
+  });
+});
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
+```
+
+Start the server with the following command (from the same directory as `backend.js`).
+
+``` bash
+node backend.js
+```
+
+<Alert>
+  Be sure to replace <code>test_priv_1234567890</code> with the Private API Key you
+  created in <a href="#creating-a-private-application">Creating a Private Application</a> and <code>token_id_1234567890</code> with the <code>id</code> for the token you wish to reveal.
+</Alert>
+
+<Alert>
+  In a real world scenario, make sure to include your own form of authentication between your frontend and backend for this request.
+</Alert>
+
+### Calling the Authorization Endpoint
+
+Next, from our client application, we'll call the authorization endpoint created on the [Authorizing in the Backend](docs/guides/share/reveal-tokenized-data#authorizing-in-the-backend) step, passing our created session `nonce`:
+
+<Tabs className="bt-tabs" groupId="clients">
+  <TabItem value="javascript" label="JavaScript">
+
+
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let textElement;
+
+(async () => {
+  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+
+  textElement = bt.createElement('text', {
+    targetId: 'exampleTextElement',
+  });
+
+  // here #exampleTextElement is a DOM selector
+  // example: <div id="exampleTextElement"></div>
+  await textElement.mount('#exampleTextElement'); 
+
+  // this is just an example method that'll have the full lifecycle for revealing
+  const reveal = async () => {
+    const session = await bt.sessions.create();
+
+    // highlight-start
+    await fetch('http://localhost:4242/authorize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ nonce: session.nonce }),
+    });
+    // highlight-end
+  }
+})();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```tsx showLineNumbers
+
+import { useRef } from 'react';
+
+import {
+  BasisTheoryProvider,
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const textRef = useRef(null);
+
+  // this is just an example method that'll have the full lifecycle for revealing
+  const reveal = async () => {
+    const session = await bt.sessions.create();
+
+    // highlight-start
+    await fetch('http://localhost:4242/authorize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ nonce: session.nonce }),
+    });
+    // highlight-end
+  }
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement
+        id="exampleTextElement"
+        ref={textRef}
+      />
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers
+import UIKit
+import BasisTheoryElements
+
+class ViewController: UIViewController {
+    @IBOutlet weak var exampleTextElement: TextElementUITextField!
+
+    // this is just an example method that'll have the full lifecycle for revealing
+    func reveal() {
+      BasisTheoryElements.createSession(apiKey: btPublicKey) { data, error in
+            let sessionKey = data!.sessionKey!
+            let nonce = data!.nonce!
+
+            //highlight-start
+            self.authorizeSession(nonce: nonce) { result, error in
+              //
+            }
+            //highlight-end
+      }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+    }
+
+    //highlight-start
+    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
+        let parameters = ["nonce": nonce]
+        
+        let url = URL(string: "http://localhost:4242/authorize")!
+        let session = URLSession.shared
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        } catch let error {
+            completion(nil, error)
+        }
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+            
+            do {
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
+                completion(json, nil)
+            } catch let error {
+                completion(nil, error)
+            }
+        })
+        
+        task.resume()
+    }
+    //highlight-end
+}
+```
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers
+//highlight-start
+import java.net.HttpURLConnection
+import java.net.URL
+//highlight-end
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var exampleTextElement: TextElement
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        exampleTextElement = findViewById(R.id.example_text_element)
+    }
+
+    // this is just an example method that'll have the full lifecycle for revealing
+    private fun reveal() {
+      val session = bt.createSession()
+
+      //highlight-next-line
+      authorizeSession(session.sessionKey)
+    }
+
+    //highlight-start
+    private fun authorizeSession(nonce: String) {
+      val url = URL("http://localhost:4242/authorize")
+      val con = url.openConnection() as HttpURLConnection
+
+      con.requestMethod = "POST"
+      con.doOutput = true
+      con.setRequestProperty("Content-Type", "application/json")
+      con.setRequestProperty("Accept", "application/json");
+
+      val body = String.format("{\"nonce\": \"%s\"}", nonce)
+
+      con.outputStream.use { os ->
+          val input: ByteArray = body.toByteArray(Charsets.UTF_8)
+          os.write(input, 0, input.size)
+      }
+
+      if (con.responseCode == 200) {
+          return
+      }
+    }
+  //highlight-end 
+}
+```
+  </TabItem>
+</Tabs>
+
+
+
+## Retrieving and Revealing a Token
+
+With the authorized session, we can now use the `sessionKey` to retrieve the token from the Basis Theory backend.
+We'll add the following code to retrieve the token and set its value to the text element.
+
+<Tabs className="bt-tabs" groupId="clients">
+  <TabItem value="javascript" label="JavaScript">
+
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+let bt;
+let textElement;
+
+(async () => {
+  bt = await new BasisTheory().init("test_1234567890", { elements: true });
+
+  textElement = bt.createElement("text", {
+    targetId: "exampleTextElement",
+  });
+
+  // here #exampleTextElement is a DOM selector
+  // example: <div id="exampleTextElement"></div>
+  await textElement.mount("#exampleTextElement");
+
+  // this is just an example method that'll have the full lifecycle for revealing
+  const reveal = async () => {
+    const session = await bt.sessions.create();
+
+    await fetch("http://localhost:4242/authorize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ nonce: session.nonce }),
+    });
+
+    // highlight-start
+    const token = await bt.tokens.retrieve("token_id_1234567890", {
+      apiKey: session.sessionKey,
+    });
+    // highlight-end
+
+    //highlight-next-line
+    textElement.setValue(token.data);
+  };
+})();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```tsx showLineNumbers
+
+import { useRef } from 'react';
+
+import {
+  BasisTheoryProvider,
+  TextElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const textRef = useRef(null);
+
+  // this is just an example method that'll have the full lifecycle for revealing
+  const reveal = async () => {
+    const session = await bt.sessions.create();
+
+    await fetch('http://localhost:4242/authorize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ nonce: session.nonce }),
+    });
+
+    // highlight-start
+    const token = await bt.tokens.retrieve("token_id_1234567890", {
+      apiKey: session.sessionKey,
+    });
+    // highlight-end
+
+    //highlight-next-line
+    textRef.setValue(token.data);
+  }
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement
+        id="exampleTextElement"
+        ref={textRef}
+      />
+    </BasisTheoryProvider>
+  );
+}
+
+export default App;
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers
+import UIKit
+import BasisTheoryElements
+
+class ViewController: UIViewController {
+    @IBOutlet weak var exampleTextElement: TextElementUITextField!
+
+    // this is just an example method that'll have the full lifecycle for revealing
+    func reveal() {
+      BasisTheoryElements.createSession(apiKey: btPublicKey) { data, error in
+            let sessionKey = data!.sessionKey!
+            let nonce = data!.nonce!
+
+            
+            self.authorizeSession(nonce: nonce) { result, error in
+              //highlight-start
+              BasisTheoryElements.getTokenById(id: 'token_id_1234567890', apiKey: sessionKey) { data, error in
+                  self.exampleTextElement.setValue(elementValueReference: data!.data!.elementValueReference)
+              }
+              //highlight-end
+            }
+      }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+    }
+
+    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
+        let parameters = ["nonce": nonce]
+        
+        let url = URL(string: "http://localhost:4242/authorize")!
+        let session = URLSession.shared
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        } catch let error {
+            completion(nil, error)
+        }
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+            
+            do {
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
+                completion(json, nil)
+            } catch let error {
+                completion(nil, error)
+            }
+        })
+        
+        task.resume()
+    }
+}
+```
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers
+import java.net.HttpURLConnection
+import java.net.URL
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var exampleTextElement: TextElement
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        exampleTextElement = findViewById(R.id.example_text_element)
+    }
+
+    // this is just an example method that'll have the full lifecycle for revealing
+    private fun reveal() {
+      val session = bt.createSession()
+
+      authorizeSession(session.nonce)
+
+      //highlight-next-line
+      val token = bt.getToken("token_id_1234567890", session.sessionKey)
+
+      //highlight-next-line
+      exampleTextElement.setValueRef(token.data)
+    }
+
+    private fun authorizeSession(nonce: String) {
+      val url = URL("http://localhost:4242/authorize")
+      val con = url.openConnection() as HttpURLConnection
+
+      con.requestMethod = "POST"
+      con.doOutput = true
+      con.setRequestProperty("Content-Type", "application/json")
+      con.setRequestProperty("Accept", "application/json");
+
+      val body = String.format("{\"nonce\": \"%s\"}", nonce)
+
+      con.outputStream.use { os ->
+          val input: ByteArray = body.toByteArray(Charsets.UTF_8)
+          os.write(input, 0, input.size)
+      }
+
+      if (con.responseCode == 200) {
+          return
+      }
+  }
+}
+```
+  </TabItem>
+</Tabs>
+
+🎉 The code above is the last bit that we need to reveal a token! 
+
+## Conclusion
+
+You can now reveal any data to a customer without your application accessing the underlying value, reducing compliance and regulatory scope.
+Just execute the `reveal` method in whichever way you desire (like with the click of a button) and watch the token value appear on your Text Element.
+
+## Learn More
+
+- [Customize your web form](/docs/guides/collect/customize-web-form)
+- [Access Data Using Sessions](/docs/guides/govern/sessions)
+- [Collect and process cards](/docs/blueprints/cards/collect-and-process-cards)
