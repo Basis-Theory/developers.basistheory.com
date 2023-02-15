@@ -2,7 +2,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
-import { Alert } from "@site/src/components/shared/Alert";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { AuthButtons } from "@site/src/components/docs/AuthButtons";
 import { Card } from "@site/src/components/shared/Card"
 
@@ -16,7 +16,7 @@ import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 
 # Reveal Tokenized Data
 
-This guide will show you how to reveal sensitive data back to a customer without touching the data.
+This guide will show you how to reveal sensitive data back to a customer without your frontend or backend code ever needing to touch the actual raw data.
 
 Key concepts in this guide:
 
@@ -30,6 +30,7 @@ To get started, you will need a Basis Theory account.
 
 <AuthButtons />
 
+### Creating a Public Application
 Next you will need a [Public Application](/docs/api/applications#application-types) in order to create tokens, sessions and initialize our Elements libraries.
 
 [Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20Web%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
@@ -49,7 +50,7 @@ If you haven't done it yet, head over to the [Collect Data](/docs/guides/collect
 
 ## Configuring Basis Theory Elements
 
-[Basis Theory Elements](/docs/concepts/elements) is available for the following technologies. Click on the desired one for detailed instructions on how to install and configure it.
+[Basis Theory Elements](/docs/concepts/elements) is available for the following technologies. Click below for detailed instructions on how to install and configure it.
 
 <div className={styles["sdk-column"]}>
 <Card
@@ -98,7 +99,7 @@ Android
 
 ## Creating a Text Element
 
-To safely reveal tokenized data back to a customer, we must create an Element that'll hold the data.
+To safely reveal tokenized data back to a customer, we must create an Element that will hold and display the data.
 In this example we'll create a Text Element, which can hold any `string` value.
 
 <Tabs className="bt-tabs" groupId="clients">
@@ -226,8 +227,8 @@ class MainActivity : AppCompatActivity() {
 
 ## Creating a Session
 
-Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide an alternative mechanism to grant temporary elevated access to your public applications, 
-so we'll will use it to safely retrieve the data from the token. Add the following code to create a session:
+Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide temporary elevated access to your public applications, 
+and we'll will use it to safely retrieve the data from the token. Add the following code to create a session:
 
 <Tabs className="bt-tabs" groupId="clients">
   <TabItem value="javascript" label="JavaScript">
@@ -371,12 +372,13 @@ First, lets create the [Private Application](docs/api/applications#application-t
 
 ### Authorizing In the Backend
 
-Now we can use the created Private Application API Key, and the `nonce` from our created session to authorize it.
-We'll also use a [Condition](/docs/concepts/access-controls#conditions) to make sure our session is only authorized to reveal our desired token.
+Using the Private Application API Key, the `nonce` from our session, and a [Condition](/docs/concepts/access-controls#conditions) we ensure we are only granting authorization for the desired token.
 
-This step <b>SHOULD</b> be done on the backend as to not expose the Private Application's API Key publicly.
+<Alert type={Alerts.WARNING}>
+The <b>only way</b> to ensure your private API keys are not publically accessible is for this step to execute in your backend service.
+</Alert>
+
 In this guide, we'll use [Express.js](https://expressjs.com/) as our backend but [docs](docs/api/applications/sessions#authorize-session) are available for different technologies.
-
 We'll create a `backend.js` file and add the following code to start the Express.js backend and authorize an incoming session.
 
 ```javascript showLineNumbers title="backend.js"
@@ -872,7 +874,7 @@ class MainActivity : AppCompatActivity() {
 
 ## Conclusion
 
-You can now reveal any data to a customer without your iOS app accessing the underlying value, drastically reducing compliance and regulatory scope.
+You can now reveal any data to a customer without your application accessing the underlying value, reducing compliance and regulatory scope.
 Just execute the `reveal` method in whichever way you desire (like with the click of a button) and watch the token value appear on your Text Element.
 
 ## Learn More
