@@ -436,12 +436,14 @@ class ViewController: UIViewController {
             self.authorizeSession(nonce: nonce) { result, error in
                 //highlight-start
                 BasisTheoryElements.getTokenById(id: "card_token_id", apiKey: sessionKey) { data, error in
+                  DispatchQueue.main.async {
                     self.cardNumberElement.setValue(elementValueReference: data!.data!.number!.elementValueReference)
                     
                     self.cardExpirationDateElement.setValue(
                         month: data!.data!.expiration_month!.elementValueReference,
                         year: data!.data!.expiration_year!.elementValueReference
                     )
+                  }
                 }
                 //highlight-end
             }
@@ -633,25 +635,29 @@ class ViewController: UIViewController {
 
             self.authorizeSession(nonce: nonce) { result, error in
                 BasisTheoryElements.getTokenById(id: "card_token_id", apiKey: sessionKey) { data, error in
+                  DispatchQueue.main.async {
                     self.cardNumberElement.setValue(elementValueReference: data!.data!.number!.elementValueReference)
                     
                     self.cardExpirationDateElement.setValue(
                         month: data!.data!.expiration_month!.elementValueReference,
                         year: data!.data!.expiration_year!.elementValueReference
                     )
+                  }
 
-                    //highlight-start
-                    let lithicCardTokenPath = "/lithic_token_id"
-                    let proxyKey = "test_proxy_123456789"
-                    let proxyHttpRequest = ProxyHttpRequest(method: .get, path: lithicCardTokenPath)
-                    BasisTheoryElements.proxy(
-                        apiKey: sessionKey,
-                        proxyKey: proxyKey,
-                        proxyHttpRequest: proxyHttpRequest)
-                    { response, data, error in
-                        self.cvcTextField.setValue(elementValueReference: data!.cvv!.elementValueReference)
+                  //highlight-start
+                  let lithicCardTokenPath = "/lithic_token_id"
+                  let proxyKey = "test_proxy_123456789"
+                  let proxyHttpRequest = ProxyHttpRequest(method: .get, path: lithicCardTokenPath)
+                  BasisTheoryElements.proxy(
+                      apiKey: sessionKey,
+                      proxyKey: proxyKey,
+                      proxyHttpRequest: proxyHttpRequest)
+                  { response, data, error in
+                    DispatchQueue.main.async {
+                      self.cvcTextField.setValue(elementValueReference: data!.cvv!.elementValueReference)
                     }
-                    //highlight-end
+                  }
+                  //highlight-end
                 }
             }
         }
@@ -677,7 +683,8 @@ class ViewController: UIViewController {
 ```
 
 <Alert>
-  Be sure to replace <code>lithic_token_id</code> with the ID for the Lithic card <code>id</code> and <code>test_proxy_123456789</code> with the proxy <code>key</code> created in the <a href="#creating-a-proxy-to-lithic">Creating a Proxy to Lithic</a> step.
+  Be sure to replace <code>lithic_token_id</code> with the ID for the Lithic card <code>id</code>, <code>test_proxy_123456789</code> with the proxy <code>key</code> created in the <a href="#creating-a-proxy-to-lithic">Creating a Proxy to Lithic</a> step
+   and <code>card_token_id</code> with your Basis Theory card token <code>id</code>.
 </Alert>
 
 🎉 The code above is the last bit that we need to reveal a full credit card! Now let's run the app by clicking on the play button on the top left. The screen should look something like this:
