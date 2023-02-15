@@ -22,29 +22,24 @@ the blueprint can be modified for your specific framework or language by leverag
 ## Getting Started
 
 <Alert>
-If you are already familar with the Basis Theory platform and already created your first token, feel free to jump to the <a href="/docs/guides/share/reveal-data-with-ios#creating-a-private-application">Create a Private Application</a> section of this guide.
+If you are already familar with the Basis Theory platform and already created your first token, feel free to jump to the <a href="/docs/blueprints/cards/display-virtual-card#setting-up-the-project">Setting Up the Project</a> section of this blueprint.
 </Alert>
 
 To get started, you will need a Basis Theory account.
 
 <AuthButtons />
 
-In order for data to be revealed with Basis Theory, it must've first been collected. 
+Next you will need a [Public Application](/docs/api/applications#application-types) in order to create tokens, sessions and initialize our Elements libraries.
 
-To collect data you will need a [Public Application](/docs/api/applications#application-types).
+[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20Web%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
 
-[Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Collect%20Data%20from%20iOS%20Guide) to create a Public Application or
-[login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
-
-- Name - Tokenize Cards
+- Name - Public App
 - Application Type - Public
 - Permissions - `token:create`
 
 <Alert>
-  Save the API Key from the created Public Application as it will be used later
-  in this guide to initialize the form.
+  Save the API Key from the created Public Application as it will be used later in this guide.
 </Alert>
-
 
 ## Creating a Card Token
 
@@ -52,27 +47,7 @@ There are many ways for which you can create a card token in the Basis Theory pl
 
 Check the [Collect Data](/docs/guides/collect/) section of our documentation for guides on how to collect data with different technologies or click [here](/docs/guides/collect/collect-data-with-ios) if you are also using iOS for collecting data.
 
-
-## Creating a Private Application
-
-To reveal data, you will need a [Private Application](docs/api/applications#application-types).
-
-[Login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
-
-- Name - Reveal Cards
-- Application Type - Private
-- Access Rule (Use the `Advanced Rule Builder` option)
-  - Description - Reveal Cards
-  - Container - `/pci/`
-  - Permissions - `token:use` and `token:read`
-
-<Alert>
-    The Private Application used to reveal the card must be in the same <a href="/docs/concepts/access-controls#what-are-tenants">Tenant</a> as the Public Application you used to collect it.
-</Alert>
-
-With this initial setup, you will be ready to start coding your iOS application.
-
-## Setup the Project
+## Setting Up the Project
 
 We will create a new iOS application through Xcode. If you don't have Xcode, download it through the Mac App Store.
 
@@ -84,13 +59,13 @@ We will create a new iOS application through Xcode. If you don't have Xcode, dow
 
 This will launch Xcode with the newly created project.
 
-## Install the iOS Elements SDK
+## Installing the iOS Elements SDK
 
-We will need to install Basis Theory's [iOS Elements SDK](/docs/sdks/mobile/ios), which will render secure `UITextFields` for revealing the data.
+We will need to install Basis Theory's [iOS Elements SDK](/docs/sdks/mobile/ios), which will render secure `UITextFields` for revealing the card data.
 
 With the Xcode window in focus, select File > Add Packages. In the dialog that appears, enter `https://github.com/Basis-Theory/basistheory-ios` in the search field on the top right, then click Add Package on this screen and the next prompts.
 
-## Add Your Form Components
+## Adding Your Form Components
 
 For a complete card, we will need to add three iOS elements to our app:
  - A [CardNumberUITextField](/docs/sdks/mobile/ios/types#cardnumberuitextfield)
@@ -105,7 +80,7 @@ Repeat this process until you have a form component for each of the three iOS ca
 
 ![](/img/iOS/ios-reveal-initialization.png)
 
-## Style Your Form Components
+## Styling Your Form Components
 
 Now it's time to style our new card text fields. We'll be styling our elements programmatically, but feel free to style it through the GUI on Xcode, or even try implementing your own styles!
 
@@ -121,7 +96,7 @@ In the window that appears, type in "cardNumberElement", "cardExpirationDateElem
 
 You should have something similar to the following for `ViewController.swift` after these steps.
 
-``` swift showLineNumbers title="Reveal iOS Guide/ViewController.swift"
+``` swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -135,12 +110,11 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
 }
-
 ```
 
 We'll use the new `cardNumberElement`, `cardExpirationDateElement` and `cardVerificationCodeElement` outlets to style our new elements. Let's write some statements to style our form.
 
-``` swift showLineNumbers title="Reveal iOS Guide/ViewController.swift"
+``` swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -168,7 +142,6 @@ class ViewController: UIViewController {
         // highlight-end
     }
 }
-
 ```
 
 As you can see above, we take advantage of the existing [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) API to style our component. All of our iOS elements extend
@@ -176,18 +149,18 @@ As you can see above, we take advantage of the existing [UITextField](https://de
 
 ## Creating a Session
 
-Sessions provide an alternative mechanism to grant temporary elevated access to your public applications. We will use a session to safely retrieve the data from a token and to invoke our proxy to Lithic.
+Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide an alternative mechanism to grant temporary elevated access to your public applications,  so we'll will use it to safely retrieve the data from the token and to invoke a proxy to an issuer.
 
 As creating a session is part of the lifecycle of revealing a token value safely, we need to add a reveal `UIButton` and a function to handle all steps for revealing, including creating the session.
 Open the `Main.storyboard` file, and click on plus button on the top right and search for "UIButton" in the dialog that appears and drag
 and drop the Filled Button component anywhere under our form elements. Let's change the name of this button to "Reveal" by double-clicking on the new UIButton.
 
-Now we need to add an action for this new button. Follow the previous steps from [Style Your Form Components](#style-your-form-components) to get `Main.storyboard` and `ViewController.swift` files side-by-side. Control-drag
+Now we need to add an action for this new button. Follow the previous steps from [Styling Your Form Components](#styling-your-form-components) to get `Main.storyboard` and `ViewController.swift` files side-by-side. Control-drag
 the "Reveal" UIButton into `ViewController.swift`, then choose Action for the Connection and "reveal" for the Name.
 
 Now we'll add the following code to our iOS app to create a session and retrieve the `sessionKey`  and `nonce` from it.
 
-``` swift showLineNumbers title="Reveal iOS Guide/ViewController.swift"
+``` swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -230,7 +203,32 @@ class ViewController: UIViewController {
   created in the <a href="#getting-started">Getting Started</a> step.
 </Alert>
 
-## Setting Up a Backend to Authorize the Session
+
+## Authorizing a Session
+
+In order to use the session to retrieve data, we need to authorize it with a Private Application.
+
+### Creating a Private Application
+
+First, lets create the [Private Application](docs/api/applications#application-types). To do so, [Login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Reveal Cards
+- Application Type - Private
+- Access Rule (Use the `Advanced Rule Builder` option)
+  - Description - Reveal Cards
+  - Container - `/pci/`
+  - Permissions - `token:read` and `token:use`
+  - Transform - `reveal`
+
+<Alert>
+    The Private Application must be in the same <a href="/docs/concepts/access-controls#what-are-tenants">Tenant</a> as the token to be revealed.
+</Alert>
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used later in this guide.
+</Alert>
+
+### Authorizing in the Backend
 
 A session needs to be authorized by a Private Application first before usage. This step <b>SHOULD</b> be done on the backend as to not expose the Private Application's API Key publicly. 
 
@@ -244,7 +242,7 @@ const express = require("express");
 const { BasisTheory } = require("@basis-theory/basis-theory-js");
 
 const app = express();
-const port = 3000;
+const port = 4242;
 
 app.post("/authorize", async (request, response) => {
   const bt = await new BasisTheory().init("test_priv_1234567890");
@@ -280,10 +278,9 @@ app.post("/authorize", async (request, response) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
 ```
 
-Now we can start the server with the following command (executed from the folder you created the file above).
+Now we can start the server with the following command (from the same directory as `backend.js`).
 
 ``` bash
 node backend.js
@@ -291,14 +288,14 @@ node backend.js
 
 <Alert>
   Be sure to replace <code>test_priv_1234567890</code> with the Private API Key you
-  created in the <a href="#creating-a-private-application">Creating a Private Application</a> step.
+  created in <a href="#creating-a-private-application">Creating a Private Application</a> and <code>token_id_1234567890</code> with the <code>id</code> for the card token you wish to reveal.
 </Alert>
 
-## Calling the Authorization Endpoint
+### Calling the Authorization Endpoint
 
-Now with our backend running, we'll add the following code to call the authorization endpoint, passing our created session `nonce` to it.
+Now with our backend running, we'll add the following code to call the authorization endpoint, passing our created session `nonce` to it:
 
-``` swift showLineNumbers title="Reveal iOS Guide/ViewController.swift"
+``` swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -311,7 +308,7 @@ class ViewController: UIViewController {
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
         
-        let url = URL(string: "http://localhost:3000/authorize")!
+        let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
         
         var request = URLRequest(url: url)
@@ -376,13 +373,18 @@ class ViewController: UIViewController {
 }
 ```
 
-## Retrieving a Token
+<Alert type={Alerts.WARNING}>
+  On a production environment, your endpoint to authorize session should be behind your own authorization scheme.
+</Alert>
+
+
+## Revealing a Card Token
 
 With the authorized session, we can now use the `sessionKey` to retrieve the card token from the Basis Theory backend.
 
 We'll add the following code to retrieve the token and set its values to the individual card elements.
 
-``` swift showLineNumbers title="Reveal iOS Guide/ViewController.swift"
+``` swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -394,7 +396,7 @@ class ViewController: UIViewController {
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
         
-        let url = URL(string: "http://localhost:3000/authorize")!
+        let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
         
         var request = URLRequest(url: url)
@@ -464,63 +466,123 @@ class ViewController: UIViewController {
     }
 }
 ```
-## Creating a Management Application
+
+## Revealing CVC from Issuer
+
+Card verification codes collected with Basis Theory are expunged from the platform 1 hour after its creation due to security and compliance reasons.
+In order to show the CVC number to a customer, we can use the Basis Theory Proxy to proxy a call to the card issuer (in this blueprint, [Lithic](https://www.lithic.com/)) and retrieve the CVC safely and in compliance.
+
+### Creating a Management Application
 
 To create a proxy, you will need a [Management Application](docs/api/applications#application-types).
 
 [Click here](https://portal.basistheory.com/applications/create?permissions=proxy%3Acreate&type=management&name=Create%20Proxy%20from%20iOS%20Guide) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
 
-- Name - Create Proxy from iOS Guide
+- Name - Create Proxy
 - Application Type - Management
 - Permissions: `proxy: create`
 
-## Creating a Proxy to Lithic
+### Creating a Proxy to Lithic
 
-Card verification codes collected with Basis Theory are expunged from the platform 1 hour after its creation due to security and compliance reasons.
-In order to show the CVC number to a customer, we can use the Basis Theory Proxy to proxy a call to the card issuer (in this case Lithic) and retrieve the CVC safely and in compliance.
-
-A proxy can be created [using one of our SDKs or through our API](/docs/api/proxies). In the example below we'll use `curl` to call our API from the terminal.
+A proxy can be created [using one of our SDKs or through our API](/docs/api/proxies). In the example below we'll continue to use our Express.js backend.
 Notice that we are using a [request transform](/docs/api/proxies/invoke-proxy#proxy-transforms) to add our Lithic API key to the header on every proxy request.
 
-```bash
-transform='module.exports = async function (req) {
-  req.args.headers["Authorization"] = "lithic_key_123456789";
+``` javascript showLineNumbers title="backend.js"
+const express = require("express");
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
 
-  return {
-    headers: req.args.headers,
-    body: req.args.body
-  };
-}'
+const app = express();
+const port = 4242;
 
+app.post("/authorize", async (request, response) => {
+  const bt = await new BasisTheory().init("test_priv_1234567890");
 
-curl "https://api-dev.basistheory.com/proxies" \
-  -H "BT-API-KEY: test_mgmt_1234567890" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "name": "Lithic Cards Proxy",
-    "destination_url": "https://api.lithic.com/v1/cards",
-    "request_transform": {
-        "code": '"$(echo $transform | jq -Rsa .)"',
-    }
-    "require_auth": true
-  }'
+  const { nonce } = request.body;
+
+  //highlight-start
+  // TODO - CONFIGURATION
+  app.post("/create-proxy", async (request, response) => {
+    const proxy = await bt.proxies.create(
+      {
+        name: "Reveal Cards Proxy",
+        destinationUrl: "https://sandbox.lithic.com/v1/cards",
+        requestTransform: {
+          code: `module.exports = async function (req) {
+            let { args: { body, headers }, bt } = req;
+
+            return {
+                body,
+                headers: {
+                  ...headers,
+                  "Authorization": "lithic_key_123456789"
+                },
+            }
+          };`,
+        },
+        requireAuth: true,
+      },
+      { apiKey: "test_mgmt_1234567890" } // management application
+    );
+
+    response.send(proxy);
+  });
+  //highlight-end
+
+  // authorizing a session returns an empty 200 response
+  await bt.sessions.authorize({
+    nonce: nonce,
+    rules: [
+      {
+        description: "Reveal only our Card Token",
+        priority: 1,
+        conditions: [
+          {
+            attribute: "id",
+            operator: "equals",
+            value: "token_id_1234567890",
+          },
+        ],
+        permissions: ["token:read", "token:use"],
+        transform: "reveal",
+      },
+    ],
+  });
+
+  // this response is arbitrary and not required
+  response.json({
+    result: "success",
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
+```
+
+You can now use your favorite API client or just run the following `curl` command from your terminal:
+
+```shell
+curl -X POST http://localhost:4242/create-proxy
 ```
 
 <Alert>
   Be sure to replace <code>test_mgmt_1234567890</code> with the Management API Key you
-  created in the <a href="#creating-a-management-application">Creating a Management Application</a> step, and <code>lithic_key_123456789</code> with your Lithic API Key.
+  created in <a href="#creating-a-management-application">Creating a Management Application</a>, and <code>lithic_key_123456789</code> with your Lithic API Key.
 </Alert>
 
 <Alert>
     Write down the <code>key</code> value returned from the proxy as its going to be used in the next step.
 </Alert>
 
-## Retrieving CVC Value from Lithic
+<Alert>
+    If using Lithic in production, make sure to change the <code>destinationUrl</code> to the production url: <code>https://api.lithic.com/v1/cards</code>
+</Alert>
+
+### Retrieving and Revealing CVC Value from Lithic
 
 With the proxy created, we'll add the following code to call it using our previously authorized `sessionKey`, retrieve the CVC number, and then set it onto our element.
 
-``` swift showLineNumbers title="Reveal iOS Guide/ViewController.swift"
+``` swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -532,7 +594,7 @@ class ViewController: UIViewController {
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
         
-        let url = URL(string: "http://localhost:3000/authorize")!
+        let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
         
         var request = URLRequest(url: url)
@@ -615,8 +677,7 @@ class ViewController: UIViewController {
 ```
 
 <Alert>
-  Be sure to replace <code>lithic_token_id</code> with the ID for the Card on Lithic, and /a> step, 
-  and <code>test_proxy_123456789</code> with the proxy <code>key</code> created in the <a href="#creating-a-proxy-to-lithic">Creating a Proxy to Lithic</a> step.
+  Be sure to replace <code>lithic_token_id</code> with the ID for the Lithic card <code>id</code> and <code>test_proxy_123456789</code> with the proxy <code>key</code> created in the <a href="#creating-a-proxy-to-lithic">Creating a Proxy to Lithic</a> step.
 </Alert>
 
 🎉 The code above is the last bit that we need to reveal a full credit card! Now let's run the app by clicking on the play button on the top left. The screen should look something like this:
@@ -628,253 +689,5 @@ class ViewController: UIViewController {
 You can now reveal any data to a customer without your iOS app accessing the underlying value, drastically reducing compliance and regulatory scope.
 
 Try to tap the Reveal button and watch the card values appear on screen.
-
-
-## Collect Credit Cards
-
-The first step to reducing your PCI scope is to securely collect cardholder information without your application touching the data. To do this, we will leverage [Basis Theory Elements](/docs/sdks/web/react). These secure form inputs for your web or mobile application collect sensitive cardholder data without directly interacting with the values.
-
-### Install Basis Theory Package
-
-Install the Basis Theory React package within your application using your package manager:
-
-<Tabs className="bt-tabs">
-  <TabItem value="npm" label="npm">
-
-```shell showLineNumbers
-npm install --save @basis-theory/basis-theory-react
-```
-
-  </TabItem>
-  <TabItem value="yarn" label="yarn">
-
-```shell showLineNumbers
-yarn add @basis-theory/basis-theory-react
-```
-
-  </TabItem>
-</Tabs>
-
-### Create a Public Application
-
-To securely collect cardholder data, you'll need a [Public Application](/docs/api/applications) using our PCI compliant template `Collect PCI Data`. [Click here to create one.](https://portal.basistheory.com/applications/create?application_template_id=db9148c1-a55f-4164-b830-a20ab6d720ae)
-
-This will create a PCI-compliant application with the following [Access Controls](/docs/concepts/access-controls):
-* Permissions: `token:create`, `token:update`
-* Containers: `/pci/`
-* Transform: `mask`
-
-Copy the API Key to be used in the next step.
-
-### Initialize Basis Theory Elements
-
-Let's create a new Card Form component. In a terminal in the same directory as your `App` component, type:
-
-```bash showLineNumbers
-touch card-form.js
-```
-
-In your editor, update your App component with the following code:
-
-```javascript showLineNumbers
-import {
-  useBasisTheory,
-  BasisTheoryProvider
-} from '@basis-theory/basis-theory-react';
-import { CardForm } from './card-form';
-
-export default function App() {
-  const { bt } = useBasisTheory('test_1234567890', { elements: true });
-
-  return (
-    <BasisTheoryProvider bt={bt}>
-      <CardForm />
-    </BasisTheoryProvider>
-  );
-}
-```
-
-<Alert>
-  Be sure to replace <code>test_1234567890</code> with the Public API Key you
-  created in the <a href="#create-a-public-application">Create a Public Application</a> step.
-</Alert>
-
-Next, add the following code to your new Card Form component:
-
-```javascript showLineNumbers
-import {
-  useBasisTheory
-} from '@basis-theory/basis-theory-react';
-
-export const CardForm = () => {
-  const { bt } = useBasisTheory();
-
-  const submit = async () => {};
-
-  return (
-    <form onSubmit={submit}>
-      <button type="button" onClick={submit} >
-        Submit
-      </button>
-    </form>
-  );
-}
-```
-
-This will initialize Basis Theory JS and add your new card form.
-
-### Add Card Element
-
-Now, we need to add a [`CardElement`](/docs/sdks/web/javascript/types#card-element) component to our form. This Element type renders a single line containing input fields to capture the card number, expiration date, and CVC.
-
-Add the `CardElement` to our inputs:
-
-```javascript showLineNumbers
-import {
-  useBasisTheory,
-  CardElement
-} from '@basis-theory/basis-theory-react';
-```
-
-And inside of our `<form>` tag, add the following code:
-
-```javascript showLineNumbers
-<CardElement id="card" />
-```
-
-Your card component should now look like this:
-
-```javascript showLineNumbers
-import { useRef } from 'react';
-import {
-  useBasisTheory,
-  CardElement
-} from '@basis-theory/basis-theory-react';
-
-export const CardForm = () => {
-  const { bt } = useBasisTheory();
-  const cardRef = useRef(null);
-
-  const submit = async () => {};
-
-  return (
-    <form onSubmit={submit}>
-      <CardElement id="card" ref={cardRef} />
-
-      <button type="button" onClick={submit} >
-        Submit
-      </button>
-    </form>
-  );
-}
-```
-
-You can fully customize the [look and feel](/docs/guides/collect/customize-web-form) to match your existing site and even listen to common [events](/docs/sdks/web/javascript/methods#events) on all Elements components.
-
-## Store Cards
-
-Now that we have securely captured the card information, we need to securely store the card.
-
-To do this, we will tokenize the data with Basis Theory. Basis Theory handles all of the secure encryption and storage of the cardholder data and returns a non-sensitive token identifier that can be stored in your database.
-
-### Tokenize the Card
-
-Inside of your `CardForm`, we will update the `submit` function to tokenize the card using the PCI-compliant [`card` Token Type](/docs/api/tokens/token-types#card):
-
-```javascript showLineNumbers
-const submit = async () => {
-  // Tokenize card with Basis Theory
-  const token = await bt.tokenize({
-    type: 'card',
-    data: cardRef.current,
-  });
-
-  // Submit card token to our Next.js app's API
-  // Example using Axios
-  const { data } = await axios.post('/api/cards', { cardTokenId: token.id });
-};
-```
-
-### What is Happening?
-
-When a user submits their payment information, we will tokenize the underlying value of the [CardElement](/docs/sdks/web/javascript/types#card-element). This will instruct Basis Theory Elements to submit this sensitive card data directly to [Basis Theory's Tokenize endpoint](/docs/api/tokens/tokenize) and return the resulting token identifiers to our front end, all without our application having accessed the sensitive card data directly.
-
-We are also creating a [`card` Token Type](/docs/api/tokens/token-types#card). This is a PCI-compliant token type that will validate the card number using the [LUHN algorithm](https://en.wikipedia.org/wiki/Luhn_algorithm) and automatically expire the `cvc` property after one hour.
-
-The resulting token ID is safe to pass between your systems and store in plaintext within your preferred database.
-
-You can fully customize your card token, such as the alias, mask, and metadata by leveraging all of our [token capabilities](/docs/concepts/what-are-tokens) using [Expressions](/docs/expressions).
-
-<Alert type={Alerts.WARNING}>
-  To not take on additional PCI scope, you cannot reveal more than the first six digits or last four digits of the card number via a combination of the alias and mask on your card token.
-</Alert>
-
-## Process Cards
-
-Now that we have our card token, we need to be able to send the cardholder data to a PCI-compliant payment service provider (PSP) such as Stripe or Braintree.
-
-In order to do this, we will send the data without touching the tokenized value. To accomplish this, we will use [Basis Theory's Proxy](/docs/concepts/what-is-the-proxy).
-
-### Create a Private Application
-
-First, you will need a [Private Application](/docs/api/applications) using our PCI-compliant template `Use PCI Tokens`. This application will be used to securely send cardholder data via the Basis Theory Proxy to the PSP of your choice. [Click here to create one.](https://portal.basistheory.com/applications/create?application_template_id=31efed55-035c-4b49-b1a1-609a728d91ce)
-
-This will create a PCI-compliant application with the following [Access Controls](/docs/concepts/access-controls/):
-* Permissions: `token:use`
-* Containers: `/pci/`
-* Transform: `reveal`
-
-Copy the API Key to be used in the next step.
-
-### Send the Data to the Payment Service Provider
-
-From our backend API, we will now be able to send the cardholder data associated with our token to a third-party PSP.
-
-Add the following code to your API, replacing `PRIVATE_API_KEY` with the API Key from the previous step::
-
-```javascript showLineNumbers
-const { data }  = await axios.post(
-  'https://api.basistheory.com/proxy',
-  {
-    card_number: `{{ ${cardTokenId} | json: '$.number' }}`,
-    exp_month: `{{ ${cardTokenId} | json: '$.expiration_month' | to_number }}`,
-    exp_year: `{{ ${cardTokenId} | json: '$.expiration_year' | to_number }}`,
-    cvc: `{{ ${cardTokenId} | json: '$.cvc' }}`
-  },
-  {
-    headers: {
-      'BT-API-KEY': 'PRIVATE_API_KEY',
-      'BT-PROXY-URL': 'https://echo.basistheory.com/post',
-      'Content-Type': 'application/json'
-    }
-  });
-```
-
-You should see a JSON response similar to:
-
-```json showLineNumbers
-{
-  "card_number": "4242424242424242",
-  "exp_month": 12,
-  "exp_year": 2025,
-  "cvc": "123"
-}
-```
-
-### What is Happening?
-A secure HTTPS request is made to Basis Theory's Proxy endpoint. Basis Theory intercepts the request and detokenizes the [Expressions](/docs/expressions/) in the request body.
-
-The detokenized request is then forwarded to the destination URL defined by the `BT-PROXY-URL` header passing request headers and query parameters along to the destination.
-
-This allows you to send the sensitive PCI cardholder data to any PCI-compliant third-party without touching the data and, therefore, keeping your systems out of PCI scope.
-
-<Alert type={Alerts.WARNING}>
-  You should ensure that any PCI cardholder data is only sent to PCI-certified third-parties. All PCI-certified services are required to maintain an up-to-date Attestation of Compliance (AOC) to accept and store cardholder information.
-</Alert>
-
-More advanced Proxy scenarios can be configured via the [Proxies endpoint](/docs/api/proxies), such as tokenizing inbound cardholder data before it touches your API or encrypting outbound API calls with an encryption key.
-
-## Conclusion
-Following the PCI Blueprint enables you to remove 95% of the PCI compliance requirements by removing the need to touch the cardholder data when collecting, storing, and processing sensitive information.
 
 Have feedback or questions? Join us in our [Slack community](https://community.basistheory.com).
