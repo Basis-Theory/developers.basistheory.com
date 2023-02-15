@@ -1,5 +1,5 @@
 ---
-title: Ephemeral Proxies
+title: Ephemeral Proxy
 ---
 
 import {
@@ -9,11 +9,11 @@ import {
 import { Permission } from "@site/src/components/shared/Permission";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
-# Ephemeral Proxies
+# Ephemeral Proxy
 
 The Basis Theory Proxy can be used to share tokenized data with trusted third parties via outbound HTTP requests.
 Some outbound proxy requests simply need to [detokenize](/docs/expressions/detokenization) some tokens in the request and forward
-the plaintext data to a destination API over HTTP. Ephemeral proxies are a good fit for this use case,
+the plaintext data to a destination API over HTTP. Ephemeral proxy requests are a good fit for this use case,
 as they don't require any up-front setup, and all configuration is self-contained within the proxy request.
 
 ## Invoke the Proxy
@@ -65,6 +65,9 @@ permission on the most-specific [container](/docs/concepts/what-are-containers) 
 
 ### Request
 
+A `BT-PROXY-URL` request header is required - its value defines the base URL to which the request will be proxied.
+See [Destination URLs](/docs/api/proxies/#destination-urls) for more information.
+
 ```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \
   -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
@@ -76,10 +79,6 @@ curl "https://api.basistheory.com/proxy" \
     "parameter2": "non-sensitive"
   }'
 ```
-
-A `BT-PROXY-URL` request header is required - its value defines the base URL to which the request will be proxied.
-See [Destination URLs](/docs/api/proxies/#destination-urls) for more information.
-
 
 ### Response
 
