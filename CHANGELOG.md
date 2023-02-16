@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.26.0...v1.27.0) (2023-02-16)
+
+
+### Features
+
+* updating proxy docs ([#70](https://github.com/Basis-Theory/developers.basistheory.com/issues/70)) ([fc4f3f4](https://github.com/Basis-Theory/developers.basistheory.com/commit/fc4f3f45715905c2f74a3d6c036cb102a15e417e))
+
 # [1.26.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.25.3...v1.26.0) (2023-02-15)
 
 
