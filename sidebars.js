@@ -244,7 +244,7 @@ const sidebars = {
         type: "doc",
         id: "api/reactors/reactors",
       },
-      items: ["api/reactors/reactor-formulas"],
+      items: ["api/reactors/reactor-formulas", "api/reactors/reactor-errors"],
     },
     {
       type: "category",

@@ -960,9 +960,11 @@ func main() {
 
 #### Request Parameters
 
-| Parameter | Required | Type     | Default | Description                                                                                                                                                                                          |
-| --------- | -------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `args`    | false    | _object_ | `null`  | Arguments to provide to the reactor. These arguments must contain the declared [request parameters](/docs/api/reactors/reactor-formulas#reactor-formula-request-parameters) for the reactor formula. |
+| Parameter      | Required | Type     | Default | Description                                                                                                                                                                                          |
+| -------------- | -------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `args`         | false    | _object_ | `null`  | Arguments to provide to the reactor. These arguments must contain the declared [request parameters](/docs/api/reactors/reactor-formulas#reactor-formula-request-parameters) for the reactor formula. |
+| `callback_url` | false    | _string_ | `null`  | Indicates that the reactor should be invoked asynchronously and the result delivered as a webhook to this url. See [Asynchronous Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) for more info.                                                |
+| `timeout_ms`   | false    | _int_    | `10000` | The maximum execution time for the reactor. Value must be between `10000` (10s) and `210000` (3.5m). Only supported for [Asynchronous Reactor](/docs/concepts/what-are-reactors#asynchronous-reactors) requests.                                                 |
 
 #### Reactor Request Parameters
 
@@ -979,7 +981,7 @@ The reactor will be executed with a `req` object that contains the following pro
 ### Response
 
 Returns a [Reactor Response](#invoke-a-reactor-reactor-response-object) if the Reactor completed successfully. Returns [an error](/docs/api/errors) if the Reactor failed.
-Errors generated from Reactors will be translated to the common Basis Theory Error format. See [Reactor Errors](/docs/api/errors#reactor-errors) for more details.
+Errors generated from Reactors will be translated to the common Basis Theory Error format. See [Reactor Errors](/docs/api/reactors/reactor-errors) for more details.
 
 #### Reactor Response Object
 

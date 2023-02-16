@@ -1,0 +1,325 @@
+---
+title: Reactor Errors
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Errors that occur when [invoking a reactor](/docs/api/reactors#invoke-a-reactor) will be formatted according to
+the standard Basis Theory [Error Response](/docs/api/errors). The contents of each error will vary based on the failure scenario,
+and there are several standard error codes that are possible that can be used to determine the cause of the error.
+
+## Reactor Error Codes
+
+| Code  | Meaning                | Common Scenarios                                                                                                                                                          |
+|-------|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `400` | Bad Request            | <ul><li>Missing or invalid `args` on the request</li><li>Invalid Reactor Configuration</li></ul>                                                                          |
+| `401` | Authentication Error   | <ul><li>Invalid or unknown credentials</li><li>Credentials are valid, but lack permission to complete the operation</li></ul>                                             |
+| `402` | Invalid Payment Method | <ul><li>Expired Card</li><li>A test card or bank account was used in a production environment, or vice-versa</li><li>The vendor denied the card or bank account</li></ul> |
+| `422` | Unprocessable Entity   | <ul><li>Reactor Formula code is not a valid function</li></ul>                                                                                                            |
+| `429` | Rate Limit Error       | <ul><li>The vendor responded with a 429 HTTP response code</li></ul>                                                                                                      |
+| `500` | Reactor Runtime Error  | <ul><li>An unhandled exception occurred</li><li>The vendor responded with a 5XX HTTP response code</li><li>Vendor connection failure</li></ul>                            |
+
+There are a few different root causes for why one of these errors may be returned from a reactor:
+
+1. An error occurred within Basis Theory's reactor execution framework when processing your request. For example,
+this can occur if the reactor code is invalid and fails to compile (JavaScript code is validated before being executed) resulting in a `422` error, or if the provided `args`
+contain an invalid expression resulting in a `400` error.
+
+2. An error occurred within your reactor code. For example, an HTTP call is made to an external vendor and they responded with an error,
+or a runtime error occurred within the code due to a bug. The following section details best practices when handling errors within reactor code.
+
+## Handling Errors in Reactor Code
+
+The [basistheory-reactor-formulas-sdk-js](https://github.com/Basis-Theory/basistheory-reactor-formulas-sdk-js) package can be referenced
+within your reactor code to better control the status codes and messages included on reactor errors.
+
+### Error Types
+
+This package includes several error types that can be thrown from your code, including:
+
+| Type                        | Status Code | Message                |
+|-----------------------------|-------------|------------------------|
+| `AuthenticationError`       | `401`       | Authentication Failed  |
+| `AuthorizationError`        | `403`       | Forbidden              |
+| `BadRequestError`           | `400`       | Bad Request            |
+| `InvalidPaymentMethodError` | `402`       | Invalid Payment Method |
+| `RateLimitError`            | `429`       | Rate Limit Exceeded    |
+| `ReactorRuntimeError`       | `500`       | Reactor Runtime Error  |
+
+If your reactor code throws any of these standard error types, they will be caught and translated into
+the corresponding status code and message specified in the table above.
+
+Unhandled errors raised from reactor code will result in a `ReactorRuntimeError` containing the original error
+and the response will have status code `500`.
+
+### Error Constructors
+
+Each of the [error types](#error-types) accepts a constructor argument that will be returned within the `errors` block.
+The constructor argument for each type supports several error formats, for example:
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="string" label="String">
+
+```javascript
+
+// Throwing an error constructed with a string error message:
+const { ReactorRuntimeError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+throw new ReactorRuntimeError('My error message');
+
+// Would result in the following error response:
+{
+  "status": 500,
+  "message": "Reactor Runtime Error",
+  "errors": {
+    "error": ["My error message"]
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="array" label="Array">
+
+```javascript
+
+// Throwing an error constructed with an array:
+const { ReactorRuntimeError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+throw new ReactorRuntimeError('My error message');
+
+// Would result in the following error response:
+{
+  "status": 500,
+  "message": "Reactor Runtime Error",
+  "errors": {
+    "error": ["error 1", "error 2"]
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="object" label="Object">
+
+```javascript
+
+// Throwing an error constructed with an object:
+const { ReactorRuntimeError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+throw new ReactorRuntimeError({
+  property1: 'error 1',
+  property2: ['error 2', 'error 3']
+});
+
+// Would result in the following error response:
+{
+  "status": 500,
+  "message": "Reactor Runtime Error",
+  "errors": {
+    "error": {
+      "property1": ["error 1"],
+      "property2": ["error 2", "error 3"]
+    }
+  }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Best Practices
+
+When integrating with an external API within a reactor, we strongly recommend handling all vendor-specific errors
+that are documented by the vendor and translating into an appropriate error type.
+
+Some vendors express error scenarios via HTTP status codes, while others opt to return a generic status code such as `200 OK` while
+expressing the error condition within the response body. Each external vendor is unique and error handling may also look very different when using a
+vendor's official SDK vs making a direct HTTP call with a generic HTTP client. For these reasons, error handling logic needs to be
+customized for each integrated vendor and API call made from within your reactor code.
+
+In order to make it easier to debug errors returned by a reactor, we strongly encourage you to handle all errors documented by each vendor
+and to craft your reactor responses such that you have sufficient information available in your system to react appropriately to each type of error.
+
+### Examples
+
+<Tabs>
+  <TabItem value="stripe" label="Stripe">
+
+```javascript
+module.exports = async function (req) {
+  const stripe = require('stripe')(req.configuration.STRIPE_PRIVATE_API_KEY);
+  const {
+    AuthenticationError,
+    BadRequestError,
+    InvalidPaymentMethodError,
+    RateLimitError,
+    ReactorRuntimeError,
+  } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+  try {
+    const token = await stripe.tokens.create({
+      // redacted for simplicity
+    });
+
+    return {
+      raw: token,
+    };
+  } catch (err) {
+    // the stripe sdk throws an error containing a type value
+    // here we translate from stripe-specific error types into Basis Theory errors
+    switch (err.type) {
+      case 'StripeCardError':
+        throw new InvalidPaymentMethodError();
+      case 'StripeRateLimitError':
+        throw new RateLimitError();
+      case 'StripeAuthenticationError':
+        throw new AuthenticationError();
+      case 'StripeInvalidRequestError':
+        throw new BadRequestError();
+      case 'StripeAPIError':
+      case 'StripeConnectionError':
+      default:
+        throw new ReactorRuntimeError(err);
+    }
+  }
+};
+```
+  </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+```javascript
+module.exports = async function (req) {
+  const {
+    AuthenticationError,
+    BadRequestError,
+    InvalidPaymentMethodError,
+    InvalidReactorConfigurationError,
+    RateLimitError,
+    ReactorRuntimeError,
+  } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+  const { Client, CheckoutAPI } = require('@adyen/api-library');
+
+  const { ADYEN_API_KEY, ADYEN_MERCHANT_ACCOUNT, ADYEN_ENVIRONMENT } =
+    req.configuration;
+
+  const client = new Client({
+    apiKey: ADYEN_API_KEY,
+    environment: ADYEN_ENVIRONMENT,
+  });
+  const checkout = new CheckoutAPI(client);
+
+  let res;
+  try {
+    res = await checkout.payments({
+      // redacted for simplicity
+    });
+  } catch (err) {
+    // Adyen's SDK throws an error that may contain an errorCode
+    switch (err.errorCode) {
+      case '101':
+      case '102':
+      case '103':
+      case '129':
+      case '140':
+      case '141':
+      case '153':
+        throw new InvalidPaymentMethodError(err);
+      case '159':
+        throw new RateLimitError(err);
+      case '180':
+      case '198':
+        throw new BadRequestError(err);
+      case '901':
+        throw new InvalidReactorConfigurationError(err);
+    }
+
+    // or the error may contain a statusCode
+    switch (err.statusCode) {
+      case 401:
+      case 403:
+        throw new AuthenticationError(err);
+      case 400:
+      case 422:
+        throw new BadRequestError(err);
+      case 429:
+        throw new RateLimitError(err);
+      default:
+        throw new ReactorRuntimeError(err);
+    }
+  }
+
+  // the API call may have also succeeded and returned an error resultCode
+  switch (res.resultCode) {
+    case 'Refused':
+      throw new InvalidPaymentMethodError(res);
+    case 'Error':
+      throw new ReactorRuntimeError(res);
+    default:
+      return {
+        raw: res,
+      };
+  }
+};
+```
+
+  </TabItem>
+  <TabItem value="spreedly" label="Spreedly">
+
+```javascript
+module.exports = async function (req) {
+  const fetch = require('node-fetch');
+  const {
+    AuthenticationError,
+    BadRequestError,
+    InvalidPaymentMethodError,
+    RateLimitError,
+    ReactorRuntimeError,
+  } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+  const { SPREEDLY_API_ENV_KEY, SPREEDLY_API_ACCESS_KEY } = req.configuration;
+
+  const res = await fetch('https://core.spreedly.com/v1/payment_methods.json', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization:
+        `Basic ` +
+        Buffer.from(
+          `${SPREEDLY_API_ENV_KEY}:${SPREEDLY_API_ACCESS_KEY}`,
+          'binary'
+        ).toString('base64'),
+    },
+    body: JSON.stringify(creationPayload),
+  });
+
+  if (res.status !== 201) {
+    const response = res.headers
+      .get('Content-Type')
+      ?.includes('application/json')
+      ? await res.json()
+      : await res.text();
+
+    // the spreedly api responds with an http status code indicating the error
+    // here we translate from a mixture of response status codes and errors in
+    // the response body into basis theory errors
+    switch (res.status) {
+      case 401:
+      case 403:
+        throw new AuthenticationError(response);
+      case 402:
+      case 422:
+        if (response.errors?.find((e) => e.key.startsWith('errors.metadata')))
+          throw new BadRequestError();
+        throw new InvalidPaymentMethodError(response);
+      case 429:
+        throw new RateLimitError(response);
+      default:
+        throw new ReactorRuntimeError(response);
+    }
+  }
+
+  return {
+    raw: await res.json(),
+  };
+};
+```
+
+  </TabItem>
+</Tabs>
