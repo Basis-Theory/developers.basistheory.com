@@ -1,0 +1,1459 @@
+---
+title: Pre-Configured Proxies
+---
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import {Permission} from "@site/src/components/shared/Permission";
+import {Alert} from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Pre-Configured Proxies
+
+As an alternative to the [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy), the Basis Theory Proxy also supports
+pre-configuring proxy instances before they are invoked. This can be useful to reuse common configurations across requests,
+or to accept inbound HTTP requests from third parties. When using a proxy to accept inbound requests from third parties,
+pre-configured proxies allow you to define the proxy's behavior and simply share that proxy's unique URL with
+the third party integrator.
+
+Pre-configured proxies also support additional configuration options, including:
+
+- Request and response [transforms](#transforms) to invoke custom code during the request pipeline
+- Securely storing proxy-specific secrets within a [configuration](#proxy-object) map
+- Allowing anonymous proxy requests
+
+## Create a Proxy
+
+Creates a new Proxy for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/proxies"
+/>
+
+#### Permissions
+
+<Permission content="proxy:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+transform='module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
+
+  return {
+    headers: req.args.headers,
+    body: req.args.body
+  };
+};'
+
+curl "https://api.basistheory.com/proxies" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "My Proxy",
+    "destination_url": "https://example.com/api",
+    "request_transform": {
+      "code": '"$(echo $transform | jq -Rsa .)"',
+    },
+    "response_transform": {
+      "code": '"$(echo $transform | jq -Rsa .)"',
+    },
+    "configuration": {
+      "SERVICE_API_KEY": "key_abcd1234"
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    },
+    "require_auth": true
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+const proxy = await bt.proxies.create({
+  name: 'My Proxy',
+  destinationUrl: 'https://example.com/api',
+  requestTransform: {
+    code: '
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    '
+  },
+  responseTransform: {
+    code: '
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    '
+  },
+  configuration: {
+    SERVICE_API_KEY: 'key_abcd1234',
+  },
+  application: {
+    id: '45c124e7-6ab2-4899-b4d9-1388b0ba9d04'
+  },
+  requireAuth: true
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Proxies;
+
+var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var proxy = await client.CreateAsync(new ProxyCreateRequest {
+  Name = "My Proxy",
+  DestinationUrl = "https://example.com/api",
+  RequestTransform = new RequestTransform {
+    Code = @"
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    "
+  },
+  ResponseTransform = new RequestTransform {
+    Code = @"
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    "
+  },
+  Configuration = new Dictionary<string, string> {
+    { "SERVICE_API_KEY", "key_abcd1234" }
+  },
+  Application = new Application {
+    Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
+  },
+  RequireAuthentication: true
+});
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        CreateProxyRequest createProxyRequest = new CreateProxyRequest();
+        Proxy result = apiInstance.create(createProxyRequest
+                .name("My Proxy")
+                .destinationUrl("https://example.com/api")
+                .requestTransform(new ProxyTransform().code("""
+                        module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                .responseTransform(new ProxyTransform().code("""
+                         module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd1234"))
+                .application(new Application().id(UUID.fromString("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")))
+                .requireAuth(true));
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import proxies_api
+from basistheory.model.create_proxy_request import CreateProxyRequest
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    proxy_client = proxies_api.ProxiesApi(api_client)
+
+    proxy = proxy_client.create(create_proxy_request=CreateProxyRequest(
+        name="My Proxy",
+        destination_url="https://example.com/api",
+        requeset_transform=ProxyTransform(
+            code=" \
+                module.exports = async function (req) { \
+                  // Do something with req.configuration.SERVICE_API_KEY \
+
+                  return { \
+                    headers: req.args.headers, \
+                    body: req.args.body \
+                  }; \
+                };"
+        ),
+        response_transform=ProxyTransform(
+            code=" \
+                module.exports = async function (req) { \
+                  // Do something with 'req.configuration.SERVICE_API_KEY' \
+
+                  return { \
+                    headers: req.args.headers, \
+                    body: req.args.body \
+                  }; \
+                };"
+        ),
+        configuration={
+            "SERVICE_API_KEY": "key_abcd134"
+        },
+        application=Application(
+            id="45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+        ),
+        require_auth=True
+    ))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  createProxyRequest := *basistheory.NewCreateProxyRequest("My Proxy", "https://example.com/api")
+  requestTransform := *basistheory.NewProxyTransform()
+  requestTransform.SetCode(`
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        headers: req.args.headers,
+        body: req.args.body
+      };
+    };
+  `)
+  createProxyRequest.SetRequestTransform(requestTransform)
+  responseTransform := *basistheory.NewProxyTransform()
+  responseTransform.SetCode(`
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        headers: req.args.headers,
+        body: req.args.body
+      };
+    };
+  `)
+  createProxyRequest.SetResponseTransform(responseTransform)
+  createProxyRequest.SetConfiguration(map[string]string{
+    "SERVICE_API_KEY": "key_abcd134",
+  })
+  application := *basistheory.NewApplication()
+  application.SetId("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
+  createProxyRequest.SetApplication(application)
+  createProxyRequest.SetRequireAuth(true)
+
+  proxy, httpResponse, err := apiClient.ProxiesApi.Create(contextWithAPIKey).CreateProxyRequest(createProxyRequest).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                                                                               |
+|----------------------|----------|------------------------------------------------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                                                                                      |
+| `destination_url`    | true     | _string_                                                   | `null`  | The URL to which requests will be proxied                                                                                                                                                                                                                                                 |
+| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | [Request Transform](#request-transforms) which will be executed against the proxy request before sending to the destination.                                                                                                                                                            |
+| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | [Response Transform](#response-transforms) which will be executed against the destination's response before returning the proxy response.                                                                                                                                                 |
+| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the transform. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                                                                                     |
+| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                                                                |
+
+### Response
+
+Returns a [Proxy](#proxy-object) if the Proxy was created. Returns [an error](/docs/api/errors) if there were validation errors, or the Proxy failed to create.
+
+```javascript showLineNumbers
+{
+  "id": "433013a6-a614-4e1e-b2aa-5fba67aa85e6",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "name": "My Proxy",
+  "key": "e29a50980ca5",
+  "destination_url": "https://example.com/api",
+  "request_transform": {
+    "code": "
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    "
+  },
+  "response_transform": {
+    "code": "
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    "
+  },
+  "configuration": {
+    "SERVICE_API_KEY": "key_abcd1234"
+  },
+  "application_id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04",
+  "require_auth": true,
+  "created_by": "3ce0dceb-fd0b-4471-8006-c51243c9ef7a",
+  "created_at": "2020-09-15T15:53:00+00:00"
+}
+```
+
+## List Proxies
+
+Get a list of proxies for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/proxies"
+/>
+
+#### Permissions
+
+<Permission content="proxy:read" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+
+const proxies = await bt.proxies.list();
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Proxies;
+
+var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var proxies = await client.GetAsync();
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        List<UUID> id = Arrays.asList();
+        String name = "name_example";
+        Integer page = 1;
+        Integer size = 50;
+        ProxyPaginatedList result = apiInstance.get(id, name, page, size);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import proxies_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    proxy_client = proxies_api.ProxiesApi(api_client)
+
+    proxies = proxy_client.get()
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  proxies, httpResponse, err := apiClient.ProxiesApi.Get(contextWithAPIKey).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### Query Parameters
+
+| Parameter | Required | Type     | Default | Description                                                     |
+| --------- | -------- | -------- | ------- | --------------------------------------------------------------- |
+| `id`      | false    | _array_  | `[]`    | An optional list of Proxy ID's to filter the list of proxies by |
+| `name`    | false    | _string_ | `null`  | Wildcard search of proxies by name                              |
+
+### Response
+
+Returns a [paginated object](/docs/api/pagination) with the `data` property containing an array of [proxies](#proxy-object). Providing any query parameters will filter the results. Returns [an error](/docs/api/errors) if proxies could not be retrieved.
+
+```javascript showLineNumbers
+{
+  "pagination": {...}
+  "data": [
+    {
+      "id": "433013a6-a614-4e1e-b2aa-5fba67aa85e6",
+      "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+      "name": "My Proxy",
+      "key": "e29a50980ca5",
+      "destination_url": "https://example.com/api",
+      "request_transform": {
+        "code": "
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
+
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        "
+      },
+      "response_transform": {
+        "code": "
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
+
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        "
+      },
+      "configuration": {
+        "SERVICE_API_KEY": "key_abcd1234"
+      },
+      "application_id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04",
+      "require_auth": true,
+      "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+      "created_at": "2020-09-15T15:53:00+00:00",
+      "modified_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+      "modified_at": "2021-03-01T08:23:14+00:00"
+    },
+    {...},
+    {...}
+  ]
+}
+```
+
+## Get a Proxy
+
+Get a Proxy by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/proxies/{id}"
+/>
+
+#### Permissions
+
+<Permission content="proxy:read" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies/5b493235-6917-4307-906a-2cd6f1a90b13" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+
+const proxy = await bt.proxies.retrieve("5b493235-6917-4307-906a-2cd6f1a90b13");
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Proxies;
+
+var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var proxy = await client.GetByIdAsync("5b493235-6917-4307-906a-2cd6f1a90b13");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```csharp showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        Proxy result = apiInstance.getById(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"));
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import proxies_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    proxy_client = proxies_api.ProxiesApi(api_client)
+
+    application = proxy_client.get_by_id("5b493235-6917-4307-906a-2cd6f1a90b13")
+
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  proxy, httpResponse, err := apiClient.ProxiesApi.GetById(contextWithAPIKey, "433013a6-a614-4e1e-b2aa-5fba67aa85e6").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description         |
+| --------- | -------- | ------ | ------- | ------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
+
+### Response
+
+Returns a [Proxy](#proxy-object) with the `id` provided. Returns [an error](/docs/api/errors) if the Proxy could not be retrieved.
+
+```javascript showLineNumbers
+{
+  "id": "433013a6-a614-4e1e-b2aa-5fba67aa85e6",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "name": "My Proxy",
+  "key": "e29a50980ca5",
+  "destination_url": "https://example.com/api",
+  "request_transform": {
+    "code": "
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    "
+  },
+  "response_transform": {
+    "code": "
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    "
+  },
+  "configuration": {
+    "SERVICE_API_KEY": "key_abcd1234"
+  },
+  "application_id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04",
+  "require_auth": true,
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "modified_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "modified_at": "2021-03-01T08:23:14+00:00"
+}
+```
+
+## Update Proxy
+
+Update a Proxy by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.PUT}
+  endpoint="https://api.basistheory.com/proxies/{id}"
+/>
+
+#### Permissions
+
+<Permission content="proxy:update" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+transform='module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
+
+  return {
+    headers: req.args.headers,
+    body: req.args.body
+  };
+};'
+
+curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/json" \
+  -X "PUT" \
+  -d '{
+    "name": "My Proxy",
+    "destination_url": "https://example.com/api",
+    "request_transform": {
+      "code": '"$(echo $transform | jq -Rsa .)"',
+    },
+    "response_transform": {
+      "code": '"$(echo $transform | jq -Rsa .)"',
+    },
+    "configuration": {
+      "SERVICE_API_KEY": "key_abcd1234"
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    },
+    "require_auth": true
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+const proxy = await bt.proxies.update('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
+  name: 'My Proxy',
+  destinationUrl: 'https://example.com/api',
+  requestTransform: {
+    code: '
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    '
+  },
+  responseTransform: {
+    code: '
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    '
+  },
+  configuration: {
+    SERVICE_API_KEY: 'key_abcd1234',
+  },
+  application: {
+    id: '45c124e7-6ab2-4899-b4d9-1388b0ba9d04'
+  },
+  requireAuth: true
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Proxies;
+
+var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var proxy = await client.UpdateAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
+  new ProxyUpdateRequest {
+    Name = "My Proxy",
+    DestinationUrl = "https://example.com/api",
+    RequestTransform = new RequestTransform {
+      Code = @"
+        module.exports = async function (req) {
+          // Do something with req.configuration.SERVICE_API_KEY
+
+          return {
+            headers: req.args.headers,
+            body: req.args.body
+          };
+        };
+      "
+    },
+    ResponseTransform = new RequestTransform {
+      Code = @"
+        module.exports = async function (req) {
+          // Do something with req.configuration.SERVICE_API_KEY
+
+          return {
+            headers: req.args.headers,
+            body: req.args.body
+          };
+        };
+      "
+    },
+    Configuration = new Dictionary<string, string> {
+      { "SERVICE_API_KEY", "key_abcd1234" }
+    },
+    Application = new Application {
+      Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
+    },
+    RequireAuthentication = true
+  }
+);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        CreateProxyRequest createProxyRequest = new CreateProxyRequest();
+        Proxy result = apiInstance.create(createProxyRequest
+                .name("My Proxy")
+                .destinationUrl("https://example.com/api")
+                .requestTransform(new ProxyTransform().code("""
+                        module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                .responseTransform(new ProxyTransform().code("""
+                         module.exports = async function (req) {
+                                // Do something with `req.configuration.SERVICE_API_KEY`
+
+                                return {
+                                  headers: req.args.headers,
+                                  body: req.args.body
+                                };
+                              };
+                        """))
+                ._configuration(Map.of("SERVICE_API_KEY", "key_abcd1234"))
+                .application(new Application().id(UUID.fromString("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")))
+                .requireAuth(true));
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import proxies_api
+from basistheory.model.update_proxy_request import UpdateProxyRequest
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    proxy_client = proxies_api.ProxiesApi(api_client)
+
+    application = proxy_client.update("433013a6-a614-4e1e-b2aa-5fba67aa85e6", update_proxy_request=UpdateProxyRequest(
+        name="My Proxy",
+        destination_url="https://example.com/api",
+        requeset_transform=ProxyTransform(
+            code=" \
+                module.exports = async function (req) { \
+                  // Do something with req.configuration.SERVICE_API_KEY \
+
+                  return { \
+                    headers: req.args.headers, \
+                    body: req.args.body \
+                  }; \
+                };"
+        ),
+        response_transform=ProxyTransform(
+            code=" \
+                module.exports = async function (req) { \
+                  // Do something with req.configuration.SERVICE_API_KEY \
+
+                  return { \
+                    headers: req.args.headers, \
+                    body: req.args.body \
+                  }; \
+                };"
+        ),
+        configuration={
+            "SERVICE_API_KEY": "key_abcd134"
+        },
+        application=Application(
+            id="45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+        ),
+        require_auth=True
+    ))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  updateProxyRequest := *basistheory.NewUpdateProxyRequest("My Proxy", "https://example.com/api")
+  requestTransform := *basistheory.NewProxyTransform()
+  requestTransform.SetCode(`
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        headers: req.args.headers,
+        body: req.args.body
+      };
+    };
+  `)
+  updateProxyRequest.SetRequestTransform(requestTransform)
+  responseTransform := *basistheory.NewProxyTransform()
+  responseTransform.SetCode(`
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        headers: req.args.headers,
+        body: req.args.body
+      };
+    };
+  `)
+  updateProxyRequest.SetResponseTransform(responseTransform)
+  updateProxyRequest.SetConfiguration(map[string]string{
+    "SERVICE_API_KEY": "key_abcd134",
+  })
+  application := *basistheory.NewApplication()
+  application.SetId("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
+  updateProxyRequest.SetApplication(application)
+  updateProxyRequest.SetRequireAuth(true)
+
+  proxy, httpResponse, err := apiClient.ProxiesApi.Update(contextWithAPIKey, "433013a6-a614-4e1e-b2aa-5fba67aa85e6").UpdateProxyRequest(updateProxyRequest).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description         |
+| --------- | -------- | ------ | ------- | ------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
+
+#### Request Parameters
+
+| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                                                                               |
+| -------------------- | -------- | ---------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | true     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                                                                                      |
+| `destination_url`    | true     | _string_                                                   | `null`  | The URL to which requests will be proxied                                                                                                                                                                                                                                                              |
+| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | [Request Transform](#request-transforms) which will be executed against the proxy request before sending to the destination.                                                                                                                                                                                               |
+| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | [Response Transform](#response-transforms) which will be executed against the destination's response before returning the proxy response.                                                                                                                                                                                      |
+| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the transform. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                                                                                     |
+| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                                                                |
+
+### Response
+
+Returns a [Proxy](#proxy-object) if the Proxy was updated. Returns [an error](/docs/api/errors) if there were validation errors, or the Proxy failed to update.
+
+```javascript showLineNumbers
+{
+
+  "id": "433013a6-a614-4e1e-b2aa-5fba67aa85e6",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "name": "My Proxy",
+  "key": "e29a50980ca5",
+  "destination_url": "https://example.com/api",
+  "request_transform": {
+    "code": "
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    "
+  },
+  "response_transform": {
+    "code": "
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    "
+  },
+  "configuration": {
+    "SERVICE_API_KEY": "key_abcd1234"
+  },
+  "application_id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04",
+  "require_auth": true,
+  "created_by": "3ce0dceb-fd0b-4471-8006-c51243c9ef7a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "modified_by": "34053374-d721-43d8-921c-5ee1d337ef21",
+  "modified_at": "2021-03-01T08:23:14+00:00"
+}
+```
+
+## Delete Proxy
+
+Delete a Proxy by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/proxies/{id}"
+/>
+
+#### Permissions
+
+<Permission content="proxy:delete" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -X "DELETE"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+
+await bt.proxies.delete("433013a6-a614-4e1e-b2aa-5fba67aa85e6");
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Proxies;
+
+var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
+
+await client.DeleteAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+        apiInstance.delete(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"));
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import proxies_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    proxies_client = proxies_api.ProxiesApi(api_client)
+
+    proxies_client.delete("433013a6-a614-4e1e-b2aa-5fba67aa85e6")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  httpResponse, err := apiClient.ProxiesApi.Delete(contextWithAPIKey, "433013a6-a614-4e1e-b2aa-5fba67aa85e6").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description         |
+| --------- | -------- | ------ | ------- | ------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
+
+### Response
+
+Returns [an error](/docs/api/errors) if the Proxy failed to delete.
+
+## Proxy Object
+
+| Attribute            | Type                                         | Description                                                                                                                                                                                                                                                 |
+| -------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                 | _uuid_                                       | Unique identifier of the Proxy which can be used to [get a Proxy](/docs/api/proxies#get-a-proxy)                                                                                                                                                            |
+| `key`                | _string_                                     | Auto-generated key used to [invoke this Proxy](/docs/api/proxies/pre-configured-proxies#invoke-a-proxy)                                                                                                                                             |
+| `name`               | _string_                                     | The name of the Proxy                                                                                                                                                                                                                                       |
+| `destination_url`    | _string_                                     | The URL to which requests will be proxied                                                                                                                                                                                                                   |
+| `tenant_id`          | _uuid_                                       | The [Tenant](/docs/api/tenants) ID which owns the Proxy                                                                                                                                                                                                     |
+| `require_auth`       | _boolean_                                    | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                                  |
+| `request_transform`  | _[Proxy Transform](#proxy-transform-object)_ | (Optional) [Request Transform](#request-transforms) which will be executed against the proxy request before sending to the destination.                                                                                                                     |
+| `response_transform` | _[Proxy Transform](#proxy-transform-object)_ | (Optional) [Response Transform](#response-transforms) which will be executed against the destination's response before returning the proxy response.                                                                                                        |
+| `application_id`     | _string_                                     | (Optional) This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the transform. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+| `configuration`      | _map_                                        | (Optional) A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                                            |
+| `created_by`         | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Proxy                                                                                                                                                               |
+| `created_at`         | _string_                                     | (Optional) Created date of the Proxy in ISO 8601 format                                                                                                                                                                                                     |
+| `modified_by`        | _uuid_                                       | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Proxy                                                                                                                                                         |
+| `modified_at`        | _date_                                       | (Optional) Last modified date of the Proxy in ISO 8601 format                                                                                                                                                                                               |
+
+### Proxy Transform Object
+
+| Attribute | Type     | Description                                                                                    |
+| --------- | -------- | ---------------------------------------------------------------------------------------------- |
+| `code`    | _string_ | Transform code which will be executed when the Proxy transform is processed. See [Request Transforms](#request-transforms) or [Response Transforms](#response-transforms) for details. |
+
+## Invoke a Proxy
+
+Invoke a pre-configured proxy instance.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.PUT}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.PATCH}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/proxy"
+/>
+
+### Authentication
+
+Pre-configured proxies can be configured to either require authentication or allow anonymous requests.
+When authentication is required, a `BT-API-KEY` header must be provided with the request (see [Authentication](/docs/api/authentication)).
+
+Unauthenticated proxy requests may be desired when receiving inbound requests from a third party.
+This would allow any caller who knows your unique proxy key to make inbound requests through the proxy
+without needing to share a Basis Theory API key with third parties.
+
+Any authentication required by the destination service can be set on the request and will be forwarded through the proxy
+(for example, by setting an `Authorization` header).
+
+### Permissions
+
+<Permission content="token:use" />
+<br/><br/>
+
+The `token:use` permission is required for each [Container](/docs/concepts/what-are-containers) of Tokens you wish to detokenize through the Proxy.
+This permission is required to use authenticated proxies, even if there are no tokens being detokenized within your request.
+
+It is recommended that you restrict which tokens the Proxy can detokenize by only granting `token:use`
+permission on the most-specific [container](/docs/concepts/what-are-containers) of tokens that is required.
+
+### Request
+
+The unique key for a pre-configured proxy can either be supplied in a request header or a query string parameter.
+
+```shell title="Request with 'BT-PROXY-KEY' header" showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-PROXY-KEY: e29a50980ca5" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
+    "parameter2": "non-sensitive"
+  }'
+```
+
+```shell title="Request with 'bt-proxy-key' query param" showLineNumbers
+curl "https://api.basistheory.com/proxy?bt-proxy-key=e29a50980ca5" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
+    "parameter2": "non-sensitive"
+  }'
+```
+
+### Response
+
+The raw response from the destination will be returned from the proxy, unless an error occurs within the Basis Theory Proxy while processing the request.
+
+If an error occurs within the proxy (e.g. an invalid detokenization expression was found), then the following error response will be returned:
+
+| Attribute     | Type  | Description                                       |
+|---------------|-------|---------------------------------------------------|
+| `proxy_error` | _any_ | A standard Basis Theory [error](/docs/api/errors) |
+
+## Transforms
+
+Pre-configured proxies allow you to optionally define request or response transforms, which allow custom Node.js code to be
+executed before and after the HTTP request is forwarded to the destination URL. When a transform is defined on a proxy,
+your custom Node.js code will execute in Basis Theory's secure [serverless reactor](/docs/concepts/what-are-reactors) environment.
+
+<Alert>
+  Transforms are only currently supported for requests with content type <code>application/json</code> or <code>application/x-www-form-urlencoded</code>.
+  Please <a href="https://basistheory.com/contact">let us know</a> if you would like to use proxy transforms with other content types.
+</Alert>
+
+### Request Transforms
+
+Request Transforms can be used to:
+
+- Transform the body or headers on the HTTP request before forwarding the request to the destination
+- Tokenize parts of an inbound HTTP request and replace sensitive data with tokens before it hits your systems
+- Inject secrets that are configured within the proxy (e.g. third party API credentials) into the request body or headers
+
+Request transforms are Node.js v16 code blocks which export a function of the form:
+
+```javascript showLineNumbers
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers, method, path, query } = args; // access properties of the http request
+  const { MY_CONFIG } = configuration; // access any static config defined on the Proxy
+
+  // do anything here!
+  const processedBody = ...; // do something with body
+  const processedHeaders = ...; // do something with headers
+
+  return {
+      body: processedBody, // transformed request body
+      headers: processedHeaders // transformed request headers
+  };
+};
+```
+
+#### Request Transform - Request Object
+
+The request transform function receives the following object:
+
+| Attribute       | Type     | Description                                                                                                               |
+|-----------------|----------|---------------------------------------------------------------------------------------------------------------------------|
+| `args`          | _object_ | Properties of the proxy request (see below)                                                                               |
+| `configuration` | _object_ | The configuration defined for the [Proxy object](#proxies-proxy-object)                                                   |
+| `bt`            | _object_ | A pre-configured Basis Theory JS instance if an `application` was configured on the [Proxy object](#proxies-proxy-object) |
+
+where `args` contains:
+
+| Attribute | Type     | Description                                                                                                                                                    |
+|-----------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `body`    | _object_ | The request body parsed as a JavaScript object                                                                                                                 |
+| `headers` | _object_ | A JavaScript object containing the headers received on the proxy request                                                                                       |
+| `method`  | _string_ | The HTTP method of the proxy request (e.g. "GET", "POST", "PUT", "PATCH", "DELETE")                                                                            |
+| `path`    | _string_ | The path suffix received on the proxy request after `/proxy` (e.g. a request to `/proxy/sub/path?param=value` would result in a `path` of `/sub/path`)         |
+| `query`   | _string_ | The unparsed query string that was received on the proxy request (e.g. a request to `/proxy/sub/path?param=value` would result in a `query` of `?param=value`) |
+
+#### Request Transform - Response Object
+
+An object of the following type must be returned by the request transform function:
+
+| Attribute | Type     | Description                                                   |
+|-----------|----------|---------------------------------------------------------------|
+| `body`    | _object_ | The transformed request body to forward to the destination    |
+| `headers` | _object_ | The transformed request headers to forward to the destination |
+
+### Response Transforms
+
+Response Transforms can be used to:
+
+- Transform the body or headers on the HTTP response received from the destination before returning a response from the proxy
+- Tokenize sensitive values returned by a third party destination API
+- For inbound HTTP requests, tokens returned in responses from your system can be detokenized before sending the response to the third party caller
+
+Response transforms are Node.js v16 code blocks which export a function of the form:
+
+```javascript showLineNumbers
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers } = args; // access properties of the http response
+  const { MY_CONFIG } = configuration; // access any static config defined on the Proxy
+
+  // do anything here!
+  const processedBody = ...; // do something to build a transformed body
+  const processedHeaders = ...; // do something to build transformed headers
+
+  return {
+      body: processedBody, // transformed response body
+      headers: processedHeaders // transformed request headers
+  };
+};
+```
+
+#### Response Transform - Request Object
+
+The response transform function receives the following object:
+
+| Attribute       | Type     | Description                                                                                                               |
+|-----------------|----------|---------------------------------------------------------------------------------------------------------------------------|
+| `args`          | _object_ | Properties of the proxy response (see below)                                                                              |
+| `configuration` | _object_ | The configuration defined for the [Proxy object](#proxies-proxy-object)                                                   |
+| `bt`            | _object_ | A pre-configured Basis Theory JS instance if an `application` was configured on the [Proxy object](#proxies-proxy-object) |
+
+where `args` contains:
+
+| Attribute | Type     | Description                                                                                |
+|-----------|----------|--------------------------------------------------------------------------------------------|
+| `body`    | _object_ | The response body returned from the destination endpoint, parsed as a JavaScript object    |
+| `headers` | _object_ | A JavaScript object containing the response headers returned from the destination endpoint |
+
+<Alert>
+  <span>
+    Request header names can only contain alphanumeric characters, hyphens, and
+    underscores. Headers names containing other characters will be discarded
+    from the request. Response headers are unrestricted. If you must forward a
+    restricted header to the proxy destination, as a workaround, you may add
+    this header manually from within the request transform.
+  </span>
+</Alert>
+
+#### Response Transform - Response Object
+
+An object of the following type must be returned by the response transform function:
+
+| Attribute | Type     | Description                                               |
+|-----------|----------|-----------------------------------------------------------|
+| `body`    | _object_ | The transformed response body to return from the proxy    |
+| `headers` | _object_ | The transformed response headers to return from the proxy |
+
+### Tokenizing or Detokenizing
+
+In some situations, you may want to tokenize or detokenize data within a transform. In order to do this,
+  set the `application.id` property when [creating your Proxy](/docs/api/proxies#create-a-proxy) with the `id` of an
+  [Application](/docs/api/applications) that has been granted the desired permissions.
+  This will inject a [Basis Theory JS](/docs/sdks/server-side/node) instance into the transform request
+that is pre-configured for this application. For example:
+
+```javascript showLineNumbers
+module.exports = async function (req) {
+  const token = await req.bt.tokenize({
+    type: "token",
+    data: req.args.body.sensitive_value,
+  });
+
+  req.args.body.sensitive_value = token.id;
+
+  return {
+    body: req.args.body,
+    headers: req.args.headers,
+  };
+};
+```
+
+In the above example, we utilized the injected Basis Theory JS instance to tokenize a property called `sensitive_value` on our request body
+and passed the token back as the updated `sensitive_value` to be forwarded to the configured `destination_url` on our [Proxy](#proxy-object).

@@ -35,7 +35,7 @@ Next you will need a [Private Application](/docs/api/applications#application-ty
 
 ## Create a Token
 
-We will need to [create a token](/docs/api/tokens#create-token) to contain our data. Basis Theory offers several ways to capture this information [from your web application](/docs/guides/collect/collect-data-from-web) or [inbound to your API](/docs/guides/collect/collect-inbound-data-to-api) without touching the information, but for this guide, we will create the token directly against the Basis Theory API.
+We will need to [create a token](/docs/api/tokens#create-token) to contain our data. Basis Theory offers several ways to capture this information [from your web application](/docs/guides/collect/collect-data-from-web) or [inbound to your API](/docs/guides/collect/collect-inbound-sensitive-data) without touching the information, but for this guide, we will create the token directly against the Basis Theory API.
 
 Run the following in your terminal to create a token containing a phone number:
 
@@ -74,12 +74,12 @@ You should see a JSON response similar to:
 Copy the `id` to use in the next step.
 
 <Alert type={Alerts.INFO}>
-  It is best practice to securely collect your data from a <a href="/docs/guides/collect/collect-data-from-web">web form</a> or <a href="/docs/guides/collect/collect-inbound-data-to-api">API</a> to avoid security and compliance risks associated with directly handling the sensitive data.
+  It is best practice to securely collect your data from a <a href="/docs/guides/collect/collect-data-from-web">web form</a> or <a href="/docs/guides/collect/collect-inbound-sensitive-data">API</a> to avoid security and compliance risks associated with directly handling the sensitive data.
 </Alert>
 
 ## Send the Data
 
-We can leverage the [Basis Theory Proxy](/docs/concepts/what-is-the-proxy) to be able to detokenize the stored data before forwarding it to a third-party. To do this, we will utilize [Expressions](/docs/expressions), which is based on the [Liquid template language](https://shopify.github.io/liquid).
+We can leverage the Basis Theory [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) to detokenize the stored data before forwarding it to a third-party. To do this, we will utilize [Expressions](/docs/expressions), which are based on the [Liquid template language](https://shopify.github.io/liquid).
 
 ```bash showLineNumbers
 curl "https://api.basistheory.com/proxy" \
@@ -138,11 +138,10 @@ You should see a response similar to:
 
 ## Conclusion
 
-Basis Theory's Proxy will intercept the sent request and [evaluate and detokenize](/docs/expressions/detokenization) the request body. Basis Theory will then forward the request onto the configured `BT-PROXY-URL`, in this example is [https://echo.basistheory.com/anything](https://echo.basistheory.com/).
+Basis Theory's Proxy will intercept the request to evaluate and detokenize [expressions](/docs/expressions/detokenization) within the request body.
+Basis Theory will then forward the request onto the configured `BT-PROXY-URL`, which in this example is [https://echo.basistheory.com/anything](https://echo.basistheory.com/).
 
-[Creating a pre-configured Proxy](/docs/api/proxies#create-a-proxy) provides additional capabilities such as the ability to execute custom transforms on the request and response bodies.
-
-You can use this guide as an example on how to easily forward any piece of information and transform the request prior to sending to the destination.
+You can use this guide as an example of how to easily forward any piece of information and transform the request prior to sending to the destination.
 
 ## Learn More
 

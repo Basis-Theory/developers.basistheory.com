@@ -42,7 +42,7 @@ const sidebars = {
         "guides/collect/collect-data-with-react",
         "guides/collect/collect-data-with-android",
         "guides/collect/collect-data-with-ios",
-        "guides/collect/collect-inbound-data-to-api",
+        "guides/collect/collect-inbound-sensitive-data",
         "guides/collect/customize-web-form",
       ],
     },
@@ -235,7 +235,7 @@ const sidebars = {
         type: "doc",
         id: "api/proxies/proxies",
       },
-      items: ["api/proxies/invoke-proxy"],
+      items: ["api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies"],
     },
     {
       type: "category",
