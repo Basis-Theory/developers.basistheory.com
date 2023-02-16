@@ -160,9 +160,9 @@ export default function Home(): JSX.Element {
                 Securely collect data in your web browser.
               </Card>
               <Card
-                href="/docs/guides/collect/collect-inbound-data-to-api"
+                href="/docs/guides/collect/collect-inbound-sensitive-data"
                 img={<Collect />}
-                heading="Collect Inbound Data to API"
+                heading="Collect Inbound Sensitive Data"
                 column
               >
                 Tokenize sensitive data before it touches your API.
