@@ -1,0 +1,64 @@
+---
+title: Testing
+---
+
+# Testing
+
+## Recommendations
+
+### Tenant per Environment
+
+When integration testing or running your systems within a deployed environment, we recommend that you use a
+dedicated Basis Theory [tenant](/docs/concepts/access-controls#what-are-tenants) for each
+test environment that is separate from your production tenant. For example, if you maintain a separate development,
+QA, Staging, and production environment for your systems, we recommend that you mirror this setup by creating 4 separate tenants in Basis Theory.
+This can help you to isolate test data from production data and allow you to more securely lock down access to production API keys.
+
+### Testing Reactors
+
+todo
+
+### Mocking at the Network Level
+
+Mocking network calls is useful within a category of tests that we refer to as `Acceptance Tests`.
+While the terminology differs throughout the software industry, we use this term to refer to black box testing
+of a system component to ensure it meets business requirements (i.e. acceptance criteria). With this type of test,
+you typically strive to mock external dependencies, especially network calls to external systems.
+
+There are many tools available to facilitate mocking network calls, such as [Wiremock](https://wiremock.org/) (our preferred tool) or
+[Mock Service Worker](https://mswjs.io/). If you're interested in learning more, check out our [series of blog posts](https://blog.basistheory.com/testing-layers-and-principles)
+diving deep into our testing philosophy at Basis Theory, which includes an article dedicated to this subject of
+[Acceptance Testing](https://blog.basistheory.com/api-acceptance-integration-testing).
+
+### Mocking at the Unit Level
+
+We recommend that you generally adhere to good design principles and strive to loosely couple your application code from external dependencies,
+including integration points with Basis Theory. This can be accomplished by using inversion of control and dependency injection
+within your codebase whenever possible.
+
+We also offer official [SDKs](/docs/sdks) in many languages, providing standard interfaces for interacting with the Basis Theory API.
+This makes it easy to mock methods on these interfaces within your unit tests. While the specifics of how to structure your code and
+mock dependencies within unit tests differ across languages and frameworks, you have all the tools available to write loosely-coupled and
+well-tested code.
+
+## Test Data
+
+### Card Numbers
+
+The [card](/docs/api/tokens/token-types#card) and [card_number](/docs/api/tokens/token-types#card-number) token types accept
+any Luhn-valid card numbers and are not restricted to a particular set of card numbers, even for tenants used for testing purposes.
+However, if you exchange card tokens with any external systems using reactors or the proxy, those systems may have
+their own test card requirements that you should follow to ensure the integration works as expected.
+
+While we do not limit you to a particular set of card numbers, for your convenience we list below some sample test card numbers
+that pass Luhn-validation and resolve to a valid card brand.
+
+| Card Number      | CVC          | Brand            |
+|------------------|--------------|------------------|
+| 4242424242424242 | Any 3 digits | Visa             |
+| 5555555555554444 | Any 3 digits | Mastercard       |
+| 378282246310005  | Any 4 digits | American Express |
+| 3530111333300000 | Any 3 digits | JCB              |
+| 6011111111111117 | Any 3 digits | Discover         |
+| 3056930009020004 | Any 3 digits | Diners Club      |
+| 6200000000000005 | Any 3 digits | Union Pay        |
