@@ -50,7 +50,7 @@ This package includes several error types that can be thrown from your code, inc
 If your reactor code throws any of these standard error types, they will be caught and translated into
 the corresponding status code and message specified in the table above.
 
-Unhandled errors raised from reactor code will result in a `ReactorRuntimeError` containing the original error
+Any other errors raised from reactor code will result in a `ReactorRuntimeError` containing the original error object
 and the response will have status code `500`.
 
 ### Error Constructors
@@ -84,7 +84,7 @@ throw new ReactorRuntimeError('My error message');
 
 // Throwing an error constructed with an array:
 const { ReactorRuntimeError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
-throw new ReactorRuntimeError('My error message');
+throw new ReactorRuntimeError(["error 1", "error 2"]);
 
 // Would result in the following error response:
 {
@@ -104,8 +104,8 @@ throw new ReactorRuntimeError('My error message');
 // Throwing an error constructed with an object:
 const { ReactorRuntimeError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
 throw new ReactorRuntimeError({
-  property1: 'error 1',
-  property2: ['error 2', 'error 3']
+  error1: 'description 1',
+  error2: ['description 2', 'description 3']
 });
 
 // Would result in the following error response:
@@ -113,10 +113,8 @@ throw new ReactorRuntimeError({
   "status": 500,
   "message": "Reactor Runtime Error",
   "errors": {
-    "error": {
-      "property1": ["error 1"],
-      "property2": ["error 2", "error 3"]
-    }
+    "error1": ["description 1"],
+    "error2": ["description 2", "description 3"]
   }
 }
 ```
@@ -127,7 +125,7 @@ throw new ReactorRuntimeError({
 ### Best Practices
 
 When integrating with an external API within a reactor, we strongly recommend handling all vendor-specific errors
-that are documented by the vendor and translating into an appropriate error type.
+that are documented by the vendor and translating into an appropriate Basis Theory error type.
 
 Some vendors express error scenarios via HTTP status codes, while others opt to return a generic status code such as `200 OK` while
 expressing the error condition within the response body. Each external vendor is unique and error handling may also look very different when using a
