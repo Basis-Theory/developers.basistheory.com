@@ -5,60 +5,66 @@ sidebar_label: Proxy
 
 # What Is the Proxy?
 
-It is a common need to share data between software systems via HTTP based APIs, but what if the HTTP request requires a piece of sensitive data that you have tokenized and do not want to access directly within your application?
+It is a common need to share data between software systems via HTTP based APIs. But what if an outbound HTTP request from your system
+requires a piece of sensitive data that you have tokenized and do not want to access directly within your application?
+Or what if your API receives inbound HTTP requests that contain sensitive data that you wish to tokenize before it hits your servers?
 
-The Proxy enables you to build HTTP requests containing sensitive tokenized data and send them from your systems in a secure and compliant manner without needing to access raw token data.
-Your application can include token identifiers within the request payload and send this request through Basis Theory's systems to substitute token data into the request before forwarding it to the desired destination.
+The Proxy allows you to use tokens with HTTP APIs without needing to access sensitive data directly within your systems.
+This enables solving both these problems securely while keeping your systems out of compliance scope.
 
-The end result is that you can call HTTP APIs with tokenized data without needing to touch the underlying sensitive data directly within your systems.
+There are two options available when proxying HTTP requests:
 
-## How It Works
+1. [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy): Simply invoke the proxy API endpoint and specify the configuration in your request. No configuration is needed ahead of time. This option is best for basic use cases.
+2. [Pre-Configured Proxies](/docs/api/proxies/pre-configured-proxies): First configure a proxy instance, then invoke it by its unique key. This option is best for more complex use cases requiring custom request or response [transforms](/docs/api/proxies/pre-configured-proxies#transforms).
 
-Your system initiates an outbound HTTP request to the Proxy hosted by Basis Theory.
-The request is transformed by evaluating any [expressions](/docs/expressions) included in the request (patterns of the form `{{<tokenId>}}`, where `<tokenId>` is the id of a token created within your tenant). Any detokenization expressions will be replaced with the detokenized `data` value of this token.
-Finally, the request is delivered to the destination URL that was specified through a `BT-PROXY-URL` HTTP header.
+## Outbound Requests
+
+Outbound HTTP requests initiated from your system can include tokens within the request payload, and the proxy
+can detokenize and substitute the token data into the request before forwarding it to the desired destination.
+This makes it easy to share sensitive data with a third party without needing to first retrieve and manipulate this sensitive data on your servers.
+
+### How It Works
+
+Your system initiates an outbound HTTP request to the [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy)
+or a [Pre-Configured Proxy](/docs/api/proxies/pre-configured-proxies) instance hosted by Basis Theory.
+
+To include sensitive data in your request, you include token identifiers within [expressions](/docs/expressions) included in the request.
+These are patterns of the form `{{<tokenId>}}`, where `<tokenId>` is the id of a token created within your Basis Theory tenant.
+The request is transformed by evaluating each expression and substituting the resulting plaintext values within the request.
+Finally, the transformed request is delivered to the configured destination URL.
 
 ![Outbound Proxy Diagram](/img/concepts/outbound-proxy.png)
 
-The Proxy terminates the inbound TLS connection from your servers and initiates a new TLS connection to the destination in order to guarantee secure transmission of your sensitive token data.
-For this reason, we require the destination servers to support TLSv1.2+ and that the provided destination URL uses `https`.
+The Proxy terminates the inbound TLS connection from your servers and initiates a new TLS connection to the destination in order to
+guarantee secure transmission of your sensitive token data.
 
-The application that is being used to call the Proxy must be granted `token:use` permission on any tokens that are detokenized.
-It is recommended that you restrict which tokens the Proxy can detokenize by only granting `token:use`
-permission on the most-specific [container](/docs/concepts/what-are-containers) of tokens that is required.
+Whatever the content type or HTTP method, any HTTP request can be sent through the Proxy.
+For further details, check out [our API docs](/docs/api/proxies).
 
-Whatever the content type or HTTP method, any HTTP request can be sent through the proxy simply by adding the headers `BT-API-KEY` and `BT-PROXY-URL`. For example:
+### Guides
 
-```shell showLineNumbers
-curl "https://api.basistheory.com/proxy" \
-      -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
-      -H "BT-PROXY-URL: https://my-destination-api.com" \
-      -H "Content-Type: application/json" \
-      -X "POST" \
-      -d '{
-            "sensitive": "{{e51b0ff4-aa80-407a-b628-3909c26ff397}}",
-            "nonSensitive": "plaintext data can go here"
-        }'
-```
+- [Send Data to a 3rd Party](/docs/guides/share/send-data-to-third-party)
 
-For further details about how to use the Proxy, check out [our docs](/docs/api/proxies/invoke-proxy).
+## Inbound Requests
 
-## Common Use Cases
+Third parties that integrate into your systems by calling an HTTP API may include sensitive data within their requests.
+Inbound HTTP requests into your system can be routed through the proxy to parse and tokenize sensitive pieces of data
+and substitute non-sensitive token identifiers into the request payload before it reaches your servers.
 
-### Share Sensitive Data with a Third Party
+### How It Works
 
-Tokenized data can be included in any HTTP request to a third party API by executing the HTTP request through the Proxy.
-This makes it easy to share sensitive data with a third party without needing to first retrieve and manipulate this sensitive data on your servers.
+You [pre-configure](/docs/api/proxies/pre-configured-proxies) a proxy instance, which provides you a unique URL to this
+proxy that can be shared with a third party integrator. The third party can then make HTTP requests to this URL that pass
+through the proxy before being forwarded on to your system.
 
-### Upgrade an Existing System
+The proxy instance can be configured with a [request transform](/docs/api/proxies/pre-configured-proxies#request-transforms) containing
+custom Node.js code that will execute within the proxy before the request is forwarded to your servers. This allows you to parse the request
+and tokenize sensitive data fields within the payload, substituting in non-sensitive tokens into the request. Your systems will receive a request
+containing the non-sensitive token identifiers that can be safely stored in your system.
 
-In existing systems with sensitive data you wish to secure, this data can be migrated and tokenized with Basis Theory.
-Once safely tokenized, your systems still need to utilize this data with your existing HTTP calls without pulling the raw values back into your system.
-For this, you can leverage the Proxy in order to minimize the impact of this change on your existing codebase.
+### Guides
 
-## Samples
-
-[Use Token Data in HTTP Requests](https://developers.basistheory.com/guides/use-token-data-in-http-requests/)
+- [Collect Inbound Sensitive Data](/docs/guides/collect/collect-inbound-sensitive-data)
 
 ## FAQs
 

@@ -1,3 +1,24 @@
+## [1.28.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.28.0...v1.28.1) (2023-02-17)
+
+
+### Bug Fixes
+
+* add display virtual cards blueprint card ([#79](https://github.com/Basis-Theory/developers.basistheory.com/issues/79)) ([12aa466](https://github.com/Basis-Theory/developers.basistheory.com/commit/12aa4666569a1b9b9604a4c456a73dca9a35c8cc))
+
+# [1.28.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.27.0...v1.28.0) (2023-02-16)
+
+
+### Features
+
+* add reveal with proxy and cvc blueprint ([#72](https://github.com/Basis-Theory/developers.basistheory.com/issues/72)) ([37023a8](https://github.com/Basis-Theory/developers.basistheory.com/commit/37023a8a55f7f6c5c18c3ffe5226061a92483354))
+
+# [1.27.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.26.0...v1.27.0) (2023-02-16)
+
+
+### Features
+
+* updating proxy docs ([#70](https://github.com/Basis-Theory/developers.basistheory.com/issues/70)) ([fc4f3f4](https://github.com/Basis-Theory/developers.basistheory.com/commit/fc4f3f45715905c2f74a3d6c036cb102a15e417e))
+
 # [1.26.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.25.3...v1.26.0) (2023-02-15)
 
 
