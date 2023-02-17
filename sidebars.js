@@ -62,7 +62,8 @@ const sidebars = {
       items: [
         "guides/share/send-data-to-third-party",
         "guides/share/display-masked-data",
-        "guides/share/reveal-tokenized-data"
+        "guides/share/reveal-tokenized-data",
+        "guides/share/reveal-data-from-third-party"
       ],
     },
     {
