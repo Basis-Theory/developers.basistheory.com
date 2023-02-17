@@ -25,6 +25,8 @@ This makes it easy to share sensitive data with a third party without needing to
 
 ### How It Works
 
+![Outbound Proxy Diagram](/img/concepts/proxy-outbound.png)
+
 Your system initiates an outbound HTTP request to the [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy)
 or a [Pre-Configured Proxy](/docs/api/proxies/pre-configured-proxies) instance hosted by Basis Theory.
 
@@ -32,8 +34,6 @@ To include sensitive data in your request, you include token identifiers within 
 These are patterns of the form `{{<tokenId>}}`, where `<tokenId>` is the id of a token created within your Basis Theory tenant.
 The request is transformed by evaluating each expression and substituting the resulting plaintext values within the request.
 Finally, the transformed request is delivered to the configured destination URL.
-
-![Outbound Proxy Diagram](/img/concepts/proxy-outbound.png)
 
 The Proxy terminates the inbound TLS connection from your servers and initiates a new TLS connection to the destination in order to
 guarantee secure transmission of your sensitive token data.
@@ -53,11 +53,11 @@ and substitute non-sensitive token identifiers into the request payload before i
 
 ### How It Works
 
+![Inbound Proxy Diagram](/img/concepts/proxy-inbound.png)
+
 You [pre-configure](/docs/api/proxies/pre-configured-proxies) a proxy instance, which provides you a unique URL to this
 proxy that can be shared with a third party integrator. The third party can then make HTTP requests to this URL that pass
 through the proxy before being forwarded on to your system.
-
-![Outbound Proxy Diagram](/img/concepts/proxy-outbound.png)
 
 The proxy instance can be configured with a [request transform](/docs/api/proxies/pre-configured-proxies#request-transforms) containing
 custom Node.js code that will execute within the proxy before the request is forwarded to your servers. This allows you to parse the request
