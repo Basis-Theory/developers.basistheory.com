@@ -1,3 +1,17 @@
+# [1.29.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.28.1...v1.29.0) (2023-02-17)
+
+
+### Features
+
+* Adds Testing page ([#77](https://github.com/Basis-Theory/developers.basistheory.com/issues/77)) ([04e92b1](https://github.com/Basis-Theory/developers.basistheory.com/commit/04e92b1c480f3db785ace44973f21bf1952ac639))
+
+## [1.28.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.28.0...v1.28.1) (2023-02-17)
+
+
+### Bug Fixes
+
+* add display virtual cards blueprint card ([#79](https://github.com/Basis-Theory/developers.basistheory.com/issues/79)) ([12aa466](https://github.com/Basis-Theory/developers.basistheory.com/commit/12aa4666569a1b9b9604a4c456a73dca9a35c8cc))
+
 # [1.28.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.27.0...v1.28.0) (2023-02-16)
 
 
