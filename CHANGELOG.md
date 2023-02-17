@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.29.0...v1.30.0) (2023-02-17)
+
+
+### Features
+
+* add get token service to ios sdk ([#74](https://github.com/Basis-Theory/developers.basistheory.com/issues/74)) ([6150d11](https://github.com/Basis-Theory/developers.basistheory.com/commit/6150d111b4c84db84310e4212fe099c169b31464))
+
 # [1.29.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.28.1...v1.29.0) (2023-02-17)
 
 
