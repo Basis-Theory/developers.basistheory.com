@@ -62,7 +62,7 @@ const sidebars = {
       items: [
         "guides/share/send-data-to-third-party",
         "guides/share/display-masked-data",
-        "guides/share/reveal-tokenized-data"
+        "guides/share/reveal-tokenized-data",
       ],
     },
     {
@@ -81,6 +81,7 @@ const sidebars = {
       items: [
         "guides/process/search-data",
         "guides/process/analyze-data",
+        "guides/process/extract-data",
       ],
     },
     {
@@ -127,7 +128,10 @@ const sidebars = {
             type: "doc",
             id: "blueprints/cards/index",
           },
-          items: ["blueprints/cards/collect-and-process-cards", "blueprints/cards/display-virtual-cards"],
+          items: [
+            "blueprints/cards/collect-and-process-cards",
+            "blueprints/cards/display-virtual-cards",
+          ],
         },
         {
           type: "category",
@@ -213,7 +217,7 @@ const sidebars = {
         "api/ip-addresses",
         "api/rate-limits",
         "api/idempotency",
-        "api/testing"
+        "api/testing",
       ],
     },
     {
@@ -223,10 +227,7 @@ const sidebars = {
         type: "doc",
         id: "api/applications/applications",
       },
-      items: [
-        "api/applications/permissions",
-        "api/applications/sessions"
-      ],
+      items: ["api/applications/permissions", "api/applications/sessions"],
     },
     "api/logs",
     {
@@ -236,7 +237,10 @@ const sidebars = {
         type: "doc",
         id: "api/proxies/proxies",
       },
-      items: ["api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies"],
+      items: [
+        "api/proxies/ephemeral-proxy",
+        "api/proxies/pre-configured-proxies",
+      ],
     },
     {
       type: "category",
@@ -310,10 +314,7 @@ const sidebars = {
             type: "doc",
             id: "sdks/web/react/index",
           },
-          items: [
-            "sdks/web/react/components",
-            "sdks/web/react/deprecations",
-          ],
+          items: ["sdks/web/react/components", "sdks/web/react/deprecations"],
         },
       ],
     },
@@ -322,13 +323,18 @@ const sidebars = {
       label: "Mobile SDKs",
       items: [
         {
-          type: 'category',
-          label: 'Android Elements',
+          type: "category",
+          label: "Android Elements",
           link: {
             type: "doc",
             id: "sdks/mobile/android/index",
           },
-          items: ["sdks/mobile/android/types", "sdks/mobile/android/options", "sdks/mobile/android/events", "sdks/mobile/android/services"],
+          items: [
+            "sdks/mobile/android/types",
+            "sdks/mobile/android/options",
+            "sdks/mobile/android/events",
+            "sdks/mobile/android/services",
+          ],
         },
         {
           type: "category",
@@ -337,7 +343,12 @@ const sidebars = {
             type: "doc",
             id: "sdks/mobile/ios/index",
           },
-          items: ["sdks/mobile/ios/types", "sdks/mobile/ios/options", "sdks/mobile/ios/events", "sdks/mobile/ios/services"],
+          items: [
+            "sdks/mobile/ios/types",
+            "sdks/mobile/ios/options",
+            "sdks/mobile/ios/events",
+            "sdks/mobile/ios/services",
+          ],
         },
       ],
     },

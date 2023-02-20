@@ -47,8 +47,8 @@ export const Alert = ({
         <Svg className={styles.svg} />
       </div>
       <div>
-        {title && <p className={styles.title}>{title}</p>}
-        <p className={styles.content}>{content ?? children}</p>
+        {title && <div className={styles.title}>{title}</div>}
+        <div className={styles.content}>{content ?? children}</div>
       </div>
     </div>
   );

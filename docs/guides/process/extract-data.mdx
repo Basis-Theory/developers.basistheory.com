@@ -1,0 +1,314 @@
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import {Alert, Alerts} from "@site/src/components/shared/Alert";
+import {AuthButtons} from "@site/src/components/docs/AuthButtons";
+import CardImage from "@site/static/img/guides/process/card.png"
+import CodeBlock from '@theme/CodeBlock';
+
+# Extract Data
+
+This guide is designed to help you understand how you can extract sensitive information out of images by leveraging Basis Theory secure environment to perform OCR.
+
+The image to be used purposely has poor quality and trim:
+
+<img src={CardImage}/>
+
+Key concepts in this guide:
+
+- [Reactors](/docs/concepts/what-are-reactors)
+- [Tesseract.js](https://github.com/naptha/tesseract.js)
+
+## Getting Started
+
+To get started, you will need a Basis Theory account.
+
+<AuthButtons/>
+
+Next you will need a [Management Application](/docs/api/applications#application-types) in order to provision the components in this guide.
+
+[Click here](https://portal.basistheory.com/applications/create?application_template_id=931b306f-6be7-405d-9a8d-1442a99dd2d7) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application from the **Full Management Access** template.
+
+<Alert>
+  Save the API Key from the created Management Application as it will be used in this guide to provision the reactor.
+</Alert>
+
+
+## Create a Private Application
+
+We need a [Private Application](/docs/concepts/access-controls#application-type) to create tokens and invoke our reactor:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "Extract Data App",
+    "type": "private",
+    "permissions": [
+      "token:create",
+      "token:use"
+    ]
+  }'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Management API Key you created in the <a
+  href="#getting-started">Getting Started</a> step.
+</Alert>
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used later in this guide.
+</Alert>
+
+## Create a Reactor
+
+Reactors provide a secure Node.js 16 runtime environment to be able to execute custom code. Reactors consist of two parts. The Reactor Formula is a re-usable template that can be used to [create multiple Reactors](/docs/api/reactors#create-reactor).
+
+First, let's write a function that takes in an image URL and invokes Tesseract.js to extract text:
+
+```javascript showLineNumbers title="formula.js"
+const { createWorker } = require("tesseract.js");
+
+module.exports = async function (req) {
+  const {
+    bt,
+    args: { url },
+  } = req;
+  let worker;
+
+  try {
+    worker = await createWorker();
+    await worker.loadLanguage("eng");
+    await worker.initialize("eng");
+    const {
+      data: { text },
+    } = await worker.recognize(url);
+
+    return {
+      raw: {},
+    };
+  } catch (error) {
+    return {
+      raw: {
+        error,
+      },
+    };
+  } finally {
+    await worker?.terminate();
+  }
+};
+```
+
+
+<Alert>
+  Tesseract.js has been whitelisted as part of Basis Theory secure environment. If you have more complex OCR needs or rely on additional dependencies, <a href="https://basistheory.com/contact">let's get in touch</a>!
+</Alert>
+
+
+Now, let's run `text` through a Regex to parse all the numeric values and invoke [Create Token](http://localhost:3000/docs/api/tokens/#create-token) via SDK method to tokenize the extracted data:
+
+```javascript showLineNumbers title="formula.js"
+const { createWorker } = require("tesseract.js");
+
+module.exports = async function (req) {
+  const {
+    bt,
+    args: { url },
+  } = req;
+  let worker;
+
+  try {
+    worker = await createWorker();
+    await worker.loadLanguage("eng");
+    await worker.initialize("eng");
+    const {
+      data: { text },
+    } = await worker.recognize(url);
+
+    // highlight-start
+    const cardData = [...text.matchAll(/\d+/g)]
+          .map((match) => match[0])
+          .reverse();
+    const [cvc, expiration_year, expiration_month, ...numberArr] = cardData;
+    const number = numberArr.join("");
+
+    const token = await bt.tokens.create({
+          type: "card",
+          data: {
+            number,
+            expiration_month,
+            expiration_year: `20${expiration_year}`,
+            cvc,
+          },
+        });
+    // highlight-end
+
+    return {
+    // highlight-start
+      raw: {
+        token
+      },
+    // highlight-end
+    };
+  } catch (error) {
+    return {
+      raw: {
+        error,
+      },
+    };
+  } finally {
+    await worker?.terminate();
+  }
+};
+```
+
+Let's store the JavaScript code as a variable. In your terminal, run the following:
+
+```shell showLineNumbers
+javascript=`cat formula.js`
+```
+
+Now, let's [create a Reactor Formula](/docs/api/reactors/reactor-formulas#create-reactor-formula) with the variable we created and add the `url` request parameter:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactor-formulas" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "Card OCR Reactor Formula",
+    "description": "Recognizes cardholder data from image and tokenizes it",
+    "type": "private",
+    "code": '"$(echo $javascript | jq -Rsa .)"',
+    "request_parameters": [{
+      "name": "url",
+      "description": "Image URL to perform OCR on",
+      "type": "string"
+    }]
+  }'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Management API Key you created in the <a
+  href="#getting-started">Getting Started</a>.
+</Alert>
+
+Finally, we need to create a Reactor from the formula we just created:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactors" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "Card OCR Reactor",
+    "application": {
+      "id": "db29a0ec-0cc2-41ec-a8c7-ba78b9b40c90"
+    },
+    "formula": {
+      "id": "c98dad07-fe6f-4eff-9d41-24726f35def4"
+    }
+  }'
+```
+
+<Alert>
+  Be sure to replace:
+  <ul>
+    <li>
+      <code>test_1234567890</code> with the Management API Key you created in the <a href="#getting-started">Getting
+      Started</a> step;
+    </li>
+    <li>
+      <code>db29a0ec-0cc2-41ec-a8c7-ba78b9b40c90</code> with the <code>id</code> of the Private Application you created
+      in the <a href="#create-a-private-application">Create a Private Application</a> step.
+    </li>
+    <li>
+      <code>c98dad07-fe6f-4eff-9d41-24726f35def4</code> with the <code>id</code> of the Reactor Formula you created
+      previously.
+    </li>
+  </ul>
+</Alert>
+
+<Alert>
+  Save the Reactor <code>id</code> from the response as it will be used to invoke the reactor.
+</Alert>
+
+## Invoke the Reactor
+
+Finally, we can invoke our reactor with the tokens we previously created. To do this, we will leverage [Expressions](/docs/expressions) to detokenize the request before passing the data directly into our code:
+
+<CodeBlock
+  language="shell"
+  showLineNumbers>
+{`curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react" \\
+  -H "BT-API-KEY: test_1234567890" \\
+  -H "Content-Type: application/json" \\
+  -X "POST" \\
+  -d '{
+    "args": {
+      "url": "${useBaseUrl('/img/guides/process/card.png')}"
+    }
+  }'`}
+</CodeBlock>
+
+<Alert>
+  Be sure to replace the following:
+  <ul>
+    <li><code>test_1234567890</code> with the Private API Key you created in the <a
+      href="#create-a-private-application">Create a Private Application</a> step
+    </li>
+    <li><code>5b493235-6917-4307-906a-2cd6f1a90b13</code> with the Reactor <code>id</code> you created in the <a
+      href="#create-a-reactor">Create a Reactor</a> step
+    </li>
+    <li>Token identifiers in the expressions with the tokens you created in the <a href="#create-tokens">Create
+      Tokens</a> step
+    </li>
+  </ul>
+</Alert>
+
+You should see the following JSON response:
+
+```json showLineNumbers
+{
+    "raw": {
+        "token": {
+            "id": "270675da-2ee9-4546-a496-655cfe912126",
+            "type": "card",
+            "tenantId": "cdbcaf0c-e5e8-4e3d-9152-796a5eeac03a",
+            "data": {
+                "number": "XXXXXXXXXXXX4242",
+                "expiration_month": "04",
+                "expiration_year": "2024"
+            },
+            "createdBy": "db29a0ec-0cc2-41ec-a8c7-ba78b9b40c90",
+            "createdAt": "2023-02-20T18:41:05.4010271+00:00",
+            "mask": {
+                "number": "{{ data.number | reveal_last: 4 }}",
+                "expirationMonth": "{{ data.expiration_month }}",
+                "expirationYear": "{{ data.expiration_year }}"
+            },
+            "privacy": {
+                "classification": "pci",
+                "impactLevel": "high",
+                "restrictionPolicy": "mask"
+            },
+            "searchIndexes": [],
+            "containers": [
+                "/pci/high/"
+            ]
+        }
+    }
+}
+```
+
+## Conclusion
+
+We were able to securely extract sensitive data from an image without directly touching the information, therefore reducing our risk and security scope.
+
+With a tokenized version of the credit card, we can now send it for processing, render it securely and in a customized manner in our own UI, and much more.
+
+## Learn More
+
+- [Share Data](/docs/guides/share/)
+- [Display Virtual cards](/docs/blueprints/cards/display-virtual-cards)
+- [Display Masked Data](/docs/guides/share/display-masked-data)
