@@ -1,5 +1,6 @@
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import {Alert, Alerts} from "@site/src/components/shared/Alert";
+import {Alert} from "@site/src/components/shared/Alert";
 import {AuthButtons} from "@site/src/components/docs/AuthButtons";
 import CardImage from "@site/static/img/guides/process/card.png"
 import CodeBlock from '@theme/CodeBlock';
@@ -243,7 +244,8 @@ Finally, we can invoke our reactor with the tokens we previously created. To do 
   showLineNumbers>
   {
     (() => {
-      const imageUrl = useBaseUrl('/img/guides/process/card.png');
+      const { siteConfig } = useDocusaurusContext()
+      const imageUrl = `${siteConfig.url}${useBaseUrl('/img/guides/process/card.png')}`;
       return `curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react" \\
   -H "BT-API-KEY: test_1234567890" \\
   -H "Content-Type: application/json" \\
