@@ -101,7 +101,8 @@ module.exports = async function (req) {
 
 
 <Alert>
-  Tesseract.js has been whitelisted as part of Basis Theory secure environment. If you have more complex OCR needs or rely on additional dependencies, <a href="https://basistheory.com/contact">let's get in touch</a>!
+  Tesseract.js has been whitelisted as part of Basis Theory secure environment. If you have more complex OCR needs or
+  rely on additional dependencies, <a href="https://basistheory.com/contact">let's get in touch</a>!
 </Alert>
 
 
@@ -240,15 +241,20 @@ Finally, we can invoke our reactor with the tokens we previously created. To do 
 <CodeBlock
   language="shell"
   showLineNumbers>
-{`curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react" \\
+  {
+    (() => {
+      const imageUrl = useBaseUrl('/img/guides/process/card.png');
+      return `curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react" \\
   -H "BT-API-KEY: test_1234567890" \\
   -H "Content-Type: application/json" \\
   -X "POST" \\
   -d '{
     "args": {
-      "url": "${window.origin}${useBaseUrl('/img/guides/process/card.png')}"
+      "url": "${imageUrl}"
     }
-  }'`}
+  }'`
+    })()
+  }
 </CodeBlock>
 
 <Alert>
