@@ -1,3 +1,10 @@
+## [1.32.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.32.0...v1.32.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* Updates proxy concept page images ([#81](https://github.com/Basis-Theory/developers.basistheory.com/issues/81)) ([a06df01](https://github.com/Basis-Theory/developers.basistheory.com/commit/a06df019da76ceb4c1a3aed41f3b884b16399ad2))
+
 # [1.32.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.31.0...v1.32.0) (2023-02-21)
 
 
