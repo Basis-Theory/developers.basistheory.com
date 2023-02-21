@@ -960,9 +960,11 @@ func main() {
 
 #### Request Parameters
 
-| Parameter | Required | Type     | Default | Description                                                                                                                                                                                          |
-| --------- | -------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `args`    | false    | _object_ | `null`  | Arguments to provide to the reactor. These arguments must contain the declared [request parameters](/docs/api/reactors/reactor-formulas#reactor-formula-request-parameters) for the reactor formula. |
+| Parameter      | Required | Type     | Default | Description                                                                                                                                                                                                       |
+| -------------- | -------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `args`         | false    | _object_ | `null`  | Arguments to provide to the reactor. These are required when arguments have been defined as [request parameters](/docs/api/reactors/reactor-formulas#reactor-formula-request-parameters) on a Reactor Formula.    |
+| `callback_url` | false    | _string_ | `null`  | Indicates that the reactor should be invoked asynchronously and the result delivered as a webhook to this URL. See [Asynchronous Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) for more info. |
+| `timeout_ms`   | false    | _int_    | `10000` | The maximum execution time for the reactor. Value must be between `10000` (10s) and `210000` (3.5m). Only supported for [Asynchronous Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) requests. |
 
 #### Reactor Request Parameters
 
@@ -977,7 +979,7 @@ The reactor will be executed with a `req` object that contains the following pro
 ### Response
 
 Returns a [Reactor Response](#invoke-a-reactor-reactor-response-object) if the Reactor completed successfully. Returns [an error](/docs/api/errors) if the Reactor failed.
-Errors generated from Reactors will be translated to the common Basis Theory Error format. See [Reactor Errors](/docs/api/errors#reactor-errors) for more details.
+Errors generated from Reactors will be translated to the common Basis Theory Error format. See [Reactor Errors](/docs/api/reactors/reactor-errors) for more details.
 
 #### Reactor Response Object
 
@@ -988,11 +990,12 @@ Errors generated from Reactors will be translated to the common Basis Theory Err
 
 ### Validation
 
-When invoking a reactor, the `args` must satisfy the `request_parameters` contract declared by the [Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object).
-The names of properties passed within `args` must match the names of each of the declared `request_parameters` - this comparison is case-sensitive.
-Additional arguments included within `args` that are not declared as request parameters will be removed from the request.
+When invoking a reactor, you may provide any `args` within your request without first pre-declaring `request_parameters` within the [Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object).
+However, if the formula declares any `request_parameters`, then matching `args` will be validated against this contract.
+Argument validation occurs when a property within `args` exactly matches the name of a request parameter - this comparison is case-sensitive.
+Additional arguments included within `args` that are not declared as request parameters will not be validated and will be passed into the reactor.
 
-Nested objects may be passed within `args`, as long as each sub-property is declared as a request parameter, dot-separating levels of the object hierarchy.
+Nested objects may be declared as request parameters by dot-separating levels of the object hierarchy.
 For example, we may have a Reactor Formula with complex request parameters declared as:
 
 | name                 | type     | optional |
@@ -1021,12 +1024,13 @@ Then the following arguments would constitute a valid Reactor request:
 }
 ```
 
-All required `request_parameters` must be included within the `args` on each request.
-If a request parameter was defined with `optional: false` and a value for this parameter is not provided within `args`, the request will be rejected with a 400 error.
+All required `request_parameters` (those with `optional: false`) must be included within the `args` on each request or the request will be rejected with a 400 error.
+If a request parameter is declared as optional, then a value for this parameter may be omitted within `args`.
 
-Each argument must match the `type` on the corresponding request parameter, and if the type does not match, auto casting to the declared type will be attempted.
+Each validated argument must match the `type` on the corresponding request parameter, and if the type does not match, auto casting to the declared type will be attempted.
 For example, say a request parameter is declared with type `number` but the string value `"123"` is provided. This value can be cast to a number, so the reactor would receive the numeric value `123`.
 However, if the string value `"non-numeric"` were provided, a 400 error would be returned because the value cannot be cast to a number.
+If an expression is provided within the `args` for a declared request parameter, then auto type casting is performed after detokenization.
 
 ### Detokenization
 

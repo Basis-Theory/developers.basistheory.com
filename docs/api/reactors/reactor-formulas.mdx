@@ -1257,7 +1257,7 @@ Complex nested objects (dot-separated names) are not currently supported within 
 
 ### Reactor Formula Request Parameters
 
-The `request_parameters` array on a Reactor Formula defines the contract that the `args` property must satisfy on each request when [Invoking a Reactor](/docs/api/reactors#invoke-a-reactor).
+The `request_parameters` array on a Reactor Formula defines an optional contract that the `args` property must satisfy on each request when [Invoking a Reactor](/docs/api/reactors#invoke-a-reactor).
 Elements of a Reactor Formula's `request_parameters` array have the following schema:
 
 | Attribute     | Required | Type      | Default | Description                                                                            |
@@ -1270,7 +1270,9 @@ Elements of a Reactor Formula's `request_parameters` array have the following sc
 Request parameters are intended to define any parameters that will be provided to a Reactor at request-time, and may change across Reactor invocations.
 Complex objects properties can be passed within the `args` property to a Reactor, and they can be defined by dot-separating levels of the object hierarchy.
 
-Any `args` property not associated with a request parameter is still forwarded to the reactor. This allows you to provide complete complex objects including arrays, in which no type checking is applied. For instance, if no request parameters are declared, it means you can provide any payload when invoking the reactor.
+Any undeclared `args` not matching a request parameter are still forwarded to the reactor. This means that if no request parameters are pre-declared,
+then you can provide any payload when invoking the reactor, but the tradeoff is that your reactor formula code must be robust enough
+to handle all possible request schemas.
 
 ### Reactor Formula Code
 
