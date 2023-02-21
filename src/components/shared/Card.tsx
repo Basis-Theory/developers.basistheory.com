@@ -30,6 +30,7 @@ interface Card {
   hoverable?: boolean;
   cta?: React.ReactNode;
   column?: boolean;
+  openInNewWindow: boolean;
 }
 
 const Card = ({
@@ -42,6 +43,7 @@ const Card = ({
   cta,
   hoverable = true,
   column = false,
+  openInNewWindow = false,
   ...otherProps
 }: PropsWithChildren<
   DetailedHTMLProps<HtmlHTMLAttributes<HTMLDivElement>, HTMLDivElement> & Card
@@ -53,7 +55,7 @@ const Card = ({
       ? (e) => {
           e.preventDefault();
 
-          if (href.startsWith("https")) {
+          if (href.startsWith("https") || openInNewWindow) {
             window.open(href, "_blank");
           } else {
             history.push(href);
