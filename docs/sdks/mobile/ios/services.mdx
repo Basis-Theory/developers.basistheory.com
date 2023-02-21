@@ -85,6 +85,38 @@ BasisTheoryElements.createSession(
 
 The callback provided calls your function with a `data` of type [CreateSessionResponse](https://github.com/Basis-Theory/basistheory-swift/blob/master/docs/CreateSessionResponse.md), and an `error` of type [Error](#errors).
 
+### getTokenById
+
+This function wraps the [get a token API endpoint](/docs/api/tokens/#get-a-token) to retrieve a single strongly typed token.
+The token's data is transformed to value references which you can use to [set the value](/docs/sdks/mobile/ios/types#methods) of your elements without touching
+the plaintext value and pulling your application into compliance scope.
+
+```swift showLineNumbers
+BasisTheoryElements.getTokenById(
+    id: "<YOUR TOKEN ID>",
+    apiKey: "<YOUR API KEY>",
+) { data, error in ... }
+```
+
+The callback provided calls your function with a:
+* `error` of type [Error](#errors)
+* `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a `token` without giving you access to read any sensitive values in `token.data` which means you stay compliant. 
+
+To show a value from the token `data`, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference` property. 
+Below is an example of how you do that and set the value reference into a Text Element.
+
+```swift showLineNumbers
+@IBOutlet private weak var myTextElement: TextElementUITextField!
+...
+
+BasisTheoryElements.getTokenById(
+    id: "<YOUR TOKEN ID>",
+    apiKey: "<YOUR API KEY>",
+) { data, error in 
+    myTextElement.setValue(elementValueReference: data!.data!.nested!.property!.elementValueReference)
+}
+```
+
 ### proxy
 
 Proxy provides a simple way to retrieve data back into an element utilizing our [proxy](/docs/api/proxies) service. To accomplish this, simply construct your `proxy` request like this:
