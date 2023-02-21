@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.30.0...v1.31.0) (2023-02-21)
+
+
+### Features
+
+* add reveal from 3rd party guide ([#80](https://github.com/Basis-Theory/developers.basistheory.com/issues/80)) ([3029a20](https://github.com/Basis-Theory/developers.basistheory.com/commit/3029a2070f2edf755775e7202a1b56e49104cb6a))
+
 # [1.30.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.29.0...v1.30.0) (2023-02-17)
 
 
