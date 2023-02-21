@@ -14,15 +14,15 @@ import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
 import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 
 
-# Reveal Tokenized Data
+# Reveal Data from 3rd Party
 
-This guide will show you how to reveal sensitive data back to a customer without your frontend or backend code ever needing to touch the actual raw data.
+This guide will show you how to reveal sensitive data from a third party back to a customer without your frontend or backend code ever needing to touch the actual raw data.
 
 Key concepts in this guide:
 
-- [Tokens](/docs/concepts/what-are-tokens)
 - [Applications](/docs/api/applications)
 - [Sessions](/docs/api/applications/sessions)
+- [Proxies](/docs/api/proxies/)
 
 ## Getting Started
 
@@ -43,10 +43,6 @@ Next you will need a [Public Application](/docs/api/applications#application-typ
   Save the API Key from the created Public Application as it will be used later in this guide.
 </Alert>
 
-## Creating a Token
-
-To reveal tokenized data, you must have a token already created and stored with Basis Theory.
-If you haven't done it yet, head over to the [Collect Data](/docs/guides/collect/) section of our docs for detailed guides on how to safely collect and tokenize data.
 
 ## Configuring Basis Theory Elements
 
@@ -57,6 +53,7 @@ If you haven't done it yet, head over to the [Collect Data](/docs/guides/collect
 href="/docs/sdks/web/javascript/"
 img={<JavaScript />}
 className={styles.sdk}
+openInNewWindow={true}
 >
 Javascript
 </Card>
@@ -65,6 +62,7 @@ Javascript
 href="/docs/sdks/web/react/"
 img={<ReactSvg />}
 className={styles.sdk}
+openInNewWindow={true}
 >
 React
 </Card>
@@ -84,6 +82,7 @@ dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
 </div>
 }
 className={styles.sdk}
+openInNewWindow={true}
 >
 iOS
 </Card>
@@ -92,6 +91,7 @@ iOS
 href="/docs/sdks/mobile/android/"
 img={<Android />}
 className={styles.sdk}
+openInNewWindow={true}
 >
 Android
 </Card>
@@ -99,7 +99,7 @@ Android
 
 ## Creating a Text Element
 
-To safely reveal tokenized data back to a customer, we must create an Element that will hold and display the data.
+To safely reveal data back to a customer, we must create an Element that will hold and display the data.
 In this example we'll create a Text Element, which can hold any `string` value.
 
 <Tabs className="bt-tabs" groupId="clients">
@@ -230,7 +230,7 @@ class MainActivity : AppCompatActivity() {
 ## Creating a Session
 
 Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide temporary elevated access to your public applications, 
-and we'll will use it to safely retrieve the data from the token. Add the following code to create a session:
+and we'll will use it to safely authenticate the request to the third party. Add the following code to create a session:
 
 <Tabs className="bt-tabs" groupId="clients">
   <TabItem value="javascript" label="JavaScript">
@@ -330,6 +330,7 @@ class ViewController: UIViewController {
 import com.basistheory.android.view.TextElement
 //highlight-next-line
 import com.basistheory.android.service.BasisTheoryElements
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var exampleTextElement: TextElement
@@ -357,40 +358,25 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
-## Authorizing a Session
+## Creating a Pre-Configured Proxy
 
-In order to use the session to retrieve data, we need to authorize it with a Private Application.
+To retrieve data from a third party URL without touching it, we will create a [Pre-Configured Proxy](/docs/api/proxies/pre-configured-proxies)
 
-### Creating a Private Application
+### Creating a Management Application
 
-First, lets create the [Private Application](docs/api/applications#application-types). To do so, [Login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+To create a proxy, you will need a [Management Application](docs/api/applications#application-types).
 
-- Name - Reveal Data
-- Application Type - Private
-- Access Rule (Use the `Advanced Rule Builder` option)
-  - Description - Reveal Data
-  - Container - `/`
-  - Permissions - `token:read`
-  - Transform - `reveal`
+[Click here](https://portal.basistheory.com/applications/create?permissions=proxy%3Acreate&type=management&name=Management%20App) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
 
-<Alert>
-    The Private Application must be in the same <a href="/docs/concepts/access-controls#what-are-tenants">Tenant</a> as the token to be revealed.
-</Alert>
+- Name - Create Proxy
+- Application Type - Management
+- Permissions: `proxy: create`
 
-<Alert>
-  Save the API Key from the created Private Application as it will be used later in this guide.
-</Alert>
 
-### Authorizing In the Backend
+### Creating the Proxy in the Backend
 
-Using the Private Application API Key, the `nonce` from our session, and a [Condition](/docs/concepts/access-controls#conditions) we ensure we are only granting authorization for the desired token.
-
-<Alert type={Alerts.WARNING}>
-The <b>only way</b> to ensure your private API keys are not publically accessible is for this step to execute in your backend service.
-</Alert>
-
-In this guide, we'll use [Express.js](https://expressjs.com/) as our backend but [docs](docs/api/applications/sessions#authorize-session) are available for different technologies.
-We'll create a `backend.js` file and add the following code to start the Express.js backend and authorize an incoming session.
+In this guide, we'll use [Express.js](https://expressjs.com/) as our backend but [docs](docs/api/) are available for different technologies.
+We'll create a `backend.js` file and add the following code to start the Express.js backend and create a proxy to the third party:
 
 ```javascript showLineNumbers title="backend.js"
 const express = require("express");
@@ -399,37 +385,45 @@ const { BasisTheory } = require("@basis-theory/basis-theory-js");
 const app = express();
 const port = 4242;
 
-app.post("/authorize", async (request, response) => {
-  const bt = await new BasisTheory().init("test_priv_1234567890");
-  const { nonce } = request.body;
-  // authorizing a session returns an empty 200 response
-  await bt.sessions.authorize({
-    nonce: nonce,
-    rules: [
-      {
-        description: "Reveal Token",
-        priority: 1,
-        conditions: [
-          {
-            attribute: "id",
-            operator: "equals",
-            value: "token_id_1234567890",
-          },
-        ],
-        permissions: ["token:read", "token:use"],
-        transform: "reveal",
+let bt = await new BasisTheory().init();
+
+app.post("/create-proxy", async (request, response) => {
+  const proxy = await bt.proxies.create(
+    {
+      name: "Proxy to Third Party",
+      destinationUrl: "http://third_party_url.com",
+      requestTransform: {
+        code: `module.exports = async function (req) {
+          let { args: { body, headers }, bt } = req;
+
+          return {
+              body,
+              headers: {
+                ...headers,
+                "Authorization": req.configuration.Credentials
+              },
+          }
+        };`,
       },
-    ],
-  });
-  // this response is arbitrary and not required
-  response.json({
-    result: "success",
-  });
+      configuration: {
+        Credentials: "credential_1234567890"
+      },
+      requireAuth: true,
+    },
+    { apiKey: "test_mgmt_1234567890" } // management application
+  );
+
+  response.send(proxy);
 });
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 ```
+
+Notice that we are using a [request transform](/docs/api/proxies/pre-configured-proxies#request-transforms) to add the third party credentials to the `Authorization` header before making the request to the third party.
+These kind of values can be safely stored in the `configuration` object and re-use them for every proxy execution.
+
 
 Start the server with the following command (from the same directory as `backend.js`).
 
@@ -437,9 +431,113 @@ Start the server with the following command (from the same directory as `backend
 node backend.js
 ```
 
+You can now use your favorite API client or just run the following `curl` command from your terminal:
+
+```shell
+curl -X POST http://localhost:4242/create-proxy
+```
+
+<Alert>
+  Be sure to replace <code>test_mgmt_1234567890</code> with the Management API Key you
+  created in <a href="#creating-a-management-application">Creating a Management Application</a>, <code>http://third_party_url.com</code> with the third party URL and <code>credential_1234567890</code> with the third party credentials (optionally).
+</Alert>
+
+<Alert>
+    Write down the <code>key</code> value returned from the proxy as its going to be used in the next steps.
+</Alert>
+
+
+## Authorizing a Session
+
+In order to use the session to securely invoke our proxy, we need to authorize it with a Private Application.
+
+### Creating a Private Application
+
+First, lets create the [Private Application](docs/api/applications#application-types). To do so [Click here](https://portal.basistheory.com/applications/create?permissions=token%3Ause&type=private&name=Invoke%20Proxy) or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Invoke Proxy
+- Application Type - Private
+- Permissions - `token:use`
+
+<Alert>
+    The Private Application must be in the same <a href="/docs/concepts/access-controls#what-are-tenants">Tenant</a> as Public Application used to create the Session.
+</Alert>
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used later in this guide.
+</Alert>
+
+### Authorizing In the Backend
+
+Using the Private Application API Key and the `nonce` from our session we can grant temporary authorization to invoke the proxy.
+
+<Alert type={Alerts.WARNING}>
+The <b>only way</b> to ensure your private API keys are not publically accessible is for this step to execute in your backend service.
+</Alert>
+
+```javascript showLineNumbers title="backend.js"
+const express = require("express");
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+
+const app = express();
+const port = 4242;
+
+let bt = await new BasisTheory().init();
+
+app.post("/create-proxy", async (request, response) => {
+  const proxy = await bt.proxies.create(
+    {
+      name: "Proxy to Third Party",
+      destinationUrl: "http://third_party_url.com",
+      requestTransform: {
+        code: `module.exports = async function (req) {
+          let { args: { body, headers }, bt } = req;
+
+          return {
+              body,
+              headers: {
+                ...headers,
+                "Authorization": req.configuration.Credentials
+              },
+          }
+        };`,
+      },
+      configuration: {
+        Credentials: "credential_1234567890"
+      },
+      requireAuth: true,
+    },
+    { apiKey: "test_mgmt_1234567890" } // management application
+  );
+
+  response.send(proxy);
+});
+
+//highlight-start
+app.post("/authorize", async (request, response) => {
+  const { nonce } = request.body;
+
+  // authorizing a session returns an empty 200 response
+  await bt.sessions.authorize({
+    nonce: nonce,
+    permissions: ['token:use']
+  }, { apiKey: "test_priv_1234567890" }); // private application
+
+  // this response is arbitrary and not required
+  response.json({
+    result: "success",
+  });
+});
+//highlight-end
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
+```
+
 <Alert>
   Be sure to replace <code>test_priv_1234567890</code> with the Private API Key you
-  created in <a href="#creating-a-private-application">Creating a Private Application</a> and <code>token_id_1234567890</code> with the <code>id</code> for the token you wish to reveal.
+  created in the <a href="#creating-a-private-application">Creating a Private Application</a> step.
 </Alert>
 
 <Alert>
@@ -448,7 +546,7 @@ node backend.js
 
 ### Calling the Authorization Endpoint
 
-Next, from our client application, we'll call the authorization endpoint created on the [Authorizing in the Backend](docs/guides/share/reveal-tokenized-data#authorizing-in-the-backend) step, passing our created session `nonce`:
+Next, from our client application, we'll call the authorization endpoint created on the [Authorizing in the Backend](docs/guides/share/reveal-data-from-third-party#authorizing-in-the-backend) step, passing our created session `nonce`:
 
 <Tabs className="bt-tabs" groupId="clients">
   <TabItem value="javascript" label="JavaScript">
@@ -625,7 +723,7 @@ class MainActivity : AppCompatActivity() {
       val bt = BasisTheoryElements.builder()
         .apiKey("test_1234567890")
         .build()
-
+      
       val session = bt.createSession()
 
       //highlight-next-line
@@ -659,12 +757,10 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
+## Invoking the Proxy and Revealing the Data
 
-
-## Retrieving and Revealing a Token
-
-With the authorized session, we can now use the `sessionKey` to retrieve the token from the Basis Theory backend.
-We'll add the following code to retrieve the token and set its value to the text element.
+With the authorized session, we can now use the `sessionKey` to invoke our created proxy.
+We'll add the following code to retrieve the data and set its value to the text element.
 
 <Tabs className="bt-tabs" groupId="clients">
   <TabItem value="javascript" label="JavaScript">
@@ -700,13 +796,16 @@ let textElement;
     });
 
     // highlight-start
-    const token = await bt.tokens.retrieve("token_id_1234567890", {
+    const data = await bt.proxy.get({
+      headers: {
+        "BT-PROXY-KEY": "proxy_key_1234567890"
+      },
       apiKey: session.sessionKey,
     });
     // highlight-end
 
     //highlight-next-line
-    textElement.setValue(token.data);
+    textElement.setValue(data);
   };
 })();
 ```
@@ -740,13 +839,16 @@ function App() {
     });
 
     // highlight-start
-    const token = await bt.tokens.retrieve("token_id_1234567890", {
+    const data = await bt.proxy.get({
+      headers: {
+        "BT-PROXY-KEY": "proxy_key_1234567890"
+      },
       apiKey: session.sessionKey,
     });
     // highlight-end
 
     //highlight-next-line
-    textRef.setValue(token.data);
+    textElement.setValue(data);
   }
 
   return (
@@ -780,8 +882,12 @@ class ViewController: UIViewController {
             
             self.authorizeSession(nonce: nonce) { result, error in
               //highlight-start
-              BasisTheoryElements.getTokenById(id: 'token_id_1234567890', apiKey: sessionKey) { data, error in
-                  self.exampleTextElement.setValue(elementValueReference: data!.data!.elementValueReference)
+              let proxyHttpRequest = ProxyHttpRequest(method: .get, path: String("/" + issuerCardId))
+              BasisTheoryElements.proxy(apiKey: sessionKey, proxyKey: "proxy_key_1234567890", proxyHttpRequest: proxyHttpRequest)
+              { response, data, error in
+                  DispatchQueue.main.async {
+                      self.cardVerificationCodeElement.setValue(elementValueReference: data!.cvv!.elementValueReference)
+                  }
               }
               //highlight-end
             }
@@ -837,6 +943,8 @@ import com.basistheory.android.view.TextElement
 import com.basistheory.android.service.BasisTheoryElements
 import java.net.HttpURLConnection
 import java.net.URL
+//highlight-next-line
+import com.basistheory.android.service.ProxyRequest
 
 class MainActivity : AppCompatActivity() {
 
@@ -859,11 +967,18 @@ class MainActivity : AppCompatActivity() {
 
       authorizeSession(session.nonce)
 
-      //highlight-next-line
-      val token = bt.getToken("token_id_1234567890", session.sessionKey)
+      //highlight-start
+      val proxyRequest: ProxyRequest = ProxyRequest().apply {
+        headers = mapOf(
+            "BT-PROXY-KEY" to "proxy_key_1234567890",
+            "Content-Type" to "application/json"
+        )
+      }
+      val data = bt.proxy.get(proxyRequest, session.sessionKey)
+      //highlight-end
 
       //highlight-next-line
-      exampleTextElement.setValueRef(token.data)
+      exampleTextElement.setValueRef(data)
     }
 
     private fun authorizeSession(nonce: String) {
@@ -891,16 +1006,20 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
-🎉 The code above is the last bit that we need to reveal a token! 
+🎉 The code above is the last bit that we need to reveal data from a third party!
+
+
+<Alert>
+  The <code>data</code> you receive as response from the proxy is not the raw data, but a synthetic reference to it that can only be used with <code>setValue</code> to display it.
+</Alert>
 
 ## Conclusion
 
 You can now reveal any data to a customer without your application accessing the underlying value, reducing compliance and regulatory scope.
-Just execute the `reveal` method in whichever way you desire (like with the click of a button) and watch the token value appear on your Text Element.
-If you need to reveal data stored outside of Basis Theory in a similar manner, check our [Reveal Data from 3rd Party](/docs/guides/share/reveal-data-from-third-party) guide.
+Just execute the `reveal` method in whichever way you desire (like with the click of a button) and watch the response value from the proxy appear on your Text Element.
 
 ## Learn More
 
 - [Customize your web form](/docs/guides/collect/customize-web-form)
-- [Access Data Using Sessions](/docs/guides/govern/sessions)
-- [Collect and process cards](/docs/blueprints/cards/collect-and-process-cards)
+- [Access data using sessions](/docs/guides/govern/sessions)
+- [Reveal tokenized data](/docs/guides/share/reveal-tokenized-data)
