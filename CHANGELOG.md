@@ -1,3 +1,10 @@
+# [1.32.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.31.0...v1.32.0) (2023-02-21)
+
+
+### Features
+
+* Adds async reactor documentation ([#76](https://github.com/Basis-Theory/developers.basistheory.com/issues/76)) ([4fb1ded](https://github.com/Basis-Theory/developers.basistheory.com/commit/4fb1ded28e54ba5e1e9c11f7c5b5a07700fe8132))
+
 # [1.31.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.30.0...v1.31.0) (2023-02-21)
 
 
