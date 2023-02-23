@@ -63,6 +63,7 @@ const sidebars = {
         "guides/share/send-data-to-third-party",
         "guides/share/display-masked-data",
         "guides/share/reveal-tokenized-data",
+        "guides/share/reveal-data-from-third-party",
       ],
     },
     {
@@ -249,7 +250,7 @@ const sidebars = {
         type: "doc",
         id: "api/reactors/reactors",
       },
-      items: ["api/reactors/reactor-formulas"],
+      items: ["api/reactors/reactor-formulas", "api/reactors/reactor-errors"],
     },
     {
       type: "category",

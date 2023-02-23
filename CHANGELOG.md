@@ -1,3 +1,24 @@
+## [1.32.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.32.0...v1.32.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* Updates proxy concept page images ([#81](https://github.com/Basis-Theory/developers.basistheory.com/issues/81)) ([a06df01](https://github.com/Basis-Theory/developers.basistheory.com/commit/a06df019da76ceb4c1a3aed41f3b884b16399ad2))
+
+# [1.32.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.31.0...v1.32.0) (2023-02-21)
+
+
+### Features
+
+* Adds async reactor documentation ([#76](https://github.com/Basis-Theory/developers.basistheory.com/issues/76)) ([4fb1ded](https://github.com/Basis-Theory/developers.basistheory.com/commit/4fb1ded28e54ba5e1e9c11f7c5b5a07700fe8132))
+
+# [1.31.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.30.0...v1.31.0) (2023-02-21)
+
+
+### Features
+
+* add reveal from 3rd party guide ([#80](https://github.com/Basis-Theory/developers.basistheory.com/issues/80)) ([3029a20](https://github.com/Basis-Theory/developers.basistheory.com/commit/3029a2070f2edf755775e7202a1b56e49104cb6a))
+
 # [1.30.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.29.0...v1.30.0) (2023-02-17)
 
 

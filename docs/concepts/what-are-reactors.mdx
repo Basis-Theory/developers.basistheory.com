@@ -19,9 +19,11 @@ Reactors are serverless function runtimes, similar to AWS Lambda, Azure Function
 
 ## Reactor Formulas
 
-Using a Reactor starts with the code you’d like to execute within your system, this code template is referred to as a Reactor Formula. When creating a Reactor Formula you will define the `code`, expected request parameters, and any up-front configuration - like secrets - required to execute your function. Find _an exhaustive list of all configuration options in our [Reactor Formula API Reference.](/docs/api/reactors/reactor-formulas#reactor-formula-object)_
+Using a Reactor starts with the code you’d like to execute - this code block is referred to as a Reactor Formula.
+When creating a Reactor Formula you will define the `code`, expected request parameters, and any up-front configuration - like secrets - required to execute your function.
+Find _an exhaustive list of all configuration options in our [Reactor Formula API Reference.](/docs/api/reactors/reactor-formulas#reactor-formula-object)_
 
-Formulas provide two different response types, giving the flexibility of securing data or returning it as a raw response:
+Formulas support two different response types, giving you the flexibility to either securely tokenize sensitive outputs or to return raw outputs in the response:
 
 - `tokenize`
   - Any object passed will be [tokenized](/docs/api/tokens/tokenize).
@@ -43,8 +45,7 @@ module.exports = async function (req) {
 ```
 
 <Alert title="Quickstart hint">
-  Find a list of our fully compliant and maintained Official Reactor Formulas
-  from within our{" "}
+  You can find a list of pre-defined Reactor Formulas for common integration scenarios within our{" "}
   <a href="https://portal.basistheory.com/reactors/formulas" target="_blank">
     Portal
   </a>
@@ -78,10 +79,18 @@ curl "https://api.basistheory.com/reactors" \
 
 ## Invoking a Reactor
 
-Reactors may be invoked by an Application with `token:use` permission, which enables the Reactor to detokenize tokens
+Any reactor can be invoked either synchronously or asynchronously depending on the parameters provided within your [request](/docs/api/reactors#invoke-a-reactor).
+
+Reactors may be invoked by any private Application with `token:use` permission, which enables the Reactor to [detokenize](/docs/expressions/detokenization) tokens
 provided in the request `args`. It is recommended that you restrict which tokens a Reactor can detokenize
 by only granting `token:use` permission on the most-specific [container](/docs/concepts/what-are-containers)
 of tokens that is required.
+
+### Synchronous Reactors
+
+Reactors are invoked synchronously by default, unless a `callback_url` is specified in your [request](/docs/api/reactors#invoke-a-reactor).
+Synchronous reactors are limited to 10 seconds of execution time before they are terminated. If you anticipate your reactor workload
+will take longer than this limit, please consider using [Asynchronous Reactors](#asynchronous-reactors) instead.
 
 ```bash showLineNumbers
 curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react" \
@@ -92,6 +101,38 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
       "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
       "customer_id": "myCustomerId1234"
     }
+  }'
+```
+
+### Asynchronous Reactors
+
+Reactors are invoked asynchronously by providing a `callback_url` parameter within the [request](/docs/api/reactors#invoke-a-reactor).
+The reactor will perform some synchronous validation to ensure the request is valid,
+then immediately respond with an empty HTTP response with `202 Accepted` status code.
+
+Your reactor code will then be asynchronously executed in our serverless compute environment for up to the configured timeout specified in the `timeout_ms`
+parameter. If not specified, this value defaults to `10000` (i.e. 10 seconds). If the timeout period is exceeded, the reactor will be terminated and you will receive
+a callback containing a [Reactor Runtime Error](/docs/api/reactors/reactor-errors#error-types) indicating that a timeout occurred.
+
+Once the reactor is completed, the response from the reactor code
+will be delivered in the body of an HTTP `POST` request to your `callback_url`.
+
+Your callback endpoint must be hosted using HTTPS, and should respond with a `2xx` status code after receiving the message. If your servers fail to
+respond with a `2xx` status code, delivery will retried up to 10 times with exponential backoff over the next ~2.5 hours.
+
+Any errors that occur while executing the reactor will be delivered to the `callback_url`. See [Reactor Errors](/docs/api/reactors/reactor-errors) for details.
+
+```bash showLineNumbers
+curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -X "POST" \
+  -d '{
+    "args": {
+      "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      "customer_id": "myCustomerId1234"
+    },
+    "callback_url": "https://my-service.com/webhooks/transactions/b1d16efc-f613-45af-a1d5-57b07ddd741b",
+    "timeout_ms": 60000
   }'
 ```
 
@@ -231,7 +272,7 @@ module.exports = async function (req) {
 
 ---
 
-## FAQ:
+## FAQ
 
 ### When do I use a Reactor?
 
