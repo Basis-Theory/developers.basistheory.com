@@ -1,3 +1,10 @@
+# [1.33.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.32.1...v1.33.0) (2023-02-23)
+
+
+### Features
+
+* add Extract Data guide ([#82](https://github.com/Basis-Theory/developers.basistheory.com/issues/82)) ([30213a5](https://github.com/Basis-Theory/developers.basistheory.com/commit/30213a52f2b02850ec78f244d3d23d9facc52604))
+
 ## [1.32.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.32.0...v1.32.1) (2023-02-21)
 
 
