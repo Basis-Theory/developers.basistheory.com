@@ -9,6 +9,7 @@ import {
   CardVerificationCodeElement,
   TextElement,
 } from "@basis-theory/basis-theory-react";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { BasisTheoryComponentDisplay } from "@site/src/components/sdks/BasisTheoryComponentDisplay";
 
 # Elements Components
@@ -46,19 +47,28 @@ const MyComponent = () => {
 
 ### Properties
 
-| Property       | Required | Type                 | Updatable | Description                                                                                                                                                                                |
-| -------------- | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`           | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization.                                                                                                                  |
-| `bt`           | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react#basistheoryprovider) if configured.                                                      |
-| `style`        | false    | _object_             | true      | [Object](/docs/sdks/web/javascript/options#style) used to customize the element appearance                                                                                                 |
-| `disabled`     | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
-| `autoComplete` | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
-| `onReady`      | false    | _function_           | true      | Event Listener. See [On Ready](/docs/sdks/web/javascript/methods#on-ready)                                                                                                                 |
-| `onChange`     | false    | _function_           | true      | Event Listener. See [On Change](/docs/sdks/web/javascript/methods#on-change)                                                                                                               |
-| `onFocus`      | false    | _function_           | true      | Event Listener. See [On Focus](/docs/sdks/web/javascript/methods#on-focus)                                                                                                                 |
-| `onBlur`       | false    | _function_           | true      | Event Listener. See [On Blur](/docs/sdks/web/javascript/methods#on-blur)                                                                                                                   |
-| `onKeyDown`    | false    | _function_           | true      | Event Listener. See [On Keydown](/docs/sdks/web/javascript/methods#on-keydown)                                                                                                             |
-| `ref`          | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                               |
+| Property           | Required | Type                 | Updatable | Description                                                                                                                                                                                |
+| ------------------ | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`               | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization.                                                                                                                  |
+| `bt`               | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react#basistheoryprovider) if configured.                                                      |
+| `style`            | false    | _object_             | true      | [Object](/docs/sdks/web/javascript/options#style) used to customize the element appearance                                                                                                 |
+| `disabled`         | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete`     | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `onReady`          | false    | _function_           | true      | Event Listener. See [On Ready](/docs/sdks/web/javascript/methods#on-ready)                                                                                                                 |
+| `onChange`         | false    | _function_           | true      | Event Listener. See [On Change](/docs/sdks/web/javascript/methods#on-change)                                                                                                               |
+| `onFocus`          | false    | _function_           | true      | Event Listener. See [On Focus](/docs/sdks/web/javascript/methods#on-focus)                                                                                                                 |
+| `onBlur`           | false    | _function_           | true      | Event Listener. See [On Blur](/docs/sdks/web/javascript/methods#on-blur)                                                                                                                   |
+| `onKeyDown`        | false    | _function_           | true      | Event Listener. See [On Keydown](/docs/sdks/web/javascript/methods#on-keydown)                                                                                                             |
+| `ref`              | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                               |
+| `validateOnChange` | false    | _boolean_            | false     | Enable validation `onChange`                                                                                                                                                               |
+| `enableCopy`       | false    | _boolean_            | false     | Renders a button to allow users to copy the value of the element to the browser's clipboard without your application ever interacting with the data.                                       |
+
+<Alert type={Alerts.WARNING}>
+  <code>enableCopy</code> is available for Chromium-based browsers only; we're
+  actively working on multi-browser support. Have feedback or questions? Feel
+  free to join us in our{" "}
+  <a href="https://community.basistheory.com">Slack community</a>.
+</Alert>
 
 ## TextElement
 
@@ -145,22 +155,31 @@ const MyComponent = () => {
 
 ### Properties
 
-| Property       | Required | Type                 | Updatable | Description                                                                                                                                                                                |
-| -------------- | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`           | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
-| `bt`           | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react#basistheoryprovider) if configured.                                                      |
-| `style`        | false    | _object_             | true      | [Object](/docs/sdks/web/javascript/options#style) used to customize the element appearance                                                                                                 |
-| `disabled`     | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
-| `autoComplete` | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
-| `iconPosition` | false    | _string_             | true      | String used to determine the position of the card brand icon. Expected values are: `left` (default), `right` or `none`.                                                                    |
-| `placeholder`  | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
-| `aria-label`   | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
-| `onReady`      | false    | _function_           | true      | Event listener. See [On Ready](/docs/sdks/web/javascript/methods#on-ready)                                                                                                                 |
-| `onChange`     | false    | _function_           | true      | Event listener. See [On Change](/docs/sdks/web/javascript/methods#on-change)                                                                                                               |
-| `onFocus`      | false    | _function_           | true      | Event listener. See [On Focus](/docs/sdks/web/javascript/methods#on-focus)                                                                                                                 |
-| `onBlur`       | false    | _function_           | true      | Event listener. See [On Blur](/docs/sdks/web/javascript/methods#on-blur)                                                                                                                   |
-| `onKeyDown`    | false    | _function_           | true      | Event listener. See [On Keydown](/docs/sdks/web/javascript/methods#on-keydown)                                                                                                             |
-| `ref`          | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                               |
+| Property           | Required | Type                 | Updatable | Description                                                                                                                                                                                |
+| ------------------ | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`               | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
+| `bt`               | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react#basistheoryprovider) if configured.                                                      |
+| `style`            | false    | _object_             | true      | [Object](/docs/sdks/web/javascript/options#style) used to customize the element appearance                                                                                                 |
+| `disabled`         | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete`     | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `iconPosition`     | false    | _string_             | true      | String used to determine the position of the card brand icon. Expected values are: `left` (default), `right` or `none`.                                                                    |
+| `placeholder`      | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
+| `aria-label`       | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
+| `onReady`          | false    | _function_           | true      | Event listener. See [On Ready](/docs/sdks/web/javascript/methods#on-ready)                                                                                                                 |
+| `onChange`         | false    | _function_           | true      | Event listener. See [On Change](/docs/sdks/web/javascript/methods#on-change)                                                                                                               |
+| `onFocus`          | false    | _function_           | true      | Event listener. See [On Focus](/docs/sdks/web/javascript/methods#on-focus)                                                                                                                 |
+| `onBlur`           | false    | _function_           | true      | Event listener. See [On Blur](/docs/sdks/web/javascript/methods#on-blur)                                                                                                                   |
+| `onKeyDown`        | false    | _function_           | true      | Event listener. See [On Keydown](/docs/sdks/web/javascript/methods#on-keydown)                                                                                                             |
+| `ref`              | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                               |
+| `validateOnChange` | false    | _boolean_            | false     | Enable validation `onChange`                                                                                                                                                               |
+| `enableCopy`       | false    | _boolean_            | false     | Renders a button to allow users to copy the value of the element to the browser's clipboard without your application ever interacting with the data.                                       |
+
+<Alert type={Alerts.WARNING}>
+  <code>enableCopy</code> is available for Chromium-based browsers only; we're
+  actively working on multi-browser support. Have feedback or questions? Feel
+  free to join us in our{" "}
+  <a href="https://community.basistheory.com">Slack community</a>.
+</Alert>
 
 ## CardExpirationDateElement
 
@@ -195,21 +214,30 @@ const MyComponent = () => {
 
 ### Properties
 
-| Property       | Required | Type                 | Updatable | Description                                                                                                                                                                                |
-| -------------- | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`           | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
-| `bt`           | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react#basistheoryprovider) if configured.                                                      |
-| `style`        | false    | _object_             | true      | [Object](/docs/sdks/web/javascript/options#style) used to customize the element appearance                                                                                                 |
-| `disabled`     | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
-| `autoComplete` | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
-| `placeholder`  | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
-| `aria-label`   | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
-| `onReady`      | false    | _function_           | true      | Event listener. See [On Ready](/docs/sdks/web/javascript/methods#on-ready)                                                                                                                 |
-| `onChange`     | false    | _function_           | true      | Event listener. See [On Change](/docs/sdks/web/javascript/methods#on-change)                                                                                                               |
-| `onFocus`      | false    | _function_           | true      | Event listener. See [On Focus](/docs/sdks/web/javascript/methods#on-focus)                                                                                                                 |
-| `onBlur`       | false    | _function_           | true      | Event listener. See [On Blur](/docs/sdks/web/javascript/methods#on-blur)                                                                                                                   |
-| `onKeyDown`    | false    | _function_           | true      | Event listener. See [On Keydown](/docs/sdks/web/javascript/methods#on-keydown)                                                                                                             |
-| `ref`          | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                               |
+| Property           | Required | Type                 | Updatable | Description                                                                                                                                                                                |
+| ------------------ | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`               | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
+| `bt`               | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react#basistheoryprovider) if configured.                                                      |
+| `style`            | false    | _object_             | true      | [Object](/docs/sdks/web/javascript/options#style) used to customize the element appearance                                                                                                 |
+| `disabled`         | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete`     | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `placeholder`      | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
+| `aria-label`       | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
+| `onReady`          | false    | _function_           | true      | Event listener. See [On Ready](/docs/sdks/web/javascript/methods#on-ready)                                                                                                                 |
+| `onChange`         | false    | _function_           | true      | Event listener. See [On Change](/docs/sdks/web/javascript/methods#on-change)                                                                                                               |
+| `onFocus`          | false    | _function_           | true      | Event listener. See [On Focus](/docs/sdks/web/javascript/methods#on-focus)                                                                                                                 |
+| `onBlur`           | false    | _function_           | true      | Event listener. See [On Blur](/docs/sdks/web/javascript/methods#on-blur)                                                                                                                   |
+| `onKeyDown`        | false    | _function_           | true      | Event listener. See [On Keydown](/docs/sdks/web/javascript/methods#on-keydown)                                                                                                             |
+| `ref`              | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                               |
+| `validateOnChange` | false    | _boolean_            | false     | Enable validation `onChange`                                                                                                                                                               |
+| `enableCopy`       | false    | _boolean_            | false     | Renders a button to allow users to copy the value of the element to the browser's clipboard without your application ever interacting with the data.                                       |
+
+<Alert type={Alerts.WARNING}>
+  <code>enableCopy</code> is available for Chromium-based browsers only; we're
+  actively working on multi-browser support. Have feedback or questions? Feel
+  free to join us in our{" "}
+  <a href="https://community.basistheory.com">Slack community</a>.
+</Alert>
 
 ## CardVerificationCodeElement
 
@@ -244,22 +272,31 @@ const MyComponent = () => {
 
 ### Properties
 
-| Property       | Required | Type                 | Updatable | Description                                                                                                                                                                                |
-| -------------- | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`           | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
-| `bt`           | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react#basistheoryprovider) if configured.                                                      |
-| `style`        | false    | _object_             | true      | [Object](/docs/sdks/web/javascript/options#style) used to customize the element appearance                                                                                                 |
-| `disabled`     | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
-| `autoComplete` | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
-| `cardBrand`    | false    | _string_             | true      | [String](/docs/sdks/web/javascript/options#card-brands) used to determine proper input format and default placeholder/aria-label                                                           |
-| `placeholder`  | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
-| `aria-label`   | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
-| `onReady`      | false    | _function_           | true      | Event listener. See [On Ready](/docs/sdks/web/javascript/methods#on-ready)                                                                                                                 |
-| `onChange`     | false    | _function_           | true      | Event listener. See [On Change](/docs/sdks/web/javascript/methods#on-change)                                                                                                               |
-| `onFocus`      | false    | _function_           | true      | Event listener. See [On Focus](/docs/sdks/web/javascript/methods#on-focus)                                                                                                                 |
-| `onBlur`       | false    | _function_           | true      | Event listener. See [On Blur](/docs/sdks/web/javascript/methods#on-blur)                                                                                                                   |
-| `onKeyDown`    | false    | _function_           | true      | Event listener. See [On Keydown](/docs/sdks/web/javascript/methods#on-keydown)                                                                                                             |
-| `ref`          | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                               |
+| Property           | Required | Type                 | Updatable | Description                                                                                                                                                                                |
+| ------------------ | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`               | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
+| `bt`               | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react#basistheoryprovider) if configured.                                                      |
+| `style`            | false    | _object_             | true      | [Object](/docs/sdks/web/javascript/options#style) used to customize the element appearance                                                                                                 |
+| `disabled`         | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+| `autoComplete`     | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. |
+| `cardBrand`        | false    | _string_             | true      | [String](/docs/sdks/web/javascript/options#card-brands) used to determine proper input format and default placeholder/aria-label                                                           |
+| `placeholder`      | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
+| `aria-label`       | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 |
+| `onReady`          | false    | _function_           | true      | Event listener. See [On Ready](/docs/sdks/web/javascript/methods#on-ready)                                                                                                                 |
+| `onChange`         | false    | _function_           | true      | Event listener. See [On Change](/docs/sdks/web/javascript/methods#on-change)                                                                                                               |
+| `onFocus`          | false    | _function_           | true      | Event listener. See [On Focus](/docs/sdks/web/javascript/methods#on-focus)                                                                                                                 |
+| `onBlur`           | false    | _function_           | true      | Event listener. See [On Blur](/docs/sdks/web/javascript/methods#on-blur)                                                                                                                   |
+| `onKeyDown`        | false    | _function_           | true      | Event listener. See [On Keydown](/docs/sdks/web/javascript/methods#on-keydown)                                                                                                             |
+| `ref`              | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                               |
+| `validateOnChange` | false    | _boolean_            | false     | Enable validation `onChange`                                                                                                                                                               |
+| `enableCopy`       | false    | _boolean_            | false     | Renders a button to allow users to copy the value of the element to the browser's clipboard without your application ever interacting with the data.                                       |
+
+<Alert type={Alerts.WARNING}>
+  <code>enableCopy</code> is available for Chromium-based browsers only; we're
+  actively working on multi-browser support. Have feedback or questions? Feel
+  free to join us in our{" "}
+  <a href="https://community.basistheory.com">Slack community</a>.
+</Alert>
 
 ## Error Handling
 
