@@ -34,9 +34,9 @@ Next you will need a [Public Application](/docs/api/applications#application-typ
 ## Setup the Project
 
 We will create a new React Native application by following the instructions outlined on React Native's environment setup [page](https://reactnative.dev/docs/environment-setup). Ensure you have
-the following tabs selected:
+the following tabs selected before starting:
 
-1. Select the "React Native CLI Quickstart" tab near the start of the page
+1. "React Native CLI Quickstart" near the top of the page
 2. "macOS" selected as the Development OS
 3. "iOS" selected as the Target OS
 
@@ -44,20 +44,20 @@ Follow each step on this page down to [Start your application](https://reactnati
 
 ## Install the iOS Elements SDK
 
-We will need to install Basis Theory's [iOS Elements SDK](/docs/sdks/mobile/ios), which will render a secure `UITextField` for capturing the data.
+We will need to install Basis Theory's [iOS Elements SDK](/docs/sdks/mobile/ios), which will render a secure text field for capturing the data.
 
-Open your new React Native project in Xcode by opening the file suffixed with `.xcworkspace` in your project under the `ios` directory.
+Open your new React Native project in Xcode by opening `AwesomeProject.xcworkspace` in your project under the `ios` directory.
 
-With the Xcode window in focus, select File > Add Packages. In the dialog that appears, enter `https://github.com/Basis-Theory/basistheory-ios` in the search field on the top right, then select "AwesomeProject" on Add to Project (do not select "Pods"),
+With the Xcode window in focus, select File > Add Packages. In the dialog that appears, enter "[https://github.com/Basis-Theory/basistheory-ios](https://github.com/Basis-Theory/basistheory-ios)" in the search field on the top right, then select "AwesomeProject" for Add to Project,
 and click Add Package on this screen and the next prompts.
 
 ## Setup Native Module and Bridging Header
 
-Now we need to add a [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield) iOS component to our app. To do this we'll add an [iOS Native Module](https://reactnative.dev/docs/native-modules-ios) and set up our TextElement
-in Swift, and import it with React Native. We'll start by adding custom native module files.
+Now we'll add a [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield) iOS component to our app. To do this we'll add an [iOS Native Module](https://reactnative.dev/docs/native-modules-ios) and set up our text field element
+in Swift. We'll start by adding custom native module files.
 
-Add a new Objective-C file called `SsnTextElement.m` under the "AwesomeProject" project in the "AwesomeProject" directory. We will add a method to export the `SsnTextElement` we'll create later, and also add the `tokenize` method required to tokenize
-with our [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield). This will allow us to expose the `SsnTextElement` component and `tokenize` method in React Native.
+Add a new Objective-C file called `SsnTextElement.m` under the "AwesomeProject" project in the "AwesomeProject" directory. We will add methods to export the `SsnTextElement` component and the `tokenize` method we'll create later to initialize our [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield)
+and tokenize its values, respectively.
 
 ```objc showLineNumbers title="AwesomeProject/SsnTextElement.m"
 #import <Foundation/Foundation.h>
@@ -78,7 +78,7 @@ RCT_EXTERN_METHOD(
 Add a new Swift file through Xcode called `SsnTextElement.swift` under the "AwesomeProject" project in the "AwesomeProject" directory. After going through the prompts for adding your new `SsnTextElement.swift` file, opt into creating a bridging header for your project.
 We will need this bridging header in a bit.
 
-First, let's import our necessary packages into `SsnTextElement.swift`.
+Let's import our necessary packages into `SsnTextElement.swift`.
 
 ```swift showLineNumbers title="AwesomeProject/SsnTextElement.swift"
 import Foundation
@@ -88,11 +88,15 @@ import BasisTheoryElements
 // highlight-end
 ```
 
-At this point, you may get an error telling you that `BasisTheoryElements` isn't compatible with the minimum iOS deployment set up for the project. In that case, click on the "AwesomeProject" project and under the "AwesomeProject" target, select "14.0" for the Minimum Deployment.
+At this point, you may get an error telling you that `BasisTheoryElements` isn't compatible with the minimum iOS deployment set up for the project. In that case, in the Project Navigator tab in Xcode click on the "AwesomeProject" project and under the "AwesomeProject" target,
+select "14.0" for the Minimum Deployment.
 
-Now we need to make `RCTViewManager` available to be used in Swift. To do this, we have to import the `RCTViewManager` header in our bridging header.
+Now we need to make `RCTViewManager` available to be used in Swift. We'll go back to the bridging header created earlier and add an import for the `RCTViewManager` header.
 
 ```objc showLineNumbers title="AwesomeProject/AwesomeProject-Bridging-Header.h"
+//
+//  Use this file to import your target's public headers that you would like to expose to Swift.
+//
 // highlight-start
 #import "React/RCTViewManager.h"
 // highlight-end
@@ -100,8 +104,8 @@ Now we need to make `RCTViewManager` available to be used in Swift. To do this, 
 
 ## Add Your Form Component on iOS
 
-Next we'll setup our component on iOS component to our liking. Let's [initiate](/docs/sdks/mobile/ios#initialization) our element, add a [mask](/docs/sdks/mobile/ios/options#mask), and add
-some [styling](/docs/sdks/mobile/ios#initialization#styling-elements) in our `SsnTextElement.swift` file with the following code:
+Next we'll setup our component to our liking. Let's [initiate](/docs/sdks/mobile/ios#initialization) our element, add a [mask](/docs/sdks/mobile/ios/options#mask), and add some [styling](/docs/sdks/mobile/ios#styling-elements) in our `SsnTextElement.swift` file
+with the following code:
 
 ```swift showLineNumbers title="AwesomeProject/SsnTextElement.swift"
 import Foundation
@@ -143,7 +147,7 @@ import BasisTheoryElements
 // highlight-end
 ```
 
-Now let's add our function to tokenize. Notice here how we make use of the `resolve` and `rejector` params. These will get used to communicate the results of the tokenize function back to React Native.
+Now let's add our function to tokenize. Notice in this function how we make use of the `resolve` and `rejector` params. These will get used to communicate the results of the tokenize function back to our Javascript.
 
 ```swift showLineNumbers title="AwesomeProject/SsnTextElement.swift"
 import Foundation
@@ -211,7 +215,7 @@ import BasisTheoryElements
   created in the <a href="#getting-started">Getting Started</a> step.
 </Alert>
 
-All that's left is to let React Native know that we need to run our `SsnTextElement` on the main queue.
+All that's left is to let React Native know that we need to setup our `SsnTextElement` on the main queue.
 
 ```swift showLineNumbers title="AwesomeProject/SsnTextElement.swift"
 import Foundation
@@ -276,9 +280,9 @@ import BasisTheoryElements
 }
 ```
 
-## Add Your Form Component on React Native
+## Add Your Form Component in Javascript
 
-Now it's time to mount `SsnTextElement` in React Native. First, we'll go into the `App.tsx` file and setup the view where we'll display the text field.
+Now it's time to mount `SsnTextElement` in Javascript. First, we'll go into the `App.tsx` file and setup the view where we'll display the secure text field.
 
 ```typescript jsx showLineNumbers title="App.tsx"
 /**
@@ -303,18 +307,19 @@ function App(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
+    paddingTop: 100,
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   }
 });
 
 export default App;
 ```
 
-To add our `ssnTextElement` in React Native we'll make use of the native `requireNativeComponent` function to get the iOS element we created earlier.
+To add our `ssnTextElement` in Javascript, we'll make use of the `requireNativeComponent` function to get the element we created in Swift earlier.
 
 ```typescript jsx showLineNumbers title="App.tsx"
 /**
@@ -360,11 +365,12 @@ function App(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
+    paddingTop: 100,
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   // highlight-start
   ssnTextElement: {
@@ -418,7 +424,7 @@ const tokenize = () => SsnTextElementModule.tokenize() as Promise<string>;
 
 function App(): JSX.Element {
   // highlight-start
-  const [text, setText] = useState<string>();
+  const [response, setResponse] = useState<string>();
   // highlight-end
 
   return (
@@ -430,11 +436,11 @@ function App(): JSX.Element {
         <Pressable
           style={styles.tokenize}
           onPress={async () => {
-            setText(await tokenize());
+            setResponse(await tokenize());
           }}>
           <Text style={styles.tokenizeText}>{'Tokenize'}</Text>
         </Pressable>
-        <Text style={styles.tokenText}>{text}</Text>
+        <Text style={styles.tokenText}>{response}</Text>
         // highlight-end
       </View>
     </SafeAreaView>
@@ -444,11 +450,12 @@ function App(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
+    paddingTop: 100,
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   ssnTextElement: {
     minHeight: 50,
@@ -484,12 +491,16 @@ const styles = StyleSheet.create({
 export default App;
 ```
 
+🎉 The code above is the last bit that we need to tokenize! Now let's run the app by running `npx react-native run-ios` in your project. The screen should look something like this:
+
+![](/img/iOS/ios-collect-data-iphone-screenshot.png)
+
 ## Conclusion
 
-You can now capture any data without your iOS app accessing the underlying value drastically reducing compliance and regulatory scope.
+You can now capture any text data without your React Native app accessing the underlying value drastically reducing compliance and regulatory scope.
 
-Try running the app with `npx react-native run-ios` and typing in a social security number in the `ssnTextElement` and tap on Tokenize. Basis Theory's iOS SDK will pass the value for the element reference. This will
-be securely submitted directly to the [Create Token Endpoint](/docs/api/tokens#create-token). The resulting [token](/docs/concepts/what-are-tokens) is printed to the Xcode console.
+Try typing in a social security number in the `ssnTextElement` and tap on Tokenize. Basis Theory's iOS SDK will pass the value for the element reference. This will
+be securely submitted directly to the [Create Token Endpoint](/docs/api/tokens#create-token). The resulting [token](/docs/concepts/what-are-tokens) is printed to the app.
 
 ## Learn More
 
