@@ -1,3 +1,10 @@
+## [1.34.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.34.0...v1.34.1) (2023-02-27)
+
+
+### Bug Fixes
+
+* change wording, title for display cards blueprint ([#83](https://github.com/Basis-Theory/developers.basistheory.com/issues/83)) ([842bb96](https://github.com/Basis-Theory/developers.basistheory.com/commit/842bb9657bd18d5c94bb8a5dc478a8b5ce64c9ab))
+
 # [1.34.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.33.0...v1.34.0) (2023-02-27)
 
 
