@@ -131,7 +131,7 @@ const sidebars = {
           },
           items: [
             "blueprints/cards/collect-and-process-cards",
-            "blueprints/cards/display-virtual-cards",
+            "blueprints/cards/issue-and-display-cards",
           ],
         },
         {
