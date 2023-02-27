@@ -1,3 +1,10 @@
+# [1.34.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.33.0...v1.34.0) (2023-02-27)
+
+
+### Features
+
+* add `enableCopy` to JS and react sdk's ([#78](https://github.com/Basis-Theory/developers.basistheory.com/issues/78)) ([a33d5a5](https://github.com/Basis-Theory/developers.basistheory.com/commit/a33d5a5a2f1ad595d4dfcc461ae0542268dda882))
+
 # [1.33.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.32.1...v1.33.0) (2023-02-23)
 
 
