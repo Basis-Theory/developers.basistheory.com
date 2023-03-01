@@ -106,8 +106,8 @@ Now we need to make `RCTViewManager` available to be used in Swift. Let's go bac
 
 ## Add Your Form Component on iOS
 
-Next we'll setup our component to our liking. Let's [initiate](/docs/sdks/mobile/ios#initialization) the TextElementUITextField, add a [mask](/docs/sdks/mobile/ios/options#mask), and add some [styling](/docs/sdks/mobile/ios#styling-elements) in our `SsnTextElement.swift` file
-with the following code:
+Next we'll [initiate](/docs/sdks/mobile/ios#initialization), configure a [mask](/docs/sdks/mobile/ios/options#mask), and [style](/docs/sdks/mobile/ios#styling-elements) our [TextElementUITextField](/docs/sdks/mobile/ios/types#textelementuitextfield), and add a method for tokenizing its input.
+Note that in the tokenizing function, we make use of the `resolve` and `rejector` params. These are used to communicate the results of the tokenize function back to our Javascript.
 
 ```swift showLineNumbers title="AwesomeProject/SsnTextElement.swift"
 import Foundation
@@ -147,53 +147,7 @@ import BasisTheoryElements
 
     return ssnTextElement
   }
-}
-// highlight-end
-```
 
-Now let's make sure we can tokenize data entered into our `ssnTextElement`. 
-
-In this function, we make use of the `resolve` and `rejector` params. These will are used to communicate the results of the tokenize function back to our Javascript.
-
-```swift showLineNumbers title="AwesomeProject/SsnTextElement.swift"
-import Foundation
-import UIKit
-import BasisTheoryElements
-
-@objc(SsnTextElement) class SsnTextElement: RCTViewManager {
-  let ssnTextElement = TextElementUITextField()
-
-  override func view() -> UIView! {
-    let regexDigit = try! NSRegularExpression(pattern: "\\d")
-    let ssnMask: [Any] = [
-      regexDigit,
-      regexDigit,
-      regexDigit,
-      "-",
-      regexDigit,
-      regexDigit,
-      "-",
-      regexDigit,
-      regexDigit,
-      regexDigit,
-      regexDigit,
-    ]
-
-    try! ssnTextElement.setConfig(options: TextElementOptions(mask: ssnMask))
-
-    ssnTextElement.layer.cornerRadius = 16.0
-    ssnTextElement.layer.borderWidth = 1.0
-    ssnTextElement.layer.borderColor = UIColor( red: 209/255, green: 209/255, blue: 214/255, alpha: 1.0 ).cgColor
-    ssnTextElement.layer.masksToBounds = true
-    ssnTextElement.backgroundColor = .white
-    ssnTextElement.placeholder = "Enter SSN"
-    ssnTextElement.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-    ssnTextElement.leftViewMode = .always
-
-    return ssnTextElement
-  }
-
-  // highlight-start
   @objc public func tokenize(
     _ resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: RCTPromiseRejectBlock
@@ -214,8 +168,9 @@ import BasisTheoryElements
       resolve(String(data: json, encoding: .utf8)!)
     }
   }
-  // highlight-end
+
 }
+// highlight-end
 ```
 
 <Alert>
@@ -231,58 +186,7 @@ import UIKit
 import BasisTheoryElements
 
 @objc(SsnTextElement) class SsnTextElement: RCTViewManager {
-  let ssnTextElement = TextElementUITextField()
-
-  override func view() -> UIView! {
-    let regexDigit = try! NSRegularExpression(pattern: "\\d")
-    let ssnMask: [Any] = [
-      regexDigit,
-      regexDigit,
-      regexDigit,
-      "-",
-      regexDigit,
-      regexDigit,
-      "-",
-      regexDigit,
-      regexDigit,
-      regexDigit,
-      regexDigit,
-    ]
-
-    try! ssnTextElement.setConfig(options: TextElementOptions(mask: ssnMask))
-
-    ssnTextElement.layer.cornerRadius = 16.0
-    ssnTextElement.layer.borderWidth = 1.0
-    ssnTextElement.layer.borderColor = UIColor( red: 209/255, green: 209/255, blue: 214/255, alpha: 1.0 ).cgColor
-    ssnTextElement.layer.masksToBounds = true
-    ssnTextElement.backgroundColor = .white
-    ssnTextElement.placeholder = "Enter SSN"
-    ssnTextElement.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-    ssnTextElement.leftViewMode = .always
-
-    return ssnTextElement
-  }
-
-  @objc public func tokenize(
-    _ resolve: @escaping RCTPromiseResolveBlock,
-    rejecter reject: RCTPromiseRejectBlock
-  ) -> Void {
-    let body = CreateToken(type: "token", data: [
-      "ssn": self.ssnTextElement,
-    ])
-
-    BasisTheoryElements.createToken(body: body, apiKey: "test_1234567890") {
-      data, error in
-      guard error == nil else {
-        resolve(error!.localizedDescription)
-        return
-      }
-
-      let encoder = JSONEncoder()
-      let json = try! encoder.encode(data)
-      resolve(String(data: json, encoding: .utf8)!)
-    }
-  }
+  ...
 
   // highlight-start
   @objc static override func requiresMainQueueSetup() -> Bool { return true }
