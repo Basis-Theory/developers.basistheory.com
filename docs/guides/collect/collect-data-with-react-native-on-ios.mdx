@@ -104,7 +104,7 @@ Now we need to make `RCTViewManager` available to be used in Swift. We'll go bac
 
 ## Add Your Form Component on iOS
 
-Next we'll setup our component to our liking. Let's [initiate](/docs/sdks/mobile/ios#initialization) our element, add a [mask](/docs/sdks/mobile/ios/options#mask), and add some [styling](/docs/sdks/mobile/ios#styling-elements) in our `SsnTextElement.swift` file
+Next we'll setup our component to our liking. Let's [initiate](/docs/sdks/mobile/ios#initialization) the TextElementUITextField, add a [mask](/docs/sdks/mobile/ios/options#mask), and add some [styling](/docs/sdks/mobile/ios#styling-elements) in our `SsnTextElement.swift` file
 with the following code:
 
 ```swift showLineNumbers title="AwesomeProject/SsnTextElement.swift"
@@ -149,7 +149,9 @@ import BasisTheoryElements
 // highlight-end
 ```
 
-Now let's add our function to tokenize. Notice in this function how we make use of the `resolve` and `rejector` params. These will get used to communicate the results of the tokenize function back to our Javascript.
+Now let's make sure we can tokenize data entered into our `ssnTextElement`. 
+
+In this function, we make use of the `resolve` and `rejector` params. These will are used to communicate the results of the tokenize function back to our Javascript.
 
 ```swift showLineNumbers title="AwesomeProject/SsnTextElement.swift"
 import Foundation
@@ -288,7 +290,7 @@ import BasisTheoryElements
 
 ## Add Your Form Component in Javascript
 
-Now it's time to mount `SsnTextElement` in Javascript. First, we'll go into the `App.tsx` file and setup the view where we'll display the secure text field.
+First, in `App.tsx` set up the view to display the secure text field.
 
 ```typescript jsx showLineNumbers title="App.tsx"
 /**
@@ -511,8 +513,7 @@ export default App;
 
 You can now capture any text data without your React Native app accessing the underlying value drastically reducing compliance and regulatory scope.
 
-Try typing in a social security number in the `ssnTextElement` and tap on Tokenize. Basis Theory's iOS SDK will pass the value for the element reference. This will
-be securely submitted directly to the [Create Token Endpoint](/docs/api/tokens#create-token). The resulting [token](/docs/concepts/what-are-tokens) is printed to the app.
+To test, type in a social security number in the `ssnTextElement` and tap on Tokenize. Basis Theory's iOS SDK securely submits the data directly to the [Create Token Endpoint](/docs/api/tokens#create-token). The resulting [token](/docs/concepts/what-are-tokens) is printed to the app.
 
 ## Learn More
 
