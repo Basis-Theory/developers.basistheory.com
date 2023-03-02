@@ -1,3 +1,10 @@
+# [1.35.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.34.1...v1.35.0) (2023-03-02)
+
+
+### Features
+
+* adds guide for React Native on iOS ([#85](https://github.com/Basis-Theory/developers.basistheory.com/issues/85)) ([377b8ad](https://github.com/Basis-Theory/developers.basistheory.com/commit/377b8ad1dd349a74f531e035a5e1fc8f45943c13))
+
 ## [1.34.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.34.0...v1.34.1) (2023-02-27)
 
 
