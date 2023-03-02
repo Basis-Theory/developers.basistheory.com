@@ -42,6 +42,7 @@ const sidebars = {
         "guides/collect/collect-data-with-react",
         "guides/collect/collect-data-with-android",
         "guides/collect/collect-data-with-ios",
+        "guides/collect/collect-data-with-react-native-on-ios",
         "guides/collect/collect-inbound-sensitive-data",
         "guides/collect/customize-web-form",
       ],
