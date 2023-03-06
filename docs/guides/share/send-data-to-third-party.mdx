@@ -4,6 +4,8 @@ toc_max_heading_level: 2
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { AuthButtons } from "@site/src/components/docs/AuthButtons";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Send Data to a 3rd Party
 
@@ -58,13 +60,17 @@ You should see a JSON response similar to:
 
 ```json showLineNumbers
 {
-  "id": "adb7ef72-73ca-4166-bc68-b77949a55f75",
+  "id": "d2411dd4-17f0-47ce-a4e2-78a66f2e4606",
   "type": "token",
   "tenant_id": "4d228c59-13e9-4d26-9ff3-883336579d35",
   "created_by": "59929b69-1282-43e1-8b26-8cf655964f9b",
   "created_at": "2022-12-19T19:20:43.7334616+00:00",
-  "fingerprint": "4CCkxuF2Gp5a5fnnc1Esxe1eANXao1g3ASMqHsTV9Adr",
-  "fingerprint_expression": "{{ data | stringify }}",
+  "privacy": {
+    "classification": "general",
+    "impact_level": "high",
+    "restriction_policy": "redact"
+  },
+  "search_indexes": [],
   "containers": [
     "/general/high/"
   ]
@@ -81,34 +87,58 @@ Copy the `id` to use in the next step.
 
 We can leverage the Basis Theory [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) to detokenize the stored data before forwarding it to a third-party. To do this, we will utilize [Expressions](/docs/expressions), which are based on the [Liquid template language](https://shopify.github.io/liquid).
 
+<Tabs className="bt-tabs" groupId="content-type">
+  <TabItem value="json" label="JSON">
+
 ```bash showLineNumbers
-curl "https://api.basistheory.com/proxy" \
--X "POST" \
--H "BT-API-KEY: test_1234567890" \
--H "BT-PROXY-URL: https://echo.basistheory.com/anything" \
--H "Content-Type: application/json" \
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+-H 'BT-API-KEY: test_1234567890' \
+-H 'BT-PROXY-URL: https://echo.basistheory.com/anything' \
+-H 'Content-Type: application/json' \
 -d '{
       "phoneNumber": {
-        "full": "+1 {{ adb7ef72-73ca-4166-bc68-b77949a55f75 }}",
+        "full": "+1 {{ d2411dd4-17f0-47ce-a4e2-78a66f2e4606 }}",
         "countryCode": "+1",
-        "areaCode": "{{ adb7ef72-73ca-4166-bc68-b77949a55f75 | split: \" \" | first | remove: \"(\" | remove: \")\" }}",
-        "exchangeCode": "{{ adb7ef72-73ca-4166-bc68-b77949a55f75  | split: \"-\" | last }}",
-        "lineNumber": "{{ adb7ef72-73ca-4166-bc68-b77949a55f75 | split: \" \" | last | split: \"-\" | first }}"
+        "areaCode": "{{ d2411dd4-17f0-47ce-a4e2-78a66f2e4606 | split: \" \" | first | remove: \"(\" | remove: \")\" }}",
+        "exchangeCode": "{{ d2411dd4-17f0-47ce-a4e2-78a66f2e4606  | split: \"-\" | last }}",
+        "lineNumber": "{{ d2411dd4-17f0-47ce-a4e2-78a66f2e4606 | split: \" \" | last | split: \"-\" | first }}"
       }
     }'
 ```
 
+  </TabItem>
+  <TabItem value="url" label="URL encoded">
+
+```bash showLineNumbers
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+-H 'BT-API-KEY: test_1234567890' \
+-H 'BT-PROXY-URL: https://echo.basistheory.com/anything' \
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'phoneNumber.full=+1 {{ d2411dd4-17f0-47ce-a4e2-78a66f2e4606 }}' \
+--data-urlencode 'phoneNumber.countryCode=+1' \
+--data-urlencode 'phoneNumber.areaCode={{ d2411dd4-17f0-47ce-a4e2-78a66f2e4606 | split: " " | first | remove: "(" | remove: ")" }}' \
+--data-urlencode 'phoneNumber.exchangeCode={{ d2411dd4-17f0-47ce-a4e2-78a66f2e4606  | split: "-" | last }}' \
+--data-urlencode 'phoneNumber.lineNumber={{ d2411dd4-17f0-47ce-a4e2-78a66f2e4606 | split: " " | last | split: "-" | first }}'
+```
+
+  </TabItem>
+</Tabs>
+
 <Alert>
-  Be sure to replace <code>test_1234567890</code> with the Private API Key you created in the <a href="#getting-started">Getting Started</a> step and replace
-  <code>adb7ef72-73ca-4166-bc68-b77949a55f75</code> with the token <code>id</code> you created in the <a href="#create-a-token">Create a Token</a> step.
+  Be sure to replace <code>test_1234567890</code> with the Private API Key you created in the <a href="#getting-started">Getting Started</a> step and replace <code>d2411dd4-17f0-47ce-a4e2-78a66f2e4606</code> with the token <code>id</code> you created in the <a href="#create-a-token">Create a Token</a> step.
 </Alert>
 
 You should see a response similar to:
 
+<Tabs className="bt-tabs" groupId="content-type">
+  <TabItem value="json" label="JSON">
+
 ```json showLineNumbers
 {
   "args": {},
-  "data": "{\"phoneNumber\":{\"full\":\"+1 8675309\",\"countryCode\":\"+1\",\"areaCode\":\"8675309\",\"exchangeCode\":\"8675309\",\"lineNumber\":\"8675309\"}}",
+  "data": "{\"phoneNumber\":{\"full\":\"+1 (555) 687-5309\",\"countryCode\":\"+1\",\"areaCode\":\"555\",\"exchangeCode\":\"5309\",\"lineNumber\":\"687\"}}",
   "files": {},
   "form": {},
   "headers": {
@@ -124,17 +154,52 @@ You should see a response similar to:
   },
   "json": {
     "phoneNumber": {
-      "areaCode": "8675309",
+      "full": "+1 (555) 687-5309",
       "countryCode": "+1",
-      "exchangeCode": "8675309",
-      "full": "+1 8675309",
-      "lineNumber": "8675309"
+      "areaCode": "555",
+      "exchangeCode": "5309",
+      "lineNumber": "687"
     }
   },
   "method": "POST",
   "url": "https://echo.basistheory.com/anything"
 }
 ```
+
+  </TabItem>
+  <TabItem value="url" label="URL encoded">
+
+```json showLineNumbers
+{
+  "args": {},
+  "data": "",
+  "files": {},
+  "form": {
+    "phoneNumber.areaCode": "555",
+    "phoneNumber.countryCode": "+1",
+    "phoneNumber.exchangeCode": "5309",
+    "phoneNumber.full": "+1 (555) 687-5309",
+    "phoneNumber.lineNumber": "687"
+  },
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip",
+    "Bt-Trace-Id": "0kr2gYwAAAACKcnGsnP/NTrEa4nIHenpYQ0hHRURHRTE1MTAAMTYzY2E1ODMtNjQ3MS00MTc3LTg0ZGItZTA4MzBlZGFiODUw",
+    "Content-Length": "147",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Disguised-Host": "echo.basistheory.com",
+    "Host": "echo.basistheory.com",
+    "Max-Forwards": "10",
+    "User-Agent": "curl/7.85.0"
+  },
+  "json": null,
+  "method": "POST",
+  "url": "https://echo.basistheory.com/anything"
+}
+```
+
+  </TabItem>
+</Tabs>
 
 ## Conclusion
 
