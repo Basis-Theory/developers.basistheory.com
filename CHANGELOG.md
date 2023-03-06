@@ -1,3 +1,10 @@
+# [1.36.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.35.0...v1.36.0) (2023-03-06)
+
+
+### Features
+
+* add application/x-www-form-urlencoded example to share data guide ([#86](https://github.com/Basis-Theory/developers.basistheory.com/issues/86)) ([69edf10](https://github.com/Basis-Theory/developers.basistheory.com/commit/69edf1050c1727b4742f61af3ee3c4f0ee934f9b))
+
 # [1.35.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.34.1...v1.35.0) (2023-03-02)
 
 
