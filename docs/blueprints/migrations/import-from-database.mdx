@@ -15,18 +15,18 @@ This blueprint explores how to perform API-based migration of Personal Identifia
 We also support batch file processing for larger datasets or cases where an API-based migration isn't suitable. If you need help with your migration plan - [please reach out](https://basistheory.com/contact).
 
 <Alert>
-  Don't want to complete this guide? View the completed example application <a href="https://github.com/Basis-Theory-Labs/pci-blueprint-example/">here</a>.
+  Don't want to complete this guide? View the completed example application <a href="https://github.com/Basis-Theory-Labs/database-migration-blueprint">here</a>.
 </Alert>
 
 ## Setup
 
 In this section, we will initialize and seed a database using the stack below:
-- [PostgreSQL](https://www.postgresql.org/) for the relational database, which is assumed to be already setup;
+- [PostgreSQL](https://www.postgresql.org/) for the relational database, which is assumed to be running already;
 - [Prisma](https://www.prisma.io/) for the ORM layer;
 - TypeScript programming language for the migration script;
 
 <Alert>
-  Already have an existing database? Skip to <a href="#migrate-data">Migrate Data</a> section.
+  Already have a modeled database? Skip to <a href="#migrate-data">Migrate Data</a> section.
 </Alert>
 
 Initialize a new project inside a blank folder using your favorite package manager:
@@ -248,15 +248,13 @@ yarn prisma db seed
 
 In this section, we will import existing sensitive data from our database into Basis Theory platform by calling the [Tokenize API](/docs/api/tokens/tokenize). The elected data points are `ssn`, `email` and `phoneNumber`, which after being migrated, will be replaced in the database with synthetic equivalents (aka [Token ID](/docs/api/tokens/#token-object)) by employing different [aliasing](/docs/concepts/what-are-tokens#aliasing) techniques. Additionally, we will also customize the [masking](/docs/concepts/what-are-tokens#masking) of the data points for securely revealing the data partially to our systems. For example:
 
-| Data type     | Value                 | Token Id              | Masked Data        |
+| Data type     | Value                 | Token Id (alias)      | Masked Data        |
 |---------------|-----------------------|-----------------------|--------------------|
 | `ssn`         | 689-92-1731           | 596-45-8462           | XXX-XX-1732        |
 | `email`       | annabel35@hotmail.com | g1x39a9oi@hotmail.com | aXXXXX@hotmail.com |
 | `phoneNumber` | 879-554-152           | 554-325-773           | XXX-XXX-152        |
 
-
-
-Create a `migrate.ts` file at the root of your project and add a `iteratePersonTable` function. We will use Prisma's [Cursor-based pagination](https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination) to walk through the `Person` table records and tokenize them in chunks of 10:
+Create a `migrate.ts` file at the root of your project and add a `iteratePersonTable` function. We will use Prisma's [cursor-based pagination](https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination) to walk through the `Person` table records and tokenize them in chunks of 10:
 
 ```typescript showLineNumbers title=migrate.ts
 import { PrismaClient, Person } from "@prisma/client";
@@ -285,31 +283,80 @@ async function iteratePersonTable(cursor?: number): Promise<Person[]> {
 
 The function above receives an id-based cursor and returns a page (or chunk) containing 10 `Person` records starting off the cursor position. If no cursor is informed, then it returns the first page.
 
-Now let's add our main `migrate` function and call it. After it is completed or errors out, we close the database connection:
+Add functions to [create token](/docs/api/tokens/#create-token) payloads, specifying expected aliasing and masking patterns:
 
-```typescript showLineNumbers title=migrate.ts
+```typescript title=migrate.ts
 import { PrismaClient, Person } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 const chunkSize = 10;
 
-async function iteratePersonTable(cursor?: number): Promise<Person[]> {
-  return prisma.person.findMany({
-    take: chunkSize,
-    orderBy: {
-      id: "asc",
+async function iteratePersonTable(cursor?: number): Promise<Person[]> { ... }
+
+// highlight-start
+function createSsnTokenPayload(data: string) {
+  return {
+    type: "social_security_number",
+    id: "{{ data | alias_preserve_format }}",
+    data,
+    containers: ["/pii/high/"],
+    privacy: {
+      classification: "pii",
+      impact_level: "high",
+      restriction_policy: "mask",
     },
-    ...(cursor
-      ? {
-          skip: 1,
-          cursor: {
-            id: cursor,
-          },
-        }
-      : {}),
-  });
+  };
 }
+
+function createEmailTokenPayload(data: string) {
+  return {
+    type: "token",
+    id: '{{ data | split: "@" | first | alias_preserve_length }}@{{ data | split: "@" | last }}',
+    data,
+    mask: '{{ data | slice: 0 }}XXXXX@{{ data | split: "@" | last }}',
+    containers: ["/pii/high/"],
+    privacy: {
+      classification: "pii",
+      impact_level: "high",
+      restriction_policy: "mask",
+    },
+  };
+}
+
+function createPhoneNumberTokenPayload(data: string) {
+  return {
+    type: "token",
+    id: "{{ data | alias_preserve_format }}",
+    data,
+    mask: "{{ data | reveal_last: 3 }}",
+    containers: ["/pii/high/"],
+    privacy: {
+      classification: "pii",
+      impact_level: "high",
+      restriction_policy: "mask",
+    },
+  };
+}
+// highlight-end
+```
+
+Now let's add our main `migrate` function and call it. After it is completed or errors out, we close the database connection:
+
+```typescript title=migrate.ts
+import { PrismaClient, Person } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const chunkSize = 10;
+
+async function iteratePersonTable(cursor?: number): Promise<Person[]> {...}
+
+function createSsnTokenPayload(data: string) {...}
+
+function createEmailTokenPayload(data: string) {...}
+
+function createPhoneNumberTokenPayload(data: string) {...}
 
 // highlight-start
 async function migrate() {
@@ -328,9 +375,9 @@ migrate()
 // highlight-end
 ```
 
-And finally, let's iterate through the data chunks and create a token per each sensitive data field we want to tokenize. In this scenario, we are going to secure `ssn`, `email` and `phoneNumber`.
+And finally, let's iterate through the data chunks and create a token per each sensitive data field we want to secure. After tokenization is completed, we will update the database records with the token IDs.
 
-```typescript showLineNumbers title=migrate.ts
+```typescript title=migrate.ts
 import { PrismaClient, Person } from "@prisma/client";
 // highlight-next-line
 import { BasisTheory } from "@basis-theory/basis-theory-js";
@@ -339,22 +386,13 @@ const prisma = new PrismaClient();
 
 const chunkSize = 10;
 
-async function iteratePersonTable(cursor?: number): Promise<Person[]> {
-  return prisma.person.findMany({
-    take: chunkSize,
-    orderBy: {
-      id: "asc",
-    },
-    ...(cursor
-      ? {
-          skip: 1,
-          cursor: {
-            id: cursor,
-          },
-        }
-      : {}),
-  });
-}
+async function iteratePersonTable(cursor?: number): Promise<Person[]> {...}
+
+function createSsnTokenPayload(data: string) {...}
+
+function createEmailTokenPayload(data: string) {...}
+
+function createPhoneNumberTokenPayload(data: string) {...}
 
 async function migrate() {
 // highlight-start
@@ -372,43 +410,12 @@ async function migrate() {
           chunk[chunk.length - 1].id
         }... `
       );
+
       const tokens = await bt.tokenize(
         chunk.map((p) => ({
-          ssn: {
-            type: "social_security_number",
-            id: "{{ data | alias_preserve_format }}",
-            data: p.ssn,
-            containers: ["/pii/high/"],
-            privacy: {
-              classification: "pii",
-              impact_level: "high",
-              restriction_policy: "mask",
-            },
-          },
-          email: {
-            type: "token",
-            id: '{{ data | split: "@" | first | alias_preserve_length }}@{{ data | split: "@" | last }}',
-            data: p.email,
-            mask: '{{ data | slice: 0 }}####@{{ data | split: "@" | last }}',
-            containers: ["/pii/high/"],
-            privacy: {
-              classification: "pii",
-              impact_level: "high",
-              restriction_policy: "mask",
-            },
-          },
-          phoneNumber: {
-            type: "token",
-            id: "{{ data | alias_preserve_format }}",
-            data: p.phoneNumber,
-            mask: "{{ data | reveal_last: 3 }}",
-            containers: ["/pii/high/"],
-            privacy: {
-              classification: "pii",
-              impact_level: "high",
-              restriction_policy: "mask",
-            },
-          },
+          ssn: createSsnTokenPayload(p.ssn),
+          email: createEmailTokenPayload(p.email),
+          phoneNumber: createPhoneNumberTokenPayload(p.phoneNumber),
         }))
       );
 
@@ -448,6 +455,51 @@ migrate()
 
 ```
 
+Add a `start` script to the `package.json` file to run the `migrate.ts` script file:
+
+```json title=package.json {4-6}
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "ts-node migrate.ts"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  ...
+}
+```
+
+And run the migration with the following command:
+
+<Tabs className="bt-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npm start
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn start
+```
+
+  </TabItem>
+</Tabs>
+
+🎉 Success! We migrated our PII from a plain text format to synthetic anonymous references, without having to change any of our existing schema.
+
 ## Conclusion
 
+By following the step-by-step instructions provided, developers can effectively ensure the security and privacy of sensitive user information while maintaining its usability under the scope of a database. Tokenization provides an effective way to protect user data by replacing identifiable information with randomly generated tokens that do not reveal any personal information. By utilizing this method, organizations can ensure that sensitive user data is protected from unauthorized access and breaches, while still allowing for effective analysis and processing of the data.
 
+You can find some useful links below on how to interact with the data we just secured.
+
+## Learn More
+
+- [Share Data](/docs/guides/share)
+- [Process Data](/docs/guides/process)
+- [Govern Data](/docs/guides/govern)
