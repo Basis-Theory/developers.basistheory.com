@@ -23,7 +23,7 @@ We also support batch file processing for larger datasets or cases where an API-
 ## Setup
 
 In this section, we will initialize and seed a database using the stack below:
-- [PostgreSQL](https://www.postgresql.org/) for the relational database, which is assumed to be running already;
+- [PostgreSQL](https://www.postgresql.org/) for the relational database;
 - [Prisma](https://www.prisma.io/) for the ORM layer;
 - TypeScript programming language for the migration script;
 
@@ -94,15 +94,17 @@ yarn add @basis-theory/basis-theory-js @prisma/client ts-node @faker-js/faker
 
 ### Prepare Environment
 
+If you don't have a PostgreSQL database running yet, you can start it using Docker, by running the following command:
+
+```shell
+docker run --name postgres -e POSTGRES_PASSWORD=basistheory! -p 5432:5432 -d postgres
+```
+
 Create a `.env` file and add your database connection url to it:
 
 ```bash showLineNumbers title=.env
-DATABASE_URL="postgresql://username:password@localhost:5432/database?schema=public"
+DATABASE_URL="postgresql://postgres:basistheory!@localhost:5432/database?schema=public"
 ```
-
-<Alert>
-  Be sure to replace the credentials and database name in the URL above appropriately.
-</Alert>
 
 To securely import data via Server-to-Server, you'll need a [Private Application](/docs/api/applications) to grant you an API Key used to authenticate against Basis Theory services. [Click here to create one](https://portal.basistheory.com/applications/create?name=Migration&permissions=token%3Acreate).
 
