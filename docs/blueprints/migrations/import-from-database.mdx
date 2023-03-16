@@ -197,7 +197,7 @@ async function main() {
       ),
       email: faker.internet.email().toLowerCase(),
       name: faker.name.fullName(),
-      phoneNumber: faker.phone.number("###-###-###"),
+      phoneNumber: faker.phone.number("###-###-####"),
       birthDate: faker.date.birthdate().toISOString(),
     })),
   });
@@ -252,11 +252,11 @@ yarn prisma db seed
 
 In this section, we will import existing sensitive data from our database into Basis Theory platform by calling the [Tokenize API](/docs/api/tokens/tokenize). The elected data points are `ssn`, `email` and `phoneNumber`, which after being migrated, will be replaced in the database with synthetic equivalents, aka [Token IDs](/docs/api/tokens/#token-object), by employing different [aliasing](/docs/concepts/what-are-tokens#aliasing) techniques. Additionally, we will also customize the [masking](/docs/concepts/what-are-tokens#masking) of the data points for securely revealing the data partially to our systems. For example:
 
-| Data type     | Value                 | Token Id (alias)      | Masked Data        |
+| Field         | Value                 | Token Id (alias)      | Masked Data        |
 |---------------|-----------------------|-----------------------|--------------------|
-| `ssn`         | 689-92-1731           | 596-45-8462           | XXX-XX-1732        |
-| `email`       | annabel35@hotmail.com | g1x39a9oi@hotmail.com | aXXXXX@hotmail.com |
-| `phoneNumber` | 879-554-152           | 554-325-773           | XXX-XXX-152        |
+| `ssn`         | 689-92-1731           | 782-54-2511           | XXX-XX-1731        |
+| `email`       | annabel35@hotmail.com | eulqvvgq5@hotmail.com | aXXXXX@hotmail.com |
+| `phoneNumber` | 879-554-1523          | 351-176-4215          | XXX-XXX-1523       |
 
 Create a `migrate.ts` file at the root of your project and add a `iteratePersonTable` function. We will use Prisma's [cursor-based pagination](https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination) to walk through the `Person` table records and tokenize them in chunks of 10:
 
@@ -333,7 +333,7 @@ function createPhoneNumberTokenPayload(data: string) {
     type: "token",
     id: "{{ data | alias_preserve_format }}",
     data,
-    mask: "{{ data | reveal_last: 3 }}",
+    mask: "{{ data | reveal_last: 4 }}",
     containers: ["/pii/high/"],
     privacy: {
       classification: "pii",
