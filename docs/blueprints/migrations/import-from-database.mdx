@@ -1,0 +1,509 @@
+---
+toc_max_heading_level: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert } from "@site/src/components/shared/Alert";
+
+# Import from a Database
+
+Storing sensitive data in plain text format in a database poses a significant risk to both users and organizations. In the event of a security breach this data could be accessed and exploited, potentially resulting in identity theft, financial loss, or other serious consequences. Hackers and malicious actors are constantly on the lookout for vulnerabilities in databases containing sensitive data, making it crucial for developers to take steps to secure this information.
+
+This blueprint explores how to perform API-based migration of Personal Identifiable Information (PII) from an existing database into the Basis Theory platform.
+
+![Import from a Database Diagram](/img/blueprints/migrations/blueprint-import-from-database.png)
+
+We also support batch file processing for larger datasets or cases where an API-based migration isn't suitable. If you need help with your migration plan - [please reach out](https://basistheory.com/contact).
+
+<Alert>
+  Don't want to complete this guide? View the completed example application <a href="https://github.com/Basis-Theory-Labs/database-migration-blueprint">here</a>.
+</Alert>
+
+## Setup
+
+In this section, we will initialize and seed a database using the stack below:
+- [PostgreSQL](https://www.postgresql.org/) for the relational database;
+- [Prisma](https://www.prisma.io/) for the ORM layer;
+- TypeScript programming language for the migration script;
+
+<Alert>
+  Already have a modeled database? Skip to <a href="#migrate-data">Migrate Data</a> section.
+</Alert>
+
+Initialize a new project inside a blank folder using your favorite package manager:
+
+<Tabs className="bt-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npm init
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn init
+```
+
+  </TabItem>
+</Tabs>
+
+Follow the CLI instructions to create a new package.
+
+### Install Dependencies
+
+Install the development dependencies within your application:
+
+<Tabs className="bt-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npm install --save-dev @types/node prisma typescript
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn add -D @types/node prisma typescript
+```
+
+  </TabItem>
+</Tabs>
+
+Now, install runtime dependencies:
+
+<Tabs className="bt-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npm install --save @basis-theory/basis-theory-js @prisma/client ts-node @faker-js/faker
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn add @basis-theory/basis-theory-js @prisma/client ts-node @faker-js/faker
+```
+
+  </TabItem>
+</Tabs>
+
+### Prepare Environment
+
+If you don't have a PostgreSQL database running yet, you can start it using Docker, by running the following command:
+
+```shell
+docker run --name postgres -e POSTGRES_PASSWORD=basistheory! -p 5432:5432 -d postgres
+```
+
+Create a `.env` file and add your database connection url to it:
+
+```bash showLineNumbers title=.env
+DATABASE_URL="postgresql://postgres:basistheory!@localhost:5432/database?schema=public"
+```
+
+To securely import data via Server-to-Server, you'll need a [Private Application](/docs/api/applications) to grant you an API Key used to authenticate against Basis Theory services. [Click here to create one](https://portal.basistheory.com/applications/create?name=Migration&permissions=token%3Acreate).
+
+This will create an application with the `token:create` permission. Copy the API Key to your `.env` file:
+
+```bash showLineNumbers title=.env
+DATABASE_URL="postgresql://username:password@localhost:5432/database?schema=public"
+# highlight-next-line
+BASIS_THEORY_API_KEY=test_1234567890
+```
+
+### Initialize Database
+
+Initialize Prisma by running:
+
+<Tabs className="bt-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npx prisma init --datasource-provider postgresql
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn prisma init --datasource-provider postgresql
+```
+
+  </TabItem>
+</Tabs>
+
+Add the `Person` model to the `prisma/schema.prisma` file:
+
+```text showLineNumbers title=prisma/schema.prisma {10-17}
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id          Int    @id @default(autoincrement())
+  ssn         String @unique
+  email       String @unique
+  name        String
+  phoneNumber String
+  birthDate   String
+}
+```
+
+Instruct Prisma to create a migration file and apply it to the database schema, which creates a `Person` table:
+
+<Tabs className="bt-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npx prisma migrate dev --name init
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn prisma migrate dev --name init
+```
+
+  </TabItem>
+</Tabs>
+
+Let's seed our database with fake sensitive data. For that, we can use [Faker JS](https://fakerjs.dev/) to populate the `Person` table.
+
+Create a new file `prisma/seed.ts` with the following contents:
+
+```typescript showLineNumbers title=prisma/seed.ts
+import { PrismaClient } from "@prisma/client";
+import { faker } from "@faker-js/faker";
+
+const prisma = new PrismaClient();
+
+async function main() {
+  const records = await prisma.person.createMany({
+    data: Array.apply(null, Array(100)).map((_, i) => ({
+      id: i,
+      ssn: faker.helpers.regexpStyleStringParse(
+        "[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]"
+      ),
+      email: faker.internet.email().toLowerCase(),
+      name: faker.name.fullName(),
+      phoneNumber: faker.phone.number("###-###-####"),
+      birthDate: faker.date.birthdate().toISOString(),
+    })),
+  });
+  console.log(`${records.count} "Person" records created successfully.`);
+}
+
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
+```
+
+Add the `prisma.seed` field to your `package.json` file:
+
+```json showLineNumbers title=package.json {4-6}
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  ...
+}
+```
+
+Run the following command to create the `Person` records in the database:
+
+
+<Tabs className="bt-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npx prisma db seed
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn prisma db seed
+```
+
+  </TabItem>
+</Tabs>
+
+## Migrate Data
+
+In this section, we will import existing sensitive data from our database into Basis Theory platform by calling the [Tokenize API](/docs/api/tokens/tokenize). The elected data points are `ssn`, `email` and `phoneNumber`, which after being migrated, will be replaced in the database with synthetic equivalents, aka [Token IDs](/docs/api/tokens/#token-object), by employing different [aliasing](/docs/concepts/what-are-tokens#aliasing) techniques. Additionally, we will also customize the [masking](/docs/concepts/what-are-tokens#masking) of the data points for securely revealing the data partially to our systems. For example:
+
+| Field         | Value                 | Token Id (alias)      | Masked Data        |
+|---------------|-----------------------|-----------------------|--------------------|
+| `ssn`         | 689-92-1731           | 782-54-2511           | XXX-XX-1731        |
+| `email`       | annabel35@hotmail.com | eulqvvgq5@hotmail.com | aXXXXX@hotmail.com |
+| `phoneNumber` | 879-554-1523          | 351-176-4215          | XXX-XXX-1523       |
+
+Create a `migrate.ts` file at the root of your project and add a `iteratePersonTable` function. We will use Prisma's [cursor-based pagination](https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination) to walk through the `Person` table records and tokenize them in chunks of 10:
+
+```typescript showLineNumbers title=migrate.ts
+import { PrismaClient, Person } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const chunkSize = 10;
+
+async function iteratePersonTable(cursor?: number): Promise<Person[]> {
+  return prisma.person.findMany({
+    take: chunkSize,
+    orderBy: {
+      id: "asc",
+    },
+    ...(cursor
+      ? {
+          skip: 1,
+          cursor: {
+            id: cursor,
+          },
+        }
+      : {}),
+  });
+}
+```
+
+The function above receives an id-based cursor and returns a page (or chunk) containing 10 `Person` records starting off the cursor position. If no cursor is informed, then it returns the first page.
+
+Add functions to [create token](/docs/api/tokens/#create-token) payloads, specifying expected aliasing and masking patterns:
+
+```typescript title=migrate.ts
+import { PrismaClient, Person } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const chunkSize = 10;
+
+async function iteratePersonTable(cursor?: number): Promise<Person[]> { ... }
+
+// highlight-start
+function createSsnTokenPayload(data: string) {
+  return {
+    type: "social_security_number",
+    id: "{{ data | alias_preserve_format }}",
+    data,
+    containers: ["/pii/high/"],
+    privacy: {
+      classification: "pii",
+      impact_level: "high",
+      restriction_policy: "mask",
+    },
+  };
+}
+
+function createEmailTokenPayload(data: string) {
+  return {
+    type: "token",
+    id: '{{ data | split: "@" | first | alias_preserve_length }}@{{ data | split: "@" | last }}',
+    data,
+    mask: '{{ data | slice: 0 }}XXXXX@{{ data | split: "@" | last }}',
+    containers: ["/pii/high/"],
+    privacy: {
+      classification: "pii",
+      impact_level: "high",
+      restriction_policy: "mask",
+    },
+  };
+}
+
+function createPhoneNumberTokenPayload(data: string) {
+  return {
+    type: "token",
+    id: "{{ data | alias_preserve_format }}",
+    data,
+    mask: "{{ data | reveal_last: 4 }}",
+    containers: ["/pii/high/"],
+    privacy: {
+      classification: "pii",
+      impact_level: "high",
+      restriction_policy: "mask",
+    },
+  };
+}
+// highlight-end
+```
+
+Now let's add our main `migrate` function and call it. After it is completed or errors out, we close the database connection:
+
+```typescript title=migrate.ts
+import { PrismaClient, Person } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const chunkSize = 10;
+
+async function iteratePersonTable(cursor?: number): Promise<Person[]> {...}
+
+function createSsnTokenPayload(data: string) {...}
+
+function createEmailTokenPayload(data: string) {...}
+
+function createPhoneNumberTokenPayload(data: string) {...}
+
+// highlight-start
+async function migrate() {
+  // TODO
+}
+
+migrate()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e: any) => {
+    console.error(e?.data?.errors || e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
+// highlight-end
+```
+
+And finally, let's iterate through the data chunks and create a token per each sensitive data field we want to secure. After tokenization is completed, we will update the database records with the token IDs.
+
+```typescript title=migrate.ts
+import { PrismaClient, Person } from "@prisma/client";
+// highlight-next-line
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const prisma = new PrismaClient();
+
+const chunkSize = 10;
+
+async function iteratePersonTable(cursor?: number): Promise<Person[]> {...}
+
+function createSsnTokenPayload(data: string) {...}
+
+function createEmailTokenPayload(data: string) {...}
+
+function createPhoneNumberTokenPayload(data: string) {...}
+
+async function migrate() {
+// highlight-start
+  process.stdout.write("Starting migration...\n");
+  const bt = await new BasisTheory().init(process.env.BASIS_THEORY_API_KEY);
+
+  let cursor = undefined;
+
+  do {
+    const chunk: Person[] = await iteratePersonTable(cursor);
+    cursor = chunk[chunkSize - 1]?.id;
+    if (chunk.length > 0) {
+      process.stdout.write(
+        `Tokenizing ${chunk.length} records from ${chunk[0].id} to ${
+          chunk[chunk.length - 1].id
+        }... `
+      );
+
+      const tokens = await bt.tokenize(
+        chunk.map((p) => ({
+          ssn: createSsnTokenPayload(p.ssn),
+          email: createEmailTokenPayload(p.email),
+          phoneNumber: createPhoneNumberTokenPayload(p.phoneNumber),
+        }))
+      );
+
+      process.stdout.write(`Done.\nUpdating DB... `);
+
+      const updates = chunk.map((person, i) => {
+        const token = (tokens as any[])[i];
+
+        return prisma.person.update({
+          where: {
+            id: person.id,
+          },
+          data: {
+            ssn: token.ssn.id,
+            email: token.email.id,
+            phoneNumber: token.phoneNumber.id,
+          },
+        });
+      });
+
+      await Promise.all(updates);
+      process.stdout.write(`Done.\n`);
+    }
+  } while (cursor !== undefined);
+// highlight-end
+}
+
+migrate()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e: any) => {
+    console.error(e?.data?.errors || e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
+
+```
+
+Add a `start` script to the `package.json` file to run the `migrate.ts` script file:
+
+```json title=package.json {4-6}
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "ts-node migrate.ts"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  ...
+}
+```
+
+And run the migration with the following command:
+
+<Tabs className="bt-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npm start
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn start
+```
+
+  </TabItem>
+</Tabs>
+
+🎉 Success! We migrated our PII from a plain text format to synthetic anonymous references, without having to change any of our existing schema.
+
+## Conclusion
+
+By following the step-by-step instructions provided, developers can effectively ensure the security and privacy of sensitive user information while maintaining its usability under the scope of a database. Tokenization provides an effective way to protect user data by replacing identifiable information with randomly generated tokens that do not reveal any personal information. By utilizing this method, organizations can ensure that sensitive user data is protected from unauthorized access and breaches, while still allowing for effective analysis and processing of the data.
+
+You can find some useful links below on how to interact with the data we just secured.
+
+## Learn More
+
+- [Share Data](/docs/guides/share)
+- [Process Data](/docs/guides/process)
+- [Govern Data](/docs/guides/govern)

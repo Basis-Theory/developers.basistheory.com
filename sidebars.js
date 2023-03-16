@@ -151,7 +151,10 @@ const sidebars = {
             type: "doc",
             id: "blueprints/migrations/index",
           },
-          items: ["blueprints/migrations/migrate-off-basis-theory"],
+          items: [
+            "blueprints/migrations/import-from-database",
+            "blueprints/migrations/migrate-off-basis-theory",
+          ],
         },
       ],
     },
