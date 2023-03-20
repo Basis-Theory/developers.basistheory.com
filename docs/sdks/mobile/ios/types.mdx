@@ -3,7 +3,6 @@ sidebar_label: Types
 ---
 
 import { Alert } from "@site/src/components/shared/Alert";
-import CardBrands from "@site/docs/sdks/_card-brands.mdx";
 
 # iOS Element Types
 
@@ -20,7 +19,7 @@ import Combine
 class TokenizeName: UIViewController {
     @IBOutlet weak var nameTextField: TextElementUITextField!
     @IBOutlet weak var output: UITextView!
- 
+
     @IBAction func tokenize(_ sender: Any) {
         let body: [String: Any] = [
             "data": [
@@ -53,19 +52,18 @@ The `TextElementUITextField` extends the native `UITextField` from UIKit, so all
 
 The following additional properties are supported when programmatically interacting with a `TextElementUITextField`:
 
-| Name | Type |
-| ---------- | --- |
-| validation | No default validation. Always valid in [ElementEvent](/docs/sdks/mobile/ios/events#elementevent). |
-| mask       | No default [mask](/docs/sdks/mobile/ios/options#mask). [Mask](/docs/sdks/mobile/ios/options#mask) can be overridden. |
+| Name       | Type                                                                                                                                    |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| validation | No default validation. Always valid in [ElementEvent](/docs/sdks/mobile/ios/events#elementevent).                                       |
+| mask       | No default [mask](/docs/sdks/mobile/ios/options#mask). [Mask](/docs/sdks/mobile/ios/options#mask) can be overridden.                    |
 | transform  | No default [transform](/docs/sdks/mobile/ios/options#transform). [Transform](/docs/sdks/mobile/ios/options#transform) can be overriden. |
 
 #### Methods
 
-| Signature                                                | Description                                                                                                                                                                  |
-|----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Signature                                                | Description                                                                                                                                                                             |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `setValue(elementValueReference: ElementValueReference)` | Sets the element's text to the value referenced by the provided ElementValueReference.                                                                                                  |
 | `setValueRef(element: TextElementUITextField)`           | Binds the provided `element: TextElementUITextField` instance as a value source for this element, keeping the value of this element in sync with any changes made to the other element. |
-
 
 ## CardNumberUITextField
 
@@ -111,11 +109,11 @@ The `CardNumberUITextField` element type extends the `TextElementUITextField` cl
 
 By default, this element is configured with:
 
-| Configuration | Defaults |
-| --- | --- |
-| validation | Input must be Luhn valid and be an acceptable length for the card brand. |
-| mask | The [mask](/docs/sdks/mobile/ios/options#mask) changes depending on the card brand identified for this input according to the [card brand](#card-brands). |
-| transform | The [transform](/docs/sdks/mobile/ios/options#transform) removes all spaces set by the [mask](/docs/sdks/mobile/ios/options#mask) before tokenization. |
+| Configuration | Defaults                                                                                                                                                  |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| validation    | Input must be Luhn valid and be an acceptable length for the card brand.                                                                                  |
+| mask          | The [mask](/docs/sdks/mobile/ios/options#mask) changes depending on the card brand identified for this input according to the [card brand](#card-brands). |
+| transform     | The [transform](/docs/sdks/mobile/ios/options#transform) removes all spaces set by the [mask](/docs/sdks/mobile/ios/options#mask) before tokenization.    |
 
 ### Card Brands
 
@@ -124,7 +122,28 @@ The brand is used to automatically set a [mask](/docs/sdks/mobile/ios/options#ma
 If the [CardNumberUITextField](#cardnumberuitextfield) is bound to a [CardVerificationCodeUITextField](#cardverificationcodeuitextfield),
 a `mask` is also automatically set on the `CardVerificationCodeElement` based on the brand's CVC length requirements.
 
-<CardBrands />
+Supported card brands are defined in the table below:
+
+| Brand            | Identifier        | Card Number Digits | CVC Digits |
+| ---------------- | ----------------- | ------------------ | ---------- |
+| American Express | `americanExpress` | 15                 | 4          |
+| Diners Club      | `dinersClub`      | 14, 16, 19         | 3          |
+| Discover         | `discover`        | 16, 19             | 3          |
+| Elo              | `elo`             | 16                 | 3          |
+| Hiper            | `hiper`           | 16                 | 3          |
+| HiperCard        | `hipercard`       | 16                 | 3          |
+| JCB              | `jcb`             | 16-19              | 3          |
+| Maestro          | `maestro`         | 12-19              | 3          |
+| Mastercard       | `mastercard`      | 16                 | 3          |
+| MIR              | `mir`             | 16-19              | 3          |
+| UnionPay         | `unionPay`        | 14-19              | 3          |
+| Visa             | `visa`            | 16, 18, 19         | 3          |
+
+<Alert>
+  Some card brands have issued card numbers with multiple lengths. The{" "}
+  <code>Card Number Digits</code> column documents all acceptable card number
+  lengths for the brand (in number of digits, excluding formatting characters).
+</Alert>
 
 ## CardExpirationDateUITextField
 
@@ -171,11 +190,11 @@ The `CardExpirationDateUITextField` element type extends the `TextElementUITextF
 
 By default, this element is configured with:
 
-| Configuration | Defaults |
-| --- | --- |
-| validation | Input must be the current month and year or later. |
-| mask | The [mask](/docs/sdks/mobile/ios/options#mask) is two digits followed by a forward slash followed by two more digits (eg. `MM/YY` ). |
-| transform | No default [transform](/docs/sdks/mobile/ios/options#transform). |
+| Configuration | Defaults                                                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| validation    | Input must be the current month and year or later.                                                                                   |
+| mask          | The [mask](/docs/sdks/mobile/ios/options#mask) is two digits followed by a forward slash followed by two more digits (eg. `MM/YY` ). |
+| transform     | No default [transform](/docs/sdks/mobile/ios/options#transform).                                                                     |
 
 #### Month and Year
 
@@ -237,11 +256,11 @@ The `CardVerificationCodeUITextField` element type extends the `TextElementUITex
 
 By default, this element is configured with:
 
-| Configuration | Defaults |
-| --- | --- |
-| validation | No default validation. Always valid in [ElementEvent](/docs/sdks/mobile/ios/events#elementevent). |
-| mask | If not associated with a `CardNumberUITextField`, the [mask](/docs/sdks/mobile/ios/options#mask) is a 4 digit number. If it is, the [mask](/docs/sdks/mobile/ios/options#mask) changes depending on the [card brand](#card-brands) identified by the `CardNumberUITextField`. Refer to the [section below](#associating-a-cardnumberuitextfield). |
-| transform | No default [transform](/docs/sdks/mobile/ios/options#transform). |
+| Configuration | Defaults                                                                                                                                                                                                                                                                                                                                          |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| validation    | No default validation. Always valid in [ElementEvent](/docs/sdks/mobile/ios/events#elementevent).                                                                                                                                                                                                                                                 |
+| mask          | If not associated with a `CardNumberUITextField`, the [mask](/docs/sdks/mobile/ios/options#mask) is a 4 digit number. If it is, the [mask](/docs/sdks/mobile/ios/options#mask) changes depending on the [card brand](#card-brands) identified by the `CardNumberUITextField`. Refer to the [section below](#associating-a-cardnumberuitextfield). |
+| transform     | No default [transform](/docs/sdks/mobile/ios/options#transform).                                                                                                                                                                                                                                                                                  |
 
 ### Associating a CardNumberUITextField
 
@@ -261,7 +280,9 @@ cvcTextField.setConfig(
 See below for an example that uses all the card-related mobile elements, `CardNumberUITextField`, `CardExpirationDateUITextField`, and `CardVerificationCodeUITextField` together.
 
 <Alert>
-  Note that when these card-related elements are grouped together in a dictionary, as shown in the value of <code>data</code> below, the token <code>type</code> of <code>card</code> should be used.
+  Note that when these card-related elements are grouped together in a
+  dictionary, as shown in the value of <code>data</code> below, the token{" "}
+  <code>type</code> of <code>card</code> should be used.
 </Alert>
 
 ```swift showLineNumbers
