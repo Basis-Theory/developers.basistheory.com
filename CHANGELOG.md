@@ -1,3 +1,10 @@
+## [1.36.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.36.0...v1.36.1) (2023-03-20)
+
+
+### Bug Fixes
+
+* update card brands in iOS types ([#90](https://github.com/Basis-Theory/developers.basistheory.com/issues/90)) ([6dcc63e](https://github.com/Basis-Theory/developers.basistheory.com/commit/6dcc63e6d7fe52c43b1266960775a42611ace82c))
+
 # [1.36.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.35.0...v1.36.0) (2023-03-06)
 
 
