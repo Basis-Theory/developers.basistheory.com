@@ -2,7 +2,7 @@
 sidebar_label: Types
 ---
 
-import { Alert } from "@site/src/components/shared/Alert";
+import {Alert} from "@site/src/components/shared/Alert";
 import CardBrands from "@site/docs/sdks/_card-brands.mdx";
 
 # Android Element Types
@@ -68,13 +68,16 @@ The following additional properties are supported when programmatically interact
 | `setValueRef(element: TextElement)`                         | Binds the provided `element: TextElement` instance as a value source for this element, keeping the value of this element in sync with any changes made to the other element. |
 
 <Alert>
-  <code>ElementValueReference</code> is a class that stores a reference to a value which can only be accessed by BasisTheoryElements, so that
+  <code>ElementValueReference</code> is a class that stores a reference to a value which can only be accessed by
+  BasisTheoryElements, so that
   you can reference data without touching the plaintext value and pulling your application into compliance scope.
 </Alert>
 
 <Alert>
-  When using <code>setValueRef</code> to keep a <code>TextElement</code> in sync with another element, or to set the text of an element, it is strongly recommended that
-  you make the element that is being acted upon <code>readonly</code>. This is possible by setting <code>isEditable=false</code>.
+  When using <code>setValueRef</code> to keep a <code>TextElement</code> in sync with another element, or to set the
+  text of an element, it is strongly recommended that
+  you make the element that is being acted upon <code>readonly</code>. This is possible by
+  setting <code>isEditable=false</code>.
 </Alert>
 
 #### XML Attributes
@@ -157,7 +160,7 @@ The brand is used to automatically set a [mask](/docs/sdks/mobile/android/option
 If the [CardNumberElement](#cardnumberelement) is bound to a [CardVerificationCodeElement](#cardverificationcodeelement),
 a mask is also automatically set on the `CardVerificationCodeElement` based on the brand's CVC length requirements.
 
-<CardBrands />
+<CardBrands/>
 
 #### CardMetadata
 
@@ -173,7 +176,7 @@ The `CardMetadata` object contains the properties:
 | Name  | Type     | Description                                                       |
 |-------|----------|-------------------------------------------------------------------|
 | brand | `String` | The card [brand identifier](#card-brands)                         |
-| bin   | `String` | The first 6 digits of the card number if complete, otherwise null |
+| bin   | `String` | The first 6 or 8 digits of the card number if complete, otherwise null. It is 6 digits for card numbers less than 16 digits long and 8 otherwise. |
 | last4 | `String` | The last 4 digits of the card number if complete, otherwise null  |
 
 ### ChangeEvent Details
@@ -181,7 +184,7 @@ The `CardMetadata` object contains the properties:
 The `CardNumberElement` emits [ChangeEvents](/docs/sdks/mobile/android/events#changeevent) that may contain several types of [EventDetail](/docs/sdks/mobile/android/events#eventdetails) records.
 
 - `cardBrand`: Contains the card [brand identifier](#card-brands). Only included once enough digits are entered to determine a card brand.
-- `cardBin`: Contains the first 6 digits of the card number. Only included for complete card numbers satisfying the brand-specific mask.
+- `cardBin`: Contains the first 6 or 8 digits of the card number. It is 6 digits for card numbers less than 16 digits long and 8 otherwise. Only included for complete card numbers satisfying the brand-specific mask.
 - `cardLast4`: Contains the last 4 digits of the card number. Only included for complete card numbers satisfying the brand-specific mask.
 
 ## CardExpirationDateElement

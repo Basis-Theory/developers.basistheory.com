@@ -39,6 +39,40 @@ This expression would evaluate to the value `"DOE"`.
 
 In addition to the standard Liquid filters, several custom filters are also available:
 
+## card_mask
+
+Returns a masked version of the card number, optionally revealing the card's BIN and last 4 digits.
+If the card's length without the preserved character is less than 16 digits, the card BIN will be 6 digits long,
+8 otherwise. If the resulting masked string equals the original unmasked value, the whole value is masked.
+
+#### Parameters
+
+| Position | Name           | Type     | Required | Default Value | Description                                     |
+| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
+| 0        | reveal_bin   | _bool_    | false    | `false`           | Whether to reveal the card BIN or not |
+| 1        | reveal_last4    | _bool_    | false    | `false`           | Whether to reveal the last 4 digits or not   |
+| 2        | mask_char      | _char_   | false    | `X`           | The masking character                             |
+| 3        | preserve_char | _string_ | false    | ``            | The character to preserve                      |
+
+#### Examples
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "token",
+  "data": "3622-7206-2716-5567"
+}
+```
+
+| Expression                                            | Result                  |
+| ----------------------------------------------------- | ----------------------- |
+| <code>{{ data &#124; card_mask: 'false', 'false', 'X', '-' }}</code>              | `"XXXX-XXXX-XXXX-XXXX"` |
+| <code>{{ data &#124; card_mask: 'true', 'false', 'X', '-' }}</code>              | `"3622-7206-XXXX-XXXX"` |
+| <code>{{ data &#124; card_mask: 'true', 'true', '#', '-' }}</code>              | `"3622-7206-####-5567"` |
+| <code>{{ data &#124; card_mask: 'false', 'true', 'X', '-' }}</code>              | `"XXXX-XXXX-XXXX-5567"` |
+
 ## alias_preserve_format
 
 Randomly generates a unique alias that preserves the format of the input string, optionally revealing a specified
@@ -193,6 +227,34 @@ Given a token with the data:
 | -------------------------------------------------------- | -------- |
 | <code>{{ data &#124; last4 }}</code>                     | `"1667"` |
 | <code>{{ data &#124; slice: 12, 2 &#124; last4 }}</code> | `"67"`   |
+
+## card_bin
+
+Returns the card's BIN, which is 6 digits for card numbers with less than 16 digits and 8 otherwise. If the card number
+contains a character separator like `4242-4242-4242-4242`, it can be passed in so it is not part of the returned BIN.
+
+#### Parameters
+
+| Position | Name           | Type     | Required | Default Value | Description                                     |
+| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
+| 1        | separator_char | _string_ | false    | ``            | The card number separator character                  |
+
+
+#### Examples
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "token",
+  "data": "4242424242424242"
+}
+```
+
+| Expression                                               | Result   |
+| -------------------------------------------------------- | -------- |
+| <code>{{ data &#124; card_bin }}</code>                     | `"42424242"` |
 
 ## reveal
 
