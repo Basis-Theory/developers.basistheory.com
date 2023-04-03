@@ -1,3 +1,10 @@
+# [1.37.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.36.1...v1.37.0) (2023-04-03)
+
+
+### Features
+
+* new filters and updating card bin length outputs ([#92](https://github.com/Basis-Theory/developers.basistheory.com/issues/92)) ([dd0c156](https://github.com/Basis-Theory/developers.basistheory.com/commit/dd0c156fa221c30adfc996ae5b55f3bd975a972c))
+
 ## [1.36.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.36.0...v1.36.1) (2023-03-20)
 
 
