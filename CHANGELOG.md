@@ -1,3 +1,10 @@
+## [1.37.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.37.0...v1.37.1) (2023-04-06)
+
+
+### Bug Fixes
+
+* updating csp ([#95](https://github.com/Basis-Theory/developers.basistheory.com/issues/95)) ([784f0a0](https://github.com/Basis-Theory/developers.basistheory.com/commit/784f0a04abd5b5dffab94dc760f83ca367b28b79))
+
 # [1.37.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.36.1...v1.37.0) (2023-04-03)
 
 
