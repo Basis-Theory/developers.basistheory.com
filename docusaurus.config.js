@@ -44,7 +44,6 @@ const config = {
         },
         gtag: {
           trackingID: "GTM-M56229L",
-          anonymizeIP: true,
         },
       }),
     ],
