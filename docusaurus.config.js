@@ -4,6 +4,9 @@
 const lightCodeTheme = require("./prism-custom-themes/light");
 const darkCodeTheme = require("./prism-custom-themes/dark");
 
+
+
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Basis Theory Developer Docs",
