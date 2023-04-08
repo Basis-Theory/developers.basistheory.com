@@ -42,9 +42,12 @@ const config = {
         theme: {
           customCss: require.resolve("./src/css/overrides.scss"),
         },
-        gtag: {
-          trackingID: "GTM-M56229L",
-          anonymizeIP: true,
+        // gtag: {
+        //   trackingID: "GTM-M56229L",
+        //   anonymizeIP: true,
+        // },
+        googleTagManager: {
+          containerId: 'GTM-M56229L',
         },
       }),
     ],
@@ -200,10 +203,11 @@ const config = {
     },
   ],
   stylesheets: ["/css/iubenda.css"],
-  // scripts: [
-  //   { src: "/scripts/iubenda.js" },
-  //   { src: "https://cdn.iubenda.com/cs/iubenda_cs.js" },
-  // ],
+  scripts: [
+    { src: "/scripts/gtm.js" },
+    // { src: "/scripts/iubenda.js" },
+    // { src: "https://cdn.iubenda.com/cs/iubenda_cs.js" },
+  ],
 };
 
 module.exports = config;
