@@ -199,7 +199,10 @@ const config = {
     },
   ],
   stylesheets: ["/css/iubenda.css"],
-  scripts: [],
+  scripts: [
+    { src: "/scripts/iubenda.js" },
+    { src: "https://cdn.iubenda.com/cs/iubenda_cs.js" },
+  ],
 };
 
 module.exports = config;
