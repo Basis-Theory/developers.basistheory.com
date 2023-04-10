@@ -1,3 +1,10 @@
+## [1.37.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.37.1...v1.37.2) (2023-04-10)
+
+
+### Bug Fixes
+
+* tag manager ([#99](https://github.com/Basis-Theory/developers.basistheory.com/issues/99)) ([03799dd](https://github.com/Basis-Theory/developers.basistheory.com/commit/03799dd370c659f051f64c6b57cb67ab7beb6f41))
+
 ## [1.37.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.37.0...v1.37.1) (2023-04-06)
 
 
