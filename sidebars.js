@@ -38,6 +38,7 @@ const sidebars = {
         id: "guides/collect/index",
       },
       items: [
+        "guides/collect/collect-cards",
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-with-react",
         "guides/collect/collect-data-with-android",

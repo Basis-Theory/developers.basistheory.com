@@ -26,6 +26,12 @@ const config = {
     locales: ["en"],
   },
 
+  // Mermaid
+  markdown: {
+    mermaid: true,
+  },
+  themes: ["@docusaurus/theme-mermaid"],
+
   presets: [
     [
       "@docusaurus/preset-classic",
@@ -43,7 +49,7 @@ const config = {
           customCss: require.resolve("./src/css/overrides.scss"),
         },
         googleTagManager: {
-          containerId: 'GTM-M56229L',
+          containerId: "GTM-M56229L",
         },
       }),
     ],
@@ -98,6 +104,12 @@ const config = {
         darkTheme: darkCodeTheme,
         additionalLanguages: ["csharp", "hcl", "kotlin", "swift", "java"],
       },
+      mermaid: {
+        theme: {
+          light: "neutral",
+          dark: "dark",
+        },
+      },
       colorMode: {
         defaultMode: "dark",
       },
@@ -123,52 +135,118 @@ const config = {
     require.resolve("docusaurus-lunr-search"),
     require.resolve("docusaurus-plugin-sass"),
     [
-      '@docusaurus/plugin-client-redirects',
+      "@docusaurus/plugin-client-redirects",
       {
         redirects: [
-          { from: '/api-reference', to: '/docs/api' },
-          { from: '/elements', to: '/docs/sdks/web/javascript' },
-          { from: '/expressions', to: '/docs/expressions' },
-          { from: '/labs', to: '/docs' },
+          { from: "/api-reference", to: "/docs/api" },
+          { from: "/elements", to: "/docs/sdks/web/javascript" },
+          { from: "/expressions", to: "/docs/expressions" },
+          { from: "/labs", to: "/docs" },
 
-          { from: '/getting-started', to: '/docs' },
-          { from: '/getting-started/quickstart-with-curl', to: '/docs' },
-          { from: '/getting-started/quickstart-with-dotnet', to: '/docs' },
-          { from: '/getting-started/quickstart-with-go', to: '/docs' },
-          { from: '/getting-started/quickstart-with-java', to: '/docs' },
-          { from: '/getting-started/quickstart-with-nodejs', to: '/docs' },
-          { from: '/getting-started/quickstart-with-ruby', to: '/docs' },
-          { from: '/getting-started/quickstart-with-python', to: '/docs' },
+          { from: "/getting-started", to: "/docs" },
+          { from: "/getting-started/quickstart-with-curl", to: "/docs" },
+          { from: "/getting-started/quickstart-with-dotnet", to: "/docs" },
+          { from: "/getting-started/quickstart-with-go", to: "/docs" },
+          { from: "/getting-started/quickstart-with-java", to: "/docs" },
+          { from: "/getting-started/quickstart-with-nodejs", to: "/docs" },
+          { from: "/getting-started/quickstart-with-ruby", to: "/docs" },
+          { from: "/getting-started/quickstart-with-python", to: "/docs" },
 
-          { from: '/concepts/access-controls', to: '/docs/concepts/access-controls' },
-          { from: '/concepts/what-are-containers', to: '/docs/concepts/what-are-containers' },
-          { from: '/concepts/what-are-mats', to: '/docs/concepts/what-are-mats' },
-          { from: '/concepts/what-are-reactors', to: '/docs/concepts/what-are-reactors' },
-          { from: '/concepts/what-are-tokens', to: '/docs/concepts/what-are-tokens' },
-          { from: '/concepts/what-is-search', to: '/docs/concepts/what-is-search' },
-          { from: '/concepts/what-is-the-proxy', to: '/docs/concepts/what-is-the-proxy' },
-          { from: '/concepts/understanding-permissions', to: '/docs/concepts/access-controls' },
+          {
+            from: "/concepts/access-controls",
+            to: "/docs/concepts/access-controls",
+          },
+          {
+            from: "/concepts/what-are-containers",
+            to: "/docs/concepts/what-are-containers",
+          },
+          {
+            from: "/concepts/what-are-mats",
+            to: "/docs/concepts/what-are-mats",
+          },
+          {
+            from: "/concepts/what-are-reactors",
+            to: "/docs/concepts/what-are-reactors",
+          },
+          {
+            from: "/concepts/what-are-tokens",
+            to: "/docs/concepts/what-are-tokens",
+          },
+          {
+            from: "/concepts/what-is-search",
+            to: "/docs/concepts/what-is-search",
+          },
+          {
+            from: "/concepts/what-is-the-proxy",
+            to: "/docs/concepts/what-is-the-proxy",
+          },
+          {
+            from: "/concepts/understanding-permissions",
+            to: "/docs/concepts/access-controls",
+          },
 
-          { from: '/guides/collect-pii-js', to: '/docs/guides/collect/collect-data-from-web' },
-          { from: '/guides/collect-pii-react', to: '/docs/guides/collect/collect-data-with-react' },
-          { from: '/guides/collect-cards-with-elements-react', to: '/docs/guides/collect/collect-data-with-react' },
-          { from: '/guides/style-elements-for-my-brand', to: '/docs/guides/collect/customize-web-form' },
-          { from: '/guides/encrypt-us-banks-in-your-applications', to: '/docs/guides/collect' },
+          {
+            from: "/guides/collect-pii-js",
+            to: "/docs/guides/collect/collect-data-from-web",
+          },
+          {
+            from: "/guides/collect-pii-react",
+            to: "/docs/guides/collect/collect-data-with-react",
+          },
+          {
+            from: "/guides/collect-cards-with-elements-react",
+            to: "/docs/guides/collect/collect-data-with-react",
+          },
+          {
+            from: "/guides/style-elements-for-my-brand",
+            to: "/docs/guides/collect/customize-web-form",
+          },
+          {
+            from: "/guides/encrypt-us-banks-in-your-applications",
+            to: "/docs/guides/collect",
+          },
 
-          { from: '/guides/collect-cards-with-elements', to: '/docs/blueprints/cards/collect-and-process-cards' },
-          { from: '/guides/use-us-bank-accounts-without-touching-them', to: '/docs/guides/share/send-data-to-third-party' },
-          { from: '/guides/reveal-cards-with-react/', to: '/docs' },
-          { from: '/guides/use-token-data-in-reactors', to: '/docs/guides/process/analyze-data' },
-          { from: '/guides/use-token-data-in-http-requests', to: '/docs/guides/share/send-data-to-third-party' },
-          { from: '/guides/run-your-own-code-in-a-reactor', to: '/docs/guides/process/analyze-data' },
-          { from: '/guides/collect-cards-with-proxies', to: '/docs/blueprints/cards/collect-and-process-cards' },
-          { from: '/guides/migrating-off-basis-theory', to: '/docs/blueprints/migrations/migrate-off-basis-theory' },
+          {
+            from: "/guides/collect-cards-with-elements",
+            to: "/docs/blueprints/cards/collect-and-process-cards",
+          },
+          {
+            from: "/guides/use-us-bank-accounts-without-touching-them",
+            to: "/docs/guides/share/send-data-to-third-party",
+          },
+          { from: "/guides/reveal-cards-with-react/", to: "/docs" },
+          {
+            from: "/guides/use-token-data-in-reactors",
+            to: "/docs/guides/process/analyze-data",
+          },
+          {
+            from: "/guides/use-token-data-in-http-requests",
+            to: "/docs/guides/share/send-data-to-third-party",
+          },
+          {
+            from: "/guides/run-your-own-code-in-a-reactor",
+            to: "/docs/guides/process/analyze-data",
+          },
+          {
+            from: "/guides/collect-cards-with-proxies",
+            to: "/docs/blueprints/cards/collect-and-process-cards",
+          },
+          {
+            from: "/guides/migrating-off-basis-theory",
+            to: "/docs/blueprints/migrations/migrate-off-basis-theory",
+          },
 
-          { from: '/blueprints/pci', to: '/docs/blueprints/cards/collect-and-process-cards' },
+          {
+            from: "/blueprints/pci",
+            to: "/docs/blueprints/cards/collect-and-process-cards",
+          },
 
-          { from: '/docs/guides/collect/collect-inbound-data-to-api', to: '/docs/guides/collect/collect-inbound-sensitive-data' },
-        ]
-      }
+          {
+            from: "/docs/guides/collect/collect-inbound-data-to-api",
+            to: "/docs/guides/collect/collect-inbound-sensitive-data",
+          },
+        ],
+      },
     ],
     // https://github.com/facebook/docusaurus/issues/8297
     // https://github.com/svg/svgo/issues/1714

@@ -1,17 +1,9 @@
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { AuthButtons } from "@site/src/components/docs/AuthButtons";
-import { Card } from "@site/src/components/shared/Card"
-
-import styles from "@site/src/pages/index.module.css";
-import ThemedImage from "@theme/ThemedImage";
-
-import Android from "@site/static/img/sdk/logos/android.svg";
-import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
-import ReactSvg from "@site/static/img/sdk/logos/react.svg";
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
 
 
 # Reveal Tokenized Data
@@ -50,52 +42,7 @@ If you haven't done it yet, head over to the [Collect Data](/docs/guides/collect
 
 ## Configuring Basis Theory Elements
 
-[Basis Theory Elements](/docs/concepts/elements) is available for the following technologies. Click below for detailed instructions on how to install and configure it.
-
-<div className={styles["sdk-column"]}>
-<Card
-href="/docs/sdks/web/javascript/"
-img={<JavaScript />}
-className={styles.sdk}
->
-Javascript
-</Card>
-
-<Card
-href="/docs/sdks/web/react/"
-img={<ReactSvg />}
-className={styles.sdk}
->
-React
-</Card>
-
-<Card
-href="/docs/sdks/mobile/ios/"
-img={
-<div className={styles["logo-container"]}>
-<ThemedImage
-width="100%"
-height="100%"
-sources={{
-light: useBaseUrl("/img/sdk/logos/apple.svg"),
-dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
-}}
-/>
-</div>
-}
-className={styles.sdk}
->
-iOS
-</Card>
-
-<Card
-href="/docs/sdks/mobile/android/"
-img={<Android />}
-className={styles.sdk}
->
-Android
-</Card>
-</div>
+<ConfigureElementsSection />
 
 ## Creating a Text Element
 
@@ -123,7 +70,7 @@ let textElement;
 
   // here #exampleTextElement is a DOM selector
   // example: <div id="exampleTextElement"></div>
-  await textElement.mount('#exampleTextElement'); 
+  await textElement.mount('#exampleTextElement');
   //highlight-end
 })();
 ```
@@ -192,7 +139,7 @@ class ViewController: UIViewController {
 To add a Text Element to your Android app, you just have to follow these two steps:
 
 1. Add the XML below to your MainActivity layout.
-2. Reference your XML element in the MainActivity class. 
+2. Reference your XML element in the MainActivity class.
 ````
 
 ```xml title="res/layout/activity_main.xml"
@@ -229,7 +176,7 @@ class MainActivity : AppCompatActivity() {
 
 ## Creating a Session
 
-Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide temporary elevated access to your public applications, 
+Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide temporary elevated access to your public applications,
 and we'll will use it to safely retrieve the data from the token. Add the following code to create a session:
 
 <Tabs className="bt-tabs" groupId="clients">
@@ -251,7 +198,7 @@ let textElement;
 
   // here #exampleTextElement is a DOM selector
   // example: <div id="exampleTextElement"></div>
-  await textElement.mount('#exampleTextElement'); 
+  await textElement.mount('#exampleTextElement');
 
   // this is just an example method that'll have the full lifecycle for revealing
   const reveal = async () => {
@@ -469,7 +416,7 @@ let textElement;
 
   // here #exampleTextElement is a DOM selector
   // example: <div id="exampleTextElement"></div>
-  await textElement.mount('#exampleTextElement'); 
+  await textElement.mount('#exampleTextElement');
 
   // this is just an example method that'll have the full lifecycle for revealing
   const reveal = async () => {
@@ -563,28 +510,28 @@ class ViewController: UIViewController {
     //highlight-start
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
-        
+
         let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
             completion(nil, error)
         }
-        
+
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
+
         let task = session.dataTask(with: request, completionHandler: { data, response, error in
             guard error == nil else {
                 completion(nil, error)
                 return
             }
-            
+
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
                 completion(json, nil)
@@ -592,7 +539,7 @@ class ViewController: UIViewController {
                 completion(nil, error)
             }
         })
-        
+
         task.resume()
     }
     //highlight-end
@@ -653,7 +600,7 @@ class MainActivity : AppCompatActivity() {
           return
       }
     }
-  //highlight-end 
+  //highlight-end
 }
 ```
   </TabItem>
@@ -777,7 +724,7 @@ class ViewController: UIViewController {
             let sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
 
-            
+
             self.authorizeSession(nonce: nonce) { result, error in
               //highlight-start
               BasisTheoryElements.getTokenById(id: 'token_id_1234567890', apiKey: sessionKey) { data, error in
@@ -795,28 +742,28 @@ class ViewController: UIViewController {
 
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
-        
+
         let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
             completion(nil, error)
         }
-        
+
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
+
         let task = session.dataTask(with: request, completionHandler: { data, response, error in
             guard error == nil else {
                 completion(nil, error)
                 return
             }
-            
+
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
                 completion(json, nil)
@@ -824,7 +771,7 @@ class ViewController: UIViewController {
                 completion(nil, error)
             }
         })
-        
+
         task.resume()
     }
 }
@@ -891,7 +838,7 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
-🎉 The code above is the last bit that we need to reveal a token! 
+🎉 The code above is the last bit that we need to reveal a token!
 
 ## Conclusion
 
