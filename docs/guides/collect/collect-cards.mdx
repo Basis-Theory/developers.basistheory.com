@@ -7,7 +7,7 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 # Collect Cards
 
-When building an e-commerce application or subscription service, or enabling one-time purchases, one of the critical requirements is collecting and storing cardholder data securely. However, it can be challenging to navigate the complex regulatory landscape, particularly PCI DSS, and ensure that your application meets all the necessary security standards.
+When building an e-commerce application, subscription service, or enabling one-time purchases, one of the critical requirements is collecting and storing cardholder data securely. However, it can be challenging to navigate the complex regulatory landscape, particularly PCI DSS, and ensure that your application meets all the necessary security standards.
 
 In this guide, we will set up SDKs to capture cards in the frontend, Web or Mobile, and securely store the cardholder data as tokens with the Basis Theory Platform. This will completely remove our user-facing applications and database from the compliance scope.
 
@@ -572,13 +572,260 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
-## Customizing the Card Token
+<Alert>
+  If you are using the single <code>CardElement</code>, simply pass its reference as the <code>data</code> attribute of the token payload.
+</Alert>
+
+The created `token` is an object containing the non-sensitive information about the tokenized card. The primary key `token.id` is safe to store in your database, relating it to your checkout, user profile, subscription or any other record you need to relate the card to.
+
+## Customizing the Card Tokens
+
+The steps so far cover most cases when you need to collect cards in your frontend and store them in a secure location. However, in some scenarios you may need to customize your card tokens for specific business needs or technical requirements. In the following sections, you will find optional steps to follow for common problems solved by [Basis Theory Token capabilities](/docs/concepts/what-are-tokens#what-are-the-capabilities-of-a-token).
 
 ### Deduplication
 
-### Aliasing
+Companies often find it necessary to uniquely identify cards flowing through their systems for various reasons, which may include: preventing fraudulent transactions, detecting abuse of credit cards, building consumer profiles or streamlining payment processing for a better user experience.
+
+By leveraging [token fingerprinting](/docs/concepts/what-are-tokens#fingerprinting), developers can recognize the tokenized data in a customizable fashion, without having to come in contact with the plaintext data. For cards, it is common to index in the Primary Account Number (PAN), but in some cases the expiration date may also be considered.
+
+When making the tokenization request to store the card, pass a fingerprint expression to instruct Basis Theory to calculate the fingerprint for the sensitive data field:
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+async function submit () {
+  try {
+    const token = await bt.tokens.create({
+      type: 'card',
+      data: {
+        number: cardNumberElement,
+        expiration_month: cardExpirationDateElement.month(),
+        expiration_year: cardExpirationDateElement.year(),
+        cvc: cardVerificationCodeElement,
+      },
+      // highlight-start
+      fingerprintExpression: '{{ data.number }}',
+      // highlight-end
+    });
+    // store token.id in your database
+  } catch (error) {
+    console.error(error);
+  }
+}
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+export default function App() {
+  const submit = async () => {
+    try {
+      const token = await bt.tokens.create({
+        type: 'card',
+        data: {
+          number: cardNumberRef.current,
+          expiration_month: cardExpirationRef.month(),
+          expiration_year: cardExpirationRef.year(),
+          cvc: cardVerificationRef.current,
+        },
+        // highlight-start
+        fingerprintExpression: '{{ data.number }}',
+        // highlight-end
+      });
+      // store token.id in your database
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (...);
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+class ViewController: UIViewController {
+      @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            "type": "card",
+            "data": [
+                "number": self.cardNumberTextField,
+                "expiration_month": self.expirationDateTextField.month(),
+                "expiration_year": self.expirationDateTextField.year(),
+                "cvc": self.cvcTextField
+            ],
+            // highlight-start
+            "fingerprint_expression": "{{ data.number }}"
+            // highlight-end
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { token, error in
+            guard error == nil else {
+                print(error)
+                return
+            }
+            // store token.id in your database
+        }
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+
+    private fun submit() {
+      val token = runBlocking {
+        bt.tokens.create(object {
+          val type = "card"
+          val data = object {
+            val number = cardNumberElement
+            val expiration_month = cardExpirationDateElement.month()
+            val expiration_year = cardExpirationDateElement.year()
+            val cvc = cardVerificationCodeElement
+          }
+          // highlight-start
+          val fingerprint_expression = "{{ data.number }}"
+          // highlight-end
+        })
+      }
+      // store token.id in your database
+    }
+}
+```
+  </TabItem>
+</Tabs>
+
+This will return a `token.fingerprint` that can be used to distinguish the card, and optionally prevent creation of a duplicate token. See the example below:
+
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+async function submit () {
+  try {
+    const token = await bt.tokens.create({
+      type: 'card',
+      data: {
+        number: cardNumberElement,
+        expiration_month: cardExpirationDateElement.month(),
+        expiration_year: cardExpirationDateElement.year(),
+        cvc: cardVerificationCodeElement,
+      },
+      fingerprintExpression: '{{ data.number }}',
+      // highlight-start
+      deduplicateToken: true,
+      // highlight-end
+    });
+    // store token.id in your database
+  } catch (error) {
+    console.error(error);
+  }
+}
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+export default function App() {
+  const submit = async () => {
+    try {
+      const token = await bt.tokens.create({
+        type: 'card',
+        data: {
+          number: cardNumberRef.current,
+          expiration_month: cardExpirationRef.month(),
+          expiration_year: cardExpirationRef.year(),
+          cvc: cardVerificationRef.current,
+        },
+        fingerprintExpression: '{{ data.number }}',
+        // highlight-start
+        deduplicateToken: true,
+        // highlight-end
+      });
+      // store token.id in your database
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (...);
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+class ViewController: UIViewController {
+      @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            "type": "card",
+            "data": [
+                "number": self.cardNumberTextField,
+                "expiration_month": self.expirationDateTextField.month(),
+                "expiration_year": self.expirationDateTextField.year(),
+                "cvc": self.cvcTextField
+            ],
+            "fingerprint_expression": "{{ data.number }}",
+            // highlight-start
+            "deduplicate_token": true
+            // highlight-end
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { token, error in
+            guard error == nil else {
+                print(error)
+                return
+            }
+            // store token.id in your database
+        }
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+
+    private fun submit() {
+      val token = runBlocking {
+        bt.tokens.create(object {
+          val type = "card"
+          val data = object {
+            val number = cardNumberElement
+            val expiration_month = cardExpirationDateElement.month()
+            val expiration_year = cardExpirationDateElement.year()
+            val cvc = cardVerificationCodeElement
+          }
+          val fingerprint_expression = "{{ data.number }}"
+          // highlight-start
+          val deduplicate_token = true
+          // highlight-end
+        })
+      }
+      // store token.id in your database
+    }
+}
+```
+  </TabItem>
+</Tabs>
+
+By doing the above, you are instructing Basis Theory to return the existing token if it is found to have the same fingerprint. [Click here to learn more about token deduplication](/docs/concepts/what-are-tokens#deduplication).
 
 ### Masking
+
+- PCI and data truncating, use cases (BIN, last4)
+
+### Aliasing
+
+- Backwards compatibility, customization, alternative for masking
 
 ## Conclusion
 
