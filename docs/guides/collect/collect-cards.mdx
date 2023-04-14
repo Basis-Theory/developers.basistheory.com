@@ -9,7 +9,7 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 When building an e-commerce application, subscription service, or enabling one-time purchases, one of the critical requirements is collecting and storing cardholder data securely. However, it can be challenging to navigate the complex regulatory landscape, particularly PCI DSS, and ensure that your application meets all the necessary security standards.
 
-In this guide, we will set up SDKs to capture cards in the frontend, Web or Mobile, and securely store the cardholder data as tokens with the Basis Theory Platform. This will completely remove our user-facing applications and database from the compliance scope.
+In this guide, we will set up SDKs to capture cards in the frontend, Web or Mobile, and securely store the cardholder data as tokens with the Basis Theory Platform. Given it is followed as it is, your user-facing applications and database are completely removed from the compliance scope.
 
 ```mermaid
 ---
@@ -579,7 +579,42 @@ class MainActivity : AppCompatActivity() {
   If you are using the single <code>CardElement</code>, simply pass its reference as the <code>data</code> attribute of the token payload.
 </Alert>
 
-The created `token` is an object containing the non-sensitive information about the tokenized card. The primary key `token.id` is safe to store in your database, relating it to your checkout, user profile, subscription or any other record you need to relate the card to.
+The created card `token` object contains the non-sensitive information about the tokenized card, which follows the [Card Token specification](/docs/api/tokens/token-types#card):
+
+```json showLineNumbers title=token.json
+{
+  "id": "3d0b4395-5581-4197-a1b8-2513b2db926d",
+  "type": "card",
+  "tenant_id": "30032404-e199-4e86-b61d-d1a0ac3927d7",
+  "data": {
+    "number": "XXXXXXXXXXXX4242",
+    "expiration_month": 12,
+    "expiration_year": 2025
+  },
+  "created_by": "cfcdc1e2-ea53-4c5b-8962-7b6c62d93dc8",
+  "created_at": "2023-04-14T13:56:45.9869344+00:00",
+  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
+  "fingerprint_expression": "{{ data.number }}",
+  "mask": {
+    "number": "{{ data.number | reveal_last: 4 }}",
+    "expiration_month": "{{ data.expiration_month }}",
+    "expiration_year": "{{ data.expiration_year }}"
+  },
+  "privacy": {
+    "classification": "pci",
+    "impact_level": "high",
+    "restriction_policy": "mask"
+  },
+  "search_indexes": [],
+  "expires_at": "2023-04-14T19:56:44.116+00:00",
+  "containers": [
+    "/pci/high/"
+  ]
+}
+```
+You can safely store the token's primary key `id` in your database to link it with the appropriate checkout, user profile, subscription, or any other record that requires association with the card.
+
+Notice how the card `number`, also known as Primary Account Number (PAN), has been masked before it is returned to your application. This default behavior prevents your application being pulled in PCI DSS scope, for it only comes in contact with a truncated portion of the cardholder data. Later in this guide we will learn how to [customize masking](#masking).
 
 ## Customizing the Card Tokens
 
@@ -611,7 +646,6 @@ async function submit () {
       fingerprintExpression: '{{ data.number }}',
       // highlight-end
     });
-    // store token.id in your database
   } catch (error) {
     console.error(error);
   }
@@ -636,7 +670,6 @@ export default function App() {
         fingerprintExpression: '{{ data.number }}',
         // highlight-end
       });
-      // store token.id in your database
     } catch (error) {
       console.error(error);
     }
@@ -669,7 +702,6 @@ class ViewController: UIViewController {
                 print(error)
                 return
             }
-            // store token.id in your database
         }
     }
 }
@@ -696,7 +728,6 @@ class MainActivity : AppCompatActivity() {
           // highlight-end
         })
       }
-      // store token.id in your database
     }
 }
 ```
@@ -704,7 +735,6 @@ class MainActivity : AppCompatActivity() {
 </Tabs>
 
 This will return a `token.fingerprint` that can be used to distinguish the card, and optionally prevent creation of a duplicate token. See the example below:
-
 
 <Tabs className="bt-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
@@ -725,7 +755,6 @@ async function submit () {
       deduplicateToken: true,
       // highlight-end
     });
-    // store token.id in your database
   } catch (error) {
     console.error(error);
   }
@@ -751,7 +780,6 @@ export default function App() {
         deduplicateToken: true,
         // highlight-end
       });
-      // store token.id in your database
     } catch (error) {
       console.error(error);
     }
@@ -785,7 +813,6 @@ class ViewController: UIViewController {
                 print(error)
                 return
             }
-            // store token.id in your database
         }
     }
 }
@@ -813,7 +840,6 @@ class MainActivity : AppCompatActivity() {
           // highlight-end
         })
       }
-      // store token.id in your database
     }
 }
 ```
@@ -824,9 +850,137 @@ By doing the above, you are instructing Basis Theory to return the existing toke
 
 ### Masking
 
-- PCI and data truncating, use cases (BIN, last4)
+When a card token is created, the returned data follows a default masking pattern that reveals the last 4 digits of card. This is useful for displaying the card to the end-user without revealing the full number, generating receipts and payment history, etc.
+
+However, being able to preserve the Bank Identification Number (BIN) from the card number can also be required for several reasons, including fraud detection, payment processing, customer service or account management. [PCI DSS allows](https://www.pcisecuritystandards.org/faq/articles/Frequently_Asked_Question/What-are-acceptable-formats-for-truncation-of-primary-account-numbers/) applications to reveal up to first 8 and last 4 digits of a card number, depending on its length and Payment Brand. Luckily, when creating a token, you can express what segments of the PAN is useful to you with a single expressions filter: `card_mask`.
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+async function submit () {
+  try {
+    const token = await bt.tokens.create({
+      type: 'card',
+      data: {
+        number: cardNumberElement,
+        expiration_month: cardExpirationDateElement.month(),
+        expiration_year: cardExpirationDateElement.year(),
+        cvc: cardVerificationCodeElement,
+      },
+      // highlight-start
+      mask: {
+        number:'{{ data.number | card_mask: "true", "true" }}',
+        expiration_month: '{{ data.expiration_month }}',
+        expiration_year: '{{ data.expiration_year }}',
+      },
+      // highlight-end
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+export default function App() {
+  const submit = async () => {
+    try {
+      const token = await bt.tokens.create({
+        type: 'card',
+        data: {
+          number: cardNumberRef.current,
+          expiration_month: cardExpirationRef.month(),
+          expiration_year: cardExpirationRef.year(),
+          cvc: cardVerificationRef.current,
+        },
+        // highlight-start
+        mask: {
+          number:'{{ data.number | card_mask: "true", "true" }}',
+          expiration_month: '{{ data.expiration_month }}',
+          expiration_year: '{{ data.expiration_year }}',
+        },
+        // highlight-end
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (...);
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+class ViewController: UIViewController {
+      @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            "type": "card",
+            "data": [
+                "number": self.cardNumberTextField,
+                "expiration_month": self.expirationDateTextField.month(),
+                "expiration_year": self.expirationDateTextField.year(),
+                "cvc": self.cvcTextField
+            ],
+            // highlight-start
+            "mask": [
+                "number": "{{ data.number | card_mask: 'true', 'true' }}",
+                "expiration_month": "{{ data.expiration_month }}",
+                "expiration_year": "{{ data.expiration_year }}"
+            ],
+            // highlight-end
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { token, error in
+            guard error == nil else {
+                print(error)
+                return
+            }
+        }
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+
+    private fun submit() {
+      val token = runBlocking {
+        bt.tokens.create(object {
+          val type = "card"
+          val data = object {
+            val number = cardNumberElement
+            val expiration_month = cardExpirationDateElement.month()
+            val expiration_year = cardExpirationDateElement.year()
+            val cvc = cardVerificationCodeElement
+          }
+          // highlight-start
+          val mask = object {
+            val number = "{{ data.number | card_mask: 'true', 'true' }}"
+            val expiration_month = "{{ data.expiration_month }}"
+            val expiration_year = "{{ data.expiration_year }}"
+          }
+          // highlight-end
+        })
+      }
+    }
+}
+```
+  </TabItem>
+</Tabs>
+
+In the example above, we instruct Basis Theory to reveal both segments, without having to worry about the card brand or number length. [Click here to learn more about this filter](/docs/expressions/filters#card_mask).
 
 ### Aliasing
+
+By default, the generated token `id` will be a Universally Unique Identifier (UUID).
 
 - Backwards compatibility, customization, alternative for masking
 
