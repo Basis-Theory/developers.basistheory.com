@@ -7,14 +7,12 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 # Collect Cards
 
-When building an e-commerce application, subscription service, or enabling one-time purchases, one of the critical requirements is collecting and storing cardholder data securely. However, it can be challenging to navigate the complex regulatory landscape, particularly PCI DSS, and ensure that your application meets all the necessary security standards.
+When building an e-commerce application, subscription service, or enabling one-time purchases, one of the critical requirements is collecting and storing cardholder data securely. However, it can be challenging to navigate PCI DSS and ensure that your application meets all the necessary security controls required to comply.
 
-In this guide, we will set up SDKs to capture cards in the frontend, Web or Mobile, and securely store the cardholder data as tokens with the Basis Theory Platform. Given it is followed as it is, your user-facing applications and database are completely removed from the compliance scope.
+In this guide, we will set up Basis Theory SDKs to capture cards in a frontend application, Web or Mobile, and securely store the cardholder data as tokens with the Basis Theory Platform. Given this guide is followed step by step, your applications, systems, and databases are removed from 95% of PCI compliance scope.
 
 [![Collect Cards Flowchart](/img/guides/collect/collect-cards-flowchart.png)](https://mermaid.live/edit#pako:eNpdUV1LwzAU_SvhPm3QzLXrx5oHYU4FwYGoKNj6kDV3Npg2JU3VOfbfTbupaF6Sc-4591xyd1BogcCAUprXVlqFjCy1UlhYsuRGtORS6fei5Mbm9SDafGNyfZvXxJ22W78Y3pRECvRJdsZb2ZL7ErXZPh8Ub7xTNhs99Nf4yPFGZoubq19E6emgOxBYi3_dN0iyR1yTE7LSa6mQLJrm6EaFFda2HfUjk4sjGv8tUtpXS60EGiK45S7Qxf7EgQcVmopL4f5j19M52NJ5c2DuKbh5zSGv907HO6vvtnUBzJoOPega1w_PJXeTVsA2XLWObXgNbAcfwJJJGsZBGvvBPJ4liQdbYHQ28YMgisM0DKIw8qNw78Gn1s7vT6ZJlKaBP52ncZzMpr4HKKTVZnXY1rC0IeBpMAyB-y8IVZD_)
 
-<!-- Flowchart source code done with Mermaid, later "radified" -->
-<!--  -->
 
 ## Getting Started
 
@@ -39,7 +37,7 @@ This will create an application with the following [Access Controls](/docs/conce
 
 ## Adding Card Elements
 
-Once properly installed and configured, add the Card Elements to your application. This will enable users to type in their card data in your form, while refraining from your systems to come in contact with it.
+Once installed and configured, add the Card Elements to your application. This will enable your users to type in their card data in your form, while ensuring your systems never come in contact with the data.
 
 <Tabs className="bt-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
@@ -334,7 +332,7 @@ https://basistheory.com/contact
 
 Now that you are securely capturing the cardholder data in your user-facing application(s), it is time to store it in your Basis Theory Tenant.
 
-To do this, we will call the [Create Token](https://developers.basistheory.com/docs/api/tokens/#create-token) endpoint from the SDK, passing the Card Elements as data points in the payload. This way, the card information is securely transferred from the frontend Elements to the Basis Theory vault, where they will reside in the encrypted form.
+To do this, we will create a token with the [Create Token](https://developers.basistheory.com/docs/api/tokens/#create-token) endpoint from the SDK, passing the Card Elements as data points in the payload. This will securely create a token by transferring the card information from the frontend Elements to Basis Theory, where the card will be strongly encrypted and stored in a compliant environment.
 
 Add a submit function along with a button to trigger it:
 
@@ -611,7 +609,7 @@ The steps so far cover most cases when you need to collect cards in your fronten
 
 Companies often find it necessary to uniquely identify cards flowing through their systems for various reasons, which may include: preventing fraudulent transactions, detecting abuse of credit cards, building consumer profiles or streamlining payment processing for a better user experience.
 
-By leveraging [token fingerprinting](/docs/concepts/what-are-tokens#fingerprinting), developers can recognize the tokenized data in a customizable fashion, without having to come in contact with the plaintext data. For cards, it is common to index in the Primary Account Number (PAN), but in some cases the expiration date may also be considered.
+By leveraging [token fingerprinting](/docs/concepts/what-are-tokens#fingerprinting), developers can recognize the tokenized data in a customizable fashion, without having to come in contact with the plaintext data. For cards, it is common to index in the Primary Account Number (PAN). In some cases the expiration date may also be considered.
 
 When making the tokenization request to store the card, pass a fingerprint expression to instruct Basis Theory to calculate the fingerprint for the sensitive data field:
 
@@ -872,9 +870,9 @@ By doing the above, you are instructing Basis Theory to return the existing toke
 
 ### Masking
 
-When a card token is created, the returned data follows a default masking pattern that reveals the last 4 digits of card. This is useful for displaying the card to the end-user without revealing the full number, generating receipts and payment history, etc.
+By default, card tokens are created with a mask revealing only the last 4 digits of the card number. This is useful for generating receipts and payment history, displaying the card to the end-user without revealing the full number, etc.
 
-However, being able to preserve the Bank Identification Number (BIN) from the card number can also be required for several reasons, including fraud detection, payment processing, customer service or account management. [PCI DSS allows](https://www.pcisecuritystandards.org/faq/articles/Frequently_Asked_Question/What-are-acceptable-formats-for-truncation-of-primary-account-numbers/) applications to reveal up to first 8 and last 4 digits of a card number, depending on its length and Payment Brand. Luckily, when creating a token, you can express what segments of the PAN is useful to you with a single expressions filter: `card_mask`.
+In other scenarios, being able to preserve the Bank Identification Number (BIN) from the card number can enable fraud detection, payment processing, customer service or account management. [PCI DSS allows](https://www.pcisecuritystandards.org/faq/articles/Frequently_Asked_Question/What-are-acceptable-formats-for-truncation-of-primary-account-numbers/) applications to reveal up to the first 8 and last 4 digits of a card number, depending on its length and Payment Brand. Luckily, when creating a token, you can express what segments of the PAN are useful to you with a single expressions filter: `card_mask`.
 
 <Tabs className="bt-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
@@ -1263,7 +1261,7 @@ Aliasing also supports passing custom data-bound expressions, that can generate 
 
 ## Conclusion
 
-By following the best practices prescribed in this guide, you can ensure that your user-facing applications are compliant with the latest security standards while protecting your users' sensitive card data. The `token.id` obtained at the end of the [Storing Cards](#storing-cards) section is a synthetic replacement for the sensitive data and can be safely stored in your database, or transmitted through your systems, meeting compliance requirements and reducing the risk of exposure in case of data breaches.
+The best practices prescribed in this guide ensure that your user-facing applications are compliant with the PCI-DSS standards and your users' sensitive card data is protected. The `token.id` obtained at the end of the [Storing Cards](#storing-cards) section is a synthetic replacement for the sensitive data and can be safely stored in your database, or transmitted through your systems, meeting compliance requirements and reducing the risk of exposure in case of data breaches.
 
 The optional [customization steps](#customizing-tokens) are meant for showcase platform capabilities that go beyond the examples given. Make sure to explore the provided links within each subsection to learn more about the possibilities for customization.
 
