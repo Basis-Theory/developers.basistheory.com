@@ -11,10 +11,10 @@ When building an e-commerce application, subscription service, or enabling one-t
 
 In this guide, we will set up SDKs to capture cards in the frontend, Web or Mobile, and securely store the cardholder data as tokens with the Basis Theory Platform. Given it is followed as it is, your user-facing applications and database are completely removed from the compliance scope.
 
-![Collect Cards Flowchart](/img/guides/collect/collect-cards-flowchart.png)
+[![Collect Cards Flowchart](/img/guides/collect/collect-cards-flowchart.png)](https://mermaid.live/edit#pako:eNpdUV1LwzAU_SvhPm3QzLXrx5oHYU4FwYGoKNj6kDV3Npg2JU3VOfbfTbupaF6Sc-4591xyd1BogcCAUprXVlqFjCy1UlhYsuRGtORS6fei5Mbm9SDafGNyfZvXxJ22W78Y3pRECvRJdsZb2ZL7ErXZPh8Ub7xTNhs99Nf4yPFGZoubq19E6emgOxBYi3_dN0iyR1yTE7LSa6mQLJrm6EaFFda2HfUjk4sjGv8tUtpXS60EGiK45S7Qxf7EgQcVmopL4f5j19M52NJ5c2DuKbh5zSGv907HO6vvtnUBzJoOPega1w_PJXeTVsA2XLWObXgNbAcfwJJJGsZBGvvBPJ4liQdbYHQ28YMgisM0DKIw8qNw78Gn1s7vT6ZJlKaBP52ncZzMpr4HKKTVZnXY1rC0IeBpMAyB-y8IVZD_)
 
 <!-- Flowchart source code done with Mermaid, later "radified" -->
-<!-- https://mermaid.live/edit#pako:eNpdUV1LwzAU_SvhPm3QzLXrx5oHYU4FwYGoKNj6kDV3Npg2JU3VOfbfTbupaF6Sc-4591xyd1BogcCAUprXVlqFjCy1UlhYsuRGtORS6fei5Mbm9SDafGNyfZvXxJ22W78Y3pRECvRJdsZb2ZL7ErXZPh8Ub7xTNhs99Nf4yPFGZoubq19E6emgOxBYi3_dN0iyR1yTE7LSa6mQLJrm6EaFFda2HfUjk4sjGv8tUtpXS60EGiK45S7Qxf7EgQcVmopL4f5j19M52NJ5c2DuKbh5zSGv907HO6vvtnUBzJoOPega1w_PJXeTVsA2XLWObXgNbAcfwJJJGsZBGvvBPJ4liQdbYHQ28YMgisM0DKIw8qNw78Gn1s7vT6ZJlKaBP52ncZzMpr4HKKTVZnXY1rC0IeBpMAyB-y8IVZD_ -->
+<!--  -->
 
 ## Getting Started
 
@@ -572,18 +572,16 @@ The created card `token` object contains the non-sensitive information about the
 
 ```json showLineNumbers title=token.json
 {
-  "id": "3d0b4395-5581-4197-a1b8-2513b2db926d",
+  "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
   "type": "card",
-  "tenant_id": "30032404-e199-4e86-b61d-d1a0ac3927d7",
+  "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
   "data": {
     "number": "XXXXXXXXXXXX4242",
     "expiration_month": 12,
     "expiration_year": 2025
   },
-  "created_by": "cfcdc1e2-ea53-4c5b-8962-7b6c62d93dc8",
-  "created_at": "2023-04-14T13:56:45.9869344+00:00",
-  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
-  "fingerprint_expression": "{{ data.number }}",
+  "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+  "created_at": "2023-04-17T12:54:44.8320458+00:00",
   "mask": {
     "number": "{{ data.number | reveal_last: 4 }}",
     "expiration_month": "{{ data.expiration_month }}",
@@ -595,17 +593,17 @@ The created card `token` object contains the non-sensitive information about the
     "restriction_policy": "mask"
   },
   "search_indexes": [],
-  "expires_at": "2023-04-14T19:56:44.116+00:00",
   "containers": [
     "/pci/high/"
   ]
 }
 ```
+
 You can safely store the token's primary key `id` in your database to link it with the appropriate checkout, user profile, subscription, or any other record that requires association with the card.
 
 Notice how the card `number`, also known as Primary Account Number (PAN), has been masked before it is returned to your application. This default behavior prevents your application being pulled in PCI DSS scope, for it only comes in contact with a truncated portion of the cardholder data. Later in this guide we will learn how to [customize masking](#masking).
 
-## Customizing the Card Tokens
+## Customizing Tokens
 
 The steps so far cover most cases when you need to collect cards in your frontend and store them in a secure location. However, in some scenarios you may need to customize your card tokens for specific business needs or technical requirements. In the following sections, you will find optional steps to follow for common problems solved by [Basis Theory Token capabilities](/docs/concepts/what-are-tokens#what-are-the-capabilities-of-a-token).
 
@@ -723,7 +721,42 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
-This will return a `token.fingerprint` that can be used to distinguish the card, and optionally prevent creation of a duplicate token. See the example below:
+The new tokens should now have a fingerprint:
+
+```json showLineNumbers title=token.json
+{
+  "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+  "type": "card",
+  "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+  "data": {
+    "number": "XXXXXXXXXXXX4242",
+    "expiration_month": 12,
+    "expiration_year": 2025
+  },
+  "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+  "created_at": "2023-04-17T12:54:44.8320458+00:00",
+  // highlight-start
+  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
+  "fingerprint_expression": "{{ data.number }}",
+  // highlight-end
+  "mask": {
+    "number": "{{ data.number | reveal_last: 4 }}",
+    "expiration_month": "{{ data.expiration_month }}",
+    "expiration_year": "{{ data.expiration_year }}"
+  },
+  "privacy": {
+    "classification": "pci",
+    "impact_level": "high",
+    "restriction_policy": "mask"
+  },
+  "search_indexes": [],
+  "containers": [
+    "/pci/high/"
+  ]
+}
+```
+
+If you want to prevent creation of a duplicate token based on the distinguishable fingerprint, add the flag below:
 
 <Tabs className="bt-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
@@ -857,6 +890,8 @@ async function submit () {
         expiration_year: cardExpirationDateElement.year(),
         cvc: cardVerificationCodeElement,
       },
+      fingerprintExpression: '{{ data.number }}',
+      deduplicateToken: true,
       // highlight-start
       mask: {
         number:'{{ data.number | card_mask: "true", "true" }}',
@@ -885,6 +920,8 @@ export default function App() {
           expiration_year: cardExpirationRef.year(),
           cvc: cardVerificationRef.current,
         },
+        fingerprintExpression: '{{ data.number }}',
+        deduplicateToken: true,
         // highlight-start
         mask: {
           number:'{{ data.number | card_mask: "true", "true" }}',
@@ -915,6 +952,8 @@ class ViewController: UIViewController {
                 "expiration_year": self.expirationDateTextField.year(),
                 "cvc": self.cvcTextField
             ],
+            "fingerprint_expression": "{{ data.number }}",
+            "deduplicate_token": true,
             // highlight-start
             "mask": [
                 "number": "{{ data.number | card_mask: 'true', 'true' }}",
@@ -950,6 +989,8 @@ class MainActivity : AppCompatActivity() {
             val expiration_year = cardExpirationDateElement.year()
             val cvc = cardVerificationCodeElement
           }
+          val fingerprint_expression = "{{ data.number }}"
+          val deduplicate_token = true
           // highlight-start
           val mask = object {
             val number = "{{ data.number | card_mask: 'true', 'true' }}"
@@ -965,16 +1006,270 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
-In the example above, we instruct Basis Theory to reveal both segments, without having to worry about the card brand or number length. [Click here to learn more about this filter](/docs/expressions/filters#card_mask).
+Now, the created token should also reveal the BIN:
+
+```json showLineNumbers title=token.json
+{
+  "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+  "type": "card",
+  "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+  "data": {
+    // highlight-next-line
+    "number": "42424242XXXX4242",
+    "expiration_month": 12,
+    "expiration_year": 2025
+  },
+  "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+  "created_at": "2023-04-17T12:54:44.8320458+00:00",
+  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
+  "fingerprint_expression": "{{ data.number }}",
+  "mask": {
+    // highlight-next-line
+    "number": "{{ data.number | card_mask: 'true', 'true' }}",
+    "expiration_month": "{{ data.expiration_month }}",
+    "expiration_year": "{{ data.expiration_year }}"
+  },
+  "privacy": {
+    "classification": "pci",
+    "impact_level": "high",
+    "restriction_policy": "mask"
+  },
+  "search_indexes": [],
+  "containers": [
+    "/pci/high/"
+  ]
+}
+```
+
+In the example above, we instruct Basis Theory to reveal both segments, without having to worry about the card brand or number length. [Click here to learn more about Masking](/docs/expressions/masks).
 
 ### Aliasing
 
-While storing or transmitting tokens between systems, you may encounter restrictive technical constraints that can render the default token Universally Unique Identifier (UUID) incompatible, to a point where only a custom algorithm for generating token IDs can be suitable. T
+While storing or transmitting tokens between systems, you may encounter restrictive technical constraints that can draw the default token Universally Unique Identifier (UUID) incompatible.
 
-- Backwards compatibility, customization, alternative for masking
+In the example below, we will pass a predefined token `id` that follows a custom logic, which resembles an alternative format used in the payments industry:
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+// highlight-start
+function generateTokenId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let tokenId = 'card_';
+  for (let i = 0; i < 24; i++) {
+    tokenId += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return tokenId;
+}
+// highlight-end
+
+async function submit () {
+  try {
+    const token = await bt.tokens.create({
+      // highlight-next-line
+      id: generateTokenId(),
+      type: 'card',
+      data: {
+        number: cardNumberElement,
+        expiration_month: cardExpirationDateElement.month(),
+        expiration_year: cardExpirationDateElement.year(),
+        cvc: cardVerificationCodeElement,
+      },
+      fingerprintExpression: '{{ data.number }}',
+      deduplicateToken: true,
+      mask: {
+        number:'{{ data.number | card_mask: "true", "true" }}',
+        expiration_month: '{{ data.expiration_month }}',
+        expiration_year: '{{ data.expiration_year }}',
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+// highlight-start
+const generateTokenId = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let tokenId = 'card_';
+  for (let i = 0; i < 24; i++) {
+    tokenId += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return tokenId;
+}
+// highlight-end
+
+export default function App() {
+  const submit = async () => {
+    try {
+      const token = await bt.tokens.create({
+        // highlight-next-line
+        id: generateTokenId(),
+        type: 'card',
+        data: {
+          number: cardNumberRef.current,
+          expiration_month: cardExpirationRef.month(),
+          expiration_year: cardExpirationRef.year(),
+          cvc: cardVerificationRef.current,
+        },
+        fingerprintExpression: '{{ data.number }}',
+        deduplicateToken: true,
+        mask: {
+          number:'{{ data.number | card_mask: "true", "true" }}',
+          expiration_month: '{{ data.expiration_month }}',
+          expiration_year: '{{ data.expiration_year }}',
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (...);
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+class ViewController: UIViewController {
+      // highlight-start
+      func generateTokenId() -> String {
+          let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+          var tokenId = "card_"
+          for _ in 1...24 {
+              let randomIndex = Int(arc4random_uniform(UInt32(chars.count)))
+              let randomChar = chars[chars.index(chars.startIndex, offsetBy: randomIndex)]
+              tokenId.append(randomChar)
+          }
+          return tokenId
+      }
+      //highlight-end
+      @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            // highlight-next-line
+            "id": generateTokenId(),
+            "type": "card",
+            "data": [
+                "number": self.cardNumberTextField,
+                "expiration_month": self.expirationDateTextField.month(),
+                "expiration_year": self.expirationDateTextField.year(),
+                "cvc": self.cvcTextField
+            ],
+            "fingerprint_expression": "{{ data.number }}",
+            "deduplicate_token": true,
+            "mask": [
+                "number": "{{ data.number | card_mask: 'true', 'true' }}",
+                "expiration_month": "{{ data.expiration_month }}",
+                "expiration_year": "{{ data.expiration_year }}"
+            ],
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: config.btApiKey!) { token, error in
+            guard error == nil else {
+                print(error)
+                return
+            }
+        }
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+    // highlight-start
+    fun generateTokenId(): String {
+      val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+      val tokenId = StringBuilder("card_")
+      repeat(24) {
+        tokenId.append(allowedChars.random())
+      }
+      return tokenId.toString()
+    }
+    // highlight-end
+
+    private fun submit() {
+      val token = runBlocking {
+        bt.tokens.create(object {
+          // highlight-next-line
+          val id = this.generateTokenId()
+          val type = "card"
+          val data = object {
+            val number = cardNumberElement
+            val expiration_month = cardExpirationDateElement.month()
+            val expiration_year = cardExpirationDateElement.year()
+            val cvc = cardVerificationCodeElement
+          }
+          val fingerprint_expression = "{{ data.number }}"
+          val deduplicate_token = true
+          val mask = object {
+            val number = "{{ data.number | card_mask: 'true', 'true' }}"
+            val expiration_month = "{{ data.expiration_month }}"
+            val expiration_year = "{{ data.expiration_year }}"
+          }
+        })
+      }
+    }
+}
+```
+  </TabItem>
+</Tabs>
+
+The returned token object should now have a custom identifier:
+
+```json showLineNumbers title=token.json
+{
+  // highlight-next-line
+  "id": "card_1Mxqr82eZvKYlo2CSaatci3m",
+  "type": "card",
+  "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+  "data": {
+    "number": "42424242XXXX4242",
+    "expiration_month": 12,
+    "expiration_year": 2025
+  },
+  "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+  "created_at": "2023-04-17T12:54:44.8320458+00:00",
+  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
+  "fingerprint_expression": "{{ data.number }}",
+  "mask": {
+    "number": "{{ data.number | card_mask: 'true', 'true' }}",
+    "expiration_month": "{{ data.expiration_month }}",
+    "expiration_year": "{{ data.expiration_year }}"
+  },
+  "privacy": {
+    "classification": "pci",
+    "impact_level": "high",
+    "restriction_policy": "mask"
+  },
+  "search_indexes": [],
+  "containers": [
+    "/pci/high/"
+  ]
+}
+```
+
+Aliasing also supports passing custom data-bound expressions, that can generate length and format-preserving token identifiers. [Click here to learn more about Aliasing](/docs/expressions/aliasing).
+
+[//]: # (TODO: add 6-8 digit BIN + last 4 example, )
 
 ## Conclusion
 
-By following the best practices prescribed in this guide, you can ensure that your user-facing applications are compliant with the latest security standards while protecting your users' sensitive data. The `token.id` obtained at the end of the [Storing Cards](#storing-cards) section is a synthetic replacement for the sensitive data and can be safely stored in your database, meeting compliance requirements and reducing the risk of exposure in case of data breaches.
+By following the best practices prescribed in this guide, you can ensure that your user-facing applications are compliant with the latest security standards while protecting your users' sensitive card data. The `token.id` obtained at the end of the [Storing Cards](#storing-cards) section is a synthetic replacement for the sensitive data and can be safely stored in your database, or transmitted through your systems, meeting compliance requirements and reducing the risk of exposure in case of data breaches.
 
-TODO: add next steps
+The optional [customization steps](#customizing-tokens) are meant for showcase platform capabilities that go beyond the examples given. Make sure to explore the provided links within each subsection to learn more about the possibilities for customization.
+
+For next steps, take a look at the following guides to proceed taking the most value of your secured card tokens:
+
+[//]: # (TODO: Replace the first link with the new "Process Card Payments" guide, when done)
+- [Process Card Payments](/docs/guides/share/send-data-to-third-party)
+- [Search Data](/docs/guides/process/search-data)
+- [Analyze Data](/docs/guides/process/analyze-data)
