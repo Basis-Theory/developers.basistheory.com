@@ -1,3 +1,10 @@
+# [1.38.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.37.2...v1.38.0) (2023-04-17)
+
+
+### Features
+
+* update doc titles and meta descriptions ([#103](https://github.com/Basis-Theory/developers.basistheory.com/issues/103)) ([9f2c7d7](https://github.com/Basis-Theory/developers.basistheory.com/commit/9f2c7d752a57258cf2346648e5ef1515b9fabf4b))
+
 ## [1.37.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.37.1...v1.37.2) (2023-04-10)
 
 
