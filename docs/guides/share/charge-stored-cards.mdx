@@ -1,3 +1,7 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert } from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 
 # Charge Stored Cards
@@ -6,21 +10,7 @@ Storing your customers' cards with Basis Theory platform grants you the ability 
 
 This guide will explore how to forward stored cardholder data to any third party API endpoint, with minimal configuration requirements.
 
-```mermaid
----
-title: Charge Stored Cards Flowchart
----
-flowchart LR
-    server[Server Application]
-    3rdparty[3rd Party]
-    server --Payload + token---> api
-    api --Payload + Cardholder data--> 3rdparty
-    subgraph ide1 [Basis Theory]
-    api[API]
-    vault[(Vault)]
-    vault--Cardholder data-->api
-    end
-```
+[![Charge Stored Cards](/img/guides/share/charge-stored-cards-flowchart.png)](https://mermaid.live/edit#pako:eNpdUctOwzAQ_BVrT1RKSvNuckAqICQkkCpacSDpYalNY5HYkeMApeq_s0kfAnzx7Hh2Z-TdwVpzARm4rlsoK20lMnZTotkItrDaCM5u0PCW3VX6c028LdQgfTvV7OGpUIxOK8yHMPliuNisaSq5Riu1Wh3eA8Mb0m9zAmzeo9XvRkZTYY7bSiNn7POSLfW7UBftqOizXTFs5EFO4I-WpH3EUlecpnC02Hdcnf2OJt3rxmBTMsmFx_JrbGXLlqXQ5hSD5uaz-f2x-sCusvnFc3-NfnOu-8-NvM7ZhOLgQC1MjZLTr-56ugBbiloUkBHkaN4LKNSedNhZvdiqNWTWdMKBrqF54lYiJa0he8OqJbZBBdkOviBLxmkY-2ns-dM4SBIHtpC5wdjz_SgO09CPwsiLwr0D31pTvzeeJFGa-t5kmsZxEkw8BwSXtNXHw86H1Q8GL0PDYLj_AYXeqCw)
 
 If you are not yet storing your customers' cards with Basis Theory, here are a few guides you can explore:
 
@@ -45,7 +35,193 @@ This will create an application with the following [Access Controls](/docs/conce
 * Transform: `reveal`
 
 <Alert>
-  Save the API Key from the created Private Application as it will be used later in this guide.
+  Save the API Key from the created Private Application as it will be used in the next steps of this guide.
 </Alert>
 
+## Send the Data
 
+We will use Basis Theory [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) to (internally) detokenize the cardholder data and share to the Payments Processor or Acquirer API. To do this, we will formulate our HTTPS request as if we were directly connecting to the target endpoint, with the following variations:
+
+1. Use the previously-created Private Application Key as the value of the `BT-API-KEY` header;
+2. Specify the target API endpoint as the value for the `BT-PROXY-URL` header;
+4. Pass any additional headers you need the target API to receive, for example `Authorization` or `X-API-KEY`;
+3. Replace the plaintext sensitive cardholder data in the expected payload contents with [detokenization expressions](/docs/expressions/detokenization) that contains token identifiers.
+
+For example, given you have a previously stored card token with the following identifier:
+
+```json showLineNumbers title=token.json
+{
+// highlight-next-line
+  "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+  "type": "card",
+  "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+  "data": {
+    "number": "XXXXXXXXXXXX4242",
+    "expiration_month": 12,
+    "expiration_year": 2025
+  },
+  "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+  "created_at": "2023-04-17T12:54:44.8320458+00:00",
+  "mask": {
+    "number": "{{ data.number | reveal_last: 4 }}",
+    "expiration_month": "{{ data.expiration_month }}",
+    "expiration_year": "{{ data.expiration_year }}"
+  },
+  "privacy": {
+    "classification": "pci",
+    "impact_level": "high",
+    "restriction_policy": "mask"
+  },
+  "search_indexes": [],
+  "containers": [
+    "/pci/high/"
+  ]
+}
+```
+
+Here are a few integration examples of how to send the underlying card information to well-known third party APIs.
+
+<Tabs className="bt-tabs" queryString="processor">
+  <TabItem value="stripe" label="Stripe">
+
+```shell showLineNumbers title="Create a Payment Method"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: test_1234567890' \
+-H 'BT-PROXY-URL: https://api.stripe.com/v1/payment_methods' \
+-H 'Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4' \
+// highlight-end
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'type=card' \
+// highlight-start
+--data-urlencode 'card[number]={{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.number" }}' \
+--data-urlencode 'card[exp_month]={{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.expiration_month" }}' \
+--data-urlencode 'card[exp_year]={{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.expiration_year" }}' \
+--data-urlencode 'card[cvc]={{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.cvc" }}'
+// highlight-end
+```
+
+[Stripe Payment Method Docs](https://stripe.com/docs/api/payment_methods/create)
+
+  </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+```shell showLineNumbers title="Create Checkout"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: test_1234567890' \
+-H 'BT-PROXY-URL: https://checkout-test.adyen.com/v69/payments' \
+-H 'X-API-KEY: Vt(JJ5U5xuVECtg59fm9hBM+cZMWhw+ms2edxM%Rwmu0=Z2n3rGiQjQr-YEYfAq((It-Ocb03Jfob1JqGhogg:J/skGLIwerM=uAuHQDFHZBh+75pKgznYB3QeL7mrnBSeh34YAxLjdGEJQAhKdaU2' \
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+   "amount": {
+      "value": 100,
+      "currency": "USD"
+   },
+   "paymentMethod": {
+      "type": "scheme",
+      // highlight-start
+      "number": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
+      "expiryMonth": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}",
+      "expiryYear": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}",
+      "cvc": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.cvc\" }}",
+      // highlight-end
+      "holderName": "John Smith"
+   },
+   "reference": "YOUR_ORDER_NUMBER",
+   "shopperInteraction": "Ecommerce",
+   "recurringProcessingModel": "CardOnFile",
+   "storePaymentMethod": "true",
+   "merchantAccount": "BasisTheoryECOM",
+   "shopperReference": "YOUR_UNIQUE_SHOPPER_ID",
+   "returnUrl": "https://your-company.com/..."
+}'
+```
+
+[Adyen Checkout Docs](https://docs.adyen.com/online-payments/tokenization/create-and-use-tokens)
+
+  </TabItem>
+  <TabItem value="chase" label="Chase">
+
+```shell showLineNumbers title="Add Profile"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: test_1234567890' \
+-H 'BT-PROXY-URL: https://checkout-test.adyen.com/v69/payments' \
+-H 'X-API-KEY: Vt(JJ5U5xuVECtg59fm9hBM+cZMWhw+ms2edxM%Rwmu0=Z2n3rGiQjQr-YEYfAq((It-Ocb03Jfob1JqGhogg:J/skGLIwerM=uAuHQDFHZBh+75pKgznYB3QeL7mrnBSeh34YAxLjdGEJQAhKdaU2' \
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "version": "4.3",
+  "transType": "AC",
+  "merchant": {
+    "bin": "000001",
+    "terminalID": "001"
+  },
+  "order": {
+    "orderID": "akbk26",
+    "comments": "Website payments2",
+    "industryType": "EC",
+    "amount": "1000"
+  },
+  "paymentInstrument": {
+    "card": {
+      "cardBrand": "MC",
+      "ccAccountNum": "5454545454545454",
+      "ccExp": "222506"
+    }
+  },
+  "profile": {
+    "addProfileFromOrder": "S",
+    "customerRefNum": "myprofile01",
+    "profileOrderOverideInd": "NO"
+  }
+}'
+```
+
+[Chase Payments Docs](https://developer.jpmorgan.com/products/orbital-api/guides/store-a-card)
+
+  </TabItem>
+  <TabItem value="braintree" label="Braintree">
+  </TabItem>
+  <TabItem value="tabapay" label="TabaPay">
+  </TabItem>
+</Tabs>
+
+{
+  "version": "4.3",
+  "transType": "AC",
+  "merchant": {
+    "bin": "000001",
+    "terminalID": "001"
+  },
+  "order": {
+    "orderID": "akbk26",
+    "comments": "Website payments2",
+    "industryType": "EC",
+    "amount": "1000"
+  },
+  "paymentInstrument": {
+    "card": {
+      "cardBrand": "MC",
+      "ccAccountNum": "5454545454545454",
+      "ccExp": "222506"
+    }
+  },
+  "profile": {
+    "addProfileFromOrder": "S",
+    "customerRefNum": "myprofile01",
+    "profileOrderOverideInd": "NO"
+  }
+}
+
+
+- IP whitelisting
+- Sensitive data return
+- Test Data
+
+## Conclusion
