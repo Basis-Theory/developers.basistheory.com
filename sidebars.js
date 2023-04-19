@@ -62,7 +62,7 @@ const sidebars = {
         id: "guides/share/index",
       },
       items: [
-        "guides/share/charge-stored-cards",
+        "guides/share/process-card-payments",
         "guides/share/send-data-to-third-party",
         "guides/share/display-masked-data",
         "guides/share/reveal-tokenized-data",

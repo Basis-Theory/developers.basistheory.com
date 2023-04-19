@@ -4,11 +4,11 @@ import TabItem from "@theme/TabItem";
 import { Alert } from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 
-# Charge Stored Cards
+# Process Card Payments
 
-Storing your customers' cards with Basis Theory platform grants you the ability to seamlessly shift between payment processors, giving you competitive advantages including payment flexibility, reliability, cost savings, increased acceptance rates and future-proofing your business in case of processor shutdown.
+Storing your customers' cards with Basis Theory platform grants you the ability to seamlessly shift between payment processors and give you competitive advantages including payment flexibility, reliability, cost savings, increased acceptance rates and future-proofing your business in case of processor shutdown.
 
-This guide will explore how to forward stored cardholder data to any third party API endpoint, with minimal configuration requirements.
+This guide will explore how to forward stored cardholder data to any third party API endpoint, with minimal configuration requirements. By following the steps presented below, you are substantially de-scoping your servers and database from PCI DSS compliance. If you want to learn more how we can help you meet up to 95% of the PCI requirements, or if you need help filling out your SAQ, [reach out to our team](https://basistheory.com/contact)!
 
 [![Charge Stored Cards](/img/guides/share/charge-stored-cards-flowchart.png)](https://mermaid.live/edit#pako:eNpdUctOwzAQ_BVrT1RKSvNuckAqICQkkCpacSDpYalNY5HYkeMApeq_s0kfAnzx7Hh2Z-TdwVpzARm4rlsoK20lMnZTotkItrDaCM5u0PCW3VX6c028LdQgfTvV7OGpUIxOK8yHMPliuNisaSq5Riu1Wh3eA8Mb0m9zAmzeo9XvRkZTYY7bSiNn7POSLfW7UBftqOizXTFs5EFO4I-WpH3EUlecpnC02Hdcnf2OJt3rxmBTMsmFx_JrbGXLlqXQ5hSD5uaz-f2x-sCusvnFc3-NfnOu-8-NvM7ZhOLgQC1MjZLTr-56ugBbiloUkBHkaN4LKNSedNhZvdiqNWTWdMKBrqF54lYiJa0he8OqJbZBBdkOviBLxmkY-2ns-dM4SBIHtpC5wdjz_SgO09CPwsiLwr0D31pTvzeeJFGa-t5kmsZxEkw8BwSXtNXHw86H1Q8GL0PDYLj_AYXeqCw)
 
@@ -40,12 +40,12 @@ This will create an application with the following [Access Controls](/docs/conce
 
 ## Send the Data
 
-We will use Basis Theory [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) to (internally) detokenize the cardholder data and share to the Payments Processor or Acquirer API. To do this, we will formulate our HTTPS request as if we were directly connecting to the target endpoint, with the following variations:
+We will use Basis Theory [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) to detokenize the cardholder data internally and share to the Payments Processor or Acquirer API. To do this, we will formulate our HTTPS request as if we were directly connecting to the target endpoint, with the following variations:
 
 1. Use the previously-created Private Application Key as the value of the `BT-API-KEY` header;
 2. Specify the target API endpoint as the value for the `BT-PROXY-URL` header;
-4. Pass any additional headers you need the target API to receive, for example `Authorization` or `X-API-KEY`;
-3. Replace the plaintext sensitive cardholder data in the expected payload contents with [detokenization expressions](/docs/expressions/detokenization) that contains token identifiers.
+3. Pass any additional headers you need the target API to receive, for example `Authorization`, `X-API-KEY`, etc.;
+4. Replace the plaintext sensitive cardholder data in the expected payload contents with [detokenization expressions](/docs/expressions/detokenization) that contains token identifiers.
 
 For example, given you have a previously stored card token with the following identifier:
 
@@ -79,7 +79,7 @@ For example, given you have a previously stored card token with the following id
 }
 ```
 
-Here are a few integration examples of how to send the underlying card information to well-known third party APIs.
+Here are a few integration examples of how to send the detokenized card information to third party APIs.
 
 <Tabs className="bt-tabs" queryString="processor">
   <TabItem value="stripe" label="Stripe">
@@ -194,13 +194,62 @@ curl 'https://api.basistheory.com/proxy' \
 
   </TabItem>
   <TabItem value="tabapay" label="TabaPay">
-    
+
+```shell showLineNumbers title="Create Account"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: test_1234567890' \
+-H 'BT-PROXY-URL: https://api.tabapay.net/v1/clients/MyClientID/accounts' \
+-H 'Authorization: Bearer 123' \
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "card": {
+    // highlight-start
+    "accountNumber": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
+    "expirationDate": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}"
+    // highlight-end
+  },
+  "owner": {
+    "name": {
+      "first": "John",
+      "last": "Smith"
+    },
+    "address": {
+      "line1": "123 Main St",
+      "city": "Tampa",
+      "state": "FL",
+      "zipcode": "33601"
+    }
+  },
+  "referenceID": "reference_123"
+}'
+```
+
+[TabaPay Account Docs](https://developers.tabapay.com/reference/accountcreate)
   </TabItem>
 </Tabs>
 
+## Key Considerations
 
-- IP whitelisting
-- Sensitive data return
-- Test Data
+**You are not restricted** to the Payment Processors listed above. As long as your partner can accept cards through an API endpoint, you can invoke it using the Ephemeral Proxy.
+
+If you find that the HTTPS response from your processor contains cardholder data, you can use a [Pre-Configured Proxy](/docs/api/proxies/pre-configured-proxies) to redact or tokenize the sensitive data points using a [Response Transform](/docs/api/proxies/pre-configured-proxies#response-transforms).
+
+Some acquirers only accept inbound connections from whitelisted IP addresses. [Here](/docs/api/ip-addresses) you can find our full list. Basis Theory can also provide dedicated IPs for the more restrictive integrations. [Contact us](https://basistheory.com/contact) if you are interested.
+
+It's important to note that for some acquirers, inbound connections are only accepted from whitelisted IP addresses provided by the client. To help with this, [here](/docs/api/ip-addresses) you can find a compiled list of our IP addresses that you can send to your acquirer. In cases of more restrictive integrations, Basis Theory can provide dedicated IPs upon request. If you're interested in this option, please don't hesitate to [contact us](https://basistheory.com/contact).
+
+During testing phase, make sure to create tokens using test cards documented by your payment processor, following the desired test scenario. Passing incorrect cards to test/sandbox endpoints may lead to rejected hard-to-debug transactions.
 
 ## Conclusion
+
+By using this solution, you can confidently transmit cardholder data to Payment Processors via API requests without ever touching the sensitive information yourself. This approach not only improves security and reduces compliance risks but also provides the flexibility to establish your own relationships with Payment Processors.
+
+With the Ephemeral Proxy, you can work with a broad range of processors and leverage the latest payment technologies, all while adhering to industry best practices. We hope this integration guide has been informative and helpful, and we welcome your feedback and questions as you continue to use our product.
+
+## Learn More
+
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [What is the Proxy](/docs/concepts/what-is-the-proxy)
