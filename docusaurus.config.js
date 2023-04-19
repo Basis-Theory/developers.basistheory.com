@@ -6,7 +6,7 @@ const darkCodeTheme = require("./prism-custom-themes/dark");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Basis Theory Developer Docs",
+  title: "Basis Theory Developer Documentation",
   url: "https://developers.basistheory.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
