@@ -117,27 +117,27 @@ curl 'https://api.basistheory.com/proxy' \
 // highlight-end
 -H 'Content-Type: application/json' \
 -d '{
-   "amount": {
-      "value": 100,
-      "currency": "USD"
-   },
-   "paymentMethod": {
-      "type": "scheme",
-      // highlight-start
-      "number": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
-      "expiryMonth": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}",
-      "expiryYear": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}",
-      "cvc": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.cvc\" }}",
-      // highlight-end
-      "holderName": "John Smith"
-   },
-   "reference": "YOUR_ORDER_NUMBER",
-   "shopperInteraction": "Ecommerce",
-   "recurringProcessingModel": "CardOnFile",
-   "storePaymentMethod": "true",
-   "merchantAccount": "BasisTheoryECOM",
-   "shopperReference": "YOUR_UNIQUE_SHOPPER_ID",
-   "returnUrl": "https://your-company.com/..."
+  "amount": {
+    "value": 100,
+    "currency": "USD"
+  },
+  "paymentMethod": {
+    "type": "scheme",
+    // highlight-start
+    "number": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
+    "expiryMonth": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}",
+    "expiryYear": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}",
+    "cvc": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.cvc\" }}",
+    // highlight-end
+    "holderName": "John Smith"
+  },
+  "reference": "YOUR_ORDER_NUMBER",
+  "shopperInteraction": "Ecommerce",
+  "recurringProcessingModel": "CardOnFile",
+  "storePaymentMethod": "true",
+  "merchantAccount": "BasisTheoryECOM",
+  "shopperReference": "YOUR_UNIQUE_SHOPPER_ID",
+  "returnUrl": "https://your-company.com/..."
 }'
 ```
 
@@ -151,34 +151,41 @@ curl 'https://api.basistheory.com/proxy' \
 -X 'POST' \
 // highlight-start
 -H 'BT-API-KEY: test_1234567890' \
--H 'BT-PROXY-URL: https://checkout-test.adyen.com/v69/payments' \
--H 'X-API-KEY: Vt(JJ5U5xuVECtg59fm9hBM+cZMWhw+ms2edxM%Rwmu0=Z2n3rGiQjQr-YEYfAq((It-Ocb03Jfob1JqGhogg:J/skGLIwerM=uAuHQDFHZBh+75pKgznYB3QeL7mrnBSeh34YAxLjdGEJQAhKdaU2' \
+-H 'BT-PROXY-URL: https://orbitalvar1.chasepaymentech.com/profile' \
+-H 'OrbitalConnectionUsername: TESTMYCOMPANY1234' \
+-H 'OrbitalConnectionPassword: f1nwbj32VwW36tV16s55' \
 // highlight-end
 -H 'Content-Type: application/json' \
 -d '{
   "version": "4.3",
-  "transType": "AC",
   "merchant": {
     "bin": "000001",
     "terminalID": "001"
   },
   "order": {
-    "orderID": "akbk26",
-    "comments": "Website payments2",
-    "industryType": "EC",
-    "amount": "1000"
+    "customerProfileFromOrderInd": "S",
+    "customerProfileOrderOverideInd": "NO",
+    "orderDefaultAmount": "500"
   },
   "paymentInstrument": {
+    "customerAccountType": "CC",
     "card": {
-      "cardBrand": "MC",
-      "ccAccountNum": "5454545454545454",
-      "ccExp": "222506"
+      // highlight-start
+      "ccAccountNum": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
+      "ccExp": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}"
+      // highlight-end
     }
   },
   "profile": {
-    "addProfileFromOrder": "S",
-    "customerRefNum": "myprofile01",
-    "profileOrderOverideInd": "NO"
+    "customerName": "John Smith",
+    "customerAddress1": "123 Main St",
+    "customerCity": "Tampa",
+    "customerState": "FL",
+    "customerZIP": "33601",
+    "customerEmail": "email@email.com",
+    "customerPhone": "1234561234",
+    "customerCountryCode": "US",
+    "customerRefNum": "myprofile10"
   }
 }'
 ```
@@ -186,38 +193,10 @@ curl 'https://api.basistheory.com/proxy' \
 [Chase Payments Docs](https://developer.jpmorgan.com/products/orbital-api/guides/store-a-card)
 
   </TabItem>
-  <TabItem value="braintree" label="Braintree">
-  </TabItem>
   <TabItem value="tabapay" label="TabaPay">
+    
   </TabItem>
 </Tabs>
-
-{
-  "version": "4.3",
-  "transType": "AC",
-  "merchant": {
-    "bin": "000001",
-    "terminalID": "001"
-  },
-  "order": {
-    "orderID": "akbk26",
-    "comments": "Website payments2",
-    "industryType": "EC",
-    "amount": "1000"
-  },
-  "paymentInstrument": {
-    "card": {
-      "cardBrand": "MC",
-      "ccAccountNum": "5454545454545454",
-      "ccExp": "222506"
-    }
-  },
-  "profile": {
-    "addProfileFromOrder": "S",
-    "customerRefNum": "myprofile01",
-    "profileOrderOverideInd": "NO"
-  }
-}
 
 
 - IP whitelisting
