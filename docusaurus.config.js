@@ -26,6 +26,12 @@ const config = {
     locales: ["en"],
   },
 
+  // Mermaid
+  markdown: {
+    mermaid: true,
+  },
+  themes: ["@docusaurus/theme-mermaid"],
+
   presets: [
     [
       "@docusaurus/preset-classic",
@@ -97,6 +103,27 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
         additionalLanguages: ["csharp", "hcl", "kotlin", "swift", "java"],
+      },
+      mermaid: {
+        theme: {
+          light: "neutral",
+          dark: "dark",
+        },
+        options: {
+          themeVariables: {
+            // Base
+            fontFamily: "var(--bt-mermaid-font-family)",
+            mainBkg: "rgba(150, 158, 194, 0.25)", // doesn't accept vars
+            textColor: "var(--bt-mermaid-text-color)",
+            // Flowchart
+            nodeBorder: "var(--bt-mermaid-node-border)",
+            clusterBkg: "var(--bt-mermaid-cluster-bkg)",
+            clusterBorder: "var(--bt-mermaid-cluster-border)",
+            titleColor: "var(--bt-mermaid-title-color)",
+            edgeLabelBackground: "var(--bt-mermaid-edge-label-background)",
+            nodeTextColor: "var(--bt-mermaid-node-text-color)",
+          },
+        },
       },
       colorMode: {
         defaultMode: "dark",

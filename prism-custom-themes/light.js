@@ -1,7 +1,7 @@
 module.exports = {
   plain: {
     color: "#434155",
-    backgroundColor: "#F9FAFF",
+    backgroundColor: "var(--bt-code-block-background-color)",
   },
   styles: [
     {
