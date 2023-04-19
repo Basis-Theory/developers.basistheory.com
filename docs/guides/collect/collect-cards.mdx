@@ -312,19 +312,13 @@ export default function App() {
   </TabItem>
   <TabItem value="ios" label="iOS">
 
-```text
-CardElement is not yet available for iOS. If you need this feature, please let us know.
+CardElement is not yet available for iOS. If you need this feature, [please let us know](https://basistheory.com/contact).
 
-https://basistheory.com/contact
-```
   </TabItem>
   <TabItem value="android" label="Android">
 
-```text
-CardElement is not yet available for Android. If you need this feature, please let us know.
+CardElement is not yet available for Android. If you need this feature, [please let us know](https://basistheory.com/contact).
 
-https://basistheory.com/contact
-```
   </TabItem>
 </Tabs>
 
@@ -599,7 +593,7 @@ The created card `token` object contains the non-sensitive information about the
 
 You can safely store the token's primary key `id` in your database to link it with the appropriate checkout, user profile, subscription, or any other record that requires association with the card.
 
-Notice how the card `number`, also known as Primary Account Number (PAN), has been masked before it is returned to your application. This default behavior prevents your application being pulled in PCI DSS scope, for it only comes in contact with a truncated portion of the cardholder data. Later in this guide we will learn how to [customize masking](#masking).
+Notice how the card `number`, also known as Primary Account Number (PAN), has been masked before it is returned to your application. This default behavior prevents your application being pulled in additional PCI DSS scope, since it only comes in contact with a truncated portion of the cardholder data. Later in this guide we will learn how to [customize masking](#masking).
 
 ## Customizing Tokens
 
@@ -607,9 +601,9 @@ The steps so far cover most cases when you need to collect cards in your fronten
 
 ### Deduplication
 
-Companies often find it necessary to uniquely identify cards flowing through their systems for various reasons, which may include: preventing fraudulent transactions, detecting abuse of credit cards, building consumer profiles or streamlining payment processing for a better user experience.
+Companies often find it necessary to uniquely identify cards flowing through their systems for various reasons, which may include: preventing fraudulent transactions, detecting credit cards abuse, building consumer profiles or streamlining payment processing for a better user experience.
 
-By leveraging [token fingerprinting](/docs/concepts/what-are-tokens#fingerprinting), developers can recognize the tokenized data in a customizable fashion, without having to come in contact with the plaintext data. For cards, it is common to index in the Primary Account Number (PAN). In some cases the expiration date may also be considered.
+By leveraging [token fingerprinting](/docs/concepts/what-are-tokens#fingerprinting), developers can recognize the tokenized data in a customizable fashion, without having to touch with the plaintext data. For cards, it is common to index in the Primary Account Number (PAN). In some cases the expiration date may also be considered.
 
 When making the tokenization request to store the card, pass a fingerprint expression to instruct Basis Theory to calculate the fingerprint for the sensitive data field:
 
@@ -872,7 +866,7 @@ By doing the above, you are instructing Basis Theory to return the existing toke
 
 By default, card tokens are created with a mask revealing only the last 4 digits of the card number. This is useful for generating receipts and payment history, displaying the card to the end-user without revealing the full number, etc.
 
-In other scenarios, being able to preserve the Bank Identification Number (BIN) from the card number can enable fraud detection, payment processing, customer service or account management. [PCI DSS allows](https://www.pcisecuritystandards.org/faq/articles/Frequently_Asked_Question/What-are-acceptable-formats-for-truncation-of-primary-account-numbers/) applications to reveal up to the first 8 and last 4 digits of a card number, depending on its length and Payment Brand. Luckily, when creating a token, you can express what segments of the PAN are useful to you with a single expressions filter: `card_mask`.
+In other scenarios, being able to preserve the Bank Identification Number (BIN) from the card number can enable fraud detection, payment processing, customer service or account management. [PCI DSS allows](https://www.pcisecuritystandards.org/faq/articles/Frequently_Asked_Question/What-are-acceptable-formats-for-truncation-of-primary-account-numbers/) applications to reveal up to the first 8 and last 4 digits of a card number, depending on its length and Payment Brand. Luckily, when creating a token, you can express which segments of the PAN are useful to you with a single expressions filter: `card_mask`. [Click here to learn more about this filter](/docs/expressions/filters#card_mask).
 
 <Tabs className="bt-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
@@ -1045,7 +1039,7 @@ In the example above, we instruct Basis Theory to reveal both segments, without 
 
 While storing or transmitting tokens between systems, you may encounter restrictive technical constraints that can draw the default token Universally Unique Identifier (UUID) incompatible.
 
-In the example below, we will pass a predefined token `id` that follows a custom logic, which resembles an alternative format used in the payments industry:
+In the example below, we will pass a predefined token `id` that follows a custom logic, which resembles an alternative format used in the payments industry. This capability enables Token Portability, and it can be specially useful in migration scenarios.
 
 <Tabs className="bt-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
@@ -1263,7 +1257,7 @@ Aliasing also supports passing custom data-bound expressions, that can generate 
 
 The best practices prescribed in this guide ensure that your user-facing applications are compliant with the PCI-DSS standards and your users' sensitive card data is protected. The `token.id` obtained at the end of the [Storing Cards](#storing-cards) section is a synthetic replacement for the sensitive data and can be safely stored in your database, or transmitted through your systems, meeting compliance requirements and reducing the risk of exposure in case of data breaches.
 
-The optional [customization steps](#customizing-tokens) are meant for showcase platform capabilities that go beyond the examples given. Make sure to explore the provided links within each subsection to learn more about the possibilities for customization.
+The optional [customization steps](#customizing-tokens) are meant to showcase platform capabilities that go beyond the examples given. Make sure to explore the provided links within each subsection to learn more about the possibilities for customization.
 
 For next steps, take a look at the following guides to proceed taking the most value of your secured card tokens:
 
