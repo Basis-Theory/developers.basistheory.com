@@ -1,3 +1,10 @@
+# [1.39.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.38.0...v1.39.0) (2023-04-19)
+
+
+### Features
+
+* add Collect Cards guide ([#102](https://github.com/Basis-Theory/developers.basistheory.com/issues/102)) ([2488646](https://github.com/Basis-Theory/developers.basistheory.com/commit/24886467fa8b6db615ca10064f3f6326add5a72e))
+
 # [1.38.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.37.2...v1.38.0) (2023-04-17)
 
 
