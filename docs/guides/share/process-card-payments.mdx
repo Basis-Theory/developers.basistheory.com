@@ -152,20 +152,19 @@ curl 'https://api.basistheory.com/proxy' \
 // highlight-start
 -H 'BT-API-KEY: test_1234567890' \
 -H 'BT-PROXY-URL: https://orbitalvar1.chasepaymentech.com/profile' \
--H 'OrbitalConnectionUsername: TESTMYCOMPANY1234' \
--H 'OrbitalConnectionPassword: f1nwbj32VwW36tV16s55' \
+-H 'orbitalConnectionUsername: TESTMYCOMPANY1234' \
+-H 'orbitalConnectionPassword: f1nwbj32VwW36tV16s55' \
+-H 'merchantID: MERCHANTID1234' \
 // highlight-end
 -H 'Content-Type: application/json' \
 -d '{
   "version": "4.3",
   "merchant": {
-    "bin": "000001",
-    "terminalID": "001"
+    "bin": "000001"
   },
   "order": {
-    "customerProfileFromOrderInd": "S",
-    "customerProfileOrderOverideInd": "NO",
-    "orderDefaultAmount": "500"
+    "customerProfileFromOrderInd": "A",
+    "customerProfileOrderOverideInd": "NO"
   },
   "paymentInstrument": {
     "customerAccountType": "CC",
@@ -181,11 +180,7 @@ curl 'https://api.basistheory.com/proxy' \
     "customerAddress1": "123 Main St",
     "customerCity": "Tampa",
     "customerState": "FL",
-    "customerZIP": "33601",
-    "customerEmail": "email@email.com",
-    "customerPhone": "1234561234",
-    "customerCountryCode": "US",
-    "customerRefNum": "myprofile10"
+    "customerZIP": "33601"
   }
 }'
 ```
@@ -208,7 +203,8 @@ curl 'https://api.basistheory.com/proxy' \
   "card": {
     // highlight-start
     "accountNumber": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
-    "expirationDate": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}"
+    "expirationDate": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}",
+    "securityCode": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.cvc\" }}"
     // highlight-end
   },
   "owner": {
