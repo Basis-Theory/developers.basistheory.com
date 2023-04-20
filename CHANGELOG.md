@@ -1,3 +1,10 @@
+# [1.40.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.39.0...v1.40.0) (2023-04-20)
+
+
+### Features
+
+* add "Process Card Payments" guide ([#104](https://github.com/Basis-Theory/developers.basistheory.com/issues/104)) ([0bfb6a3](https://github.com/Basis-Theory/developers.basistheory.com/commit/0bfb6a313a5a4861713d065070c84084b40ff17d))
+
 # [1.39.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.38.0...v1.39.0) (2023-04-19)
 
 
