@@ -1,3 +1,10 @@
+# [1.41.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.40.0...v1.41.0) (2023-04-21)
+
+
+### Features
+
+* add "collect cards with your inputs" guide ([#106](https://github.com/Basis-Theory/developers.basistheory.com/issues/106)) ([744fb91](https://github.com/Basis-Theory/developers.basistheory.com/commit/744fb918eb84cdbddc1dd83f1d52e91afee4c370))
+
 # [1.40.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.39.0...v1.40.0) (2023-04-20)
 
 
