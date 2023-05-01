@@ -1,3 +1,10 @@
+## [1.41.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.41.0...v1.41.1) (2023-05-01)
+
+
+### Bug Fixes
+
+* Fixing whitespace rendering issue ([#109](https://github.com/Basis-Theory/developers.basistheory.com/issues/109)) ([1a172d5](https://github.com/Basis-Theory/developers.basistheory.com/commit/1a172d5b3bdbcb2b198e47dddc2b1d5077dc46ec))
+
 # [1.41.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.40.0...v1.41.0) (2023-04-21)
 
 
