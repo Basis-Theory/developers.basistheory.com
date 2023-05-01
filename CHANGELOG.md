@@ -1,3 +1,10 @@
+## [1.41.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.41.1...v1.41.2) (2023-05-01)
+
+
+### Bug Fixes
+
+* Update example Gradle repository ([#108](https://github.com/Basis-Theory/developers.basistheory.com/issues/108)) ([dd06cf1](https://github.com/Basis-Theory/developers.basistheory.com/commit/dd06cf1b582c6ac0520b0e473e663830403a07b1))
+
 ## [1.41.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.41.0...v1.41.1) (2023-05-01)
 
 
