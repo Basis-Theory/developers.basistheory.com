@@ -8,7 +8,7 @@ import { Alert } from "@site/src/components/shared/Alert";
 
 ## Mask
 
-A [`TextElementUITextField`](/docs/sdks/mobile/ios/types#text-element-ui-text-field) can restrict and fill user input by using the mask attribute.
+A [`TextElementUITextField`](/docs/sdks/mobile/ios/types#textelementuitextfield) can restrict and fill user input by using the mask attribute.
 It consists of an array of `NSRegularExpression` objects and Strings, used to restrict and fill input, respectively.
 The position of each item in the mask array corresponds to the restriction or fill used for that input's position.
 The length of the array determines how long an input is allowed to be.
@@ -17,7 +17,7 @@ For example, the mask for a US based phone number shown below will have the foll
 ```swift showLineNumbers
 let regexDigit = try! NSRegularExpression(pattern: "\\d")
 
-let phoneMask = [ //(123)456-7890
+let phoneMask = [ // (123)456-7890
   "(",
   regexDigit,
   regexDigit,
@@ -46,7 +46,7 @@ The mask will be displayed as the user is typing, and will be used as the value 
 
 ## Transform
 
-A [`TextElementUITextField`](/docs/sdks/mobile/ios/types#text-element-ui-text-field) allows you to modify user input before tokenization through the `transform` attribute. It’s a struct that takes in an `NSRegularExpression` and a `String`.
+A [`TextElementUITextField`](/docs/sdks/mobile/ios/types#textelementuitextfield) allows you to modify user input before tokenization through the `transform` attribute. It’s a struct that takes in an `NSRegularExpression` and a `String`.
 It works by making use of the [stringByReplacingMatches](https://developer.apple.com/documentation/foundation/nsregularexpression/1413740-stringbyreplacingmatches) function on the `NSRegularExpression` provided.
 If no string is defined, an empty string will be used as the argument for `withTemplate`. For instance, the mask for a US based phone number shown below will modify user input to look like this: `(123)456-7890`.
 The `transform` setting set below, in this case, will modify the user input to remove `(`, `)`, and `-` from the input. The resulting value is `1234567890`, which will be the value that gets tokenized.
@@ -54,7 +54,7 @@ The `transform` setting set below, in this case, will modify the user input to r
 ```swift showLineNumbers
 let regexDigit = try! NSRegularExpression(pattern: "\\d")
 
-let phoneMask = [ //(123)456-7890
+let phoneMask = [ // (123)456-7890
   "(",
   regexDigit,
   regexDigit,
@@ -70,10 +70,47 @@ let phoneMask = [ //(123)456-7890
   regexDigit
 ] as [Any]
 
-let transformMatcher = try! NSRegularExpression(pattern: "[()-]") //Regex to remove parentheses & dashes
+let transformMatcher = try! NSRegularExpression(pattern: "[()-]") // Regex to remove parentheses & dashes
+
 textElementUITextField.setConfig(options: TextElementOptions(mask: phoneMask, transform: ElementTransform(matcher: transformMatcher))
 ```
 
 <Alert>
   If no transform is set, the value is sent to be tokenized as is, including the mask, if set.
+</Alert>
+
+## Validation
+
+A [`TextElementUITextField`](/docs/sdks/mobile/ios/types#textelementuitextfield) allows you to validate user input before tokenization through the `validation` attribute of type `NSRegularExpression`.
+Text is validated after every change and is considered valid if any matches are found using the `NSRegularExpression` provided. If the text is `nil` and a `validation` attribute is set, the text will be considered invalid. Let's run through
+an example. Say you want to validate a US based phone number. You can use the following `NSRegularExpression` to validate the phone number:
+
+```swift showLineNumbers
+let regexDigit = try! NSRegularExpression(pattern: "\\d")
+
+let phoneMask = [ // (123)456-7890
+  "(",
+  regexDigit,
+  regexDigit,
+  regexDigit,
+  ")",
+  regexDigit,
+  regexDigit,
+  regexDigit,
+  "-",
+  regexDigit,
+  regexDigit,
+  regexDigit,
+  regexDigit
+] as [Any]
+
+let transformMatcher = try! NSRegularExpression(pattern: "[()-]") // Regex to remove parentheses & dashes
+let phoneNumberRegex = try! NSRegularExpression(pattern: "^\\d{10}$") // Regex to validate phone number, after the transform is applied
+
+textElementUITextField.setConfig(options: TextElementOptions(mask: phoneMask, transform: ElementTransform(matcher: transformMatcher), validation: phoneNumberRegex))
+```
+
+<Alert>
+  Validation is performed on the transformed value, if <a href="/docs/sdks/mobile/ios/options#transform">transform</a> is set. If I had not set a transform above to remove the parentheses and dashes, the validation would be performed on a
+  value like <code>(123)456-7890</code>. The proper <code>NSRegularExpression</code> pattern for that would be <code>"^\\(\\d&#123;3&#125;\\)\\d&#123;3&#125;-\\d&#123;4&#125;$"</code>
 </Alert>
