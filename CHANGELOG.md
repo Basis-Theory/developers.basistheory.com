@@ -1,3 +1,10 @@
+# [1.42.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.41.2...v1.42.0) (2023-05-02)
+
+
+### Features
+
+* Documents Android SDK Input Types ([#110](https://github.com/Basis-Theory/developers.basistheory.com/issues/110)) ([2908cd2](https://github.com/Basis-Theory/developers.basistheory.com/commit/2908cd2c7d2b4fe6763edfa3d52258735c25efb9))
+
 ## [1.41.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.41.1...v1.41.2) (2023-05-01)
 
 
