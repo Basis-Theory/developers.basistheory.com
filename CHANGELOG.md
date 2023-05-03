@@ -1,3 +1,10 @@
+## [1.43.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.43.0...v1.43.1) (2023-05-03)
+
+
+### Bug Fixes
+
+* **fingerprints:** fix fingerprint example ([#105](https://github.com/Basis-Theory/developers.basistheory.com/issues/105)) ([342af18](https://github.com/Basis-Theory/developers.basistheory.com/commit/342af18f33dad81a8f561f6bdd8522f4eca5cba5))
+
 # [1.43.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.42.0...v1.43.0) (2023-05-03)
 
 
