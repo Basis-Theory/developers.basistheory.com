@@ -1,3 +1,10 @@
+# [1.43.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.42.0...v1.43.0) (2023-05-03)
+
+
+### Features
+
+* Adding typeface property to Android elements ([#114](https://github.com/Basis-Theory/developers.basistheory.com/issues/114)) ([84752ae](https://github.com/Basis-Theory/developers.basistheory.com/commit/84752ae7eff059b3bd3dd49313c2968802b70d0f))
+
 # [1.42.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.41.2...v1.42.0) (2023-05-02)
 
 
