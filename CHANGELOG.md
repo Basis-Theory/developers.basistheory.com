@@ -1,3 +1,10 @@
+# [1.44.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.43.1...v1.44.0) (2023-05-04)
+
+
+### Features
+
+* adds validation option on TextElement ([#113](https://github.com/Basis-Theory/developers.basistheory.com/issues/113)) ([2027d69](https://github.com/Basis-Theory/developers.basistheory.com/commit/2027d69e21c035aa854147efd3ddc9e8a4b8019e))
+
 ## [1.43.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.43.0...v1.43.1) (2023-05-03)
 
 
