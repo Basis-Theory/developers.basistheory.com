@@ -1,3 +1,10 @@
+## [1.44.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.44.0...v1.44.1) (2023-05-06)
+
+
+### Bug Fixes
+
+* adds details about BasisTheoryUIViewController class ([#115](https://github.com/Basis-Theory/developers.basistheory.com/issues/115)) ([f012e1a](https://github.com/Basis-Theory/developers.basistheory.com/commit/f012e1aced584caa3d89023941dfa20e5d1eb52a))
+
 # [1.44.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.43.1...v1.44.0) (2023-05-04)
 
 
