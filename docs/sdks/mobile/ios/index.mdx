@@ -52,6 +52,23 @@ Below is an example of a UITextField set as `TextElementUITextField`.
 
 ![](/img/iOS/ios-initialization.jpg)
 
+If you want to use methods available from [UITextFieldDelegate](https://developer.apple.com/documentation/uikit/uitextfielddelegate) you'll need to have your [UIViewController](https://developer.apple.com/documentation/uikit/uiviewcontroller)
+inherit from the `BasisTheoryUIViewController` class. It should look something like this:
+
+```swift showLineNumbers
+import UIKit
+import BasisTheoryElements
+
+class ViewController: BasisTheoryUIViewController {
+  ...
+}
+```
+
+The `BasisTheoryUIViewController` class inherits from [UIViewController](https://developer.apple.com/documentation/uikit/uiviewcontroller) and [UITextFieldDelegate](https://developer.apple.com/documentation/uikit/uitextfielddelegate) to safely
+expose methods on [UITextFieldDelegate](https://developer.apple.com/documentation/uikit/uitextfielddelegate). To ensure you're not exposed to any sensitive data, the following functions are unavailable to be overridden:
+
+* [`textField(_:shouldChangeCharactersIn:replacementString:)`](https://developer.apple.com/documentation/uikit/uitextfielddelegate/1619599-textfield) - this function will always return `true`
+
 ## Styling Elements
 
 All of our elements have been designed to take advantage of the pre-existing native properties and customizations built directly into the [UIKit framework](https://developer.apple.com/documentation/uikit). Utilizing this framework means you’re able to customize the styling of your elements as you would with any other `UITextField`. For example:
