@@ -11,6 +11,7 @@ import {
 } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import CvcTtlInfoAlert from "@site/docs/api/tokens/_cvc-ttl-info-alert.mdx";
 
 # Tokens
 
@@ -915,14 +916,18 @@ Returns [an error](/docs/api/errors) if the token failed to delete.
 
 #### Card Object
 
-| Attribute          | Required | Type      | Default | Description                                               |
-| ------------------ | -------- | --------- | ------- | --------------------------------------------------------- |
-| `number`           | true     | _string_  | `null`  | The card number without any separators                    |
-| `expiration_month` | false    | _integer_ | `null`  | Two-digit number representing the card's expiration month |
-| `expiration_year`  | false    | _integer_ | `null`  | Four-digit number representing the card's expiration year |
-| `cvc`              | false    | _string_  | `null`  | Three or four-digit card verification code                |
+| Attribute          | Required | Type      | Default | Description                                                          |
+| ------------------ | -------- | --------- | ------- | -------------------------------------------------------------------- |
+| `number`           | true     | _string_  | `null`  | The card number without any separators                               |
+| `expiration_month` | false    | _integer_ | `null`  | Two-digit number representing the card's expiration month            |
+| `expiration_year`  | false    | _integer_ | `null`  | Four-digit number representing the card's expiration year            |
+| `cvc`              | false    | _string_  | `null`  | Three or four-digit card verification code with automatic expiration |
 
 See [Test Card Numbers](/docs/api/testing#card-numbers) for suggested test data when using cards.
+
+The `cvc` property automatically expires and is deleted after one hour in order to comply with PCI requirements.
+
+<CvcTtlInfoAlert/>
 
 ### Token Expiration
 
