@@ -1,3 +1,10 @@
+# [1.45.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.44.1...v1.45.0) (2023-05-10)
+
+
+### Features
+
+* Documenting CVC TTL behavior ([#117](https://github.com/Basis-Theory/developers.basistheory.com/issues/117)) ([b1b5efb](https://github.com/Basis-Theory/developers.basistheory.com/commit/b1b5efb3e9c3c30aff29a0512bf5fb251c1db5e5))
+
 ## [1.44.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.44.0...v1.44.1) (2023-05-06)
 
 
