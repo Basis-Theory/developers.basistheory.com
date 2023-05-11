@@ -1,0 +1,191 @@
+---
+sidebar_label: Events
+---
+
+# Events
+
+You can communicate with Elements by listening to events. When you subscribe to an event, you'll get back a <a href="https://rxjs.dev/guide/subscription" target="_blank">Subscription</a> that you can unsubscribe if/when it fits your workflow.
+
+```javascript showLineNumbers
+// Make sure to replace 'event-type' with an actual event type.
+var subscription = cardElement.on("event-type", (event) => {
+  // handle event
+});
+
+subscription.unsubscribe(); // stops listening to the event type
+```
+
+### On Ready
+
+This event is triggered when the element has rendered and user is able to start interacting with it.
+
+```javascript showLineNumbers
+cardElement.on("ready", () => {
+  // handle ready event
+});
+```
+
+### On Change
+
+This event is triggered whenever element's value(s) change. For example, if the user types data that doesn't change the state of a field between valid/invalid or empty/filled, you shouldn't expect the event to trigger.
+
+```javascript showLineNumbers
+cardElement.on("change", (changeEvent) => {
+  if (changeEvent.complete) {
+    // enable submit button
+  } else {
+    // disable submit button
+    // present validation message
+  }
+});
+```
+
+| Parameter | Required | Type       | Description                                                                                     |
+| --------- | -------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| `event`   | true     | _"change"_ | The event type to listen to.                                                                    |
+| `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [ChangeEvent](#changeevent). |
+
+#### ChangeEvent
+
+`ChangeEvent`s are emitted depending on the validation strategy set for each element; by default, validations run `onBlur`. You can change this behavior by setting the boolean flag [`validateOnChange`](/docs/sdks/web/javascript/options) to `true`.
+
+When running validations <code>onChange</code>, elements emit events
+whenever an <code>error</code> occurs or if the input's <code>value</code>
+changes. Default validation (`onBlur`) triggers an event every time one of the values below changes:
+
+```json showLineNumbers
+{
+  "complete": false,
+  "valid": false,
+  "maskSatisfid": false,
+  "empty": false,
+  "errors": [
+    {...},
+    {...}
+  ],
+  "cardBrand": "american-express",
+  "cardLast4": "8431",
+  "cardBin": "341212"
+}
+```
+
+| Attribute       | Type      | Eligible Elements                                                                                                          | Description                                                                                                                                                                                               |
+| --------------- | --------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`      | _boolean_ | All                                                                                                                        | Whether the input `valid` and `maskSatisfied` properties are `true`.                                                                                                                                      |
+| `valid`         | _boolean_ | All                                                                                                                        | Whether the input is `valid` according to `validation` for each element. Defaults to `true` if no validation is defined for the element.                                                                  |
+| `maskSatisfied` | _boolean_ | All                                                                                                                        | Whether the input satisfies the `mask` length requirements. Defaults to `true` if no mask is provided.                                                                                                    |
+| `empty`         | _boolean_ | All                                                                                                                        | Whether the element is empty. Multi-input Elements will be `empty` only if all inputs are.                                                                                                                |
+| `errors`        | _array_   | All                                                                                                                        | Array of [FieldError](#fielderror).                                                                                                                                                                       |
+| `cardBrand`     | _string_  | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | (Optional) The credit card [brand](/docs/sdks/web/javascript/options#card-brands) (e.g. `'american-express'`, `'visa'`, `'unknown'`). The value defaults to `'unknown'` until a card brand is recognized. |
+| `cardLast4`     | _string_  | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | (Optional) The credit card's last 4 digits. The value is not provided until a complete card number is entered.                                                                                            |
+| `cardBin`       | _string_  | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | (Optional) The credit card number's first 6 or 8 digits when the input is considered complete. It is 6 digits for card numbers less than 16 digit long and 8 otherwise.                                   |
+
+#### Metadata
+
+Instead of subscribing to events, the same properties can be accessed at any time from the `metadata` property on all elements.
+
+Additionally, the card related event [change events](#changeevent) can be accessed from the `cardMetadata` property only on [Card](/docs/sdks/web/javascript/types#card-element) and [CardNumber](/docs/sdks/web/javascript/types#card-number-element) elements.
+
+| Attribute      | Eligible Elements                                                                                                          | Attributes                                    |
+|----------------|----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| `metadata`     | All                                                                                                                        | `complete`, `valid`, `maskSatisfied`, `empty` |
+| `cardMetadata` | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | `cardLast4`, `cardBin`, `cardBrand`           |
+
+#### FieldError
+
+```json showLineNumbers
+{
+  "targetId": "cardNumber",
+  "type": "invalid"
+}
+```
+
+| Attribute  | Type                          | Description                                                                                         |
+| ---------- | ----------------------------- | --------------------------------------------------------------------------------------------------- |
+| `targetId` | _string_                      | Input ID that triggered the error. Values vary per [element type](/docs/sdks/web/javascript/types). |
+| `type`     | _"invalid"_ or _"incomplete"_ | Type of the error.                                                                                  |
+
+### On Focus
+
+Triggered when an element input is focused.
+
+```javascript showLineNumbers
+cardElement.on("focus", (focusEvent) => {});
+```
+
+| Parameter | Required | Type       | Description                                                                                   |
+| --------- | -------- | ---------- | --------------------------------------------------------------------------------------------- |
+| `event`   | true     | _"focus"_  | The event type to listen to.                                                                  |
+| `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [FocusEvent](#focusevent). |
+
+#### FocusEvent
+
+```json showLineNumbers
+{
+  "targetId": "cardNumber"
+}
+```
+
+| Attribute  | Type     | Description                                                                                         |
+| ---------- | -------- | --------------------------------------------------------------------------------------------------- |
+| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](/docs/sdks/web/javascript/types). |
+
+### On Blur
+
+Triggered when an element input focus is lost.
+
+```javascript showLineNumbers
+cardElement.on("blur", (blurEvent) => {});
+```
+
+| Parameter | Required | Type       | Description                                                                                 |
+| --------- | -------- | ---------- | ------------------------------------------------------------------------------------------- |
+| `event`   | true     | _"blur"_   | The event type to listen to.                                                                |
+| `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [BlurEvent](#blurevent). |
+
+#### BlurEvent
+
+```json showLineNumbers
+{
+  "targetId": "cardNumber"
+}
+```
+
+| Attribute  | Type     | Description                                                                                         |
+| ---------- | -------- | --------------------------------------------------------------------------------------------------- |
+| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](/docs/sdks/web/javascript/types). |
+
+### On Keydown
+
+Triggered when user hits a special key inside an element input.
+
+```javascript showLineNumbers
+cardElement.on("keydown", (keydownEvent) => {});
+```
+
+| Parameter | Required | Type        | Description                                                                                       |
+| --------- | -------- | ----------- | ------------------------------------------------------------------------------------------------- |
+| `event`   | true     | _"keydown"_ | The event type to listen to.                                                                      |
+| `handler` | true     | _function_  | Callback function to be called when the event is fired. Takes in a [KeydownEvent](#keydownevent). |
+
+#### KeydownEvent
+
+```json showLineNumbers
+{
+  "targetId": "cardNumber",
+  "key": "Enter",
+  "ctrlKey": false,
+  "altKey": false,
+  "shiftKey": false,
+  "metaKey": false
+}
+```
+
+| Attribute  | Type                | Description                                                                                                                                                             |
+| ---------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `targetId` | _string_            | Input targetId that triggered the event. Values vary per [element type](/docs/sdks/web/javascript/types).                                                               |
+| `key`      | _Escape_ or _Enter_ | Key pressed by the user.                                                                                                                                                |
+| `ctrlKey`  | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/ctrlKey" target="_blank">`control` key</a> was pressed when the event occurred. |
+| `altKey`   | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/altKey" target="_blank">`alt` key</a> was pressed when the event occurred.      |
+| `shiftKey` | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/shiftKey" target="_blank">`shift` key</a> was pressed when the event occurred.  |
+| `metaKey`  | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey" target="_blank">`meta` key</a> was pressed when the event occurred.    |
