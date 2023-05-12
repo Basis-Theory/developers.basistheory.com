@@ -300,6 +300,10 @@ const sidebars = {
       label: "Web SDKs",
       items: [
         {
+          type: "doc",
+          id: "sdks/web/content-security-policy",
+        },
+        {
           type: "category",
           label: "JavaScript Elements",
           link: {
@@ -307,10 +311,10 @@ const sidebars = {
             id: "sdks/web/javascript/index",
           },
           items: [
-            "sdks/web/javascript/content-security-policy",
             "sdks/web/javascript/types",
-            "sdks/web/javascript/lifecycle",
             "sdks/web/javascript/options",
+            "sdks/web/javascript/lifecycle",
+            "sdks/web/javascript/events",
             "sdks/web/javascript/methods",
           ],
         },
@@ -321,7 +325,11 @@ const sidebars = {
             type: "doc",
             id: "sdks/web/react/index",
           },
-          items: ["sdks/web/react/components", "sdks/web/react/deprecations"],
+          items: [
+            "sdks/web/react/components", 
+            "sdks/web/react/events", 
+            "sdks/web/react/methods"
+          ],
         },
       ],
     },

@@ -1,14 +1,14 @@
 ---
-sidebar_label: Methods & Events
+sidebar_label: Services
 ---
 
 import {Alert, Alerts} from "@site/src/components/shared/Alert";
 
-# Elements Methods & Events
+# Elements Services
 
-Basis Theory Elements offers several methods and events to listen to changes to your components and interact with the underlying data.
+Basis Theory Elements offers several methods and to interact with the underlying data and services to collect or share data safely.
 
-## Methods
+## Element Methods
 
 Once you have [created](/docs/sdks/web/javascript/lifecycle#create-element) and [mounted](/docs/sdks/web/javascript/lifecycle#mount-element) an element instance, you can invoke the methods below:
 
@@ -17,7 +17,7 @@ Once you have [created](/docs/sdks/web/javascript/lifecycle#create-element) and 
 
 <script>
   var cardElement = BasisTheory.createElement("card");
-  cardElement.mount("#my-card");
+  await cardElement.mount("#my-card");
 
   cardElement.focus();
 </script>
@@ -32,200 +32,24 @@ Once you have [created](/docs/sdks/web/javascript/lifecycle#create-element) and 
 | `year`     | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the four-digit year value of the input date.            |
 | `setValue` | _void_         | All                                                                                | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.  |
 
-## Events
 
-You can communicate with Elements by listening to events. When you subscribe to an event, you'll get back a <a href="https://rxjs.dev/guide/subscription" target="_blank">Subscription</a> that you can unsubscribe if/when it fits your workflow.
+## Tokenization Services
 
-```javascript showLineNumbers
-// Make sure to replace 'event-type' with an actual event type.
-var subscription = cardElement.on("event-type", (event) => {
-  // handle event
-});
+Elements' values can be securely tokenized by simply passing the Element instance (or one of its [data parsing methods](#methods)) in the tokenization payload.
 
-subscription.unsubscribe(); // stops listening to the event type
-```
+<Alert>
+  The actual input data never leaves the element (iframe) other than to hit our
+  secure API endpoints.
+</Alert>
 
-### On Ready
+<Alert type={Alerts.WARNING}>
+  When submitting <code>plainText</code> values, data will be HTML encoded
+  before storage for security reasons.
+</Alert>
 
-This event is triggered when the element has rendered and user is able to start interacting with it.
+### Create Token
 
-```javascript showLineNumbers
-cardElement.on("ready", () => {
-  // handle ready event
-});
-```
-
-### On Change
-
-This event is triggered whenever element's value(s) change. For example, if the user types data that doesn't change the state of a field between valid/invalid or empty/filled, you shouldn't expect the event to trigger.
-
-```javascript showLineNumbers
-cardElement.on("change", (changeEvent) => {
-  if (changeEvent.complete) {
-    // enable submit button
-  } else {
-    // disable submit button
-    // present validation message
-  }
-});
-```
-
-| Parameter | Required | Type       | Description                                                                                     |
-| --------- | -------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| `event`   | true     | _"change"_ | The event type to listen to.                                                                    |
-| `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [ChangeEvent](#changeevent). |
-
-#### ChangeEvent
-
-`ChangeEvent`s are emitted depending on the validation strategy set for each element; by default, validations run `onBlur`. You can change this behavior by setting the boolean flag [`validateOnChange`](/docs/sdks/web/javascript/options) to `true`.
-
-When running validations <code>onChange</code>, elements emit events
-whenever an <code>error</code> occurs or if the input's <code>value</code>
-changes. Default validation (`onBlur`) triggers an event every time one of the values below changes:
-
-```json showLineNumbers
-{
-  "complete": false,
-  "valid": false,
-  "maskSatisfid": false,
-  "empty": false,
-  "errors": [
-    {...},
-    {...}
-  ],
-  "cardBrand": "american-express",
-  "cardLast4": "8431",
-  "cardBin": "341212"
-}
-```
-
-| Attribute       | Type      | Eligible Elements                                                                                                          | Description                                                                                                                                                                                               |
-| --------------- | --------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`      | _boolean_ | All                                                                                                                        | Whether the input `valid` and `maskSatisfied` properties are `true`.                                                                                                                                      |
-| `valid`         | _boolean_ | All                                                                                                                        | Whether the input is `valid` according to `validation` for each element. Defaults to `true` if no validation is defined for the element.                                                                  |
-| `maskSatisfied` | _boolean_ | All                                                                                                                        | Whether the input satisfies the `mask` length requirements. Defaults to `true` if no mask is provided.                                                                                                    |
-| `empty`         | _boolean_ | All                                                                                                                        | Whether the element is empty. Multi-input Elements will be `empty` only if all inputs are.                                                                                                                |
-| `errors`        | _array_   | All                                                                                                                        | Array of [FieldError](#fielderror).                                                                                                                                                                       |
-| `cardBrand`     | _string_  | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | (Optional) The credit card [brand](/docs/sdks/web/javascript/options#card-brands) (e.g. `'american-express'`, `'visa'`, `'unknown'`). The value defaults to `'unknown'` until a card brand is recognized. |
-| `cardLast4`     | _string_  | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | (Optional) The credit card's last 4 digits. The value is not provided until a complete card number is entered.                                                                                            |
-| `cardBin`       | _string_  | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | (Optional) The credit card number's first 6 or 8 digits when the input is considered complete. It is 6 digits for card numbers less than 16 digit long and 8 otherwise.                                   |
-
-#### Metadata
-
-Instead of subscribing to events, the same properties can be accessed at any time from the `metadata` property on all elements.
-
-Additionally, the card related event [change events](#changeevent) can be accessed from the `cardMetadata` property only on [Card](/docs/sdks/web/javascript/types#card-element) and [CardNumber](/docs/sdks/web/javascript/types#card-number-element) elements.
-
-| Attribute      | Eligible Elements                                                                                                          | Attributes                                    |
-|----------------|----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
-| `metadata`     | All                                                                                                                        | `complete`, `valid`, `maskSatisfied`, `empty` |
-| `cardMetadata` | [card](/docs/sdks/web/javascript/types#card-element)<br/>[cardNumber](/docs/sdks/web/javascript/types#card-number-element) | `cardLast4`, `cardBin`, `cardBrand`           |
-
-#### FieldError
-
-```json showLineNumbers
-{
-  "targetId": "cardNumber",
-  "type": "invalid"
-}
-```
-
-| Attribute  | Type                          | Description                                                                                         |
-| ---------- | ----------------------------- | --------------------------------------------------------------------------------------------------- |
-| `targetId` | _string_                      | Input ID that triggered the error. Values vary per [element type](/docs/sdks/web/javascript/types). |
-| `type`     | _"invalid"_ or _"incomplete"_ | Type of the error.                                                                                  |
-
-### On Focus
-
-Triggered when an element input is focused.
-
-```javascript showLineNumbers
-cardElement.on("focus", (focusEvent) => {});
-```
-
-| Parameter | Required | Type       | Description                                                                                   |
-| --------- | -------- | ---------- | --------------------------------------------------------------------------------------------- |
-| `event`   | true     | _"focus"_  | The event type to listen to.                                                                  |
-| `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [FocusEvent](#focusevent). |
-
-#### FocusEvent
-
-```json showLineNumbers
-{
-  "targetId": "cardNumber"
-}
-```
-
-| Attribute  | Type     | Description                                                                                         |
-| ---------- | -------- | --------------------------------------------------------------------------------------------------- |
-| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](/docs/sdks/web/javascript/types). |
-
-### On Blur
-
-Triggered when an element input focus is lost.
-
-```javascript showLineNumbers
-cardElement.on("blur", (blurEvent) => {});
-```
-
-| Parameter | Required | Type       | Description                                                                                 |
-| --------- | -------- | ---------- | ------------------------------------------------------------------------------------------- |
-| `event`   | true     | _"blur"_   | The event type to listen to.                                                                |
-| `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [BlurEvent](#blurevent). |
-
-#### BlurEvent
-
-```json showLineNumbers
-{
-  "targetId": "cardNumber"
-}
-```
-
-| Attribute  | Type     | Description                                                                                         |
-| ---------- | -------- | --------------------------------------------------------------------------------------------------- |
-| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](/docs/sdks/web/javascript/types). |
-
-### On Keydown
-
-Triggered when user hits a special key inside an element input.
-
-```javascript showLineNumbers
-cardElement.on("keydown", (keydownEvent) => {});
-```
-
-| Parameter | Required | Type        | Description                                                                                       |
-| --------- | -------- | ----------- | ------------------------------------------------------------------------------------------------- |
-| `event`   | true     | _"keydown"_ | The event type to listen to.                                                                      |
-| `handler` | true     | _function_  | Callback function to be called when the event is fired. Takes in a [KeydownEvent](#keydownevent). |
-
-#### KeydownEvent
-
-```json showLineNumbers
-{
-  "targetId": "cardNumber",
-  "key": "Enter",
-  "ctrlKey": false,
-  "altKey": false,
-  "shiftKey": false,
-  "metaKey": false
-}
-```
-
-| Attribute  | Type                | Description                                                                                                                                                             |
-| ---------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `targetId` | _string_            | Input targetId that triggered the event. Values vary per [element type](/docs/sdks/web/javascript/types).                                                               |
-| `key`      | _Escape_ or _Enter_ | Key pressed by the user.                                                                                                                                                |
-| `ctrlKey`  | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/ctrlKey" target="_blank">`control` key</a> was pressed when the event occurred. |
-| `altKey`   | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/altKey" target="_blank">`alt` key</a> was pressed when the event occurred.      |
-| `shiftKey` | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/shiftKey" target="_blank">`shift` key</a> was pressed when the event occurred.  |
-| `metaKey`  | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey" target="_blank">`meta` key</a> was pressed when the event occurred.    |
-
-## Tokenization
-
-Elements' values can be securely tokenized using [`tokens.create`](/docs/api/tokens#create-token) and [`tokenize`](/docs/api/tokens/tokenize)
-services. To do that, simply pass the Element instance (or one of its [data parsing methods](#methods)) in the payload.
-
-You can fetch this same data later with [Get a Token API](/docs/api/tokens#get-a-token)
+The examples below show how to use Elements' instances in the payload of the [`tokens.create`](/docs/api/tokens#create-token) service.
 
 ```javascript showLineNumbers title="Create generic token"
 BasisTheory.tokens
@@ -277,6 +101,10 @@ BasisTheory.tokens
   });
 ```
 
+### Tokenize
+
+The example below shows how to use Elements' instances in the payload of the [`tokenize`](/docs/api/tokens#tokenize) service.
+
 ```javascript showLineNumbers title="Tokenize data"
 BasisTheory.tokenize({
   card1: {
@@ -305,96 +133,29 @@ BasisTheory.tokenize({
 });
 ```
 
-<Alert>
-  The actual input data never leaves the element (iframe) other than to hit our
-  secure API endpoints.
-</Alert>
+### Token Update
 
-<Alert type={Alerts.WARNING}>
-  When submitting <code>plainText</code> values, data will be HTML encoded
-  before storage for security reasons.
-</Alert>
-
-### Errors
-
-Elements services could throw an error based on client-side validations or if the server rejects the request.
-
-```javascript showLineNumbers title="Handling services errors"
-import {
-  BasisTheoryApiError,
-  BasisTheoryValidationError,
-} from "@basis-theory/basis-theory-js/common";
-
-BasisTheory.tokenize({
-  card1: {
-    type: "card",
-    data: cardElement1,
-  },
-  card2: {
-    type: "card",
-    data: cardElement2,
-  },
-  ssn: textElement,
-}).catch((error) => {
-  if (error instanceof BasisTheoryValidationError) {
-    // check error details
-  } else if (error instanceof BasisTheoryApiError) {
-    // check error data or status
-  }
-});
-```
-
-#### BasisTheoryValidationError
+Aside from creating tokens, an Element value can be used to update a token using [`tokens.update`](/docs/api/tokens#update-token).
+To do that, simply pass the Element instance (or one of its [data parsing methods](#methods)) in the payload.
 
 ```javascript showLineNumbers
-{
-  details: {
-    card1: {
-      number: {
-        type: 'invalid'
-      },
-      cvc: {
-        type: 'incomplete'
-      }
-    },
-    card2: {
-    }
-  },
-  validation: [] // deprecated
-}
+BasisTheory.tokens
+  .update("ca9f3fd7-3906-4087-83aa-9a6129221297", { // replace w/ desired token id
+    data: cardElement,
+  })
+  .then((token) => {
+    console.log(JSON.stringify(token.data)); // redacted updated token data
+  });
 ```
 
-| Attribute | Type     | Description                                                                |
-| --------- | -------- | -------------------------------------------------------------------------- |
-| `name`    | string   | Error name, always `'BasisTheoryValidationError'`.                         |
-| `details` | _object_ | Maps payload properties to their respective element's validation problems. |
+## Detokenization Services
 
-#### BasisTheoryApiError
+Elements' values can be securely detokenized and revealed using these detokenization services and the Elements' [`setValue`](#methods) method.
 
-```javascript showLineNumbers
-{
-  data: {
-    // API response body
-  },
-  status: 400
-}
-```
+### Retrieve Token
 
-| Attribute | Type     | Description                                             |
-| --------- | -------- | ------------------------------------------------------- |
-| `name`    | string   | Error name, always `'BasisTheoryApiError'`.             |
-| `data`    | _object_ | Response body [sent from the server](/docs/api/errors). |
-| `status`  | _number_ | Response HTTP status.                                   |
-
-<Alert>
-  Error <code>name</code> property may be used instead of checking its instance
-  type.
-</Alert>
-
-## Detokenization
-
-Elements' values can be securely revealed using the [`tokens.retrieve`](/docs/api/tokens#get-a-token) service and the Elements' [`setValue`](#methods)
-method. When `retrieve` is called from a Basis Theory instance configured with `elements: true`, the API request is made from inside a Basis Theory hosted `iframe` and the returned data remains within it.
+When `retrieve` is called from a Basis Theory instance configured with `elements: true`, the API request is made from inside a Basis Theory hosted `iframe` and the returned data remains within it.
+The examples below show how to use `retrieve` and `setValue`, but for more information on revealing and session keys, visit the [Reveal Tokenized Data](/docs/guides/share/reveal-tokenized-data) guide.
 
 ```javascript showLineNumbers title="Retrieve 'string' token data and set value into TextElement"
 const textElement = BasisTheory.createElement("text", {
@@ -469,23 +230,122 @@ BasisTheory.tokens
   the <code>retrieve</code> response as they are considered non-sensitive.
 </Alert>
 
-### Errors
+## Proxy Service
 
-Elements services will throw an error if the server rejects the request.
+This service wraps the [proxy API endpoint](/docs/api/proxies) to proxy a request to a third party API.
 
-```javascript showLineNumbers title="Handling service errors"
-import { BasisTheoryApiError } from "@basis-theory/basis-theory-js/common";
+### Invoking Proxy
 
-BasisTheory.tokens
-  .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
-    apiKey: "key_N88mVGsp3sCXkykyN2EFED", // api key is required and should belong to a session
+When a proxy is invoked from a Basis Theory instance configured with `elements: true`, the API request is made from inside a Basis Theory hosted `iframe` and the returned data remains within it, whether the proxy has Elements instances in its `body` or not.
+The examples below show how to invoke the proxy and use `setValue`, but for more information on revealing and session keys, visit the [Reveal Data from 3rd Party](/docs/guides/share/reveal-data-from-third-party) guide. 
+Elements can be used to proxy data securely by including them in the proxy `body` as shown in the example.
+
+```javascript showLineNumbers title="Invoking Pre-Configured Proxy w/ POST"
+const submitElement = BasisTheory.createElement("text", {
+  targetId: "submitElement",
+});
+const revealElement = BasisTheory.createElement("text", { 
+  targetId: "revealElement" }
+);
+
+BasisTheory.proxy
+  .post({
+    headers: {
+      "BT-PROXY-KEY": "e29a50980ca5", // replace with your pre-configured proxy key (if pre-configured)
+    },
+    body: {
+      sensitiveValue: submitElement,
+      nonSensitiveValue: "plainText",
+    },
+    apiKey: "key_N88mVGsp3sCXkykyN2EFED",
   })
-  .catch((error) => {
-    if (error instanceof BasisTheoryApiError) {
-      // check error details
-    }
+  .then((response) => {
+    revealElement.setValue(response.value);
   });
 ```
+
+<Alert type={Alerts.WARNING}>
+  The proxy response object returned after invoking it with elements is not the actual data, but a a synthetic representation of the sensitive data.
+</Alert>
+
+### Proxy Invocation Methods
+
+The Elements proxy service supports all of the same HTTP methods that the [ephemeral](/docs/api/proxies/ephemeral-proxy#invoke-the-proxy) or [pre-configured](/docs/api/proxies/pre-configured-proxies#invoke-a-proxy) proxy APIs support.
+All proxy calls take the same [options](/docs/sdks/web/javascript/methods#proxyrequestoptions) object as a parameter.
+
+| Signature                                                                   | Description                      |
+|-----------------------------------------------------------------------------|----------------------------------|
+| `get(proxyRequest: ProxyRequestOptions)`                                    | Performs a proxy GET request.    |
+| `post(proxyRequest: ProxyRequestOptions)`                                   | Performs a proxy POST request.   |
+| `put(proxyRequest: ProxyRequestOptions)`                                    | Performs a proxy PUT request.    |
+| `patch(proxyRequest: ProxyRequestOptions)`                                  | Performs a proxy PATCH request.  |
+| `delete(proxyRequest: ProxyRequestOptions)`                                 | Performs a proxy DELETE request. |
+
+### ProxyRequestOptions
+
+| Attribute         | Type     | Required | Description                                                                  |
+| ----------------- | -------- | ---------| ---------------------------------------------------------------------------- |
+| `path`            | string   | false    | String that gets added to the end of the proxied URL path.                   |
+| `query`           | _object_ | false    | Key/Value pairs that are added as a query parameter to the proxied URL.      |
+| `headers`         | _object_ | false    | Key/Value pairs that are added as headers when invoking the proxied URL.     |
+| `body`            | _object_ | false    | Payload that gets sent to the proxied URL. Can contain Elements.             |
+| `apiKey`          | _object_ | false    | BasisTheory API Key for [authentication](/docs/api/authentication)           |
+| `correlationId`   | _object_ | false    | ID that can be used for [request correlation](/docs/api/request-correlation) |
+| `idempotencyKey`  | _object_ | false    | Key used for request [idempotency](/docs/api/idempotency)                    |
+
+## Service Errors
+
+Elements services could throw an error based on client-side validations or if the server rejects the request.
+
+```javascript showLineNumbers title="Handling services errors"
+import {
+  BasisTheoryApiError,
+  BasisTheoryValidationError,
+} from "@basis-theory/basis-theory-js/common";
+
+BasisTheory.tokenize({
+  card1: {
+    type: "card",
+    data: cardElement1,
+  },
+  card2: {
+    type: "card",
+    data: cardElement2,
+  },
+  ssn: textElement,
+}).catch((error) => {
+  if (error instanceof BasisTheoryValidationError) { // only applies to tokenization
+    // check error details
+  } else if (error instanceof BasisTheoryApiError) {
+    // check error data or status
+  }
+});
+```
+
+#### BasisTheoryValidationError
+
+```javascript showLineNumbers
+{
+  details: {
+    card1: {
+      number: {
+        type: 'invalid'
+      },
+      cvc: {
+        type: 'incomplete'
+      }
+    },
+    card2: {
+    }
+  },
+  validation: [] // deprecated
+}
+```
+
+| Attribute | Type     | Description                                                                |
+| --------- | -------- | -------------------------------------------------------------------------- |
+| `name`    | string   | Error name, always `'BasisTheoryValidationError'`.                         |
+| `details` | _object_ | Maps payload properties to their respective element's validation problems. |
 
 #### BasisTheoryApiError
 
