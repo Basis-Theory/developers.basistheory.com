@@ -1,3 +1,10 @@
+# [1.46.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.45.0...v1.46.0) (2023-05-12)
+
+
+### Features
+
+* refactor web elements docs, add elements proxy info ([#118](https://github.com/Basis-Theory/developers.basistheory.com/issues/118)) ([904845e](https://github.com/Basis-Theory/developers.basistheory.com/commit/904845eccca07c34345a89a73947108a941ee914))
+
 # [1.45.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.44.1...v1.45.0) (2023-05-10)
 
 
