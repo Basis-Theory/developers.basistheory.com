@@ -1,3 +1,10 @@
+## [1.46.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.46.0...v1.46.1) (2023-05-16)
+
+
+### Bug Fixes
+
+* session Authorization C# doc ([#120](https://github.com/Basis-Theory/developers.basistheory.com/issues/120)) ([bef3419](https://github.com/Basis-Theory/developers.basistheory.com/commit/bef34191ad7a5546d685393caa0d574539b3983b))
+
 # [1.46.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.45.0...v1.46.0) (2023-05-12)
 
 
