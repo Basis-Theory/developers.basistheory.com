@@ -56,6 +56,32 @@ length, an error is returned.
 
 #### Examples
 
+##### Card token type
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
+}
+```
+
+| Expression                                            | Result                  |
+| ----------------------------------------------------- | ----------------------- |
+| <code>{{ data.number &#124; alias_card }}</code>              | `"3292231249202291"` |
+| <code>{{ data.number &#124; alias_card: 'false', 'false' }}</code>              | `"2012232912901293"` |
+| <code>{{ data.number &#124; alias_card: 'true', 'false' }}</code>              | `"3622720629129014"` |
+| <code>{{ data.number &#124; alias_card: 'true', 'true' }}</code>              | `"3622720639185567"` |
+| <code>{{ data.number &#124; alias_card: 'false', 'true' }}</code>              | `"4024420198125567"` |
+
+##### Card number with delimiters
+
 Given a token with the data:
 
 ```json showLineNumbers
@@ -160,6 +186,31 @@ If the card's length without the preserved character is less than 16 digits, the
 
 #### Examples
 
+##### Card token type
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
+}
+```
+
+| Expression                                            | Result                  |
+| ----------------------------------------------------- | ----------------------- |
+| <code>{{ data.number &#124; card_mask: 'false', 'false', 'X', '-' }}</code>              | `"XXXXXXXXXXXXXXXX"` |
+| <code>{{ data.number &#124; card_mask: 'true', 'false', 'X', '-' }}</code>              | `"36227206XXXXXXXX"` |
+| <code>{{ data.number &#124; card_mask: 'true', 'true', '#', '-' }}</code>              | `"36227206####5567"` |
+| <code>{{ data.number &#124; card_mask: 'false', 'true', 'X', '-' }}</code>              | `"XXXXXXXXXXXX5567"` |
+
+##### Card number with delimiters
+
 Given a token with the data:
 
 ```json showLineNumbers
@@ -253,15 +304,19 @@ Given a token with the data:
 ```json showLineNumbers
 {
   "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
-  "type": "token",
-  "data": "36227206271667"
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
 }
 ```
 
 | Expression                                               | Result   |
 | -------------------------------------------------------- | -------- |
-| <code>{{ data &#124; last4 }}</code>                     | `"1667"` |
-| <code>{{ data &#124; slice: 12, 2 &#124; last4 }}</code> | `"67"`   |
+| <code>{{ data.number &#124; last4 }}</code>                     | `"1667"` |
+| <code>{{ data.number &#124; slice: 12, 2 &#124; last4 }}</code> | `"67"`   |
 
 ## card_bin
 
@@ -282,14 +337,18 @@ Given a token with the data:
 ```json showLineNumbers
 {
   "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
-  "type": "token",
-  "data": "4242424242424242"
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
 }
 ```
 
 | Expression                                               | Result   |
 | -------------------------------------------------------- | -------- |
-| <code>{{ data &#124; card_bin }}</code>                     | `"42424242"` |
+| <code>{{ data.number &#124; card_bin }}</code>                     | `"42424242"` |
 
 ## reveal
 
