@@ -39,11 +39,13 @@ This expression would evaluate to the value `"DOE"`.
 
 In addition to the standard Liquid filters, several custom filters are also available:
 
-## card_mask
+## alias_card
 
-Returns a masked version of the card number, optionally revealing the card's BIN and last 4 digits.
-If the card's length without the preserved character is less than 16 digits, the card BIN will be 6 digits long,
-8 otherwise. If the resulting masked string equals the original unmasked value, the whole value is masked.
+Randomly generates a unique alias that preserves the format of the card number, optionally revealing the card's BIN and last 4 digits. If the card's
+length without the preserved character is less than 16 digits, the card BIN will be 6 digits long, 8 otherwise.
+
+The special characters preserved are the traditional card number delimiters such as `" "`  and `"-"`. If the card number length is less than the revealed
+length, an error is returned.
 
 #### Parameters
 
@@ -51,10 +53,34 @@ If the card's length without the preserved character is less than 16 digits, the
 | -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
 | 0        | reveal_bin   | _bool_    | false    | `false`           | Whether to reveal the card BIN or not |
 | 1        | reveal_last4    | _bool_    | false    | `false`           | Whether to reveal the last 4 digits or not   |
-| 2        | mask_char      | _char_   | false    | `X`           | The masking character                             |
-| 3        | preserve_char | _string_ | false    | ``            | The character to preserve                      |
 
 #### Examples
+
+##### Card token type
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
+}
+```
+
+| Expression                                            | Result                  |
+| ----------------------------------------------------- | ----------------------- |
+| <code>{{ data.number &#124; alias_card }}</code>              | `"3292231249202291"` |
+| <code>{{ data.number &#124; alias_card: 'false', 'false' }}</code>              | `"2012232912901293"` |
+| <code>{{ data.number &#124; alias_card: 'true', 'false' }}</code>              | `"3622720629129014"` |
+| <code>{{ data.number &#124; alias_card: 'true', 'true' }}</code>              | `"3622720639185567"` |
+| <code>{{ data.number &#124; alias_card: 'false', 'true' }}</code>              | `"4024420198125567"` |
+
+##### Card number with delimiters
 
 Given a token with the data:
 
@@ -68,10 +94,11 @@ Given a token with the data:
 
 | Expression                                            | Result                  |
 | ----------------------------------------------------- | ----------------------- |
-| <code>{{ data &#124; card_mask: 'false', 'false', 'X', '-' }}</code>              | `"XXXX-XXXX-XXXX-XXXX"` |
-| <code>{{ data &#124; card_mask: 'true', 'false', 'X', '-' }}</code>              | `"3622-7206-XXXX-XXXX"` |
-| <code>{{ data &#124; card_mask: 'true', 'true', '#', '-' }}</code>              | `"3622-7206-####-5567"` |
-| <code>{{ data &#124; card_mask: 'false', 'true', 'X', '-' }}</code>              | `"XXXX-XXXX-XXXX-5567"` |
+| <code>{{ data &#124; alias_card }}</code>              | `"3292-2312-4920-2291"` |
+| <code>{{ data &#124; alias_card: 'false', 'false' }}</code>              | `"2012-2329-1290-1293"` |
+| <code>{{ data &#124; alias_card: 'true', 'false' }}</code>              | `"3622-7206-2912-9014"` |
+| <code>{{ data &#124; alias_card: 'true', 'true' }}</code>              | `"3622-7206-3918-5567"` |
+| <code>{{ data &#124; alias_card: 'false', 'true' }}</code>              | `"4024-4201-9812-5567"` |
 
 ## alias_preserve_format
 
@@ -141,6 +168,65 @@ Given a token with the data:
 | <code>{{ data &#124; alias_preserve_length: 3 }}</code>    | `"ABCanr9m2cx0giw7"` |
 | <code>{{ data &#124; alias_preserve_length: 0, 5 }}</code> | `"v38anr9m2cx67890"` |
 | <code>{{ data &#124; alias_preserve_length: 3, 5 }}</code> | `"ABCanr9m2cx67890"` |
+
+## card_mask
+
+Returns a masked version of the card number, optionally revealing the card's BIN and last 4 digits.
+If the card's length without the preserved character is less than 16 digits, the card BIN will be 6 digits long,
+8 otherwise. If the resulting masked string equals the original unmasked value, the whole value is masked.
+
+#### Parameters
+
+| Position | Name           | Type     | Required | Default Value | Description                                     |
+| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
+| 0        | reveal_bin   | _bool_    | false    | `false`           | Whether to reveal the card BIN or not |
+| 1        | reveal_last4    | _bool_    | false    | `false`           | Whether to reveal the last 4 digits or not   |
+| 2        | mask_char      | _char_   | false    | `X`           | The masking character                             |
+| 3        | preserve_char | _string_ | false    | ``            | The character to preserve                      |
+
+#### Examples
+
+##### Card token type
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
+}
+```
+
+| Expression                                            | Result                  |
+| ----------------------------------------------------- | ----------------------- |
+| <code>{{ data.number &#124; card_mask: 'false', 'false', 'X', '-' }}</code>              | `"XXXXXXXXXXXXXXXX"` |
+| <code>{{ data.number &#124; card_mask: 'true', 'false', 'X', '-' }}</code>              | `"36227206XXXXXXXX"` |
+| <code>{{ data.number &#124; card_mask: 'true', 'true', '#', '-' }}</code>              | `"36227206####5567"` |
+| <code>{{ data.number &#124; card_mask: 'false', 'true', 'X', '-' }}</code>              | `"XXXXXXXXXXXX5567"` |
+
+##### Card number with delimiters
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "token",
+  "data": "3622-7206-2716-5567"
+}
+```
+
+| Expression                                            | Result                  |
+| ----------------------------------------------------- | ----------------------- |
+| <code>{{ data &#124; card_mask: 'false', 'false', 'X', '-' }}</code>              | `"XXXX-XXXX-XXXX-XXXX"` |
+| <code>{{ data &#124; card_mask: 'true', 'false', 'X', '-' }}</code>              | `"3622-7206-XXXX-XXXX"` |
+| <code>{{ data &#124; card_mask: 'true', 'true', '#', '-' }}</code>              | `"3622-7206-####-5567"` |
+| <code>{{ data &#124; card_mask: 'false', 'true', 'X', '-' }}</code>              | `"XXXX-XXXX-XXXX-5567"` |
 
 ## json
 
@@ -218,15 +304,19 @@ Given a token with the data:
 ```json showLineNumbers
 {
   "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
-  "type": "token",
-  "data": "36227206271667"
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
 }
 ```
 
 | Expression                                               | Result   |
 | -------------------------------------------------------- | -------- |
-| <code>{{ data &#124; last4 }}</code>                     | `"1667"` |
-| <code>{{ data &#124; slice: 12, 2 &#124; last4 }}</code> | `"67"`   |
+| <code>{{ data.number &#124; last4 }}</code>                     | `"1667"` |
+| <code>{{ data.number &#124; slice: 12, 2 &#124; last4 }}</code> | `"67"`   |
 
 ## card_bin
 
@@ -247,14 +337,18 @@ Given a token with the data:
 ```json showLineNumbers
 {
   "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
-  "type": "token",
-  "data": "4242424242424242"
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
 }
 ```
 
 | Expression                                               | Result   |
 | -------------------------------------------------------- | -------- |
-| <code>{{ data &#124; card_bin }}</code>                     | `"42424242"` |
+| <code>{{ data.number &#124; card_bin }}</code>                     | `"42424242"` |
 
 ## reveal
 
