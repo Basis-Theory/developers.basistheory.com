@@ -1,3 +1,10 @@
+# [1.47.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.46.1...v1.47.0) (2023-05-17)
+
+
+### Features
+
+* documenting alias_card filter ([#119](https://github.com/Basis-Theory/developers.basistheory.com/issues/119)) ([d9b523d](https://github.com/Basis-Theory/developers.basistheory.com/commit/d9b523d8529e89e14601510994166b5c36c5c4d7))
+
 ## [1.46.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.46.0...v1.46.1) (2023-05-16)
 
 
