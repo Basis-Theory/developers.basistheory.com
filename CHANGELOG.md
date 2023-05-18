@@ -1,3 +1,10 @@
+## [1.47.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.47.1...v1.47.2) (2023-05-18)
+
+
+### Bug Fixes
+
+* Update Android SDK XML attribute docs ([#123](https://github.com/Basis-Theory/developers.basistheory.com/issues/123)) ([7123a03](https://github.com/Basis-Theory/developers.basistheory.com/commit/7123a034e406f9d0199912c7a57d9b8d68cd61bd))
+
 ## [1.47.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.47.0...v1.47.1) (2023-05-18)
 
 
