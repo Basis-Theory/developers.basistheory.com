@@ -1,3 +1,10 @@
+## [1.47.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.47.0...v1.47.1) (2023-05-18)
+
+
+### Bug Fixes
+
+* reference alias_card in Collect Cards guide ([#122](https://github.com/Basis-Theory/developers.basistheory.com/issues/122)) ([f837c84](https://github.com/Basis-Theory/developers.basistheory.com/commit/f837c84a9695712b22d675908f67426c2b56315b))
+
 # [1.47.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.46.1...v1.47.0) (2023-05-17)
 
 
