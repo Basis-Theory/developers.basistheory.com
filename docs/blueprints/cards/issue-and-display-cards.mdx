@@ -2,9 +2,6 @@
 toc_max_heading_level: 2
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
-
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { AuthButtons } from "@site/src/components/docs/AuthButtons";
 
@@ -53,7 +50,7 @@ Next you will need a [Public Application](/docs/api/applications#application-typ
 
 When a new card is issued with your system, you'll want to vault this with Basis Theory to later reveal it and perhaps process or share it.
 
-In order to vault these newly created cards, follow [this guide](/docs/guides/collect/collect-inbound-sensitive-data). 
+In order to vault these newly created cards, follow [this guide](/docs/guides/collect/collect-inbound-sensitive-data).
 
 ## Setting Up the Project
 
@@ -99,7 +96,7 @@ on the top right. Here's a helpful image below:
 
 Clicking on the button above will open the `Main.storyboard` on a new pane on the right. Now in the Project Navigator on the left, click on the `ViewController.swift` file. This should replace the `Main.storyboard` file on the right pane.
 
-Next, we control-drag from each of `CardNumberUITextField`, `CardExpirationDateUITextField` and `CardVerificationCodeUITextField`  in `Main.storyboard` to the top of our `ViewController` class in the `ViewController.swift` file on the right. 
+Next, we control-drag from each of `CardNumberUITextField`, `CardExpirationDateUITextField` and `CardVerificationCodeUITextField`  in `Main.storyboard` to the top of our `ViewController` class in the `ViewController.swift` file on the right.
 In the window that appears, type in "cardNumberElement", "cardExpirationDateElement" and "cardVerificationCodeElement" respectively for the Name of each element and click Connect. Then Xcode should suggest you import BasisTheoryElements, so let's go ahead and do that now.
 
 You should have something similar to the following for `ViewController.swift` after these steps.
@@ -238,7 +235,7 @@ First, lets create the [Private Application](docs/api/applications#application-t
 
 ### Authorizing in the Backend
 
-A session needs to be authorized by a Private Application first before usage. 
+A session needs to be authorized by a Private Application first before usage.
 Using the Private Application API Key, the `nonce` from our session, and [Condition](/docs/concepts/access-controls#conditions) we ensure we are only granting authorization for the desired token.
 
 <Alert type={Alerts.WARNING}>
@@ -318,28 +315,28 @@ class ViewController: UIViewController {
     //highlight-start
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
-        
+
         let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
             completion(nil, error)
         }
-        
+
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
+
         let task = session.dataTask(with: request, completionHandler: { data, response, error in
             guard error == nil else {
                 completion(nil, error)
                 return
             }
-            
+
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
                 completion(json, nil)
@@ -347,7 +344,7 @@ class ViewController: UIViewController {
                 completion(nil, error)
             }
         })
-        
+
         task.resume()
     }
     //highlight-end
@@ -359,7 +356,7 @@ class ViewController: UIViewController {
 
             //highlight-start
             self.authorizeSession(nonce: nonce) { result, error in
-                
+
             }
             //highlight-end
         }
@@ -406,28 +403,28 @@ class ViewController: UIViewController {
 
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
-        
+
         let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
             completion(nil, error)
         }
-        
+
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
+
         let task = session.dataTask(with: request, completionHandler: { data, response, error in
             guard error == nil else {
                 completion(nil, error)
                 return
             }
-            
+
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
                 completion(json, nil)
@@ -435,7 +432,7 @@ class ViewController: UIViewController {
                 completion(nil, error)
             }
         })
-        
+
         task.resume()
     }
 
@@ -449,7 +446,7 @@ class ViewController: UIViewController {
                 BasisTheoryElements.getTokenById(id: "card_token_id", apiKey: sessionKey) { data, error in
                   DispatchQueue.main.async {
                     self.cardNumberElement.setValue(elementValueReference: data!.data!.number!.elementValueReference)
-                    
+
                     self.cardExpirationDateElement.setValue(
                         month: data!.data!.expiration_month!.elementValueReference,
                         year: data!.data!.expiration_year!.elementValueReference
@@ -606,28 +603,28 @@ class ViewController: UIViewController {
 
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
-        
+
         let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
             completion(nil, error)
         }
-        
+
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
+
         let task = session.dataTask(with: request, completionHandler: { data, response, error in
             guard error == nil else {
                 completion(nil, error)
                 return
             }
-            
+
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
                 completion(json, nil)
@@ -635,7 +632,7 @@ class ViewController: UIViewController {
                 completion(nil, error)
             }
         })
-        
+
         task.resume()
     }
 
@@ -648,7 +645,7 @@ class ViewController: UIViewController {
                 BasisTheoryElements.getTokenById(id: "card_token_id", apiKey: sessionKey) { data, error in
                   DispatchQueue.main.async {
                     self.cardNumberElement.setValue(elementValueReference: data!.data!.number!.elementValueReference)
-                    
+
                     self.cardExpirationDateElement.setValue(
                         month: data!.data!.expiration_month!.elementValueReference,
                         year: data!.data!.expiration_year!.elementValueReference
