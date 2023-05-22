@@ -1,3 +1,10 @@
+## [1.47.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.47.2...v1.47.3) (2023-05-22)
+
+
+### Bug Fixes
+
+* update public app permission session docs ([#124](https://github.com/Basis-Theory/developers.basistheory.com/issues/124)) ([17fd55f](https://github.com/Basis-Theory/developers.basistheory.com/commit/17fd55f612d5361459e512d7b30d43ea409468d0))
+
 ## [1.47.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.47.1...v1.47.2) (2023-05-18)
 
 
