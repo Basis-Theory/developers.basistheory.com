@@ -2,7 +2,10 @@
 sidebar_label: Services
 ---
 
-import {Alert, Alerts} from "@site/src/components/shared/Alert";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Beta } from "@site/src/components/shared/Beta";
+
+import RawProxyResponse from "@site/docs/sdks/web/_raw-proxy-response.mdx";
 
 # Elements Services
 
@@ -10,7 +13,7 @@ Basis Theory Elements offers several methods and to interact with the underlying
 
 ## Element Methods
 
-Once you have declared an Element [component](/docs/sdks/web/react/components), you can use its [ref](/docs/sdks/web/react/#using-refs) to invoke the methods below:  
+Once you have declared an Element [component](/docs/sdks/web/react/components), you can use its [ref](/docs/sdks/web/react/#using-refs) to invoke the methods below:
 
 ```jsx showLineNumbers
 import { useRef } from "react";
@@ -24,39 +27,29 @@ const MyForm = () => {
 
   return (
     <BasisTheoryProvider bt={bt}>
-      <TextElement
-        id="fullName"
-        ref={fullNameRef}
-        placeholder="Full name"
-        aria-label="Full name"
-      />
+      <TextElement id="fullName" ref={fullNameRef} placeholder="Full name" aria-label="Full name" />
     </BasisTheoryProvider>
   );
 };
 ```
 
-| Name       | Resulting Type | Eligible Elements                                                                  | Description                                                                                  |
-| ---------- | -------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `clear`    | _void_         | All                                                                                | Clears the element input(s) value.                                                           |
-| `focus`    | _void_         | All                                                                                | Focuses on the element input.                                                                |
-| `blur`     | _void_         | All                                                                                | Blurs the element input.                                                                     |
-| `month`    | _number_       | [CardExpirationDate](/docs/sdks/web/react/components#cardexpirationdateelement)    | Data-parsing method that resolves to the month value of the input date, where "January" = 1. |
-| `year`     | _number_       | [CardExpirationDate](/docs/sdks/web/react/components#cardexpirationdateelement)    | Data-parsing method that resolves to the four-digit year value of the input date.            |
-| `setValue` | _void_         | All                                                                                | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.  |
-
+| Name       | Resulting Type | Eligible Elements                                                               | Description                                                                                  |
+| ---------- | -------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `clear`    | _void_         | All                                                                             | Clears the element input(s) value.                                                           |
+| `focus`    | _void_         | All                                                                             | Focuses on the element input.                                                                |
+| `blur`     | _void_         | All                                                                             | Blurs the element input.                                                                     |
+| `month`    | _number_       | [CardExpirationDate](/docs/sdks/web/react/components#cardexpirationdateelement) | Data-parsing method that resolves to the month value of the input date, where "January" = 1. |
+| `year`     | _number_       | [CardExpirationDate](/docs/sdks/web/react/components#cardexpirationdateelement) | Data-parsing method that resolves to the four-digit year value of the input date.            |
+| `setValue` | _void_         | All                                                                             | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.  |
 
 ## Tokenization Services
 
 Elements' values can be securely tokenized by simply passing the Element `ref` instance (or one of its [data parsing methods](#methods)) in the tokenization payload.
 
-<Alert>
-  The actual input data never leaves the element (iframe) other than to hit our
-  secure API endpoints.
-</Alert>
+<Alert>The actual input data never leaves the element (iframe) other than to hit our secure API endpoints.</Alert>
 
 <Alert type={Alerts.WARNING}>
-  When submitting <code>plainText</code> values, data will be HTML encoded
-  before storage for security reasons.
+  When submitting <code>plainText</code> values, data will be HTML encoded before storage for security reasons.
 </Alert>
 
 ### Create Token
@@ -65,13 +58,7 @@ The examples below show how to use Elements' instances in the payload of the [`t
 
 ```jsx showLineNumbers title="Create generic token"
 import { useRef } from "react";
-import { 
-  useBasisTheory,
-  BasisTheoryProvider,
-  TextElement,
-  BasisTheoryValidationError,
-  BasisTheoryApiError
-} from "@basis-theory/basis-theory-react";
+import { useBasisTheory, BasisTheoryProvider, TextElement, BasisTheoryValidationError, BasisTheoryApiError } from "@basis-theory/basis-theory-react";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
@@ -85,11 +72,11 @@ const MyForm = () => {
         type: "token",
         data: {
           name: fullName,
-          nonSensitiveData: "plainText"
+          nonSensitiveData: "plainText",
         },
         metadata: {
-          nonSensitiveField: "nonSensitiveValue"
-        }
+          nonSensitiveField: "nonSensitiveValue",
+        },
       });
 
       console.log(token.id); // token to share
@@ -105,12 +92,7 @@ const MyForm = () => {
 
   return (
     <BasisTheoryProvider bt={bt}>
-      <TextElement
-        id="fullName"
-        ref={fullNameRef}
-        placeholder="Full name"
-        aria-label="Full name"
-      />
+      <TextElement id="fullName" ref={fullNameRef} placeholder="Full name" aria-label="Full name" />
       <div>
         <button type="submit" onClick={submit} disabled={!bt}>
           Submit
@@ -123,13 +105,7 @@ const MyForm = () => {
 
 ```jsx showLineNumbers title="Create card token"
 import { useRef } from "react";
-import {
-  useBasisTheory,
-  BasisTheoryProvider,
-  CardElement,
-  BasisTheoryValidationError,
-  BasisTheoryApiError
-} from "@basis-theory/basis-theory-react";
+import { useBasisTheory, BasisTheoryProvider, CardElement, BasisTheoryValidationError, BasisTheoryApiError } from "@basis-theory/basis-theory-react";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
@@ -156,7 +132,7 @@ const MyForm = () => {
         // check error data or status
       }
     }
-  }
+  };
 
   return (
     <BasisTheoryProvider bt={bt}>
@@ -177,17 +153,7 @@ The example below shows how to use Elements' instances in the payload of the [`t
 
 ```jsx showLineNumbers title="Tokenize data"
 import { useRef } from "react";
-import {
-  useBasisTheory,
-  BasisTheoryProvider,
-  TextElement,
-  CardElement,
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
-  BasisTheoryValidationError,
-  BasisTheoryApiError
-} from "@basis-theory/basis-theory-react";
+import { useBasisTheory, BasisTheoryProvider, TextElement, CardElement, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BasisTheoryValidationError, BasisTheoryApiError } from "@basis-theory/basis-theory-react";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
@@ -208,7 +174,7 @@ const MyForm = () => {
       const tokens = await bt.tokenize({
         card1: {
           type: "card",
-          data: card
+          data: card,
         },
         card2: {
           type: "card",
@@ -216,16 +182,16 @@ const MyForm = () => {
             number: cardNumber,
             expiration_month: cardExpirationDate.month(),
             expiration_year: cardExpirationDate.year(),
-            cvc: cardVerificationCode
-          }
+            cvc: cardVerificationCode,
+          },
         },
         name: fullName,
         nonSensitiveData: "plainText", // see warning on plain text data
         otherData: {
           someInteger: 20,
-          someBoolean: false
+          someBoolean: false,
         },
-        someOtherData: ["plainText1", "plainText2"]
+        someOtherData: ["plainText1", "plainText2"],
       });
 
       console.log(tokens.card1.id, tokens.card2.id, tokens.name); // token to store
@@ -243,20 +209,9 @@ const MyForm = () => {
     <BasisTheoryProvider bt={bt}>
       <CardElement id="card" ref={cardRef} />
       <CardNumberElement id="cardNumber" ref={cardNumberRef} />
-      <CardExpirationDateElement
-        id="cardExpirationDate"
-        ref={cardExpirationDateRef}
-      />
-      <CardVerificationCodeElement
-        id="cardVerificationCode"
-        ref={cardVerificationCodeRef}
-      />
-      <TextElement
-        id="fullName"
-        ref={fullNameRef}
-        placeholder="Full name"
-        aria-label="Full name"
-      />
+      <CardExpirationDateElement id="cardExpirationDate" ref={cardExpirationDateRef} />
+      <CardVerificationCodeElement id="cardVerificationCode" ref={cardVerificationCodeRef} />
+      <TextElement id="fullName" ref={fullNameRef} placeholder="Full name" aria-label="Full name" />
       <div>
         <button type="submit" onClick={submit} disabled={!bt}>
           Submit
@@ -274,13 +229,7 @@ To do that, simply pass the Element instance (or one of its [data parsing method
 
 ```jsx showLineNumbers
 import { useRef } from "react";
-import { 
-  useBasisTheory,
-  BasisTheoryProvider,
-  TextElement,
-  BasisTheoryValidationError,
-  BasisTheoryApiError
-} from "@basis-theory/basis-theory-react";
+import { useBasisTheory, BasisTheoryProvider, TextElement, BasisTheoryValidationError, BasisTheoryApiError } from "@basis-theory/basis-theory-react";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
@@ -290,7 +239,8 @@ const MyForm = () => {
     const fullName = fullNameRef.current;
 
     try {
-      const token = await bt.tokens.update("ca9f3fd7-3906-4087-83aa-9a6129221297", { // replace w/ desired token id
+      const token = await bt.tokens.update("ca9f3fd7-3906-4087-83aa-9a6129221297", {
+        // replace w/ desired token id
         data: {
           name: fullName,
         },
@@ -308,12 +258,7 @@ const MyForm = () => {
 
   return (
     <BasisTheoryProvider bt={bt}>
-      <TextElement
-        id="fullName"
-        ref={fullNameRef}
-        placeholder="Full name"
-        aria-label="Full name"
-      />
+      <TextElement id="fullName" ref={fullNameRef} placeholder="Full name" aria-label="Full name" />
       <div>
         <button type="submit" onClick={submit} disabled={!bt}>
           Submit
@@ -335,11 +280,7 @@ The examples below show how to use `retrieve` and `setValue`, but for more infor
 
 ```jsx showLineNumbers title="Retrieve 'string' token data and set value into TextElement"
 import { useRef } from "react";
-import { 
-  useBasisTheory,
-  BasisTheoryProvider,
-  TextElement,
-} from "@basis-theory/basis-theory-react";
+import { useBasisTheory, BasisTheoryProvider, TextElement } from "@basis-theory/basis-theory-react";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
@@ -355,7 +296,7 @@ const MyForm = () => {
 
       textElement.setValue(token.data);
     } catch (error) {
-      // handle error 
+      // handle error
     }
   };
 
@@ -374,11 +315,7 @@ const MyForm = () => {
 
 ```jsx showLineNumbers title="Retrieve card token and set value into CardElement"
 import { useRef } from "react";
-import { 
-  useBasisTheory,
-  BasisTheoryProvider,
-  CardElement,
-} from "@basis-theory/basis-theory-react";
+import { useBasisTheory, BasisTheoryProvider, CardElement } from "@basis-theory/basis-theory-react";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
@@ -404,7 +341,7 @@ const MyForm = () => {
         expiration_year: token.data.expiration_year, // expects number
       });
     } catch (error) {
-      // handle error 
+      // handle error
     }
   };
 
@@ -423,12 +360,7 @@ const MyForm = () => {
 
 ```jsx showLineNumbers title="Retrieve card token and set value into split card elements"
 import { useRef } from "react";
-import {
-  useBasisTheory,
-  BasisTheoryProvider,
-  CardNumberElement,
-  CardExpirationDateElement,
-} from "@basis-theory/basis-theory-react";
+import { useBasisTheory, BasisTheoryProvider, CardNumberElement, CardExpirationDateElement } from "@basis-theory/basis-theory-react";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
@@ -450,7 +382,7 @@ const MyForm = () => {
         year: token.data.expiration_year,
       });
     } catch (error) {
-      // handle error 
+      // handle error
     }
   };
 
@@ -469,14 +401,11 @@ const MyForm = () => {
 ```
 
 <Alert type={Alerts.WARNING}>
-  The <code>data</code> attribute in the token returned by the{" "}
-  <code>retrieve</code> method is not the actual data, but a a synthetic
-  representation of the sensitive detokenized data.
+  The <code>data</code> attribute in the token returned by the <code>retrieve</code> method is not the actual data, but a a synthetic representation of the sensitive detokenized data.
 </Alert>
 
 <Alert>
-  Token attributes such as <code>metadata</code> are directly accessible from
-  the <code>retrieve</code> response as they are considered non-sensitive.
+  Token attributes such as <code>metadata</code> are directly accessible from the <code>retrieve</code> response as they are considered non-sensitive.
 </Alert>
 
 ## Proxy Service
@@ -486,16 +415,12 @@ This service wraps the [proxy API endpoint](/docs/api/proxies) to proxy a reques
 ### Invoking Proxy
 
 When a proxy is invoked from a Basis Theory instance configured with `elements: true`, the API request is made from inside a Basis Theory hosted `iframe` and the returned data remains within it, whether the proxy has Elements instances in its `body` or not.
-The examples below show how to invoke the proxy and use `setValue`, but for more information on revealing and session keys, visit the [Reveal Data from 3rd Party](/docs/guides/share/reveal-data-from-third-party) guide. 
+The examples below show how to invoke the proxy and use `setValue`, but for more information on revealing and session keys, visit the [Reveal Data from 3rd Party](/docs/guides/share/reveal-data-from-third-party) guide.
 Elements can be used to proxy data securely by including them in the proxy `body` as shown in the example.
 
 ```javascript showLineNumbers title="Invoking Pre-Configured Proxy w/ POST"
 import { useRef } from "react";
-import {
-  useBasisTheory,
-  BasisTheoryProvider,
-  TextElement
-} from "@basis-theory/basis-theory-react";
+import { useBasisTheory, BasisTheoryProvider, TextElement } from "@basis-theory/basis-theory-react";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
@@ -509,13 +434,13 @@ const MyForm = () => {
     try {
       const response = await bt.proxy.post({
         headers: {
-          "BT-PROXY-KEY": "e29a50980ca5" // replace with your pre-configured proxy key (if pre-configured)
+          "BT-PROXY-KEY": "e29a50980ca5", // replace with your pre-configured proxy key (if pre-configured)
         },
         body: {
           sensitiveValue: submitElement,
-          nonSensitiveValue: "plainText"
+          nonSensitiveValue: "plainText",
         },
-        apiKey: "key_N88mVGsp3sCXkykyN2EFED"
+        apiKey: "key_N88mVGsp3sCXkykyN2EFED",
       });
 
       revealElement.setValue(response.value);
@@ -538,45 +463,43 @@ const MyForm = () => {
 };
 ```
 
-<Alert type={Alerts.WARNING}>
-  The proxy response object returned after invoking it with elements is not the actual data, but a a synthetic representation of the sensitive data.
-</Alert>
+<Alert type={Alerts.WARNING}>The proxy response object returned after invoking it with elements is not the actual data, but a a synthetic representation of the sensitive data.</Alert>
 
 ### Proxy Invocation Methods
 
 The Elements proxy service supports all of the same HTTP methods that the [ephemeral](/docs/api/proxies/ephemeral-proxy#invoke-the-proxy) or [pre-configured](/docs/api/proxies/pre-configured-proxies#invoke-a-proxy) proxy APIs support.
 All proxy calls take the same [options](/docs/sdks/web/react/methods#proxyrequestoptions) object as a parameter.
 
-| Signature                                                                   | Description                      |
-|-----------------------------------------------------------------------------|----------------------------------|
-| `get(proxyRequest: ProxyRequestOptions)`                                    | Performs a proxy GET request.    |
-| `post(proxyRequest: ProxyRequestOptions)`                                   | Performs a proxy POST request.   |
-| `put(proxyRequest: ProxyRequestOptions)`                                    | Performs a proxy PUT request.    |
-| `patch(proxyRequest: ProxyRequestOptions)`                                  | Performs a proxy PATCH request.  |
-| `delete(proxyRequest: ProxyRequestOptions)`                                 | Performs a proxy DELETE request. |
+| Signature                                   | Description                      |
+| ------------------------------------------- | -------------------------------- |
+| `get(proxyRequest: ProxyRequestOptions)`    | Performs a proxy GET request.    |
+| `post(proxyRequest: ProxyRequestOptions)`   | Performs a proxy POST request.   |
+| `put(proxyRequest: ProxyRequestOptions)`    | Performs a proxy PUT request.    |
+| `patch(proxyRequest: ProxyRequestOptions)`  | Performs a proxy PATCH request.  |
+| `delete(proxyRequest: ProxyRequestOptions)` | Performs a proxy DELETE request. |
 
 ### ProxyRequestOptions
 
-| Attribute         | Type     | Required | Description                                                                  |
-| ----------------- | -------- | ---------| ---------------------------------------------------------------------------- |
-| `path`            | string   | false    | String that gets added to the end of the proxied URL path.                   |
-| `query`           | _object_ | false    | Key/Value pairs that are added as a query parameter to the proxied URL.      |
-| `headers`         | _object_ | false    | Key/Value pairs that are added as headers when invoking the proxied URL.     |
-| `body`            | _object_ | false    | Payload that gets sent to the proxied URL. Can contain Elements.             |
-| `apiKey`          | _object_ | false    | BasisTheory API Key for [authentication](/docs/api/authentication)           |
-| `correlationId`   | _object_ | false    | ID that can be used for [request correlation](/docs/api/request-correlation) |
-| `idempotencyKey`  | _object_ | false    | Key used for request [idempotency](/docs/api/idempotency)                    |
+| Attribute        | Type     | Required | Description                                                                  |
+| ---------------- | -------- | -------- | ---------------------------------------------------------------------------- |
+| `path`           | string   | false    | String that gets added to the end of the proxied URL path.                   |
+| `query`          | _object_ | false    | Key/Value pairs that are added as a query parameter to the proxied URL.      |
+| `headers`        | _object_ | false    | Key/Value pairs that are added as headers when invoking the proxied URL.     |
+| `body`           | _object_ | false    | Payload that gets sent to the proxied URL. Can contain Elements.             |
+| `apiKey`         | _object_ | false    | BasisTheory API Key for [authentication](/docs/api/authentication)           |
+| `correlationId`  | _object_ | false    | ID that can be used for [request correlation](/docs/api/request-correlation) |
+| `idempotencyKey` | _object_ | false    | Key used for request [idempotency](/docs/api/idempotency)                    |
 
+### Access non-sensitive responses from Proxy calls <Beta />
+
+<RawProxyResponse />
 
 ## Service Errors
 
 Elements services could throw an error based on client-side validations or if the server rejects the request.
 
 ```javascript showLineNumbers title="Handling services errors"
-import {
-  BasisTheoryApiError,
-  BasisTheoryValidationError,
-} from "@basis-theory/basis-theory-js/common";
+import { BasisTheoryApiError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
 
 BasisTheory.tokenize({
   card1: {
@@ -589,7 +512,8 @@ BasisTheory.tokenize({
   },
   ssn: textElement,
 }).catch((error) => {
-  if (error instanceof BasisTheoryValidationError) { // only applies to tokenization
+  if (error instanceof BasisTheoryValidationError) {
+    // only applies to tokenization
     // check error details
   } else if (error instanceof BasisTheoryApiError) {
     // check error data or status
@@ -640,6 +564,5 @@ BasisTheory.tokenize({
 | `status`  | _number_ | Response HTTP status.                                   |
 
 <Alert>
-  Error <code>name</code> property may be used instead of checking its instance
-  type.
+  Error <code>name</code> property may be used instead of checking its instance type.
 </Alert>

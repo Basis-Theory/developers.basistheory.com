@@ -2,7 +2,10 @@
 sidebar_label: Services
 ---
 
-import {Alert, Alerts} from "@site/src/components/shared/Alert";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Beta } from "@site/src/components/shared/Beta";
+import Link from "@docusaurus/Link";
+import RawProxyResponse from "@site/docs/sdks/web/_raw-proxy-response.mdx";
 
 # Elements Services
 
@@ -32,19 +35,14 @@ Once you have [created](/docs/sdks/web/javascript/lifecycle#create-element) and 
 | `year`     | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the four-digit year value of the input date.            |
 | `setValue` | _void_         | All                                                                                | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.  |
 
-
 ## Tokenization Services
 
 Elements' values can be securely tokenized by simply passing the Element instance (or one of its [data parsing methods](#methods)) in the tokenization payload.
 
-<Alert>
-  The actual input data never leaves the element (iframe) other than to hit our
-  secure API endpoints.
-</Alert>
+<Alert>The actual input data never leaves the element (iframe) other than to hit our secure API endpoints.</Alert>
 
 <Alert type={Alerts.WARNING}>
-  When submitting <code>plainText</code> values, data will be HTML encoded
-  before storage for security reasons.
+  When submitting <code>plainText</code> values, data will be HTML encoded before storage for security reasons.
 </Alert>
 
 ### Create Token
@@ -140,7 +138,8 @@ To do that, simply pass the Element instance (or one of its [data parsing method
 
 ```javascript showLineNumbers
 BasisTheory.tokens
-  .update("ca9f3fd7-3906-4087-83aa-9a6129221297", { // replace w/ desired token id
+  .update("ca9f3fd7-3906-4087-83aa-9a6129221297", {
+    // replace w/ desired token id
     data: cardElement,
   })
   .then((token) => {
@@ -201,10 +200,7 @@ BasisTheory.tokens
 const cardNumberElement = BasisTheory.createElement("cardNumber", {
   targetId: "card-number",
 });
-const cardExpirationDateElement = BasisTheory.createElement(
-  "cardExpirationDate",
-  { targetId: "card-expiration-date" }
-);
+const cardExpirationDateElement = BasisTheory.createElement("cardExpirationDate", { targetId: "card-expiration-date" });
 
 BasisTheory.tokens
   .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
@@ -220,14 +216,11 @@ BasisTheory.tokens
 ```
 
 <Alert type={Alerts.WARNING}>
-  The <code>data</code> attribute in the token returned by the{" "}
-  <code>retrieve</code> method is not the actual data, but a a synthetic
-  representation of the sensitive detokenized data.
+  The <code>data</code> attribute in the token returned by the <code>retrieve</code> method is not the actual data, but a a synthetic representation of the sensitive detokenized data.
 </Alert>
 
 <Alert>
-  Token attributes such as <code>metadata</code> are directly accessible from
-  the <code>retrieve</code> response as they are considered non-sensitive.
+  Token attributes such as <code>metadata</code> are directly accessible from the <code>retrieve</code> response as they are considered non-sensitive.
 </Alert>
 
 ## Proxy Service
@@ -237,16 +230,16 @@ This service wraps the [proxy API endpoint](/docs/api/proxies) to proxy a reques
 ### Invoking Proxy
 
 When a proxy is invoked from a Basis Theory instance configured with `elements: true`, the API request is made from inside a Basis Theory hosted `iframe` and the returned data remains within it, whether the proxy has Elements instances in its `body` or not.
-The examples below show how to invoke the proxy and use `setValue`, but for more information on revealing and session keys, visit the [Reveal Data from 3rd Party](/docs/guides/share/reveal-data-from-third-party) guide. 
+The examples below show how to invoke the proxy and use `setValue`, but for more information on revealing and session keys, visit the [Reveal Data from 3rd Party](/docs/guides/share/reveal-data-from-third-party) guide.
 Elements can be used to proxy data securely by including them in the proxy `body` as shown in the example.
 
 ```javascript showLineNumbers title="Invoking Pre-Configured Proxy w/ POST"
 const submitElement = BasisTheory.createElement("text", {
   targetId: "submitElement",
 });
-const revealElement = BasisTheory.createElement("text", { 
-  targetId: "revealElement" }
-);
+const revealElement = BasisTheory.createElement("text", {
+  targetId: "revealElement",
+});
 
 BasisTheory.proxy
   .post({
@@ -264,44 +257,43 @@ BasisTheory.proxy
   });
 ```
 
-<Alert type={Alerts.WARNING}>
-  The proxy response object returned after invoking it with elements is not the actual data, but a a synthetic representation of the sensitive data.
-</Alert>
+<Alert type={Alerts.WARNING}>The proxy response object returned after invoking it with elements is not the actual data, but a a synthetic representation of the sensitive data.</Alert>
 
 ### Proxy Invocation Methods
 
 The Elements proxy service supports all of the same HTTP methods that the [ephemeral](/docs/api/proxies/ephemeral-proxy#invoke-the-proxy) or [pre-configured](/docs/api/proxies/pre-configured-proxies#invoke-a-proxy) proxy APIs support.
 All proxy calls take the same [options](/docs/sdks/web/javascript/methods#proxyrequestoptions) object as a parameter.
 
-| Signature                                                                   | Description                      |
-|-----------------------------------------------------------------------------|----------------------------------|
-| `get(proxyRequest: ProxyRequestOptions)`                                    | Performs a proxy GET request.    |
-| `post(proxyRequest: ProxyRequestOptions)`                                   | Performs a proxy POST request.   |
-| `put(proxyRequest: ProxyRequestOptions)`                                    | Performs a proxy PUT request.    |
-| `patch(proxyRequest: ProxyRequestOptions)`                                  | Performs a proxy PATCH request.  |
-| `delete(proxyRequest: ProxyRequestOptions)`                                 | Performs a proxy DELETE request. |
+| Signature                                   | Description                      |
+| ------------------------------------------- | -------------------------------- |
+| `get(proxyRequest: ProxyRequestOptions)`    | Performs a proxy GET request.    |
+| `post(proxyRequest: ProxyRequestOptions)`   | Performs a proxy POST request.   |
+| `put(proxyRequest: ProxyRequestOptions)`    | Performs a proxy PUT request.    |
+| `patch(proxyRequest: ProxyRequestOptions)`  | Performs a proxy PATCH request.  |
+| `delete(proxyRequest: ProxyRequestOptions)` | Performs a proxy DELETE request. |
 
 ### ProxyRequestOptions
 
-| Attribute         | Type     | Required | Description                                                                  |
-| ----------------- | -------- | ---------| ---------------------------------------------------------------------------- |
-| `path`            | string   | false    | String that gets added to the end of the proxied URL path.                   |
-| `query`           | _object_ | false    | Key/Value pairs that are added as a query parameter to the proxied URL.      |
-| `headers`         | _object_ | false    | Key/Value pairs that are added as headers when invoking the proxied URL.     |
-| `body`            | _object_ | false    | Payload that gets sent to the proxied URL. Can contain Elements.             |
-| `apiKey`          | _object_ | false    | BasisTheory API Key for [authentication](/docs/api/authentication)           |
-| `correlationId`   | _object_ | false    | ID that can be used for [request correlation](/docs/api/request-correlation) |
-| `idempotencyKey`  | _object_ | false    | Key used for request [idempotency](/docs/api/idempotency)                    |
+| Attribute        | Type     | Required | Description                                                                  |
+| ---------------- | -------- | -------- | ---------------------------------------------------------------------------- |
+| `path`           | string   | false    | String that gets added to the end of the proxied URL path.                   |
+| `query`          | _object_ | false    | Key/Value pairs that are added as a query parameter to the proxied URL.      |
+| `headers`        | _object_ | false    | Key/Value pairs that are added as headers when invoking the proxied URL.     |
+| `body`           | _object_ | false    | Payload that gets sent to the proxied URL. Can contain Elements.             |
+| `apiKey`         | _object_ | false    | BasisTheory API Key for [authentication](/docs/api/authentication)           |
+| `correlationId`  | _object_ | false    | ID that can be used for [request correlation](/docs/api/request-correlation) |
+| `idempotencyKey` | _object_ | false    | Key used for request [idempotency](/docs/api/idempotency)                    |
+
+### Access non-sensitive responses from Proxy calls <Beta />
+
+<RawProxyResponse />
 
 ## Service Errors
 
 Elements services could throw an error based on client-side validations or if the server rejects the request.
 
 ```javascript showLineNumbers title="Handling services errors"
-import {
-  BasisTheoryApiError,
-  BasisTheoryValidationError,
-} from "@basis-theory/basis-theory-js/common";
+import { BasisTheoryApiError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
 
 BasisTheory.tokenize({
   card1: {
@@ -314,7 +306,8 @@ BasisTheory.tokenize({
   },
   ssn: textElement,
 }).catch((error) => {
-  if (error instanceof BasisTheoryValidationError) { // only applies to tokenization
+  if (error instanceof BasisTheoryValidationError) {
+    // only applies to tokenization
     // check error details
   } else if (error instanceof BasisTheoryApiError) {
     // check error data or status
@@ -365,6 +358,5 @@ BasisTheory.tokenize({
 | `status`  | _number_ | Response HTTP status.                                   |
 
 <Alert>
-  Error <code>name</code> property may be used instead of checking its instance
-  type.
+  Error <code>name</code> property may be used instead of checking its instance type.
 </Alert>
