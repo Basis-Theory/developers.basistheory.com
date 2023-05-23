@@ -2,6 +2,9 @@
 sidebar_label: Services
 ---
 
+import { Beta } from "@site/src/components/shared/Beta";
+import RawProxyResponse from "@site/docs/sdks/_raw-proxy-response.mdx";
+
 # Services
 
 ## BasisTheoryElements
@@ -21,6 +24,7 @@ val bt = BasisTheoryElements.builder()
 ```
 
 The following values are used by default if not specified when constructing an instance of the service:
+
 - `apiUrl`: `https://api.basistheory.com`
 - `apiKey`: `null`
 - `ioDispatcher`: `Dispatchers.IO`
@@ -112,7 +116,7 @@ val proxyResponse = bt.proxy.post(proxyRequest)
 #### Methods Supported
 
 | Signature                                                                  | Description                      |
-|----------------------------------------------------------------------------|----------------------------------|
+| -------------------------------------------------------------------------- | -------------------------------- |
 | `get(proxyRequest: ProxyRequest, apiKeyOverride: String? = null): Any?`    | Performs a proxy GET request.    |
 | `post(proxyRequest: ProxyRequest, apiKeyOverride: String? = null): Any?`   | Performs a proxy POST request.   |
 | `put(proxyRequest: ProxyRequest, apiKeyOverride: String? = null): Any?`    | Performs a proxy PUT request.    |
@@ -121,9 +125,13 @@ val proxyResponse = bt.proxy.post(proxyRequest)
 
 #### ProxyRequest
 
-| Attribute     | Required | Type                   | Default      | Description                                                                                             |
-|---------------|----------|------------------------|--------------|---------------------------------------------------------------------------------------------------------|
-| `path`        | false    | _String?_              | `null`       | The sub-path of the HTTP URL.                                                                           |
-| `queryParams` | false    | _Map<String, String>?_ | `emptyMap()` | Map of query parameters to include in the request.                                                      |
-| `headers`     | false    | _Map<String, String>?_ | `emptyMap()` | Map of headers to include in the request.                                                               |
+| Attribute     | Required | Type                   | Default      | Description                                                                                                                                         |
+| ------------- | -------- | ---------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `path`        | false    | _String?_              | `null`       | The sub-path of the HTTP URL.                                                                                                                       |
+| `queryParams` | false    | _Map<String, String>?_ | `emptyMap()` | Map of query parameters to include in the request.                                                                                                  |
+| `headers`     | false    | _Map<String, String>?_ | `emptyMap()` | Map of headers to include in the request.                                                                                                           |
 | `body`        | false    | _Any?_                 | `null`       | The request body. Can be an [Element](/docs/sdks/mobile/android/types), object, array, or any primitive type such as an integer, boolean, or string |
+
+### Access non-sensitive responses from Proxy calls <Beta />
+
+<RawProxyResponse />
