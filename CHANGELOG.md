@@ -1,3 +1,10 @@
+# [1.49.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.48.0...v1.49.0) (2023-05-23)
+
+
+### Features
+
+* adds raw proxy response docs for android ([#126](https://github.com/Basis-Theory/developers.basistheory.com/issues/126)) ([4d7f1ca](https://github.com/Basis-Theory/developers.basistheory.com/commit/4d7f1ca796fde31fe0c1cc3806fa29314615c25b))
+
 # [1.48.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.47.3...v1.48.0) (2023-05-23)
 
 
