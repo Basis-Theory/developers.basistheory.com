@@ -1,3 +1,10 @@
+# [1.48.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.47.3...v1.48.0) (2023-05-23)
+
+
+### Features
+
+* adds raw proxy response docs ([#125](https://github.com/Basis-Theory/developers.basistheory.com/issues/125)) ([94c0899](https://github.com/Basis-Theory/developers.basistheory.com/commit/94c0899d5ae0ba2c5dfc2a5af624a0c24198d7be))
+
 ## [1.47.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.47.2...v1.47.3) (2023-05-22)
 
 
