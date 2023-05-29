@@ -1,3 +1,10 @@
+# [1.50.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.49.0...v1.50.0) (2023-05-29)
+
+
+### Features
+
+* add new validation option for web elements, add value prop to react ([#127](https://github.com/Basis-Theory/developers.basistheory.com/issues/127)) ([7bf89ac](https://github.com/Basis-Theory/developers.basistheory.com/commit/7bf89ac78e19cb468dc104e87c5911e6fcda3bec))
+
 # [1.49.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.48.0...v1.49.0) (2023-05-23)
 
 
