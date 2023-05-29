@@ -69,7 +69,7 @@ curl "https://api.basistheory.com/applications" \
 Now we will create a Proxy that intercepts the HTTP response from the Issuer API, which contains sensitive cardholder data that we need to store in our Basis Theory Tenant. To achieve that, we will leverage a [Response Transform](/docs/api/proxies/pre-configured-proxies#response-transforms) code that handles the response body to tokenize and redact the cardholder data, and include the new token:
 
 <Tabs className="bt-tabs" queryString="issuer">
-  <TabItem value="lithc" label="Lithic">
+  <TabItem value="lithic" label="Lithic">
 
 ```javascript showLineNumbers title="responseTransform.js"
 module.exports = async function (req) {
@@ -170,7 +170,7 @@ response_transform_code=$(cat responseTransform.js)
 And call Basis Theory API to [create the Proxy](/docs/api/proxies#create-a-proxy):
 
 <Tabs className="bt-tabs" queryString="issuer">
-  <TabItem value="lithc" label="Lithic">
+  <TabItem value="lithic" label="Lithic">
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/proxies" \
@@ -249,7 +249,7 @@ Done! These are all the resources necessary. Let's see how to actually use them.
 This is the last step of this guide, and it's also the one that your services will likely perform repeatedly based on your business requirements. Let's call the Issuer API through the Proxy, passing the payload and authorization headers the endpoint expects:
 
 <Tabs className="bt-tabs" queryString="issuer">
-  <TabItem value="lithc" label="Lithic">
+  <TabItem value="lithic" label="Lithic">
 
 ```shell showLineNumbers title="Create Card Request"
 curl 'https://api.basistheory.com/proxy' \
