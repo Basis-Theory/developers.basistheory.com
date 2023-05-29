@@ -1,3 +1,10 @@
+# [1.51.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.50.0...v1.51.0) (2023-05-29)
+
+
+### Features
+
+* add docs for mounting to element directly ([#128](https://github.com/Basis-Theory/developers.basistheory.com/issues/128)) ([773be10](https://github.com/Basis-Theory/developers.basistheory.com/commit/773be10c034308391825b65fd9c7372f1149c680))
+
 # [1.50.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.49.0...v1.50.0) (2023-05-29)
 
 
