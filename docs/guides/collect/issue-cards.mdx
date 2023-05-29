@@ -246,7 +246,7 @@ Done! These are all the resources necessary. Let's see how to actually use them.
 
 ## Calling the Issuer API
 
-This is the last step of this guide, and it's also the one that your services will likely perform repeatedly based on your business requirements. Let's call the Issuer API through the Proxy, passing the payload and authorization headers the endpoint expects:
+This is the last step of this guide, and it's also the one that your services will likely perform repeatedly based on your business requirements. Let's [call the Issuer API through the Proxy](/docs/api/proxies/pre-configured-proxies#invoke-a-proxy), passing the Private Application key to authenticate the request, and the payload the endpoint expects:
 
 <Tabs className="bt-tabs" queryString="issuer">
   <TabItem value="lithic" label="Lithic">
@@ -256,6 +256,7 @@ curl 'https://api.basistheory.com/proxy' \
   -X 'POST' \
   -H 'Content-Type: application/json' \
   -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "BT-API-KEY: test_123456789" \
   -H 'Authorization: 5c2150b7-1c86-4f34-9d27-7f4465837e8d' \
   -d '{
     "type": "VIRTUAL"
@@ -323,6 +324,7 @@ curl 'https://api.basistheory.com/proxy' \
   -X 'POST' \
   -H 'Content-Type: application/json' \
   -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "BT-API-KEY: test_123456789" \
   -H 'Authorization: Basic OGIyZjM3ZTUtYWU0My00YTM2LTljZjYtOTFjYmI5N2E4ZjkxOmY1YzllZDQ3LTNhODEtNDlkZi1hN2MyLWI5ODcyYjU2M2MxNw==' \
   -d '{
     "card_product_token": "69b58c85-60a2-4c36-88f4-2f8e78f5a9b6",
@@ -387,6 +389,7 @@ curl 'https://api.basistheory.com/proxy/ic_1ND8RgGuvJF9SIWEmUMy57D9?expand[]=num
   -X 'GET' \
   -H 'Content-Type: application/json' \
   -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "BT-API-KEY: test_123456789" \
   -H 'Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4' \
 ```
 
@@ -504,6 +507,11 @@ The `Authorization` header includes the Stripe API Key, and `ic_1ND8RgGuvJF9SIWE
 Stripe only returns `number` and `cvc` when retrieving an existing card. So you first must [create](https://stripe.com/docs/api/issuing/cards/create) the card directly calling Stripe API, and then [retrieve](https://stripe.com/docs/api/issuing/cards/retrieve) it using the Proxy.
   </TabItem>
 </Tabs>
+
+
+<Alert>
+  Be sure to replace <code>test_123456789</code> with the Private Application Key you created previously.
+</Alert>
 
 ## Key Considerations
 
