@@ -10,22 +10,11 @@ import GettingStartedSection from "@site/src/components/docs/_getting-started-se
 
 # Issue Cards
 
-Whether you're building a fintech platform, corporate expense management system, digital wallet solution, or any application requiring card issuance capabilities, you may face hurdles while integrating with card issuers or BaaS providers, including limited customization options, user experience constraints, and complex PCI-DSS compliance requirements. It is also fair to mention that truly owning the cardholder data is rarely possible without building your own Cardholder Data Environment (CDE) to perform simple tasks, like shipping the card information to a card switcher service or rewards program.
+Whether you're building a fintech platform, corporate expense management system, digital wallet solution, or any application requiring card issuance capabilities, you may face hurdles while integrating with card issuers or BaaS (Banking as a Service) providers, including limited customization options, user experience constraints, and complex PCI-DSS compliance requirements. It is also fair to mention that truly owning the cardholder data is rarely possible without building your own Cardholder Data Environment (CDE) to perform simple tasks, like shipping the card information to a card switcher service or rewards program.
 
 In this guide, we will leverage the Basis Theory Proxy API to set up a thin layer for handling the Issuer API responses and storing the newly issued cardholder data in a secure vault using tokenization. By following a small series of simple steps, we can unlock possibilities for using this sensitive data in various scenarios without taking on any unnecessary compliance scope.
 
-```mermaid
-sequenceDiagram
-  participant backend as Server Applicaton
-  participant api as Basis Theory API
-  participant issuer as Issuer API
-
-backend->>api: createCard(details)
-api->>issuer: createCard(details)
-issuer->>api: response(cardDetails)
-api->>api: tokenizeCard
-api->>backend: response(cardToken)
-```
+![Issue Cards](/img/guides/collect/issue-cards-flowchart.png)
 
 ## Getting Started
 
@@ -39,11 +28,11 @@ In this section, we will explore the bare minimum resources necessary to call th
 
 To create all subsequent resources, you will need a [Management Application](/docs/api/applications#application-types).
 
-[Click here](https://portal.basistheory.com/applications/create?name=Create+Proxy&permissions=proxy%3Acreate&permissions=application%3Acreate&type=management) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+[Click here](https://portal.basistheory.com/applications/create?name=Resource+Creator&permissions=proxy%3Acreate&permissions=application%3Acreate&type=management) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
 
-- Name - Create Proxy
+- Name - Resource Creator
 - Application Type - Management
-- Permissions: `proxy: create`
+- Permissions: `application:create`, `proxy: create`
 
 <Alert>
   Save the API Key from the created Management Application as it will be used later in this guide.
@@ -77,7 +66,7 @@ curl "https://api.basistheory.com/applications" \
 
 ### Pre-Configured Proxy
 
-Now we will create a Proxy that intercepts the HTTP response from the Issuer API, which contains sensitive cardholder data that we need to store in our Basis Theory Vault. To achieve that, we will leverage a [Response Transform](/docs/api/proxies/pre-configured-proxies#response-transforms) code that handles the response body to tokenize and redact the cardholder data, and include the new token:
+Now we will create a Proxy that intercepts the HTTP response from the Issuer API, which contains sensitive cardholder data that we need to store in our Basis Theory Tenant. To achieve that, we will leverage a [Response Transform](/docs/api/proxies/pre-configured-proxies#response-transforms) code that handles the response body to tokenize and redact the cardholder data, and include the new token:
 
 <Tabs className="bt-tabs" queryString="issuer">
   <TabItem value="lithc" label="Lithic">
@@ -193,7 +182,7 @@ curl "https://api.basistheory.com/proxies" \
   </TabItem>
 </Tabs>
 
-A few things to notice on the request above:
+A few things to notice in the request above:
 
 1. `test_1234567890` is the Management Application Key, used to authenticate the request;
 2. `45c124e7-6ab2-4899-b4d9-1388b0ba9d04` is the id of the Private Application, which is used to initialize the `bt` instance injected in the `req` parameter;
@@ -340,15 +329,24 @@ curl 'https://api.basistheory.com/proxy' \
 
 ## Key Considerations
 
-**You are not restricted** to the Card Issuers listed above. As long as your partner can send you the card information through an API response, you can redact and tokenize it using the Proxy.
+### Flexibility
+
+**You are not restricted** to the Card Issuers listed above. As long as your partner can send you the card information through an API response, you can redact and tokenize it using the Pre-Configured Proxy.
+
+### Issuer Requirements
 
 If you find that the Issuer API expects any form of Personal Identifiable Information (PII) in the Request Payload, you can also [use the Proxy to detokenize sensitive data](/docs/guides/share/send-data-to-third-party) before hitting the downstream endpoint.
 
 It's important to note that for some Issuers, inbound connections are only accepted from whitelisted IP addresses provided by the client. To help with this, [here](/docs/api/ip-addresses) you can find a compiled list of our IP addresses that you can send to your acquirer. In cases of more restrictive integrations, Basis Theory can provide dedicated IPs upon request. If you're interested in this option, please don't hesitate to [contact us](https://basistheory.com/contact).
 
+### asd
+
+A major benefit of vaulting your issued cards is the ability to
+
+
 ## Conclusion
 
-By using our Ephemeral Proxy, you can confidently transmit cardholder data to Payment Processors via API requests without ever touching the card details yourself. This approach not only improves security and reduces compliance risks but also provides the flexibility to establish your own relationships with Payment Processors and the latest payment technologies.
+By using our Pre-Configured Proxy, you can confidently receive cardholder data from a Card Issuer via API requests without ever touching the card details yourself. This approach not only improves security and reduces compliance risks but also provides the flexibility to establish your own relationships with Issuers and decide what to do with the issued cards' data.
 
 ## Learn More
 
