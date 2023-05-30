@@ -1,3 +1,10 @@
+# [1.52.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.51.0...v1.52.0) (2023-05-30)
+
+
+### Features
+
+* add Issue Cards guide ([#130](https://github.com/Basis-Theory/developers.basistheory.com/issues/130)) ([bd33182](https://github.com/Basis-Theory/developers.basistheory.com/commit/bd3318234fba8498d3d523a950d0aa866156493c))
+
 # [1.51.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.50.0...v1.51.0) (2023-05-29)
 
 
