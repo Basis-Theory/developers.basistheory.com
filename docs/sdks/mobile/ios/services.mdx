@@ -3,6 +3,8 @@ sidebar_label: Services
 ---
 
 import { Alert } from "@site/src/components/shared/Alert";
+import { Beta } from "@site/src/components/shared/Beta";
+import RawProxyResponse from "@site/docs/sdks/_raw-proxy-response.mdx";
 
 # Services
 
@@ -17,8 +19,7 @@ BasisTheoryElements.apiKey = "<YOUR PUBLIC BT API KEY>"
 All [service method](#methods) calls take an optional `apiKey` should you need to override the globally set `apiKey`.
 
 <Alert>
-  The <a href="/docs/sdks/mobile/ios/services#proxy">proxy</a> service call does not use this globally set <code>apiKey</code> since its use case is different from the other
-  services and requires a <a href="#createsession">session API key</a> for requests.
+  The <a href="/docs/sdks/mobile/ios/services#proxy">proxy</a> service call does not use this globally set <code>apiKey</code> since its use case is different from the other services and requires a <a href="#createsession">session API key</a> for requests.
 </Alert>
 
 ## Methods
@@ -42,9 +43,7 @@ BasisTheoryElements.tokenize(body: body, apiKey: "<YOUR PUBLIC API KEY>")
 ```
 
 <Alert>
-  Note that <code>tokenize</code> requires the use of a public API key
-  (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>).
-  Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
+  Note that <code>tokenize</code> requires the use of a public API key (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>). Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
   to create one in the Basis Theory portal.
 </Alert>
 
@@ -65,9 +64,7 @@ BasisTheoryElements.createToken(body: body, apiKey: "<YOUR PUBLIC API KEY>")
 ```
 
 <Alert>
-  Note that <code>createToken</code> requires the use of a public API key
-  (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>).
-  Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
+  Note that <code>createToken</code> requires the use of a public API key (an API key issued to a <code>public</code> <a href="/docs/concepts/access-controls#what-are-applications">Application</a>). Click <a href="https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public">here </a>
   to create one in the Basis Theory portal.
 </Alert>
 
@@ -99,10 +96,11 @@ BasisTheoryElements.getTokenById(
 ```
 
 The callback provided calls your function with a:
-* `error` of type [Error](#errors)
-* `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a `token` without giving you access to read any sensitive values in `token.data` which means you stay compliant. 
 
-To show a value from the token `data`, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference` property. 
+- `error` of type [Error](#errors)
+- `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a `token` without giving you access to read any sensitive values in `token.data` which means you stay compliant.
+
+To show a value from the token `data`, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference` property.
 Below is an example of how you do that and set the value reference into a Text Element.
 
 ```swift showLineNumbers
@@ -112,7 +110,7 @@ Below is an example of how you do that and set the value reference into a Text E
 BasisTheoryElements.getTokenById(
     id: "<YOUR TOKEN ID>",
     apiKey: "<YOUR API KEY>",
-) { data, error in 
+) { data, error in
     myTextElement.setValue(elementValueReference: data!.data!.nested!.property!.elementValueReference)
 }
 ```
@@ -146,9 +144,10 @@ BasisTheoryElements.proxy(
 </Alert>
 
 The callback provided calls your function with a:
-* `response` of type [URLResponse](https://developer.apple.com/documentation/foundation/urlresponse)
-* `error` of type [Error](#errors)
-* `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a response from a `proxy` without giving you access to read any sensitive `proxy` response data, which means you stay compliant. To tokenize a JSON property from a `proxy` response, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference` property. As of now, only numbers, booleans, and strings can be retrieved using this method. Below is an example of how you can use a response from a `proxy` with our elements.
+
+- `response` of type [URLResponse](https://developer.apple.com/documentation/foundation/urlresponse)
+- `error` of type [Error](#errors)
+- `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a response from a `proxy` without giving you access to read any sensitive `proxy` response data, which means you stay compliant. To tokenize a JSON property from a `proxy` response, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference` property. As of now, only numbers, booleans, and strings can be retrieved using this method. Below is an example of how you can use a response from a `proxy` with our elements.
 
 ```swift showLineNumbers
 @IBOutlet private weak var myTextElement: TextElementUITextField!
@@ -169,23 +168,27 @@ BasisTheoryElements.proxy(
 }
 ```
 
+### Access non-sensitive responses from Proxy calls <Beta />
+
+<RawProxyResponse />
+
 ## Errors
 
-| Error | Description |
-| --- |--- |
+| Error                                    | Description                                                                                                                                                                                                               |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TokenizingError.applicationTypeNotPublic | The [Application](/docs/api/applications) API key used is not of type `public`. Create a `public` API key through this [link](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public). |
-| TokenizingError.invalidInput | An element instance used in a tokenization request is invalid. Check the element events on each element to determine which one is invalid. |
-| ProxyError.invalidRequest | The [proxy](#proxy) request is malformed. Revise the [proxy](#proxy) request being attempted. |
-| ErrorResponse.error | An instance of [ErrorResponse enum](#errorresponse-enum) gets returned when there's an error from the BasisTheory API. |
+| TokenizingError.invalidInput             | An element instance used in a tokenization request is invalid. Check the element events on each element to determine which one is invalid.                                                                                |
+| ProxyError.invalidRequest                | The [proxy](#proxy) request is malformed. Revise the [proxy](#proxy) request being attempted.                                                                                                                             |
+| ErrorResponse.error                      | An instance of [ErrorResponse enum](#errorresponse-enum) gets returned when there's an error from the BasisTheory API.                                                                                                    |
 
 ### ErrorResponse Enum
 
-| Order | Associated Value Name | Description |
-| --- | --- |--- |
-| 1 | status | An `Int` describing the response status code |
-| 2 | data | A `Data?` instance describing the response body |
-| 3 | urlResponse | The raw `UrlResponse?` instance |
-| 4 | error | The raw `Error` instance |
+| Order | Associated Value Name | Description                                     |
+| ----- | --------------------- | ----------------------------------------------- |
+| 1     | status                | An `Int` describing the response status code    |
+| 2     | data                  | A `Data?` instance describing the response body |
+| 3     | urlResponse           | The raw `UrlResponse?` instance                 |
+| 4     | error                 | The raw `Error` instance                        |
 
 <Alert>
   The <code>ErrorResponse</code> enum can be imported from the BasisTheory Swift SDK through the <code>BasisTheory</code> package, which is a dependency of the iOS <code>BasisTheoryElements</code> package.
