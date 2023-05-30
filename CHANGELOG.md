@@ -1,3 +1,10 @@
+# [1.53.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.52.0...v1.53.0) (2023-05-30)
+
+
+### Features
+
+* adds raw proxy response to iOS ([#129](https://github.com/Basis-Theory/developers.basistheory.com/issues/129)) ([27fee51](https://github.com/Basis-Theory/developers.basistheory.com/commit/27fee51c7bdf96726e7ecdcf0a9f04a51ef5126b))
+
 # [1.52.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.51.0...v1.52.0) (2023-05-30)
 
 
