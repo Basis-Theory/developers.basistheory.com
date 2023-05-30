@@ -10,7 +10,7 @@ const config = {
   url: "https://developers.basistheory.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
+  onBrokenMarkdownLinks: "throw",
   favicon: "https://cdn.basistheory.com/images/favicons/favicon.ico",
 
   // GitHub pages deployment config.

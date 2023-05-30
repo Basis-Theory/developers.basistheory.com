@@ -39,6 +39,7 @@ const sidebars = {
       },
       items: [
         "guides/collect/collect-cards",
+        "guides/collect/issue-cards",
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-with-react",
         "guides/collect/collect-data-with-android",
@@ -326,9 +327,9 @@ const sidebars = {
             id: "sdks/web/react/index",
           },
           items: [
-            "sdks/web/react/components", 
-            "sdks/web/react/events", 
-            "sdks/web/react/methods"
+            "sdks/web/react/components",
+            "sdks/web/react/events",
+            "sdks/web/react/methods",
           ],
         },
       ],

@@ -1,0 +1,544 @@
+---
+toc_max_heading_level: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+
+# Issue Cards
+
+Whether you're building a fintech platform, corporate expense management system, digital wallet solution, or any application requiring card issuance capabilities, you may face hurdles while integrating with card issuers or BaaS (Banking as a Service) providers, including limited customization options, user experience constraints, and complex PCI-DSS compliance requirements. It is also fair to mention that truly owning the cardholder data is rarely possible without building your own Cardholder Data Environment (CDE) to perform simple tasks, like shipping the card information to a card switcher service or rewards program.
+
+In this guide, we will leverage the Basis Theory Proxy API to set up a thin layer for handling the Issuer API responses and storing the newly issued cardholder data in a secure vault using tokenization. By following a small series of simple steps, we can unlock possibilities for using this sensitive data in various scenarios without taking on any unnecessary compliance scope.
+
+![Issue Cards](/img/guides/collect/issue-cards-flowchart.png)
+
+## Getting Started
+
+<GettingStartedSection />
+
+## Provisioning Resources
+
+In this section, we will explore the bare minimum resources necessary to call the Issuer API and securely store the card details.
+
+### Management Application
+
+To create all subsequent resources, you will need a [Management Application](/docs/api/applications#application-types).
+
+[Click here](https://portal.basistheory.com/applications/create?name=Resource+Creator&permissions=proxy%3Acreate&permissions=application%3Acreate&type=management) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Resource Creator
+- Application Type - Management
+- Permissions: `application:create`, `proxy: create`
+
+<Alert>
+  Save the API Key from the created Management Application as it will be used later in this guide.
+</Alert>
+
+### Private Application
+
+Next you will need a [Private Application](/docs/api/applications#application-types) to create tokens within the Proxy, and invoke it from your servers. This application represents your backend.
+
+Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Private Application:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -X "POST" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Backend",
+    "type": "private",
+    "permissions": [ "token:create", "tokens:use" ]
+  }'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Management API Key you created previously.
+</Alert>
+
+<Alert>
+  Save the <code>key</code> and <code>id</code> from the created Private Application as it will be used later in this guide.
+</Alert>
+
+### Pre-Configured Proxy
+
+Now we will create a Proxy that intercepts the HTTP response from the Issuer API, which contains sensitive cardholder data that we need to store in our Basis Theory Tenant. To achieve that, we will leverage a [Response Transform](/docs/api/proxies/pre-configured-proxies#response-transforms) code that handles the response body to tokenize and redact the cardholder data, and include the new token:
+
+<Tabs className="bt-tabs" queryString="issuer">
+  <TabItem value="lithic" label="Lithic">
+
+```javascript showLineNumbers title="responseTransform.js"
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers } = args;
+  const { pan, exp_month, exp_year, cvv, ...rest } = body;
+
+  const token = await bt.tokens.create({
+    type: 'card',
+    data: {
+      number: pan,
+      expiration_month: exp_month,
+      expiration_year: exp_year,
+      cvc: cvv
+    }
+  });
+
+  return {
+    headers,
+    body: {
+      ...rest,
+      token,
+    },
+  }
+}
+```
+
+[Lithic Create Card Docs](https://docs.lithic.com/reference/postcards)
+  </TabItem>
+  <TabItem value="marqeta" label="Marqeta">
+
+```javascript showLineNumbers title="responseTransform.js"
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers } = args;
+  const { pan, expiration, cvv_number, ...rest } = body;
+
+  const token = await bt.tokens.create({
+    type: 'card',
+    data: {
+      number: pan,
+      expiration_month: expiration.substring(0, 2),
+      expiration_year: `20${expiration.substring(2, 4)}`,
+      cvc: cvv_number
+    }
+  });
+
+  return {
+    headers,
+    body: {
+      ...rest,
+      token,
+    },
+  }
+}
+```
+
+[Marqeta Create Card Docs](https://www.marqeta.com/docs/core-api/cards#postCards)
+  </TabItem>
+  <TabItem value="stripe" label="Stripe">
+
+```javascript showLineNumbers title="responseTransform.js"
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers } = args;
+  const { number, exp_month, exp_year, cvc, ...rest } = body;
+
+  const token = await bt.tokens.create({
+    type: 'card',
+    data: {
+      number,
+      expiration_month: exp_month,
+      expiration_year: exp_year,
+      cvc
+    }
+  });
+
+  return {
+    headers,
+    body: {
+      ...rest,
+      token,
+    },
+  }
+}
+```
+
+[Stripe Retrieve Card Docs](https://stripe.com/docs/api/issuing/cards/retrieve)
+  </TabItem>
+</Tabs>
+
+Let's store the contents of the `responseTransform.js` file into a variable:
+
+```shell showLineNumbers
+response_transform_code=$(cat responseTransform.js)
+```
+
+And call Basis Theory API to [create the Proxy](/docs/api/proxies#create-a-proxy):
+
+<Tabs className="bt-tabs" queryString="issuer">
+  <TabItem value="lithic" label="Lithic">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -X "POST" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Issuer Proxy",
+    "destination_url": "https://sandbox.lithic.com/v1/cards",
+    "request_transform": {
+      "code": '"$(echo $response_transform_code | jq -Rsa .)"'
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    }
+  }'
+```
+
+  </TabItem>
+  <TabItem value="marqeta" label="Marqeta">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -X "POST" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Issuer Proxy",
+    "destination_url": "https://sandbox-api.marqeta.com/v3/cards?show_cvv_number=true&show_pan=true",
+    "request_transform": {
+      "code": '"$(echo $response_transform_code | jq -Rsa .)"'
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    }
+  }'
+```
+
+  </TabItem>
+  <TabItem value="stripe" label="Stripe">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -X "POST" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Issuer Proxy",
+    "destination_url": "https://api.stripe.com/v1/issuing/cards",
+    "request_transform": {
+      "code": '"$(echo $response_transform_code | jq -Rsa .)"'
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    }
+  }'
+```
+
+  </TabItem>
+</Tabs>
+
+A few things to notice in the request above:
+
+1. `test_1234567890` is the Management Application Key, used to authenticate the request;
+2. `45c124e7-6ab2-4899-b4d9-1388b0ba9d04` is the id of the Private Application, which is used to initialize the `bt` instance injected in the `req` parameter;
+3. `response_transform_code` is passed in plaintext form.
+
+<Alert>
+  Save the <code>key</code> from the created Proxy as it will be used later to invoke it.
+</Alert>
+
+Done! These are all the resources necessary. Let's see how to actually use them.
+
+## Calling the Issuer API
+
+This is the last step of this guide, and it's also the one that your services will likely perform repeatedly based on your business requirements. Let's [call the Issuer API through the Proxy](/docs/api/proxies/pre-configured-proxies#invoke-a-proxy), passing the Private Application key to authenticate the request, and the payload the endpoint expects:
+
+<Tabs className="bt-tabs" queryString="issuer">
+  <TabItem value="lithic" label="Lithic">
+
+```shell showLineNumbers title="Create Card Request"
+curl 'https://api.basistheory.com/proxy' \
+  -X 'POST' \
+  -H 'Content-Type: application/json' \
+  -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "BT-API-KEY: test_123456789" \
+  -H 'Authorization: 5c2150b7-1c86-4f34-9d27-7f4465837e8d' \
+  -d '{
+    "type": "VIRTUAL"
+  }'
+```
+
+The `Authorization` header includes Lithic API Key.
+
+```json showLineNumbers title="Create Card (Transformed) Response"
+{
+  "created": "2023-05-25T13:15:15Z",
+  "token": "f122d84b-f8ce-4f0f-899b-44ff5eb6a720",
+  "last_four": "3671",
+  "hostname": "",
+  "memo": "VIRTUAL card",
+  "type": "VIRTUAL",
+  "spend_limit": 0,
+  "spend_limit_duration": "TRANSACTION",
+  "state": "OPEN",
+  "funding": {
+    "created": "2021-10-06T21:25:13Z",
+    "token": "2b191150-1a75-451a-a5fa-52e3cba2a5f6",
+    "type": "DEPOSITORY_CHECKING",
+    "state": "ENABLED",
+    "nickname": "",
+    "account_name": "Sandbox",
+    "last_four": "1883"
+  },
+  "auth_rule_tokens": [],
+  "token": {
+    "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+    "type": "card",
+    "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+    "data": {
+      "number": "XXXXXXXXXXXX4242",
+      "expiration_month": 12,
+      "expiration_year": 2025
+    },
+    "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+    "created_at": "2023-04-17T12:54:44.8320458+00:00",
+    "mask": {
+      "number": "{{ data.number | reveal_last: 4 }}",
+      "expiration_month": "{{ data.expiration_month }}",
+      "expiration_year": "{{ data.expiration_year }}"
+    },
+    "privacy": {
+      "classification": "pci",
+      "impact_level": "high",
+      "restriction_policy": "mask"
+    },
+    "search_indexes": [],
+    "containers": [
+      "/pci/high/"
+    ]
+  }
+}
+```
+
+[Lithic Create Card Docs](https://docs.lithic.com/reference/postcards)
+  </TabItem>
+  <TabItem value="marqeta" label="Marqeta">
+
+```shell showLineNumbers title="Create Card Request"
+curl 'https://api.basistheory.com/proxy' \
+  -X 'POST' \
+  -H 'Content-Type: application/json' \
+  -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "BT-API-KEY: test_123456789" \
+  -H 'Authorization: Basic OGIyZjM3ZTUtYWU0My00YTM2LTljZjYtOTFjYmI5N2E4ZjkxOmY1YzllZDQ3LTNhODEtNDlkZi1hN2MyLWI5ODcyYjU2M2MxNw==' \
+  -d '{
+    "card_product_token": "69b58c85-60a2-4c36-88f4-2f8e78f5a9b6",
+    "user_token": "d4ae5e81-7f9d-45b4-8f17-56e4abdafd18"
+  }'
+```
+
+The `Authorization` header includes Marqeta's Application token and Admin access token in the form of Basic HTTP Auth.
+
+```json showLineNumbers title="Create Card (Transformed) Response"
+{
+  "created_time": "2023-05-25T13:33:22Z",
+  "last_modified_time": "2023-05-25T13:33:22Z",
+  "token": "5880854a-0ed8-4943-9488-389bd7b4a6b8",
+  "user_token": "fc601fb6-4b8b-4670-bad6-c1875cee7657",
+  "card_product_token": "45d0d874-2b89-487a-9296-ea92a9c6dc68",
+  "last_four": "3181",
+  "expiration_time": "2023-06-04T23:59:59Z",
+  "barcode": "19938128247771351193",
+  "pin_is_set": false,
+  "state": "ACTIVE",
+  "state_reason": "Digitally presented the card",
+  "fulfillment_status": "DIGITALLY_PRESENTED",
+  "instrument_type": "VIRTUAL_PAN",
+  "expedite": false,
+  "metadata": {},
+  "token": {
+    "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+    "type": "card",
+    "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+    "data": {
+      "number": "XXXXXXXXXXXX4242",
+      "expiration_month": 12,
+      "expiration_year": 2025
+    },
+    "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+    "created_at": "2023-04-17T12:54:44.8320458+00:00",
+    "mask": {
+      "number": "{{ data.number | reveal_last: 4 }}",
+      "expiration_month": "{{ data.expiration_month }}",
+      "expiration_year": "{{ data.expiration_year }}"
+    },
+    "privacy": {
+      "classification": "pci",
+      "impact_level": "high",
+      "restriction_policy": "mask"
+    },
+    "search_indexes": [],
+    "containers": [
+      "/pci/high/"
+    ]
+  }
+}
+```
+
+[Marqeta Create Card Docs](https://www.marqeta.com/docs/core-api/cards#postCards)
+  </TabItem>
+  <TabItem value="stripe" label="Stripe">
+
+```shell showLineNumbers title="Retrieve Card Request"
+curl 'https://api.basistheory.com/proxy/ic_1ND8RgGuvJF9SIWEmUMy57D9?expand[]=number&expand[]=cvc' \
+  -X 'GET' \
+  -H 'Content-Type: application/json' \
+  -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "BT-API-KEY: test_123456789" \
+  -H 'Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4' \
+```
+
+The `Authorization` header includes the Stripe API Key, and `ic_1ND8RgGuvJF9SIWEmUMy57D9` is the card id added to the the URL. Notice that we also must instruct Stripe to expand the card `number` and `cvc` using the URL.
+
+```json showLineNumbers title="Retrieve Card (Transformed) Response"
+{
+  "id": "ic_1ND8RgGuvJF9SIWEmUMy57D9",
+  "object": "issuing.card",
+  "brand": "Visa",
+  "cancellation_reason": null,
+  "cardholder": {
+    "id": "ich_1ND8OKGuvJF9SIWEEqzwegKr",
+    "object": "issuing.cardholder",
+    "billing": {
+      "address": {
+        "city": "San Francisco",
+        "country": "US",
+        "line1": "1234 Main Street",
+        "line2": null,
+        "postal_code": "94111",
+        "state": "CA"
+      }
+    },
+    "company": null,
+    "created": 1685375632,
+    "email": "jenny.rosen@example.com",
+    "individual": null,
+    "livemode": false,
+    "metadata": {},
+    "name": "Jenny Rosen",
+    "phone_number": "+18888675309",
+    "requirements": {
+      "disabled_reason": "requirements.past_due",
+      "past_due": [
+        "individual.card_issuing.user_terms_acceptance.ip",
+        "individual.card_issuing.user_terms_acceptance.date",
+        "individual.first_name",
+        "individual.last_name"
+      ]
+    },
+    "spending_controls": {
+      "allowed_categories": [],
+      "blocked_categories": [],
+      "spending_limits": [],
+      "spending_limits_currency": null
+    },
+    "status": "active",
+    "type": "individual"
+  },
+  "created": 1685375840,
+  "currency": "usd",
+  "last4": "0005",
+  "livemode": false,
+  "metadata": {},
+  "pin": null,
+  "replaced_by": null,
+  "replacement_for": null,
+  "replacement_reason": null,
+  "shipping": null,
+  "spending_controls": {
+    "allowed_categories": null,
+    "blocked_categories": null,
+    "spending_limits": [
+      {
+        "amount": 50000,
+        "categories": [],
+        "interval": "daily"
+      }
+    ],
+    "spending_limits_currency": "usd"
+  },
+  "status": "inactive",
+  "type": "virtual",
+  "wallets": {
+    "apple_pay": {
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    "google_pay": {
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    "primary_account_identifier": null
+  },
+  "token": {
+    "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+    "type": "card",
+    "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+    "data": {
+      "number": "XXXXXXXXXXXX4242",
+      "expiration_month": 12,
+      "expiration_year": 2025
+    },
+    "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+    "created_at": "2023-04-17T12:54:44.8320458+00:00",
+    "mask": {
+      "number": "{{ data.number | reveal_last: 4 }}",
+      "expiration_month": "{{ data.expiration_month }}",
+      "expiration_year": "{{ data.expiration_year }}"
+    },
+    "privacy": {
+      "classification": "pci",
+      "impact_level": "high",
+      "restriction_policy": "mask"
+    },
+    "search_indexes": [],
+    "containers": [
+      "/pci/high/"
+    ]
+  }
+}
+```
+
+Stripe only returns `number` and `cvc` when retrieving an existing card. So you first must [create](https://stripe.com/docs/api/issuing/cards/create) the card directly calling Stripe API, and then [retrieve](https://stripe.com/docs/api/issuing/cards/retrieve) it using the Proxy.
+  </TabItem>
+</Tabs>
+
+
+<Alert>
+  Be sure to replace <code>test_123456789</code> with the Private Application Key you created previously.
+</Alert>
+
+## Key Considerations
+
+### Flexibility
+
+**You are not restricted** to the Card Issuers listed above. As long as your partner can send you the card information through an API response, you can redact and tokenize it using the Pre-Configured Proxy.
+
+### Issuer Requirements
+
+If you find that the Issuer API expects any form of Personal Identifiable Information (PII) in the Request Payload, you can also [use the Proxy to detokenize sensitive data](/docs/guides/share/send-data-to-third-party) before hitting the downstream endpoint.
+
+It's important to note that for some Issuers, inbound connections are only accepted from whitelisted IP addresses provided by the client. To help with this, [here](/docs/api/ip-addresses) you can find a compiled list of our IP addresses that you can send to your acquirer. In cases of more restrictive integrations, Basis Theory can provide dedicated IPs upon request. If you're interested in this option, please don't hesitate to [contact us](https://basistheory.com/contact).
+
+### Integrations
+
+A major benefit of vaulting issued cards is the ability to work with their data and send it anywhere. You may find useful to offer value-added services to your users, like a rewards program, the ability to monitor transactions, manage expenses or update payment methods in 3rd party services.
+
+Check out [this guide](/docs/guides/share/process-card-payments) to learn how to route stored cards to 3rd party APIs. While it is mainly geared towards payments processing, the concepts are virtually the same.
+
+
+[//]: # (Add Display Cards link when the new guide is ready)
+
+## Conclusion
+
+By using our Pre-Configured Proxy, you can confidently receive cardholder data from a Card Issuer via API requests without ever touching the card details yourself. This approach not only improves security and reduces compliance risks but also provides the flexibility to establish your own relationships with Issuers and decide what to do with the issued cards' data.
+
+## Learn More
+
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [What is the Proxy](/docs/concepts/what-is-the-proxy)
