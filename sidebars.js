@@ -280,6 +280,7 @@ const sidebars = {
         "api/tokens/token-types",
         "api/tokens/search",
         "api/tokens/token-associations",
+        "api/tokens/transactions",
       ],
     },
     "api/deprecations",
