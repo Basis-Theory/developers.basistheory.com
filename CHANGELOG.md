@@ -1,3 +1,10 @@
+## [1.54.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.54.0...v1.54.1) (2023-05-31)
+
+
+### Bug Fixes
+
+* adds section for custom domain for proxies ([#132](https://github.com/Basis-Theory/developers.basistheory.com/issues/132)) ([2107009](https://github.com/Basis-Theory/developers.basistheory.com/commit/2107009322a85f10d375923c29021b77d954ad65))
+
 # [1.54.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.53.0...v1.54.0) (2023-05-31)
 
 
