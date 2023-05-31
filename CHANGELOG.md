@@ -1,3 +1,10 @@
+# [1.54.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.53.0...v1.54.0) (2023-05-31)
+
+
+### Features
+
+* Adds documentation for transactions ([#131](https://github.com/Basis-Theory/developers.basistheory.com/issues/131)) ([c1b01e0](https://github.com/Basis-Theory/developers.basistheory.com/commit/c1b01e0f8d0b4b853f77834eea571a92216e80d8))
+
 # [1.53.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.52.0...v1.53.0) (2023-05-30)
 
 
