@@ -4,6 +4,8 @@ description: The Basis Theory Proxy allows you to use tokens with HTTP APIs with
 sidebar_label: Proxy
 ---
 
+import { Alert } from "@site/src/components/shared/Alert";
+
 # What Is the Proxy?
 
 It is a common need to share data between software systems via HTTP based APIs. But what if an outbound HTTP request from your system
@@ -64,6 +66,22 @@ The proxy instance can be configured with a [request transform](/docs/api/proxie
 custom Node.js code that will execute within the proxy before the request is forwarded to your servers. This allows you to parse the request
 and tokenize sensitive data fields within the payload, substituting in non-sensitive tokens into the request. Your systems will receive a request
 containing the non-sensitive token identifiers that can be safely stored in your system.
+
+### Create a custom domain for your inbound proxy
+
+You can create a custom domain for your inbound proxy to make it seamless to integrate into your existing application. This allows you to use a
+domain like `https://secure.yourdomain.com` instead of the default proxy domain `https://api.basistheory.com/proxy` to invoke your inbound proxy.
+All you would need to do is the following:
+
+1. Configure a Basis Theory proxy instance
+2. Have a domain you own with a valid SSL certificate
+3. After we register your domain with our DNS provider, you'll need a CNAME record pointing to `btproxy.cloud` and a new TXT record with a value
+we'll provide you for validation.
+
+<Alert>
+  If you're ready to get started with white labeling your Basis Theory proxies, <a href="https://basistheory.com/contact">
+  please reach out</a>.
+</Alert>
 
 ### Guides
 
