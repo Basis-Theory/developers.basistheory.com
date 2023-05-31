@@ -64,6 +64,7 @@ const sidebars = {
       },
       items: [
         "guides/share/process-card-payments",
+        "guides/share/display-cards",
         "guides/share/send-data-to-third-party",
         "guides/share/display-masked-data",
         "guides/share/reveal-tokenized-data",

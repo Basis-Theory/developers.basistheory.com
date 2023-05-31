@@ -1,0 +1,264 @@
+---
+toc_max_heading_level: 2
+---
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+
+# Display Cards
+
+Lorem ipsum
+
+
+## Getting Started
+
+<GettingStartedSection />
+
+## Provisioning Resources
+
+In this section, we will explore the bare minimum resources necessary to display cards to your users.
+
+### Public Application
+
+You will need a [Public Application](/docs/api/applications) to initialize Basis Theory Elements with. This application represents your Frontend.
+
+[Click here to create it](https://portal.basistheory.com/applications/create?name=Frontend&type=public). Notice how no permissions are assigned at this point. They will be programmatically granted later using sessions.
+
+<Alert>
+  Save the API Key from the created Public Application as it will be used later in this guide.
+</Alert>
+
+### Private Application
+
+Next, you will need a [Private Application](/docs/api/applications) using our PCI-compliant template `Read PCI Tokens`. [Click here to create one.](https://portal.basistheory.com/applications/create?application_template_id=e6d4c554-6703-4bbb-b351-42cd2ee5cb5a)
+
+This will create an application with the following [Access Controls](/docs/concepts/access-controls):
+* Permissions: `token:read`
+* Containers: `/pci/`
+* Transform: `mask`
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used in the next steps of this guide.
+</Alert>
+
+## Configuring Basis Theory Elements
+
+<ConfigureElementsSection />
+
+## Adding Card Elements
+
+Once installed and configured, add the Card Elements to your application. This will enable your users to type in their card data in your form, while ensuring your systems never come in contact with the data.
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+<div id="cardNumber"></div>
+<div style="display: flex;">
+  <div id="cardExpirationDate" style="width: 100%;"></div>
+  <div id="cardVerificationCode" style="width: 100%;"></div>
+</div>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let cardNumberElement;
+let cardExpirationDateElement;
+let cardVerificationCodeElement;
+
+async function init() {
+  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+
+  //highlight-start
+  // Creates Elements instances
+  cardNumberElement = bt.createElement('cardNumber', {
+    targetId: 'myCardNumber' // (custom) used for tracking validation errors
+  });
+  cardExpirationDateElement = bt.createElement('cardExpirationDate', {
+    targetId: 'myCardExpiration'
+  });
+  cardVerificationCodeElement = bt.createElement('cardVerificationCode', {
+    targetId: 'myCardVerification'
+  });
+  //highlight-end
+
+  //highlight-start
+  // Mounts Elements in the DOM in parallel
+  await Promise.all([
+    cardNumberElement.mount('#cardNumber'),
+    cardExpirationDateElement.mount('#cardExpirationDate'),
+    cardVerificationCodeElement.mount('#cardVerificationCode'),
+  ]);
+  //highlight-end
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef, useState } from 'react';
+import {
+  BasisTheoryProvider,
+  // highlight-start
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  //highlight-end
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+export default function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  // highlight-start
+  // Refs to get access to the Elements instance
+  const cardNumberRef = useRef(null);
+  const cardExpirationRef = useRef(null);
+  const cardVerificationRef = useRef(null);
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      // highlight-start
+      <CardNumberElement
+        id="myCardNumber"
+        ref={cardNumberRef}
+      />
+      // highlight-end
+      <div style={{ display: 'flex' }}>
+        <div style={{ width: "100%" }}>
+          // highlight-start
+          <CardExpirationDateElement
+            id="myCardExpiration"
+            ref={cardExpirationRef}
+          />
+          // highlight-end
+        </div>
+        <div style={{ width: "100%" }}>
+          // highlight-start
+          <CardVerificationCodeElement
+            id="myCardVerification"
+            ref={cardVerificationRef}
+          />
+          // highlight-end
+        </div>
+      </div>
+    </BasisTheoryProvider>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+// highlight-next-line
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+    // highlight-start
+    @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
+    @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
+    @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
+    // highlight-end
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // highlight-start
+        // Setting Elements as read-only
+        cardNumberTextField.isUserInteractionEnabled = false
+        expirationDateTextField.isUserInteractionEnabled = false
+        cvcTextField.isUserInteractionEnabled = false
+        // highlight-end
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```xml showLineNumbers title=activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+      // highlight-start
+        <com.basistheory.android.view.CardNumberElement
+            android:id="@+id/card_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false" />
+        <com.basistheory.android.view.CardExpirationDateElement
+            android:id="@+id/expiration_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false" />
+        <com.basistheory.android.view.CardVerificationCodeElement
+            android:id="@+id/cvc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false" />
+      // highlight-end
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+
+    // highlight-start
+    private lateinit var cardNumberElement: CardNumberElement
+    private lateinit var cardExpirationDateElement: CardExpirationDateElement
+    private lateinit var cardVerificationCodeElement: CardVerificationCodeElement
+    // highlight-end
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // highlight-start
+        cardNumberElement = findViewById(R.id.card_number)
+        cardExpirationDateElement = findViewById(R.id.expiration_date)
+        cardVerificationCodeElement = findViewById(R.id.cvc)
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Displaying the Card
+
+### Creating a Session
+
+### Authorizing a Session
+
+### Retrieving the Card Token
+
+## Key Considerations
+
+- Proxy use, CVC ttl
+- elevation of permissions: pvt app vs sessions
+
+## Conclusion
