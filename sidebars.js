@@ -181,6 +181,13 @@ const sidebars = {
         "concepts/access-controls",
         "concepts/what-is-the-proxy",
         "concepts/what-are-reactors",
+        {
+          type: "doc",
+          id: "concepts/transactions",
+          customProps: {
+            beta: true,
+          },
+        },
         "concepts/elements",
         "concepts/what-are-mats",
       ],
@@ -280,6 +287,13 @@ const sidebars = {
         "api/tokens/token-types",
         "api/tokens/search",
         "api/tokens/token-associations",
+        {
+          type: "doc",
+          id: "api/tokens/transactions",
+          customProps: {
+            beta: true,
+          },
+        },
       ],
     },
     "api/deprecations",

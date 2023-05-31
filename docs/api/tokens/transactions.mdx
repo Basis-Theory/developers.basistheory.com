@@ -1,0 +1,370 @@
+---
+title: Transactions
+---
+
+import { Beta } from "@site/src/components/shared/Beta";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+
+# Transactions
+
+## Create Transaction <Beta /> {#create-transaction}
+
+Creates a new [transaction](/docs/concepts/transactions).
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/transactions"
+/>
+
+#### Permissions
+
+None
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/transactions" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -X "POST"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+
+const transaction = await bt.transactions.create();
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Transactions;
+
+var client = new TransactionClient("key_N88mVGsp3sCXkykyN2EFED");
+
+var transaction = await client.CreateAsync();
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TransactionsApi apiInstance = new TransactionsApi(defaultClient);
+        Transaction transaction = apiInstance.create();
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import transactions_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    transactions_client = transactions_api.TransactionsApi(api_client)
+
+    transaction = transactions_client.create()
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+  transaction, httpResponse, err := apiClient.TransactionsApi.Create(contextWithAPIKey).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a [transaction object](#transaction-object) if the transaction was created successfully.
+
+```json showLineNumbers
+{
+    "id": "683b3e4a-b50c-4fc2-9dea-c48e544b1603",
+    "created_at": "2023-05-30T18:12:16.4033481+00:00",
+    "created_by": "9cce23ec-5848-47c2-8a67-f7539077e423",
+    "expires_at": "2023-05-30T19:12:16.3826804+00:00"
+}
+```
+
+
+## Commit Transaction <Beta /> {#commit-transaction}
+
+Commits an open [transaction](/docs/concepts/transactions).
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/transactions/{id}/commit"
+/>
+
+#### Permissions
+
+None
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/transactions/683b3e4a-b50c-4fc2-9dea-c48e544b1603/commit" \
+-H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+-X "POST"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const transactionId = '683b3e4a-b50c-4fc2-9dea-c48e544b1603';
+
+await bt.transactions.commit(transactionId);
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Transactions;
+
+var client = new TransactionClient("key_N88mVGsp3sCXkykyN2EFED");
+var transactionId = Guid.Parse("683b3e4a-b50c-4fc2-9dea-c48e544b1603");
+
+await client.CommitAsync(transactionId);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TransactionsApi apiInstance = new TransactionsApi(defaultClient);
+        UUID transactionId = UUID.fromString("683b3e4a-b50c-4fc2-9dea-c48e544b1603");
+        apiInstance.commit(transactionId);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import transactions_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    transactions_client = transactions_api.TransactionsApi(api_client)
+    transaction_id = "683b3e4a-b50c-4fc2-9dea-c48e544b1603";
+    transactions_client.commit(transaction_id)
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+  transactionId := "683b3e4a-b50c-4fc2-9dea-c48e544b1603";
+
+  httpResponse, err := apiClient.TransactionsApi.Commit(contextWithAPIKey, transactionId).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns an empty `200` response when successful.
+
+
+## Rollback Transaction <Beta /> {#rollback-transaction}
+
+Rolls back an open [transaction](/docs/concepts/transactions).
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/transactions/{id}/rollback"
+/>
+
+#### Permissions
+
+None
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/transactions/683b3e4a-b50c-4fc2-9dea-c48e544b1603/rollback" \
+  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -X "POST"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const transactionId = '683b3e4a-b50c-4fc2-9dea-c48e544b1603';
+
+await bt.transactions.rollback(transactionId);
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Transactions;
+
+var client = new TransactionClient("key_N88mVGsp3sCXkykyN2EFED");
+var transactionId = Guid.Parse("683b3e4a-b50c-4fc2-9dea-c48e544b1603");
+
+await client.RollbackAsync(transactionId);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+        TransactionsApi apiInstance = new TransactionsApi(defaultClient);
+        UUID transactionId = UUID.fromString("683b3e4a-b50c-4fc2-9dea-c48e544b1603");
+        apiInstance.rollback(transactionId);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import transactions_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    transactions_client = transactions_api.TransactionsApi(api_client)
+    transaction_id = "683b3e4a-b50c-4fc2-9dea-c48e544b1603";
+    transactions_client.rollback(transaction_id)
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+  transactionId := "683b3e4a-b50c-4fc2-9dea-c48e544b1603";
+
+  httpResponse, err := apiClient.TransactionsApi.Rollback(contextWithAPIKey, transactionId).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns an empty `200` response when successful.
+
+
+## Transaction Object
+
+| Attribute    | Type   | Description                                                                |
+|--------------|--------|----------------------------------------------------------------------------|
+| `id`         | _uuid_ | The transaction ID                                                         |
+| `created_at` | _date_ | The date and time the transaction was created, in ISO 8601 format          |
+| `created_by` | _uuid_ | The [Application](/docs/api/applications) ID which created the transaction |
+| `expires_at` | _date_ | The date and time at which this transaction expires, in ISO 8601 format    |
