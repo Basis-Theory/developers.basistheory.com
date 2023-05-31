@@ -181,7 +181,13 @@ const sidebars = {
         "concepts/access-controls",
         "concepts/what-is-the-proxy",
         "concepts/what-are-reactors",
-        "concepts/transactions",
+        {
+          type: "doc",
+          id: "concepts/transactions",
+          customProps: {
+            beta: true,
+          },
+        },
         "concepts/elements",
         "concepts/what-are-mats",
       ],
