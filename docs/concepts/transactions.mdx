@@ -1,0 +1,50 @@
+---
+title: Transactions
+sidebar_label: Transactions
+---
+
+# Transactions
+
+Token operations are typically performed via separate Basis Theory API calls, with each operation committing changes immediately
+upon completion of the request. This can lead to challenges when needing to coordinate changes between your
+systems and Basis Theory, or to rollback changes in Basis Theory in the event of an unexpected error.
+
+Transactions allow multiple token operations to be logically grouped together into a single unit of work,
+which can then be atomically committed or rolled back.
+
+## How It Works
+
+First, a transaction must be [created](/docs/api/tokens/transactions/#create-transaction) through the Basis Theory API or an SDK.
+This will return a [Transaction](/docs/api/tokens/transactions/#transaction-object) object containing an `id` that can
+be referenced to enlist token operations into the transaction.
+
+Next, individual token operations are enlisted into the transaction by providing a `BT-TRANSACTION-ID` request header with the API request.
+The following endpoints support transactions:
+
+- [Create Token](/docs/api/tokens/#create-token)
+- [Update Token](/docs/api/tokens/#update-token)
+- [Delete Token](/docs/api/tokens/#delete-token)
+- [Tokenize](/docs/api/tokens/tokenize)
+
+Once all the desired changes are enlisted into a transaction, the transaction can be either [committed](/docs/api/tokens/transactions/#commit-transaction)
+or [rolled back](/docs/api/tokens/transactions/#rollback-transaction) through the API.
+
+## Isolation
+
+Transactions use an isolation model analogous to the `Read Committed` isolation level implemented by several popular database engines.
+Tokens created or updated within a transaction cannot be read outside the transaction until it is committed.
+
+If a token is updated or deleted within a transaction, the same token cannot be updated or deleted again by another
+transaction until the first transaction is either committed or rolled back.
+This is analogous to a row-level lock that many traditional databases use to implement transaction isolation.
+Attempts to re-enlist a token into another transaction will be rejected with a `409 Conflict` error response.
+
+## Token Deduplication
+
+The isolation model used by transactions has some interesting consequences relating to token deduplication:
+
+Duplicate tokens simultaneously created within two open transactions will NOT be deduplicated across transactions.
+Both token creations will be isolated and can be committed independently, even if this results in duplicate token data.
+
+However, if a token is created in a transaction that duplicates a pre-existing committed token,
+then the new token will be deduplicated by returning the existing matched token instead of creating a new one.

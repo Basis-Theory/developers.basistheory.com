@@ -181,6 +181,7 @@ const sidebars = {
         "concepts/access-controls",
         "concepts/what-is-the-proxy",
         "concepts/what-are-reactors",
+        "concepts/transactions",
         "concepts/elements",
         "concepts/what-are-mats",
       ],
