@@ -281,7 +281,13 @@ const sidebars = {
         "api/tokens/token-types",
         "api/tokens/search",
         "api/tokens/token-associations",
-        "api/tokens/transactions",
+        {
+          type: "doc",
+          id: "api/tokens/transactions",
+          customProps: {
+            beta: true,
+          },
+        },
       ],
     },
     "api/deprecations",
