@@ -427,6 +427,8 @@ export default function App() {
   </TabItem>
   <TabItem value="ios" label="iOS">
 
+Add a new `UIButton` to your `Main.storyboard` and create a new Action for it called `submit`.
+
 ```swift showLineNumbers title=ViewController.swift
 import Foundation
 import UIKit
@@ -440,7 +442,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
 
     // highlight-start
-      @IBAction func tokenize(_ sender: Any) {
+    @IBAction func submit(_ sender: Any) {
         let body: [String: Any] = [
             "type": "card",
             "data": [
@@ -668,7 +670,7 @@ export default function App() {
 
 ```swift showLineNumbers title=ViewController.swift
 class ViewController: UIViewController {
-      @IBAction func tokenize(_ sender: Any) {
+    @IBAction func submit(_ sender: Any) {
         let body: [String: Any] = [
             "type": "card",
             "data": [
@@ -813,7 +815,7 @@ export default function App() {
 
 ```swift showLineNumbers title=ViewController.swift
 class ViewController: UIViewController {
-      @IBAction func tokenize(_ sender: Any) {
+    @IBAction func submit(_ sender: Any) {
         let body: [String: Any] = [
             "type": "card",
             "data": [
@@ -941,7 +943,7 @@ export default function App() {
 
 ```swift showLineNumbers title=ViewController.swift
 class ViewController: UIViewController {
-      @IBAction func tokenize(_ sender: Any) {
+    @IBAction func submit(_ sender: Any) {
         let body: [String: Any] = [
             "type": "card",
             "data": [
@@ -1136,19 +1138,20 @@ export default function App() {
 
 ```swift showLineNumbers title=ViewController.swift
 class ViewController: UIViewController {
-      // highlight-start
-      func generateTokenId() -> String {
-          let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-          var tokenId = "card_"
-          for _ in 1...24 {
-              let randomIndex = Int(arc4random_uniform(UInt32(chars.count)))
-              let randomChar = chars[chars.index(chars.startIndex, offsetBy: randomIndex)]
-              tokenId.append(randomChar)
-          }
-          return tokenId
-      }
-      //highlight-end
-      @IBAction func tokenize(_ sender: Any) {
+    // highlight-start
+    func generateTokenId() -> String {
+        let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        var tokenId = "card_"
+        for _ in 1...24 {
+            let randomIndex = Int(arc4random_uniform(UInt32(chars.count)))
+            let randomChar = chars[chars.index(chars.startIndex, offsetBy: randomIndex)]
+            tokenId.append(randomChar)
+        }
+        return tokenId
+    }
+    //highlight-end
+
+    @IBAction func submit(_ sender: Any) {
         let body: [String: Any] = [
             // highlight-next-line
             "id": generateTokenId(),
