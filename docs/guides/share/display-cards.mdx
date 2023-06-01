@@ -52,7 +52,7 @@ This will create an application with the following [Access Controls](/docs/conce
 
 Once installed and configured, add the Card Elements to your application. This will enable your users to type in their card data in your form, while ensuring your systems never come in contact with the data.
 
-<Tabs className="bt-tabs" queryString="sdk">
+<Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="javascript" label="JavaScript">
 
 ```html showLineNumbers title=index.html
@@ -248,11 +248,382 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
-## Displaying the Card
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Public API Key you created previously.
+</Alert>
+
+## Displaying Card Data
+
+Now that we have Elements ready, it is time to fetch the card data and display it. We will add a button to trigger a function that gets the job done.
 
 ### Creating a Session
 
+The first step of securely fetching the card data is creating a [Session](/docs/api/applications/sessions) to grant temporary elevated access to our Public Application. Add the following code to create a session:
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+<div id="cardNumber"></div>
+<div style="display: flex;">
+  <div id="cardExpirationDate" style="width: 100%;"></div>
+  <div id="cardVerificationCode" style="width: 100%;"></div>
+</div>
+// highlight-next-line
+<button onclick="display();">Display</button>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let cardNumberElement;
+let cardExpirationDateElement;
+let cardVerificationCodeElement;
+
+async function init () { ... }
+
+// highlight-start
+async function display () {
+  try {
+    const session = await bt.sessions.create();
+  } catch (error) {
+    console.error(error);
+  }
+}
+// highlight-end
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef, useState } from 'react';
+import {
+  BasisTheoryProvider,
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+export default function App() {
+  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  // Refs to get access to the Elements instance
+  const cardNumberRef = useRef(null);
+  const cardExpirationRef = useRef(null);
+  const cardVerificationRef = useRef(null);
+
+  // highlight-start
+  const display = async () => {
+    try {
+      const session = await bt.sessions.create();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
+      // highlight-next-line
+      <button onClick={display}>Display</button>
+    </BasisTheoryProvider>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+Add a new `UIButton` to your `Main.storyboard` and create a new Action for it called `display`.
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+// highlight-next-line
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+    @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
+    @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
+    @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
+
+    // highlight-start
+    @IBAction func display(_ sender: Any) {
+        BasisTheoryElements.createSession(apiKey: "test_1234567890") { data, error in
+            let sessionKey = data!.sessionKey!
+            let nonce = data!.nonce!
+        }
+    }
+    // highlight-end
+
+    override func viewDidLoad() { ... }
+
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```xml showLineNumbers title=activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        ...
+
+      // highlight-start
+        <Button
+            android:id="@+id/display_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#00A4BA"
+            android:text="Display" />
+      // highlight-end
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var cardNumberElement: CardNumberElement
+    private lateinit var cardExpirationDateElement: CardExpirationDateElement
+    private lateinit var cardVerificationCodeElement: CardVerificationCodeElement
+    // highlight-start
+    private lateinit var button: Button;
+    // highlight-end
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        cardNumberElement = findViewById(R.id.card_number)
+        cardExpirationDateElement = findViewById(R.id.expiration_date)
+        cardVerificationCodeElement = findViewById(R.id.cvc)
+        // highlight-start
+        button = findViewById(R.id.display_button)
+        button.setOnClickListener {
+            display()
+        }
+        // highlight-end
+    }
+
+    // highlight-start
+    private fun display() {
+      val bt = BasisTheoryElements.builder()
+        .apiKey("test_1234567890")
+        .build()
+
+      val session = bt.createSession()
+    }
+    // highlight-end
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Public API Key you created previously.
+</Alert>
+
 ### Authorizing a Session
+
+Sessions must be [authorized](/docs/api/applications/sessions#authorize-session) by a Private Application to perform any actions against tokens. In our case, we want to allow it to temporarily retrieve the card token to display it for the user. To achieve that, we will add a new `/authorize` endpoint to our backend that receives the session `nonce` and authorizes it with the necessary permissions.
+
+<Tabs className="bt-tabs" queryString="backend">
+  <TabItem value="node" label="Node">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript
+const express = require("express");
+// highlight-next-line
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+
+const app = express();
+const port = 4242;
+
+// highlight-start
+app.post("/authorize", async (request, response) => {
+  const bt = await new BasisTheory().init("test_priv_1234567890");
+  const { nonce } = request.body;
+  // authorizing a session returns an empty 200 response
+  await bt.sessions.authorize({
+    nonce: nonce,
+    rules: [
+      {
+        description: "Display Token",
+        priority: 1,
+        conditions: [
+          {
+            attribute: "id",
+            operator: "equals",
+            value: "token_id_1234567890",
+          },
+        ],
+        permissions: ["token:read"],
+        transform: "reveal",
+      },
+    ],
+  });
+  response.status(204).send();
+});
+// highlight-end
+```
+
+  </TabItem>
+  <TabItem value=".net" label=".NET">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
+
+```csharp showLineNumbers
+using System.Collections.Generic;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+// highlight-start
+using BasisTheory.net.Sessions;
+using BasisTheory.net.Applications.Entities;
+// highlight-end
+
+namespace server.Controllers
+{
+  public class Program
+  {
+    public static void Main(string[] args)
+    {
+      WebHost.CreateDefaultBuilder(args)
+        .UseUrls("http://0.0.0.0:4242")
+        .UseWebRoot("public")
+        .UseStartup<Startup>()
+        .Build()
+        .Run();
+    }
+  }
+
+  public class Startup
+  {
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddMvc().AddNewtonsoftJson();
+    }
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+      if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+      app.UseRouting();
+      app.UseStaticFiles();
+      app.UseEndpoints(endpoints => endpoints.MapControllers());
+    }
+  }
+
+  [Route("authorize")]
+  [ApiController]
+  public class CheckoutApiController : Controller
+  {
+    // highlight-start
+    var client = new SessionClient("test_priv_1234567890");
+
+    [HttpPost]
+    public ActionResult Authorize(IDictionary<string,string> body)
+    {
+      var authorizedSession = await client.AuthorizeAsync(new AuthorizeSessionRequest {
+        Nonce = body["nonce"],
+        Rules = new List<AccessRule> {
+          new AccessRule {
+            Description = "Display Token",
+            Priority = 1,
+            Conditions = new List<Condition> {
+              new Condition {
+                Attribute = "id",
+                Operator = "equals",
+                Value = "token_id_1234567890"
+              }
+            },
+            Permissions = new List<string> { "token:read" },
+            Transform = "reveal"
+          },
+        }
+      });
+      return new StatusCodeResult(204);
+    }
+    // highlight-end
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import os
+from flask import Flask, redirect, request
+
+import basistheory
+from basistheory.api import sessions_api
+from basistheory.model.access_rule import AccessRule
+from basistheory.model.condition import Condition
+from basistheory.model.authorize_session_request import AuthorizeSessionRequest
+
+app = Flask(__name__)
+
+@app.route('/authorize', methods=['POST'])
+def authorize_session():
+    try:
+        body = request.get_json()
+        with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+          session_client = sessions_api.SessionsApi(api_client)
+
+          authorizedSession = session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
+              nonce = body.get("nonce"),
+              rules = [AccessRule(
+                description = "Display Tokens",
+                priority = 1,
+                conditions = [Condition(
+                  attribute = "id",
+                  operator = "equals",
+                  value = "token_id_1234567890",
+                )],
+                permissions = [ "token:read" ],
+                transform = "reveal"
+              )]
+          ))
+    except Exception as e:
+        return str(e)
+
+    return '', 204
+
+if __name__ == '__main__':
+    app.run(port=4242)
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+  </TabItem>
+</Tabs>
 
 ### Retrieving the Card Token
 
