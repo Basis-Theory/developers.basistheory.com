@@ -40,6 +40,10 @@ This will create an application with the following [Access Controls](/docs/conce
 
 Once installed and configured, add the Card Elements to your application. This will enable your users to type in their card data in your form, while ensuring your systems never come in contact with the data.
 
+<Alert>
+  Alternatively, you can follow <a href="/docs/guides/collect/collect-cards-single-element">this guide</a> for using a single <code>CardElement</code> with Javascript or React.
+</Alert>
+
 <Tabs className="bt-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
 
@@ -223,6 +227,11 @@ class ViewController: UIViewController {
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 ```kotlin showLineNumbers title=MainActivity.kt
+// highlight-start
+import com.basistheory.android.view.TextElement
+import com.basistheory.android.service.BasisTheoryElements
+// highlight-end
+
 class MainActivity : AppCompatActivity() {
 
     // highlight-start
@@ -246,79 +255,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
-
-  </TabItem>
-</Tabs>
-
-### Using a single Card Element
-Alternatively, you can declare a single Card Element that features all three basic cardholder data inputs in a single element.
-
-
-<Tabs className="bt-tabs" queryString="sdk">
-  <TabItem value="javascript" label="JavaScript">
-
-```html showLineNumbers title=index.html
-<div id="card"></div>
-```
-
-```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
-
-let bt;
-//highlight-start
-let cardElement;
-//highlight-end
-
-async function init () {
-  bt = await new BasisTheory().init('test_1234567890', { elements: true });
-  //highlight-start
-  cardElement = bt.createElement('card');
-  await cardElement.mount('#card');
-  //highlight-end
-};
-
-init();
-```
-  </TabItem>
-  <TabItem value="react" label="React">
-
-```jsx showLineNumbers title=App.jsx
-import React, { useRef } from 'react';
-import {
-  BasisTheoryProvider,
-  // highlight-next-line
-  CardElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
-
-export default function App() {
-  const { bt } = useBasisTheory('test_1234567890', { elements: true });
-  // highlight-start
-  // Ref to get access to the Element instance
-  const cardRef = useRef(null);
-  // highlight-end
-
-  return (
-    <BasisTheoryProvider bt={bt}>
-      // highlight-start
-      <CardElement
-        id="myCard"
-        ref={cardRef}
-      />
-      // highlight-end
-    </BasisTheoryProvider>
-  );
-}
-```
-  </TabItem>
-  <TabItem value="ios" label="iOS">
-
-CardElement is not yet available for iOS. If you need this feature, [please let us know](https://basistheory.com/contact).
-
-  </TabItem>
-  <TabItem value="android" label="Android">
-
-CardElement is not yet available for Android. If you need this feature, [please let us know](https://basistheory.com/contact).
 
   </TabItem>
 </Tabs>
@@ -432,7 +368,6 @@ Add a new `UIButton` to your `Main.storyboard` and create a new Action for it ca
 ```swift showLineNumbers title=ViewController.swift
 import Foundation
 import UIKit
-// highlight-next-line
 import BasisTheoryElements
 import Combine
 
@@ -505,6 +440,9 @@ class ViewController: UIViewController {
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 ```kotlin showLineNumbers title=MainActivity.kt
+import com.basistheory.android.view.TextElement
+import com.basistheory.android.service.BasisTheoryElements
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var cardNumberElement: CardNumberElement
@@ -562,10 +500,6 @@ class MainActivity : AppCompatActivity() {
 <Alert>
   Be sure to replace <code>test_1234567890</code> with the Public API Key you
   created in the <a href="#creating-a-public-application">Creating a Public Application</a> step.
-</Alert>
-
-<Alert>
-  If you are <a href="#using-a-single-card-element">using a single Card Element</a>, simply pass its reference as the <code>data</code> attribute of the token payload.
 </Alert>
 
 The created card `token` object contains the non-sensitive information about the tokenized card, which follows the [Card Token specification](/docs/api/tokens/token-types#card):
