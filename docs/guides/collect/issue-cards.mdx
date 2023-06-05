@@ -52,7 +52,7 @@ curl "https://api.basistheory.com/applications" \
   -d '{
     "name": "Backend",
     "type": "private",
-    "permissions": [ "token:create", "tokens:use" ]
+    "permissions": [ "token:create", "token:read", "tokens:use" ]
   }'
 ```
 
@@ -84,7 +84,9 @@ module.exports = async function (req) {
       expiration_month: exp_month,
       expiration_year: exp_year,
       cvc: cvv
-    }
+    },
+    fingerprintExpression: '{{ data.number }}',
+    deduplicateToken: true,
   });
 
   return {
@@ -114,7 +116,9 @@ module.exports = async function (req) {
       expiration_month: expiration.substring(0, 2),
       expiration_year: `20${expiration.substring(2, 4)}`,
       cvc: cvv_number
-    }
+    },
+    fingerprintExpression: '{{ data.number }}',
+    deduplicateToken: true,
   });
 
   return {
@@ -144,7 +148,9 @@ module.exports = async function (req) {
       expiration_month: exp_month,
       expiration_year: exp_year,
       cvc
-    }
+    },
+    fingerprintExpression: '{{ data.number }}',
+    deduplicateToken: true,
   });
 
   return {
@@ -160,6 +166,8 @@ module.exports = async function (req) {
 [Stripe Retrieve Card Docs](https://stripe.com/docs/api/issuing/cards/retrieve)
   </TabItem>
 </Tabs>
+
+Notice how we are using `fingerprintExpression` and `deduplicateToken` properties to make sure we only create one card token per unique each card number, also known as Primary Account Number (PAN). [Click here to learn more about deduplication](/docs/concepts/what-are-tokens#deduplication).
 
 Let's store the contents of the `responseTransform.js` file into a variable:
 
