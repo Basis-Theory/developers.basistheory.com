@@ -12,16 +12,19 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 Displaying cards to your application users is a feature that often comes with its own set of problems. Being able to implement a custom and refined user experience usually means either having to deal with the compliance burden associated with handling the sensitive cardholder data directly, or having to compromise aesthetics and developer experience trying to conform with outworn solutions.
 
-In this guide we will cover the necessary steps to integrate your frontend with Basis Theory SDKs to display tokenized cardholder data to your users, while holding the keys to that in your backend. The visual Elements are focused in the card data points: primary account number (PAN), expiration date and verification code, allowing you own the card visuals, which is out of scope for this guide.
+In this guide we will cover the necessary steps to integrate your frontend with Basis Theory SDKs to display tokenized cardholder data to your users, while keeping security control in your backend. The visual Elements are focused in the card data points: primary account number (PAN), expiration date and verification code, allowing you own the card visuals, which is out of scope for this guide.
 
+![Display Cards](/img/guides/share/display-cards-flowchart.png)
 
-
-If you don't have yet cards stored with Basis Theory, here a few guides you can explore:
+If you don't have yet cards stored with Basis Theory, here are a few guides you can explore:
 
 - [Issue Cards](/docs/guides/collect/issue-cards) - create brand-new cards using an Issuer API;
 - [Collect Cards](/docs/guides/collect/collect-cards) - capture cards in the frontend;
 - [Receive Cards](/docs/guides/share/reveal-data-from-third-party) - receive cards in API requests;
 - [Import from a Database](/docs/blueprints/migrations/import-from-database) - migrate to Basis Theory.
+
+[//]: # (Replace #3 link above with "Receive Cards" when the guide is available)
+[//]: # (Replace #4 link above with "Migrating from a Payments Processor" when the guide is available)
 
 ## Getting Started
 
@@ -51,7 +54,7 @@ Next, you will need a [Private Application](/docs/api/applications) using our PC
 * Transform: `mask`
 
 <Alert>
-  Save the API Key from the created Private Application as it will be used in the next steps of this guide.
+  Save the API Key from the created Public Application as it will be used later in this guide.
 </Alert>
 
 ## Configuring Basis Theory Elements
@@ -1137,9 +1140,9 @@ Basis Theory Elements' unopinionated nature allows for creative freedom, enablin
 
 ### CVC Retention
 
-Card tokens retain verification code for 1 hour. This limitation is enforced by default to comply with PCI-DSS guidelines. However, depending on your business case, extending this period may be possible upon analysis. Please, [reach out to our support team](https://basistheory.com/contact) for assistance anytime.
+Card tokens retain verification code for 1 hour. This limitation is enforced by default to comply with PCI-DSS guidelines. However, depending on your business case, extending this period or implementing technical workarounds may be possible upon analysis. Please, [reach out to our support team](https://basistheory.com/contact) for assistance anytime.
 
-### Permissions
+### Security
 
 Data security and compliance are major concerns when dealing with cardholder data. By using the Application Templates provided in the  [Provisioning Resources](#provisioning-resources) section, you can rest assured that your applications won't directly access sensitive data at any given moment.
 
@@ -1147,3 +1150,12 @@ To display the cardholder to the end user, the temporary frontend session is bri
 
 
 ## Conclusion
+
+The best practices prescribed in this guide ensure that your applications stay compliant with PCI-DSS standards while displaying cards to your users. With the access controls provisioned in the steps above, we are authorizing the frontend to retrieve existing tokenized data from the secure vault and display it using minimal UI components.
+
+While the example workflow is triggered by user interaction through a button click, your team can design different user experiences that better fit your app. You may chose to do all the steps when the view loads; or perhaps create a session earlier in the workflow, and only authorize if/when displaying the data is necessary.
+
+## Learn More
+
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [Elements](/docs/concepts/elements)
