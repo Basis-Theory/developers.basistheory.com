@@ -38,8 +38,6 @@ const sidebars = {
         id: "guides/collect/index",
       },
       items: [
-        "guides/collect/collect-cards",
-        "guides/collect/issue-cards",
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-with-react",
         "guides/collect/collect-data-with-android",
@@ -63,7 +61,6 @@ const sidebars = {
         id: "guides/share/index",
       },
       items: [
-        "guides/share/process-card-payments",
         "guides/share/send-data-to-third-party",
         "guides/share/display-masked-data",
         "guides/share/reveal-tokenized-data",
