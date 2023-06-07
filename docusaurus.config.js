@@ -291,7 +291,7 @@ const config = {
       };
     },
   ],
-  stylesheets: ["/css/iubenda.css"],
+  stylesheets: ["/css/iubenda.css", "/css/kapa.css"],
   scripts: [
     { src: "/scripts/iubenda.js" },
     { src: "https://cdn.iubenda.com/cs/iubenda_cs.js" },
