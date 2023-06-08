@@ -1,3 +1,10 @@
+# [1.55.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.54.1...v1.55.0) (2023-06-08)
+
+
+### Features
+
+* adding kapa to test ([#121](https://github.com/Basis-Theory/developers.basistheory.com/issues/121)) ([c071f6a](https://github.com/Basis-Theory/developers.basistheory.com/commit/c071f6a8e4d64ec532a986390f2e5da53530730f))
+
 ## [1.54.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.54.0...v1.54.1) (2023-05-31)
 
 
