@@ -291,10 +291,19 @@ const config = {
       };
     },
   ],
-  stylesheets: ["/css/iubenda.css"],
+  stylesheets: ["/css/iubenda.css", "/css/kapa.css"],
   scripts: [
     { src: "/scripts/iubenda.js" },
     { src: "https://cdn.iubenda.com/cs/iubenda_cs.js" },
+    {
+      src: "https://widget.kapa.ai/kapa-widget.bundle.js",
+      "data-website-id": "3755b5a8-e659-404c-9119-8cce3b1e87a7",
+      "data-project-name": "Basis Theory",
+      "data-project-color": "#45D1DB",
+      "data-project-logo":
+        "https://avatars.githubusercontent.com/u/75859349?s=280&v=4",
+      async: true,
+    },
   ],
 };
 

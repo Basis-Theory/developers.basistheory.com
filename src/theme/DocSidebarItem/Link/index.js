@@ -7,6 +7,8 @@ import ThemedImage from "@theme/ThemedImage";
 import clsx from "clsx";
 import React from "react";
 import styles from "./styles.module.css";
+import { Beta } from "@site/src/components/shared/Beta";
+
 export default function DocSidebarItemLink({
   item,
   onItemClick,
@@ -55,7 +57,7 @@ export default function DocSidebarItemLink({
             sources={item.customProps?.icon}
           />
         )}
-        {label}
+        {label} {item.customProps?.beta && <Beta />}
         {!isInternalLink && <IconExternalLink />}
       </Link>
     </li>
