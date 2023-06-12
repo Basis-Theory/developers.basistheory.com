@@ -364,6 +364,8 @@ import BasisTheoryElements
 import Combine
 
 class ViewController: UIViewController {
+    // highlight-next-line
+    private var sessionApiKey: String = ""
     @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
     @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
     @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
@@ -371,7 +373,7 @@ class ViewController: UIViewController {
     // highlight-start
     @IBAction func display(_ sender: Any) {
         BasisTheoryElements.createSession(apiKey: "test_1234567890") { data, error in
-            let sessionKey = data!.sessionKey!
+            self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
         }
     }
@@ -513,6 +515,8 @@ const { BasisTheory } = require("@basis-theory/basis-theory-js");
 const app = express();
 const port = 4242;
 
+app.use(express.json());
+
 // highlight-start
 app.post("/authorize", async (request, response) => {
   const bt = await new BasisTheory().init("test_priv_1234567890");
@@ -539,6 +543,10 @@ app.post("/authorize", async (request, response) => {
   response.status(204).send();
 });
 // highlight-end
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
 ```
 
   </TabItem>
@@ -632,7 +640,7 @@ In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) 
 
 ```python showLineNumbers
 import os
-from flask import Flask, redirect, request
+from flask import Flask, request
 
 import basistheory
 # highlight-start
@@ -651,7 +659,7 @@ def authorize_session():
   with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="test_priv_1234567890")) as api_client:
     session_client = sessions_api.SessionsApi(api_client)
 
-    authorizedSession = session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
+    session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
       nonce = body.get("nonce"),
       rules = [AccessRule(
         description = "Display Tokens",
@@ -691,7 +699,6 @@ import (
 )
 
 func main() {
-  http.Handle("/", http.FileServer(http.Dir("public")))
   // highlight-next-line
   http.HandleFunc("/authorize", authorizeSession)
   addr := "localhost:4242"
@@ -834,6 +841,7 @@ import BasisTheoryElements
 import Combine
 
 class ViewController: UIViewController {
+    private var sessionKey: String = ""
     @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
     @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
     @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
@@ -877,7 +885,7 @@ class ViewController: UIViewController {
 
     @IBAction func display(_ sender: Any) {
         BasisTheoryElements.createSession(apiKey: "test_1234567890") { data, error in
-            let sessionKey = data!.sessionKey!
+            self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
             // highlight-start
             self.authorizeSession(nonce: nonce) { result, error in
@@ -1061,6 +1069,7 @@ import BasisTheoryElements
 import Combine
 
 class ViewController: UIViewController {
+    private var sessionApiKey: String = ""
     @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
     @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
     @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
@@ -1069,11 +1078,11 @@ class ViewController: UIViewController {
 
     @IBAction func display(_ sender: Any) {
         BasisTheoryElements.createSession(apiKey: "test_1234567890") { data, error in
-            let sessionKey = data!.sessionKey!
+            self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
             self.authorizeSession(nonce: nonce) { result, error in
                 // highlight-start
-                BasisTheoryElements.getTokenById(id: 'd2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4', apiKey: sessionKey) { data, error in
+                BasisTheoryElements.getTokenById(id: 'd2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4', apiKey: self.sessionKey) { data, error in
                     DispatchQueue.main.async {
                         self.cardNumberTextField.setValue(elementValueReference: data!.data!.number!.elementValueReference)
                         self.expirationDateTextField.setValue(
@@ -1117,9 +1126,12 @@ class MainActivity : AppCompatActivity() {
 
       // highlight-start
       val token = bt.getToken("d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4", session.sessionKey)
-      cardNumberElement.setValueRef(token.data.number)
-      cardExpirationDateElement.setValueRef(token.data.expiration_month, token.data.expiration_year)
-      cardVerificationCodeElement.setValueRef(token.data.cvc)
+      cardNumberElement.setValueRef(token.data.getElementValueReference("number"))
+      cardExpirationDateElement.setValueRef(
+        token.data.getElementValueReference("expiration_month"),
+        token.data.getElementValueReference("expiration_year"),
+      )
+      cardVerificationCodeElement.setValueRef(token.data.getElementValueReference("cvc"))
       // highlight-end
     }
 
