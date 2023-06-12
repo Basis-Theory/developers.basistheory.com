@@ -52,7 +52,7 @@ curl "https://api.basistheory.com/applications" \
   -d '{
     "name": "Backend",
     "type": "private",
-    "permissions": [ "token:create", "tokens:use" ]
+    "permissions": [ "token:create", "token:read", "tokens:use" ]
   }'
 ```
 
@@ -84,7 +84,9 @@ module.exports = async function (req) {
       expiration_month: exp_month,
       expiration_year: exp_year,
       cvc: cvv
-    }
+    },
+    fingerprintExpression: '{{ data.number }}',
+    deduplicateToken: true,
   });
 
   return {
@@ -114,7 +116,9 @@ module.exports = async function (req) {
       expiration_month: expiration.substring(0, 2),
       expiration_year: `20${expiration.substring(2, 4)}`,
       cvc: cvv_number
-    }
+    },
+    fingerprintExpression: '{{ data.number }}',
+    deduplicateToken: true,
   });
 
   return {
@@ -144,7 +148,9 @@ module.exports = async function (req) {
       expiration_month: exp_month,
       expiration_year: exp_year,
       cvc
-    }
+    },
+    fingerprintExpression: '{{ data.number }}',
+    deduplicateToken: true,
   });
 
   return {
@@ -160,6 +166,8 @@ module.exports = async function (req) {
 [Stripe Retrieve Card Docs](https://stripe.com/docs/api/issuing/cards/retrieve)
   </TabItem>
 </Tabs>
+
+Notice how we are using `fingerprintExpression` and `deduplicateToken` properties to make sure we only create one card token per unique each card number, also known as Primary Account Number (PAN). [Click here to learn more about deduplication](/docs/concepts/what-are-tokens#deduplication).
 
 Let's store the contents of the `responseTransform.js` file into a variable:
 
@@ -519,6 +527,10 @@ Stripe only returns `number` and `cvc` when retrieving an existing card. So you 
 
 **You are not restricted** to the Card Issuers listed above. As long as your partner can send you the card information through an API response, you can redact and tokenize it using the Pre-Configured Proxy.
 
+### CVC Retention
+
+Card tokens retain verification code for 1 hour. This limitation is enforced by default to comply with PCI-DSS guidelines. However, depending on your business case, extending this period or implementing technical workarounds may be possible upon analysis. Please, [reach out to our support team](https://basistheory.com/contact) for assistance with this or other subjects.
+
 ### Issuer Requirements
 
 If you find that the Issuer API expects any form of Personal Identifiable Information (PII) in the Request Payload, you can also [use the Proxy to detokenize sensitive data](/docs/guides/share/send-data-to-third-party) before hitting the downstream endpoint.
@@ -531,8 +543,11 @@ A major benefit of vaulting issued cards is the ability to work with their data 
 
 Check out [this guide](/docs/guides/share/process-card-payments) to learn how to route stored cards to 3rd party APIs. While it is mainly geared towards payments processing, the concepts are virtually the same.
 
+### Display Card to End User
 
-[//]: # (Add Display Cards link when the new guide is ready)
+By vaulting your issued cards with Basis Theory you automatically unlock the ability to display them to your end users using our highly customizable and developer-friendly [Elements](/docs/concepts/elements).
+
+Check out [this guide](/docs/guides/share/display-cards) to learn how to securely display cards in your Web or Mobile application.
 
 ## Conclusion
 
@@ -541,4 +556,4 @@ By using our Pre-Configured Proxy, you can confidently receive cardholder data f
 ## Learn More
 
 - [What are tokens?](/docs/concepts/what-are-tokens)
-- [What is the Proxy](/docs/concepts/what-is-the-proxy)
+- [What is the Proxy?](/docs/concepts/what-is-the-proxy)
