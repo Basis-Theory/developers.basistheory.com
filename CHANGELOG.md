@@ -1,3 +1,10 @@
+# [1.56.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.55.0...v1.56.0) (2023-06-12)
+
+
+### Features
+
+* Add "Display Cards" Guide ([#134](https://github.com/Basis-Theory/developers.basistheory.com/issues/134)) ([82e5e23](https://github.com/Basis-Theory/developers.basistheory.com/commit/82e5e237b2ddf63f05a41059ba3a83bb41211690))
+
 # [1.55.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.54.1...v1.55.0) (2023-06-08)
 
 
