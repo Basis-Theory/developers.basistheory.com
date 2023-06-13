@@ -1,3 +1,10 @@
+## [1.56.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.56.0...v1.56.1) (2023-06-13)
+
+
+### Bug Fixes
+
+* update hostname docs ([#138](https://github.com/Basis-Theory/developers.basistheory.com/issues/138)) ([80f254b](https://github.com/Basis-Theory/developers.basistheory.com/commit/80f254b20c8140f9556e188af8276332349d2334))
+
 # [1.56.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.55.0...v1.56.0) (2023-06-12)
 
 
