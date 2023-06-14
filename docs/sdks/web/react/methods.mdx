@@ -502,21 +502,33 @@ Element values can be used in a request to a third party API using our http clie
 
 The example below shows how to use the http client service to make a POST request to a third party API with an element in the payload.
 
-```jsx showLineNumbers title="Create generic token"
+```jsx showLineNumbers title="Invoking Http Client Service w/ POST"
 import { useRef } from "react";
-import { useBasisTheory, BasisTheoryProvider, TextElement, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+import { useBasisTheory, BasisTheoryProvider, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
-  const fullNameRef = useRef(null);
+  const cardNumberRef = useRef(null);
+  const cardExpirationDateRef = useRef(null);
+  const cardVerificationCodeRef = useRef(null);
 
   const submit = async () => {
-    const fullName = fullNameRef.current;
+    const cardNumber = cardNumberRef.current;
+    const cardExpirationDate = cardExpirationDateRef.current;
+    const cardVerificationCode = cardVerificationCodeRef.current;
 
     try {
       const response = await bt.post('https://www.api.thirdpartydomain.com/resources', {
-        name: fullName,
+        number: cardNumber,
+        expiration_month: cardExpirationDate.month(),
+        expiration_year: cardExpirationDate.year(),
+        cvc: cardVerificationCode,
         nonSensitiveData: "plainText",
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       });
 
       console.log(JSON.stringify(response)); // full plaintext response
@@ -531,7 +543,223 @@ const MyForm = () => {
 
   return (
     <BasisTheoryProvider bt={bt}>
-      <TextElement id="fullName" ref={fullNameRef} placeholder="Full name" aria-label="Full name" />
+      <CardNumberElement id="cardNumber" ref={cardNumberRef} />
+      <CardExpirationDateElement id="cardExpirationDate" ref={cardExpirationDateRef} />
+      <CardVerificationCodeElement id="cardVerificationCode" ref={cardVerificationCodeRef} />
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<Alert type={Alerts.WARNING}>
+  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
+</Alert>
+
+### Put
+
+The example below shows how to use the http client service to make a PUT request to a third party API with an element in the payload.
+
+```jsx showLineNumbers title="Invoking Http Client Service w/ PUT"
+import { useRef } from "react";
+import { useBasisTheory, BasisTheoryProvider, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+  const cardNumberRef = useRef(null);
+  const cardExpirationDateRef = useRef(null);
+  const cardVerificationCodeRef = useRef(null);
+
+  const submit = async () => {
+    const cardNumber = cardNumberRef.current;
+    const cardExpirationDate = cardExpirationDateRef.current;
+    const cardVerificationCode = cardVerificationCodeRef.current;
+
+    try {
+      const response = await bt.put('https://www.api.thirdpartydomain.com/resources/id', {
+        number: cardNumber,
+        expiration_month: cardExpirationDate.month(),
+        expiration_year: cardExpirationDate.year(),
+        cvc: cardVerificationCode,
+        nonSensitiveData: "plainText",
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <CardNumberElement id="cardNumber" ref={cardNumberRef} />
+      <CardExpirationDateElement id="cardExpirationDate" ref={cardExpirationDateRef} />
+      <CardVerificationCodeElement id="cardVerificationCode" ref={cardVerificationCodeRef} />
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<Alert type={Alerts.WARNING}>
+  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
+</Alert>
+
+### Put
+
+The example below shows how to use the http client service to make a PATCH request to a third party API with an element in the payload.
+
+```jsx showLineNumbers title="Invoking Http Client Service w/ PATCH"
+import { useRef } from "react";
+import { useBasisTheory, BasisTheoryProvider, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+  const cardNumberRef = useRef(null);
+  const cardExpirationDateRef = useRef(null);
+  const cardVerificationCodeRef = useRef(null);
+
+  const submit = async () => {
+    const cardNumber = cardNumberRef.current;
+    const cardExpirationDate = cardExpirationDateRef.current;
+    const cardVerificationCode = cardVerificationCodeRef.current;
+
+    try {
+      const response = await bt.patch('https://www.api.thirdpartydomain.com/resources/id', {
+        number: cardNumber,
+        expiration_month: cardExpirationDate.month(),
+        expiration_year: cardExpirationDate.year(),
+        cvc: cardVerificationCode,
+        nonSensitiveData: "plainText",
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <CardNumberElement id="cardNumber" ref={cardNumberRef} />
+      <CardExpirationDateElement id="cardExpirationDate" ref={cardExpirationDateRef} />
+      <CardVerificationCodeElement id="cardVerificationCode" ref={cardVerificationCodeRef} />
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<Alert type={Alerts.WARNING}>
+  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
+</Alert>
+
+### Get
+
+The example below shows how to use the http client service to make a GET request to a third party API.
+
+```jsx showLineNumbers title="Invoking Http Client Service w/ GET"
+import { useBasisTheory, BasisTheoryProvider, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+
+  const submit = async () => {
+    try {
+      const response = await bt.get('https://www.api.thirdpartydomain.com/resources/id', {
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<Alert type={Alerts.WARNING}>
+  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
+</Alert>
+
+### Delete
+
+The example below shows how to use the http client service to make a DELETE request to a third party API.
+
+```jsx showLineNumbers title="Invoking Http Client Service w/ DELETE"
+import { useBasisTheory, BasisTheoryProvider, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+
+  const submit = async () => {
+    try {
+      const response = await bt.delete('https://www.api.thirdpartydomain.com/resources/id', {
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
       <div>
         <button type="submit" onClick={submit} disabled={!bt}>
           Submit
