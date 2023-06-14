@@ -494,7 +494,61 @@ All proxy calls take the same [options](/docs/sdks/web/react/methods#proxyreques
 
 <RawProxyResponse />
 
-## Service Errors
+## Http Client Service
+
+Element values can be used in a request to a third party API using our http client service.
+
+### Post
+
+The example below shows how to use the http client service to make a POST request to a third party API with an element in the payload.
+
+```jsx showLineNumbers title="Create generic token"
+import { useRef } from "react";
+import { useBasisTheory, BasisTheoryProvider, TextElement, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+  const fullNameRef = useRef(null);
+
+  const submit = async () => {
+    const fullName = fullNameRef.current;
+
+    try {
+      const response = await bt.post('https://www.api.thirdpartydomain.com/resources', {
+        name: fullName,
+        nonSensitiveData: "plainText",
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement id="fullName" ref={fullNameRef} placeholder="Full name" aria-label="Full name" />
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<Alert type={Alerts.WARNING}>
+  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
+</Alert>
+
+## Errors
+
+### BasisTheory Service Errors
 
 Elements services could throw an error based on client-side validations or if the server rejects the request.
 
@@ -517,6 +571,24 @@ BasisTheory.tokenize({
     // check error details
   } else if (error instanceof BasisTheoryApiError) {
     // check error data or status
+  }
+});
+```
+
+### Http Client Service Errors
+
+Http client services could throw an error based on client-side validations or if the server rejects the request.
+
+```javascript showLineNumbers title="Handling services errors"
+import { HttpClientError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
+
+BasisTheory.post({
+  sensitiveData: textElement,
+}).catch((error) => {
+  if (error instanceof BasisTheoryValidationError) {
+    // check error details
+  } else if (error instanceof HttpClientError) {
+    // check error data, status, or headers
   }
 });
 ```
@@ -565,4 +637,25 @@ BasisTheory.tokenize({
 
 <Alert>
   Error <code>name</code> property may be used instead of checking its instance type.
+</Alert>
+
+#### HttpClientError
+
+```json showLineNumbers
+{
+  data: {...},
+  status: 400,
+  headers: {...}
+}
+```
+
+| Attribute | Type     | Description                                        |
+|-----------|----------|----------------------------------------------------|
+| `name`    | string   | Error name, always `'BasisTheoryValidationError'`. |
+| `data`    | _object_ | Response body sent from the server.                |
+| `status`  | _number_ | Response HTTP status.                              |
+| `headers` | _object_ | Response HTTP headers.                             |
+
+<Alert type={Alerts.WARNING}>
+  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
 </Alert>
