@@ -26,7 +26,18 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Collect Data",
+      label: "Cards",
+      items: [
+        "guides/cards/collect-cards",
+        "guides/cards/receive-cards",
+        "guides/share/process-card-payments",
+        "guides/collect/issue-cards",
+        "guides/share/display-cards",
+      ]
+    },
+    {
+      type: "category",
+      label: "Personal Information",
       customProps: {
         icon: {
           light: "/img/sidebar/light/collect-data.svg",
@@ -38,8 +49,6 @@ const sidebars = {
         id: "guides/collect/index",
       },
       items: [
-        "guides/collect/collect-cards",
-        "guides/collect/issue-cards",
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-with-react",
         "guides/collect/collect-data-with-android",
@@ -51,7 +60,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Share Data",
+      label: "Banking Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/share-data.svg",
@@ -63,8 +72,6 @@ const sidebars = {
         id: "guides/share/index",
       },
       items: [
-        "guides/share/process-card-payments",
-        "guides/share/display-cards",
         "guides/share/send-data-to-third-party",
         "guides/share/display-masked-data",
         "guides/share/reveal-tokenized-data",
@@ -73,7 +80,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Process Data",
+      label: "Any Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/process-data.svg",
@@ -91,76 +98,8 @@ const sidebars = {
       ],
     },
     {
-      type: "category",
-      label: "Govern Data",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/govern-data.svg",
-          dark: "/img/sidebar/dark/govern-data.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "guides/govern/index",
-      },
-      items: [
-        "guides/govern/control-data-access",
-        "guides/govern/audit-data-access",
-        "guides/govern/sessions",
-      ],
-    },
-    {
       type: "html",
       value: "<hr />",
-    },
-    {
-      type: "category",
-      label: "Blueprints",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/blueprint.svg",
-          dark: "/img/sidebar/dark/blueprint.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "blueprints/index",
-      },
-      items: [
-        {
-          type: "category",
-          label: "Cards",
-          link: {
-            type: "doc",
-            id: "blueprints/cards/index",
-          },
-          items: [
-            "blueprints/cards/collect-and-process-cards",
-            "blueprints/cards/issue-and-display-cards",
-          ],
-        },
-        {
-          type: "category",
-          label: "Personal Information",
-          link: {
-            type: "doc",
-            id: "blueprints/personal-information/index",
-          },
-          items: ["blueprints/personal-information/query-user-data-from-api"],
-        },
-        {
-          type: "category",
-          label: "Migrations",
-          link: {
-            type: "doc",
-            id: "blueprints/migrations/index",
-          },
-          items: [
-            "blueprints/migrations/import-from-database",
-            "blueprints/migrations/migrate-off-basis-theory",
-          ],
-        },
-      ],
     },
     {
       type: "category",
@@ -213,6 +152,69 @@ const sidebars = {
         "expressions/fingerprints",
         "expressions/masks",
         "expressions/search-indexes",
+      ],
+    },
+    {
+      type: "link",
+      label: "API Reference",
+      href: "/docs/api"
+    },
+    {
+      type: "link",
+      label: "SDKs",
+      href: "/docs/sdks"
+    },
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    {
+      type: "category",
+      label: "Blueprints",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/blueprint.svg",
+          dark: "/img/sidebar/dark/blueprint.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "blueprints/index",
+      },
+      items: [
+        {
+          type: "category",
+          label: "Cards",
+          link: {
+            type: "doc",
+            id: "blueprints/cards/index",
+          },
+          items: [
+            "blueprints/cards/collect-and-process-cards",
+            "blueprints/cards/issue-and-display-cards",
+          ],
+        },
+        {
+          type: "category",
+          label: "Personal Information",
+          link: {
+            type: "doc",
+            id: "blueprints/personal-information/index",
+          },
+          items: ["blueprints/personal-information/query-user-data-from-api"],
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Migration Guides",
+      link: {
+        type: "doc",
+        id: "migrations/index",
+      },
+      items: [
+        "migrations/import-from-database",
+        "migrations/migrate-off-basis-theory",
       ],
     },
   ],

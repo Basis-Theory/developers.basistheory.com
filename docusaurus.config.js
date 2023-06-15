@@ -71,7 +71,7 @@ const config = {
             type: "doc",
             docId: "index",
             position: "left",
-            label: "Documentation",
+            label: "Guides",
           },
           {
             type: "doc",
@@ -248,7 +248,7 @@ const config = {
           },
           {
             from: "/guides/migrating-off-basis-theory",
-            to: "/docs/blueprints/migrations/migrate-off-basis-theory",
+            to: "/docs//migrations/migrate-off-basis-theory",
           },
 
           {
