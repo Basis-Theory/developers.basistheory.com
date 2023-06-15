@@ -27,6 +27,12 @@ const sidebars = {
     {
       type: "category",
       label: "Cards",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/card.svg",
+          dark: "/img/sidebar/dark/card.svg",
+        },
+      },
       items: [
         "guides/cards/collect-cards",
         "guides/cards/receive-cards",
@@ -40,13 +46,9 @@ const sidebars = {
       label: "Personal Information",
       customProps: {
         icon: {
-          light: "/img/sidebar/light/collect-data.svg",
-          dark: "/img/sidebar/dark/collect-data.svg",
+          light: "/img/sidebar/light/pii.svg",
+          dark: "/img/sidebar/dark/pii.svg",
         },
-      },
-      link: {
-        type: "doc",
-        id: "guides/collect/index",
       },
       items: [
         "guides/collect/collect-data-from-web",
@@ -63,13 +65,9 @@ const sidebars = {
       label: "Banking Data",
       customProps: {
         icon: {
-          light: "/img/sidebar/light/share-data.svg",
-          dark: "/img/sidebar/dark/share-data.svg",
+          light: "/img/sidebar/light/bank.svg",
+          dark: "/img/sidebar/dark/bank.svg",
         },
-      },
-      link: {
-        type: "doc",
-        id: "guides/share/index",
       },
       items: [
         "guides/share/send-data-to-third-party",
@@ -83,8 +81,8 @@ const sidebars = {
       label: "Any Data",
       customProps: {
         icon: {
-          light: "/img/sidebar/light/process-data.svg",
-          dark: "/img/sidebar/dark/process-data.svg",
+          light: "/img/sidebar/light/any.svg",
+          dark: "/img/sidebar/dark/any.svg",
         },
       },
       link: {
@@ -157,12 +155,24 @@ const sidebars = {
     {
       type: "link",
       label: "API Reference",
-      href: "/docs/api"
+      href: "/docs/api",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/terminal.svg",
+          dark: "/img/sidebar/dark/terminal.svg",
+        },
+      },
     },
     {
       type: "link",
       label: "SDKs",
-      href: "/docs/sdks"
+      href: "/docs/sdks",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/cube.svg",
+          dark: "/img/sidebar/dark/cube.svg",
+        },
+      }
     },
     {
       type: "html",
