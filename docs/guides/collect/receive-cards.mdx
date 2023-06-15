@@ -1,16 +1,218 @@
+---
+toc_max_heading_level: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+
+import { Alert } from "@site/src/components/shared/Alert";
+
 # Receive Cards via API
 
 Lorem ipsum
 
 ## Getting Started
 
+<GettingStartedSection />
+
 ## Provisioning Resources
+
+In this section, we will explore the bare minimum resources to create a Proxy for your API, that will receive cards and store them securely.
+
+### Management Application
+
+To create all subsequent resources, you will need a [Management Application](/docs/api/applications#application-types).
+
+[Click here](https://portal.basistheory.com/applications/create?name=Resource+Creator&permissions=proxy%3Acreate&permissions=application%3Acreate&type=management) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Resource Creator
+- Application Type - Management
+- Permissions: `application:create`, `proxy: create`
+
+<Alert>
+  Save the API Key from the created Management Application as it will be used later in this guide.
+</Alert>
+
+### Private Application
+
+Next you will need a [Private Application](/docs/api/applications#application-types) to associate later with the Proxy. This will be used to create card tokens in the vault.
+
+Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Private Application:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -X "POST" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Backend",
+    "type": "private",
+    "permissions": [ "token:create", "token:read" ]
+  }'
+```
+
+<Alert>
+  Be sure to replace <code>test_1234567890</code> with the Management API Key you created previously.
+</Alert>
+
+<Alert>
+  Save the <code>id</code> from the created Private Application as it will be used later in this guide.
+</Alert>
+
+### Pre-Configured Proxy
+
+Now we will create the Proxy that will listen to HTTP requests containing card data that we need to store in our Basis Theory Tenant. To achieve that, we will leverage a [Request Transform](/docs/api/proxies/pre-configured-proxies#request-transforms) code that handles the request body to tokenize and redact the cardholder data, and include the new token.
+
+The API contract is customizable and can follow any desired format:
+
+<Tabs className="bt-tabs" queryString="content">
+  <TabItem value="json" label="JSON">
+
+In this example, we are handling `application/json` content type in the request payload.
+
+```json showLineNumbers title="request.json"
+{
+  "reference": "REF1234",
+  "currency": "USD",
+// highlight-start
+  "payment_method": {
+    "number": "4242424242424242",
+    "expiration_month": "12",
+    "expiration_year": "2025",
+    "cvc": "123"
+  },
+// highlight-end
+  "items": [
+    {
+      "id": "0001",
+      "quantity": 1,
+      "description": "Black T-shirt",
+      "amount": 25
+    },
+    {
+      "id": "0002",
+      "quantity": 1,
+      "description": "Cargo Shorts",
+      "amount": 17.5
+    }
+  ]
+}
+```
+
+```javascript showLineNumbers title="requestTransform.js"
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers } = args;
+
+  const { card, ...rest } = body;
+
+  const token = await bt.tokens.create({
+    type: 'card',
+    data: card,
+  })
+
+  return {
+      body: {
+        card: token,
+        ...rest
+      },
+      headers,
+  }
+};
+```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+
+In this example, we are handling `application/xml` content type in the request payload.
+
+```xml showLineNumbers title="request.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<Checkout>
+    <Reference>REF1234</Reference>
+    <Currency>USD</Currency>
+// highlight-start
+    <PaymentMethod>
+        <Number>4242424242424242</Number>
+        <ExpirationMonth>12</ExpirationMonth>
+        <ExpirationYear>2025</ExpirationYear>
+        <Cvc>123</Cvc>
+    </PaymentMethod>
+// highlight-end
+    <Items>
+        <Item>
+            <Id>0001</Id>
+            <Quantity>1</Quantity>
+            <Description>Black T-shirt</Description>
+            <Amount>25.00</Amount>
+        </Item>
+        <Item>
+            <Id>0002</Id>
+            <Quantity>1</Quantity>
+            <Description>Cargo Shorts</Description>
+            <Amount>17.50</Amount>
+        </Item>
+    </Items>
+</Checkout>
+```
+```javascript showLineNumbers title="requestTransform.js"
+const { create } = require("xmlbuilder2");
+
+module.exports = async function (req) {
+  const {
+    bt,
+    args: { body, headers },
+  } = req;
+
+  // parse the xml
+  const doc = create(body);
+  // convert it to a Javascript object
+  const object = doc.end({ format: "object" });
+
+  const token = await bt.tokens.create({
+    type: "card",
+    data: {
+      number: object.Checkout.PaymentMethod.Number,
+      expiration_month: object.Checkout.PaymentMethod.ExpirationMonth,
+      expiration_year: object.Checkout.PaymentMethod.ExpirationYear,
+      cvc: object.Checkout.PaymentMethod.Cvc,
+    },
+  });
+
+  // creates an XML replacing the contents of the <PaymentMethod> tag
+  const transformed = create({
+    ...object,
+    Checkout: {
+      ...object.Checkout,
+      PaymentMethod: token,
+    },
+  }).end();
+
+  return {
+    body: transformed,
+    headers,
+  };
+};
+```
+  </TabItem>
+  <TabItem value="urlencoded" label="URL Encoded">
+
+In this example, we are handling `application/x-www-form-urlencoded` content type in the request payload.
+
+```text showLines title=request.txt
+reference=REF1234&currency=USD&paymentMethod[number]=4242424242424242&paymentMethod[expirationMonth]=12&paymentMethod[expirationYear]=2025
+```
+
+  </TabItem>
+</Tabs>
 
 ## Customizing Tokens
 
 ## Invoking the Proxy
 
 ## Key Considerations
+
+- Authentication
 
 ## Conclusion
 
