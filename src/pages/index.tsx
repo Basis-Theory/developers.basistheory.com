@@ -1,5 +1,5 @@
 import Layout from "@theme/Layout";
-import React, { ComponentProps, useEffect, useState } from "react";
+import React, { ComponentProps, useState } from "react";
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import ThemedImage from "@theme/ThemedImage";
@@ -14,7 +14,6 @@ import ApiReference from "@site/static/img/homepage/console.svg";
 import Info from "@site/static/img/homepage/info.svg";
 import Package from "@site/static/img/homepage/package.svg";
 import Question from "@site/static/img/homepage/question.svg";
-import Arrow from "@site/static/img/homepage/arrow.svg";
 import Blueprint from "@site/static/img/homepage/blueprint.svg";
 
 import Android from "@site/static/img/sdk/logos/android.svg";
@@ -78,76 +77,179 @@ export default function Home(): JSX.Element {
             Basis Theory will guide you on how to safely collect, share, process
             and govern your data in your applications.
           </p>
-          <Card className={styles.card} hoverable={false}>
-            <div className={styles["card-body"]}>
-              <Link to="/docs/">
-                <div>
-                  <Step
-                    text="Get Started"
-                    id="getting-started"
-                    sources={{
-                      light: "/img/homepage/light/getting-started.png",
-                      dark: "/img/homepage/dark/getting-started.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/collect/">
-                <div>
-                  <Step
-                    text="Collect Data"
-                    id="collect-data"
-                    sources={{
-                      light: "/img/homepage/light/collect-data.png",
-                      dark: "/img/homepage/dark/collect-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/share/">
-                <div>
-                  <Step
-                    text="Share Data"
-                    id="share-data"
-                    sources={{
-                      light: "/img/homepage/light/share-data.png",
-                      dark: "/img/homepage/dark/share-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/process/">
-                <div>
-                  <Step
-                    text="Process Data"
-                    id="process-data"
-                    sources={{
-                      light: "/img/homepage/light/process-data.png",
-                      dark: "/img/homepage/dark/process-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/govern/">
-                <div>
-                  <Step
-                    text="Govern Data"
-                    id="govern-data"
-                    sources={{
-                      light: "/img/homepage/light/govern-data.png",
-                      dark: "/img/homepage/dark/govern-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-            </div>
-          </Card>
+          <div className={styles.cards}>
+            <Card className={styles.card} hoverable={false}>
+              <div className={styles["card-body"]}>
+                <Link to="/docs/">
+                  <div>
+                    <Step
+                      text="Overview"
+                      id="getting-started"
+                      sources={{
+                        light: "/img/homepage/light/getting-started.png",
+                        dark: "/img/homepage/dark/getting-started.png",
+                      }}
+                    />
+                  </div>
+                </Link>
+              </div>
+            </Card>
+            <Card className={styles.card} hoverable={false}>
+              <div className={styles["card-body"]}>
+                <Link to="/docs/guides/collect/">
+                  <div>
+                    <Step
+                      text="Collect Data"
+                      id="collect-data"
+                      sources={{
+                        light: "/img/homepage/light/collect-data.png",
+                        dark: "/img/homepage/dark/collect-data.png",
+                      }}
+                    />
+                  </div>
+                </Link>
+                <Link to="/docs/guides/share/">
+                  <div>
+                    <Step
+                      text="Share Data"
+                      id="share-data"
+                      sources={{
+                        light: "/img/homepage/light/share-data.png",
+                        dark: "/img/homepage/dark/share-data.png",
+                      }}
+                    />
+                  </div>
+                </Link>
+                <Link to="/docs/guides/process/">
+                  <div>
+                    <Step
+                      text="Process Data"
+                      id="process-data"
+                      sources={{
+                        light: "/img/homepage/light/process-data.png",
+                        dark: "/img/homepage/dark/process-data.png",
+                      }}
+                    />
+                  </div>
+                </Link>
+                <Link to="/docs/guides/govern/">
+                  <div>
+                    <Step
+                      text="Govern Data"
+                      id="govern-data"
+                      sources={{
+                        light: "/img/homepage/light/govern-data.png",
+                        dark: "/img/homepage/dark/govern-data.png",
+                      }}
+                    />
+                  </div>
+                </Link>
+              </div>
+            </Card>
+          </div>
         </header>
         <main>
+        <div className={styles["sdks"]}>
+          <h2>SDKs</h2>
+          <div className={styles["sdks-container"]}>
+            <div>
+              Server-side SDKs
+              <div className={styles["sdk-column"]}>
+                <Card
+                  href="/docs/sdks/server-side/dotnet"
+                  img={<DotNet />}
+                  className={styles.sdk}
+                >
+                  .NET
+                </Card>
+                <Card
+                  href="/docs/sdks/server-side/java"
+                  img={<Java />}
+                  className={styles.sdk}
+                >
+                  Java
+                </Card>
+                <Card
+                  href="/docs/sdks/server-side/go"
+                  img={<Go />}
+                  className={styles.sdk}
+                >
+                  Go
+                </Card>
+                <Card
+                  href="/docs/sdks/server-side/node"
+                  img={<Node />}
+                  className={styles.sdk}
+                >
+                  NodeJS
+                </Card>
+                <Card
+                  href="/docs/sdks/server-side/python"
+                  img={<Python />}
+                  className={styles.sdk}
+                >
+                  Python
+                </Card>
+                <Card
+                  href="/docs/sdks/server-side/terraform"
+                  img={<Terraform />}
+                  className={styles.sdk}
+                >
+                  Terraform
+                </Card>
+              </div>
+            </div>
+            <div>
+              Web SDKs
+              <div className={styles["sdk-column"]}>
+                <Card
+                  href="/docs/sdks/web/javascript/"
+                  img={<JavaScript />}
+                  className={styles.sdk}
+                >
+                  Javascript
+                </Card>
+                <Card
+                  href="/docs/sdks/web/react/"
+                  img={<ReactSvg />}
+                  className={styles.sdk}
+                >
+                  React
+                </Card>
+              </div>
+            </div>
+            <div className={styles["sdk-column"]}>
+              Mobile SDKs
+              <div className={styles["sdk-column"]}>
+                <Card
+                  href="/docs/sdks/mobile/ios/"
+                  img={
+                    <div className={styles["logo-container"]}>
+                      <ThemedImage
+                        width="100%"
+                        height="100%"
+                        sources={{
+                          light: useBaseUrl("/img/sdk/logos/apple.svg"),
+                          dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
+                        }}
+                      />
+                    </div>
+                  }
+                  className={styles.sdk}
+                >
+                  iOS
+                </Card>
+                <Card
+                  href="/docs/sdks/mobile/android/"
+                  img={<Android />}
+                  className={styles.sdk}
+                >
+                  Android
+                </Card>
+              </div>
+            </div>
+          </div>
+        </div>
           <div className={styles["explore-cards-container"]}>
             <h2>Start Building</h2>
             <div className={styles["explore-cards"]}>
@@ -170,107 +272,7 @@ export default function Home(): JSX.Element {
             </div>
           </div>
 
-          <div className={styles["sdks"]}>
-            <h2>SDKs</h2>
-            <div className={styles["sdks-container"]}>
-              <div>
-                Server-side SDKs
-                <div className={styles["sdk-column"]}>
-                  <Card
-                    href="/docs/sdks/server-side/dotnet"
-                    img={<DotNet />}
-                    className={styles.sdk}
-                  >
-                    .NET
-                  </Card>
-                  <Card
-                    href="/docs/sdks/server-side/java"
-                    img={<Java />}
-                    className={styles.sdk}
-                  >
-                    Java
-                  </Card>
-                  <Card
-                    href="/docs/sdks/server-side/go"
-                    img={<Go />}
-                    className={styles.sdk}
-                  >
-                    Go
-                  </Card>
-                  <Card
-                    href="/docs/sdks/server-side/node"
-                    img={<Node />}
-                    className={styles.sdk}
-                  >
-                    NodeJS
-                  </Card>
-                  <Card
-                    href="/docs/sdks/server-side/python"
-                    img={<Python />}
-                    className={styles.sdk}
-                  >
-                    Python
-                  </Card>
-                  <Card
-                    href="/docs/sdks/server-side/terraform"
-                    img={<Terraform />}
-                    className={styles.sdk}
-                  >
-                    Terraform
-                  </Card>
-                </div>
-              </div>
-              <div>
-                Web SDKs
-                <div className={styles["sdk-column"]}>
-                  <Card
-                    href="/docs/sdks/web/javascript/"
-                    img={<JavaScript />}
-                    className={styles.sdk}
-                  >
-                    Javascript
-                  </Card>
-                  <Card
-                    href="/docs/sdks/web/react/"
-                    img={<ReactSvg />}
-                    className={styles.sdk}
-                  >
-                    React
-                  </Card>
-                </div>
-              </div>
-              <div className={styles["sdk-column"]}>
-                Mobile SDKs
-                <div className={styles["sdk-column"]}>
-                  <Card
-                    href="/docs/sdks/mobile/ios/"
-                    img={
-                      <div className={styles["logo-container"]}>
-                        <ThemedImage
-                          width="100%"
-                          height="100%"
-                          sources={{
-                            light: useBaseUrl("/img/sdk/logos/apple.svg"),
-                            dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
-                          }}
-                        />
-                      </div>
-                    }
-                    className={styles.sdk}
-                  >
-                    iOS
-                  </Card>
-                  <Card
-                    href="/docs/sdks/mobile/android/"
-                    img={<Android />}
-                    className={styles.sdk}
-                  >
-                    Android
-                  </Card>
-                </div>
-              </div>
-            </div>
-          </div>
+
 
           <div className={styles["explore-cards-container"]}>
             <h2>Explore Basis Theory</h2>
