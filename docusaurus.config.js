@@ -248,7 +248,7 @@ const config = {
           },
           {
             from: "/guides/migrating-off-basis-theory",
-            to: "/docs//migrations/migrate-off-basis-theory",
+            to: "/docs/migrations/migrate-off-basis-theory",
           },
 
           {
