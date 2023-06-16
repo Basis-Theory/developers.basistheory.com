@@ -33,12 +33,16 @@ const sidebars = {
           dark: "/img/sidebar/dark/card.svg",
         },
       },
+      link: {
+        type: "doc",
+        id: "guides/collect/index",
+      },
       items: [
         "guides/cards/collect-cards",
         "guides/cards/receive-cards",
-        "guides/share/process-card-payments",
-        "guides/collect/issue-cards",
-        "guides/share/display-cards",
+        "guides/cards/process-card-payments",
+        "guides/cards/issue-cards",
+        "guides/cards/display-cards",
       ]
     },
     {
@@ -49,6 +53,10 @@ const sidebars = {
           light: "/img/sidebar/light/pii.svg",
           dark: "/img/sidebar/dark/pii.svg",
         },
+      },
+      link: {
+        type: "doc",
+        id: "guides/share/index",
       },
       items: [
         "guides/collect/collect-data-from-web",
@@ -69,6 +77,10 @@ const sidebars = {
           dark: "/img/sidebar/dark/bank.svg",
         },
       },
+      link: {
+        type: "doc",
+        id: "guides/process/index",
+      },
       items: [
         "guides/share/send-data-to-third-party",
         "guides/share/display-masked-data",
@@ -87,7 +99,7 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "guides/process/index",
+        id: "guides/govern/index",
       },
       items: [
         "guides/process/search-data",

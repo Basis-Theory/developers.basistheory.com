@@ -8,7 +8,9 @@ import { Card } from "../components/shared/Card";
 
 import styles from "./index.module.css";
 
-import Collect from "@site/static/img/getting-started/icons/collect.svg";
+import CardIcon from "@site/static/img/getting-started/icons/card.svg";
+import PiiIcon from "@site/static/img/getting-started/icons/pii.svg";
+import BankIcon from "@site/static/img/getting-started/icons/bank.svg";
 
 import ApiReference from "@site/static/img/homepage/console.svg";
 import Info from "@site/static/img/homepage/info.svg";
@@ -99,11 +101,11 @@ export default function Home(): JSX.Element {
                 <Link to="/docs/guides/collect/">
                   <div>
                     <Step
-                      text="Collect Data"
-                      id="collect-data"
+                      text="Card Data"
+                      id="card-data"
                       sources={{
-                        light: "/img/homepage/light/collect-data.png",
-                        dark: "/img/homepage/dark/collect-data.png",
+                        light: "/img/homepage/light/card.png",
+                        dark: "/img/homepage/dark/card.png",
                       }}
                     />
                   </div>
@@ -111,11 +113,11 @@ export default function Home(): JSX.Element {
                 <Link to="/docs/guides/share/">
                   <div>
                     <Step
-                      text="Share Data"
-                      id="share-data"
+                      text="PII Data"
+                      id="pii-data"
                       sources={{
-                        light: "/img/homepage/light/share-data.png",
-                        dark: "/img/homepage/dark/share-data.png",
+                        light: "/img/homepage/light/pii.png",
+                        dark: "/img/homepage/dark/pii.png",
                       }}
                     />
                   </div>
@@ -123,11 +125,11 @@ export default function Home(): JSX.Element {
                 <Link to="/docs/guides/process/">
                   <div>
                     <Step
-                      text="Process Data"
-                      id="process-data"
+                      text="Bank Data"
+                      id="bank-data"
                       sources={{
-                        light: "/img/homepage/light/process-data.png",
-                        dark: "/img/homepage/dark/process-data.png",
+                        light: "/img/homepage/light/bank.png",
+                        dark: "/img/homepage/dark/bank.png",
                       }}
                     />
                   </div>
@@ -135,11 +137,11 @@ export default function Home(): JSX.Element {
                 <Link to="/docs/guides/govern/">
                   <div>
                     <Step
-                      text="Govern Data"
-                      id="govern-data"
+                      text="Any Data"
+                      id="any-data"
                       sources={{
-                        light: "/img/homepage/light/govern-data.png",
-                        dark: "/img/homepage/dark/govern-data.png",
+                        light: "/img/homepage/light/any.png",
+                        dark: "/img/homepage/dark/any.png",
                       }}
                     />
                   </div>
@@ -254,26 +256,31 @@ export default function Home(): JSX.Element {
             <h2>Start Building</h2>
             <div className={styles["explore-cards"]}>
               <Card
-                href="/docs/guides/collect/collect-data-from-web"
-                img={<Collect />}
-                heading="Collect Data from Web"
+                href="/docs/guides/cards/collect-cards"
+                img={<CardIcon />}
+                heading="Collect Cards"
                 column
               >
-                Securely collect data in your web browser.
+                Securely collect cardholder data in your web or mobile applications.
               </Card>
               <Card
                 href="/docs/guides/collect/collect-inbound-sensitive-data"
-                img={<Collect />}
-                heading="Collect Inbound Sensitive Data"
+                img={<PiiIcon />}
+                heading="Collect PII"
                 column
               >
-                Tokenize sensitive data before it touches your API.
+                Securely collect SSNs, e-mail, date of birth, etc. in your web or mobile applications.
+              </Card>
+              <Card
+                href="/docs/guides/share/send-data-to-third-party"
+                img={<BankIcon />}
+                heading="Collect Banking Data"
+                column
+              >
+                Securely collect routing and account numbers in your web or mobile applications.
               </Card>
             </div>
           </div>
-
-
-
           <div className={styles["explore-cards-container"]}>
             <h2>Explore Basis Theory</h2>
             <div className={styles["explore-cards"]}>
