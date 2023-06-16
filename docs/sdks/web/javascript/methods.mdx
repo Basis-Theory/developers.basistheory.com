@@ -3,9 +3,8 @@ sidebar_label: Services
 ---
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
-import { Beta } from "@site/src/components/shared/Beta";
-import Link from "@docusaurus/Link";
 import RawProxyResponse from "@site/docs/sdks/_raw-proxy-response.mdx";
+import PlaintextHttpClientResponse from "@site/docs/sdks/_plaintext-http-client-response.mdx";
 
 # Elements Services
 
@@ -225,7 +224,7 @@ BasisTheory.tokens
 
 ## Proxy Service
 
-This service wraps the [proxy API endpoint](/docs/api/proxies) to proxy a request to a third party API.
+This service wraps the [proxy API endpoint](/docs/api/proxies) to proxy a request to a third-party API.
 
 ### Invoking Proxy
 
@@ -288,9 +287,126 @@ All proxy calls take the same [options](/docs/sdks/web/javascript/methods#proxyr
 
 <RawProxyResponse />
 
-## Service Errors
+## HTTP Client Service
 
-Elements services could throw an error based on client-side validations or if the server rejects the request.
+Element values can be used in a request to a third-party API using our HTTP client service.
+
+### Post
+
+The example below shows how to use the HTTP client service to make a POST request to a third-party API with an element in the payload.
+
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ POST"
+BasisTheory.post('https://www.api.thirdpartydomain.com/resources', {
+    sensitiveData: sensitiveDataElement,
+    nonSensitiveData: "plainText", // see warning on plain text data
+    otherData: {
+      someInteger: 20,
+      someBoolean: false,
+      },
+    someOtherData: ["plainText1", "plainText2"],
+  }, {
+    headers: {
+        'Content-Type': 'application/json',
+    }
+  })
+  .then((response) => {
+    console.log(JSON.stringify(response)); // full plaintext response
+  });
+```
+
+<PlaintextHttpClientResponse />
+
+### Put
+
+The example below shows how to use the HTTP client service to make a PUT request to a third-party API with an element in the payload.
+
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ PUT"
+BasisTheory.put('https://www.api.thirdpartydomain.com/resources/id', {
+    sensitiveData: sensitiveDataElement,
+    nonSensitiveData: "plainText", // see warning on plain text data
+    otherData: {
+      someInteger: 20,
+      someBoolean: false,
+      },
+    someOtherData: ["plainText1", "plainText2"],
+  }, {
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
+  })
+  .then((response) => {
+    console.log(JSON.stringify(response)); // full plaintext response
+  });
+```
+
+<PlaintextHttpClientResponse />
+
+### Patch
+
+The example below shows how to use the HTTP client service to make a PATCH request to a third-party API with an element in the payload.
+
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ PATCH"
+BasisTheory.patch('https://www.api.thirdpartydomain.com/resources/id', {
+    sensitiveData: sensitiveDataElement,
+    nonSensitiveData: "plainText", // see warning on plain text data
+    otherData: {
+      someInteger: 20,
+      someBoolean: false,
+      },
+    someOtherData: ["plainText1", "plainText2"],
+  }, {
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
+  })
+  .then((response) => {
+    console.log(JSON.stringify(response)); // full plaintext response
+  });
+```
+
+<PlaintextHttpClientResponse />
+
+### Get
+
+The example below shows how to use the HTTP client service to make a GET request to a third-party API.
+
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ GET"
+BasisTheory.get('https://www.api.thirdpartydomain.com/resources/id', {
+    headers: {
+        'Accept': 'application/json',
+    }
+  })
+  .then((response) => {
+    console.log(JSON.stringify(response)); // full plaintext response
+  });
+```
+
+<PlaintextHttpClientResponse />
+
+### Delete
+
+The example below shows how to use the HTTP client service to make a DELETE request to a third-party API.
+
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ DELETE"
+BasisTheory.delete('https://www.api.thirdpartydomain.com/resources/id', {
+    headers: {
+        'Accept': 'application/json',
+    }
+  })
+  .then((response) => {
+    console.log(JSON.stringify(response)); // full plaintext response
+  });
+```
+
+<PlaintextHttpClientResponse />
+
+## Errors
+
+### Basis Theory Service Errors
+
+Basis Theory element services could throw an error based on client-side validations or if the server rejects the request.
 
 ```javascript showLineNumbers title="Handling services errors"
 import { BasisTheoryApiError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
@@ -315,7 +431,25 @@ BasisTheory.tokenize({
 });
 ```
 
-#### BasisTheoryValidationError
+### HTTP Client Service Errors
+
+HTTP client services could throw an error based on client-side validations or if the server rejects the request.
+
+```javascript showLineNumbers title="Handling services errors"
+import { HttpClientError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
+
+BasisTheory.post({
+  sensitiveData: textElement,
+}).catch((error) => {
+  if (error instanceof BasisTheoryValidationError) {
+    // check error details
+  } else if (error instanceof HttpClientError) {
+    // check error data, status, or headers
+  }
+});
+```
+
+### BasisTheoryValidationError
 
 ```javascript showLineNumbers
 {
@@ -340,7 +474,7 @@ BasisTheory.tokenize({
 | `name`    | string   | Error name, always `'BasisTheoryValidationError'`.                         |
 | `details` | _object_ | Maps payload properties to their respective element's validation problems. |
 
-#### BasisTheoryApiError
+### BasisTheoryApiError
 
 ```javascript showLineNumbers
 {
@@ -360,3 +494,22 @@ BasisTheory.tokenize({
 <Alert>
   Error <code>name</code> property may be used instead of checking its instance type.
 </Alert>
+
+### HttpClientError
+
+```json showLineNumbers
+{
+  data: {...},
+  status: 400,
+  headers: {...}
+}
+```
+
+| Attribute | Type     | Description                             |
+|-----------|----------|-----------------------------------------|
+| `name`    | string   | Error name, always `'HttpClientError'`. |
+| `data`    | _object_ | Response body sent from the server.     |
+| `status`  | _number_ | Response HTTP status.                   |
+| `headers` | _object_ | Response HTTP headers.                  |
+
+<PlaintextHttpClientResponse />
