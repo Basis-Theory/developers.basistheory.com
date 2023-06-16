@@ -3,9 +3,8 @@ sidebar_label: Services
 ---
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
-import { Beta } from "@site/src/components/shared/Beta";
-import Link from "@docusaurus/Link";
 import RawProxyResponse from "@site/docs/sdks/_raw-proxy-response.mdx";
+import PlaintextHttpClientResponse from "@site/docs/sdks/_plaintext-http-client-response.mdx";
 
 # Elements Services
 
@@ -225,7 +224,7 @@ BasisTheory.tokens
 
 ## Proxy Service
 
-This service wraps the [proxy API endpoint](/docs/api/proxies) to proxy a request to a third party API.
+This service wraps the [proxy API endpoint](/docs/api/proxies) to proxy a request to a third-party API.
 
 ### Invoking Proxy
 
@@ -288,15 +287,15 @@ All proxy calls take the same [options](/docs/sdks/web/javascript/methods#proxyr
 
 <RawProxyResponse />
 
-## Http Client Service
+## HTTP Client Service
 
-Element values can be used in a request to a third party API using our http client service.
+Element values can be used in a request to a third-party API using our HTTP client service.
 
 ### Post
 
-The example below shows how to use the http client service to make a POST request to a third party API with an element in the payload.
+The example below shows how to use the HTTP client service to make a POST request to a third-party API with an element in the payload.
 
-```javascript showLineNumbers title="Invoking Http Client Service w/ POST"
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ POST"
 BasisTheory.post('https://www.api.thirdpartydomain.com/resources', {
     sensitiveData: sensitiveDataElement,
     nonSensitiveData: "plainText", // see warning on plain text data
@@ -315,15 +314,13 @@ BasisTheory.post('https://www.api.thirdpartydomain.com/resources', {
   });
 ```
 
-<Alert type={Alerts.WARNING}>
-  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
-</Alert>
+<PlaintextHttpClientResponse />
 
 ### Put
 
-The example below shows how to use the http client service to make a PUT request to a third party API with an element in the payload.
+The example below shows how to use the HTTP client service to make a PUT request to a third-party API with an element in the payload.
 
-```javascript showLineNumbers title="Invoking Http Client Service w/ PUT"
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ PUT"
 BasisTheory.put('https://www.api.thirdpartydomain.com/resources/id', {
     sensitiveData: sensitiveDataElement,
     nonSensitiveData: "plainText", // see warning on plain text data
@@ -343,15 +340,13 @@ BasisTheory.put('https://www.api.thirdpartydomain.com/resources/id', {
   });
 ```
 
-<Alert type={Alerts.WARNING}>
-  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
-</Alert>
+<PlaintextHttpClientResponse />
 
 ### Patch
 
-The example below shows how to use the http client service to make a PATCH request to a third party API with an element in the payload.
+The example below shows how to use the HTTP client service to make a PATCH request to a third-party API with an element in the payload.
 
-```javascript showLineNumbers title="Invoking Http Client Service w/ PATCH"
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ PATCH"
 BasisTheory.patch('https://www.api.thirdpartydomain.com/resources/id', {
     sensitiveData: sensitiveDataElement,
     nonSensitiveData: "plainText", // see warning on plain text data
@@ -371,15 +366,13 @@ BasisTheory.patch('https://www.api.thirdpartydomain.com/resources/id', {
   });
 ```
 
-<Alert type={Alerts.WARNING}>
-  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
-</Alert>
+<PlaintextHttpClientResponse />
 
 ### Get
 
-The example below shows how to use the http client service to make a GET request to a third party API.
+The example below shows how to use the HTTP client service to make a GET request to a third-party API.
 
-```javascript showLineNumbers title="Invoking Http Client Service w/ GET"
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ GET"
 BasisTheory.get('https://www.api.thirdpartydomain.com/resources/id', {
     headers: {
         'Accept': 'application/json',
@@ -390,15 +383,13 @@ BasisTheory.get('https://www.api.thirdpartydomain.com/resources/id', {
   });
 ```
 
-<Alert type={Alerts.WARNING}>
-  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
-</Alert>
+<PlaintextHttpClientResponse />
 
 ### Delete
 
-The example below shows how to use the http client service to make a DELETE request to a third party API.
+The example below shows how to use the HTTP client service to make a DELETE request to a third-party API.
 
-```javascript showLineNumbers title="Invoking Http Client Service w/ DELETE"
+```javascript showLineNumbers title="Invoking HTTP Client Service w/ DELETE"
 BasisTheory.delete('https://www.api.thirdpartydomain.com/resources/id', {
     headers: {
         'Accept': 'application/json',
@@ -409,9 +400,7 @@ BasisTheory.delete('https://www.api.thirdpartydomain.com/resources/id', {
   });
 ```
 
-<Alert type={Alerts.WARNING}>
-  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
-</Alert>
+<PlaintextHttpClientResponse />
 
 ## Errors
 
@@ -442,9 +431,9 @@ BasisTheory.tokenize({
 });
 ```
 
-### Http Client Service Errors
+### HTTP Client Service Errors
 
-Http client services could throw an error based on client-side validations or if the server rejects the request.
+HTTP client services could throw an error based on client-side validations or if the server rejects the request.
 
 ```javascript showLineNumbers title="Handling services errors"
 import { HttpClientError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
@@ -523,6 +512,4 @@ BasisTheory.post({
 | `status`  | _number_ | Response HTTP status.                   |
 | `headers` | _object_ | Response HTTP headers.                  |
 
-<Alert type={Alerts.WARNING}>
-  The response from this service is the actual plaintext data. It may contain sensitive data depending on the third party API response.
-</Alert>
+<PlaintextHttpClientResponse />
