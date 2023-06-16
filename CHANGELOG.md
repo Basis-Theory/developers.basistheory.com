@@ -1,3 +1,10 @@
+# [1.57.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.56.1...v1.57.0) (2023-06-16)
+
+
+### Features
+
+* adds docs for http client calls for web elements (dual writing) ([#140](https://github.com/Basis-Theory/developers.basistheory.com/issues/140)) ([d05244e](https://github.com/Basis-Theory/developers.basistheory.com/commit/d05244ea18aabf33be69bcd1f5f61bbeec12791d))
+
 ## [1.56.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.56.0...v1.56.1) (2023-06-13)
 
 
