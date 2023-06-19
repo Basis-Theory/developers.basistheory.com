@@ -85,7 +85,7 @@ export default function Home(): JSX.Element {
                 <Link to="/docs/">
                   <div>
                     <Step
-                      text="Overview"
+                      text="Getting Started"
                       id="getting-started"
                       sources={{
                         light: "/img/homepage/light/getting-started.png",
@@ -98,7 +98,7 @@ export default function Home(): JSX.Element {
             </Card>
             <Card className={styles.card} hoverable={false}>
               <div className={styles["card-body"]}>
-                <Link to="/docs/guides/collect/">
+                <Link to="/docs/guides/cards/">
                   <div>
                     <Step
                       text="Card Data"

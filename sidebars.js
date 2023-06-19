@@ -35,7 +35,7 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "guides/collect/index",
+        id: "guides/cards/index",
       },
       items: [
         "guides/cards/collect-cards",
