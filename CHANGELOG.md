@@ -1,3 +1,10 @@
+## [1.57.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.57.0...v1.57.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* response_transform in issue-cards.mdx ([#142](https://github.com/Basis-Theory/developers.basistheory.com/issues/142)) ([37d7055](https://github.com/Basis-Theory/developers.basistheory.com/commit/37d70555e9e0c36c5fbb6b675eaa35d83f70cf28))
+
 # [1.57.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.56.1...v1.57.0) (2023-06-16)
 
 
