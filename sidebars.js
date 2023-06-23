@@ -288,7 +288,6 @@ const sidebars = {
         "api/tokens/tokenize",
         "api/tokens/token-types",
         "api/tokens/search",
-        "api/tokens/token-associations",
         {
           type: "doc",
           id: "api/tokens/transactions",
