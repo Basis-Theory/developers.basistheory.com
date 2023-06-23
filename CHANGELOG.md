@@ -1,3 +1,10 @@
+# [1.58.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.57.1...v1.58.0) (2023-06-23)
+
+
+### Features
+
+* removing token associations ([#144](https://github.com/Basis-Theory/developers.basistheory.com/issues/144)) ([2cfe6cf](https://github.com/Basis-Theory/developers.basistheory.com/commit/2cfe6cf35599e577f0194a9e21d6e4cde64179b3))
+
 ## [1.57.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.57.0...v1.57.1) (2023-06-21)
 
 
