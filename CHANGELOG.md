@@ -1,3 +1,10 @@
+# [1.59.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.58.0...v1.59.0) (2023-06-26)
+
+
+### Features
+
+* add dd and ld to elements csp docs ([#143](https://github.com/Basis-Theory/developers.basistheory.com/issues/143)) ([f3b786b](https://github.com/Basis-Theory/developers.basistheory.com/commit/f3b786bea57fbb4615105cc3ccebbee0949de9de))
+
 # [1.58.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.57.1...v1.58.0) (2023-06-23)
 
 
