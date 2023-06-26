@@ -1,3 +1,10 @@
+# [1.60.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.59.0...v1.60.0) (2023-06-26)
+
+
+### Features
+
+* adds HTTP client services to iOS ([#145](https://github.com/Basis-Theory/developers.basistheory.com/issues/145)) ([d616c3b](https://github.com/Basis-Theory/developers.basistheory.com/commit/d616c3b600b067099fa76f77f48a5ef2de5fb654))
+
 # [1.59.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.58.0...v1.59.0) (2023-06-26)
 
 
