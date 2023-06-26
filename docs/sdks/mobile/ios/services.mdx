@@ -3,7 +3,7 @@ sidebar_label: Services
 ---
 
 import { Alert } from "@site/src/components/shared/Alert";
-import { Beta } from "@site/src/components/shared/Beta";
+import IosHttpClientResponse from "@site/docs/sdks/_ios-http-client-response.mdx";
 import RawProxyResponse from "@site/docs/sdks/_raw-proxy-response.mdx";
 
 # Services
@@ -147,7 +147,9 @@ The callback provided calls your function with a:
 
 - `response` of type [URLResponse](https://developer.apple.com/documentation/foundation/urlresponse)
 - `error` of type [Error](#errors)
-- `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a response from a `proxy` without giving you access to read any sensitive `proxy` response data, which means you stay compliant. To tokenize a JSON property from a `proxy` response, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference` property. As of now, only numbers, booleans, and strings can be retrieved using this method. Below is an example of how you can use a response from a `proxy` with our elements.
+- `data` of type [JSON](#json)
+
+Below is an example of how you can use a response from a `proxy` with our elements.
 
 ```swift showLineNumbers
 @IBOutlet private weak var myTextElement: TextElementUITextField!
@@ -171,6 +173,140 @@ BasisTheoryElements.proxy(
 ### Access non-sensitive responses from Proxy calls <Beta />
 
 <RawProxyResponse />
+
+### HTTP Client Services
+
+Element values can be used in a request to a third-party API using our HTTP client service.
+
+#### post
+
+The example below shows how to use the HTTP client service to make a POST request to a third-party API with an element in the payload.
+
+```swift showLineNumbers title="Invoking HTTP Client Service w/ POST"
+@IBOutlet private weak var myTextElement: TextElementUITextField!
+
+let payload = [
+    "textElementProp": myTextElement,
+    "plainTextProp": "plaintext value",
+    "object" : [
+        "nestedProp": "nested value"
+    ],
+    "array": [1, 2, 3]
+] as [String : Any]
+let config = Config(headers: [
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Test-Header": "test header value"
+])
+
+BasisTheoryElements.post(url: "https://www.api.thirdpartydomain.com/resources", payload: payload, config: config) { request, data, error in
+    print(data)
+}
+```
+
+<IosHttpClientResponse />
+
+#### put
+
+The example below shows how to use the HTTP client service to make a PUT request to a third-party API with an element in the payload.
+
+```swift showLineNumbers title="Invoking HTTP Client Service w/ PUT"
+@IBOutlet private weak var myTextElement: TextElementUITextField!
+
+let payload = [
+    "textElementProp": myTextElement,
+    "plainTextProp": "plaintext value",
+    "object" : [
+        "nestedProp": "nested value"
+    ],
+    "array": [1, 2, 3]
+] as [String : Any]
+let config = Config(headers: [
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Test-Header": "test header value"
+])
+
+BasisTheoryElements.put(url: "https://www.api.thirdpartydomain.com/resources/id", payload: payload, config: config) { request, data, error in
+    print(data)
+}
+```
+
+<IosHttpClientResponse />
+
+#### patch
+
+The example below shows how to use the HTTP client service to make a PATCH request to a third-party API with an element in the payload.
+
+```swift showLineNumbers title="Invoking HTTP Client Service w/ PATCH"
+@IBOutlet private weak var myTextElement: TextElementUITextField!
+
+let payload = [
+    "textElementProp": myTextElement,
+    "plainTextProp": "plaintext value",
+    "object" : [
+        "nestedProp": "nested value"
+    ],
+    "array": [1, 2, 3]
+] as [String : Any]
+let config = Config(headers: [
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Test-Header": "test header value"
+])
+
+BasisTheoryElements.patch(url: "https://www.api.thirdpartydomain.com/resources/id", payload: payload, config: config) { request, data, error in
+    print(data)
+}
+```
+
+<IosHttpClientResponse />
+
+#### get
+
+The example below shows how to use the HTTP client service to make a GET request to a third-party API.
+
+```swift showLineNumbers title="Invoking HTTP Client Service w/ GET"
+let config = Config(headers: [
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Test-Header": "test header value"
+])
+
+BasisTheoryElements.get(url: "https://www.api.thirdpartydomain.com/resources/id", config: config) { request, data, error in
+    print(data)
+}
+```
+
+<IosHttpClientResponse />
+
+#### delete
+
+The example below shows how to use the HTTP client service to make a DELETE request to a third-party API.
+
+```swift showLineNumbers title="Invoking HTTP Client Service w/ DELETE"
+let config = Config(headers: [
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Test-Header": "test header value"
+])
+
+BasisTheoryElements.delete(url: "https://www.api.thirdpartydomain.com/resources/id", config: config) { request, data, error in
+    print(data)
+}
+```
+
+<IosHttpClientResponse />
+
+## JSON
+
+`JSON` is a data structure that has dynamic member lookup capabilities. This means that you can traverse a `JSON` response using dot or bracket notation. Each property in a
+`JSON` struct returns a `JSON` struct has the following properties to help read sensitive and non-sensitive properties:
+
+- `elementValueReference` - This property is used to get the sensitive value of a `JSON` property. It returns a value reference that can be used to [set the value](/docs/sdks/mobile/ios/types#methods) of an iOS Basis Theory element.
+- `rawValue` - This property is used to get the non-sensitive value of a `JSON` property. It returns the plaintext value of the property.
+
+Only numbers, booleans, and strings can be retrieved using this struct.
 
 ## Errors
 
