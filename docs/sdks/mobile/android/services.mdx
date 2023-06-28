@@ -4,6 +4,7 @@ sidebar_label: Services
 
 import { Beta } from "@site/src/components/shared/Beta";
 import RawProxyResponse from "@site/docs/sdks/_raw-proxy-response.mdx";
+import PlaintextHttpClientResponse from "@site/docs/sdks/_plaintext-http-client-response.mdx";
 
 # Services
 
@@ -135,3 +136,137 @@ val proxyResponse = bt.proxy.post(proxyRequest)
 ### Access non-sensitive responses from Proxy calls <Beta />
 
 <RawProxyResponse />
+
+### HTTP Client
+
+Element values can be used in a request to a third-party API using our HTTP client service.
+
+#### Post
+
+The example below shows how to use the HTTP client service to make a POST request to a third-party API with an element in the payload.
+
+```kotlin showLineNumbers title="Invoking HTTP Client Service w/ POST"
+private val bt = BasisTheoryElements.builder()
+    .apiUrl(BuildConfig.BASIS_THEORY_API_URL)
+    .apiKey(BuildConfig.BASIS_THEORY_API_KEY)
+    .build()
+...
+
+bt.client.post("https://api.psp.com/v1/payment_methods",
+            object {
+                val type = "card"
+                val billing_details = object {
+                    val name =  "Peter Panda"
+                }
+                val card = object {
+                    val number = binding.cardNumber
+                    val exp_month = binding.expirationDate.month()
+                    val exp_year = binding.expirationDate.year()
+                    val cvc = binding.cvc
+                }
+            },
+            mapOf(
+                "Authorization" to "Bearer ...",
+                "Content-Type" to "application/x-www-form-urlencoded"
+            ))
+```
+
+<PlaintextHttpClientResponse />
+
+#### Put
+
+The example below shows how to use the HTTP client service to make a PUT request to a third-party API with an element in the payload.
+
+```kotlin showLineNumbers title="Invoking HTTP Client Service w/ POST"
+private val bt = BasisTheoryElements.builder()
+    .apiUrl(BuildConfig.BASIS_THEORY_API_URL)
+    .apiKey(BuildConfig.BASIS_THEORY_API_KEY)
+    .build()
+...
+
+bt.client.put("https://api.psp.com/v1/payment_methods/id",
+            object {
+                val type = "card"
+                val billing_details = object {
+                    val name =  "Peter Panda"
+                }
+                val card = object {
+                    val number = binding.cardNumber
+                    val exp_month = binding.expirationDate.month()
+                    val exp_year = binding.expirationDate.year()
+                    val cvc = binding.cvc
+                }
+            },
+            mapOf(
+                "Authorization" to "Bearer ...",
+                "Content-Type" to "application/x-www-form-urlencoded"
+            ))
+```
+
+<PlaintextHttpClientResponse />
+
+#### Patch
+
+The example below shows how to use the HTTP client service to make a PATCH request to a third-party API with an element in the payload.
+
+```kotlin showLineNumbers title="Invoking HTTP Client Service w/ POST"
+private val bt = BasisTheoryElements.builder()
+    .apiUrl(BuildConfig.BASIS_THEORY_API_URL)
+    .apiKey(BuildConfig.BASIS_THEORY_API_KEY)
+    .build()
+...
+
+bt.client.patch("https://api.psp.com/v1/payment_methods/id",
+            object {
+                val card = object {
+                    val exp_month = binding.expirationDate.month()
+                    val exp_year = binding.expirationDate.year()
+                }
+            },
+            mapOf(
+                "Authorization" to "Bearer ...",
+                "Content-Type" to "application/x-www-form-urlencoded"
+            ))
+```
+
+<PlaintextHttpClientResponse />
+
+#### Get
+
+The example below shows how to use the HTTP client service to make a GET request to a third-party API.
+
+```kotlin showLineNumbers title="Invoking HTTP Client Service w/ POST"
+private val bt = BasisTheoryElements.builder()
+    .apiUrl(BuildConfig.BASIS_THEORY_API_URL)
+    .apiKey(BuildConfig.BASIS_THEORY_API_KEY)
+    .build()
+...
+
+bt.client.get("https://api.psp.com/v1/payment_methods/id",
+            mapOf(
+                "Authorization" to "Bearer ...",
+                "Content-Type" to "application/x-www-form-urlencoded"
+            ))
+```
+
+<PlaintextHttpClientResponse />
+
+#### Delete
+
+The example below shows how to use the HTTP client service to make a DELETE request to a third-party API.
+
+```kotlin showLineNumbers title="Invoking HTTP Client Service w/ POST"
+private val bt = BasisTheoryElements.builder()
+    .apiUrl(BuildConfig.BASIS_THEORY_API_URL)
+    .apiKey(BuildConfig.BASIS_THEORY_API_KEY)
+    .build()
+...
+
+bt.client.delete("https://api.psp.com/v1/payment_methods/id",
+            mapOf(
+                "Authorization" to "Bearer ...",
+                "Content-Type" to "application/x-www-form-urlencoded"
+            ))
+```
+
+<PlaintextHttpClientResponse />
