@@ -52,11 +52,11 @@ The `TextElementUITextField` extends the native `UITextField` from UIKit, so all
 
 The following additional properties are supported when programmatically interacting with a `TextElementUITextField`:
 
-| Name       | Type                                                                                                                                          |
-|------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| validation | No default [validation](/docs/sdks/mobile/ios/options#validation). [Validation](/docs/sdks/mobile/ios/options#validation) can be overridden.  |
-| mask       | No default [mask](/docs/sdks/mobile/ios/options#mask). [Mask](/docs/sdks/mobile/ios/options#mask) can be overridden.                          |
-| transform  | No default [transform](/docs/sdks/mobile/ios/options#transform). [Transform](/docs/sdks/mobile/ios/options#transform) can be overridden.      |
+| Name       | Type                                                                                                                                         |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| validation | No default [validation](/docs/sdks/mobile/ios/options#validation). [Validation](/docs/sdks/mobile/ios/options#validation) can be overridden. |
+| mask       | No default [mask](/docs/sdks/mobile/ios/options#mask). [Mask](/docs/sdks/mobile/ios/options#mask) can be overridden.                         |
+| transform  | No default [transform](/docs/sdks/mobile/ios/options#transform). [Transform](/docs/sdks/mobile/ios/options#transform) can be overridden.     |
 
 #### Methods
 
@@ -140,9 +140,7 @@ Supported card brands are defined in the table below:
 | Visa             | `visa`            | 16, 18, 19         | 3          |
 
 <Alert>
-  Some card brands have issued card numbers with multiple lengths. The{" "}
-  <code>Card Number Digits</code> column documents all acceptable card number
-  lengths for the brand (in number of digits, excluding formatting characters).
+  Some card brands have issued card numbers with multiple lengths. The <code>Card Number Digits</code> column documents all acceptable card number lengths for the brand (in number of digits, excluding formatting characters).
 </Alert>
 
 ## CardExpirationDateUITextField
@@ -212,6 +210,29 @@ let body: [String: Any] = [
 ]
 ```
 
+#### Format
+
+`format(dateFormat: String)` allows you to customize card expiration dates. It implements Swift's [DateFormatter](https://developer.apple.com/documentation/foundation/dateformatter), so all date formats supported by it are also available.
+
+```swift showLineNumbers
+    // expirationDateTextField value is 04/25
+
+    let body: [String: Any] = [
+        "data": [
+            "expiration_date1": cardExpirationDateElement.format("yyyy-MM"), // 2025-04
+            "expiration_date2": cardExpirationDateElement.format("MM"),      // 04
+            "expiration_date3": cardExpirationDateElement.format("M"),       // 4
+            "expiration_date4": cardExpirationDateElement.format("MM/yyyy"), // 04/2025
+            "expiration_date4": cardExpirationDateElement.format("yy"),      // 25
+        ],
+        "type": "token"
+    ]
+```
+
+<Alert>
+  This code example uses Basis Theory <Link to="/docs/sdks/mobile/ios/services#http-client">HTTP Client</Link>
+</Alert>
+
 ## CardVerificationCodeUITextField
 
 The `CardVerificationCodeUITextField` element type is used to collect the card verification code.
@@ -280,9 +301,7 @@ cvcTextField.setConfig(
 See below for an example that uses all the card-related mobile elements, `CardNumberUITextField`, `CardExpirationDateUITextField`, and `CardVerificationCodeUITextField` together.
 
 <Alert>
-  Note that when these card-related elements are grouped together in a
-  dictionary, as shown in the value of <code>data</code> below, the token{" "}
-  <code>type</code> of <code>card</code> should be used.
+  Note that when these card-related elements are grouped together in a dictionary, as shown in the value of <code>data</code> below, the token <code>type</code> of <code>card</code> should be used.
 </Alert>
 
 ```swift showLineNumbers
