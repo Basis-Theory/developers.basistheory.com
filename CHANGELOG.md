@@ -1,3 +1,10 @@
+# [1.61.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.60.0...v1.61.0) (2023-07-06)
+
+
+### Features
+
+* document patch proxies reactors ([#149](https://github.com/Basis-Theory/developers.basistheory.com/issues/149)) ([632f542](https://github.com/Basis-Theory/developers.basistheory.com/commit/632f54248a1b71c151d433168f08ab825301af78))
+
 # [1.60.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.59.0...v1.60.0) (2023-06-26)
 
 
