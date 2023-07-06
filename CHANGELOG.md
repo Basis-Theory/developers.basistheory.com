@@ -1,3 +1,10 @@
+# [1.62.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.61.0...v1.62.0) (2023-07-06)
+
+
+### Features
+
+* documenting android drawables ([#150](https://github.com/Basis-Theory/developers.basistheory.com/issues/150)) ([16def14](https://github.com/Basis-Theory/developers.basistheory.com/commit/16def14344fba6423d2ae869bb598bfa6124482e))
+
 # [1.61.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.60.0...v1.61.0) (2023-07-06)
 
 
