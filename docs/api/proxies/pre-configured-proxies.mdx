@@ -1106,75 +1106,75 @@ Patch a Proxy by ID in the Tenant.
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
-    ```shell showLineNumbers
-    transform='module.exports = async function (req) {
-    // Do something with req.configuration.SERVICE_API_KEY
+```shell showLineNumbers
+transform='module.exports = async function (req) {
+// Do something with req.configuration.SERVICE_API_KEY
 
-    return {
+  return {
     headers: req.args.headers,
     body: req.args.body
   };
-  };'
+};'
 
-    curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" \
-    -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
-    -H "Content-Type: application/merge-patch+json" \
-    -X "PATCH" \
-    -d '{
-    "name": "My Proxy",
-    "destination_url": "https://example.com/api",
-    "configuration": {
-      "SERVICE_API_KEY": "key_abcd1234"
-      }
-    }'
-    ```
+curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" \
+-H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+-H "Content-Type: application/merge-patch+json" \
+-X "PATCH" \
+-d '{
+  "name": "My Proxy",
+  "destination_url": "https://example.com/api",
+  "configuration": {
+    "SERVICE_API_KEY": "key_abcd1234"
+  }
+}'
+```
 
   </TabItem>
   <TabItem value="javascript" label="JavaScript">
 
-    ```javascript showLineNumbers
-    import { BasisTheory } from '@basis-theory/basis-theory-js';
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
 
-    const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
 
-    const proxy = await bt.proxies.patch('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
-    name: 'My Proxy',
-    destinationUrl: 'https://example.com/api',
-    configuration: {
+const proxy = await bt.proxies.patch('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
+  name: 'My Proxy',
+  destinationUrl: 'https://example.com/api',
+  configuration: {
     SERVICE_API_KEY: 'key_abcd1234',
   }
-  });
-    ```
+});
+```
 
   </TabItem>
   <TabItem value="csharp" label="C#">
 
-    ```csharp showLineNumbers
-    using BasisTheory.net.Proxies;
+```csharp showLineNumbers
+using BasisTheory.net.Proxies;
 
-    var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
 
-    var proxy = await client.PatchAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
-    new ProxyUpdateRequest {
+var proxy = await client.PatchAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
+  new ProxyUpdateRequest {
     Name = "My Proxy",
     DestinationUrl = "https://example.com/api",
     Configuration = new Dictionary<string, string> {
-  { "SERVICE_API_KEY", "key_abcd1234" }
-  }}
-    );
-    ```
+      { "SERVICE_API_KEY", "key_abcd1234" }
+    }
+  });
+```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
-    ```java showLineNumbers
-    import com.basistheory.*;
-    import com.basistheory.auth.*;
-    import java.util.Map;
-    import java.util.UUID;
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Map;
+import java.util.UUID;
 
-    public class Example {
-    public static void main(String[] args) throws Exception {
+public class Example {
+  public static void main(String[] args) throws Exception {
     ApiClient defaultClient = Configuration.getDefaultApiClient();
     defaultClient.setBasePath("https://api.basistheory.com");
 
@@ -1184,60 +1184,60 @@ Patch a Proxy by ID in the Tenant.
     ProxiesApi apiInstance = new ProxiesApi(defaultClient);
     PatchProxyRequest patchProxyRequest = new PatchProxyRequest();
     Proxy result = apiInstance.create("433013a6-a614-4e1e-b2aa-5fba67aa85e6", patchProxyRequest
-    .name("My Proxy")
-    .destinationUrl("https://example.com/api")
-    ._configuration(Map.of("SERVICE_API_KEY", "key_abcd1234")));
+      .name("My Proxy")
+      .destinationUrl("https://example.com/api")
+      ._configuration(Map.of("SERVICE_API_KEY", "key_abcd1234")));
   }
-  }
-    ```
+}
+```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
-    ```python showLineNumbers
-    import basistheory
-    from basistheory.api import proxies_api
-    from basistheory.model.patch_proxy_request import PatchProxyRequest
+```python showLineNumbers
+import basistheory
+from basistheory.api import proxies_api
+from basistheory.model.patch_proxy_request import PatchProxyRequest
 
-    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
-    proxy_client = proxies_api.ProxiesApi(api_client)
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+proxy_client = proxies_api.ProxiesApi(api_client)
 
-    application = proxy_client.update("433013a6-a614-4e1e-b2aa-5fba67aa85e6", update_proxy_request=UpdateProxyRequest(
-    name="My Proxy",
-    destination_url="https://example.com/api",
-    configuration={
+application = proxy_client.update("433013a6-a614-4e1e-b2aa-5fba67aa85e6", update_proxy_request=UpdateProxyRequest(
+  name="My Proxy",
+  destination_url="https://example.com/api",
+  configuration={
     "SERVICE_API_KEY": "key_abcd134"
   })
-    ```
+```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
-    ```go showLineNumbers
-    package main
+```go showLineNumbers
+package main
 
-    import (
-    "context"
-    "github.com/Basis-Theory/basistheory-go/v3"
-    )
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
 
-    func main() {
-    configuration := basistheory.NewConfiguration()
-    apiClient := basistheory.NewAPIClient(configuration)
-    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
     "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
   })
 
-    patchProxyRequest := *basistheory.NewPatchProxyRequest("My Proxy", "https://example.com/api")
+  patchProxyRequest := *basistheory.NewPatchProxyRequest("My Proxy", "https://example.com/api")
   patchProxyRequest.SetConfiguration(map[string]string{
     "SERVICE_API_KEY": "key_abcd134",
   })
-    application := *basistheory.NewApplication()
-    application.SetId("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
+  application := *basistheory.NewApplication()
+  application.SetId("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
 
-    proxy, httpResponse, err := apiClient.ProxiesApi.Patch(contextWithAPIKey, "433013a6-a614-4e1e-b2aa-5fba67aa85e6").PatchProxyRequest(patchProxyRequest).Execute()
-  }
-    ```
+  proxy, httpResponse, err := apiClient.ProxiesApi.Patch(contextWithAPIKey, "433013a6-a614-4e1e-b2aa-5fba67aa85e6").PatchProxyRequest(patchProxyRequest).Execute()
+}
+```
 
   </TabItem>
 </Tabs>
