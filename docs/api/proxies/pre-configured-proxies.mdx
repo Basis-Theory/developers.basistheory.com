@@ -870,8 +870,8 @@ public class Example {
         ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
 
         ProxiesApi apiInstance = new ProxiesApi(defaultClient);
-        CreateProxyRequest createProxyRequest = new CreateProxyRequest();
-        Proxy result = apiInstance.create(createProxyRequest
+        UpdateProxyRequest updateProxyRequest = new UpdateProxyRequest();
+        Proxy result = apiInstance.update("433013a6-a614-4e1e-b2aa-5fba67aa85e6", updateProxyRequest
                 .name("My Proxy")
                 .destinationUrl("https://example.com/api")
                 .requestTransform(new ProxyTransform().code("""
@@ -1070,6 +1070,199 @@ Returns a [Proxy](#proxy-object) if the Proxy was updated. Returns [an error](/d
   "modified_at": "2021-03-01T08:23:14+00:00"
 }
 ```
+
+## Patch Proxy
+
+Patch a Proxy by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.PATCH}
+  endpoint="https://api.basistheory.com/proxies/{id}"
+/>
+
+#### Permissions
+
+<Permission content="proxy:update" />
+
+<Alert>
+  The Patch Proxies endpoint uses a different content-type to support
+  merge-patch operations. Requests need the <code>Content-Type</code> header to
+  be set to <code>application/merge-patch+json</code>. Requests made with a
+  different <code>Content-Type</code> header value will receive a{" "}
+  <code>415 Unsupported Media Type</code> response code. For more information on
+  merge-patch, see{" "}
+  <a
+    href="https://datatracker.ietf.org/doc/html/rfc7386"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    RFC 7386
+  </a>
+  .
+</Alert>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    transform='module.exports = async function (req) {
+    // Do something with req.configuration.SERVICE_API_KEY
+
+    return {
+    headers: req.args.headers,
+    body: req.args.body
+  };
+  };'
+
+    curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" \
+    -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+    -H "Content-Type: application/merge-patch+json" \
+    -X "PATCH" \
+    -d '{
+    "name": "My Proxy",
+    "destination_url": "https://example.com/api",
+    "configuration": {
+      "SERVICE_API_KEY": "key_abcd1234"
+      }
+    }'
+    ```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+    ```javascript showLineNumbers
+    import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+    const bt = await new BasisTheory().init('key_N88mVGsp3sCXkykyN2EFED');
+
+    const proxy = await bt.proxies.patch('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
+    name: 'My Proxy',
+    destinationUrl: 'https://example.com/api',
+    configuration: {
+    SERVICE_API_KEY: 'key_abcd1234',
+  }
+  });
+    ```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+    ```csharp showLineNumbers
+    using BasisTheory.net.Proxies;
+
+    var client = new ProxyClient("key_N88mVGsp3sCXkykyN2EFED");
+
+    var proxy = await client.PatchAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
+    new ProxyUpdateRequest {
+    Name = "My Proxy",
+    DestinationUrl = "https://example.com/api",
+    Configuration = new Dictionary<string, string> {
+  { "SERVICE_API_KEY", "key_abcd1234" }
+  }}
+    );
+    ```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+    ```java showLineNumbers
+    import com.basistheory.*;
+    import com.basistheory.auth.*;
+    import java.util.Map;
+    import java.util.UUID;
+
+    public class Example {
+    public static void main(String[] args) throws Exception {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.basistheory.com");
+
+    ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+    ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+    ProxiesApi apiInstance = new ProxiesApi(defaultClient);
+    PatchProxyRequest patchProxyRequest = new PatchProxyRequest();
+    Proxy result = apiInstance.create("433013a6-a614-4e1e-b2aa-5fba67aa85e6", patchProxyRequest
+    .name("My Proxy")
+    .destinationUrl("https://example.com/api")
+    ._configuration(Map.of("SERVICE_API_KEY", "key_abcd1234")));
+  }
+  }
+    ```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+    ```python showLineNumbers
+    import basistheory
+    from basistheory.api import proxies_api
+    from basistheory.model.patch_proxy_request import PatchProxyRequest
+
+    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    proxy_client = proxies_api.ProxiesApi(api_client)
+
+    application = proxy_client.update("433013a6-a614-4e1e-b2aa-5fba67aa85e6", update_proxy_request=UpdateProxyRequest(
+    name="My Proxy",
+    destination_url="https://example.com/api",
+    configuration={
+    "SERVICE_API_KEY": "key_abcd134"
+  })
+    ```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+    ```go showLineNumbers
+    package main
+
+    import (
+    "context"
+    "github.com/Basis-Theory/basistheory-go/v3"
+    )
+
+    func main() {
+    configuration := basistheory.NewConfiguration()
+    apiClient := basistheory.NewAPIClient(configuration)
+    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+    patchProxyRequest := *basistheory.NewPatchProxyRequest("My Proxy", "https://example.com/api")
+  patchProxyRequest.SetConfiguration(map[string]string{
+    "SERVICE_API_KEY": "key_abcd134",
+  })
+    application := *basistheory.NewApplication()
+    application.SetId("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
+
+    proxy, httpResponse, err := apiClient.ProxiesApi.Patch(contextWithAPIKey, "433013a6-a614-4e1e-b2aa-5fba67aa85e6").PatchProxyRequest(patchProxyRequest).Execute()
+  }
+    ```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description         |
+| --------- | -------- | ------ | ------- | ------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the proxy |
+
+#### Request Parameters
+
+| Attribute            | Required | Type                                                       | Default | Description                                                                                                                                                                                                                                                                               |
+| -------------------- | -------- | ---------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | false     | _string_                                                   | `null`  | The name of the Proxy. Has a maximum length of `200`                                                                                                                                                                                                                                      |
+| `destination_url`    | false     | _string_                                                   | `null`  | The URL to which requests will be proxied                                                                                                                                                                                                                                                              |
+| `request_transform`  | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | [Request Transform](#request-transforms) which will be executed against the proxy request before sending to the destination.                                                                                                                                                                                               |
+| `response_transform` | false    | _[Proxy Transform](#proxy-transform-object)_               | `null`  | [Response Transform](#response-transforms) which will be executed against the destination's response before returning the proxy response.                                                                                                                                                                                      |
+| `application`        | false    | _[Application](/docs/api/applications#application-object)_ | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the transform. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+| `configuration`      | false    | _map_                                                      | `null`  | A key-value map of all configuration name and values for a [Proxy Transform](#proxy-transform-object)                                                                                                                                                                                     |
+| `require_auth`       | false    | _boolean_                                                  | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                                                                |
+
+### Response
+
+Returns `204` if successful. Returns [an error](/docs/api/errors) if there were validation errors, or the operation failed.
 
 ## Delete Proxy
 

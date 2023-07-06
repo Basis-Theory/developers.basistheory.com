@@ -687,6 +687,183 @@ Returns a [Reactor](#reactor-object) if the Reactor was updated. Returns [an err
 }
 ```
 
+## Patch Reactor
+
+Patch a Reactor by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.PATCH}
+  endpoint="https://api.basistheory.com/reactors/{id}"
+/>
+
+#### Permissions
+
+<Permission content="reactor:update" />
+
+<Alert>
+  The Patch Proxies endpoint uses a different content-type to support
+  merge-patch operations. Requests need the <code>Content-Type</code> header to
+  be set to <code>application/merge-patch+json</code>. Requests made with a
+  different <code>Content-Type</code> header value will receive a{" "}
+  <code>415 Unsupported Media Type</code> response code. For more information on
+  merge-patch, see{" "}
+  <a
+    href="https://datatracker.ietf.org/doc/html/rfc7386"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    RFC 7386
+  </a>
+  .
+</Alert>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13" \
+    -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+    -H "Content-Type: application/merge-patch+json" \
+    -X "PUT" \
+    -d '{
+    "name": "My Reactor",
+    "configuration": {
+    "SERVICE_API_KEY": "key_abcd1234"
+  }
+  }'
+    ```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+    ```javascript showLineNumbers
+    import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+    const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+
+    const reactor = await bt.reactors.patch(
+    "5b493235-6917-4307-906a-2cd6f1a90b13",
+    {
+      name: "My Reactor",
+      configuration: {
+      SERVICE_API_KEY: "key_abcd1234",
+    }
+    }
+    );
+    ```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+    ```csharp showLineNumbers
+    using BasisTheory.net.Reactors;
+
+    var client = new ReactorClient("key_N88mVGsp3sCXkykyN2EFED");
+
+    var reactor = await client.PatchAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
+    new Reactor {
+    Name = "My Reactor",
+    Configuration = new Dictionary<string, string> {
+  { "SERVICE_API_KEY", "key_abcd1234" }
+  }
+  }
+    );
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+    ```java showLineNumbers
+    import com.basistheory.*;
+    import com.basistheory.auth.*;
+    import java.util.Map;
+    import java.util.UUID;
+
+    public class Example {
+    public static void main(String[] args) throws Exception {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.basistheory.com");
+
+    ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+    ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+
+    ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+    PatchReactorRequest patchReactorRequest = new PatchReactorRequest();
+    Reactor reactor = apiInstance.patch(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"), patchReactorRequest
+    .name("My Reactor")
+    ._configuration(Map.of("SERVICE_API_KEY", "key_abcd134")));
+  }
+  }
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+    ```python showLineNumbers
+    import basistheory
+    from basistheory.api import reactors_api
+    from basistheory.model.patch_reactor_request import PatchReactorRequest
+    from basistheory.model.application import Application
+
+    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+    reactors_client = reactors_api.ReactorsApi(api_client)
+
+    reactor = reactors_client.patch("5b493235-6917-4307-906a-2cd6f1a90b13", patch_reactor_request=PatchReactorRequest(
+    name="My Reactor",
+    configuration={
+    "SERVICE_API_KEY": "key_abcd134"
+  }
+    ))
+    ```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+    ```go showLineNumbers
+    package main
+
+    import (
+    "context"
+    "github.com/Basis-Theory/basistheory-go/v3"
+    )
+
+    func main() {
+    configuration := basistheory.NewConfiguration()
+    apiClient := basistheory.NewAPIClient(configuration)
+    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+  })
+
+    patchReactorRequest := *basistheory.NewPatchReactorRequest("My Reactor")
+    patchReactorRequest.SetConfiguration(map[string]string{
+    "SERVICE_API_KEY": "key_abcd134",
+  })
+
+    reactor, httpResponse, err := apiClient.ReactorsApi.Patch(contextWithAPIKey, "5b493235-6917-4307-906a-2cd6f1a90b13").PatchReactorRequest(patchReactorRequest).Execute()
+  }
+    ```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description           |
+| --------- | -------- | ------ | ------- | --------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the reactor |
+
+#### Request Parameters
+
+| Attribute        | Required | Type     | Default | Description                                                                                                                                                                                                                                                                               |
+| ---------------- | -------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`           | false     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                                                                                                                                                    |
+| `configuration`  | false     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                                                                             |
+| `application.id` | false    | _uuid_   | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+
+### Response
+
+Returns `204` if successful. Returns [an error](/docs/api/errors) if there were validation errors, or the operation failed.
+
 ## Delete Reactor
 
 Delete a Reactor by ID in the Tenant.
