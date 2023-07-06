@@ -1,3 +1,10 @@
+# [1.63.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.62.0...v1.63.0) (2023-07-06)
+
+
+### Features
+
+* update deps ([#151](https://github.com/Basis-Theory/developers.basistheory.com/issues/151)) ([8a0f653](https://github.com/Basis-Theory/developers.basistheory.com/commit/8a0f65347ffb797fc569e33c2e65c97eea68cded))
+
 # [1.62.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.61.0...v1.62.0) (2023-07-06)
 
 
