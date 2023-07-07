@@ -1,3 +1,10 @@
+# [1.64.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.63.0...v1.64.0) (2023-07-07)
+
+
+### Features
+
+* adds dual write docs to android sdk ([#146](https://github.com/Basis-Theory/developers.basistheory.com/issues/146)) ([df959bb](https://github.com/Basis-Theory/developers.basistheory.com/commit/df959bbebaadefb316175f3e88b5e3154277aed0))
+
 # [1.63.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.62.0...v1.63.0) (2023-07-06)
 
 
