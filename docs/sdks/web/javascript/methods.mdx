@@ -25,14 +25,38 @@ Once you have [created](/docs/sdks/web/javascript/lifecycle#create-element) and 
 </script>
 ```
 
-| Name       | Resulting Type | Eligible Elements                                                                  | Description                                                                                  |
-| ---------- | -------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `clear`    | _void_         | All                                                                                | Clears the element input(s) value.                                                           |
-| `focus`    | _void_         | All                                                                                | Focuses on the element input.                                                                |
-| `blur`     | _void_         | All                                                                                | Blurs the element input.                                                                     |
-| `month`    | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the month value of the input date, where "January" = 1. |
-| `year`     | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the four-digit year value of the input date.            |
-| `setValue` | _void_         | All                                                                                | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.  |
+| Name       | Resulting Type | Eligible Elements                                                                  | Description                                                                                                      |
+| ---------- | -------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `clear`    | _void_         | All                                                                                | Clears the element input(s) value.                                                                               |
+| `focus`    | _void_         | All                                                                                | Focuses on the element input.                                                                                    |
+| `blur`     | _void_         | All                                                                                | Blurs the element input.                                                                                         |
+| `month`    | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the month value of the input date, where "January" = 1.                     |
+| `year`     | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the four-digit year value of the input date.                                |
+| `format`\* | _string_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that takes a date format as an argument and returns the expiration date in the given format. |
+| `setValue` | _void_         | All                                                                                | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.                      |
+
+#### Format\*
+
+Our card expiration date format implements Luxon's [toFormat](https://moment.github.io/luxon/api-docs/index.html#datetimetoformat), so all of Luxon's date formatting [tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) are available.
+
+```ts title="Card Expiration Date format example"
+const cardExpirationDateElement = BasisTheory.createElement("cardExpirationDate", {
+  targetId: "expirationDate",
+  value: "04/25",
+});
+
+...
+
+const requestBody = {
+  ...
+  expiration_date1: cardExpirationDateElement.format("yyyy-MM"), // 2025-04
+  expiration_date2: cardExpirationDateElement.format("MM"),      // 04
+  expiration_date3: cardExpirationDateElement.format("M"),       // 4
+  expiration_date4: cardExpirationDateElement.format("MM/yyyy"), // 04/2025
+  expiration_date5: cardExpirationDateElement.format("yy"),      // 25
+  ...
+}
+```
 
 ## Tokenization Services
 
@@ -296,22 +320,25 @@ Element values can be used in a request to a third-party API using our HTTP clie
 The example below shows how to use the HTTP client service to make a POST request to a third-party API with an element in the payload.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ POST"
-BasisTheory.post('https://www.api.thirdpartydomain.com/resources', {
+BasisTheory.post(
+  "https://www.api.thirdpartydomain.com/resources",
+  {
     sensitiveData: sensitiveDataElement,
     nonSensitiveData: "plainText", // see warning on plain text data
     otherData: {
       someInteger: 20,
       someBoolean: false,
-      },
+    },
     someOtherData: ["plainText1", "plainText2"],
-  }, {
+  },
+  {
     headers: {
-        'Content-Type': 'application/json',
-    }
-  })
-  .then((response) => {
-    console.log(JSON.stringify(response)); // full plaintext response
-  });
+      "Content-Type": "application/json",
+    },
+  }
+).then((response) => {
+  console.log(JSON.stringify(response)); // full plaintext response
+});
 ```
 
 <PlaintextHttpClientResponse />
@@ -321,23 +348,26 @@ BasisTheory.post('https://www.api.thirdpartydomain.com/resources', {
 The example below shows how to use the HTTP client service to make a PUT request to a third-party API with an element in the payload.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ PUT"
-BasisTheory.put('https://www.api.thirdpartydomain.com/resources/id', {
+BasisTheory.put(
+  "https://www.api.thirdpartydomain.com/resources/id",
+  {
     sensitiveData: sensitiveDataElement,
     nonSensitiveData: "plainText", // see warning on plain text data
     otherData: {
       someInteger: 20,
       someBoolean: false,
-      },
+    },
     someOtherData: ["plainText1", "plainText2"],
-  }, {
+  },
+  {
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    }
-  })
-  .then((response) => {
-    console.log(JSON.stringify(response)); // full plaintext response
-  });
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  }
+).then((response) => {
+  console.log(JSON.stringify(response)); // full plaintext response
+});
 ```
 
 <PlaintextHttpClientResponse />
@@ -347,23 +377,26 @@ BasisTheory.put('https://www.api.thirdpartydomain.com/resources/id', {
 The example below shows how to use the HTTP client service to make a PATCH request to a third-party API with an element in the payload.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ PATCH"
-BasisTheory.patch('https://www.api.thirdpartydomain.com/resources/id', {
+BasisTheory.patch(
+  "https://www.api.thirdpartydomain.com/resources/id",
+  {
     sensitiveData: sensitiveDataElement,
     nonSensitiveData: "plainText", // see warning on plain text data
     otherData: {
       someInteger: 20,
       someBoolean: false,
-      },
+    },
     someOtherData: ["plainText1", "plainText2"],
-  }, {
+  },
+  {
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    }
-  })
-  .then((response) => {
-    console.log(JSON.stringify(response)); // full plaintext response
-  });
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  }
+).then((response) => {
+  console.log(JSON.stringify(response)); // full plaintext response
+});
 ```
 
 <PlaintextHttpClientResponse />
@@ -373,14 +406,13 @@ BasisTheory.patch('https://www.api.thirdpartydomain.com/resources/id', {
 The example below shows how to use the HTTP client service to make a GET request to a third-party API.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ GET"
-BasisTheory.get('https://www.api.thirdpartydomain.com/resources/id', {
-    headers: {
-        'Accept': 'application/json',
-    }
-  })
-  .then((response) => {
-    console.log(JSON.stringify(response)); // full plaintext response
-  });
+BasisTheory.get("https://www.api.thirdpartydomain.com/resources/id", {
+  headers: {
+    Accept: "application/json",
+  },
+}).then((response) => {
+  console.log(JSON.stringify(response)); // full plaintext response
+});
 ```
 
 <PlaintextHttpClientResponse />
@@ -390,14 +422,13 @@ BasisTheory.get('https://www.api.thirdpartydomain.com/resources/id', {
 The example below shows how to use the HTTP client service to make a DELETE request to a third-party API.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ DELETE"
-BasisTheory.delete('https://www.api.thirdpartydomain.com/resources/id', {
-    headers: {
-        'Accept': 'application/json',
-    }
-  })
-  .then((response) => {
-    console.log(JSON.stringify(response)); // full plaintext response
-  });
+BasisTheory.delete("https://www.api.thirdpartydomain.com/resources/id", {
+  headers: {
+    Accept: "application/json",
+  },
+}).then((response) => {
+  console.log(JSON.stringify(response)); // full plaintext response
+});
 ```
 
 <PlaintextHttpClientResponse />
@@ -506,7 +537,7 @@ BasisTheory.post({
 ```
 
 | Attribute | Type     | Description                             |
-|-----------|----------|-----------------------------------------|
+| --------- | -------- | --------------------------------------- |
 | `name`    | string   | Error name, always `'HttpClientError'`. |
 | `data`    | _object_ | Response body sent from the server.     |
 | `status`  | _number_ | Response HTTP status.                   |
