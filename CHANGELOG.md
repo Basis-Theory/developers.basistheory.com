@@ -1,3 +1,10 @@
+# [1.65.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.64.0...v1.65.0) (2023-07-10)
+
+
+### Features
+
+* update packages ([#152](https://github.com/Basis-Theory/developers.basistheory.com/issues/152)) ([799e5de](https://github.com/Basis-Theory/developers.basistheory.com/commit/799e5de75cb51170314f8e2d712976e1673641fe))
+
 # [1.64.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.63.0...v1.64.0) (2023-07-07)
 
 
