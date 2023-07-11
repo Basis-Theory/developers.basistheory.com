@@ -303,6 +303,8 @@ const config = {
       "data-project-logo":
         "https://avatars.githubusercontent.com/u/75859349?s=280&v=4",
       async: true,
+      "data-search-mode-enabled": "true", // ADD THIS LINE TO ENABLE SEARCH
+      // "data-modal-override-open-class": "navbar__search" // OPTIONAL: If you want to override the default search
     },
   ],
 };
