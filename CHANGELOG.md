@@ -1,3 +1,10 @@
+# [1.66.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.65.0...v1.66.0) (2023-07-12)
+
+
+### Features
+
+* updating kapa to include searching ([#154](https://github.com/Basis-Theory/developers.basistheory.com/issues/154)) ([274bcac](https://github.com/Basis-Theory/developers.basistheory.com/commit/274bcacb26a92928aca17166e4f5519f7b543afc))
+
 # [1.65.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.64.0...v1.65.0) (2023-07-10)
 
 
