@@ -1,3 +1,10 @@
+# [1.67.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.66.0...v1.67.0) (2023-07-17)
+
+
+### Features
+
+* adding proxy destination timeout info ([#156](https://github.com/Basis-Theory/developers.basistheory.com/issues/156)) ([5dc0ea7](https://github.com/Basis-Theory/developers.basistheory.com/commit/5dc0ea7205557163b2c4bf4a811500ef6c0f55e4))
+
 # [1.66.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.65.0...v1.66.0) (2023-07-12)
 
 
