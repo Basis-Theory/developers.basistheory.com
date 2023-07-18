@@ -25,12 +25,7 @@ interface GithubCard {
 const placeholder = "Loading";
 const placeholderUrl = "https://www.basistheory.com/";
 
-export const GithubCard = ({
-  heading,
-  organization,
-  repository,
-  icon,
-}: GithubCard) => {
+export const GithubCard = ({ heading, organization, repository, icon }: GithubCard) => {
   if (!icon) throw Error("Missing SDK icon");
   if (!isValidSdk(icon)) throw Error("Invalid SDK.");
 
@@ -40,26 +35,23 @@ export const GithubCard = ({
   const [contributors, setContributors] = useState<number>(null);
 
   const loadMetadata = async () => {
-    const { data } = await axios.get(
-      `https://api.github.com/repos/${organization}/${repository}`
-    );
+    const { data } = await axios.get(`https://api.github.com/repos/${organization}/${repository}`);
 
     setGithubUrl(data.html_url);
     setStargazersCount(data.stargazers_count);
   };
 
   const loadRelease = async () => {
-    const { data } = await axios.get(
-      `https://api.github.com/repos/${organization}/${repository}/releases/latest`
-    );
+    // catches 404 from github when trying to load android/iOS releases
+    try {
+      const { data } = await axios.get(`https://api.github.com/repos/${organization}/${repository}/releases/latest`);
 
-    setReleaseName(data.name);
+      setReleaseName(data.name);
+    } catch (err) {}
   };
 
   const loadContributors = async () => {
-    const { data } = await axios.get(
-      `https://api.github.com/repos/${organization}/${repository}/contributors`
-    );
+    const { data } = await axios.get(`https://api.github.com/repos/${organization}/${repository}/contributors`);
 
     setContributors(data.length);
   };
