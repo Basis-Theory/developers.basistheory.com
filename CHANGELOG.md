@@ -1,3 +1,10 @@
+# [1.68.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.67.0...v1.68.0) (2023-07-18)
+
+
+### Features
+
+* build using swc instead of webpack ([#159](https://github.com/Basis-Theory/developers.basistheory.com/issues/159)) ([8e5b8b7](https://github.com/Basis-Theory/developers.basistheory.com/commit/8e5b8b757d17af860aba399e21a8138b8199bfb4))
+
 # [1.67.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.66.0...v1.67.0) (2023-07-17)
 
 
