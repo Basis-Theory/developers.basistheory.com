@@ -1,0 +1,74 @@
+---
+sidebar_label: Services
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import RawProxyResponse from "@site/docs/sdks/_raw-proxy-response.mdx";
+import PlaintextHttpClientResponse from "@site/docs/sdks/_plaintext-http-client-response.mdx";
+
+# Services
+
+## Static Fields
+
+You can set your API key globally for `BasisTheoryElements` through the static `apiKey` field.
+
+```javascript showLineNumbers
+BasisTheoryElements.apiKey = "<YOUR PUBLIC BT API KEY>"
+```
+
+All [service method](#methods) calls take an optional `apiKey` should you need to override the globally set `apiKey`.
+
+## Methods
+
+### createSession
+
+To retrieve sensitive data on iOS, you'll need to create a `session` and use its `sessionKey` for making requests securely. To accomplish this, simply construct your `createSession` request like this:
+
+```javascript showLineNumbers
+BasisTheoryElements.createSession(
+    apiKey: "<YOUR PUBLIC BT API KEY>"
+) { data, error in ... }
+```
+
+The callback provided calls your function with a `data` of type [CreateSessionResponse](https://github.com/Basis-Theory/basistheory-swift/blob/master/docs/CreateSessionResponse.md), and an `error` of type [Error](#errors).
+
+### getTokenById
+
+This function wraps the [get a token API endpoint](/docs/api/tokens/#get-a-token) to retrieve a single strongly typed token.
+The token's data is transformed to value references which you can use to [set the value](/docs/sdks/mobile/ios/types#methods) of your elements without touching
+the plaintext value and pulling your application into compliance scope.
+
+```javascript showLineNumbers
+BasisTheoryElements.getTokenById(
+    id: "<YOUR TOKEN ID>",
+    apiKey: "<YOUR API KEY>",
+) { data, error in ... }
+```
+
+The callback provided calls your function with a:
+
+- `error` of type [Error](#errors)
+- `data` of type `JSON` - `JSON` is a data structure that has dynamic member lookup capabilities. This allows you to traverse a `token` without giving you access to read any sensitive values in `token.data` which means you stay compliant.
+
+To show a value from the token `data`, traverse the JSON using dot or bracket notation and retrieve the value using the `elementValueReference` property.
+Below is an example of how you do that and set the value reference into a Text Element.
+
+```javascript showLineNumbers
+@IBOutlet private weak var myTextElement: TextElementUITextField!
+...
+
+BasisTheoryElements.getTokenById(
+    id: "<YOUR TOKEN ID>",
+    apiKey: "<YOUR API KEY>",
+) { data, error in
+    myTextElement.setValue(elementValueReference: data!.data!.nested!.property!.elementValueReference)
+}
+```
+
+<Alert type={Alerts.WARNING}>
+  The <code>data</code> attribute in the token returned by the <code>retrieve</code> method is not the actual data, but a a synthetic representation of the sensitive detokenized data.
+</Alert>
+
+<Alert>
+  Token attributes such as <code>metadata</code> are directly accessible from the <code>retrieve</code> response as they are considered non-sensitive.
+</Alert>

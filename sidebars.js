@@ -381,6 +381,19 @@ const sidebars = {
             "sdks/mobile/ios/services",
           ],
         },
+        {
+          type: "category",
+          label: "ReactNative Elements",
+          link: {
+            type: "doc",
+            id: "sdks/mobile/react-native/index",
+          },
+          items: [
+            "sdks/mobile/react-native/components",
+            // "sdks/mobile/react-native/events",
+            "sdks/mobile/react-native/methods",
+          ],
+        },
       ],
     },
   ],

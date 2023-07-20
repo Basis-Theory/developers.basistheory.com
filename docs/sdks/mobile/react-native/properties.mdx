@@ -1,0 +1,77 @@
+---
+sidebar_label: Properties
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import CardBrands from "@site/docs/sdks/_card-brands.mdx";
+
+# Elements Properties
+
+You can customize the behavior of your Elements using the following properties:
+
+| Attribute          | Required | Type      | Updatable | Eligible Elements                                                                                                                                                                                                                                                                                                           | Description                                                                                                                                                                                |
+| ------------------ | -------- | --------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `style`            | false    | _object_  | true      | All                                                                                                                                                                                                                                                                                                                         | [Object](#style) used to customize the element appearance                                                                                                                                  |
+| `disabled`         | false    | _boolean_ | true      | All                                                                                                                                                                                                                                                                                                                         | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
+<!-- | `autoComplete`     | false    | _string_  | true      | All                                                                                                                                                                                                                                                                                                                         | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. | -->
+<!-- | `targetId`         | true     | _string_  | false     | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)        | String used to identify your element                                                                                                                                                       | -->
+| `placeholder`      | false    | _string_  | true      | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)        | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
+<!-- | `aria-label`       | false    | _string_  | true      | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#ard-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)         | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 | -->
+<!-- | `mask`             | false    | _array_   | false     | [`text`](/docs/sdks/web/javascript/types#text-element)                                                                                                                                                                                                                                                                      | [Array](#mask) used to restrict and fill user input using regex and static strings                                                                                                         | -->
+<!-- | `transform`        | false    | _RegExp_  | true      | [`text`](/docs/sdks/web/javascript/types#text-element)                                                                                                                                                                                                                                                                      | [`RegExp` object or array](#transform) used to modify user input before [tokenization](/docs/sdks/web/react/methods#tokenization-services)                                                 | -->
+<!-- | `password`         | false    | _boolean_ | true      | [`text`](/docs/sdks/web/javascript/types#text-element)                                                                                                                                                                                                                                                                      | Boolean used to set the text element input type as [password](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password)                                                    | -->
+<!-- | `iconPosition`     | false    | _string_  | true      | [`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)                                                                                                                                                                                                                                                         | String used to determine the position of the card element icon. Expected values are: `left` (default), `right` or `none`.                                                                  | -->
+<!-- | `cardBrand`        | false    | _string_  | true      | [`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element)                                                                                                                                                                                                                                    | [Brand identifier](#card-brands) used to determine proper input format and default placeholder/aria-label                                                                                  | -->
+<!-- | `validateOnChange` | false    | _boolean_ | false     | [`cardNumber`](/docs/sdks/web/javascript/types#ard-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardElement`](/docs/sdks/web/javascript/types#card-element) <br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element) | Switches from default validation `onBlur` to `onChange`.                                                                                                                                   | -->
+| `value`            | false    | _string_  | true      | All                                                                                                                                                                                                                                                                                                                         | Sets a static value for the element input.                                                                                                                                                 |
+<!-- | `enableCopy`       | false    | _boolean_ | true      | [`cardNumber`](/docs/sdks/web/javascript/types#ard-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardElement`](/docs/sdks/web/javascript/types#card-element) <br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element) | Renders a button to allow users to copy the value of the element to the browser's clipboard without your application ever interacting with the data.                                       | -->
+
+## Style
+
+All Elements are styled with the native <a href="https://reactnative.dev/docs/style" target="_blank">React Native styling</a>, which maps state variants and miscellaneous.
+
+## Mask
+
+Text elements can restrict and fill user input by using the `mask` attribute. It consists of an array of `RegExp`
+objects and strings, used to restrict and fill input, respectively. The position of each item in the mask array
+corresponds to the restriction or fill used for that input's position. The length of the array determines how long an
+input is allowed to be. For example, the mask for a US based phone number shown on the right will have the following
+rules:
+
+- The input must be at most 13 characters long
+- Only digits are allowed in the 2-4, 6-8, 10-13 positions
+- '(' will be filled in the 1 position
+- ')' will be filled in the 5 position
+- '-' will be filled in the 8 position
+
+The mask will be displayed as the user is typing, and will be used as the value for [tokenization](/docs/sdks/web/javascript/methods#tokenization)
+performed with that text element. If the value does not satisfy the mask in its entirety, the field is
+considered incomplete. This is reflected in the [on change events](#element-events-on-change) and will fail validation
+before [tokenization](/docs/sdks/web/javascript/methods#tokenization).
+
+```javascript showLineNumbers
+<CardNumberElement
+  id="myPhoneNumberElement"
+  mask={[
+    "(",
+    /\d/,
+    /\d/,
+    /\d/,
+    ")",
+    /\d/,
+    /\d/,
+    /\d/,
+    "-",
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+  ]}
+/>
+```
+
+<Alert>
+  Once set, we do not currently allow updating the mask. If you need to update
+  the mask programmatically, don't hesitate to{" "}
+  <a href="mailto:support@basistheory.com">reach out</a>.
+</Alert>
