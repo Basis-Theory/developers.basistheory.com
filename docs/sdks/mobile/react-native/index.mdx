@@ -73,61 +73,30 @@ is an instance of `BTRef` that has the following methods under the `current` pro
 | `blur`     | `() => void`                       | Blurs the underlying [TextInput](https://reactnative.dev/docs/textinput#blur)                                                                                       |
 | `setValue` | `(inputBTRef: InputBTRef) => void` | Sets the value of the Element. The function takes in an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref) which is returned from a Basis Theory service call |
 
-[//]: # (TODO: Fix the example below)
-
 ```javascript showLineNumbers
 import { useRef } from "react";
 import {
-  BasisTheoryApiError,
-  BasisTheoryValidationError,
-  TextElement,
-  useBasisTheory,
-} from "@basis-theory/basis-theory-react";
-
-const ssnMask = [/\d/, /\d/, /\d/, "-", /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/];
+  CardNumberElement,
+  BTRef,
+} from "@basis-theory/basis-theory-react-native";
 
 const MyForm = () => {
-  const { bt } = useBasisTheory("test_1234567890", { elements: true });
-  const fullNameRef = useRef(null);
-  const ssnRef = useRef(null);
+  const cardNumberRef = useRef<BTRef>(null);
 
-  const submit = async () => {
-    const fullName = fullNameRef.current;
-    const ssn = ssnRef.current;
-
-    try {
-      const tokens = await bt.tokenize({
-        fullName,
-        ssn,
-      });
-    } catch (error) {
-      if (error instanceof BasisTheoryValidationError) {
-        // check error details
-      } else if (error instanceof BasisTheoryApiError) {
-        // check error data or status
-      }
-    }
+  const clear = async () => {
+    cardNumberRef.current.clear();
   };
 
   return (
     <BasisTheoryProvider bt={bt}>
-      <TextElement
-        id="fullName"
-        ref={fullNameRef}
+      <CardNumberElement
+        ref={cardNumberRef}
         placeholder="Full name"
         aria-label="Full name"
       />
-      <TextElement
-        id="ssn"
-        ref={ssnRef}
-        placeholder="SSN"
-        aria-label="Social Security Number"
-        mask={ssnMask}
-        transform={/[-]/}
-      />
       <div>
-        <button type="submit" onClick={submit} disabled={!bt}>
-          Submit
+        <button type="button" onClick={clear}>
+          "Clear"
         </button>
       </div>
     </BasisTheoryProvider>
@@ -137,5 +106,39 @@ const MyForm = () => {
 
 ### InputBTRef
 
-Placeholder
+An `InputBTRef` is an object that contains a reference to a sensitive value returned from a Basis Theory service call. Pass in
+an `inputBTRef` to the `setValue` method of an Element ref to set the value of that Element. Below is an example of how to do that.
 
+```javascript showLineNumbers
+import { useRef } from "react";
+import {
+  CardNumberElement,
+  BasisTheoryElements,
+  BTRef,
+} from "@basis-theory/basis-theory-react-native";
+
+const MyForm = () => {
+  const cardNumberRef = useRef<BTRef>(null);
+
+  const getCardNumber = async () => {
+    const token = await BasisTheoryElements.getTokenById('id-for-customer', 'test_1234567890');
+
+    cardNumberRef.current.setValue(token.data.number);
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <CardNumberElement
+        ref={cardNumberRef}
+        placeholder="Full name"
+        aria-label="Full name"
+      />
+      <div>
+        <button type="button" onClick={getCardNumber}>
+          "Get Card Number"
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
