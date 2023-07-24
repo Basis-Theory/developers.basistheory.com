@@ -165,6 +165,117 @@ module.exports = async function (req) {
 
 [Stripe Retrieve Card Docs](https://stripe.com/docs/api/issuing/cards/retrieve)
   </TabItem>
+  <TabItem value="galileo" label="Galileo">
+
+```javascript showLineNumbers title="responseTransform.js"
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers } = args;
+  const {
+    response_data: [{
+      card_number,
+      expiry_date,
+      card_security_code,
+      ...response_data
+    }],
+    ...rest
+  } = body;
+
+  const expiration = new Date(expiry_date);
+
+  const token = await bt.tokens.create({
+    type: 'card',
+    data: {
+      number: card_number,
+      expiration_month: expiration.getMonth() + 1,
+      expiration_year: expiration.getFullYear(),
+      cvc: card_security_code,
+    },
+    fingerprintExpression: '{{ data.number }}',
+    deduplicateToken: true,
+  });
+
+  return {
+    headers,
+    body: {
+      ...rest,
+      response_data: [{
+        ...response_data,
+        token,
+      }],
+    },
+  };
+};
+```
+
+[Galileo Create Virtual Card Account Docs](https://docs.galileo-ft.com/pro/reference/post_createvirtualcard)
+
+  </TabItem>
+  <TabItem value="mastercard" label="Mastercard">
+
+```javascript showLineNumbers title="responseTransform.js"
+const { create } = require('xmlbuilder2');
+
+const WHITE_PIXEL =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=';
+
+module.exports = async function (req) {
+  const { bt, args } = req;
+  const { body, headers } = args;
+
+  const doc = create(body);
+  const obj = doc.end({ format: 'object' });
+
+  const purchaseRequestDetail =
+    obj['S:Envelope']?.['S:Body']?.['ns2:getPurchaseRequestDetail'];
+  const vcnInformation = purchaseRequestDetail?.['ns2:vcnInformation'];
+  const cardImage = purchaseRequestDetail?.['ns2:cardImage'];
+
+  if (vcnInformation) {
+    const {
+      'ns2:Pan': number,
+      'ns2:Expiry': expiry,
+      'ns2:Avv': cvc,
+    } = vcnInformation;
+    const expirationMonth = expiry.slice(-2);
+    const expirationYear = `20${expiry.slice(0, 2)}`;
+
+    const token = await bt.tokens.create({
+      type: 'card',
+      data: {
+        number,
+        expirationMonth,
+        expirationYear,
+        cvc,
+      },
+      fingerprintExpression: '{{ data.number }}',
+      deduplicateToken: true,
+    });
+
+    vcnInformation['ns2:Pan'] = token.id;
+    vcnInformation['ns2:Avv'] = '000';
+  }
+
+  if (cardImage) {
+    // redacts card image from response
+    purchaseRequestDetail['ns2:cardImage'] = cardImage.replace(
+      /base64,.+?"/,
+      `base64,${WHITE_PIXEL}"`
+    );
+  }
+
+  const transformed = create(obj).end();
+
+  return {
+    body: transformed,
+    headers,
+  };
+};
+
+```
+
+[Mastercard ICCP Submit Purchase Request](https://developer.mastercard.com/iccp/documentation/05_api_reference/purchaserequest/submitpurchaserequest/)
+  </TabItem>
 </Tabs>
 
 Notice how we are using `fingerprintExpression` and `deduplicateToken` properties to make sure we only create one card token per unique each card number, also known as Primary Account Number (PAN). [Click here to learn more about deduplication](/docs/concepts/what-are-tokens#deduplication).
@@ -238,6 +349,46 @@ curl "https://api.basistheory.com/proxies" \
 ```
 
   </TabItem>
+  <TabItem value="galileo" label="Galileo">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -X "POST" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Issuer Proxy",
+    "destination_url": "https://api-sandbox.cv.gpsrv.com/intserv/4.0/createVirtualCard",
+    "response_transform": {
+      "code": '"$(echo $response_transform_code | jq -Rsa .)"'
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    }
+  }'
+```
+
+  </TabItem>
+  <TabItem value="mastercard" label="Mastercard">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -X "POST" \
+  -H "BT-API-KEY: test_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Issuer Proxy",
+    "destination_url": "https://sandbox.api.mastercard.com/iccp/financial",
+    "response_transform": {
+      "code": '"$(echo $response_transform_code | jq -Rsa .)"'
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    }
+  }'
+```
+
+  </TabItem>
 </Tabs>
 
 Important things to notice in the request above:
@@ -261,11 +412,11 @@ This is the last step of this guide, and it's also the one that your services wi
 
 ```shell showLineNumbers title="Create Card Request"
 curl 'https://api.basistheory.com/proxy' \
-  -X 'POST' \
-  -H 'Content-Type: application/json' \
+  -X "POST" \
+  -H "Content-Type: application/json" \
   -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
   -H "BT-API-KEY: test_123456789" \
-  -H 'Authorization: 5c2150b7-1c86-4f34-9d27-7f4465837e8d' \
+  -H "Authorization: 5c2150b7-1c86-4f34-9d27-7f4465837e8d" \
   -d '{
     "type": "VIRTUAL"
   }'
@@ -329,11 +480,11 @@ The `Authorization` header includes Lithic API Key.
 
 ```shell showLineNumbers title="Create Card Request"
 curl 'https://api.basistheory.com/proxy' \
-  -X 'POST' \
-  -H 'Content-Type: application/json' \
+  -X "POST" \
+  -H "Content-Type: application/json" \
   -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
   -H "BT-API-KEY: test_123456789" \
-  -H 'Authorization: Basic OGIyZjM3ZTUtYWU0My00YTM2LTljZjYtOTFjYmI5N2E4ZjkxOmY1YzllZDQ3LTNhODEtNDlkZi1hN2MyLWI5ODcyYjU2M2MxNw==' \
+  -H "Authorization: Basic OGIyZjM3ZTUtYWU0My00YTM2LTljZjYtOTFjYmI5N2E4ZjkxOmY1YzllZDQ3LTNhODEtNDlkZi1hN2MyLWI5ODcyYjU2M2MxNw==" \
   -d '{
     "card_product_token": "69b58c85-60a2-4c36-88f4-2f8e78f5a9b6",
     "user_token": "d4ae5e81-7f9d-45b4-8f17-56e4abdafd18"
@@ -394,11 +545,11 @@ The `Authorization` header includes Marqeta's Application token and Admin access
 
 ```shell showLineNumbers title="Retrieve Card Request"
 curl 'https://api.basistheory.com/proxy/ic_1ND8RgGuvJF9SIWEmUMy57D9?expand[]=number&expand[]=cvc' \
-  -X 'GET' \
-  -H 'Content-Type: application/json' \
+  -X "GET" \
+  -H "Content-Type: application/json" \
   -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
   -H "BT-API-KEY: test_123456789" \
-  -H 'Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4' \
+  -H "Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4" \
 ```
 
 The `Authorization` header includes the Stripe API Key, and `ic_1ND8RgGuvJF9SIWEmUMy57D9` is the card id added to the the URL. Notice that we also must instruct Stripe to expand the card `number` and `cvc` using the URL.
@@ -513,6 +664,173 @@ The `Authorization` header includes the Stripe API Key, and `ic_1ND8RgGuvJF9SIWE
 ```
 
 Stripe only returns `number` and `cvc` when retrieving an existing card. So you first must [create](https://stripe.com/docs/api/issuing/cards/create) the card directly calling Stripe API, and then [retrieve](https://stripe.com/docs/api/issuing/cards/retrieve) it using the Proxy.
+  </TabItem>
+  <TabItem value="galileo" label="Galileo">
+
+```shell showLineNumbers title="Create Virtual Card Request"
+curl 'https://api.basistheory.com/proxy' \
+  -X "POST" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "response-content-type: json" \
+  -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "BT-API-KEY: test_123456789" \
+  -d "apiLogin=A6Dyok-0439" \
+  -d "apiTransKey=oDSCeZmIF5YyiGqKtos4GFZ3" \
+  -d "providerId=78569" \
+  -d "transactionId=9e9d8aa5-63a2-5072-8d66-38424e0c3527" \
+  -d "prodId=6595"
+```
+
+The data parameters `apiLogin`, `apiTransKey` `providerId` and `transactionId` are all part of [Galileo authentication](https://docs.galileo-ft.com/pro/reference/authentication). Notice that we instruct Galileo to return JSON content using the `response-content-type` header.
+
+
+```json showLineNumbers title="Create Virtual Card (Transformed) Response"
+{
+  "status_code": 0,
+  "status": "Success",
+  "processing_time": 0.916,
+  "response_data": [
+    {
+      "pmt_ref_no": "001109456010",
+      "product_id": "1665",
+      "galileo_account_number": "462881",
+      "cip": [
+        {
+          "status": "Pass",
+          "model_results": [
+            {
+              "model_name": "BancorpPIDC",
+              "model_version": "3",
+              "code": "Pass A",
+              "text": "Pass A"
+            }
+          ],
+          "date_time": "2020-07-13 10:37:52"
+        }
+      ],
+      "card_id": "850238",
+      "token": {
+        "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+        "type": "card",
+        "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+        "data": {
+          "number": "XXXXXXXXXXXX4242",
+          "expiration_month": 12,
+          "expiration_year": 2025
+        },
+        "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+        "created_at": "2023-04-17T12:54:44.8320458+00:00",
+        "mask": {
+          "number": "{{ data.number | reveal_last: 4 }}",
+          "expiration_month": "{{ data.expiration_month }}",
+          "expiration_year": "{{ data.expiration_year }}"
+        },
+        "privacy": {
+          "classification": "pci",
+          "impact_level": "high",
+          "restriction_policy": "mask"
+        },
+        "search_indexes": [],
+        "containers": [
+          "/pci/high/"
+        ]
+      }
+    }
+  ],
+  "echo": {
+    "provider_transaction_id": "",
+    "provider_timestamp": null,
+    "transaction_id": "RSNU68AN366U7I1UT8JQ"
+  },
+  "rtoken": "8cc16de0-5eda-4e2a-968e-3b08fce6f778",
+  "system_timestamp": "2020-07-13 10:37:52"
+}
+```
+  </TabItem>
+  <TabItem value="mastercard" label="Mastercard">
+
+```shell showLineNumbers title="Submit Purchase Request"
+curl 'https://api.basistheory.com/proxy?bt-proxy-key=TDEyQmkhQMpGiZd13FSRQ9' \
+  -X "POST" \
+  -H "Content-Type: text/xml" \
+  -H "BT-API-KEY: test_123456789" \
+  -H 'Authorization: OAuth oauth_body_hash="..."' \
+  -d '<?xml version="1.0"?>
+    <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+      <S:Header/>
+      <S:Body>
+        <submitPurchaseRequestRequest xmlns="http://mastercard.com/sd/pc2/service" xmlns:ns2="http://mastercard.com/sd/pc/service">
+          <SubmitPurchaseRequest>
+            <RCNData>
+              <ns2:rcnId>123456</ns2:rcnId>
+              <ns2:rcnAlias>Test RCN</ns2:rcnAlias>
+            </RCNData>
+            <companyId>123456</companyId>
+            <description>Purchase description</description>
+            <TemplateDetails2>
+              <templateId>12345</templateId>
+              <fullTemplateRuleDetails>
+                <ruleName>My Rule</ruleName>
+                <ruleType>A</ruleType>
+                <templateControl xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="transactionLimitControl">
+                  <amount>100.0</amount>
+                </templateControl>
+              </fullTemplateRuleDetails>
+            </TemplateDetails2>
+            <supplierDetails>
+              <supplierId>12345</supplierId>
+            </supplierDetails>
+          </SubmitPurchaseRequest>
+        </submitPurchaseRequestRequest>
+      </S:Body>
+    </S:Envelope>'
+```
+
+The `Authorization` header is created by your application to [authenticate against Mastercard API](https://developer.mastercard.com/platform/documentation/security-and-authentication/using-oauth-1a-to-access-mastercard-apis/). It is likely that you will use a SOAP client to create the request and send to Mastercard.
+
+Remember to change the URL to target the Proxy, and add the `BT-API-KEY` header.
+
+```xml showLineNumbers title="Purchase Request (Transformed) Response"
+<?xml version="1.0"?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+  <S:Body>
+    <ns2:getPurchaseRequestDetail xmlns="http://mastercard.com/sd/pc/service" xmlns:ns2="http://mastercard.com/sd/pc2/service">
+      <ns2:purchaseRequestId>123456789</ns2:purchaseRequestId>
+      <ns2:requestStatus>Approved</ns2:requestStatus>
+      <ns2:PurchaseRequestTemplateDetails>
+        <ns2:templateId>12345</ns2:templateId>
+        <ns2:fullTemplateRuleDetails>
+          <ns2:ruleName>My Rule</ns2:ruleName>
+          <ns2:ruleType>A</ns2:ruleType>
+          <ns2:templateControl xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:transactionLimitControl">
+            <ns2:amount>100.0</ns2:amount>
+            <ns2:negate>false</ns2:negate>
+          </ns2:templateControl>
+        </ns2:fullTemplateRuleDetails>
+      </ns2:PurchaseRequestTemplateDetails>
+      <ns2:vcnInformation>
+        <ns2:Id>18015011</ns2:Id>
+        <ns2:Pan>d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4</ns2:Pan>
+        <ns2:Expiry>2512</ns2:Expiry>
+        <ns2:Avv>000</ns2:Avv>
+        <ns2:Status>S</ns2:Status>
+        <ns2:EVCNIndicator>false</ns2:EVCNIndicator>
+      </ns2:vcnInformation>
+      <ns2:addenda>
+        <tripLeg/>
+        <railDetail/>
+        <travelAgency/>
+      </ns2:addenda>
+      <ns2:cardImage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;html&gt;&lt;head/&gt; &lt;body style="margin:0; padding:0; width:100%"&gt;   &lt;div style="position: relative;"&gt;     &lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=" style="height: 250px; width: 800px;"/&gt;
+   &lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</ns2:cardImage>
+      <ns2:supplierDetails>
+        <ns2:supplierId>12345</ns2:supplierId>
+        <ns2:notifySupplier>false</ns2:notifySupplier>
+      </ns2:supplierDetails>
+    </ns2:getPurchaseRequestDetail>
+  </S:Body>
+</S:Envelope>
+```
   </TabItem>
 </Tabs>
 
