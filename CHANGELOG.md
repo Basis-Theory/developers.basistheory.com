@@ -1,3 +1,10 @@
+# [1.69.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.68.0...v1.69.0) (2023-07-24)
+
+
+### Features
+
+* add issuing support for iccp and galileo ([#162](https://github.com/Basis-Theory/developers.basistheory.com/issues/162)) ([7330333](https://github.com/Basis-Theory/developers.basistheory.com/commit/73303332a776d1093ffea25be73e5d1d7060d8fd))
+
 # [1.68.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.67.0...v1.68.0) (2023-07-18)
 
 
