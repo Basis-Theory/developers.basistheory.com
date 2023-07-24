@@ -20,11 +20,11 @@ import { SDK } from "@site/src/components/types";
   repository="basis-theory-react"
 />
 
-###
+Basis Theory React Native is an [open source](https://github.com/Basis-Theory/basis-theory-react-native) [package](https://www.npmjs.com/package/@basis-theory/basis-theory-react-native)
+designed to allow you to quickly integrate Element features in your mobile application. Every Element is a thin wrapper around the React Native
+[TextInput component](https://reactnative.dev/docs/textinput), which makes its interface similar to working directly with a regular [TextInput](https://reactnative.dev/docs/textinput).
 
-Basis Theory React Native is an [open source](https://github.com/Basis-Theory/basis-theory-react-native) [package](https://www.npmjs.com/package/@basis-theory/basis-theory-react-native) designed to allow you to quickly integrate Elements features in your Mobile application.
-
-Utilizing these Elements is as simple as declaring them as a typical React Components and passing the required props.
+Utilizing these Elements is as simple as declaring them as a typical React Native Components and passing the required props.
 
 ## Installation
 
@@ -50,11 +50,92 @@ yarn add @basis-theory/basis-theory-react-native
 ```javascript showLineNumbers
 import {
   CardNumberElement,
-} from "@basis-theory/basis-theory-react";
+} from "@basis-theory/basis-theory-react-native";
 
 const Component = () => {
   return (
-    <CardNumberElement id="myInput" />
+    <CardNumberElement />
   );
 };
 ```
+
+## Using Refs
+
+[Refs](https://react.dev/learn/referencing-values-with-refs) are a way to access React component instances. You can pass in a `ref` into the `btRef`
+prop into any Basis Theory Element to store or receive the Element instance, to tokenize their value or call one of its methods. For security reasons,
+we don't return the underlying [TextInput](https://reactnative.dev/docs/textinput) `ref`, but instead our own instance of `ref`. The `ref` that's returned
+is an instance of `BTRef` that has the following methods under the `current` property:
+
+| Methods    | Signature                          | Description                                                                                                                                                         |
+|------------|------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `clear`    | `() => void`                       | Clears the value from the underlying [TextInput](https://reactnative.dev/docs/textinput#clear)                                                                      |
+| `focus`    | `() => void`                       | Focuses the underlying [TextInput](https://reactnative.dev/docs/textinput#focus)                                                                                    |
+| `blur`     | `() => void`                       | Blurs the underlying [TextInput](https://reactnative.dev/docs/textinput#blur)                                                                                       |
+| `setValue` | `(inputBTRef: InputBTRef) => void` | Sets the value of the Element. The function takes in an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref) which is returned from a Basis Theory service call |
+
+[//]: # (TODO: Fix the example below)
+
+```javascript showLineNumbers
+import { useRef } from "react";
+import {
+  BasisTheoryApiError,
+  BasisTheoryValidationError,
+  TextElement,
+  useBasisTheory,
+} from "@basis-theory/basis-theory-react";
+
+const ssnMask = [/\d/, /\d/, /\d/, "-", /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/];
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true });
+  const fullNameRef = useRef(null);
+  const ssnRef = useRef(null);
+
+  const submit = async () => {
+    const fullName = fullNameRef.current;
+    const ssn = ssnRef.current;
+
+    try {
+      const tokens = await bt.tokenize({
+        fullName,
+        ssn,
+      });
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof BasisTheoryApiError) {
+        // check error data or status
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <TextElement
+        id="fullName"
+        ref={fullNameRef}
+        placeholder="Full name"
+        aria-label="Full name"
+      />
+      <TextElement
+        id="ssn"
+        ref={ssnRef}
+        placeholder="SSN"
+        aria-label="Social Security Number"
+        mask={ssnMask}
+        transform={/[-]/}
+      />
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+### InputBTRef
+
+Placeholder
+

@@ -2,67 +2,31 @@
 sidebar_label: Components
 ---
 
-import {
-  CardElement,
-  CardExpirationDateElement,
-  CardNumberElement,
-  CardVerificationCodeElement,
-  TextElement,
-} from "@basis-theory/basis-theory-react";
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
-import { BasisTheoryComponentDisplay } from "@site/src/components/sdks/BasisTheoryComponentDisplay";
-
 # Elements Components
 
 ## CardNumberElement
 
-The `CardNumberElement` [component](https://reactjs.org/docs/components-and-props.html) features a card number input, by wrapping the [Card Number Element type](/docs/sdks/web/javascript/types#card-number-element) functionality and taking care of the React lifecycle.
-
-<BasisTheoryComponentDisplay title="Live Card Number Element">
-  <CardNumberElement id="types-card-number-element" />
-</BasisTheoryComponentDisplay>
+The `CardNumberElement` component features a card number input, by wrapping the React Native [TextInput component](https://reactnative.dev/docs/textinput),
+which makes its interface similar to working directly with a regular [TextInput](https://reactnative.dev/docs/textinput).
 
 ```javascript showLineNumbers
 import {
-  BasisTheoryProvider,
   CardNumberElement,
-  useBasisTheory,
-} from "@basis-theory/basis-theory-react";
+} from "@basis-theory/basis-theory-react-native";
 
 const App = () => {
-  // creates a new instance of BasisTheory class
-  const { bt } = useBasisTheory("test_1234567890", { elements: true });
 
   return (
-    <BasisTheoryProvider bt={bt}>
-      <MyComponent />
-    </BasisTheoryProvider>
+    <CardNumberElement />
   );
-};
-
-const MyComponent = () => {
-  return <CardNumberElement id="cardNumber" />; // Element will grab instance from the Context
 };
 ```
 
 ### Properties
 
-| Property           | Required | Type                 | Updatable | Description                                                                                                                                                                                |
-| ------------------ | -------- | -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`               | true     | _string_             | false     | String identifier used to retrieve the Element instance for tokenization. This is passed through to the `targetId` option.                                                                 |
-<!-- | `bt`               | false    | _React Elements SDK_ | false     | Instance used by the Element. Will use instance from [`BasisTheoryProvider`](/docs/sdks/web/react#basistheoryprovider) if configured.                                                      | -->
-| `style`            | false    | _object_             | true      | [ReactNative styles](https://reactnative.dev/docs/style) used to customize the element appearance                                                                                                 |
-| `disabled`         | false    | _boolean_            | true      | Boolean used to set the [disabled attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) of the input(s)                                                        |
-<!-- | `autoComplete`     | false    | _string_             | true      | String used to set the [autocomplete attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) of the input(s). Expected values are: `off` (default), or `on`. | -->
-<!-- | `iconPosition`     | false    | _string_             | true      | String used to determine the position of the card brand icon. Expected values are: `left` (default), `right` or `none`.                                                                    | -->
-| `placeholder`      | false    | _string_             | true      | String used to customize the [placeholder attribute](https://developer.mozilla.org/docs/Web/HTML/Element/input#attr-placeholder) of the input                                              |
-<!-- | `aria-label`       | false    | _string_             | true      | String used to customize the [aria-label attribute](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) of the input                 | -->
-<!-- | `onReady`          | false    | _function_           | true      | Event listener. See [On Ready](/docs/sdks/web/react/events#on-ready)                                                                                                                 | -->
-<!-- | `onChange`         | false    | _function_           | true      | Event listener. See [On Change](/docs/sdks/web/react/events#on-change)                                                                                                               | -->
-<!-- | `onFocus`          | false    | _function_           | true      | Event listener. See [On Focus](/docs/sdks/web/react/events#on-focus)                                                                                                                 | -->
-<!-- | `onBlur`           | false    | _function_           | true      | Event listener. See [On Blur](/docs/sdks/web/react/events#on-blur)                                                                                                                   | -->
-<!-- | `onKeyDown`        | false    | _function_           | true      | Event listener. See [On Keydown](/docs/sdks/web/react/events#on-keydown)                                                                                                             | -->
-<!-- | `ref`              | false    | _object/function_    | false     | [Ref object](/docs/sdks/web/react#using-refs)/[Callback ref function](https://reactjs.org/docs/refs-and-the-dom.html) to store/receive the Element instance.                               | -->
-<!-- | `validateOnChange` | false    | _boolean_            | false     | Enable validation `onChange`                                                                                                                                                               | -->
-| `enableCopy`       | false    | _boolean_            | false     | Renders a button to allow users to copy the value of the element to the browser's clipboard without your application ever interacting with the data.                                       |
-| `value`            | false    | _string_             | true      | Sets a static value for the element input.                                                                                                                                                 |
+| Property      | Required | Type              | Description                                                                                                                                                                                                                              |
+|---------------|----------|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `btRef`       | false    | _object/function_ | [Callback ref function](https://react.dev/learn/referencing-values-with-refs) to store/receive the Element instance. Review the [using refs](/docs/sdks/mobile/react-native#using-refs) section for more information                     |
+| `style`       | false    | _object_          | [ReactNative styles](https://reactnative.dev/docs/style) used to customize the Element appearance                                                                                                                                        |
+| `editable`    | false    | _boolean_         | Boolean used to set the [editable attribute](https://reactnative.dev/docs/textinput#editable) of the Element                                                                                                                             |
+| `placeholder` | false    | _string_          | String used to customize the [placeholder attribute](https://reactnative.dev/docs/textinput#placeholder) of the Element                                                                                                                  |
