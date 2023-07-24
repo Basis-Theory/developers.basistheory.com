@@ -390,8 +390,7 @@ const sidebars = {
           },
           items: [
             "sdks/mobile/react-native/components",
-            // "sdks/mobile/react-native/events",
-            "sdks/mobile/react-native/methods",
+            "sdks/mobile/react-native/services",
           ],
         },
       ],

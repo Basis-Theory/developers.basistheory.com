@@ -1,0 +1,104 @@
+---
+sidebar_label: Services
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Services
+
+## Static Fields
+
+You can set your API key globally for `BasisTheoryElements` through the static `apiKey` field.
+
+```javascript showLineNumbers
+BasisTheoryElements.apiKey = '<YOUR PUBLIC BT API KEY>'
+```
+
+All [service method](#methods) calls take an optional `apiKey` should you need to override the globally set `apiKey`.
+
+## Methods
+
+### createSession
+
+To retrieve sensitive data in React Native, you'll need to create a `session` and use its `sessionKey` for making requests securely.
+To accomplish this, construct your `createSession` request like this:
+
+```typescript showLineNumbers
+const session = await BasisTheoryElements.createSession(
+    '<YOUR PUBLIC BT API KEY>'
+);
+```
+
+#### Parameters
+
+| Parameter | Type     | Required | Description                                                                |
+|-----------|----------|----------|----------------------------------------------------------------------------|
+| `apiKey`  | `string` | `false`  | The API key to use for this request. Defaults to the globally set API key. |
+
+The response returns a [session](/docs/api/applications/sessions#response).
+
+### getTokenById
+
+This function wraps the [get a token API endpoint](/docs/api/tokens/#get-a-token) to retrieve a single token. The token's data
+is transformed to an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref) which you can use to [set the value](/docs/sdks/mobile/react-native#using-refs)
+of your elements without touching the plaintext value and pulling your application into compliance scope.
+
+```typescript showLineNumbers
+const token = await BasisTheoryElements.getTokenById(
+    '<YOUR TOKEN ID>',
+    '<YOUR SESSION API KEY>',
+);
+```
+
+#### Parameters
+
+| Parameter | Type     | Required | Description                                                                        |
+|-----------|----------|----------|------------------------------------------------------------------------------------|
+| `id`      | `string` | `true`   | The ID of the token you want to retrieve.                                          |
+| `apiKey`  | `string` | `false`  | The session API key to use for this request. Defaults to the globally set API key. |
+
+The response returns a [token](/docs/api/tokens/#response-2). All values in the `data` object in the response is converted to an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref).
+This means that you can traverse through the `data` object and set the value of your elements without touching the plaintext value.
+Below is an example of how to do that.
+
+```javascript showLineNumbers
+import React, { useRef } from 'react';
+import {
+  CardNumberElement,
+  BasisTheoryElements,
+  BTRef,
+} from '@basis-theory/basis-theory-react-native';
+
+const MyForm = () => {
+  const cardNumberRef = useRef<BTRef>(null);
+
+  const getCardNumber = async () => {
+    const token = await BasisTheoryElements.getTokenById('<TOKEN ID FOR CUSTOMER>', '<YOUR SESSION API KEY>');
+
+    cardNumberRef.current.setValue(token.data.number);
+  };
+
+  return (
+    <>
+      <CardNumberElement
+        btRef={cardNumberRef}
+        placeholder="Full name"
+        aria-label="Full name"
+      />
+      <div>
+        <button type="button" onClick={getCardNumber}>
+          "Get Card Number"
+        </button>
+      </div>
+    </>
+  );
+};
+```
+
+<Alert type={Alerts.WARNING}>
+  The <code>data</code> attribute in the token returned by the <code>getTokenById</code> method is not the actual data, but a synthetic representation of the sensitive detokenized data.
+</Alert>
+
+<Alert>
+  Token attributes such as <code>metadata</code> are directly accessible from the <code>retrieve</code> response as they are considered non-sensitive.
+</Alert>

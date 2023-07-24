@@ -47,16 +47,57 @@ yarn add @basis-theory/basis-theory-react-native
 
 ## Using an Element
 
-```javascript showLineNumbers
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
 import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  BTRef,
   CardNumberElement,
-} from "@basis-theory/basis-theory-react-native";
+} from '@basis-theory/basis-theory-react-native';
 
-const Component = () => {
+const App = () => {
+  const ref = useRef<BTRef>(null);
+
   return (
-    <CardNumberElement />
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardNumberElement
+            btRef={ref}
+            placeholder="Card Number"
+            style={styles.cardNumber}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: '#eeeeee',
+    borderColor: 'blue',
+    borderWidth: 2,
+    color: 'purple',
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 32,
+  },
+});
+
+export default App;
 ```
 
 ## Using Refs
@@ -73,12 +114,12 @@ is an instance of `BTRef` that has the following methods under the `current` pro
 | `blur`     | `() => void`                       | Blurs the underlying [TextInput](https://reactnative.dev/docs/textinput#blur)                                                                                       |
 | `setValue` | `(inputBTRef: InputBTRef) => void` | Sets the value of the Element. The function takes in an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref) which is returned from a Basis Theory service call |
 
-```javascript showLineNumbers
-import { useRef } from "react";
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
 import {
   CardNumberElement,
   BTRef,
-} from "@basis-theory/basis-theory-react-native";
+} from '@basis-theory/basis-theory-react-native';
 
 const MyForm = () => {
   const cardNumberRef = useRef<BTRef>(null);
@@ -88,18 +129,17 @@ const MyForm = () => {
   };
 
   return (
-    <BasisTheoryProvider bt={bt}>
+    <>
       <CardNumberElement
-        ref={cardNumberRef}
+        btRef={cardNumberRef}
         placeholder="Full name"
-        aria-label="Full name"
       />
       <div>
         <button type="button" onClick={clear}>
           "Clear"
         </button>
       </div>
-    </BasisTheoryProvider>
+    </>
   );
 };
 ```
@@ -109,27 +149,27 @@ const MyForm = () => {
 An `InputBTRef` is an object that contains a reference to a sensitive value returned from a Basis Theory service call. Pass in
 an `inputBTRef` to the `setValue` method of an Element ref to set the value of that Element. Below is an example of how to do that.
 
-```javascript showLineNumbers
-import { useRef } from "react";
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
 import {
   CardNumberElement,
   BasisTheoryElements,
   BTRef,
-} from "@basis-theory/basis-theory-react-native";
+} from '@basis-theory/basis-theory-react-native';
 
 const MyForm = () => {
   const cardNumberRef = useRef<BTRef>(null);
 
   const getCardNumber = async () => {
-    const token = await BasisTheoryElements.getTokenById('id-for-customer', 'test_1234567890');
+    const token = await BasisTheoryElements.getTokenById('<TOKEN ID FOR CUSTOMER>', 'test_1234567890');
 
     cardNumberRef.current.setValue(token.data.number);
   };
 
   return (
-    <BasisTheoryProvider bt={bt}>
+    <>
       <CardNumberElement
-        ref={cardNumberRef}
+        btRef={cardNumberRef}
         placeholder="Full name"
         aria-label="Full name"
       />
@@ -138,7 +178,7 @@ const MyForm = () => {
           "Get Card Number"
         </button>
       </div>
-    </BasisTheoryProvider>
+    </>
   );
 };
 ```

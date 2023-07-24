@@ -9,17 +9,57 @@ sidebar_label: Components
 The `CardNumberElement` component features a card number input, by wrapping the React Native [TextInput component](https://reactnative.dev/docs/textinput),
 which makes its interface similar to working directly with a regular [TextInput](https://reactnative.dev/docs/textinput).
 
-```javascript showLineNumbers
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
 import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  BTRef,
   CardNumberElement,
-} from "@basis-theory/basis-theory-react-native";
+} from '@basis-theory/basis-theory-react-native';
 
 const App = () => {
+  const ref = useRef<BTRef>(null);
 
   return (
-    <CardNumberElement />
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardNumberElement
+            btRef={ref}
+            placeholder="Card Number"
+            style={styles.cardNumber}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: '#eeeeee',
+    borderColor: 'blue',
+    borderWidth: 2,
+    color: 'purple',
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 32,
+  },
+});
+
+export default App;
 ```
 
 ### Properties
