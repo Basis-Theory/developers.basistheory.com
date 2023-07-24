@@ -172,12 +172,12 @@ module.exports = async function (req) {
   const { bt, args, configuration } = req;
   const { body, headers } = args;
   const {
-    response_data: {
+    response_data: [{
       card_number,
       expiry_date,
       card_security_code,
       ...response_data
-    },
+    }],
     ...rest
   } = body;
 
@@ -199,10 +199,10 @@ module.exports = async function (req) {
     headers,
     body: {
       ...rest,
-      response_data: {
+      response_data: [{
         ...response_data,
         token,
-      },
+      }],
     },
   };
 };
@@ -686,7 +686,64 @@ The data parameters `apiLogin`, `apiTransKey` `providerId` and `transactionId` a
 
 ```json showLineNumbers title="Create Virtual Card (Transformed) Response"
 {
-
+  "status_code": 0,
+  "status": "Success",
+  "processing_time": 0.916,
+  "response_data": [
+    {
+      "pmt_ref_no": "001109456010",
+      "product_id": "1665",
+      "galileo_account_number": "462881",
+      "cip": [
+        {
+          "status": "Pass",
+          "model_results": [
+            {
+              "model_name": "BancorpPIDC",
+              "model_version": "3",
+              "code": "Pass A",
+              "text": "Pass A"
+            }
+          ],
+          "date_time": "2020-07-13 10:37:52"
+        }
+      ],
+      "card_id": "850238",
+      "token": {
+        "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+        "type": "card",
+        "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+        "data": {
+          "number": "XXXXXXXXXXXX4242",
+          "expiration_month": 12,
+          "expiration_year": 2025
+        },
+        "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+        "created_at": "2023-04-17T12:54:44.8320458+00:00",
+        "mask": {
+          "number": "{{ data.number | reveal_last: 4 }}",
+          "expiration_month": "{{ data.expiration_month }}",
+          "expiration_year": "{{ data.expiration_year }}"
+        },
+        "privacy": {
+          "classification": "pci",
+          "impact_level": "high",
+          "restriction_policy": "mask"
+        },
+        "search_indexes": [],
+        "containers": [
+          "/pci/high/"
+        ]
+      }
+    }
+  ],
+  "echo": {
+    "provider_transaction_id": "",
+    "provider_timestamp": null,
+    "transaction_id": "RSNU68AN366U7I1UT8JQ"
+  },
+  "rtoken": "8cc16de0-5eda-4e2a-968e-3b08fce6f778",
+  "system_timestamp": "2020-07-13 10:37:52"
 }
 ```
   </TabItem>
