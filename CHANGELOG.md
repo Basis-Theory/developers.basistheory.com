@@ -1,3 +1,101 @@
+# [1.69.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.68.0...v1.69.0) (2023-07-24)
+
+
+### Features
+
+* add issuing support for iccp and galileo ([#162](https://github.com/Basis-Theory/developers.basistheory.com/issues/162)) ([7330333](https://github.com/Basis-Theory/developers.basistheory.com/commit/73303332a776d1093ffea25be73e5d1d7060d8fd))
+
+# [1.68.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.67.0...v1.68.0) (2023-07-18)
+
+
+### Features
+
+* build using swc instead of webpack ([#159](https://github.com/Basis-Theory/developers.basistheory.com/issues/159)) ([8e5b8b7](https://github.com/Basis-Theory/developers.basistheory.com/commit/8e5b8b757d17af860aba399e21a8138b8199bfb4))
+
+# [1.67.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.66.0...v1.67.0) (2023-07-17)
+
+
+### Features
+
+* adding proxy destination timeout info ([#156](https://github.com/Basis-Theory/developers.basistheory.com/issues/156)) ([5dc0ea7](https://github.com/Basis-Theory/developers.basistheory.com/commit/5dc0ea7205557163b2c4bf4a811500ef6c0f55e4))
+
+# [1.66.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.65.0...v1.66.0) (2023-07-12)
+
+
+### Features
+
+* updating kapa to include searching ([#154](https://github.com/Basis-Theory/developers.basistheory.com/issues/154)) ([274bcac](https://github.com/Basis-Theory/developers.basistheory.com/commit/274bcacb26a92928aca17166e4f5519f7b543afc))
+
+# [1.65.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.64.0...v1.65.0) (2023-07-10)
+
+
+### Features
+
+* update packages ([#152](https://github.com/Basis-Theory/developers.basistheory.com/issues/152)) ([799e5de](https://github.com/Basis-Theory/developers.basistheory.com/commit/799e5de75cb51170314f8e2d712976e1673641fe))
+
+# [1.64.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.63.0...v1.64.0) (2023-07-07)
+
+
+### Features
+
+* adds dual write docs to android sdk ([#146](https://github.com/Basis-Theory/developers.basistheory.com/issues/146)) ([df959bb](https://github.com/Basis-Theory/developers.basistheory.com/commit/df959bbebaadefb316175f3e88b5e3154277aed0))
+
+# [1.63.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.62.0...v1.63.0) (2023-07-06)
+
+
+### Features
+
+* update deps ([#151](https://github.com/Basis-Theory/developers.basistheory.com/issues/151)) ([8a0f653](https://github.com/Basis-Theory/developers.basistheory.com/commit/8a0f65347ffb797fc569e33c2e65c97eea68cded))
+
+# [1.62.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.61.0...v1.62.0) (2023-07-06)
+
+
+### Features
+
+* documenting android drawables ([#150](https://github.com/Basis-Theory/developers.basistheory.com/issues/150)) ([16def14](https://github.com/Basis-Theory/developers.basistheory.com/commit/16def14344fba6423d2ae869bb598bfa6124482e))
+
+# [1.61.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.60.0...v1.61.0) (2023-07-06)
+
+
+### Features
+
+* document patch proxies reactors ([#149](https://github.com/Basis-Theory/developers.basistheory.com/issues/149)) ([632f542](https://github.com/Basis-Theory/developers.basistheory.com/commit/632f54248a1b71c151d433168f08ab825301af78))
+
+# [1.60.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.59.0...v1.60.0) (2023-06-26)
+
+
+### Features
+
+* adds HTTP client services to iOS ([#145](https://github.com/Basis-Theory/developers.basistheory.com/issues/145)) ([d616c3b](https://github.com/Basis-Theory/developers.basistheory.com/commit/d616c3b600b067099fa76f77f48a5ef2de5fb654))
+
+# [1.59.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.58.0...v1.59.0) (2023-06-26)
+
+
+### Features
+
+* add dd and ld to elements csp docs ([#143](https://github.com/Basis-Theory/developers.basistheory.com/issues/143)) ([f3b786b](https://github.com/Basis-Theory/developers.basistheory.com/commit/f3b786bea57fbb4615105cc3ccebbee0949de9de))
+
+# [1.58.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.57.1...v1.58.0) (2023-06-23)
+
+
+### Features
+
+* removing token associations ([#144](https://github.com/Basis-Theory/developers.basistheory.com/issues/144)) ([2cfe6cf](https://github.com/Basis-Theory/developers.basistheory.com/commit/2cfe6cf35599e577f0194a9e21d6e4cde64179b3))
+
+## [1.57.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.57.0...v1.57.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* response_transform in issue-cards.mdx ([#142](https://github.com/Basis-Theory/developers.basistheory.com/issues/142)) ([37d7055](https://github.com/Basis-Theory/developers.basistheory.com/commit/37d70555e9e0c36c5fbb6b675eaa35d83f70cf28))
+
+# [1.57.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.56.1...v1.57.0) (2023-06-16)
+
+
+### Features
+
+* adds docs for http client calls for web elements (dual writing) ([#140](https://github.com/Basis-Theory/developers.basistheory.com/issues/140)) ([d05244e](https://github.com/Basis-Theory/developers.basistheory.com/commit/d05244ea18aabf33be69bcd1f5f61bbeec12791d))
+
 ## [1.56.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.56.0...v1.56.1) (2023-06-13)
 
 

@@ -3,9 +3,8 @@ sidebar_label: Services
 ---
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
-import { Beta } from "@site/src/components/shared/Beta";
-
 import RawProxyResponse from "@site/docs/sdks/_raw-proxy-response.mdx";
+import PlaintextHttpClientResponse from "@site/docs/sdks/_plaintext-http-client-response.mdx";
 
 # Elements Services
 
@@ -410,7 +409,7 @@ const MyForm = () => {
 
 ## Proxy Service
 
-This service wraps the [proxy API endpoint](/docs/api/proxies) to proxy a request to a third party API.
+This service wraps the [proxy API endpoint](/docs/api/proxies) to proxy a request to a third-party API.
 
 ### Invoking Proxy
 
@@ -494,9 +493,281 @@ All proxy calls take the same [options](/docs/sdks/web/react/methods#proxyreques
 
 <RawProxyResponse />
 
-## Service Errors
+## Http Client Service
 
-Elements services could throw an error based on client-side validations or if the server rejects the request.
+Element values can be used in a request to a third-party API using our HTTP client service.
+
+### Post
+
+The example below shows how to use the HTTP client service to make a POST request to a third-party API with an element in the payload.
+
+```jsx showLineNumbers title="Invoking HTTP Client Service w/ POST"
+import { useRef } from "react";
+import { useBasisTheory, BasisTheoryProvider, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+  const cardNumberRef = useRef(null);
+  const cardExpirationDateRef = useRef(null);
+  const cardVerificationCodeRef = useRef(null);
+
+  const submit = async () => {
+    const cardNumber = cardNumberRef.current;
+    const cardExpirationDate = cardExpirationDateRef.current;
+    const cardVerificationCode = cardVerificationCodeRef.current;
+
+    try {
+      const response = await bt.post('https://www.api.thirdpartydomain.com/resources', {
+        number: cardNumber,
+        expiration_month: cardExpirationDate.month(),
+        expiration_year: cardExpirationDate.year(),
+        cvc: cardVerificationCode,
+        nonSensitiveData: "plainText",
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <CardNumberElement id="cardNumber" ref={cardNumberRef} />
+      <CardExpirationDateElement id="cardExpirationDate" ref={cardExpirationDateRef} />
+      <CardVerificationCodeElement id="cardVerificationCode" ref={cardVerificationCodeRef} />
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<PlaintextHttpClientResponse />
+
+### Put
+
+The example below shows how to use the HTTP client service to make a PUT request to a third-party API with an element in the payload.
+
+```jsx showLineNumbers title="Invoking HTTP Client Service w/ PUT"
+import { useRef } from "react";
+import { useBasisTheory, BasisTheoryProvider, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+  const cardNumberRef = useRef(null);
+  const cardExpirationDateRef = useRef(null);
+  const cardVerificationCodeRef = useRef(null);
+
+  const submit = async () => {
+    const cardNumber = cardNumberRef.current;
+    const cardExpirationDate = cardExpirationDateRef.current;
+    const cardVerificationCode = cardVerificationCodeRef.current;
+
+    try {
+      const response = await bt.put('https://www.api.thirdpartydomain.com/resources/id', {
+        number: cardNumber,
+        expiration_month: cardExpirationDate.month(),
+        expiration_year: cardExpirationDate.year(),
+        cvc: cardVerificationCode,
+        nonSensitiveData: "plainText",
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <CardNumberElement id="cardNumber" ref={cardNumberRef} />
+      <CardExpirationDateElement id="cardExpirationDate" ref={cardExpirationDateRef} />
+      <CardVerificationCodeElement id="cardVerificationCode" ref={cardVerificationCodeRef} />
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<PlaintextHttpClientResponse />
+
+### Patch
+
+The example below shows how to use the HTTP client service to make a PATCH request to a third-party API with an element in the payload.
+
+```jsx showLineNumbers title="Invoking HTTP Client Service w/ PATCH"
+import { useRef } from "react";
+import { useBasisTheory, BasisTheoryProvider, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+  const cardNumberRef = useRef(null);
+  const cardExpirationDateRef = useRef(null);
+  const cardVerificationCodeRef = useRef(null);
+
+  const submit = async () => {
+    const cardNumber = cardNumberRef.current;
+    const cardExpirationDate = cardExpirationDateRef.current;
+    const cardVerificationCode = cardVerificationCodeRef.current;
+
+    try {
+      const response = await bt.patch('https://www.api.thirdpartydomain.com/resources/id', {
+        number: cardNumber,
+        expiration_month: cardExpirationDate.month(),
+        expiration_year: cardExpirationDate.year(),
+        cvc: cardVerificationCode,
+        nonSensitiveData: "plainText",
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      <CardNumberElement id="cardNumber" ref={cardNumberRef} />
+      <CardExpirationDateElement id="cardExpirationDate" ref={cardExpirationDateRef} />
+      <CardVerificationCodeElement id="cardVerificationCode" ref={cardVerificationCodeRef} />
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<PlaintextHttpClientResponse />
+
+### Get
+
+The example below shows how to use the HTTP client service to make a GET request to a third-party API.
+
+```jsx showLineNumbers title="Invoking HTTP Client Service w/ GET"
+import { useBasisTheory, BasisTheoryProvider, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+
+  const submit = async () => {
+    try {
+      const response = await bt.get('https://www.api.thirdpartydomain.com/resources/id', {
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<PlaintextHttpClientResponse />
+
+### Delete
+
+The example below shows how to use the HTTP client service to make a DELETE request to a third-party API.
+
+```jsx showLineNumbers title="Invoking HTTP Client Service w/ DELETE"
+import { useBasisTheory, BasisTheoryProvider, BasisTheoryValidationError, HttpClientError } from "@basis-theory/basis-theory-react";
+
+const MyForm = () => {
+  const { bt } = useBasisTheory("test_1234567890", { elements: true }); // replace test_... w/ your public API key
+
+  const submit = async () => {
+    try {
+      const response = await bt.delete('https://www.api.thirdpartydomain.com/resources/id', {
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log(JSON.stringify(response)); // full plaintext response
+    } catch (error) {
+      if (error instanceof BasisTheoryValidationError) {
+        // check error details
+      } else if (error instanceof HttpClientError) {
+        // check error data, status, or headers
+      }
+    }
+  };
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
+      <div>
+        <button type="submit" onClick={submit} disabled={!bt}>
+          Submit
+        </button>
+      </div>
+    </BasisTheoryProvider>
+  );
+};
+```
+
+<PlaintextHttpClientResponse />
+
+## Errors
+
+### Basis Theory Service Errors
+
+Basis Theory elements services could throw an error based on client-side validations or if the server rejects the request.
 
 ```javascript showLineNumbers title="Handling services errors"
 import { BasisTheoryApiError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
@@ -521,7 +792,25 @@ BasisTheory.tokenize({
 });
 ```
 
-#### BasisTheoryValidationError
+### HTTP Client Service Errors
+
+HTTP client services could throw an error based on client-side validations or if the server rejects the request.
+
+```javascript showLineNumbers title="Handling services errors"
+import { HttpClientError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
+
+BasisTheory.post({
+  sensitiveData: textElement,
+}).catch((error) => {
+  if (error instanceof BasisTheoryValidationError) {
+    // check error details
+  } else if (error instanceof HttpClientError) {
+    // check error data, status, or headers
+  }
+});
+```
+
+### BasisTheoryValidationError
 
 ```javascript showLineNumbers
 {
@@ -546,7 +835,7 @@ BasisTheory.tokenize({
 | `name`    | string   | Error name, always `'BasisTheoryValidationError'`.                         |
 | `details` | _object_ | Maps payload properties to their respective element's validation problems. |
 
-#### BasisTheoryApiError
+### BasisTheoryApiError
 
 ```javascript showLineNumbers
 {
@@ -566,3 +855,22 @@ BasisTheory.tokenize({
 <Alert>
   Error <code>name</code> property may be used instead of checking its instance type.
 </Alert>
+
+### HttpClientError
+
+```json showLineNumbers
+{
+  data: {...},
+  status: 400,
+  headers: {...}
+}
+```
+
+| Attribute | Type     | Description                             |
+|-----------|----------|-----------------------------------------|
+| `name`    | string   | Error name, always `'HttpClientError'`. |
+| `data`    | _object_ | Response body sent from the server.     |
+| `status`  | _number_ | Response HTTP status.                   |
+| `headers` | _object_ | Response HTTP headers.                  |
+
+<PlaintextHttpClientResponse />
