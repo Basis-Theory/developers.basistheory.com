@@ -1,3 +1,10 @@
+# [1.70.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.69.0...v1.70.0) (2023-07-26)
+
+
+### Features
+
+* add warning about CRA version to react and js docs ([#167](https://github.com/Basis-Theory/developers.basistheory.com/issues/167)) ([0562a6d](https://github.com/Basis-Theory/developers.basistheory.com/commit/0562a6d930ccc85adf5a515a8ba86e9c46af47a1))
+
 # [1.69.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.68.0...v1.69.0) (2023-07-24)
 
 
