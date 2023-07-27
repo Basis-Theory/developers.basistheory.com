@@ -1,0 +1,954 @@
+---
+toc_max_heading_level: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+
+# Set Card PIN
+
+In this guide, we will leverage Basis Theory Elements to securely capture the card PIN via user input in the frontend, and pass it to Basis Theory Proxy, which will inject Issuer authentication and connect to the Issuer API.
+
+![Set Card PIN](/img/guides/collect/set-card-pin-flowchart.png)
+
+## Getting Started
+
+<GettingStartedSection />
+
+## Provisioning Resources
+
+In this section, we will explore the bare minimum resources necessary to enable your users to set PIN on their cards.
+
+### Management Application
+
+To create all subsequent resources, you will need a [Management Application](/docs/api/applications#application-types).
+
+[Click here](https://portal.basistheory.com/applications/create?name=Resource+Creator&permissions=proxy%3Acreate&permissions=application%3Acreate&type=management) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Resource Creator
+- Application Type - Management
+- Permissions: `application:create`, `proxy: create`
+
+<Alert>
+  Save the API Key from the created Management Application as it will be used later in this guide.
+</Alert>
+
+### Public Application
+
+You will need a [Public Application](/docs/api/applications#application-types) to initialize Basis Theory Elements with. This application represents your Frontend.
+
+Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Public Application:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -X "POST" \
+  -H "BT-API-KEY: test_mgt_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Frontend",
+    "type": "public"
+  }'
+```
+Notice how no permissions are assigned at this point. They will be programmatically granted later using sessions.
+
+<Alert>
+  Be sure to replace <code>test_mgt_1234567890</code> with the Management API Key you created previously.
+</Alert>
+
+<Alert>
+  Save the <code>key</code> from the created Public Application as it will be used later in this guide.
+</Alert>
+
+### Private Application
+
+Next you will need a [Private Application](/docs/api/applications#application-types) to authorize the Proxy call performed by your Frontend. This application represents your Backend.
+
+Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Private Application:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -X "POST" \
+  -H "BT-API-KEY: test_mgt_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Backend",
+    "type": "private",
+    "permissions": [ "token:use" ]
+  }'
+```
+
+<Alert>
+  Be sure to replace <code>test_mgt_1234567890</code> with the Management API Key you created previously.
+</Alert>
+
+<Alert>
+  Save the <code>key</code> from the created Private Application as it will be used later in this guide.
+</Alert>
+
+### Pre-Configured Proxy
+
+Now we will create a Proxy that listens for incoming requests from the Frontend, injects credentials and forwards the PIN to the Issuer API. To achieve that, we will leverage a [Request Transform](/docs/api/proxies/pre-configured-proxies#request-transforms) code to manipulate the request as necessary:
+
+<Tabs className="bt-tabs" queryString="issuer">
+  <TabItem value="lithic" label="Lithic">
+
+Lithic expects an encrypted PIN Block in the `pin` field when updating a card. [See documentation](https://docs.lithic.com/docs/cards#encrypted-pin-block-enterprise).
+
+```javascript showLineNumbers title="requestTransform.js"
+const forge = require("node-forge");
+
+const createKey = (LITHIC_PUB_KEY) => {
+  const pem = Buffer.from(LITHIC_PUB_KEY, "base64").toString();
+  return forge.pki.publicKeyFromPem(pem);
+};
+
+function randomInt(low, high) {
+  // Generate random integer between low and high, inclusive
+  return Math.floor(Math.random() * (high - low + 1) + low);
+}
+
+const encryptPinBlock = (pin, publicKey) => {
+  const nonce = randomInt(1e8, 1e12);
+  const pinBlock = {
+    nonce,
+    pin,
+  };
+
+  const ciphertext = publicKey.encrypt(JSON.stringify(pinBlock), "RSA-OAEP", {
+    md: forge.md.sha1.create(),
+    mgf1: {
+      md: forge.md.sha1.create(),
+    },
+  });
+
+  return forge.util.encode64(ciphertext);
+};
+
+module.exports = (req) => {
+  const {
+    args: {
+      headers,
+      body
+    },
+    configuration: {
+      LITHIC_PUB_KEY,
+      LITHIC_API_KEY
+    }
+  } = req;
+  const { pin } = body;
+  const publicKey = createKey(LITHIC_PUB_KEY);
+  const pinBlock = encryptPinBlock(pin, publicKey);
+
+  return {
+    body: {
+      pin: pinBlock,
+    },
+    headers: {
+      ...headers,
+      Authorization: LITHIC_API_KEY,
+    },
+  };
+};
+
+```
+
+  </TabItem>
+  <TabItem value="marqeta" label="Marqeta">
+
+Marqeta accepts the `pin` in plaintext along with a `control_token` that you can obtain going directly to them. [See documentation](https://www.marqeta.com/docs/core-api/pins#putPins).
+
+```javascript showLineNumbers title="requestTransform.js"
+module.exports = (req) => {
+  const {
+    args: {
+      headers,
+      body
+    },
+    configuration: {
+      MARQETA_APPLICATION_TOKEN,
+      MARQETA_ADMIN_ACCESS_TOKEN
+    }
+  } = req;
+
+  const credentials = `${MARQETA_APPLICATION_TOKEN}:${MARQETA_ADMIN_ACCESS_TOKEN}`;
+  const auth = new Buffer.from(credentials).toString('base64');
+
+  return {
+    body,
+    headers: {
+      ...headers,
+      Authorization: `Basic ${auth}`,
+    },
+  };
+};
+
+```
+
+  </TabItem>
+</Tabs>
+
+Let's store the contents of the `requestTransform.js` file into a variable:
+
+```shell showLineNumbers
+request_transform_code=$(cat requestTransform.js)
+```
+
+And call Basis Theory API to [create the Proxy](/docs/api/proxies#create-a-proxy):
+
+<Tabs className="bt-tabs" queryString="issuer">
+  <TabItem value="lithic" label="Lithic">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -X "POST" \
+  -H "BT-API-KEY: test_mgt_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "PIN Proxy",
+    "destination_url": "https://sandbox.lithic.com/v1/cards",
+    "request_transform": {
+      "code": '"$(echo $request_transform_code | jq -Rsa .)"'
+    }
+  }'
+```
+  </TabItem>
+  <TabItem value="marqeta" label="Marqeta">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -X "POST" \
+  -H "BT-API-KEY: test_mgt_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "PIN Proxy",
+    "destination_url": "https://sandbox-api.marqeta.com/v3/pins",
+    "request_transform": {
+      "code": '"$(echo $request_transform_code | jq -Rsa .)"'
+    }
+  }'
+```
+  </TabItem>
+</Tabs>
+
+<Alert>
+  Be sure to replace <code>test_mgt_1234567890</code> with the Management API Key you created previously.
+</Alert>
+
+<Alert>
+  Save the <code>key</code> from the created Proxy as it will be used later to invoke it.
+</Alert>
+
+Done! These are all the resources necessary. Let's see how to use them.
+
+## Configuring Basis Theory Elements
+
+<ConfigureElementsSection />
+
+## Adding Text Element
+
+Once installed and configured, add the Text Element to your application. This will enable your users to type in their desired card PIN in your form, while ensuring your systems never come in contact with the data.
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+<div id="pin"></div>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let pinElement;
+
+async function init() {
+  bt = await new BasisTheory().init('test_pub_1234567890', { elements: true });
+
+  const wrapper = document.getElementById("pin");
+  wrapper.style.border = "1px solid black";
+
+  //highlight-start
+  pinElement = bt.createElement("text", {
+    targetId: "pinElement",
+    mask: [/\d/u, /\d/u, /\d/u, /\d/u],
+    style: {
+      base: {
+        fontSize: "25px",
+        fontFamily: "conceal",
+        textAlign: "center"
+      }
+    }
+  });
+
+  await pinElement.mount(wrapper);
+  //highlight-end
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef } from "react";
+import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
+
+export default function App() {
+  const { bt } = useBasisTheory("test_pub_1234567890", {
+    elements: true
+  });
+
+  const pinRef = useRef(null);
+
+  return (
+    <div className="App">
+      <div style={{ border: "1px solid black" }}>
+        <TextElement
+          id="pin"
+          mask={[/\d/u, /\d/u, /\d/u, /\d/u]}
+          bt={bt}
+          style={{
+            base: {
+              fontSize: "25px",
+              fontFamily: "conceal",
+              textAlign: "center"
+            }
+          }}
+          ref={pinRef}
+        />
+      </div>
+    </div>
+  );
+}
+
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+TODO
+
+```swift showLineNumbers title=ViewController.swift
+
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+TODO
+
+```xml showLineNumbers title=activity_main.xml
+```
+```kotlin showLineNumbers title=MainActivity.kt
+```
+
+  </TabItem>
+</Tabs>
+
+## Setting the PIN
+
+With the TextElement enabling you to securely capture the PIN in your user-facing application(s), it is time to send it to the Issuer API using the Proxy. We will add a button to trigger a function to get the job done.
+
+### Creating a Session
+
+The first step of securely fetching the card data is creating a [Session](/docs/api/applications/sessions) to grant temporary elevated access to our Public Application. Add the following code to create a session:
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+<div id="pin"></div>
+// highlight-next-line
+<button onclick="submit();">Submit</button>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let pinElement;
+
+async function init () { ... }
+
+// highlight-start
+async function submit () {
+  try {
+    const session = await bt.sessions.create();
+  } catch (error) {
+    console.error(error);
+  }
+}
+// highlight-end
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef } from "react";
+import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
+
+export default function App() {
+  const { bt } = useBasisTheory("test_pub_1234567890", {
+    elements: true
+  });
+
+  const pinRef = useRef(null);
+
+  // highlight-start
+  const submit = async () => {
+    try {
+      const session = await bt.sessions.create();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
+      // highlight-next-line
+      <button onClick={submit}>Submit</button>
+    </BasisTheoryProvider>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+Add a new `UIButton` to your `Main.storyboard` and create a new Action for it called `submit`.
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+    // highlight-next-line
+    private var sessionApiKey: String = ""
+    @IBOutlet weak var pinTextField: TextElementUITextField!
+
+    // highlight-start
+    @IBAction func submit(_ sender: Any) {
+        BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
+            self.sessionKey = data!.sessionKey!
+            let nonce = data!.nonce!
+        }
+    }
+    // highlight-end
+
+    override func viewDidLoad() { ... }
+
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```xml showLineNumbers title=activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        ...
+
+      // highlight-start
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#00A4BA"
+            android:text="Submit" />
+      // highlight-end
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var pinElement: TextElement
+    // highlight-start
+    private lateinit var button: Button;
+    // highlight-end
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        pinElement = findViewById(R.id.pin)
+        // highlight-start
+        button = findViewById(R.id.submit_button)
+        button.setOnClickListener {
+            submit()
+        }
+        // highlight-end
+    }
+
+    // highlight-start
+    private fun submit() {
+      val bt = BasisTheoryElements.builder()
+        .apiKey("test_pub_1234567890")
+        .build()
+
+      val session = bt.createSession()
+    }
+    // highlight-end
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert>
+  Be sure to replace <code>test_pub_1234567890</code> with the Public API Key you created previously.
+</Alert>
+
+
+
+### Authorizing a Session
+
+Sessions must be [authorized](/docs/api/applications/sessions#authorize-session) by a Private Application to perform any actions against backend resources, such as the Proxy. In our case, we want to allow it to invoke the Proxy, which requires `token:use` permission.
+
+We will add a new `/authorize` endpoint to our backend that receives the session `nonce` and authorizes it with the necessary permissions.
+
+<Tabs className="bt-tabs" queryString="backend">
+  <TabItem value="node" label="Node">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript showLineNumbers
+const express = require("express");
+const cors = require("cors");
+// highlight-next-line
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+
+const app = express();
+const port = 4242;
+
+app.use(cors());
+app.use(express.json());
+
+// highlight-start
+app.post("/authorize", async (request, response) => {
+  const bt = await new BasisTheory().init("test_pvt_1234567890");
+  const { nonce } = request.body;
+  // authorizing a session returns an empty 200 response
+  await bt.sessions.authorize({
+    nonce: nonce,
+    permissions: ['token:use']
+  });
+  response.status(204).send();
+});
+// highlight-end
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+```
+
+  </TabItem>
+  <TabItem value=".net" label=".NET">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
+
+```csharp showLineNumbers
+using System.Collections.Generic;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+// highlight-start
+using BasisTheory.net.Sessions;
+using BasisTheory.net.Applications.Entities;
+// highlight-end
+
+namespace server.Controllers
+{
+  public class Program
+  {
+    public static void Main(string[] args)
+    {
+      WebHost.CreateDefaultBuilder(args)
+        .UseUrls("http://0.0.0.0:4242")
+        .UseWebRoot("public")
+        .UseStartup<Startup>()
+        .Build()
+        .Run();
+    }
+  }
+
+  public class Startup
+  {
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddMvc().AddNewtonsoftJson();
+    }
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+      if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+      app.UseRouting();
+      app.UseStaticFiles();
+      app.UseEndpoints(endpoints => endpoints.MapControllers());
+    }
+  }
+
+  [Route("authorize")]
+  [ApiController]
+  public class CheckoutApiController : Controller
+  {
+    // highlight-start
+    var client = new SessionClient("test_pvt_1234567890");
+
+    [HttpPost]
+    public ActionResult AuthorizeSession(IDictionary<string,string> body)
+    {
+      var authorizedSession = await client.AuthorizeAsync(new AuthorizeSessionRequest {
+        Nonce = body["nonce"],
+        Rules = new List<String> { "token:use" }
+      });
+      return new StatusCodeResult(204);
+    }
+    // highlight-end
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
+
+```python showLineNumbers
+import os
+from flask import Flask, request
+
+import basistheory
+# highlight-start
+from basistheory.api import sessions_api
+from basistheory.model.access_rule import AccessRule
+from basistheory.model.condition import Condition
+from basistheory.model.authorize_session_request import AuthorizeSessionRequest
+# highlight-end
+
+app = Flask(__name__)
+
+# highlight-start
+@app.route('/authorize', methods=['POST'])
+def authorize_session():
+  body = request.get_json()
+  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="test_pvt_1234567890")) as api_client:
+    session_client = sessions_api.SessionsApi(api_client)
+
+    session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
+      nonce = body.get("nonce"),
+      permissions = ["token:use"]
+    ))
+
+  return '', 204
+# highlight-end
+
+if __name__ == '__main__':
+    app.run(port=4242)
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go) and [Go HTTP package](https://pkg.go.dev/net/http).
+
+```go showLineNumbers
+package main
+
+import (
+    "log"
+    "net/http"
+    "context"
+    "encoding/json"
+    // highlight-next-line
+    "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  // highlight-next-line
+  http.HandleFunc("/authorize", authorizeSession)
+  addr := "localhost:4242"
+  log.Printf("Listening on %s", addr)
+  log.Fatal(http.ListenAndServe(addr, nil))
+}
+
+// highlight-start
+func authorizeSession(rw http.ResponseWriter, r *http.Request) {
+  var payload map[string]interface{}
+  json.NewDecoder(r.Body).Decode(&payload)
+
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "test_pvt_1234567890"},
+  })
+
+  authorizeSessionRequest := *basistheory.NewAuthorizeSessionRequest(payload["nonce"].(string))
+  authorizeSessionRequest.SetPermissions([]string{"token:use"})
+
+  authorizedSession, httpResponse, err := apiClient.SessionsApi.Authorize(contextWithAPIKey).AuthorizeSessionRequest(authorizeSessionRequest).Execute()
+
+  w.WriteHeader(http.StatusNoContent)
+}
+// highlight-end
+```
+
+  </TabItem>
+</Tabs>
+
+
+<Alert type={Alerts.WARNING}>
+  On a production environment, your endpoint to authorize session should be behind your own authorization scheme.
+</Alert>
+
+<Alert>
+  Be sure to replace <code>test_pvt_1234567890</code> with the Private API Key you created previously.
+</Alert>
+
+Now let's have our frontend `display` function call this new endpoint passing the session `nonce`.
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let cardNumberElement;
+let cardExpirationDateElement;
+let cardVerificationCodeElement;
+
+async function init () { ... }
+
+async function display () {
+  try {
+    const session = await bt.sessions.create();
+    // highlight-start
+    await fetch('http://localhost:4242/authorize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ nonce: session.nonce }),
+    });
+    // highlight-end
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef, useState } from 'react';
+import {
+  BasisTheoryProvider,
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+export default function App() {
+  const { bt } = useBasisTheory('test_pub_1234567890', { elements: true });
+  // Refs to get access to the Elements instance
+  const cardNumberRef = useRef(null);
+  const cardExpirationRef = useRef(null);
+  const cardVerificationRef = useRef(null);
+
+  const display = async () => {
+    try {
+      const session = await bt.sessions.create();
+      // highlight-start
+      await fetch('http://localhost:4242/authorize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ nonce: session.nonce }),
+      });
+      // highlight-end
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
+      // highlight-next-line
+      <button onClick={display}>Display</button>
+    </BasisTheoryProvider>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+    private var sessionKey: String = ""
+    @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
+    @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
+    @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
+
+    // highlight-start
+    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
+        let parameters = ["nonce": nonce]
+
+        let url = URL(string: "http://localhost:4242/authorize")!
+        let session = URLSession.shared
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        } catch let error {
+            completion(nil, error)
+        }
+
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+
+            do {
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
+                completion(json, nil)
+            } catch let error {
+                completion(nil, error)
+            }
+        })
+
+        task.resume()
+    }
+    // highlight-end
+
+    @IBAction func display(_ sender: Any) {
+        BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
+            self.sessionKey = data!.sessionKey!
+            let nonce = data!.nonce!
+            // highlight-start
+            self.authorizeSession(nonce: nonce) { result, error in
+
+            }
+            // highlight-end
+        }
+    }
+
+    override func viewDidLoad() { ... }
+
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+import com.basistheory.android.view.TextElement
+import com.basistheory.android.service.BasisTheoryElements
+// highlight-start
+import java.net.HttpURLConnection
+import java.net.URL
+// highlight-end
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var cardNumberElement: CardNumberElement
+    private lateinit var cardExpirationDateElement: CardExpirationDateElement
+    private lateinit var cardVerificationCodeElement: CardVerificationCodeElement
+    private lateinit var button: Button;
+
+    override fun onCreate(savedInstanceState: Bundle?) { ... }
+
+    // highlight-start
+    private fun display() {
+      val bt = BasisTheoryElements.builder()
+        .apiKey("test_pub_1234567890")
+        .build()
+
+      val session = bt.createSession()
+
+      //highlight-next-line
+      authorizeSession(session.nonce)
+    }
+
+    //highlight-start
+    private fun authorizeSession(nonce: String) {
+      val url = URL("http://localhost:4242/authorize")
+      val con = url.openConnection() as HttpURLConnection
+
+      con.requestMethod = "POST"
+      con.doOutput = true
+      con.setRequestProperty("Content-Type", "application/json")
+      con.setRequestProperty("Accept", "application/json");
+
+      val body = String.format("{\"nonce\": \"%s\"}", nonce)
+
+      con.outputStream.use { os ->
+          val input: ByteArray = body.toByteArray(Charsets.UTF_8)
+          os.write(input, 0, input.size)
+      }
+
+      if (con.responseCode == 200) {
+          return
+      }
+    }
+    // highlight-end
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Conclusion
+
+The best practices prescribed in this guide ensure that your user-facing applications are compliant with the PCI-DSS standards and your users' sensitive card data is protected. The `token.id` obtained at the end of the [Storing Cards](#storing-cards) section is a synthetic replacement for the sensitive data and can be safely stored in your database, or transmitted through your systems, meeting compliance requirements and reducing the risk of exposure in case of data breaches.
+
+The optional [customization steps](#customizing-tokens) are meant to showcase platform capabilities that go beyond the examples given. Make sure to explore the provided links within each subsection to learn more about the possibilities for customization.
+
+For next steps, take a look at the following guides to proceed taking the most value of your secured card tokens:
+
+- [Process Card Payments](/docs/guides/share/process-card-payments)
+- [Display Cards](/docs/guides/share/display-cards)
+- [Search Data](/docs/guides/process/search-data)
+- [Analyze Data](/docs/guides/process/analyze-data)
