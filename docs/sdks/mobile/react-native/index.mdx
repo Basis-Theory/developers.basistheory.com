@@ -119,21 +119,35 @@ import React, { useRef } from 'react';
 import {
   Button,
   CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
   BTRef,
 } from '@basis-theory/basis-theory-react-native';
 
 const MyForm = () => {
   const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
 
   const clear = async () => {
     cardNumberRef.current.clear();
+    cardExpirationDateRef.current.clear();
+    cardVerificationCodeRef.current.clear();
   };
 
   return (
     <>
       <CardNumberElement
         btRef={cardNumberRef}
-        placeholder="Full name"
+        placeholder="Card Number"
+      />
+      <CardExpirationDateElement
+        btRef={cardExpirationDateRef}
+        placeholder="Card Expiration Date"
+      />
+      <CardVerificationCodeElement
+        btRef={cardVerificationCodeRef}
+        placeholder="CVC"
       />
       <div>
         <Button title="Clear" onPress={clear} />
@@ -152,29 +166,48 @@ an `inputBTRef` to the `setValue` method of an Element ref to set the value of t
 import React, { useRef } from 'react';
 import {
   CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
   BasisTheoryElements,
   BTRef,
 } from '@basis-theory/basis-theory-react-native';
 
 const MyForm = () => {
   const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
 
-  const getCardNumber = async () => {
-    const token = await BasisTheoryElements.getTokenById('<TOKEN ID FOR CUSTOMER>', 'test_1234567890');
+  const getCardData = async () => {
+    const proxyResponse = await BasisTheoryElements.proxy({
+      headers: {
+        'BT-API-KEY': '<YOUR SESSION API KEY>',
+        'BT-PROXY-KEY': '<YOUR PROXY KEY>',
+      },
+      method: 'post',
+    });
 
-    cardNumberRef.current.setValue(token.data.number);
+    cardNumberRef.current?.setValue(proxyResponse.json.cardNumber);
+    cardExpirationDateRef.current?.setValue(proxyResponse.json.expDate);
+    cardVerificationCodeRef.current?.setValue(proxyResponse.json.cvc);
   };
 
   return (
     <>
       <CardNumberElement
         btRef={cardNumberRef}
-        placeholder="Full name"
-        aria-label="Full name"
+        placeholder="Card Number"
+      />
+      <CardExpirationDateElement
+        btRef={cardExpirationDateRef}
+        placeholder="Card Expiration Date"
+      />
+      <CardVerificationCodeElement
+        btRef={cardVerificationCodeRef}
+        placeholder="CVC"
       />
       <div>
-        <button type="button" onClick={getCardNumber}>
-          "Get Card Number"
+        <button type="button" onClick={getCardData}>
+          "Get Card Data"
         </button>
       </div>
     </>

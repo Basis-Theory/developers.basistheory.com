@@ -70,3 +70,188 @@ export default App;
 | `style`       | false    | _object_          | [ReactNative styles](https://reactnative.dev/docs/style) used to customize the Element appearance                                                                                                                                        |
 | `editable`    | false    | _boolean_         | Boolean used to set the [editable attribute](https://reactnative.dev/docs/textinput#editable) of the Element                                                                                                                             |
 | `placeholder` | false    | _string_          | String used to customize the [placeholder attribute](https://reactnative.dev/docs/textinput#placeholder) of the Element                                                                                                                  |
+
+### Methods
+
+The methods available to `CardNumberElement` can be accessed through the refs. Review the [using refs](/docs/sdks/mobile/react-native#using-refs) section for more information.
+
+### Masking
+
+Element masks enable user input to be restricted and formatted to meet a pre-defined format. The `CardNumberElement` automatically sets a mask based on the [card brand](#card-brands).
+
+#### Card Brands
+
+The first several digits of the card number are analyzed as the user is typing to determine the card brand.
+The brand is used to automatically set a mask to a brand-specific format.
+
+Supported card brands are defined in the table below:
+
+| Brand            | Identifier        | Card Number Digits | CVC Digits |
+| ---------------- | ----------------- | ------------------ | ---------- |
+| American Express | `americanExpress` | 15                 | 4          |
+| Diners Club      | `dinersClub`      | 14, 16, 19         | 3          |
+| Discover         | `discover`        | 16, 19             | 3          |
+| Elo              | `elo`             | 16                 | 3          |
+| Hiper            | `hiper`           | 16                 | 3          |
+| HiperCard        | `hipercard`       | 16                 | 3          |
+| JCB              | `jcb`             | 16-19              | 3          |
+| Maestro          | `maestro`         | 12-19              | 3          |
+| Mastercard       | `mastercard`      | 16                 | 3          |
+| MIR              | `mir`             | 16-19              | 3          |
+| UnionPay         | `unionPay`        | 14-19              | 3          |
+| Visa             | `visa`            | 16, 18, 19         | 3          |
+
+<Alert>
+  Some card brands have issued card numbers with multiple lengths. The <code>Card Number Digits</code> column documents all acceptable card number lengths for the brand (in number of digits, excluding formatting characters).
+</Alert>
+
+## CardExpirationDateElement
+
+The `CardExpirationDateElement` component features a card number input, by wrapping the React Native [TextInput component](https://reactnative.dev/docs/textinput),
+which makes its interface similar to working directly with a regular [TextInput](https://reactnative.dev/docs/textinput).
+
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  BTRef,
+  CardExpirationDateElement,
+} from '@basis-theory/basis-theory-react-native';
+
+const App = () => {
+  const ref = useRef<BTRef>(null);
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardExpirationDateElement
+            btRef={ref}
+            placeholder="Card Expiration Date"
+            style={styles.cardExpiration}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardExpiration: {
+    backgroundColor: '#eeeeee',
+    borderColor: 'blue',
+    borderWidth: 2,
+    color: 'purple',
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+### Properties
+
+| Property      | Required | Type              | Description                                                                                                                                                                                                                              |
+|---------------|----------|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `btRef`       | false    | _object/function_ | [Callback ref function](https://react.dev/learn/referencing-values-with-refs) to store/receive the Element instance. Review the [using refs](/docs/sdks/mobile/react-native#using-refs) section for more information                     |
+| `style`       | false    | _object_          | [ReactNative styles](https://reactnative.dev/docs/style) used to customize the Element appearance                                                                                                                                        |
+| `editable`    | false    | _boolean_         | Boolean used to set the [editable attribute](https://reactnative.dev/docs/textinput#editable) of the Element                                                                                                                             |
+| `placeholder` | false    | _string_          | String used to customize the [placeholder attribute](https://reactnative.dev/docs/textinput#placeholder) of the Element                                                                                                                  |
+
+### Methods
+
+The methods available to `CardExpirationDateElement` can be accessed through the refs. Review the [using refs](/docs/sdks/mobile/react-native#using-refs) section for more information.
+
+### Masking
+
+Element masks enable user input to be restricted and formatted to meet a pre-defined format. The `CardExpirationDateElement` automatically sets a mask of `MM/YY`.
+
+
+## CardVerificationCodeElement
+
+The `CardVerificationCodeElement` component features a card number input, by wrapping the React Native [TextInput component](https://reactnative.dev/docs/textinput),
+which makes its interface similar to working directly with a regular [TextInput](https://reactnative.dev/docs/textinput).
+
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  BTRef,
+  CardVerificationCodeElement,
+} from '@basis-theory/basis-theory-react-native';
+
+const App = () => {
+  const ref = useRef<BTRef>(null);
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardVerificationCodeElement
+            btRef={ref}
+            placeholder="CVC"
+            style={styles.cvc}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cvc: {
+    backgroundColor: '#eeeeee',
+    borderColor: 'blue',
+    borderWidth: 2,
+    color: 'purple',
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+### Properties
+
+| Property      | Required | Type              | Description                                                                                                                                                                                                                              |
+|---------------|----------|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `btRef`       | false    | _object/function_ | [Callback ref function](https://react.dev/learn/referencing-values-with-refs) to store/receive the Element instance. Review the [using refs](/docs/sdks/mobile/react-native#using-refs) section for more information                     |
+| `style`       | false    | _object_          | [ReactNative styles](https://reactnative.dev/docs/style) used to customize the Element appearance                                                                                                                                        |
+| `editable`    | false    | _boolean_         | Boolean used to set the [editable attribute](https://reactnative.dev/docs/textinput#editable) of the Element                                                                                                                             |
+| `placeholder` | false    | _string_          | String used to customize the [placeholder attribute](https://reactnative.dev/docs/textinput#placeholder) of the Element                                                                                                                  |
+
+### Methods
+
+The methods available to `CardVerificationCodeElement` can be accessed through the refs. Review the [using refs](/docs/sdks/mobile/react-native#using-refs) section for more information.
+
+### Masking
+
+Element masks enable user input to be restricted and formatted to meet a pre-defined format. The `CardVerificationCodeElement` automatically sets a mask of 4 digits.

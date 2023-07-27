@@ -83,8 +83,7 @@ const MyForm = () => {
     <>
       <CardNumberElement
         btRef={cardNumberRef}
-        placeholder="Full name"
-        aria-label="Full name"
+        placeholder="Card Number"
       />
       <div>
         <Button type="button" onPress={getCardNumber}/>
@@ -101,3 +100,91 @@ const MyForm = () => {
 <Alert>
   Token attributes such as <code>metadata</code> are directly accessible from the <code>retrieve</code> response as they are considered non-sensitive.
 </Alert>
+
+### proxy
+
+Proxy provides a simple way to retrieve data back into an element utilizing our [proxy](/docs/api/proxies) service.
+
+```typescript showLineNumbers
+const proxyResponse = await BasisTheoryElements.proxy({
+  headers: {
+    'BT-API-KEY': '<YOUR SESSION API KEY>',
+    'BT-PROXY-KEY': '<YOUR API KEY>',
+    'Content-Type': 'application/json',
+  },
+  body: {...},
+  method: 'post',
+  path: '/my-proxy',
+  query: {
+      query1: 'value1',
+      query2: 'value2',
+  },
+});
+```
+
+#### Parameters
+
+| Parameter                | Type      | Required | Description                                                                               |
+|--------------------------|-----------|----------|-------------------------------------------------------------------------------------------|
+| `method`                 | `string`  | `true`   | The HTTP method to invoke for the proxy request ("post", "put", "patch", "get", "delete") |
+| `headers`                | `object`  | `false`  | The headers to pass into the proxy request                                                |
+| `body`                   | `object`  | `false`  | The request body to pass into the proxy request                                           |
+| `query`                  | `object`  | `false`  | The query params to pass into the proxy request                                           |
+| `path`                   | `string`  | `false`  | The path to pass onto the end of the proxy destination URL                                |
+
+The response returns a [proxu](/docs/api/proxies/pre-configured-proxies#response-6). All values in the response is converted to an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref).
+This means that you can traverse through the proxy response and set the value of your elements without touching the plaintext value.
+Below is an example of how to do that.
+
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
+import {
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  BasisTheoryElements,
+  BTRef,
+} from '@basis-theory/basis-theory-react-native';
+
+const MyForm = () => {
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+
+  const getCardData = async () => {
+    const proxyResponse = await BasisTheoryElements.proxy({
+      headers: {
+        'BT-API-KEY': '<YOUR SESSION API KEY>',
+        'BT-PROXY-KEY': '<YOUR PROXY KEY>',
+      },
+      method: 'post',
+    });
+
+    cardNumberRef.current?.setValue(proxyResponse.json.cardNumber);
+    cardExpirationDateRef.current?.setValue(proxyResponse.json.expDate);
+    cardVerificationCodeRef.current?.setValue(proxyResponse.json.cvc);
+  };
+
+  return (
+    <>
+      <CardNumberElement
+        btRef={cardNumberRef}
+        placeholder="Card Number"
+      />
+      <CardExpirationDateElement
+        btRef={cardExpirationDateRef}
+        placeholder="Card Expiration Date"
+      />
+      <CardVerificationCodeElement
+        btRef={cardVerificationCodeRef}
+        placeholder="CVC"
+      />
+      <div>
+        <button type="button" onClick={getCardData}>
+          "Get Card Data"
+        </button>
+      </div>
+    </>
+  );
+};
+```
