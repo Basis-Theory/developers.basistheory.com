@@ -1,3 +1,10 @@
+# [1.73.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.72.0...v1.73.0) (2023-08-01)
+
+
+### Features
+
+* adding react native v1.0.0-beta.x docs ([#161](https://github.com/Basis-Theory/developers.basistheory.com/issues/161)) ([394ad74](https://github.com/Basis-Theory/developers.basistheory.com/commit/394ad7423e34d4de291fbe60214e7d6cc5a6176a))
+
 # [1.72.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.71.0...v1.72.0) (2023-08-01)
 
 
