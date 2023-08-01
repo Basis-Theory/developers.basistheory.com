@@ -1,0 +1,217 @@
+---
+title: ReactNative Elements SDK
+sidebar_label: ReactNative Elements
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { GithubCard } from "@site/src/components/sdks/GithubCard";
+import { SDK } from "@site/src/components/types";
+
+# React Elements SDK
+
+<GithubCard
+  heading="ReactNative SDK"
+  icon={SDK.REACT}
+  organization="basis-theory"
+  repository="basis-theory-react-native"
+/>
+
+###
+
+Basis Theory React Native is an [open source](https://github.com/Basis-Theory/basis-theory-react-native) [package](https://www.npmjs.com/package/@basis-theory/basis-theory-react-native)
+designed to allow you to quickly integrate Element features in your mobile application. Every Element is a thin wrapper around the React Native
+[TextInput component](https://reactnative.dev/docs/textinput), which makes its interface similar to working directly with a regular [TextInput](https://reactnative.dev/docs/textinput).
+
+Utilizing these Elements is as simple as declaring them as a typical React Native Components and passing the required props.
+
+## Installation
+
+<Tabs className="bt-tabs">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npm install --save @basis-theory/basis-theory-react-native
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn add @basis-theory/basis-theory-react-native
+```
+
+  </TabItem>
+</Tabs>
+
+## Using an Element
+
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  BTRef,
+  CardNumberElement,
+} from '@basis-theory/basis-theory-react-native';
+
+const App = () => {
+  const ref = useRef<BTRef>(null);
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardNumberElement
+            btRef={ref}
+            placeholder="Card Number"
+            style={styles.cardNumber}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: '#eeeeee',
+    borderColor: 'blue',
+    borderWidth: 2,
+    color: 'purple',
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+## Using Refs
+
+[Refs](https://react.dev/learn/referencing-values-with-refs) are a way to access React component instances. You can pass in a `ref` into the `btRef`
+prop into any Basis Theory Element to store or receive the Element instance, to tokenize their value or call one of its methods. For security reasons,
+we don't return the underlying [TextInput](https://reactnative.dev/docs/textinput) `ref`, but instead our own instance of `ref`. The `ref` that's returned
+is an instance of `BTRef` that has the following methods under the `current` property:
+
+| Methods    | Signature                          | Description                                                                                                                                                         |
+|------------|------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `clear`    | `() => void`                       | Clears the value from the underlying [TextInput](https://reactnative.dev/docs/textinput#clear)                                                                      |
+| `focus`    | `() => void`                       | Focuses the underlying [TextInput](https://reactnative.dev/docs/textinput#focus)                                                                                    |
+| `blur`     | `() => void`                       | Blurs the underlying [TextInput](https://reactnative.dev/docs/textinput#blur)                                                                                       |
+| `setValue` | `(inputBTRef: InputBTRef) => void` | Sets the value of the Element. The function takes in an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref) which is returned from a Basis Theory service call |
+
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
+import {
+  Button,
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  BTRef,
+} from '@basis-theory/basis-theory-react-native';
+
+const MyForm = () => {
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+
+  const clear = async () => {
+    cardNumberRef.current.clear();
+    cardExpirationDateRef.current.clear();
+    cardVerificationCodeRef.current.clear();
+  };
+
+  return (
+    <>
+      <CardNumberElement
+        btRef={cardNumberRef}
+        placeholder="Card Number"
+      />
+      <CardExpirationDateElement
+        btRef={cardExpirationDateRef}
+        placeholder="Card Expiration Date"
+      />
+      <CardVerificationCodeElement
+        btRef={cardVerificationCodeRef}
+        placeholder="CVC"
+      />
+      <div>
+        <Button title="Clear" onPress={clear} />
+      </div>
+    </>
+  );
+};
+```
+
+### InputBTRef
+
+An `InputBTRef` is an object that contains a reference to a sensitive value returned from a Basis Theory service call. Pass in
+an `inputBTRef` to the `setValue` method of an Element ref to set the value of that Element. Below is an example of how to do that.
+
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
+import {
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  BasisTheoryElements,
+  BTRef,
+} from '@basis-theory/basis-theory-react-native';
+
+const MyForm = () => {
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+
+  const getCardData = async () => {
+    const proxyResponse = await BasisTheoryElements.proxy({
+      headers: {
+        'BT-API-KEY': '<YOUR SESSION API KEY>',
+        'BT-PROXY-KEY': '<YOUR PROXY KEY>',
+      },
+      method: 'post',
+    });
+
+    cardNumberRef.current?.setValue(proxyResponse.json.cardNumber);
+    cardExpirationDateRef.current?.setValue(proxyResponse.json.expDate);
+    cardVerificationCodeRef.current?.setValue(proxyResponse.json.cvc);
+  };
+
+  return (
+    <>
+      <CardNumberElement
+        btRef={cardNumberRef}
+        placeholder="Card Number"
+      />
+      <CardExpirationDateElement
+        btRef={cardExpirationDateRef}
+        placeholder="Card Expiration Date"
+      />
+      <CardVerificationCodeElement
+        btRef={cardVerificationCodeRef}
+        placeholder="CVC"
+      />
+      <div>
+        <button type="button" onClick={getCardData}>
+          "Get Card Data"
+        </button>
+      </div>
+    </>
+  );
+};
+```
