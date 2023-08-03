@@ -252,7 +252,7 @@ Done! These are all the resources necessary. Let's see how to use them.
 
 Once installed and configured, add the Text Element to your application. This will enable your users to type in their desired card PIN in your form, while ensuring your systems never come in contact with the data.
 
-<Tabs className="bt-tabs" queryString="sdk">
+<Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="javascript" label="JavaScript">
 
 ```html showLineNumbers title=index.html
@@ -328,20 +328,82 @@ export default function App() {
   </TabItem>
   <TabItem value="ios" label="iOS">
 
-TODO
-
 ```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+// highlight-next-line
+import BasisTheoryElements
+import Combine
 
+class ViewController: UIViewController {
+    // highlight-next-line
+    @IBOutlet weak var pinTextField: TextElementUITextField!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // highlight-start
+        let regexDigit = try! NSRegularExpression(pattern: "\\d")
+        let pinMask = [regexDigit, regexDigit, regexDigit, regexDigit] as [Any]
+
+        pinTextField.setConfig(options: TextElementOptions(mask: pinMask))
+        // highlight-end
+    }
+}
 ```
 
   </TabItem>
   <TabItem value="android" label="Android">
 
-TODO
-
 ```xml showLineNumbers title=activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+      // highlight-start
+        <com.basistheory.android.view.TextElement
+            android:id="@+id/pin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+      // highlight-end
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 ```
 ```kotlin showLineNumbers title=MainActivity.kt
+// highlight-start
+import com.basistheory.android.view.TextElement
+import com.basistheory.android.service.BasisTheoryElements
+// highlight-end
+
+class MainActivity : AppCompatActivity() {
+
+    // highlight-next-line
+    private lateinit var pinElement: TextElement
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // highlight-start
+        pinElement = findViewById(R.id.pin)
+        pinElement.mask = ElementMask("####")
+        // highlight-end
+    }
+}
 ```
 
   </TabItem>
@@ -408,11 +470,11 @@ export default function App() {
   // highlight-end
 
   return (
-    <BasisTheoryProvider bt={bt}>
+    <div>
       ...
       // highlight-next-line
       <button onClick={submit}>Submit</button>
-    </BasisTheoryProvider>
+    </div>
   );
 }
 ```
@@ -486,15 +548,15 @@ class ViewController: UIViewController {
 class MainActivity : AppCompatActivity() {
 
     private lateinit var pinElement: TextElement
-    // highlight-start
+    // highlight-next-line
     private lateinit var button: Button;
-    // highlight-end
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         pinElement = findViewById(R.id.pin)
+        pinElement.mask = ElementMask("####")
         // highlight-start
         button = findViewById(R.id.submit_button)
         button.setOnClickListener {
@@ -521,8 +583,6 @@ class MainActivity : AppCompatActivity() {
 <Alert>
   Be sure to replace <code>test_pub_1234567890</code> with the Public API Key you created previously.
 </Alert>
-
-
 
 ### Authorizing a Session
 
@@ -731,7 +791,7 @@ func authorizeSession(rw http.ResponseWriter, r *http.Request) {
   Be sure to replace <code>test_pvt_1234567890</code> with the Private API Key you created previously.
 </Alert>
 
-Now let's have our frontend `display` function call this new endpoint passing the session `nonce`.
+Now let's have our frontend `submit` function call this new endpoint passing the session `nonce`.
 
 <Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="javascript" label="JavaScript">
@@ -740,13 +800,11 @@ Now let's have our frontend `display` function call this new endpoint passing th
 import { BasisTheory } from '@basis-theory/basis-theory-js';
 
 let bt;
-let cardNumberElement;
-let cardExpirationDateElement;
-let cardVerificationCodeElement;
+let pinElement;
 
 async function init () { ... }
 
-async function display () {
+async function submit () {
   try {
     const session = await bt.sessions.create();
     // highlight-start
@@ -769,23 +827,17 @@ init();
   <TabItem value="react" label="React">
 
 ```jsx showLineNumbers title=App.jsx
-import React, { useRef, useState } from 'react';
-import {
-  BasisTheoryProvider,
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+import React, { useRef } from "react";
+import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory('test_pub_1234567890', { elements: true });
-  // Refs to get access to the Elements instance
-  const cardNumberRef = useRef(null);
-  const cardExpirationRef = useRef(null);
-  const cardVerificationRef = useRef(null);
+  const { bt } = useBasisTheory("test_pub_1234567890", {
+    elements: true
+  });
 
-  const display = async () => {
+  const pinRef = useRef(null);
+
+  const submit = async () => {
     try {
       const session = await bt.sessions.create();
       // highlight-start
@@ -803,11 +855,10 @@ export default function App() {
   }
 
   return (
-    <BasisTheoryProvider bt={bt}>
+    <div>
       ...
-      // highlight-next-line
-      <button onClick={display}>Display</button>
-    </BasisTheoryProvider>
+      <button onClick={submit}>Submit</button>
+    </div>
   );
 }
 ```
@@ -822,9 +873,7 @@ import Combine
 
 class ViewController: UIViewController {
     private var sessionKey: String = ""
-    @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
-    @IBOutlet weak var expirationDateTextField: CardExpirationDateUITextField!
-    @IBOutlet weak var cvcTextField: CardVerificationCodeUITextField!
+    @IBOutlet weak var pinTextField: TextElementUITextField!
 
     // highlight-start
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
@@ -863,7 +912,7 @@ class ViewController: UIViewController {
     }
     // highlight-end
 
-    @IBAction func display(_ sender: Any) {
+    @IBAction func submit(_ sender: Any) {
         BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
@@ -893,15 +942,13 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var cardNumberElement: CardNumberElement
-    private lateinit var cardExpirationDateElement: CardExpirationDateElement
-    private lateinit var cardVerificationCodeElement: CardVerificationCodeElement
+    private lateinit var pinElement: TextElement
     private lateinit var button: Button;
 
     override fun onCreate(savedInstanceState: Bundle?) { ... }
 
     // highlight-start
-    private fun display() {
+    private fun submit() {
       val bt = BasisTheoryElements.builder()
         .apiKey("test_pub_1234567890")
         .build()
@@ -940,6 +987,219 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
+### Invoking the Proxy
+
+With the user session properly authorized, it is time to use it to invoke the Pre-Configured Proxy, passing the Text Element value.
+
+
+<Tabs className="bt-tabs" queryString="issuer">
+  <TabItem value="lithic" label="Lithic">
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let pinElement;
+
+async function init () { ... }
+
+async function submit () {
+  try {
+    const session = await bt.sessions.create();
+    await fetch('http://localhost:4242/authorize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ nonce: session.nonce }),
+    });
+    // highlight-start
+    await bt.proxy.patch({
+
+    })
+    // highlight-end
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef } from "react";
+import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
+
+export default function App() {
+  const { bt } = useBasisTheory("test_pub_1234567890", {
+    elements: true
+  });
+
+  const pinRef = useRef(null);
+
+  const submit = async () => {
+    try {
+      const session = await bt.sessions.create();
+      // highlight-start
+      await fetch('http://localhost:4242/authorize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ nonce: session.nonce }),
+      });
+      // highlight-end
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <div>
+      ...
+      <button onClick={submit}>Submit</button>
+    </div>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+    private var sessionKey: String = ""
+    @IBOutlet weak var pinTextField: TextElementUITextField!
+
+    // highlight-start
+    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
+        let parameters = ["nonce": nonce]
+
+        let url = URL(string: "http://localhost:4242/authorize")!
+        let session = URLSession.shared
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        } catch let error {
+            completion(nil, error)
+        }
+
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+
+            do {
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
+                completion(json, nil)
+            } catch let error {
+                completion(nil, error)
+            }
+        })
+
+        task.resume()
+    }
+    // highlight-end
+
+    @IBAction func submit(_ sender: Any) {
+        BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
+            self.sessionKey = data!.sessionKey!
+            let nonce = data!.nonce!
+            // highlight-start
+            self.authorizeSession(nonce: nonce) { result, error in
+
+            }
+            // highlight-end
+        }
+    }
+
+    override func viewDidLoad() { ... }
+
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+import com.basistheory.android.view.TextElement
+import com.basistheory.android.service.BasisTheoryElements
+// highlight-start
+import java.net.HttpURLConnection
+import java.net.URL
+// highlight-end
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var pinElement: TextElement
+    private lateinit var button: Button;
+
+    override fun onCreate(savedInstanceState: Bundle?) { ... }
+
+    // highlight-start
+    private fun submit() {
+      val bt = BasisTheoryElements.builder()
+        .apiKey("test_pub_1234567890")
+        .build()
+
+      val session = bt.createSession()
+
+      //highlight-next-line
+      authorizeSession(session.nonce)
+    }
+
+    //highlight-start
+    private fun authorizeSession(nonce: String) {
+      val url = URL("http://localhost:4242/authorize")
+      val con = url.openConnection() as HttpURLConnection
+
+      con.requestMethod = "POST"
+      con.doOutput = true
+      con.setRequestProperty("Content-Type", "application/json")
+      con.setRequestProperty("Accept", "application/json");
+
+      val body = String.format("{\"nonce\": \"%s\"}", nonce)
+
+      con.outputStream.use { os ->
+          val input: ByteArray = body.toByteArray(Charsets.UTF_8)
+          os.write(input, 0, input.size)
+      }
+
+      if (con.responseCode == 200) {
+          return
+      }
+    }
+    // highlight-end
+}
+```
+
+  </TabItem>
+</Tabs>
+
+  </TabItem>
+  <TabItem value="marqeta" label="Marqeta">
+
+
+
+  </TabItem>
+</Tabs>
+
 ## Conclusion
 
 The best practices prescribed in this guide ensure that your user-facing applications are compliant with the PCI-DSS standards and your users' sensitive card data is protected. The `token.id` obtained at the end of the [Storing Cards](#storing-cards) section is a synthetic replacement for the sensitive data and can be safely stored in your database, or transmitted through your systems, meeting compliance requirements and reducing the risk of exposure in case of data breaches.
@@ -949,6 +1209,6 @@ The optional [customization steps](#customizing-tokens) are meant to showcase pl
 For next steps, take a look at the following guides to proceed taking the most value of your secured card tokens:
 
 - [Process Card Payments](/docs/guides/share/process-card-payments)
-- [Display Cards](/docs/guides/share/display-cards)
+- [Display Cards](/docs/guides/share/submit-cards)
 - [Search Data](/docs/guides/process/search-data)
 - [Analyze Data](/docs/guides/process/analyze-data)
