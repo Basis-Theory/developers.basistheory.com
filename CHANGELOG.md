@@ -1,3 +1,10 @@
+## [1.73.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.73.0...v1.73.1) (2023-08-04)
+
+
+### Bug Fixes
+
+* reactor examples ([#174](https://github.com/Basis-Theory/developers.basistheory.com/issues/174)) ([5e5661d](https://github.com/Basis-Theory/developers.basistheory.com/commit/5e5661d7fdaed2de9085021424a7328434a48e02))
+
 # [1.73.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.72.0...v1.73.0) (2023-08-01)
 
 
