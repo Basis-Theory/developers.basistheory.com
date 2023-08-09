@@ -28,10 +28,7 @@ Next you will need a [Public Application](/docs/api/applications#application-typ
 - Application Type - Public
 - Permissions - `token:create`
 
-<Alert>
-  Save the API Key from the created Public Application as it will be used later
-  in this guide to initialize the form.
-</Alert>
+<Alert>Save the API Key from the created Public Application as it will be used later in this guide to initialize the form.</Alert>
 
 ## Setup the Project
 
@@ -69,21 +66,20 @@ npm install --save @basis-theory/basis-theory-js
 
 ## Initialize the Web SDK
 
-Now we need to initialize Basis Theory JavaScript Elements. To do this, we will create an instance of `BasisTheory` with `elements: true` to dynamically loads **Elements** module in `index.js`:
+Now we need to initialize Basis Theory JavaScript Elements. To do this, we will create an instance of `BasisTheory` with `elements: true` to dynamically load **Elements** module in `index.js`:
 
 ```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
 let bt;
 
 (async () => {
-  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+  bt = await new BasisTheory().init("test_1234567890", { elements: true });
 })();
 ```
 
 <Alert>
-  Be sure to replace <code>test_1234567890</code> with the Public API Key you
-  created in the <a href="#getting-started">Getting Started</a> step.
+  Be sure to replace <code>test_1234567890</code> with the Public API Key you created in the <a href="#getting-started">Getting Started</a> step.
 </Alert>
 
 Next we need to import our JavaScript file as a module within `index.html`:
@@ -117,22 +113,22 @@ First let's add a `div` to be the placeholder for where the Basis Theory Element
 Next, we need to create a new Text Element and mount it to our `div`:
 
 ```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
 let bt;
 // highlight-next-line
 let textElement;
 
 (async () => {
-  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+  bt = await new BasisTheory().init("test_1234567890", { elements: true });
 
   // highlight-start
-  textElement = bt.createElement('text', {
-    targetId: 'exampleTextElement',
-    placeholder: 'Input text'
+  textElement = bt.createElement("text", {
+    targetId: "exampleTextElement",
+    placeholder: "Input text",
   });
 
-  textElement.mount('#exampleTextElement'); 
+  textElement.mount("#exampleTextElement");
   // highlight-end
 })();
 ```
@@ -172,37 +168,37 @@ We want to be able to tokenize the value within the Text Element without exposin
 Within our JavaScript code, let's add a new submit function to tokenize the value of our Text Element.
 
 ```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
 let bt;
 let textElement;
 
 (async () => {
-  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+  bt = await new BasisTheory().init("test_1234567890", { elements: true });
 
-  textElement = bt.createElement('text', {
-    targetId: 'exampleTextElement',
-    placeholder: 'Input text'
+  textElement = bt.createElement("text", {
+    targetId: "exampleTextElement",
+    placeholder: "Input text",
   });
 
-  textElement.mount('#exampleTextElement'); 
+  textElement.mount("#exampleTextElement");
 })();
 
 // highlight-start
 window.submit = async function submit() {
   try {
     const token = await bt.tokens.create({
-      type: 'token',
-      data: textElement
+      type: "token",
+      data: textElement,
     });
 
-    const result = document.querySelector('#result');
+    const result = document.querySelector("#result");
 
     result.innerHTML = JSON.stringify(token, null, 4);
   } catch (error) {
     console.error(error);
   }
-}
+};
 // highlight-end
 ```
 
@@ -235,36 +231,36 @@ Following this guide, your resulting application should look like the following:
   <TabItem value="index.js" label="index.js">
 
 ```javascript showLineNumbers
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
 let bt;
 let textElement;
 
 (async () => {
-  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+  bt = await new BasisTheory().init("test_1234567890", { elements: true });
 
-  textElement = bt.createElement('text', {
-    targetId: 'exampleTextElement',
-    placeholder: 'Input text'
+  textElement = bt.createElement("text", {
+    targetId: "exampleTextElement",
+    placeholder: "Input text",
   });
 
-  textElement.mount('#exampleTextElement'); 
+  textElement.mount("#exampleTextElement");
 })();
 
 window.submit = async function submit() {
   try {
     const token = await bt.tokens.create({
-      type: 'token',
-      data: textElement
+      type: "token",
+      data: textElement,
     });
 
-    const result = document.querySelector('#result');
+    const result = document.querySelector("#result");
 
     result.innerHTML = JSON.stringify(token, null, 4);
   } catch (error) {
     console.error(error);
   }
-}
+};
 ```
 
   </TabItem>
