@@ -517,18 +517,22 @@ const MyForm = () => {
     const cardVerificationCode = cardVerificationCodeRef.current;
 
     try {
-      const response = await bt.post('https://www.api.thirdpartydomain.com/resources', {
-        number: cardNumber,
-        expiration_month: cardExpirationDate.month(),
-        expiration_year: cardExpirationDate.year(),
-        cvc: cardVerificationCode,
-        nonSensitiveData: "plainText",
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+      const response = await bt.client.post(
+        "https://www.api.thirdpartydomain.com/resources",
+        {
+          number: cardNumber,
+          expiration_month: cardExpirationDate.month(),
+          expiration_year: cardExpirationDate.year(),
+          cvc: cardVerificationCode,
+          nonSensitiveData: "plainText",
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
 
       console.log(JSON.stringify(response)); // full plaintext response
     } catch (error) {
@@ -577,18 +581,22 @@ const MyForm = () => {
     const cardVerificationCode = cardVerificationCodeRef.current;
 
     try {
-      const response = await bt.put('https://www.api.thirdpartydomain.com/resources/id', {
-        number: cardNumber,
-        expiration_month: cardExpirationDate.month(),
-        expiration_year: cardExpirationDate.year(),
-        cvc: cardVerificationCode,
-        nonSensitiveData: "plainText",
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+      const response = await bt.client.put(
+        "https://www.api.thirdpartydomain.com/resources/id",
+        {
+          number: cardNumber,
+          expiration_month: cardExpirationDate.month(),
+          expiration_year: cardExpirationDate.year(),
+          cvc: cardVerificationCode,
+          nonSensitiveData: "plainText",
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
 
       console.log(JSON.stringify(response)); // full plaintext response
     } catch (error) {
@@ -637,18 +645,22 @@ const MyForm = () => {
     const cardVerificationCode = cardVerificationCodeRef.current;
 
     try {
-      const response = await bt.patch('https://www.api.thirdpartydomain.com/resources/id', {
-        number: cardNumber,
-        expiration_month: cardExpirationDate.month(),
-        expiration_year: cardExpirationDate.year(),
-        cvc: cardVerificationCode,
-        nonSensitiveData: "plainText",
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+      const response = await bt.client.patch(
+        "https://www.api.thirdpartydomain.com/resources/id",
+        {
+          number: cardNumber,
+          expiration_month: cardExpirationDate.month(),
+          expiration_year: cardExpirationDate.year(),
+          cvc: cardVerificationCode,
+          nonSensitiveData: "plainText",
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
 
       console.log(JSON.stringify(response)); // full plaintext response
     } catch (error) {
@@ -689,9 +701,9 @@ const MyForm = () => {
 
   const submit = async () => {
     try {
-      const response = await bt.get('https://www.api.thirdpartydomain.com/resources/id', {
+      const response = await bt.client.get("https://www.api.thirdpartydomain.com/resources/id", {
         headers: {
-          'Accept': 'application/json',
+          Accept: "application/json",
         },
       });
 
@@ -732,9 +744,9 @@ const MyForm = () => {
 
   const submit = async () => {
     try {
-      const response = await bt.delete('https://www.api.thirdpartydomain.com/resources/id', {
+      const response = await bt.client.delete("https://www.api.thirdpartydomain.com/resources/id", {
         headers: {
-          'Accept': 'application/json',
+          Accept: "application/json",
         },
       });
 
@@ -799,15 +811,17 @@ HTTP client services could throw an error based on client-side validations or if
 ```javascript showLineNumbers title="Handling services errors"
 import { HttpClientError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
 
-BasisTheory.post({
-  sensitiveData: textElement,
-}).catch((error) => {
-  if (error instanceof BasisTheoryValidationError) {
-    // check error details
-  } else if (error instanceof HttpClientError) {
-    // check error data, status, or headers
-  }
-});
+BasisTheory.client
+  .post({
+    sensitiveData: textElement,
+  })
+  .catch((error) => {
+    if (error instanceof BasisTheoryValidationError) {
+      // check error details
+    } else if (error instanceof HttpClientError) {
+      // check error data, status, or headers
+    }
+  });
 ```
 
 ### BasisTheoryValidationError
@@ -867,7 +881,7 @@ BasisTheory.post({
 ```
 
 | Attribute | Type     | Description                             |
-|-----------|----------|-----------------------------------------|
+| --------- | -------- | --------------------------------------- |
 | `name`    | string   | Error name, always `'HttpClientError'`. |
 | `data`    | _object_ | Response body sent from the server.     |
 | `status`  | _number_ | Response HTTP status.                   |
