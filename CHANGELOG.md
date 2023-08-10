@@ -1,3 +1,10 @@
+# [1.76.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.75.0...v1.76.0) (2023-08-10)
+
+
+### Features
+
+* documenting reactors payload size limit ([#169](https://github.com/Basis-Theory/developers.basistheory.com/issues/169)) ([082e29a](https://github.com/Basis-Theory/developers.basistheory.com/commit/082e29ac66bef51f1faa770db5764fec84e9ada7))
+
 # [1.75.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.74.0...v1.75.0) (2023-08-10)
 
 
