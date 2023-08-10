@@ -1,3 +1,10 @@
+# [1.75.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.74.0...v1.75.0) (2023-08-10)
+
+
+### Features
+
+* adding reserved headers to proxies ([#179](https://github.com/Basis-Theory/developers.basistheory.com/issues/179)) ([fb5cdb7](https://github.com/Basis-Theory/developers.basistheory.com/commit/fb5cdb7273fdc93a9a3189c344019180a9315978))
+
 # [1.74.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.73.1...v1.74.0) (2023-08-07)
 
 
