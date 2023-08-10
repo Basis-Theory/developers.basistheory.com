@@ -1,3 +1,10 @@
+## [1.76.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.76.0...v1.76.1) (2023-08-10)
+
+
+### Bug Fixes
+
+* moving out from under detoknization ([#180](https://github.com/Basis-Theory/developers.basistheory.com/issues/180)) ([eede309](https://github.com/Basis-Theory/developers.basistheory.com/commit/eede309904ac8926a0d0ad89c3f8887376a5b973))
+
 # [1.76.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.75.0...v1.76.0) (2023-08-10)
 
 
