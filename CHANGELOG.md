@@ -1,3 +1,10 @@
+# [1.77.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.76.1...v1.77.0) (2023-08-12)
+
+
+### Features
+
+* add new ios events ([#181](https://github.com/Basis-Theory/developers.basistheory.com/issues/181)) ([8695676](https://github.com/Basis-Theory/developers.basistheory.com/commit/869567665ed7bd79e07b979671afc3e7acec6a62))
+
 ## [1.76.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.76.0...v1.76.1) (2023-08-10)
 
 
