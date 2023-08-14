@@ -3,6 +3,7 @@ sidebar_label: Types
 ---
 
 import { Alert } from "@site/src/components/shared/Alert";
+import Link from "@docusaurus/Link";
 
 # iOS Element Types
 
@@ -46,17 +47,22 @@ class TokenizeName: UIViewController {
 
 ### Configuration
 
-The `TextElementUITextField` extends the native `UITextField` from UIKit, so all standard properties and attributes supported by `UITextField` are supported by `TextElementUITextField`.
+The `TextElementUITextField` extends the native `UITextField` from UIKit, so all standard properties and methods supported by [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) are supported by `TextElementUITextField`.
 
 #### Properties
 
 The following additional properties are supported when programmatically interacting with a `TextElementUITextField`:
 
-| Name       | Type                                                                                                                                          |
-|------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| validation | No default [validation](/docs/sdks/mobile/ios/options#validation). [Validation](/docs/sdks/mobile/ios/options#validation) can be overridden.  |
-| mask       | No default [mask](/docs/sdks/mobile/ios/options#mask). [Mask](/docs/sdks/mobile/ios/options#mask) can be overridden.                          |
-| transform  | No default [transform](/docs/sdks/mobile/ios/options#transform). [Transform](/docs/sdks/mobile/ios/options#transform) can be overridden.      |
+| Name       | Type                                                                                                                                         |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| validation | No default [validation](/docs/sdks/mobile/ios/options#validation). [Validation](/docs/sdks/mobile/ios/options#validation) can be overridden. |
+| mask       | No default [mask](/docs/sdks/mobile/ios/options#mask). [Mask](/docs/sdks/mobile/ios/options#mask) can be overridden.                         |
+| transform  | No default [transform](/docs/sdks/mobile/ios/options#transform). [Transform](/docs/sdks/mobile/ios/options#transform) can be overridden.     |
+
+<Alert>
+  <code>TextElementUITextField</code> extends the native iOS <a href="https://developer.apple.com/documentation/uikit/uitextfield">UITextField</a> from UIKit, so all standard properties and attributes
+  supported by <a href="https://developer.apple.com/documentation/uikit/uitextfield">UITextField</a> are supported by <code>TextElementUITextField</code>.
+</Alert>
 
 #### Methods
 
@@ -64,6 +70,11 @@ The following additional properties are supported when programmatically interact
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `setValue(elementValueReference: ElementValueReference)` | Sets the element's text to the value referenced by the provided ElementValueReference.                                                                                                  |
 | `setValueRef(element: TextElementUITextField)`           | Binds the provided `element: TextElementUITextField` instance as a value source for this element, keeping the value of this element in sync with any changes made to the other element. |
+
+<Alert>
+  <code>TextElementUITextField</code> extends the native iOS <a href="https://developer.apple.com/documentation/uikit/uitextfield">UITextField</a> from UIKit, so all standard methods
+  supported by <a href="https://developer.apple.com/documentation/uikit/uitextfield">UITextField</a> are supported by <code>TextElementUITextField</code>.
+</Alert>
 
 ## CardNumberUITextField
 
@@ -105,7 +116,8 @@ class TokenizeCardNumber: UIViewController {
 
 ### Configuration
 
-The `CardNumberUITextField` element type extends the `TextElementUITextField` class, so all properties and attributes supported by `TextElementUITextField` are also supported here.
+The `CardNumberUITextField` element type extends the `TextElementUITextField` and [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) class, so all properties and
+methods supported by `TextElementUITextField` and [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) are also supported here.
 
 By default, this element is configured with:
 
@@ -140,9 +152,7 @@ Supported card brands are defined in the table below:
 | Visa             | `visa`            | 16, 18, 19         | 3          |
 
 <Alert>
-  Some card brands have issued card numbers with multiple lengths. The{" "}
-  <code>Card Number Digits</code> column documents all acceptable card number
-  lengths for the brand (in number of digits, excluding formatting characters).
+  Some card brands have issued card numbers with multiple lengths. The <code>Card Number Digits</code> column documents all acceptable card number lengths for the brand (in number of digits, excluding formatting characters).
 </Alert>
 
 ## CardExpirationDateUITextField
@@ -186,7 +196,8 @@ class TokenizeCardExpirationDate: UIViewController {
 
 ### Configuration
 
-The `CardExpirationDateUITextField` element type extends the `TextElementUITextField` class, so all properties and attributes supported by `TextElementUITextField` are also supported here.
+The `CardExpirationDateUITextField` element type extends the `TextElementUITextField` and [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) class, so all properties and
+methods supported by `TextElementUITextField` and [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) are also supported here.
 
 By default, this element is configured with:
 
@@ -211,6 +222,29 @@ let body: [String: Any] = [
   "type": "card"
 ]
 ```
+
+#### Format
+
+`format(dateFormat: String)` allows you to customize card expiration dates. It implements Swift's [DateFormatter](https://developer.apple.com/documentation/foundation/dateformatter), so all date formats supported by it are also available.
+
+```swift showLineNumbers
+    // expirationDateTextField value is 04/25
+
+    let body: [String: Any] = [
+        "data": [
+            "expiration_date1": self.expirationDateTextField.format(dateFormat: "yyyy-MM"), // 2025-04
+            "expiration_date2": self.expirationDateTextField.format(dateFormat: "MM"),      // 04
+            "expiration_date3": self.expirationDateTextField.format(dateFormat: "M"),       // 4
+            "expiration_date4": self.expirationDateTextField.format(dateFormat: "MM/yyyy"), // 04/2025
+            "expiration_date5": self.expirationDateTextField.format(dateFormat: "yy"),      // 25
+        ],
+        "type": "token"
+    ]
+```
+
+<Alert>
+  This code example uses Basis Theory <Link to="/docs/sdks/mobile/ios/services#http-client-services">HTTP Client</Link>
+</Alert>
 
 ## CardVerificationCodeUITextField
 
@@ -252,7 +286,8 @@ class TokenizeCVC: UIViewController {
 
 ### Configuration
 
-The `CardVerificationCodeUITextField` element type extends the `TextElementUITextField` class, so all properties and attributes supported by `TextElementUITextField` are also supported here.
+The `CardVerificationCodeUITextField` element type extends the `TextElementUITextField` and [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) class, so all properties and methods
+supported by `TextElementUITextField` and [UITextField](https://developer.apple.com/documentation/uikit/uitextfield) are also supported here.
 
 By default, this element is configured with:
 
@@ -280,9 +315,7 @@ cvcTextField.setConfig(
 See below for an example that uses all the card-related mobile elements, `CardNumberUITextField`, `CardExpirationDateUITextField`, and `CardVerificationCodeUITextField` together.
 
 <Alert>
-  Note that when these card-related elements are grouped together in a
-  dictionary, as shown in the value of <code>data</code> below, the token{" "}
-  <code>type</code> of <code>card</code> should be used.
+  Note that when these card-related elements are grouped together in a dictionary, as shown in the value of <code>data</code> below, the token <code>type</code> of <code>card</code> should be used.
 </Alert>
 
 ```swift showLineNumbers

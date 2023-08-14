@@ -40,6 +40,7 @@ const sidebars = {
       items: [
         "guides/collect/collect-cards",
         "guides/collect/issue-cards",
+        "guides/collect/receive-cards",
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-with-react",
         "guides/collect/collect-data-with-android",
@@ -190,7 +191,6 @@ const sidebars = {
           },
         },
         "concepts/elements",
-        "concepts/what-are-mats",
       ],
     },
     {
@@ -287,7 +287,6 @@ const sidebars = {
         "api/tokens/tokenize",
         "api/tokens/token-types",
         "api/tokens/search",
-        "api/tokens/token-associations",
         {
           type: "doc",
           id: "api/tokens/transactions",
@@ -379,6 +378,18 @@ const sidebars = {
             "sdks/mobile/ios/options",
             "sdks/mobile/ios/events",
             "sdks/mobile/ios/services",
+          ],
+        },
+        {
+          type: "category",
+          label: "ReactNative Elements",
+          link: {
+            type: "doc",
+            id: "sdks/mobile/react-native/index",
+          },
+          items: [
+            "sdks/mobile/react-native/components",
+            "sdks/mobile/react-native/services",
           ],
         },
       ],

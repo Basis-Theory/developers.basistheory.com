@@ -147,8 +147,9 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
 Depending on how complex your use case is a Reactor may provide you with an excellent opportunity to mutate data before forwarding it onto a 3rd Party. In the below example, we call httpbin.org (an echo service) with the last 4 characters of our token:
 
 ```javascript showLineNumbers
+const fetch = require("node-fetch");
+
 module.exports = async function (req) {
-  const fetch = require("node-fetch");
   const { customer_id } = req.args;
   const last4 = customer_id.substring(-4);
 
@@ -156,7 +157,7 @@ module.exports = async function (req) {
     method: "POST",
     body: last4,
   });
-  const raw = await resp.json();
+  const raw = await response.json();
 
   return {
     raw,
@@ -169,9 +170,10 @@ module.exports = async function (req) {
 Creating documents out of sensitive data is a primary need for businesses today, especially in fintech where you need to create and submit 1099s for many businesses:
 
 ```javascript showLineNumbers
+const fetch = require("node-fetch");
+const PDFDocument = require("pdfkit");
+
 module.exports = async function (req) {
-  const fetch = require("node-fetch");
-  const PDFDocument = require("pdfkit");
   const {
     token: { data },
   } = req.args;
@@ -185,7 +187,7 @@ module.exports = async function (req) {
     method: "POST",
     body: doc,
   });
-  const raw = await resp.json();
+  const raw = await response.json();
 
   return {
     raw,
@@ -198,31 +200,53 @@ module.exports = async function (req) {
 Many legacy business process still rely heavily on comma delimited files (CSV), tab delimited files or space-delimited files to transport data between companies, typically using SFTP servers as the endpoint of this data. For example, engaging with partner banks with ACH files requires you to format your file correctly and drop it on to an SFTP server.
 
 ```javascript showLineNumbers
+const { Client } = require('ssh2');
+
 module.exports = async function (req) {
-  var fs = require("fs");
-  var {Client} = require('ssh2');
-  const { token: { { prop1, prop2, prop3 } } } = req.args;
-  const { host, username, password } = req.configuration;
+  const { HOST, USERNAME, PASSWORD } = req.configuration;
+  const data = req.args;
 
-  var connSettings = { host, port: 22, username, password };
-  var conn = new Client();
+  const conn = new Client();
 
-  return new Promise((resolve) =>
-    conn.on('ready', function() {
-      conn.sftp(function(err, sftp) {
-        var bufferStream = new require('stream').PassThrough();
-        bufferStream.end(Buffer.from(`${prop1},${prop2},${prop3}`, "utf-8"));
+  await new Promise((resolve, reject) => {
+    conn
+      .on('error', (error) => {
+        reject(error);
+      })
+      .on('ready', () => {
+        conn.sftp((err, sftp) => {
+          const writeStream = sftp.createWriteStream('export.csv');
 
-        const writeStream =  sftp.createWriteStream( "test.csv");
+          writeStream.on('close', function () {
+            resolve();
+          });
 
-        writeStream.on('close',function () {
-          res.json({success: true});
-          resolve();
+          data.forEach((row) => {
+            writeStream.write(row.join(','));
+            writeStream.write('\n');
+          });
+
+          writeStream.end();
         });
-        bufferStream.pipe(writeStream);
+      })
+      .connect({
+        host: HOST,
+        port: 22,
+        username: USERNAME,
+        password: PASSWORD,
+        debug: console.log,
       });
-    }).connect(connSettings));
+  }).finally(() => {
+    conn.end();
+  });
+
+  return {
+    raw: {
+      status: 'ok',
+    },
   };
+};
+
 ```
 
 ### Import file from a partner
@@ -231,11 +255,9 @@ When you need to process files of sensitive data without it touching your system
 
 ```javascript showLineNumbers
 module.exports = async function (req) {
-  const { BasisTheory } = require("@basis-theory/basis-theory-js");
-  const { fileString } = req.args; // "name,ssn\nTheory,555445555"
-  const { BT_API_KEY } = req.configuration;
+  const { bt, args } = req;
+  const { fileString } = args; // "name,ssn\nTheory,555445555"
 
-  const bt = await new BasisTheory().init(BT_API_KEY);
   const rows = fileString.split("\n").map((r) => r.split(","));
 
   await Promise.all(
@@ -251,7 +273,9 @@ module.exports = async function (req) {
 
   const desensitizedFile = rows.map((row) => row.join(",")).join("\n");
 
-  res.json({ raw: desensitizedFile }); // "name,ssn\nTheory,14f5c8d4-3e84-4185-96ac-fac6386614dc"
+  return {
+    raw: desensitizedFile
+  }
 };
 ```
 
