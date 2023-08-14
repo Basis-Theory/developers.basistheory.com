@@ -330,7 +330,7 @@ const sidebars = {
             "sdks/web/javascript/options",
             "sdks/web/javascript/lifecycle",
             "sdks/web/javascript/events",
-            "sdks/web/javascript/methods",
+            "sdks/web/javascript/services",
           ],
         },
         {
@@ -343,7 +343,7 @@ const sidebars = {
           items: [
             "sdks/web/react/components",
             "sdks/web/react/events",
-            "sdks/web/react/methods",
+            "sdks/web/react/services",
           ],
         },
       ],
