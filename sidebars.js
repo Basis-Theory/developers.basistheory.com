@@ -191,7 +191,6 @@ const sidebars = {
           },
         },
         "concepts/elements",
-        "concepts/what-are-mats",
       ],
     },
     {
