@@ -96,9 +96,10 @@ Now we will create a Proxy that listens for incoming requests from the Frontend,
 <Tabs className="bt-tabs" queryString="issuer">
   <TabItem value="lithic" label="Lithic">
 
-Lithic expects an encrypted PIN Block in the `pin` field when updating a card. [See documentation](https://docs.lithic.com/docs/cards#encrypted-pin-block-enterprise).
+Lithic expects an encrypted PIN Block in the `pin` field when updating a card. The code below receives the `pin` in plaintext, and encrypt the PIN Block using Lithic's Public Key, and injects the necessary credentials to call the endpoint. [See documentation](https://docs.lithic.com/docs/cards#encrypted-pin-block-enterprise).
 
 ```javascript showLineNumbers title="requestTransform.js"
+const { Buffer } = require("buffer");
 const forge = require("node-forge");
 
 const createKey = (LITHIC_PUB_KEY) => {
@@ -159,9 +160,10 @@ module.exports = (req) => {
   </TabItem>
   <TabItem value="marqeta" label="Marqeta">
 
-Marqeta accepts the `pin` in plaintext along with a `control_token` that you can obtain going directly to them. [See documentation](https://www.marqeta.com/docs/core-api/pins#putPins).
+Marqeta accepts the `pin` in plaintext along with a `control_token` that you can obtain [going directly to them](https://www.marqeta.com/docs/core-api/pins#postPinsControltoken). The code below receives both in plaintext and injects the necessary credentials to call the endpoint. [See documentation](https://www.marqeta.com/docs/core-api/pins#putPins).
 
 ```javascript showLineNumbers title="requestTransform.js"
+const { Buffer } = require("buffer");
 module.exports = (req) => {
   const {
     args: {
@@ -995,6 +997,8 @@ With the user session properly authorized, it is time to use it to invoke the Pr
 <Tabs className="bt-tabs" queryString="issuer">
   <TabItem value="lithic" label="Lithic">
 
+Additionally, we pass the Lithic's card id in the request `path` to call the [Update Card endpoint](https://docs.lithic.com/docs/cards#update-card).
+
 <Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="javascript" label="JavaScript">
 
@@ -1018,7 +1022,6 @@ async function submit () {
     });
     // highlight-start
     await bt.proxy.patch({
-      // card id concatenated to the proxy destination_url
       path: "ef7d65c-9023-4da3-b113-3b8583fd7951",
       headers: {
         "BT-PROXY-KEY": "proxy_key_1234567890"
@@ -1062,7 +1065,6 @@ export default function App() {
       });
       // highlight-start
       await bt.proxy.patch({
-        // card id concatenated to the proxy destination_url
         path: "ef7d65c-9023-4da3-b113-3b8583fd7951",
         headers: {
           "BT-PROXY-KEY": "proxy_key_1234567890"
@@ -1180,10 +1182,191 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
   <TabItem value="marqeta" label="Marqeta">
 
+Additionally, we pass Marqeta's `control_token` for the PIN in the request `body`. You can create one by calling their [`/pins/controltoken`](https://www.marqeta.com/docs/core-api/pins#postPinsControltoken) endpoint.
 
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let pinElement;
+
+async function init () { ... }
+
+async function submit () {
+  try {
+    const session = await bt.sessions.create();
+    await fetch('http://localhost:4242/authorize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ nonce: session.nonce }),
+    });
+    // highlight-start
+    await bt.proxy.put({
+      headers: {
+        "BT-PROXY-KEY": "proxy_key_1234567890"
+      },
+      body: {
+        control_token,
+        pin: pinElement,
+      },
+      apiKey: session.sessionKey
+    });
+    // highlight-end
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef } from "react";
+import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
+
+export default function App() {
+  const { bt } = useBasisTheory("test_pub_1234567890", {
+    elements: true
+  });
+
+  const pinRef = useRef(null);
+
+  const submit = async () => {
+    try {
+      const session = await bt.sessions.create();
+      await fetch('http://localhost:4242/authorize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ nonce: session.nonce }),
+      });
+      // highlight-start
+      await bt.proxy.put({
+        headers: {
+          "BT-PROXY-KEY": "proxy_key_1234567890"
+        },
+        body: {
+          control_token,
+          pin: pinRef.current,
+        },
+        apiKey: session.sessionKey
+      });
+      // highlight-end
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <div>
+      ...
+      <button onClick={submit}>Submit</button>
+    </div>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+    private var sessionKey: String = ""
+    @IBOutlet weak var pinTextField: TextElementUITextField!
+
+    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) { ... }
+
+    @IBAction func submit(_ sender: Any) {
+        BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
+            self.sessionKey = data!.sessionKey!
+            let nonce = data!.nonce!
+            self.authorizeSession(nonce: nonce) { result, error in
+                // highlight-start
+                let proxyHttpRequest = ProxyHttpRequest(
+                    method: .put,
+                    body: [
+                      "control_token": control_token,
+                      "pin": pinTextField
+                    ])
+                BasisTheoryElements.proxy(apiKey: sessionKey, proxyKey: "proxy_key_1234567890", proxyHttpRequest: proxyHttpRequest)
+                { response, data, error in
+
+                }
+                // highlight-end
+            }
+        }
+    }
+
+    override func viewDidLoad() { ... }
+
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+import com.basistheory.android.view.TextElement
+import com.basistheory.android.service.BasisTheoryElements
+// highlight-next-line
+import com.basistheory.android.service.ProxyRequest
+import java.net.HttpURLConnection
+import java.net.URL
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var pinElement: TextElement
+    private lateinit var button: Button;
+
+    override fun onCreate(savedInstanceState: Bundle?) { ... }
+
+    // highlight-start
+    private fun submit() {
+      val bt = BasisTheoryElements.builder()
+        .apiKey("test_pub_1234567890")
+        .build()
+
+      val session = bt.createSession()
+
+      authorizeSession(session.nonce)
+
+      // highlight-start
+      val proxyRequest: ProxyRequest = ProxyRequest().apply {
+        headers = mapOf(
+            "BT-PROXY-KEY" to "proxy_key_1234567890",
+            "Content-Type" to "application/json"
+        )
+        body = object {
+          val control_token = control_token
+          val pin = pinElement
+        }
+      }
+      bt.proxy.put(proxyRequest, session.sessionKey)
+      // highlight-end
+    }
+
+    private fun authorizeSession(nonce: String) { ... }
+}
+```
 
   </TabItem>
 </Tabs>
+
+  </TabItem>
+</Tabs>
+
 
 ## Conclusion
 
