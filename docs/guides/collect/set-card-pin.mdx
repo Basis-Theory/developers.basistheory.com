@@ -1018,8 +1018,16 @@ async function submit () {
     });
     // highlight-start
     await bt.proxy.patch({
-
-    })
+      // card id concatenated to the proxy destination_url
+      path: "ef7d65c-9023-4da3-b113-3b8583fd7951",
+      headers: {
+        "BT-PROXY-KEY": "proxy_key_1234567890"
+      },
+      body: {
+        pin: pinElement,
+      },
+      apiKey: session.sessionKey
+    });
     // highlight-end
   } catch (error) {
     console.error(error);
@@ -1045,13 +1053,24 @@ export default function App() {
   const submit = async () => {
     try {
       const session = await bt.sessions.create();
-      // highlight-start
       await fetch('http://localhost:4242/authorize', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ nonce: session.nonce }),
+      });
+      // highlight-start
+      await bt.proxy.patch({
+        // card id concatenated to the proxy destination_url
+        path: "ef7d65c-9023-4da3-b113-3b8583fd7951",
+        headers: {
+          "BT-PROXY-KEY": "proxy_key_1234567890"
+        },
+        body: {
+          pin: pinRef.current,
+        },
+        apiKey: session.sessionKey
       });
       // highlight-end
     } catch (error) {
@@ -1080,52 +1099,26 @@ class ViewController: UIViewController {
     private var sessionKey: String = ""
     @IBOutlet weak var pinTextField: TextElementUITextField!
 
-    // highlight-start
-    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
-        let parameters = ["nonce": nonce]
-
-        let url = URL(string: "http://localhost:4242/authorize")!
-        let session = URLSession.shared
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
-        } catch let error {
-            completion(nil, error)
-        }
-
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-
-        let task = session.dataTask(with: request, completionHandler: { data, response, error in
-            guard error == nil else {
-                completion(nil, error)
-                return
-            }
-
-            do {
-                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
-                completion(json, nil)
-            } catch let error {
-                completion(nil, error)
-            }
-        })
-
-        task.resume()
-    }
-    // highlight-end
+    func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) { ... }
 
     @IBAction func submit(_ sender: Any) {
         BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
-            // highlight-start
             self.authorizeSession(nonce: nonce) { result, error in
+                // highlight-start
+                let proxyHttpRequest = ProxyHttpRequest(
+                    method: .patch,
+                    path: String("/ef7d65c-9023-4da3-b113-3b8583fd7951"),
+                    body: [
+                      "pin": pinTextField
+                    ])
+                BasisTheoryElements.proxy(apiKey: sessionKey, proxyKey: "proxy_key_1234567890", proxyHttpRequest: proxyHttpRequest)
+                { response, data, error in
 
+                }
+                // highlight-end
             }
-            // highlight-end
         }
     }
 
@@ -1140,10 +1133,10 @@ class ViewController: UIViewController {
 ```kotlin showLineNumbers title=MainActivity.kt
 import com.basistheory.android.view.TextElement
 import com.basistheory.android.service.BasisTheoryElements
-// highlight-start
+// highlight-next-line
+import com.basistheory.android.service.ProxyRequest
 import java.net.HttpURLConnection
 import java.net.URL
-// highlight-end
 
 class MainActivity : AppCompatActivity() {
 
@@ -1160,32 +1153,24 @@ class MainActivity : AppCompatActivity() {
 
       val session = bt.createSession()
 
-      //highlight-next-line
       authorizeSession(session.nonce)
+
+      // highlight-start
+      val proxyRequest: ProxyRequest = ProxyRequest().apply {
+        path = "/ef7d65c-9023-4da3-b113-3b8583fd7951"
+        headers = mapOf(
+            "BT-PROXY-KEY" to "proxy_key_1234567890",
+            "Content-Type" to "application/json"
+        )
+        body = object {
+          val pin = pinElement
+        }
+      }
+      bt.proxy.patch(proxyRequest, session.sessionKey)
+      // highlight-end
     }
 
-    //highlight-start
-    private fun authorizeSession(nonce: String) {
-      val url = URL("http://localhost:4242/authorize")
-      val con = url.openConnection() as HttpURLConnection
-
-      con.requestMethod = "POST"
-      con.doOutput = true
-      con.setRequestProperty("Content-Type", "application/json")
-      con.setRequestProperty("Accept", "application/json");
-
-      val body = String.format("{\"nonce\": \"%s\"}", nonce)
-
-      con.outputStream.use { os ->
-          val input: ByteArray = body.toByteArray(Charsets.UTF_8)
-          os.write(input, 0, input.size)
-      }
-
-      if (con.responseCode == 200) {
-          return
-      }
-    }
-    // highlight-end
+    private fun authorizeSession(nonce: String) { ... }
 }
 ```
 
@@ -1209,6 +1194,6 @@ The optional [customization steps](#customizing-tokens) are meant to showcase pl
 For next steps, take a look at the following guides to proceed taking the most value of your secured card tokens:
 
 - [Process Card Payments](/docs/guides/share/process-card-payments)
-- [Display Cards](/docs/guides/share/submit-cards)
+- [Display Cards](/docs/guides/share/display-cards)
 - [Search Data](/docs/guides/process/search-data)
 - [Analyze Data](/docs/guides/process/analyze-data)
