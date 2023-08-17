@@ -11,7 +11,7 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 # Set Card PIN
 
-In this guide, we will leverage Basis Theory Elements to securely capture the card PIN via user input in the frontend, and pass it to Basis Theory Proxy, which will inject Issuer authentication and connect to the Issuer API.
+In this guide we will cover the necessary steps to integrate your frontend with Basis Theory SDKs to securely capture the card PIN via user input and pass it to Basis Theory Proxy, which will inject Issuer authentication and connect to the Issuer API.
 
 ![Set Card PIN](/img/guides/collect/set-card-pin-flowchart.png)
 
@@ -991,13 +991,13 @@ class MainActivity : AppCompatActivity() {
 
 ### Invoking the Proxy
 
-With the user session properly authorized, it is time to use it to invoke the Pre-Configured Proxy, passing the Text Element value.
+With the user session properly authorized, it is time to use it to invoke the Pre-Configured Proxy, passing the Text Element value for the `pin` attribute in the request `body`.
 
 
 <Tabs className="bt-tabs" queryString="issuer">
   <TabItem value="lithic" label="Lithic">
 
-Additionally, we pass the Lithic's card id in the request `path` to call the [Update Card endpoint](https://docs.lithic.com/docs/cards#update-card).
+Additionally, we pass the Lithic's card id in the request `path` to properly call the [Update Card endpoint](https://docs.lithic.com/docs/cards#update-card).
 
 <Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="javascript" label="JavaScript">
@@ -1182,7 +1182,7 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
   <TabItem value="marqeta" label="Marqeta">
 
-Additionally, we pass Marqeta's `control_token` for the PIN in the request `body`. You can create one by calling their [`/pins/controltoken`](https://www.marqeta.com/docs/core-api/pins#postPinsControltoken) endpoint.
+Additionally, we pass Marqeta's `control_token` for the PIN in the request `body`. You can create one by calling their [`/pins/controltoken`](https://www.marqeta.com/docs/core-api/pins#postPinsControltoken) endpoint before making the proxy call.
 
 <Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="javascript" label="JavaScript">
@@ -1366,6 +1366,11 @@ class MainActivity : AppCompatActivity() {
 
   </TabItem>
 </Tabs>
+
+<Alert>
+  Be sure to replace <code>proxy_key_1234567890</code> with the Proxy Key you created previously.
+</Alert>
+
 
 
 ## Conclusion
