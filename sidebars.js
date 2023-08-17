@@ -226,6 +226,7 @@ const sidebars = {
         id: "api/index",
       },
       items: [
+        "api/index",
         "api/authentication",
         "api/request-correlation",
         "api/pagination",
@@ -243,7 +244,7 @@ const sidebars = {
         type: "doc",
         id: "api/applications/applications",
       },
-      items: ["api/applications/permissions", "api/applications/sessions"],
+      items: ["api/applications/applications", "api/applications/permissions", "api/applications/sessions"],
     },
     "api/logs",
     {
@@ -254,6 +255,7 @@ const sidebars = {
         id: "api/proxies/proxies",
       },
       items: [
+        "api/proxies/proxies",
         "api/proxies/ephemeral-proxy",
         "api/proxies/pre-configured-proxies",
       ],
@@ -265,7 +267,7 @@ const sidebars = {
         type: "doc",
         id: "api/reactors/reactors",
       },
-      items: ["api/reactors/reactor-formulas", "api/reactors/reactor-errors"],
+      items: ["api/reactors/reactors", "api/reactors/reactor-formulas", "api/reactors/reactor-errors"],
     },
     {
       type: "category",
@@ -274,7 +276,7 @@ const sidebars = {
         type: "doc",
         id: "api/tenants/tenants",
       },
-      items: ["api/tenants/tenant-members"],
+      items: ["api/tenants/tenants", "api/tenants/tenant-members"],
     },
     {
       type: "category",
@@ -284,6 +286,7 @@ const sidebars = {
         id: "api/tokens/tokens",
       },
       items: [
+        "api/tokens/tokens",
         "api/tokens/tokenize",
         "api/tokens/token-types",
         "api/tokens/search",
