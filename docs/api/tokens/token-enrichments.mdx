@@ -1,0 +1,194 @@
+---
+title: Token Enrichments
+---
+
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+
+# Enrichments
+
+Basis Theory offers several features that can be used to enrich the tokens that are tokenized.
+
+| Attribute     | Type  | Token Types                                                                                    | Description                                                        |
+| ------------- | ----- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `bin_details` | _any_ | [`card`](docs/api/tokens/token-types#card) , [`card_number`](docs/api/tokens/token-types#card) | Object containing information related to the tokenized credit card |
+
+## BIN Details <Enterprise />
+
+BIN details, or Bank Identification Number details, represent a fundamental aspect of credit card processing.
+Each credit card is associated with a unique BIN, which serves as a numerical identifier for the issuing bank
+or financial institution. These details hold crucial technical significance as they help validate transactions,
+prevent fraud, and optimize routing. Understanding the intricate mechanics of BIN details
+is vital for implementing secure and efficient credit card processing solutions.
+
+In this section of Basis Theory's documentation, we outline the options you have when interacting with
+BIN details within the Basis Theory platform and how our tokenization services
+seamlessly integrate this crucial element to enhance data security and compliance in your applications.
+
+Basis Theory offers two options for BIN details:
+
+| Level                      | Description                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------- |
+| [Standard](#standard-data) | Details on the credit cards function and origin.                                             |
+| [Enhanced](#enhanced-data) | Include Standard Data and also interchange, authentication, and other more advanced details. |
+
+### Standard Data
+
+#### Properties
+
+| Property              | Type   | Description                                  |
+| --------------------- | ------ | -------------------------------------------- |
+| bank                  | object |                                              |
+| _&nbsp;.name_         | string | Issuing bank name                            |
+| _&nbsp;.phone_        | string | Issuing bank phone                           |
+| _&nbsp;.url_          | string | Issuing bank website                         |
+| card_brand            | string | Card brand                                   |
+| card_segment_type     | string | Consumer BIN or commercial BIN               |
+| country               | object |                                              |
+| _&nbsp;.alpha2_       | string | Issuing country ISO3166 aplpha country code  |
+| _&nbsp;.numeric_      | string | Issuing country ISO3166 numeric country code |
+| _&nbsp;.name_         | string | Issuing country name                         |
+| number                | object |                                              |
+| _&nbsp;.length_       | string | Length of PAN                                |
+| prepaid               | bool   | Is prepaid BIN                               |
+| product               | object |                                              |
+| _&nbsp;.product_id_   | string | The product ID                               |
+| _&nbsp;.product_name_ | string | The product name                             |
+| type                  | string | Card type                                    |
+
+#### JSON example
+
+```json
+{
+  "bank": {
+    "name": "JPMORGAN CHASE BANK, N.A.",
+    "phone": "800-432-3117",
+    "url": "www.jpmorganchase.com"
+  },
+  "card_brand": "VISA",
+  "card_segment_type": "CONSUMER",
+  "country": {
+    "alpha2": "US",
+    "numeric": "840",
+    "name": "United States of America"
+  },
+  "number": {
+    "length": 16
+  },
+  "prepaid": false,
+  "product": {
+    "product_id": "D",
+    "product_name": "VISA TRADITIONAL"
+  },
+  "type": "CREDIT"
+}
+```
+
+### Enhanced Data
+
+#### Properties
+
+| Data Field                                 | Variable Type | Description                                            |
+| ------------------------------------------ | ------------- | ------------------------------------------------------ |
+| account_updater                            | bool          | Account Updater enabled                                |
+| additional_card_brands                     | object        |                                                        |
+| _&nbsp;.card_brand_                        | string        | Name of the additional brand                           |
+| _&nbsp;.card_brand_product_                | string        | Card brand product                                     |
+| _&nbsp;.card_brand_bank_name_              | string        | Issuing bank                                           |
+| _&nbsp;.ecom_enabled_                      | bool          | BIN has ecommerce purchases enabled                    |
+| _&nbsp;.billpay_enabled_                   | bool          | BIN has electronic bill payments enabled               |
+| alm                                        | string        | Bin participating in Account Level Management          |
+| authentication                             | object        | Authentication requirements                            |
+| _&nbsp;.authentication_required_           | bool          | Is authentication required                             |
+| _&nbsp;.authentication_name_               | string        | Name of authentication                                 |
+| bin_length                                 | string        | Length of BIN                                          |
+| clean_bank_name                            | string        | Santized bank name                                     |
+| combo_card                                 | string        | Card has combined card type capabilities               |
+| cost                                       | object        |                                                        |
+| _&nbsp;.interchange_                       | object        |                                                        |
+| _&nbsp;&nbsp;.regulated_                   | bool          | Presence of interchange regulation on a BIN            |
+| _&nbsp;&nbsp;.regulated_name_              | string        | The name interchange regulation                        |
+| _&nbsp;.domestic_                          | object        |                                                        |
+| _&nbsp;&nbsp;.cap_region_shortname_        | string        | Region where the interchange applies                   |
+| _&nbsp;&nbsp;.cap_advalorem_amount_        | string        | Interchange percentage (decimal) assessed              |
+| _&nbsp;&nbsp;.cap_type_name_               | string        | Name of the regulated interchange                      |
+| _&nbsp;&nbsp;.cap_fixed_amount_            | string        | Fixed amount                                           |
+| _&nbsp;&nbsp;.cap_type_qualifier_currency_ | string        | Currency of fixed_amount                               |
+| _&nbsp;&nbsp;.cap_type_qualifier_text_     | string        | Description of the interchange                         |
+| _&nbsp;&nbsp;.cap_type_qualifier_lower_    | string        | Minimum merchant processing volume for the interchange |
+| _&nbsp;&nbsp;.cap_type_qualifier_upper_    | string        | Maximum merchant processing volume for the interchange |
+| _&nbsp;.international_                     | object        |                                                        |
+| _&nbsp;&nbsp;.cap_region_shortname_        | string        | Region name where the interchange applies              |
+| _&nbsp;&nbsp;.cap_advalorem_amount_        | string        | Interchange percentage (decimal) assessed              |
+| _&nbsp;&nbsp;.cap_type_name_               | string        | Name of the regulated interchange                      |
+| _&nbsp;&nbsp;.cap_fixed_amount_            | string        | Fixed amount                                           |
+| _&nbsp;&nbsp;.cap_type_qualifier_currency_ | string        | Currency of fixed_amount                               |
+| _&nbsp;&nbsp;.cap_type_qualifier_text_     | string        | Description of the interchange                         |
+| _&nbsp;&nbsp;.cap_type_qualifier_lower_    | string        | Minimum merchant processing volume for the interchange |
+| _&nbsp;&nbsp;.cap_type_qualifier_upper_    | string        | Maximum merchant processing volume for the interchange |
+| domestic_only                              | bool          | Domestic-only BIN                                      |
+| gambling_blocked                           | bool          | Is not permitted to be used for online gambling        |
+| issuer_currency                            | string        | BIN Currency                                           |
+| issuer_supports_tokenization               | bool          | Issuing bank supports network tokenization             |
+| level2                                     | bool          | Level 2 interchange rate eligibility                   |
+| level3                                     | bool          | Level 3 interchange rate eligibility                   |
+| pan_or_token                               | string        | BIN is a PAN or a Network Token                        |
+| reloadable                                 | bool          | Is reloadable                                          |
+| shared_bin                                 | bool          | BIN is shared by multiple issuers                      |
+
+#### JSON example
+```json
+{
+  "account_updater": true,
+  "additional_card_brands": {
+    "card_brand": "Visa",
+    "card_brand_product": "Platinum",
+    "card_brand_bank_name": "Example Bank",
+    "ecom_enabled": true,
+    "billpay_enabled": false
+  },
+  "alm": "Managed",
+  "authentication": {
+    "authentication_required": true,
+    "authentication_name": "Fingerprint"
+  },
+  "bin_length": "6",
+  "clean_bank_name": "Example Clean Bank",
+  "combo_card": "Gold",
+  "cost": {
+    "interchange": {
+      "regulated": true,
+      "regulated_name": "Regulation A"
+    },
+    "domestic": {
+      "cap_region_shortname": "North America",
+      "cap_advalorem_amount": "0.02",
+      "cap_type_name": "Standard",
+      "cap_fixed_amount": "0.50",
+      "cap_type_qualifier_currency": "USD",
+      "cap_type_qualifier_text": "Standard cap",
+      "cap_type_qualifier_lower": "1000",
+      "cap_type_qualifier_upper": "10000"
+    },
+    "international": {
+      "cap_region_shortname": "Europe",
+      "cap_advalorem_amount": "0.03",
+      "cap_type_name": "Premium",
+      "cap_fixed_amount": "1.00",
+      "cap_type_qualifier_currency": "EUR",
+      "cap_type_qualifier_text": "Premium cap",
+      "cap_type_qualifier_lower": "500",
+      "cap_type_qualifier_upper": "5000"
+    }
+  },
+  "domestic_only": true,
+  "gambling_blocked": true,
+  "issuer_currency": "USD",
+  "issuer_supports_tokenization": true,
+  "level2": false,
+  "level3": true,
+  "pan_or_token": "Token",
+  "reloadable": false,
+  "shared_bin": true
+}
+
+```
