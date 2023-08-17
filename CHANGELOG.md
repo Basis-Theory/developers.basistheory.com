@@ -1,3 +1,10 @@
+# [1.79.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.78.0...v1.79.0) (2023-08-17)
+
+
+### Features
+
+* adding main page in sidebar making it easier to find main resources ([#185](https://github.com/Basis-Theory/developers.basistheory.com/issues/185)) ([55e3e0c](https://github.com/Basis-Theory/developers.basistheory.com/commit/55e3e0c306f64cb29ba557f399408568c6cb73ff))
+
 # [1.78.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.77.0...v1.78.0) (2023-08-16)
 
 
