@@ -1,3 +1,10 @@
+# [1.80.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.79.0...v1.80.0) (2023-08-18)
+
+
+### Features
+
+* adds readOnly and inputMode to JS and React ([#187](https://github.com/Basis-Theory/developers.basistheory.com/issues/187)) ([bd8ef29](https://github.com/Basis-Theory/developers.basistheory.com/commit/bd8ef29f9a2ae631aa1d7302b752fd5664ab3bd8))
+
 # [1.79.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.78.0...v1.79.0) (2023-08-17)
 
 
