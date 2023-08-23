@@ -1,3 +1,11 @@
+# [1.81.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.80.0...v1.81.0) (2023-08-23)
+
+
+### Features
+
+* adding details on card expiration ([#195](https://github.com/Basis-Theory/developers.basistheory.com/issues/195)) ([415d216](https://github.com/Basis-Theory/developers.basistheory.com/commit/415d216f295a3be1c5cb0e9602a647d3e19ad382))
+* adding page for Access Rules to better outline logic ([#193](https://github.com/Basis-Theory/developers.basistheory.com/issues/193)) ([de9694b](https://github.com/Basis-Theory/developers.basistheory.com/commit/de9694b5f55c91e912d4abb35bdfca0c10eaf4f4))
+
 # [1.80.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.79.0...v1.80.0) (2023-08-18)
 
 
