@@ -149,18 +149,19 @@ func main() {
   application, httpResponse, err := apiClient.ApplicationsApi.Create(contextWithAPIKey).CreateApplicationRequest(createApplicationRequest).Execute()
 }
 ```
+
   </TabItem>
 </Tabs>
 
 #### Request Parameters
 
-| Attribute                          | Required | Type     | Default                   | Description                                                                                                                             |
-| ---------------------------------- | -------- | -------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                             | true     | _string_ | `null`                    | The name of the Application. Has a maximum length of `200`                                                                              |
-| `type`                             | true     | _string_ | `null`                    | [Application type](#application-types) of the application                                                                               |
-| `permissions`                      | false    | _array_  | `[]`                      | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application                               |
-| `rules`                            | false    | _array_  | `[]`                      | An array of [Access Rules](#access-rules) granted to the application                                                                    |
-| `expires_at`                       | false    | _string_ | `null`                    | ISO8601 compatible DateTime in which the application will be deleted                                                                    |
+| Attribute     | Required | Type     | Default | Description                                                                                               |
+| ------------- | -------- | -------- | ------- | --------------------------------------------------------------------------------------------------------- |
+| `name`        | true     | _string_ | `null`  | The name of the Application. Has a maximum length of `200`                                                |
+| `type`        | true     | _string_ | `null`  | [Application type](#application-types) of the application                                                 |
+| `permissions` | false    | _array_  | `[]`    | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application |
+| `rules`       | false    | _array_  | `[]`    | An array of [Access Rules](/docs/api/applications/access-rules) granted to the application                |
+| `expires_at`  | false    | _string_ | `null`  | ISO8601 compatible DateTime in which the application will be deleted                                      |
 
 Either `permissions` or `rules` is required to be non-empty when creating an Application.
 
@@ -214,6 +215,7 @@ const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
 
 const applications = await bt.applications.list();
 ```
+
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -720,11 +722,11 @@ func main() {
 
 #### Request Parameters
 
-| Attribute                          | Required | Type     | Default | Description                                                                                                         |
-| ---------------------------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
-| `name`                             | true     | _string_ | `null`  | The name of the application. Has a maximum length of `200`                                                          |
-| `permissions`                      | false    | _array_  | `[]`    | A non-empty array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application. |
-| `rules`                            | false    | _array_  | `[]`    | An array of [Access Rules](#access-rules) granted to the application.                                               |
+| Attribute     | Required | Type     | Default | Description                                                                                                         |
+| ------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
+| `name`        | true     | _string_ | `null`  | The name of the application. Has a maximum length of `200`                                                          |
+| `permissions` | false    | _array_  | `[]`    | A non-empty array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application. |
+| `rules`       | false    | _array_  | `[]`    | An array of [Access Rules](/docs/api/applicatins/access-rules#access-rules) granted to the application.             |
 
 Either `permissions` or `rules` is required to be non-empty when updating an Application.
 
@@ -932,7 +934,6 @@ await client.DeleteAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
   </TabItem>
   <TabItem value="java" label="Java">
 
-
 ```java showLineNumbers
 import com.basistheory.*;
 import com.basistheory.auth.*;
@@ -1002,39 +1003,39 @@ Returns [an error](/docs/api/errors) if the application failed to delete.
 
 ## Application Object
 
-| Attribute                          | Type     | Description                                                                                           |
-| ---------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| `id`                               | _uuid_   | Unique identifier of the Application which can be used to [get an Application](#get-an-application)   |
-| `tenant_id`                        | _uuid_   | The [Tenant](/docs/api/tenants) ID which owns the Application                                         |
-| `name`                             | _string_ | The name of the Application                                                                           |
-| `key`                              | _string_ | The API key which should be used for authenticating against Basis Theory API endpoints                |
-| `type`                             | _string_ | [Application type](#application-types) of the Application                                             |
-| `permissions`                      | _array_  | List of [permissions](/docs/api/applications/permissions#permission-types) granted to the Application |
-| `rules`                            | _array_  | List of [access rules](#access-rules) granted to the Application                                      |
-| `created_by`                       | _uuid_   | (Optional) The ID of the user or Application that created the Application                             |
-| `created_at`                       | _date_   | (Optional) Created date of the Application in ISO 8601 format                                         |
-| `modified_by`                      | _uuid_   | (Optional) The ID of the user or Application that last modified the Application                       |
-| `modified_at`                      | _date_   | (Optional) Last modified date of the Application in ISO 8601 format                                   |
-| `expires_at`                       | _date_   | (Optional) Expiring date of the Application in ISO 8601 format                                        |
+| Attribute     | Type     | Description                                                                                           |
+| ------------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| `id`          | _uuid_   | Unique identifier of the Application which can be used to [get an Application](#get-an-application)   |
+| `tenant_id`   | _uuid_   | The [Tenant](/docs/api/tenants) ID which owns the Application                                         |
+| `name`        | _string_ | The name of the Application                                                                           |
+| `key`         | _string_ | The API key which should be used for authenticating against Basis Theory API endpoints                |
+| `type`        | _string_ | [Application type](#application-types) of the Application                                             |
+| `permissions` | _array_  | List of [permissions](/docs/api/applications/permissions#permission-types) granted to the Application |
+| `rules`       | _array_  | List of [access rules](/docs/api/applicatins/access-rules#access-rules) granted to the Application    |
+| `created_by`  | _uuid_   | (Optional) The ID of the user or Application that created the Application                             |
+| `created_at`  | _date_   | (Optional) Created date of the Application in ISO 8601 format                                         |
+| `modified_by` | _uuid_   | (Optional) The ID of the user or Application that last modified the Application                       |
+| `modified_at` | _date_   | (Optional) Last modified date of the Application in ISO 8601 format                                   |
+| `expires_at`  | _date_   | (Optional) Expiring date of the Application in ISO 8601 format                                        |
 
 ### Application Types
 
-| Name       | Type         | Description                                                                                                       |
-| ---------- | ------------ | ----------------------------------------------------------------------------------------------------------------- |
-| Private    | `private`    | Used for tokenizing, retrieving, and decrypting data within backend services where the `API key` can be secured   |
-| Public     | `public`     | Used for collecting data within your mobile or browser application                                                |
-| Management | `management` | Used for managing all aspects of your infrastructure such as [creating an Application](#create-application)       |
+| Name       | Type         | Description                                                                                                     |
+| ---------- | ------------ | --------------------------------------------------------------------------------------------------------------- |
+| Private    | `private`    | Used for tokenizing, retrieving, and decrypting data within backend services where the `API key` can be secured |
+| Public     | `public`     | Used for collecting data within your mobile or browser application                                              |
+| Management | `management` | Used for managing all aspects of your infrastructure such as [creating an Application](#create-application)     |
 
 ### Access Rules
 
-| Attribute     | Type     | Description                                                                                                                                                       |
-| ------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `description` | _string_ | A description of this Access Rule                                                                                                                                 |
-| `priority`    | _int_    | The priority of the rule, beginning with `1` and higher values having lower precedence                                                                            |
-| `container`   | _string_ | (Optional) The [container](/docs/concepts/what-are-containers) of Tokens this rule is scoped to                                                                   |
-| `conditions`  | _array_  | (Optional) List of [conditions](#access-rule-conditions) to be satisfied for the rule to be used. Only apply to sessions                |
-| `transform`   | _string_ | The [transform](#access-rule-transforms) to apply to accessed Tokens                                                                    |
-| `permissions` | _array_  | List of [permissions](/docs/api/applications/permissions#permission-types) to grant on this Access Rule                                                                                 |
+| Attribute     | Type     | Description                                                                                                                                                 |
+| ------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `description` | _string_ | A description of this Access Rule                                                                                                                           |
+| `priority`    | _int_    | The priority of the rule, beginning with `1` and higher values having lower precedence                                                                      |
+| `container`   | _string_ | (Optional) The [container](/docs/concepts/what-are-containers) of Tokens this rule is scoped to                                                             |
+| `conditions`  | _array_  | (Optional) List of [conditions](/docs/api/applications/access-rules#access-rule-conditions) to be satisfied for the rule to be used. Only apply to sessions |
+| `transform`   | _string_ | The [transform](/docs/api/applications/access-rules#access-rule-transforms) to apply to accessed Tokens                                                     |
+| `permissions` | _array_  | List of [permissions](/docs/api/applications/permissions#permission-types) to grant on this Access Rule                                                     |
 
 See [Access Rules](/docs/concepts/access-controls#what-are-access-rules) for more information.
 
