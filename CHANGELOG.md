@@ -1,3 +1,10 @@
+# [1.82.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.81.0...v1.82.0) (2023-08-23)
+
+
+### Features
+
+* adding whiteliisted dependencies ([#194](https://github.com/Basis-Theory/developers.basistheory.com/issues/194)) ([9de4be8](https://github.com/Basis-Theory/developers.basistheory.com/commit/9de4be8b576bf227369a0d1ac9d887504e75ac3b))
+
 # [1.81.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.80.0...v1.81.0) (2023-08-23)
 
 
