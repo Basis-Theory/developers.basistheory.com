@@ -274,6 +274,7 @@ const sidebars = {
       },
       items: [
         "api/reactors/reactors",
+        "api/reactors/reactor-dependencies",
         "api/reactors/reactor-formulas",
         "api/reactors/reactor-errors",
       ],
