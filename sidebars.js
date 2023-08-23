@@ -246,6 +246,7 @@ const sidebars = {
       },
       items: [
         "api/applications/applications",
+        "api/applications/access-rules",
         "api/applications/permissions",
         "api/applications/sessions",
       ],

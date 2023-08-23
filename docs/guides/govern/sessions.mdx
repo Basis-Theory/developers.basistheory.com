@@ -28,7 +28,8 @@ We will be granting this Public Application just-in-time access to read a token 
 If you do not already have a Public Application, [click here](https://portal.basistheory.com/applications/create?name=My%20Public%20Application&type=public) to create one.
 
 <Alert>
-  Save the API Key from the created Public Application as it will be used later in this guide.
+  Save the API Key from the created Public Application as it will be used later
+  in this guide.
 </Alert>
 
 ### Create a Private Application
@@ -40,7 +41,8 @@ so ensure that you have granted at least the `token:create` and `token:read` per
 If you do not already have a Private Application with these permissions, [click here](https://portal.basistheory.com/applications/create?name=My%20Private%20Application&type=private&permissions=token%3Acreate&permissions=token%3Aread) to create one.
 
 <Alert>
-  Save the API Key from the created Private Application as it will be used later in this guide.
+  Save the API Key from the created Private Application as it will be used later
+  in this guide.
 </Alert>
 
 ## Create a Token
@@ -69,7 +71,9 @@ curl "https://api.basistheory.com/tokenize" \
 ```
 
 <Alert>
-  Be sure to replace <code>test_priv_1234567890</code> with the Private API Key you created in the <a href="#create-a-private-application">Create a Private Application</a> step.
+  Be sure to replace <code>test_priv_1234567890</code> with the Private API Key
+  you created in the{" "}
+  <a href="#create-a-private-application">Create a Private Application</a> step.
 </Alert>
 
 ## Create a Session
@@ -85,7 +89,7 @@ The following examples illustrate how to create a session through the Elements S
 
 ```javascript showLineNumbers
 // using the CDN-based version of the basis-theory-js SDK
-const bt = await BasisTheory.init('test_pub_1234567890');
+const bt = await BasisTheory.init("test_pub_1234567890");
 
 const { sessionKey, nonce } = await bt.sessions.create();
 ```
@@ -117,7 +121,9 @@ BasisTheoryElements.createSession("test_pub_1234567890") { data, error in
 </Tabs>
 
 <Alert>
-  Be sure to replace <code>test_pub_1234567890</code> with the Public API Key you created in the <a href="#create-a-public-application">Create a Public Application</a> step.
+  Be sure to replace <code>test_pub_1234567890</code> with the Public API Key
+  you created in the{" "}
+  <a href="#create-a-public-application">Create a Public Application</a> step.
 </Alert>
 
 At this point, the session has not yet been authorized and attempts to use the `session_key` will be rejected by the API.
@@ -141,18 +147,18 @@ using the Private API Key [created earlier](#create-a-private-application) to au
 ```javascript showLineNumbers
 // example server-side application using Node.js + Express
 
-const express = require('express');
-const bodyParser = require('body-parser');
+const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
 
-const { BasisTheory } = require('@basis-theory/basis-theory-js');
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
 let bt;
 
 app.use(bodyParser.json());
 
-app.post('/authorize-session', async (request, response) => {
+app.post("/authorize-session", async (request, response) => {
   if (!bt) {
-    bt = await new BasisTheory().init('test_priv_1234567890');
+    bt = await new BasisTheory().init("test_priv_1234567890");
   }
 
   const { nonce } = request.body;
@@ -160,29 +166,36 @@ app.post('/authorize-session', async (request, response) => {
   // authorizing a session returns an empty 200 response
   await bt.sessions.authorize({
     nonce: nonce,
-    rules: [{
-        description: 'Allow reading only our token',
+    rules: [
+      {
+        description: "Allow reading only our token",
         priority: 1,
-        conditions: [{
-            attribute: 'id',
-            operator: 'equals',
-            value: 'token_id_1234567890'
-        }],
-        permissions: [ 'token:read' ],
-        transform: 'reveal'
-    }]
+        conditions: [
+          {
+            attribute: "id",
+            operator: "equals",
+            value: "token_id_1234567890",
+          },
+        ],
+        permissions: ["token:read"],
+        transform: "reveal",
+      },
+    ],
   });
 
   // this response is arbitrary and not required
   response.json({
-    result: 'success'
+    result: "success",
   });
 });
 ```
 
 <Alert>
-  Be sure to replace <code>test_priv_1234567890</code> with the Private API Key you created in the <a href="#create-a-private-application">Create a Private Application</a> step,
-  and <code>token_id_1234567890</code> with the id of the token created in the <a href="#create-a-token">Create a Token</a> step.
+  Be sure to replace <code>test_priv_1234567890</code> with the Private API Key
+  you created in the{" "}
+  <a href="#create-a-private-application">Create a Private Application</a> step,
+  and <code>token_id_1234567890</code> with the id of the token created in the{" "}
+  <a href="#create-a-token">Create a Token</a> step.
 </Alert>
 
 ### Passing the nonce to the Server-Side Endpoint
@@ -192,17 +205,17 @@ This step is entirely up to you to implement in your frontend framework of choic
 The following example shows how to call our example `/authorize-session` endpoint within a JavaScript environment using [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
 
 ```javascript showLineNumbers
-const bt = await BasisTheory.init('test_pub_1234567890');
+const bt = await BasisTheory.init("test_pub_1234567890");
 
 const { sessionKey, nonce } = await bt.sessions.create();
 
 // note: you would typically also provide some form of authentication on this request to your backend
-await fetch('https://my-api-is-hosted-here.com/authorize-session', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ nonce })
+await fetch("https://my-api-is-hosted-here.com/authorize-session", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ nonce }),
 });
 ```
 
@@ -211,7 +224,7 @@ await fetch('https://my-api-is-hosted-here.com/authorize-session', {
 - You must implement some server-side method for authorizing sessions in order to access the Private API Key - only **Private Applications** can authorize sessions.
 - Your server-side endpoint should use some form of authentication to guarantee that sessions are only authorized for known users in your system.
 - Your server-side endpoint should apply some form of authorization logic to ensure that sessions are only granted access to tokens that should be accessible to the authenticated user.
-- Follow the [principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege). In particular, try to only grant `token:read` or `token:use` access to specific tokens using [conditions](/docs/api/applications#access-rule-conditions), and avoid granting access to entire containers of tokens.
+- Follow the [principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege). In particular, try to only grant `token:read` or `token:use` access to specific tokens using [conditions](/docs/api/applications/access-rules#access-rule-conditions), and avoid granting access to entire containers of tokens.
 
 ## Retrieve the Token
 
@@ -227,9 +240,10 @@ curl "https://api.basistheory.com/tokens/token_id_1234567890" \
 ```
 
 <Alert>
-  Be sure to replace <code>test_sess_1234567890</code> with the Session Key you received
-  when <a href="#create-a-session">creating a session</a> and <code>token_id_1234567890</code> with the id
-  of the token created in the <a href="#create-a-token">Create a Token</a> step.
+  Be sure to replace <code>test_sess_1234567890</code> with the Session Key you
+  received when <a href="#create-a-session">creating a session</a> and{" "}
+  <code>token_id_1234567890</code> with the id of the token created in the{" "}
+  <a href="#create-a-token">Create a Token</a> step.
 </Alert>
 
 You should see a JSON response similar to:
@@ -247,7 +261,7 @@ You should see a JSON response similar to:
     "social_security_number": "111-22-3333",
     "email_address": "luke@skywalkerranch.com"
   },
-  "containers": [ "/" ]
+  "containers": ["/"]
 }
 ```
 
@@ -266,7 +280,7 @@ Next, we will illustrate how the frontend application could use the Session Key 
 ```javascript showLineNumbers
 // using the basis-theory-js SDK initialized with elements: false
 const token = await bt.tokens.retrieve(tokenId, {
-    apiKey: sessionKey
+  apiKey: sessionKey,
 });
 
 const plaintextTokenData = token.data;
@@ -309,8 +323,9 @@ TokensAPI.getByIdWithRequestBuilder(id: tokenId)
 </Tabs>
 
 <Alert>
-  The code shown above retrieves the plaintext token data so that it is directly accessible within your frontend code.
-  This will result in your frontend application being pulled into compliance scope!
+  The code shown above retrieves the plaintext token data so that it is directly
+  accessible within your frontend code. This will result in your frontend
+  application being pulled into compliance scope!
 </Alert>
 
 If you would like to securely display sensitive data within a frontend application while keeping your code out of compliance scope, you should use
