@@ -1,3 +1,10 @@
+# [1.84.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.83.0...v1.84.0) (2023-08-28)
+
+
+### Features
+
+* add mastercard-client-encryption dependency ([#197](https://github.com/Basis-Theory/developers.basistheory.com/issues/197)) ([c2cfd5c](https://github.com/Basis-Theory/developers.basistheory.com/commit/c2cfd5ca9a01e454884c2b0f7374d7a043efe682))
+
 # [1.83.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.82.0...v1.83.0) (2023-08-25)
 
 
