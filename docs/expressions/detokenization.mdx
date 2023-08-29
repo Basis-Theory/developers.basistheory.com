@@ -24,7 +24,7 @@ See the following links for more information about the permissions required to u
 [Reactor](/docs/api/reactors#invoke-a-reactor) or [Proxy](/docs/api/proxies/ephemeral-proxy#permissions).
 
 Token data can also be transformed before including it in a request by applying [filters](/docs/expressions/filters) within an expression.
-In general, filters are applied during detokenization using one of the following syntax:
+In general, filters are applied during detokenization using one of the following syntaxes:
 
 - Full Token Expressions
   - `{{ token: <tokenId> | <filter1> | <filter2> | ... }}`
@@ -52,7 +52,7 @@ Then a request containing the detokenization expression:
 
 ```json showLineNumbers
 {
-  "ssn": "{{ token: 1d08babf-456a-4bef-993d-aece3c1a2f66 | json: '$.data}}"
+  "ssn": "{{ token: 1d08babf-456a-4bef-993d-aece3c1a2f66 | json: '$.data' }}"
 }
 ```
 
@@ -106,8 +106,7 @@ which will be detokenized into the request:
 
 ## Using Token Properties
 
-Card, Bank, or generic tokens containing complex JSON objects can all be detokenized as well.
-Detokenization of complex token data is performed by embedding the token's JSON data within the request.
+In addition to the token's data, all properties of a token can be used within Detokenization Expressions.
 For example, say you have the `card` token:
 
 ```json showLineNumbers
@@ -330,7 +329,6 @@ We have not tokenized the card owner's name, `John Doe`. Assume that we have thi
   </TabItem>
 </Tabs>
 
-asdflasjfk;asdjfasd
 
 ### Use Complex Tokens
 
