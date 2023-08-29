@@ -12,8 +12,8 @@ Basis Theory supports detokenization through the use of expressions within our s
 platform and the [Proxy](/docs/concepts/what-is-the-proxy).
 
 Detokenization is performed whenever a **detokenization expression** is identified within a request.
-In their simplest form, these are Liquid [objects](/docs/expressions#objects) of the form `{{ token: <tokenId>}}`.
-This expression will be replaced with the token data contained within the token with ID `<tokenId>`.
+In their simplest form, these are Liquid [objects](/docs/expressions#objects) of the form `{{ token: <tokenId> }}`.
+This expression will be replaced with the token with ID `<tokenId>`.
 
 Any `string` value contained in a detokenization expression is expected to represent the `id` of a token within your tenant.
 If no such token is found with that identifier, the request will be rejected with a 400 error.
@@ -245,45 +245,42 @@ We have not tokenized the card owner's name, `John Doe`. Assume that we have thi
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-    ```shell showLineNumbers
-    curl "https://api.basistheory.com/proxy" \
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxy" \
     -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
     -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
     -H "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" \
     -H "Content-Type: application/json" \
     -X "POST" \
     -d '{
-    "payment_method": {
-    "credit_card": {
-    "number": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.number'}}",
-    "month": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_month'}}",
-    "year": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_year'}}",
-    "verification_value": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.cvc'}}",
-    "full_name": "John Doe"
-
-},
-"retained": true
-}
-}'
-
-````
+        "payment_method": {
+            "credit_card": {
+                "number": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.number'}}",
+                "month": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_month'}}",
+                "year": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_year'}}",
+                "verification_value": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.cvc'}}",
+                "full_name": "John Doe"
+            },
+            "retained": true
+        }
+    }'
+```
 
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-    ```shell showLineNumbers
-    curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
     -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
     -H "Content-Type: application/json" \
     -X "POST" \
     -d '{
-    "args": {
-    "card": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data'}}",
-    "card_owner_full_name": "John Doe"
-
-}
-}'
-````
+        "args": {
+            "card": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data'}}",
+            "card_owner_full_name": "John Doe"
+        }
+    }'
+```
 
   </TabItem>
 </Tabs>
@@ -293,38 +290,38 @@ We have not tokenized the card owner's name, `John Doe`. Assume that we have thi
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-    ```json showLineNumbers
-    {
-      "payment_method": {
-      "credit_card": {
-      "number": "4242424242424242",
-      "month": "11",
-      "year": "2025",
-      "verification_value": "123",
-      "full_name": "John Doe"
-    },
-      "retained": true
+```json showLineNumbers
+{
+    "payment_method": {
+        "credit_card": {
+            "number": "4242424242424242",
+            "month": "11",
+            "year": "2025",
+            "verification_value": "123",
+            "full_name": "John Doe"
+        },
+        "retained": true
     }
-    }
-    ```
+}
+```
 
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-    ```json showLineNumbers
-    {
-      "args": {
+```json showLineNumbers
+{
+  "args": {
       "card": {
-      "number": "4242424242424242",
-      "expiration_month": 11,
-      "expiration_year": 2025,
-      "cvc": "123"
-    },
+          "number": "4242424242424242",
+          "expiration_month": 11,
+          "expiration_year": 2025,
+          "cvc": "123"
+      },
       "card_owner_full_name": "John Doe"
-    },
-      "configuration": {...}
-    }
-    ```
+  },
+  "configuration": {...}
+}
+```
 
   </TabItem>
 </Tabs>
@@ -356,45 +353,43 @@ We have not tokenized the card owner's name, `John Doe`. Assume that we have thi
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-    ```shell showLineNumbers
-    curl "https://api.basistheory.com/proxy" \
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxy" \
     -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
     -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
     -H "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" \
     -H "Content-Type: application/json" \
     -X "POST" \
     -d '{
-    "payment_method": {
-    "credit_card": {
-    "number": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.number'}}",
-    "month": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_month'}}",
-    "year": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_year'}}",
-    "verification_value": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.cvc'}}",
-    "full_name": "John Doe"
-
-},
-"retained": true
-}
-}'
-
-````
+      "payment_method": {
+        "credit_card": {
+          "number": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.number'}}",
+          "month": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_month'}}",
+          "year": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_year'}}",
+          "verification_value": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.cvc'}}",
+          "full_name": "John Doe"
+        },
+        "retained": true
+      }
+    }'
+```
 
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-    ```shell showLineNumbers
-    curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
     -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
     -H "Content-Type: application/json" \
     -X "POST" \
     -d '{
-    "args": {
-    "card": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data'}}",
-    "card_owner_full_name": "John Doe"
+        "args": {
+            "card": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data'}}",
+            "card_owner_full_name": "John Doe"
 
-}
-}'
-````
+        }
+    }'
+```
 
   </TabItem>
 </Tabs>
@@ -404,38 +399,38 @@ We have not tokenized the card owner's name, `John Doe`. Assume that we have thi
 <Tabs className="bt-tabs" groupId="detokenization-examples">
   <TabItem value="proxy" label="Proxy">
 
-    ```json showLineNumbers
-    {
-      "payment_method": {
-      "credit_card": {
-      "number": "4242424242424242",
-      "month": "11",
-      "year": "2025",
-      "verification_value": "123",
-      "full_name": "John Doe"
-    },
-      "retained": true
+```json showLineNumbers
+{
+    "payment_method": {
+        "credit_card": {
+            "number": "4242424242424242",
+            "month": "11",
+            "year": "2025",
+            "verification_value": "123",
+            "full_name": "John Doe"
+        },
+        "retained": true
     }
-    }
-    ```
+}
+```
 
   </TabItem>
   <TabItem value="reactor" label="Reactor">
 
-    ```json showLineNumbers
-    {
-      "args": {
-      "card": {
-      "number": "4242424242424242",
-      "expiration_month": 11,
-      "expiration_year": 2025,
-      "cvc": "123"
+```json showLineNumbers
+{
+    "args": {
+        "card": {
+            "number": "4242424242424242",
+            "expiration_month": 11,
+            "expiration_year": 2025,
+            "cvc": "123"
+        },
+        "card_owner_full_name": "John Doe"
     },
-      "card_owner_full_name": "John Doe"
-    },
-      "configuration": {...}
-    }
-    ```
+    "configuration": {...}
+}
+```
 
   </TabItem>
 </Tabs>
