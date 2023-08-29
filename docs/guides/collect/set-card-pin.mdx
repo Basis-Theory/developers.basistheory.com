@@ -11,7 +11,7 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 # Set Card PIN
 
-In this guide we will cover the necessary steps to integrate your frontend with Basis Theory SDKs to securely capture the card PIN via user input and pass it to Basis Theory Proxy, which will inject Issuer authentication and connect to the Issuer API.
+In this guide we will cover the necessary steps to integrate your frontend with Basis Theory SDKs to securely capture the card PIN via user input and pass it to the Basis Theory Proxy, which will inject Issuer authentication and connect to the Issuer API.
 
 ![Set Card PIN](/img/guides/collect/set-card-pin-flowchart.png)
 
@@ -39,9 +39,9 @@ To create all subsequent resources, you will need a [Management Application](/do
 
 ### Public Application
 
-You will need a [Public Application](/docs/api/applications#application-types) to initialize Basis Theory Elements with. This application represents your Frontend.
+You will need a [Public Application](/docs/api/applications#application-types) to initialize Basis Theory Elements. This application represents your Frontend.
 
-Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Public Application:
+Using the Management Application key to authorize the request, call the Basis Theory API to [create a new](/docs/api/applications/#create-application) Public Application:
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications" \
@@ -53,7 +53,7 @@ curl "https://api.basistheory.com/applications" \
     "type": "public"
   }'
 ```
-Notice how no permissions are assigned at this point. They will be programmatically granted later using sessions.
+Notice how no permissions are assigned at this point. They will be programmatically granted later using [sessions](/docs/concepts/access-controls#what-are-sessions).
 
 <Alert>
   Be sure to replace <code>test_mgt_1234567890</code> with the Management API Key you created previously.
@@ -96,7 +96,7 @@ Now we will create a [Pre-Configured Proxy](/docs/api/proxies/pre-configured-pro
 <Tabs className="bt-tabs" queryString="issuer">
   <TabItem value="lithic" label="Lithic">
 
-Lithic expects an encrypted PIN Block in the `pin` field when updating a card. The code below receives the `pin` in plaintext, and encrypt the PIN Block using Lithic's Public Key, and injects the necessary credentials to call the endpoint. [See documentation](https://docs.lithic.com/docs/cards#encrypted-pin-block-enterprise).
+Lithic expects an encrypted PIN Block in the `pin` field when updating a card. The code below receives the `pin` in plaintext, encrypts the PIN Block using Lithic's Public Key, and injects the necessary credentials to call the endpoint. [See documentation](https://docs.lithic.com/docs/cards#encrypted-pin-block-enterprise).
 
 ```javascript showLineNumbers title="requestTransform.js"
 const { Buffer } = require("buffer");
@@ -199,7 +199,7 @@ Let's store the contents of the `requestTransform.js` file into a variable:
 request_transform_code=$(cat requestTransform.js)
 ```
 
-And call Basis Theory API to [create the Proxy](/docs/api/proxies#create-a-proxy):
+And call the Basis Theory API to [create the Proxy](/docs/api/proxies#create-a-proxy):
 
 <Tabs className="bt-tabs" queryString="issuer">
   <TabItem value="lithic" label="Lithic">
@@ -244,7 +244,7 @@ curl "https://api.basistheory.com/proxies" \
   Save the <code>key</code> from the created Proxy as it will be used later to invoke it.
 </Alert>
 
-Done! These are all the resources necessary. Let's see how to use them.
+Done! These are all the resources needed. Let's see how to use them.
 
 ## Configuring Basis Theory Elements
 
@@ -709,8 +709,6 @@ from flask import Flask, request
 import basistheory
 # highlight-start
 from basistheory.api import sessions_api
-from basistheory.model.access_rule import AccessRule
-from basistheory.model.condition import Condition
 from basistheory.model.authorize_session_request import AuthorizeSessionRequest
 # highlight-end
 
@@ -1371,13 +1369,13 @@ class MainActivity : AppCompatActivity() {
   Be sure to replace <code>proxy_key_1234567890</code> with the Proxy Key you created previously.
 </Alert>
 
-And that is it. Invoking the proxy is the last step to securely set the card PIN against the issuer API.
+And that's it. Invoking the proxy is the last step to securely set the card PIN against the issuer API.
 
 ## Conclusion
 
 This comprehensive guide equips developers with the essential tools to seamlessly integrate Basis Theory's frontend SDKs for secure card PIN capture. By diligently following the outlined steps, developers ensure both robust security and adherence to PCI compliance, while unlocking the [possibilities around Elements customization](/docs/guides/collect/customize-web-form).
 
-Our emphasis on emphasis on security, flexibility, and customization not only addresses inherent challenges in card PIN handling but also paves the way for innovative solutions in collaboration with card issuers. With code samples spanning various frontend and backend technologies, developers gain the knowledge needed to navigate diverse development environments effectively. By adopting these practices, developers bolster their ability to create secure, adaptable, and customized solutions that resonate within the dynamic landscape of modern payment systems.
+Our emphasis on security, flexibility, and customization not only addresses inherent challenges in card PIN handling but also paves the way for innovative solutions in collaboration with card issuers. With code samples spanning various frontend and backend technologies, developers gain the knowledge needed to navigate diverse development environments effectively. By adopting these practices, developers bolster their ability to create secure, adaptable, and customized solutions that resonate within the dynamic landscape of modern payment systems.
 
 ## Learn More
 
