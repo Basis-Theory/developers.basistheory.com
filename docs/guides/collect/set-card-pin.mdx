@@ -686,10 +686,10 @@ namespace server.Controllers
     var client = new SessionClient("test_pvt_1234567890");
 
     [HttpPost]
-    public ActionResult AuthorizeSession([FromBody] IDictionary<string,string> body)
+    public ActionResult AuthorizeSession([FromBody] string nonce)
     {
       var authorizedSession = await client.AuthorizeAsync(new AuthorizeSessionRequest {
-        Nonce = body["nonce"],
+        Nonce = nonce,
         Permissions = new List<String> { "token:use" }
       });
       return new StatusCodeResult(204);
