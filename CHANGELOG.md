@@ -1,3 +1,10 @@
+# [1.85.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.84.0...v1.85.0) (2023-08-29)
+
+
+### Features
+
+* adding enrichments ([#186](https://github.com/Basis-Theory/developers.basistheory.com/issues/186)) ([c050ebc](https://github.com/Basis-Theory/developers.basistheory.com/commit/c050ebc3c1f35310ab9eaebc2352b4295225e4ce))
+
 # [1.84.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.83.0...v1.84.0) (2023-08-28)
 
 
