@@ -35,7 +35,7 @@ In this section, we will explore the bare minimum resources necessary to display
 
 ### Public Application
 
-You will need a [Public Application](/docs/api/applications) to initialize Basis Theory Elements with. This application represents your Frontend.
+You will need a [Public Application](/docs/api/applications) to initialize Basis Theory Elements. This application represents your Frontend.
 
 [Click here to create it](https://portal.basistheory.com/applications/create?name=Frontend&type=public). Notice how no permissions are assigned at this point. They will be programmatically granted later using sessions.
 
@@ -45,7 +45,7 @@ You will need a [Public Application](/docs/api/applications) to initialize Basis
 
 ### Private Application
 
-Next, you will need a [Private Application](/docs/api/applications) using our PCI-compliant template `Read PCI Tokens`.
+Next, you will need a [Private Application](/docs/api/applications) using our PCI-compliant template `Read PCI Tokens`.  This application represents your Backend.
 
 [Click here to create it](https://portal.basistheory.com/applications/create?application_template_id=e6d4c554-6703-4bbb-b351-42cd2ee5cb5a) with the following [Access Controls](/docs/concepts/access-controls):
 * Permissions: `token:read`
@@ -53,7 +53,7 @@ Next, you will need a [Private Application](/docs/api/applications) using our PC
 * Transform: `mask`
 
 <Alert>
-  Save the API Key from the created Public Application as it will be used later in this guide.
+  Save the API Key from the created Private Application as it will be used later in this guide.
 </Alert>
 
 ## Configuring Basis Theory Elements
@@ -607,10 +607,10 @@ namespace server.Controllers
     var client = new SessionClient("test_priv_1234567890");
 
     [HttpPost]
-    public ActionResult AuthorizeSession(IDictionary<string,string> body)
+    public ActionResult AuthorizeSession([FromBody] string nonce)
     {
       var authorizedSession = await client.AuthorizeAsync(new AuthorizeSessionRequest {
-        Nonce = body["nonce"],
+        Nonce = nonce,
         Rules = new List<AccessRule> {
           new AccessRule {
             Description = "Display Token",

@@ -41,6 +41,7 @@ const sidebars = {
         "guides/collect/collect-cards",
         "guides/collect/issue-cards",
         "guides/collect/receive-cards",
+        "guides/collect/set-card-pin",
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-with-react",
         "guides/collect/collect-data-with-android",
