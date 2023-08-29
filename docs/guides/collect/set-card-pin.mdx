@@ -11,7 +11,7 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 # Set Card PIN
 
-In this guide we will cover the necessary steps to integrate your frontend with Basis Theory SDKs to securely capture the card PIN via user input and pass it to the Basis Theory Proxy, which will inject Issuer authentication and connect to the Issuer API.
+This guides provides a detailed walkthrough on how to incorporate Basis Theory SDKs into your frontend for secure card PIN collection, and send them in accordance with regulations to the Issuer API through the Basis Theory Proxy.
 
 ![Set Card PIN](/img/guides/collect/set-card-pin-flowchart.png)
 
@@ -53,7 +53,7 @@ curl "https://api.basistheory.com/applications" \
     "type": "public"
   }'
 ```
-Notice how no permissions are assigned at this point. They will be programmatically granted later using [sessions](/docs/concepts/access-controls#what-are-sessions).
+Observe that at this stage, no permissions have been allocated yet. They will be granted later programmatically using [sessions](/docs/concepts/access-controls#what-are-sessions).
 
 <Alert>
   Be sure to replace <code>test_mgt_1234567890</code> with the Management API Key you created previously.
@@ -65,7 +65,7 @@ Notice how no permissions are assigned at this point. They will be programmatica
 
 ### Private Application
 
-Next you will need a [Private Application](/docs/api/applications#application-types) to authorize the Proxy call performed by your Frontend. This application represents your Backend.
+To authorize the Proxy call to be performed by your Frontend, you will need a [Private Application](/docs/api/applications#application-types). This new application represents your Backend.
 
 Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Private Application:
 
@@ -417,7 +417,7 @@ With the TextElement enabling you to securely capture the PIN in your user-facin
 
 ### Creating a Session
 
-The first step of securely fetching the card data is creating a [Session](/docs/api/applications/sessions) to grant temporary elevated access to our Public Application. Add the following code to create a session:
+The first step of securely fetching the card data is creating a [Session](/docs/api/applications/sessions) to grant temporary elevated access to our Public Application. To create a session, add the following code:
 
 <Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="javascript" label="JavaScript">
@@ -989,7 +989,7 @@ class MainActivity : AppCompatActivity() {
 
 ### Invoking the Proxy
 
-With the user session properly authorized, it is time to use it to invoke the Pre-Configured Proxy, passing the Text Element value for the `pin` attribute in the request `body`.
+After properly authorizing the user session, you can use it to invoke the Pre-Configured Proxy by passing the Text Element value for the `pin` attribute in the request body.
 
 
 <Tabs className="bt-tabs" queryString="issuer">
@@ -1375,7 +1375,7 @@ And that's it. Invoking the proxy is the last step to securely set the card PIN 
 
 This comprehensive guide equips developers with the essential tools to seamlessly integrate Basis Theory's frontend SDKs for secure card PIN capture. By diligently following the outlined steps, developers ensure both robust security and adherence to PCI compliance, while unlocking the [possibilities around Elements customization](/docs/guides/collect/customize-web-form).
 
-Our emphasis on security, flexibility, and customization not only addresses inherent challenges in card PIN handling but also paves the way for innovative solutions in collaboration with card issuers. With code samples spanning various frontend and backend technologies, developers gain the knowledge needed to navigate diverse development environments effectively. By adopting these practices, developers bolster their ability to create secure, adaptable, and customized solutions that resonate within the dynamic landscape of modern payment systems.
+Our emphasis on security, flexibility and customization not only addresses inherent challenges in card PIN handling but also paves the way for innovative solutions in collaboration with card issuers. With code samples spanning various frontend and backend technologies, developers gain the knowledge needed to navigate diverse development environments effectively. By adopting these practices, developers bolster their ability to create secure, adaptable and customized solutions that resonate within the dynamic landscape of modern payment systems.
 
 ## Learn More
 
