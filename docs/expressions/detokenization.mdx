@@ -12,8 +12,8 @@ Basis Theory supports detokenization through the use of expressions within our s
 platform and the [Proxy](/docs/concepts/what-is-the-proxy).
 
 Detokenization is performed whenever a **detokenization expression** is identified within a request.
-In their simplest form, these are Liquid [objects](/docs/expressions#objects) of the form `{{<tokenId>}}`.
-This expression will be replaced with the token data contained within the token with ID `<tokenId>`.
+In their simplest form, these are Liquid [objects](/docs/expressions#objects) of the form `{{ token: <tokenId> }}`.
+This expression will be replaced with the token with ID `<tokenId>`.
 
 Any `string` value contained in a detokenization expression is expected to represent the `id` of a token within your tenant.
 If no such token is found with that identifier, the request will be rejected with a 400 error.
@@ -24,8 +24,14 @@ See the following links for more information about the permissions required to u
 [Reactor](/docs/api/reactors#invoke-a-reactor) or [Proxy](/docs/api/proxies/ephemeral-proxy#permissions).
 
 Token data can also be transformed before including it in a request by applying [filters](/docs/expressions/filters) within an expression.
-In general, filters are applied during detokenization using the syntax:
-`{{ <tokenId> | <filter1> | <filter2> | ... }}`
+In general, filters are applied during detokenization using one of the following syntaxes:
+
+- Full Token Expressions
+  - `{{ token: <tokenId> | <filter1> | <filter2> | ... }}`
+  - Filters able to compute on any token property
+- Data only Expressions
+  - `{{ <tokenId> | <filter1> | <filter2> | ... }}`
+  - Filters only able to compute on data
 
 Check out the [detokenization examples](/docs/expressions/detokenization#examples) below to see some examples of filters in action.
 
@@ -46,7 +52,7 @@ Then a request containing the detokenization expression:
 
 ```json showLineNumbers
 {
-  "ssn": "{{1d08babf-456a-4bef-993d-aece3c1a2f66}}"
+  "ssn": "{{ token: 1d08babf-456a-4bef-993d-aece3c1a2f66 | json: '$.data' }}"
 }
 ```
 
@@ -81,7 +87,7 @@ Then you can embed the entire [Card](/docs/api/tokens/token-types#card) object w
 
 ```json showLineNumbers
 {
-  "card": "{{5c20545b-52dc-4a60-b9b5-5b7c84f22369}}"
+  "card": "{{ token: 5c20545b-52dc-4a60-b9b5-5b7c84f22369 | json: '$.data' }}"
 }
 ```
 
@@ -96,6 +102,68 @@ which will be detokenized into the request:
     "cvc": "123"
   }
 }
+```
+
+## Using Token Properties
+
+In addition to the token's data, all properties of a token can be used within Detokenization Expressions.
+For example, say you have the `card` token:
+
+```json showLineNumbers
+{
+  "id": "5c20545b-52dc-4a60-b9b5-5b7c84f22369",
+  "type": "card",
+  "data": {
+    "number": "4242424242424242",
+    "expiration_month": 12,
+    "expiration_year": 2025,
+    "cvc": "123"
+  },
+  "metadata": {
+    "name": "John Doe"
+  },
+  "enrichments": {
+    "bin_details": {
+      // ...
+      "card_brand": "Visa"
+      // ...
+    }
+  }
+}
+```
+
+The following example shows how to use the `card_brand` from the [BIN Details Enrichment](http://localhost:3000/docs/api/tokens/token-enrichments#bin-details-) and the `name` from `metadata`:
+
+```json showLineNumbers
+{
+  "card_brand": "{{ token: 5c20545b-52dc-4a60-b9b5-5b7c84f22369 | json: '$.enrichments.bin_details.card_brand' }}",
+  "card_holder_name": "{{ token: 5c20545b-52dc-4a60-b9b5-5b7c84f22369 | json: '$.metadata.name' }}"
+}
+```
+
+which will be detokenized into the request:
+
+```json showLineNumbers
+{
+  "card_brand": "Visa",
+  "card_holder_name": "John Doe"
+}
+```
+
+## Data-only Expressions
+
+These expressions are an ease of use addition to our Expression language, making it simpler to get access to just the token data instead of the full token results. Here are a few examples:
+
+The following expressions are equivalent:
+
+```json
+  {{ 815029c2-29ec-4fc2-8cd4-99feb3ee582c }}
+  {{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data' }}
+```
+
+```json
+  {{ 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.number' }}
+  {{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.number' }}
 ```
 
 ## Examples
@@ -179,23 +247,23 @@ We have not tokenized the card owner's name, `John Doe`. Assume that we have thi
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \
-      -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
-      -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
-      -H "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" \
-      -H "Content-Type: application/json" \
-      -X "POST" \
-      -d '{
-            "payment_method": {
-              "credit_card": {
-                "number": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.number'\''}}",
-                "month": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.expiration_month'\''}}",
-                "year": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.expiration_year'\''}}",
-                "verification_value": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.cvc'\''}}",
+    -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
+    -H "BT-PROXY-URL: https://core.spreedly.com/v1/payment_methods.json" \
+    -H "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" \
+    -H "Content-Type: application/json" \
+    -X "POST" \
+    -d '{
+        "payment_method": {
+            "credit_card": {
+                "number": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.number'}}",
+                "month": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_month'}}",
+                "year": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_year'}}",
+                "verification_value": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.cvc'}}",
                 "full_name": "John Doe"
-              },
-              "retained": true
-            }
-          }'
+            },
+            "retained": true
+        }
+    }'
 ```
 
   </TabItem>
@@ -203,15 +271,15 @@ curl "https://api.basistheory.com/proxy" \
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/react" \
-      -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
-      -H "Content-Type: application/json" \
-      -X "POST" \
-      -d '{
-            "args": {
-              "card": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c}}",
-              "card_owner_full_name": "John Doe"
-            }
-        }'
+    -H "BT-API-KEY: key_NS21v84n7epsSc5WzoFjM6" \
+    -H "Content-Type: application/json" \
+    -X "POST" \
+    -d '{
+        "args": {
+            "card": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data'}}",
+            "card_owner_full_name": "John Doe"
+        }
+    }'
 ```
 
   </TabItem>
@@ -224,16 +292,16 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 
 ```json showLineNumbers
 {
-  "payment_method": {
-    "credit_card": {
-      "number": "4242424242424242",
-      "month": "11",
-      "year": "2025",
-      "verification_value": "123",
-      "full_name": "John Doe"
-    },
-    "retained": true
-  }
+    "payment_method": {
+        "credit_card": {
+            "number": "4242424242424242",
+            "month": "11",
+            "year": "2025",
+            "verification_value": "123",
+            "full_name": "John Doe"
+        },
+        "retained": true
+    }
 }
 ```
 
@@ -243,13 +311,13 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
 ```json showLineNumbers
 {
   "args": {
-    "card": {
-      "number": "4242424242424242",
-      "expiration_month": 11,
-      "expiration_year": 2025,
-      "cvc": "123"
-    },
-    "card_owner_full_name": "John Doe"
+      "card": {
+          "number": "4242424242424242",
+          "expiration_month": 11,
+          "expiration_year": 2025,
+          "cvc": "123"
+      },
+      "card_owner_full_name": "John Doe"
   },
   "configuration": {...}
 }
@@ -281,9 +349,9 @@ curl "https://api.basistheory.com/proxy" \
       -d '{
             "payment_method": {
               "credit_card": {
-                "number": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.number'\''}}"
-                "month": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.expiration_month'\''}}",
-                "year": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.expiration_year'\''}}",
+                "number": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.number'}}"
+                "month": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_month'}}",
+                "year": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_year'}}",
                 "verification_value": "987",
                 "full_name": "John Doe"
               },
@@ -303,9 +371,9 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
       -d '{
             "args": {
               "card": {
-                "number": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.number'\''}}",
-                "expiration_month": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.expiration_month'\''}}",
-                "expiration_year": "{{815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '\''$.expiration_year'\''}}",
+                "number": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.number'}}",
+                "expiration_month": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_month'}}",
+                "expiration_year": "{{ token: 815029c2-29ec-4fc2-8cd4-99feb3ee582c | json: '$.data.expiration_year'}}",
                 "cvc": "987"
               },
               "card_owner_full_name": "John Doe"
@@ -398,11 +466,11 @@ curl "https://api.basistheory.com/proxy" \
       -d '{
             "payment_method": {
               "credit_card": {
-                "number": "{{d9939ddc-d7be-423b-a0f5-69f65fec57df}}",
+                "number": "{{ token: d9939ddc-d7be-423b-a0f5-69f65fec57df | json: '$.data' }}",
                 "month": "10",
                 "year": "2024",
                 "verification_value": "789",
-                "full_name": "{{f4d86311-1254-4155-b532-b651279a8cc0}}"
+                "full_name": "{{ token: f4d86311-1254-4155-b532-b651279a8cc0 | json: '$.data' }}"
               },
               "retained": true
             }
@@ -420,12 +488,12 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
       -d '{
             "args": {
               "card": {
-                "number": "{{d9939ddc-d7be-423b-a0f5-69f65fec57df}}"
+                "number": "{{ token: d9939ddc-d7be-423b-a0f5-69f65fec57df | json: '$.data'}}"
                 "expiration_month": 10,
                 "expiration_year": 2024,
                 "cvc": "789"
               },
-              "card_owner_full_name": "{{f4d86311-1254-4155-b532-b651279a8cc0}}"
+              "card_owner_full_name": "{{ token: f4d86311-1254-4155-b532-b651279a8cc0 | json: '$.data'}}"
             }
         }'
 ```
@@ -527,11 +595,11 @@ curl "https://api.basistheory.com/proxy" \
       -d '{
             "payment_method": {
               "credit_card": {
-                "number": "{{b78b4bee-5499-42dd-8671-f1d23d32355b | json: '\''$.number'\''}}",
-                "month": "{{b78b4bee-5499-42dd-8671-f1d23d32355b | json: '\''$.expiration_month'\''}}",
-                "year": "{{b78b4bee-5499-42dd-8671-f1d23d32355b | json: '\''$.expiration_year'\''}}",
-                "verification_value": "{{b78b4bee-5499-42dd-8671-f1d23d32355b | json: '\''$.cvc'\''}}",
-                "full_name": "{{523949a9-e32f-4b5b-a0ad-7a435c79deb4}} {{42af9170-e6ca-4ea7-a43b-730a0b47b6d0}}"
+                "number": "{{token: b78b4bee-5499-42dd-8671-f1d23d32355b | json: '$.data.number'}}",
+                "month": "{{token: b78b4bee-5499-42dd-8671-f1d23d32355b | json: '$.data.expiration_month'}}",
+                "year": "{{token: b78b4bee-5499-42dd-8671-f1d23d32355b | json: '$.data.expiration_year'}}",
+                "verification_value": "{{token: b78b4bee-5499-42dd-8671-f1d23d32355b | json: '$.data.cvc'}}",
+                "full_name": "{{523949a9-e32f-4b5b-a0ad-7a435c79deb4}} {{42af9170-e6ca-4ea7-a43b-730a0b47b6d0}}" // Data only expression
               },
               "retained": true
             }
@@ -548,8 +616,8 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
       -X "POST" \
       -d '{
             "args": {
-              "card": "{{b78b4bee-5499-42dd-8671-f1d23d32355b}}",
-              "card_owner_full_name": "{{523949a9-e32f-4b5b-a0ad-7a435c79deb4}} {{42af9170-e6ca-4ea7-a43b-730a0b47b6d0}}"
+              "card": "{{ token: b78b4bee-5499-42dd-8671-f1d23d32355b | json: '$.data'}}",
+              "card_owner_full_name": "{{523949a9-e32f-4b5b-a0ad-7a435c79deb4}} {{42af9170-e6ca-4ea7-a43b-730a0b47b6d0}}"  // Data only expression
             }
         }'
 ```
@@ -646,10 +714,10 @@ curl "https://api.basistheory.com/proxy" \
       -d '{
             "payment_method": {
               "credit_card": {
-                "number": "{{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '\''$.card.card_number'\''}}",
-                "month": "{{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '\''$.card.exp_month'\''}}",
-                "year": "{{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '\''$.card.exp_year'\''}}",
-                "full_name": "{{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.card.owner.first_name'}} {{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '\''$.card.owner.last_name'\''}}"
+                "number": "{{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.card_number'}}",
+                "month": "{{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.exp_month'}}",
+                "year": "{{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.exp_year'}}",
+                "full_name": "{{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.owner.first_name'}} {{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.owner.last_name'}}"
               },
               "retained": true
             }
@@ -667,11 +735,11 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
       -d '{
             "args": {
               "card": {
-                "number": "{{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '\''$.card.card_number'\''}}",
-                "expiration_month": "{{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '\''$.card.exp_month'\''}}",
-                "expiration_year": "{{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '\''$.card.exp_year'\''}}",
+                "number": "{{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.card_number'}}",
+                "expiration_month": "{{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.exp_month'}}",
+                "expiration_year": "{{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.exp_year'}}",
               },
-              "card_owner_full_name": "{{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '\''$.card.owner.first_name'\''}} {{9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '\''$.card.owner.last_name'\''}}"
+              "card_owner_full_name": "{{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.owner.first_name'}} {{token: 9a48a051-972b-4569-8fd5-cbe17a604f96 | json: '$.data.card.owner.last_name'}}"
             }
         }'
 ```
@@ -753,9 +821,9 @@ curl "https://api.basistheory.com/proxy" \
       -d '{
             "payment_method": {
               "credit_card": {
-                "number": "{{67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '\''$.card_number'\''}}",
-                "month": "{{67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '\''$.expiration_month' | pad_left: 2, '\''0'\''}}",
-                "year": "{{67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '\''$.expiration_year' | to_string | slice: -2, 2}}",
+                "number": "{{token: 67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '$.data.card_number'}}",
+                "month": "{{token: 67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '$.data.expiration_month' | pad_left: 2, '0'}}",
+                "year": "{{token: 67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '$.data.expiration_year' | to_string | slice: -2, 2}}",
                 "full_name": "John Doe"
               },
               "retained": true
@@ -774,9 +842,9 @@ curl "https://api.basistheory.com/reactors/d08bc998-9301-495c-a2e5-04f8dc0916b4/
       -d '{
             "args": {
               "card": {
-                "number": "{{67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '\''$.card_number'\''}}",
-                "expiration_month": "{{67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '\''$.expiration_month'\'' | pad_left: 2, '\''0'\''}}",
-                "expiration_year": "{{67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '\''$.expiration_year'\'' | to_string | slice: -2, 2}}",
+                "number": "{{token: 67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '$.data.card_number'}}",
+                "expiration_month": "{{token: 67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '$.data.expiration_month' | pad_left: 2, '0'}}",
+                "expiration_year": "{{token: 67d76cd0-bc2a-4a73-be8c-6539c81db465 | json: '$.data.expiration_year' | to_string | slice: -2, 2}}",
               },
               "card_owner_full_name": "John Doe"
             }

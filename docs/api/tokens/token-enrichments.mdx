@@ -1,0 +1,172 @@
+---
+title: Token Enrichments
+---
+
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+
+# Enrichments
+
+Basis Theory offers several features that can be used to enrich the tokens that are tokenized.
+
+| Attribute     | Type     | Token Types                                                                                    | Description                                                        |
+| ------------- | -------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `bin_details` | _object_ | [`card`](docs/api/tokens/token-types#card) , [`card_number`](docs/api/tokens/token-types#card) | Object containing information related to the tokenized credit card |
+
+## Using Token Enrichments
+
+When a specific Enrichment is activated for a Tenant, each is added as a token property and returned during every [token operation](/docs/api/tokens/) and is available to be used within [Detokenization Expressions](/docs/expressions/detokenization#using-token-properties).
+
+## BIN Details <Enterprise />
+
+BIN details, or Bank Identification Number details, represent a fundamental aspect of credit card processing.
+Each credit card is associated with a unique BIN, which serves as a numerical identifier for the issuing bank
+or financial institution. These details hold crucial technical significance as they help validate transactions,
+prevent fraud, and optimize routing. Understanding the intricate mechanics of BIN details
+is vital for implementing secure and efficient credit card processing solutions.
+
+Basis Theory offers two options for enriching `card` or `card_number` tokens with BIN details, depending on the level of detail you require:
+
+| Level                      | Description                                                                                   |
+| -------------------------- | --------------------------------------------------------------------------------------------- |
+| [Standard](#standard-data) | Basic information about the credit card's function and origin.                                |
+| [Enhanced](#enhanced-data) | Includes Standard Data and also interchange, authentication, and other more advanced details. |
+
+### Standard Data
+
+#### Properties
+
+| Property            | Type   | Description                                                       |
+| ------------------- | ------ | ----------------------------------------------------------------- |
+| bank                | object |                                                                   |
+| _&nbsp;.name_       | string | Issuing bank name                                                 |
+| _&nbsp;.phone_      | string | Issuing bank phone                                                |
+| _&nbsp;.url_        | string | Issuing bank website                                              |
+| _&nbsp;.clean_name_ | string | Issuing bank name that has been reformatted for human readability |
+| card_brand          | string | Card brand                                                        |
+| card_segment_type   | string | Consumer BIN or commercial BIN                                    |
+| country             | object |                                                                   |
+| _&nbsp;.alpha2_     | string | Issuing country ISO3166 aplpha country code                       |
+| _&nbsp;.numeric_    | string | Issuing country ISO3166 numeric country code                      |
+| _&nbsp;.name_       | string | Issuing country name                                              |
+| prepaid             | bool   | Is prepaid BIN                                                    |
+| product             | object |                                                                   |
+| _&nbsp;.code_       | string | The product code                                                  |
+| _&nbsp;.name_       | string | The product name                                                  |
+| type                | string | Card type                                                         |
+
+#### JSON example
+
+```json
+{
+  "bank": {
+    "name": "JPMORGAN CHASE BANK, N.A.",
+    "phone": "800-432-3117",
+    "url": "www.jpmorganchase.com",
+    "clean_name": "JPMORGAN CHASE BANK, N.A."
+  },
+  "card_brand": "VISA",
+  "card_segment_type": "CONSUMER",
+  "country": {
+    "alpha2": "US",
+    "numeric": "840",
+    "name": "United States of America"
+  },
+  "prepaid": false,
+  "product": {
+    "code": "D",
+    "name": "VISA TRADITIONAL"
+  },
+  "type": "CREDIT"
+}
+```
+
+### Enhanced Data
+
+#### Properties
+
+| Data Field                          | Variable Type | Description                                     |
+| ----------------------------------- | ------------- | ----------------------------------------------- |
+| account_updater                     | bool          | Account Updater enabled                         |
+| additional_card_brands              | object        |                                                 |
+| _&nbsp;.card_brand_                 | string        | Name of the additional brand                    |
+| _&nbsp;.card_brand_product_         | string        | Card brand product                              |
+| _&nbsp;.card_brand_bank_name_       | string        | Issuing bank                                    |
+| alm                                 | string        | Bin participating in Account Level Management   |
+| authentication                      | object        | Authentication requirements                     |
+| _&nbsp;.authentication_required_    | bool          | Is authentication required                      |
+| _&nbsp;.authentication_name_        | string        | Name of authentication                          |
+| bank                                | object        |                                                 |
+| _&nbsp;.name_                       | string        | Issuing bank name                               |
+| _&nbsp;.phone_                      | string        | Issuing bank phone                              |
+| _&nbsp;.url_                        | string        | Issuing bank website                            |
+| _&nbsp;.clean_name_                 | string        | Issuing bank name                               |
+| bin_length                          | string        | Length of BIN                                   |
+| card_brand                          | string        | Card brand                                      |
+| card_segment_type                   | string        | Consumer BIN or commercial BIN                  |
+| combo_card                          | string        | Card has combined card type capabilities        |
+| cost                                | array         |                                                 |
+| _&nbsp;&nbsp;.cap_advalorem_amount_ | string        | Interchange percentage (decimal) assessed       |
+| _&nbsp;&nbsp;.cap_type_name_        | string        | Name of the regulated interchange               |
+| _&nbsp;&nbsp;.cap_fixed_amount_     | string        | Fixed amount                                    |
+| domestic_only                       | bool          | Domestic-only BIN                               |
+| gambling_blocked                    | bool          | Is not permitted to be used for online gambling |
+| issuer_currency                     | string        | BIN Currency                                    |
+| issuer_supports_tokenization        | bool          | Issuing bank supports network tokenization      |
+| level2                              | bool          | Level 2 interchange rate eligibility            |
+| level3                              | bool          | Level 3 interchange rate eligibility            |
+| pan_or_token                        | string        | BIN is a PAN or a Network Token                 |
+| product                             | object        |                                                 |
+| _&nbsp;.code_                       | string        | The product code                                |
+| _&nbsp;.name_                       | string        | The product name                                |
+| reloadable                          | bool          | Is reloadable                                   |
+| type                                | string        | Card type                                       |
+
+#### JSON example
+
+```json
+{
+  "account_updater": true,
+  "additional_card_brands": [
+    {
+      "card_brand": "Visa",
+      "card_brand_product": "Platinum",
+      "card_brand_bank_name": "Example Bank"
+    }
+  ],
+  "alm": "Managed",
+  "authentication": {
+    "authentication_required": true,
+    "authentication_name": "3ds"
+  },
+  "bank": {
+    "name": "JPMORGAN CHASE BANK, N.A.",
+    "phone": "800-432-3117",
+    "url": "www.jpmorganchase.com",
+    "clean_name": "JPMORGAN CHASE BANK, N.A."
+  },
+  "bin_length": "6",
+  "card_brand": "VISA",
+  "card_segment_type": "Consumer",
+  "combo_card": "Gold",
+  "cost": [
+    {
+      "cap_fixed_amount": 0,
+      "cap_advalorem_amount": 0.0115,
+      "cap_type_qualifier_text": "EU XB CNP MIF"
+    }
+  ],
+  "domestic_only": true,
+  "gambling_blocked": true,
+  "issuer_currency": "USD",
+  "issuer_supports_tokenization": true,
+  "level2": false,
+  "level3": true,
+  "pan_or_token": "Token",
+  "product": {
+    "code": "F",
+    "name": "Visa Classic"
+  },
+  "reloadable": false,
+  "type": "Debit"
+}
+```

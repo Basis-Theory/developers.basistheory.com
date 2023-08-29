@@ -887,23 +887,24 @@ Returns [an error](/docs/api/errors) if the token failed to delete.
 
 ## Token Object
 
-| Attribute                | Type                  | Description                                                                                                                                                                                  |
-| ------------------------ | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                     | _string_              | Unique identifier of the token which can be used to [get a token](#get-a-token)                                                                                                              |
-| `tenant_id`              | _uuid_                | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the token                                                                                                                        |
-| `type`                   | _string_              | [Token type](#token-types)                                                                                                                                                                   |
-| `data`                   | _any_                 | Token data                                                                                                                                                                                   |
-| `mask`                   | _any_                 | An [expression](/docs/expressions/masks) defining the mask to apply when retrieving token data with restricted permissions.                                                                  |
-| `fingerprint`            | _string_              | Uniquely identifies the contents of this token. See [Token Types](/docs/api/tokens/token-types) for the default expression for each token type.                                              |
-| `containers`             | _array_               | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details. |
-| `metadata`               | _map<string, string>_ | A key-value map of strings containing non-sensitive data.                                                                                                                                    |
-| `created_by`             | _uuid_                | The [Application](/docs/api/applications#application-object) ID which created the token                                                                                                      |
-| `created_at`             | _date_                | Created date of the token in ISO 8601 format                                                                                                                                                 |
-| `modified_by`            | _uuid_                | (Optional) The [Application](/docs/api/applications) ID which last modified the token                                                                                                        |
-| `modified_at`            | _date_                | (Optional) Last modified date of the token in ISO 8601 format                                                                                                                                |
-| `search_indexes`         | _array_               | (Optional) Array of search index [expressions](/docs/expressions/search-indexes) used when creating the token.                                                                               |
-| `fingerprint_expression` | _string_              | (Optional) An [expression](/docs/expressions/fingerprints) defining the value to fingerprint when creating the token.                                                                        |
-| `expires_at`             | _string_              | (Optional) The [token expiration](/docs/api/tokens/#token-expiration) date.                                                                                                                  |
+| Attribute                | Type                  | Description                                                                                                                                                                                                              |
+| ------------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`                     | _string_              | Unique identifier of the token which can be used to [get a token](#get-a-token)                                                                                                                                          |
+| `tenant_id`              | _uuid_                | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the token                                                                                                                                                    |
+| `type`                   | _string_              | [Token type](#token-types)                                                                                                                                                                                               |
+| `data`                   | _any_                 | Token data                                                                                                                                                                                                               |
+| `mask`                   | _any_                 | An [expression](/docs/expressions/masks) defining the mask to apply when retrieving token data with restricted permissions.                                                                                              |
+| `enrichments`            | _object_              | _Only available when detokenizing and with expressions._<br /><br /> An object containing the enrichments applied to this token. See [Token Enrichments](/docs/api/tokens/token-enrichments) for available enrichements. |
+| `fingerprint`            | _string_              | Uniquely identifies the contents of this token. See [Token Types](/docs/api/tokens/token-types) for the default expression for each token type.                                                                          |
+| `containers`             | _array_               | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details.                             |
+| `metadata`               | _map<string, string>_ | A key-value map of strings containing non-sensitive data.                                                                                                                                                                |
+| `search_indexes`         | _array_               | (Optional) Array of search index [expressions](/docs/expressions/search-indexes) used when creating the token.                                                                                                           |
+| `fingerprint_expression` | _string_              | (Optional) An [expression](/docs/expressions/fingerprints) defining the value to fingerprint when creating the token.                                                                                                    |
+| `expires_at`             | _string_              | (Optional) The [token expiration](/docs/api/tokens/#token-expiration) date.                                                                                                                                              |
+| `created_by`             | _uuid_                | The [Application](/docs/api/applications#application-object) ID which created the token                                                                                                                                  |
+| `created_at`             | _date_                | Created date of the token in ISO 8601 format                                                                                                                                                                             |
+| `modified_by`            | _uuid_                | (Optional) The [Application](/docs/api/applications) ID which last modified the token                                                                                                                                    |
+| `modified_at`            | _date_                | (Optional) Last modified date of the token in ISO 8601 format                                                                                                                                                            |
 
 ### Token Data Validations
 
@@ -927,7 +928,7 @@ See [Test Card Numbers](/docs/api/testing#card-numbers) for suggested test data 
 
 The `cvc` property automatically expires and is deleted after one hour in order to comply with PCI requirements.
 
-<CvcTtlInfoAlert/>
+<CvcTtlInfoAlert />
 
 ### Token Expiration
 

@@ -299,6 +299,7 @@ const sidebars = {
         "api/tokens/tokens",
         "api/tokens/tokenize",
         "api/tokens/token-types",
+        "api/tokens/token-enrichments",
         "api/tokens/search",
         {
           type: "doc",
