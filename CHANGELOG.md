@@ -1,3 +1,10 @@
+# [1.86.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.85.0...v1.86.0) (2023-08-29)
+
+
+### Features
+
+* add Set Card PIN guide ([#183](https://github.com/Basis-Theory/developers.basistheory.com/issues/183)) ([2619f8c](https://github.com/Basis-Theory/developers.basistheory.com/commit/2619f8c896c5b2b0539113af594c99e7f56bb64f))
+
 # [1.85.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.84.0...v1.85.0) (2023-08-29)
 
 
