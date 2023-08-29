@@ -549,6 +549,12 @@ class ViewController: UIViewController {
 ```kotlin showLineNumbers title=MainActivity.kt
 class MainActivity : AppCompatActivity() {
 
+    // highlight-start
+    private val bt = BasisTheoryElements.builder()
+      .apiKey("test_pub_1234567890")
+      .build()
+    // highlight-end
+
     private lateinit var pinElement: TextElement
     // highlight-next-line
     private lateinit var button: Button;
@@ -569,10 +575,6 @@ class MainActivity : AppCompatActivity() {
 
     // highlight-start
     private fun submit() {
-      val bt = BasisTheoryElements.builder()
-        .apiKey("test_pub_1234567890")
-        .build()
-
       val session = bt.createSession()
     }
     // highlight-end
@@ -684,11 +686,11 @@ namespace server.Controllers
     var client = new SessionClient("test_pvt_1234567890");
 
     [HttpPost]
-    public ActionResult AuthorizeSession(IDictionary<string,string> body)
+    public ActionResult AuthorizeSession([FromBody] IDictionary<string,string> body)
     {
       var authorizedSession = await client.AuthorizeAsync(new AuthorizeSessionRequest {
         Nonce = body["nonce"],
-        Rules = new List<String> { "token:use" }
+        Permissions = new List<String> { "token:use" }
       });
       return new StatusCodeResult(204);
     }
@@ -942,6 +944,10 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
+    private val bt = BasisTheoryElements.builder()
+      .apiKey("test_pub_1234567890")
+      .build()
+
     private lateinit var pinElement: TextElement
     private lateinit var button: Button;
 
@@ -949,12 +955,7 @@ class MainActivity : AppCompatActivity() {
 
     // highlight-start
     private fun submit() {
-      val bt = BasisTheoryElements.builder()
-        .apiKey("test_pub_1234567890")
-        .build()
-
       val session = bt.createSession()
-
       //highlight-next-line
       authorizeSession(session.nonce)
     }
@@ -1140,6 +1141,10 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
+    private val bt = BasisTheoryElements.builder()
+      .apiKey("test_pub_1234567890")
+      .build()
+
     private lateinit var pinElement: TextElement
     private lateinit var button: Button;
 
@@ -1147,12 +1152,7 @@ class MainActivity : AppCompatActivity() {
 
     // highlight-start
     private fun submit() {
-      val bt = BasisTheoryElements.builder()
-        .apiKey("test_pub_1234567890")
-        .build()
-
       val session = bt.createSession()
-
       authorizeSession(session.nonce)
 
       // highlight-start
@@ -1325,6 +1325,10 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
+    private val bt = BasisTheoryElements.builder()
+      .apiKey("test_pub_1234567890")
+      .build()
+
     private lateinit var pinElement: TextElement
     private lateinit var button: Button;
 
@@ -1332,12 +1336,7 @@ class MainActivity : AppCompatActivity() {
 
     // highlight-start
     private fun submit() {
-      val bt = BasisTheoryElements.builder()
-        .apiKey("test_pub_1234567890")
-        .build()
-
       val session = bt.createSession()
-
       authorizeSession(session.nonce)
 
       // highlight-start
