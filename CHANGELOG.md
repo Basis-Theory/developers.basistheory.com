@@ -1,3 +1,10 @@
+## [1.86.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.86.0...v1.86.1) (2023-08-31)
+
+
+### Bug Fixes
+
+* updating response to fix gaps ([#202](https://github.com/Basis-Theory/developers.basistheory.com/issues/202)) ([5e837ae](https://github.com/Basis-Theory/developers.basistheory.com/commit/5e837ae456376ee29126e13415d805d676296314))
+
 # [1.86.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.85.0...v1.86.0) (2023-08-29)
 
 
