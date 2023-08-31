@@ -43,7 +43,7 @@ Basis Theory offers two options for enriching `card` or `card_number` tokens wit
 | _&nbsp;.url_        | string | Issuing bank website                                              |
 | _&nbsp;.clean_name_ | string | Issuing bank name that has been reformatted for human readability |
 | card_brand          | string | Card brand                                                        |
-| card_segment_type   | string | Consumer BIN or commercial BIN                                    |
+| card_segment_type   | string | `["", "Business", "Commercial", "Consumer", "Government"]`        |
 | country             | object |                                                                   |
 | _&nbsp;.alpha2_     | string | Issuing country ISO3166 aplpha country code                       |
 | _&nbsp;.numeric_    | string | Issuing country ISO3166 numeric country code                      |
@@ -52,7 +52,7 @@ Basis Theory offers two options for enriching `card` or `card_number` tokens wit
 | product             | object |                                                                   |
 | _&nbsp;.code_       | string | The product code                                                  |
 | _&nbsp;.name_       | string | The product name                                                  |
-| type                | string | Card type                                                         |
+| type                | string | Card type `["Credit", "Debit"]`                                   |
 
 #### JSON example
 
@@ -84,42 +84,41 @@ Basis Theory offers two options for enriching `card` or `card_number` tokens wit
 
 #### Properties
 
-| Data Field                          | Variable Type | Description                                     |
-| ----------------------------------- | ------------- | ----------------------------------------------- |
-| account_updater                     | bool          | Account Updater enabled                         |
-| additional_card_brands              | object        |                                                 |
-| _&nbsp;.card_brand_                 | string        | Name of the additional brand                    |
-| _&nbsp;.card_brand_product_         | string        | Card brand product                              |
-| _&nbsp;.card_brand_bank_name_       | string        | Issuing bank                                    |
-| alm                                 | string        | Bin participating in Account Level Management   |
-| authentication                      | object        | Authentication requirements                     |
-| _&nbsp;.authentication_required_    | bool          | Is authentication required                      |
-| _&nbsp;.authentication_name_        | string        | Name of authentication                          |
-| bank                                | object        |                                                 |
-| _&nbsp;.name_                       | string        | Issuing bank name                               |
-| _&nbsp;.phone_                      | string        | Issuing bank phone                              |
-| _&nbsp;.url_                        | string        | Issuing bank website                            |
-| _&nbsp;.clean_name_                 | string        | Issuing bank name                               |
-| bin_length                          | string        | Length of BIN                                   |
-| card_brand                          | string        | Card brand                                      |
-| card_segment_type                   | string        | Consumer BIN or commercial BIN                  |
-| combo_card                          | string        | Card has combined card type capabilities        |
-| cost                                | array         |                                                 |
-| _&nbsp;&nbsp;.cap_advalorem_amount_ | string        | Interchange percentage (decimal) assessed       |
-| _&nbsp;&nbsp;.cap_type_name_        | string        | Name of the regulated interchange               |
-| _&nbsp;&nbsp;.cap_fixed_amount_     | string        | Fixed amount                                    |
-| domestic_only                       | bool          | Domestic-only BIN                               |
-| gambling_blocked                    | bool          | Is not permitted to be used for online gambling |
-| issuer_currency                     | string        | BIN Currency                                    |
-| issuer_supports_tokenization        | bool          | Issuing bank supports network tokenization      |
-| level2                              | bool          | Level 2 interchange rate eligibility            |
-| level3                              | bool          | Level 3 interchange rate eligibility            |
-| pan_or_token                        | string        | BIN is a PAN or a Network Token                 |
-| product                             | object        |                                                 |
-| _&nbsp;.code_                       | string        | The product code                                |
-| _&nbsp;.name_                       | string        | The product name                                |
-| reloadable                          | bool          | Is reloadable                                   |
-| type                                | string        | Card type                                       |
+| Data Field                          | Variable Type | Description                                                       |
+| ----------------------------------- | ------------- | ----------------------------------------------------------------- |
+| account_updater                     | bool          | Account Updater enabled                                           |
+| additional_card_brands              | object        |                                                                   |
+| _&nbsp;.card_brand_                 | string        | Name of the additional brand                                      |
+| _&nbsp;.card_brand_product_         | string        | Card brand product                                                |
+| _&nbsp;.card_brand_bank_name_       | string        | Issuing bank                                                      |
+| alm                                 | bool          | Participating in Account Level Management                         |
+| authentication                      | array         | Authentication requirements `[{"sca_name": string}]`              |
+| _&nbsp;.sca_name_                   | string        | Is authentication required `["EU PSD2 - SCA"]`                    |
+| bank                                | object        |                                                                   |
+| _&nbsp;.name_                       | string        | Issuing bank name                                                 |
+| _&nbsp;.phone_                      | string        | Issuing bank phone                                                |
+| _&nbsp;.url_                        | string        | Issuing bank website                                              |
+| _&nbsp;.clean_name_                 | string        | Issuing bank name that has been reformatted for human readability |
+| bin_length                          | string        | Length of BIN                                                     |
+| card_brand                          | string        | Card brand                                                        |
+| card_segment_type                   | string        | `["", "Business", "Commercial", "Consumer", "Government"]`        |
+| combo_card                          | string        | Card has combined card type capabilities                          |
+| cost                                | array         |                                                                   |
+| _&nbsp;&nbsp;.cap_advalorem_amount_ | string        | Interchange percentage (decimal) assessed                         |
+| _&nbsp;&nbsp;.cap_type_name_        | string        | Name of the regulated interchange                                 |
+| _&nbsp;&nbsp;.cap_fixed_amount_     | string        | Fixed amount                                                      |
+| domestic_only                       | bool          | Domestic-only BIN                                                 |
+| gambling_blocked                    | bool          | Is not permitted to be used for online gambling                   |
+| issuer_currency                     | string        | 3-digit ISO-3166 Currency                                         |
+| issuer_supports_tokenization        | bool          | Issuing bank supports network tokenization                        |
+| level2                              | bool          | Level 2 interchange rate eligibility                              |
+| level3                              | bool          | Level 3 interchange rate eligibility                              |
+| pan_or_token                        | string        | `["pan", "token"]`                                                |
+| product                             | object        |                                                                   |
+| _&nbsp;.code_                       | string        | The product code                                                  |
+| _&nbsp;.name_                       | string        | The product name                                                  |
+| reloadable                          | bool          | Is reloadable                                                     |
+| type                                | string        | Card type `["Credit", "Debit"]`                                   |
 
 #### JSON example
 
