@@ -1,3 +1,10 @@
+# [1.87.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.86.1...v1.87.0) (2023-08-31)
+
+
+### Features
+
+* adding product codes ([e7236f7](https://github.com/Basis-Theory/developers.basistheory.com/commit/e7236f72f7ba622117a8e7cd90fa85026486e9c9))
+
 ## [1.86.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.86.0...v1.86.1) (2023-08-31)
 
 
