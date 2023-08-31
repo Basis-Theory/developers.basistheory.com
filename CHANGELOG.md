@@ -1,3 +1,10 @@
+# [1.88.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.87.0...v1.88.0) (2023-08-31)
+
+
+### Features
+
+* adding link to codes ([#204](https://github.com/Basis-Theory/developers.basistheory.com/issues/204)) ([38dcea2](https://github.com/Basis-Theory/developers.basistheory.com/commit/38dcea2d53cf7e7e243e25fb71426ce7cf492a54))
+
 # [1.87.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.86.1...v1.87.0) (2023-08-31)
 
 
