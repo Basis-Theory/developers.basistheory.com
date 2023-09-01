@@ -1,3 +1,10 @@
+## [1.88.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.88.0...v1.88.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* typo in alpha ([#205](https://github.com/Basis-Theory/developers.basistheory.com/issues/205)) ([a6940d8](https://github.com/Basis-Theory/developers.basistheory.com/commit/a6940d8545fa04e5044a4d77d549664db03c3565))
+
 # [1.88.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.87.0...v1.88.0) (2023-08-31)
 
 
