@@ -1,3 +1,10 @@
+# [1.89.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.88.1...v1.89.0) (2023-09-01)
+
+
+### Features
+
+* add ios enableCopy docs ([#206](https://github.com/Basis-Theory/developers.basistheory.com/issues/206)) ([337b2e4](https://github.com/Basis-Theory/developers.basistheory.com/commit/337b2e4be75fa7d74355506f83e29dd3ecf0ad82))
+
 ## [1.88.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.88.0...v1.88.1) (2023-09-01)
 
 
