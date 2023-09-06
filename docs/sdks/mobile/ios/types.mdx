@@ -2,7 +2,7 @@
 sidebar_label: Types
 ---
 
-import { Alert } from "@site/src/components/shared/Alert";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import Link from "@docusaurus/Link";
 
 # iOS Element Types
@@ -60,6 +60,7 @@ The following additional properties are supported when programmatically interact
 | transform     | No default [transform](/docs/sdks/mobile/ios/options#transform). [Transform](/docs/sdks/mobile/ios/options#transform) can be overridden.     |
 | enableCopy    | [enableCopy](/docs/sdks/mobile/ios/options#enable-copy) defaults to `false` and can be overriden.                                            |
 | copyIconColor | [copyIconColor](/docs/sdks/mobile/ios/options#copy-icon-color) defaults to `UIColor.blue` and can be overriden.                              |
+| getValueType  | [getValueType](/docs/sdks/mobile/ios/options#get-value-type) defaults to `.string` and can be overriden.                                     |
 
 <Alert>
   <code>TextElementUITextField</code> extends the native iOS <a href="https://developer.apple.com/documentation/uikit/uitextfield">UITextField</a> from UIKit, so all standard properties and attributes
@@ -130,6 +131,7 @@ By default, this element is configured with:
 | transform     | The [transform](/docs/sdks/mobile/ios/options#transform) removes all spaces set by the [mask](/docs/sdks/mobile/ios/options#mask) before tokenization.    |
 | enableCopy    | [enableCopy](/docs/sdks/mobile/ios/options#enable-copy) defaults to `false` and can be overriden.                                                         |
 | copyIconColor | [copyIconColor](/docs/sdks/mobile/ios/options#copy-icon-color) defaults to `UIColor.blue` and can be overriden.                                           |
+| getValueType  | [getValueType](/docs/sdks/mobile/ios/options#get-value-type) defaults to `.string` and can be overriden.                                                  |
 
 ### Card Brands
 
@@ -212,6 +214,7 @@ By default, this element is configured with:
 | transform     | No default [transform](/docs/sdks/mobile/ios/options#transform).                                                                     |
 | enableCopy    | [enableCopy](/docs/sdks/mobile/ios/options#enable-copy) defaults to `false` and can be overriden.                                    |
 | copyIconColor | [copyIconColor](/docs/sdks/mobile/ios/options#copy-icon-color) defaults to `UIColor.blue` and can be overriden.                      |
+| getValueType  | [getValueType](/docs/sdks/mobile/ios/options#get-value-type) defaults to `.string` and can be overriden.                             |
 
 #### Month and Year
 
@@ -228,6 +231,12 @@ let body: [String: Any] = [
   "type": "card"
 ]
 ```
+
+<Alert type={Alerts.WARNING}>
+  Before SDK version <code>3.0.0</code> the <code>month()</code> and <code>year()</code> methods rendered as <code>String</code> when sending the value to the API.
+  As of version <code>3.0.0</code>, these methods now render as <code>Int</code> when sending the value to the API.
+</Alert>
+
 
 #### Format
 
