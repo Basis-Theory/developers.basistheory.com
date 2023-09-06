@@ -1,3 +1,10 @@
+# [1.91.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.90.0...v1.91.0) (2023-09-06)
+
+
+### Features
+
+* add ios getValueType docs ([#212](https://github.com/Basis-Theory/developers.basistheory.com/issues/212)) ([4303506](https://github.com/Basis-Theory/developers.basistheory.com/commit/43035069e49d9757bd882d026624394b96cef467))
+
 # [1.90.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.89.0...v1.90.0) (2023-09-06)
 
 
