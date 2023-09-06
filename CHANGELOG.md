@@ -1,3 +1,10 @@
+# [1.92.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.91.0...v1.92.0) (2023-09-06)
+
+
+### Features
+
+* upgrades dependencies ([#213](https://github.com/Basis-Theory/developers.basistheory.com/issues/213)) ([d91b80c](https://github.com/Basis-Theory/developers.basistheory.com/commit/d91b80ce6d4be8895ba0c4113b1a244fe885d1f7))
+
 # [1.91.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.90.0...v1.91.0) (2023-09-06)
 
 
