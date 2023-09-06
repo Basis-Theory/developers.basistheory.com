@@ -16,7 +16,7 @@ All `List` endpoints support pagination to allow bulk fetching multiple items. E
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications?page=2&size=10" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+  -H "BT-API-KEY: <API Key>"
 ```
 
   </TabItem>
@@ -25,7 +25,7 @@ curl "https://api.basistheory.com/applications?page=2&size=10" \
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<Management API Key>");
 
 const applications = await bt.applications.list({
   page: 2,
@@ -39,7 +39,7 @@ const applications = await bt.applications.list({
 ```csharp showLineNumbers
 using BasisTheory.net.Applications;
 
-var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new ApplicationClient("<Management API Key>");
 
 var applications = client.GetAsync(new ApplicationGetRequest {
   Page = 2,
@@ -54,7 +54,7 @@ var applications = client.GetAsync(new ApplicationGetRequest {
 import basistheory
 from basistheory.api import applications_api
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<Management API Key>")) as api_client:
     applications_client = applications_api.ApplicationsApi(api_client)
 
     applications = applications_client.get(page=2, size=10)
@@ -75,7 +75,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<Management API Key>"},
   })
 
   applications, httpResponse, err := apiClient.ApplicationsApi.Get(contextWithAPIKey).Page(2).Size(10).Execute()

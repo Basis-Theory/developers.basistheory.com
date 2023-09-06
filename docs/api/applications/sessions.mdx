@@ -30,7 +30,7 @@ Create a new Session for a Public Application.
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/sessions" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-API-KEY: <Public API Key>" \
   -X "POST"
 ```
 
@@ -40,7 +40,7 @@ curl "https://api.basistheory.com/sessions" \
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<Public API Key>");
 
 const session = await bt.sessions.create();
 ```
@@ -51,7 +51,7 @@ const session = await bt.sessions.create();
 ```csharp showLineNumbers
 using BasisTheory.net.Sessions;
 
-var client = new SessionClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new SessionClient("<Public API Key>");
 
 var session = await client.CreateAsync();
 ```
@@ -63,7 +63,7 @@ var session = await client.CreateAsync();
 import basistheory
 from basistheory.api import sessions_api
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<Public API Key>")) as api_client:
     session_client = sessions_api.SessionsApi(api_client)
 
     session = session_client.create()
@@ -84,7 +84,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<Public API Key>"},
   })
 
   session, httpResponse, err := apiClient.SessionsApi.Create(contextWithAPIKey).Execute()
@@ -100,7 +100,7 @@ Returns a [CreateSessionResponse](#create-session-response-object) if the sessio
 
 ```json showLineNumbers
 {
-  "session_key": "key_sess_9A8skE7MhJi9HnaSGyTDZY",
+  "session_key": "<Session API Key>",
   "nonce": "4J7SiRvfADwJ9ZqwviJJs8",
   "expires_at": "2023-01-09T20:14:55.2130891+00:00"
 }
@@ -127,7 +127,7 @@ Authorize a created session with permissions or access rules.
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/sessions/authorize" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-API-KEY: <Private API Key>" \
   -H "Content-Type: application/json" \
   -X "POST" \
   -d '{
@@ -142,7 +142,7 @@ curl "https://api.basistheory.com/sessions/authorize" \
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<Private API Key>");
 
 const authorizedSession = await bt.sessions.authorize({
   nonce: "4J7SiRvfADwJ9ZqwviJJs8",
@@ -156,7 +156,7 @@ const authorizedSession = await bt.sessions.authorize({
 ```csharp showLineNumbers
 using BasisTheory.net.Sessions;
 
-var client = new SessionClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new SessionClient("<Private API Key>");
 
 var authorizedSession = await client.AuthorizeAsync(new AuthorizeSessionRequest {
   Nonce = "4J7SiRvfADwJ9ZqwviJJs8",
@@ -172,7 +172,7 @@ import basistheory
 from basistheory.api import sessions_api
 from basistheory.model.authorize_session_request import AuthorizeSessionRequest
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<Private API Key>")) as api_client:
     session_client = sessions_api.SessionsApi(api_client)
 
     authorizedSession = session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
@@ -196,7 +196,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<Private API Key>"},
   })
 
   authorizeSessionRequest := *basistheory.NewAuthorizeSessionRequest("4J7SiRvfADwJ9ZqwviJJs8")
