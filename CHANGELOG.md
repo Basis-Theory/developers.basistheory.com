@@ -1,3 +1,10 @@
+# [1.90.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.89.0...v1.90.0) (2023-09-06)
+
+
+### Features
+
+* add android gravity docs ([#211](https://github.com/Basis-Theory/developers.basistheory.com/issues/211)) ([d00b504](https://github.com/Basis-Theory/developers.basistheory.com/commit/d00b504771ff1efe61992ae0004ab424592d9265))
+
 # [1.89.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.88.1...v1.89.0) (2023-09-01)
 
 
