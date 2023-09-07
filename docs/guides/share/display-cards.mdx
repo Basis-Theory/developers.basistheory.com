@@ -83,7 +83,7 @@ let cardExpirationDateElement;
 let cardVerificationCodeElement;
 
 async function init() {
-  bt = await new BasisTheory().init('<API Key>', { elements: true });
+  bt = await new BasisTheory().init('<API_KEY>', { elements: true });
 
   //highlight-start
   // Creates Elements instances
@@ -126,7 +126,7 @@ import {
 } from '@basis-theory/basis-theory-react';
 
 export default function App() {
-  const { bt } = useBasisTheory('<API Key>', { elements: true });
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
   // highlight-start
   // Refs to get access to the Elements instance
   const cardNumberRef = useRef(null);
@@ -267,7 +267,7 @@ class MainActivity : AppCompatActivity() {
 </Tabs>
 
 <Alert>
-  Be sure to replace <code>&lt;API Key></code> with the Public API Key you created previously.
+  Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created previously.
 </Alert>
 
 ## Displaying Card Data
@@ -326,7 +326,7 @@ import {
 } from '@basis-theory/basis-theory-react';
 
 export default function App() {
-  const { bt } = useBasisTheory('<API Key>', { elements: true });
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
   // Refs to get access to the Elements instance
   const cardNumberRef = useRef(null);
   const cardExpirationRef = useRef(null);
@@ -371,7 +371,7 @@ class ViewController: UIViewController {
 
     // highlight-start
     @IBAction func display(_ sender: Any) {
-        BasisTheoryElements.createSession(apiKey: "<API Key>") { data, error in
+        BasisTheoryElements.createSession(apiKey: "<API_KEY>") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
         }
@@ -447,7 +447,7 @@ class MainActivity : AppCompatActivity() {
     // highlight-start
     private fun display() {
       val bt = BasisTheoryElements.builder()
-        .apiKey("<API Key>")
+        .apiKey("<API_KEY>")
         .build()
 
       val session = bt.createSession()
@@ -460,7 +460,7 @@ class MainActivity : AppCompatActivity() {
 </Tabs>
 
 <Alert>
-  Be sure to replace <code>&lt;API Key></code> with the Public API Key you created previously.
+  Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created previously.
 </Alert>
 
 ### Authorizing a Session
@@ -520,7 +520,7 @@ app.use(express.json());
 
 // highlight-start
 app.post("/authorize", async (request, response) => {
-  const bt = await new BasisTheory().init("<Private API Key>");
+  const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
   const { nonce } = request.body;
   // authorizing a session returns an empty 200 response
   await bt.sessions.authorize({
@@ -604,7 +604,7 @@ namespace server.Controllers
   public class CheckoutApiController : Controller
   {
     // highlight-start
-    var client = new SessionClient("<Private API Key>");
+    var client = new SessionClient("<PRIVATE_API_KEY>");
 
     [HttpPost]
     public ActionResult AuthorizeSession([FromBody] string nonce)
@@ -657,7 +657,7 @@ app = Flask(__name__)
 @app.route('/authorize', methods=['POST'])
 def authorize_session():
   body = request.get_json()
-  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<Private API Key>")) as api_client:
+  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
     session_client = sessions_api.SessionsApi(api_client)
 
     session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
@@ -715,7 +715,7 @@ func authorizeSession(rw http.ResponseWriter, r *http.Request) {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<Private API Key>"},
+    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
   })
 
   authorizeSessionRequest := *basistheory.NewAuthorizeSessionRequest(payload["nonce"].(string))
@@ -749,7 +749,7 @@ func authorizeSession(rw http.ResponseWriter, r *http.Request) {
 </Alert>
 
 <Alert>
-  Be sure to replace <code>&lt;Private API Key></code> with the Private API Key you created previously.
+  Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.
 </Alert>
 
 Now let's have our frontend `display` function call this new endpoint passing the session `nonce`.
@@ -800,7 +800,7 @@ import {
 } from '@basis-theory/basis-theory-react';
 
 export default function App() {
-  const { bt } = useBasisTheory('<API Key>', { elements: true });
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
   // Refs to get access to the Elements instance
   const cardNumberRef = useRef(null);
   const cardExpirationRef = useRef(null);
@@ -885,7 +885,7 @@ class ViewController: UIViewController {
     // highlight-end
 
     @IBAction func display(_ sender: Any) {
-        BasisTheoryElements.createSession(apiKey: "<API Key>") { data, error in
+        BasisTheoryElements.createSession(apiKey: "<API_KEY>") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
             // highlight-start
@@ -924,7 +924,7 @@ class MainActivity : AppCompatActivity() {
     // highlight-start
     private fun display() {
       val bt = BasisTheoryElements.builder()
-        .apiKey("<API Key>")
+        .apiKey("<API_KEY>")
         .build()
 
       val session = bt.createSession()
@@ -1020,7 +1020,7 @@ import {
 } from '@basis-theory/basis-theory-react';
 
 export default function App() {
-  const { bt } = useBasisTheory('<API Key>', { elements: true });
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
   // Refs to get access to the Elements instance
   const cardNumberRef = useRef(null);
   const cardExpirationRef = useRef(null);
@@ -1078,7 +1078,7 @@ class ViewController: UIViewController {
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) { ... }
 
     @IBAction func display(_ sender: Any) {
-        BasisTheoryElements.createSession(apiKey: "<API Key>") { data, error in
+        BasisTheoryElements.createSession(apiKey: "<API_KEY>") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
             self.authorizeSession(nonce: nonce) { result, error in
@@ -1118,7 +1118,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun display() {
       val bt = BasisTheoryElements.builder()
-        .apiKey("<API Key>")
+        .apiKey("<API_KEY>")
         .build()
 
       val session = bt.createSession()
