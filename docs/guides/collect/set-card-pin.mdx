@@ -46,7 +46,7 @@ Using the Management Application key to authorize the request, call the Basis Th
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications" \
   -X "POST" \
-  -H "BT-API-KEY: test_mgt_1234567890" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Frontend",
@@ -56,7 +56,7 @@ curl "https://api.basistheory.com/applications" \
 Observe that at this stage, no permissions have been allocated yet. They will be granted later programmatically using [sessions](/docs/concepts/access-controls#what-are-sessions).
 
 <Alert>
-  Be sure to replace <code>test_mgt_1234567890</code> with the Management API Key you created previously.
+  Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.
 </Alert>
 
 <Alert>
@@ -72,7 +72,7 @@ Using the Management Application key to authorize the request, call Basis Theory
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications" \
   -X "POST" \
-  -H "BT-API-KEY: test_mgt_1234567890" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Backend",
@@ -82,7 +82,7 @@ curl "https://api.basistheory.com/applications" \
 ```
 
 <Alert>
-  Be sure to replace <code>test_mgt_1234567890</code> with the Management API Key you created previously.
+  Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.
 </Alert>
 
 <Alert>
@@ -207,7 +207,7 @@ And call the Basis Theory API to [create the Proxy](/docs/api/proxies#create-a-p
 ```shell showLineNumbers
 curl "https://api.basistheory.com/proxies" \
   -X "POST" \
-  -H "BT-API-KEY: test_mgt_1234567890" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "PIN Proxy",
@@ -223,7 +223,7 @@ curl "https://api.basistheory.com/proxies" \
 ```shell showLineNumbers
 curl "https://api.basistheory.com/proxies" \
   -X "POST" \
-  -H "BT-API-KEY: test_mgt_1234567890" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "PIN Proxy",
@@ -237,7 +237,7 @@ curl "https://api.basistheory.com/proxies" \
 </Tabs>
 
 <Alert>
-  Be sure to replace <code>test_mgt_1234567890</code> with the Management API Key you created previously.
+  Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.
 </Alert>
 
 <Alert>
@@ -267,7 +267,7 @@ let bt;
 let pinElement;
 
 async function init() {
-  bt = await new BasisTheory().init('test_pub_1234567890', { elements: true });
+  bt = await new BasisTheory().init('<PUBLIC_API_KEY>', { elements: true });
 
   const wrapper = document.getElementById("pin");
   wrapper.style.border = "1px solid black";
@@ -299,7 +299,7 @@ import React, { useRef } from "react";
 import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory("test_pub_1234567890", {
+  const { bt } = useBasisTheory("<PUBLIC_API_KEY>", {
     elements: true
   });
 
@@ -455,7 +455,7 @@ import React, { useRef } from "react";
 import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory("test_pub_1234567890", {
+  const { bt } = useBasisTheory("<PUBLIC_API_KEY>", {
     elements: true
   });
 
@@ -498,7 +498,7 @@ class ViewController: UIViewController {
 
     // highlight-start
     @IBAction func submit(_ sender: Any) {
-        BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
+        BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
         }
@@ -551,7 +551,7 @@ class MainActivity : AppCompatActivity() {
 
     // highlight-start
     private val bt = BasisTheoryElements.builder()
-      .apiKey("test_pub_1234567890")
+      .apiKey("<PUBLIC_API_KEY>")
       .build()
     // highlight-end
 
@@ -585,7 +585,7 @@ class MainActivity : AppCompatActivity() {
 </Tabs>
 
 <Alert>
-  Be sure to replace <code>test_pub_1234567890</code> with the Public API Key you created previously.
+  Be sure to replace <code>&lt;PUBLIC_API_KEY></code> with the Public API Key you created previously.
 </Alert>
 
 ### Authorizing a Session
@@ -613,7 +613,7 @@ app.use(express.json());
 
 // highlight-start
 app.post("/authorize", async (request, response) => {
-  const bt = await new BasisTheory().init("test_pvt_1234567890");
+  const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
   const { nonce } = request.body;
   // authorizing a session returns an empty 200 response
   await bt.sessions.authorize({
@@ -683,7 +683,7 @@ namespace server.Controllers
   public class CheckoutApiController : Controller
   {
     // highlight-start
-    var client = new SessionClient("test_pvt_1234567890");
+    var client = new SessionClient("<PRIVATE_API_KEY>");
 
     [HttpPost]
     public ActionResult AuthorizeSession([FromBody] string nonce)
@@ -720,7 +720,7 @@ app = Flask(__name__)
 @app.route('/authorize', methods=['POST'])
 def authorize_session():
   body = request.get_json()
-  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="test_pvt_1234567890")) as api_client:
+  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
     session_client = sessions_api.SessionsApi(api_client)
 
     session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
@@ -768,7 +768,7 @@ func authorizeSession(rw http.ResponseWriter, r *http.Request) {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "test_pvt_1234567890"},
+    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
   })
 
   authorizeSessionRequest := *basistheory.NewAuthorizeSessionRequest(payload["nonce"].(string))
@@ -790,7 +790,7 @@ func authorizeSession(rw http.ResponseWriter, r *http.Request) {
 </Alert>
 
 <Alert>
-  Be sure to replace <code>test_pvt_1234567890</code> with the Private API Key you created previously.
+  Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.
 </Alert>
 
 Now let's have our frontend `submit` function call this new endpoint passing the session `nonce`.
@@ -833,7 +833,7 @@ import React, { useRef } from "react";
 import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory("test_pub_1234567890", {
+  const { bt } = useBasisTheory("<PUBLIC_API_KEY>", {
     elements: true
   });
 
@@ -915,7 +915,7 @@ class ViewController: UIViewController {
     // highlight-end
 
     @IBAction func submit(_ sender: Any) {
-        BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
+        BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
             // highlight-start
@@ -945,7 +945,7 @@ import java.net.URL
 class MainActivity : AppCompatActivity() {
 
     private val bt = BasisTheoryElements.builder()
-      .apiKey("test_pub_1234567890")
+      .apiKey("<PUBLIC_API_KEY>")
       .build()
 
     private lateinit var pinElement: TextElement
@@ -1046,7 +1046,7 @@ import React, { useRef } from "react";
 import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory("test_pub_1234567890", {
+  const { bt } = useBasisTheory("<PUBLIC_API_KEY>", {
     elements: true
   });
 
@@ -1103,7 +1103,7 @@ class ViewController: UIViewController {
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) { ... }
 
     @IBAction func submit(_ sender: Any) {
-        BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
+        BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
             self.authorizeSession(nonce: nonce) { result, error in
@@ -1142,7 +1142,7 @@ import java.net.URL
 class MainActivity : AppCompatActivity() {
 
     private val bt = BasisTheoryElements.builder()
-      .apiKey("test_pub_1234567890")
+      .apiKey("<PUBLIC_API_KEY>")
       .build()
 
     private lateinit var pinElement: TextElement
@@ -1230,7 +1230,7 @@ import React, { useRef } from "react";
 import { TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory("test_pub_1234567890", {
+  const { bt } = useBasisTheory("<PUBLIC_API_KEY>", {
     elements: true
   });
 
@@ -1287,7 +1287,7 @@ class ViewController: UIViewController {
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) { ... }
 
     @IBAction func submit(_ sender: Any) {
-        BasisTheoryElements.createSession(apiKey: "test_pub_1234567890") { data, error in
+        BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
             self.authorizeSession(nonce: nonce) { result, error in
@@ -1326,7 +1326,7 @@ import java.net.URL
 class MainActivity : AppCompatActivity() {
 
     private val bt = BasisTheoryElements.builder()
-      .apiKey("test_pub_1234567890")
+      .apiKey("<PUBLIC_API_KEY>")
       .build()
 
     private lateinit var pinElement: TextElement

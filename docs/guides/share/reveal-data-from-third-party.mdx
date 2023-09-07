@@ -114,7 +114,7 @@ let textElement;
 //highlight-end
 
 (async () => {
-  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+  bt = await new BasisTheory().init('<API_KEY>', { elements: true });
 
   //highlight-start
   textElement = bt.createElement('text', {
@@ -123,7 +123,7 @@ let textElement;
 
   // here #exampleTextElement is a DOM selector
   // example: <div id="exampleTextElement"></div>
-  await textElement.mount('#exampleTextElement'); 
+  await textElement.mount('#exampleTextElement');
   //highlight-end
 })();
 ```
@@ -142,7 +142,7 @@ import {
 } from '@basis-theory/basis-theory-react';
 
 function App() {
-  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
   // highlight-next-line
   const textRef = useRef(null);
 
@@ -192,7 +192,7 @@ class ViewController: UIViewController {
 To add a Text Element to your Android app, you just have to follow these two steps:
 
 1. Add the XML below to your MainActivity layout.
-2. Reference your XML element in the MainActivity class. 
+2. Reference your XML element in the MainActivity class.
 ````
 
 ```xml title="res/layout/activity_main.xml"
@@ -223,13 +223,13 @@ class MainActivity : AppCompatActivity() {
 </Tabs>
 
 <Alert>
-  Be sure to replace <code>test_1234567890</code> with the Public API Key you
+  Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you
   created in <a href="#getting-started">Getting Started</a>.
 </Alert>
 
 ## Creating a Session
 
-Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide temporary elevated access to your public applications, 
+Next, we'll create a [Session](/docs/api/applications/sessions). Sessions provide temporary elevated access to your public applications,
 and we'll will use it to safely authenticate the request to the third party. Add the following code to create a session:
 
 <Tabs className="bt-tabs" groupId="clients">
@@ -243,7 +243,7 @@ let bt;
 let textElement;
 
 (async () => {
-  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+  bt = await new BasisTheory().init('<API_KEY>', { elements: true });
 
   textElement = bt.createElement('text', {
     targetId: 'exampleTextElement',
@@ -251,7 +251,7 @@ let textElement;
 
   // here #exampleTextElement is a DOM selector
   // example: <div id="exampleTextElement"></div>
-  await textElement.mount('#exampleTextElement'); 
+  await textElement.mount('#exampleTextElement');
 
   // this is just an example method that'll have the full lifecycle for revealing
   const reveal = async () => {
@@ -275,7 +275,7 @@ import {
 } from '@basis-theory/basis-theory-react';
 
 function App() {
-  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
   const textRef = useRef(null);
 
   // this is just an example method that'll have the full lifecycle for revealing
@@ -346,7 +346,7 @@ class MainActivity : AppCompatActivity() {
     private fun reveal() {
       //highlight-start
       val bt = BasisTheoryElements.builder()
-        .apiKey("test_1234567890")
+        .apiKey("<API_KEY>")
         .build()
       //highlight-end
 
@@ -410,7 +410,7 @@ app.post("/create-proxy", async (request, response) => {
       },
       requireAuth: true,
     },
-    { apiKey: "test_mgmt_1234567890" } // management application
+    { apiKey: "<MANAGEMENT_API_KEY>" } // management application
   );
 
   response.send(proxy);
@@ -438,7 +438,7 @@ curl -X POST http://localhost:4242/create-proxy
 ```
 
 <Alert>
-  Be sure to replace <code>test_mgmt_1234567890</code> with the Management API Key you
+  Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you
   created in <a href="#creating-a-management-application">Creating a Management Application</a>, <code>http://third_party_url.com</code> with the third party URL and <code>credential_1234567890</code> with the third party credentials (optionally).
 </Alert>
 
@@ -507,7 +507,7 @@ app.post("/create-proxy", async (request, response) => {
       },
       requireAuth: true,
     },
-    { apiKey: "test_mgmt_1234567890" } // management application
+    { apiKey: "<MANAGEMENT_API_KEY>" } // management application
   );
 
   response.send(proxy);
@@ -521,7 +521,7 @@ app.post("/authorize", async (request, response) => {
   await bt.sessions.authorize({
     nonce: nonce,
     permissions: ['token:use']
-  }, { apiKey: "test_priv_1234567890" }); // private application
+  }, { apiKey: "<PRIVATE_API_KEY>" }); // private application
 
   // this response is arbitrary and not required
   response.json({
@@ -536,7 +536,7 @@ app.listen(port, () => {
 ```
 
 <Alert>
-  Be sure to replace <code>test_priv_1234567890</code> with the Private API Key you
+  Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you
   created in the <a href="#creating-a-private-application">Creating a Private Application</a> step.
 </Alert>
 
@@ -559,7 +559,7 @@ let bt;
 let textElement;
 
 (async () => {
-  bt = await new BasisTheory().init('test_1234567890', { elements: true });
+  bt = await new BasisTheory().init('<API_KEY>', { elements: true });
 
   textElement = bt.createElement('text', {
     targetId: 'exampleTextElement',
@@ -567,7 +567,7 @@ let textElement;
 
   // here #exampleTextElement is a DOM selector
   // example: <div id="exampleTextElement"></div>
-  await textElement.mount('#exampleTextElement'); 
+  await textElement.mount('#exampleTextElement');
 
   // this is just an example method that'll have the full lifecycle for revealing
   const reveal = async () => {
@@ -599,7 +599,7 @@ import {
 } from '@basis-theory/basis-theory-react';
 
 function App() {
-  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
   const textRef = useRef(null);
 
   // this is just an example method that'll have the full lifecycle for revealing
@@ -661,28 +661,28 @@ class ViewController: UIViewController {
     //highlight-start
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
-        
+
         let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
             completion(nil, error)
         }
-        
+
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
+
         let task = session.dataTask(with: request, completionHandler: { data, response, error in
             guard error == nil else {
                 completion(nil, error)
                 return
             }
-            
+
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
                 completion(json, nil)
@@ -690,7 +690,7 @@ class ViewController: UIViewController {
                 completion(nil, error)
             }
         })
-        
+
         task.resume()
     }
     //highlight-end
@@ -721,9 +721,9 @@ class MainActivity : AppCompatActivity() {
     // this is just an example method that'll have the full lifecycle for revealing
     private fun reveal() {
       val bt = BasisTheoryElements.builder()
-        .apiKey("test_1234567890")
+        .apiKey("<API_KEY>")
         .build()
-      
+
       val session = bt.createSession()
 
       //highlight-next-line
@@ -751,7 +751,7 @@ class MainActivity : AppCompatActivity() {
           return
       }
     }
-  //highlight-end 
+  //highlight-end
 }
 ```
   </TabItem>
@@ -773,7 +773,7 @@ let bt;
 let textElement;
 
 (async () => {
-  bt = await new BasisTheory().init("test_1234567890", { elements: true });
+  bt = await new BasisTheory().init("<API_KEY>", { elements: true });
 
   textElement = bt.createElement("text", {
     targetId: "exampleTextElement",
@@ -823,7 +823,7 @@ import {
 } from '@basis-theory/basis-theory-react';
 
 function App() {
-  const { bt } = useBasisTheory('test_1234567890', { elements: true });
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
   const textRef = useRef(null);
 
   // this is just an example method that'll have the full lifecycle for revealing
@@ -879,7 +879,7 @@ class ViewController: UIViewController {
             let sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
 
-            
+
             self.authorizeSession(nonce: nonce) { result, error in
               //highlight-start
               let proxyHttpRequest = ProxyHttpRequest(method: .get, path: String("/" + issuerCardId))
@@ -901,28 +901,28 @@ class ViewController: UIViewController {
 
     func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
         let parameters = ["nonce": nonce]
-        
+
         let url = URL(string: "http://localhost:4242/authorize")!
         let session = URLSession.shared
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
             completion(nil, error)
         }
-        
+
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
+
         let task = session.dataTask(with: request, completionHandler: { data, response, error in
             guard error == nil else {
                 completion(nil, error)
                 return
             }
-            
+
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
                 completion(json, nil)
@@ -930,7 +930,7 @@ class ViewController: UIViewController {
                 completion(nil, error)
             }
         })
-        
+
         task.resume()
     }
 }
@@ -960,7 +960,7 @@ class MainActivity : AppCompatActivity() {
     // this is just an example method that'll have the full lifecycle for revealing
     private fun reveal() {
       val bt = BasisTheoryElements.builder()
-        .apiKey("test_1234567890")
+        .apiKey("<API_KEY>")
         .build()
 
       val session = bt.createSession()

@@ -38,7 +38,7 @@ Create a new Application for the Tenant.
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -X "POST" \
   -d '{
@@ -54,7 +54,7 @@ curl "https://api.basistheory.com/applications" \
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const application = await bt.applications.create({
   name: "My Example App",
@@ -69,7 +69,7 @@ const application = await bt.applications.create({
 ```csharp showLineNumbers
 using BasisTheory.net.Applications;
 
-var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
 
 var application = await client.CreateAsync(new Application {
   Name = "My Example App",
@@ -95,7 +95,7 @@ public class Example {
         defaultClient.setBasePath("https://api.basistheory.com");
 
         ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
 
         ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
         CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
@@ -115,7 +115,7 @@ import basistheory
 from basistheory.api import applications_api
 from basistheory.model.create_application_request import CreateApplicationRequest
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
     application_client = applications_api.ApplicationsApi(api_client)
 
     application = application_client.create(create_application_request=CreateApplicationRequest(
@@ -140,7 +140,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
   })
 
   createApplicationRequest := *basistheory.NewCreateApplicationRequest(applicationName, applicationType)
@@ -174,7 +174,7 @@ Returns an [Application](#application-object) if the application was created. Re
   "id": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Example App",
-  "key": "key_FZ8RmaxoGc73lbmF2cpmUJ",
+  "key": "<PRIVATE_API_KEY>",
   "type": "private",
   "permissions": ["token:create", "token:read"],
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -202,7 +202,7 @@ Get a list of applications for the Tenant.
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>"
 ```
 
   </TabItem>
@@ -211,7 +211,7 @@ curl "https://api.basistheory.com/applications" \
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const applications = await bt.applications.list();
 ```
@@ -222,7 +222,7 @@ const applications = await bt.applications.list();
 ```csharp showLineNumbers
 using BasisTheory.net.Applications;
 
-var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
 
 var applications = await client.GetAsync();
 ```
@@ -243,7 +243,7 @@ var applications = await client.GetAsync();
       defaultClient.setBasePath("https://api.basistheory.com");
 
       ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-      ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+      ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
 
       ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
       List<UUID> id = Arrays.asList();
@@ -261,7 +261,7 @@ var applications = await client.GetAsync();
 import basistheory
 from basistheory.api import applications_api
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
     application_client = applications_api.ApplicationsApi(api_client)
 
     applications = application_client.get()
@@ -282,7 +282,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
   })
 
   applications, httpResponse, err := apiClient.ApplicationsApi.Get(contextWithAPIKey).Execute()
@@ -346,7 +346,7 @@ Get an application by ID in the Tenant.
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications/fe1f9ba4-474e-44b9-b949-110cdba9d662" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>"
 ```
 
   </TabItem>
@@ -355,7 +355,7 @@ curl "https://api.basistheory.com/applications/fe1f9ba4-474e-44b9-b949-110cdba9d
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const application = await bt.applications.retrieve(
   "fe1f9ba4-474e-44b9-b949-110cdba9d662"
@@ -368,7 +368,7 @@ const application = await bt.applications.retrieve(
 ```csharp showLineNumbers
 using BasisTheory.net.Applications;
 
-var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
 
 var application = await client.GetByIdAsync("fe1f9ba4-474e-44b9-b949-110cdba9d662");
 ```
@@ -386,7 +386,7 @@ public class Example {
         defaultClient.setBasePath("https://api.basistheory.com");
 
         ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
 
         ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
         Application result = apiInstance.getById("9b806250-d507-46e7-9dc0-de0f89a91a92");
@@ -401,7 +401,7 @@ public class Example {
 import basistheory
 from basistheory.api import applications_api
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
     application_client = applications_api.ApplicationsApi(api_client)
 
     application = application_client.get_by_id("fe1f9ba4-474e-44b9-b949-110cdba9d662")
@@ -422,7 +422,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
   })
 
   application, httpResponse, err := apiClient.ApplicationsApi.GetById(contextWithAPIKey, "fe1f9ba4-474e-44b9-b949-110cdba9d662").Execute()
@@ -476,7 +476,7 @@ Get an application by key in the Tenant. Will use the `BT-API-KEY` header to loo
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications/key" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED"
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>"
 ```
 
   </TabItem>
@@ -485,7 +485,7 @@ curl "https://api.basistheory.com/applications/key" \
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const application = await bt.applications.retrieveByKey();
 ```
@@ -496,7 +496,7 @@ const application = await bt.applications.retrieveByKey();
 ```csharp showLineNumbers
 using BasisTheory.net.Applications;
 
-var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
 
 var application = await client.GetByKeyAsync();
 ```
@@ -514,7 +514,7 @@ public class Example {
         defaultClient.setBasePath("https://api.basistheory.com");
 
         ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
 
         ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
         Application result = apiInstance.getByKey();
@@ -529,7 +529,7 @@ public class Example {
 import basistheory
 from basistheory.api import applications_api
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
     application_client = applications_api.ApplicationsApi(api_client)
 
     application = application_client.get_by_key()
@@ -550,7 +550,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
   })
 
   application, httpResponse, err := apiClient.ApplicationsApi.GetByKey(contextWithCreatedAppAPIKey).Execute()
@@ -598,7 +598,7 @@ Update an application by ID in the Tenant.
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications/fb124bba-f90d-45f0-9a59-5edca27b3b4a" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json"
   -X "PUT" \
   -d '{
@@ -616,7 +616,7 @@ curl "https://api.basistheory.com/applications/fb124bba-f90d-45f0-9a59-5edca27b3
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const application = await bt.applications.update(
   "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -633,7 +633,7 @@ const application = await bt.applications.update(
 ```csharp showLineNumbers
 using BasisTheory.net.Applications;
 
-var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
 
 var application = await client.UpdateAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   new Application {
@@ -658,7 +658,7 @@ public class Example {
         defaultClient.setBasePath("https://api.basistheory.com");
 
         ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
 
         ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
         UpdateApplicationRequest updateApplicationRequest = new UpdateApplicationRequest();
@@ -677,7 +677,7 @@ import basistheory
 from basistheory.api import applications_api
 from basistheory.model.update_application_request import UpdateApplicationRequest
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
     application_client = applications_api.ApplicationsApi(api_client)
 
     application = application_client.update("fb124bba-f90d-45f0-9a59-5edca27b3b4a", update_application_request=UpdateApplicationRequest(
@@ -701,7 +701,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
   })
 
   updateApplicationRequest := basistheory.NewUpdateApplicationRequest(updatedApplicationName)
@@ -773,7 +773,7 @@ Regenerate the API key for an application.
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications/fb124bba-f90d-45f0-9a59-5edca27b3b4a/regenerate" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -X "POST"
 ```
 
@@ -783,7 +783,7 @@ curl "https://api.basistheory.com/applications/fb124bba-f90d-45f0-9a59-5edca27b3
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const application = await bt.applications.regenerateKey(
   "fb124bba-f90d-45f0-9a59-5edca27b3b4a"
@@ -796,7 +796,7 @@ const application = await bt.applications.regenerateKey(
 ```csharp showLineNumbers
 using BasisTheory.net.Applications;
 
-var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
 
 var application = await client.RegenerateKeyAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
 ```
@@ -814,7 +814,7 @@ public class Example {
         defaultClient.setBasePath("https://api.basistheory.com");
 
         ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
 
         ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
         Application result = apiInstance.regenerateKey("f7c90548-ea08-4757-bb2d-a5cfe3fb4782");
@@ -829,7 +829,7 @@ public class Example {
 import basistheory
 from basistheory.api import applications_api
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
     application_client = applications_api.ApplicationsApi(api_client)
 
     application = application_client.regenerate_key("fb124bba-f90d-45f0-9a59-5edca27b3b4a")
@@ -850,7 +850,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
   })
 
   application, httpResponse, err := apiClient.ApplicationsApi.RegenerateKey(contextWithAPIKey, "fb124bba-f90d-45f0-9a59-5edca27b3b4a").Execute()
@@ -875,7 +875,7 @@ Returns an [Application](#application-object) with the new `key` property popula
   "id": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Example App",
-  "key": "key_FZ8RmaxoGc73lbmF2cpmUJ",
+  "key": "<PRIVATE_API_KEY>",
   "type": "private",
   "permissions": ["token:create", "token:read"],
   "created_by": "c57a0d0d-e8e6-495f-9c79-a317cc21996c",
@@ -905,7 +905,7 @@ Delete an application by ID in the Tenant.
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications/fb124bba-f90d-45f0-9a59-5edca27b3b4a" \
-  -H "BT-API-KEY: key_N88mVGsp3sCXkykyN2EFED" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -X "DELETE"
 ```
 
@@ -915,7 +915,7 @@ curl "https://api.basistheory.com/applications/fb124bba-f90d-45f0-9a59-5edca27b3
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("key_N88mVGsp3sCXkykyN2EFED");
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 await bt.applications.delete("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
 ```
@@ -926,7 +926,7 @@ await bt.applications.delete("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
 ```csharp showLineNumbers
 using BasisTheory.net.Applications;
 
-var client = new ApplicationClient("key_N88mVGsp3sCXkykyN2EFED");
+var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
 
 await client.DeleteAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
 ```
@@ -945,7 +945,7 @@ public class Example {
         defaultClient.setBasePath("https://api.basistheory.com");
 
         ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("key_N88mVGsp3sCXkykyN2EFED");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
 
         ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
         apiInstance.delete("f7c90548-ea08-4757-bb2d-a5cfe3fb4782");
@@ -960,7 +960,7 @@ public class Example {
 import basistheory
 from basistheory.api import applications_api
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="key_N88mVGsp3sCXkykyN2EFED")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
     application_client = applications_api.ApplicationsApi(api_client)
 
     application_client.delete("fb124bba-f90d-45f0-9a59-5edca27b3b4a")
@@ -981,7 +981,7 @@ func main() {
   configuration := basistheory.NewConfiguration()
   apiClient := basistheory.NewAPIClient(configuration)
   contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "key_N88mVGsp3sCXkykyN2EFED"},
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
   })
 
   httpResponse, err := apiClient.ApplicationsApi.Delete(contextWithAPIKey, "fb124bba-f90d-45f0-9a59-5edca27b3b4a").Execute()
