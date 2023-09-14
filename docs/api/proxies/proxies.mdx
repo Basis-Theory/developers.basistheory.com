@@ -2,7 +2,7 @@
 title: Proxies
 ---
 
-import {Alert} from "@site/src/components/shared/Alert";
+import { Alert } from "@site/src/components/shared/Alert";
 import ReservedHeaders from "./_reserved_headers.mdx";
 import { Enterprise } from "@site/src/components/shared/Enterprise";
 
@@ -34,7 +34,24 @@ The destination URL will serve as the base URL for the proxied request, and any 
 For example, sending a proxy request to `https://api.basistheory.com/proxy/foo/bar?param=value` and including the header `BT-PROXY-URL=https://example.com/api` will result in the request being forwarded to `https://example.com/api/foo/bar?param=value`.
 
 <Alert>
-  If the destination endpoint takes more than 30 seconds to respond, a <code>504 Gateway Timeout</code> error will be returned.
+  If the destination endpoint takes more than 25 seconds to respond, a <code>408 Request Timeout</code> error will be returned.
+</Alert>
+
+### Reserved Proxy Headers <Enterprise />
+
+<ReservedHeaders />
+
+### Custom Headers
+
+| Header                        | Description                                                            |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| `BT-PROXY-DESTINATION-STATUS` | This header contains the HTTP status code from the destination server. |
+
+<Alert>
+If the <code>BT-PROXY-DESTINATION-STATUS</code> HTTP header is present and has an HTTP status code, the code represents the status code responded from the destination service. A 4xx code generally points to a problem with the integration to the destination, while a 5xx code suggests an issue with the destination service itself.
+<br/><br/>
+If the <code>BT-PROXY-DESTINATION-STATUS</code> HTTP header is not present, there is likely an integration or service problem. 4xx codes indicate issues on your end, while 5xx codes indicate problems with Basis Theory's service.
+
 </Alert>
 
 ### IP Whitelisting
@@ -43,13 +60,8 @@ Some 3rd party services may require whitelisting of Basis Theory IP addresses to
 You can find our IP list [here](/docs/api/ip-addresses).
 
 <Alert>
-  We can also support single dedicated outbound IP addresses. Please <a href="https://basistheory.com/contact">reach out</a> to
-  our support team if you have specific security requirements that mandate this configuration.
+  We can also support single dedicated outbound IP addresses. Please <a href="https://basistheory.com/contact">reach out</a> to our support team if you have specific security requirements that mandate this configuration.
 </Alert>
-
-### Reserved Proxy Headers <Enterprise />
-
-<ReservedHeaders />
 
 ## Detokenization
 
@@ -88,10 +100,5 @@ The `token:use` permission is required in order to detokenize tokens within a pr
 At most, 100 tokens may be detokenized within a single proxy request. You can find more information about the supported detokenization expressions [here](/docs/expressions/detokenization).
 
 <Alert>
-  For more detailed examples about how to detokenize within the Proxy, check out
-  our{" "}
-  <a href="/docs/expressions/detokenization#examples">
-    Detokenization Examples
-  </a>
-  .
+  For more detailed examples about how to detokenize within the Proxy, check out our <a href="/docs/expressions/detokenization#examples">Detokenization Examples</a>.
 </Alert>
