@@ -1,3 +1,10 @@
+# [1.94.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.93.0...v1.94.0) (2023-09-14)
+
+
+### Features
+
+* adds proxy destination status header and update proxy call timeout ([#216](https://github.com/Basis-Theory/developers.basistheory.com/issues/216)) ([22feb7a](https://github.com/Basis-Theory/developers.basistheory.com/commit/22feb7a1e60786470ce65cd7ede8ce0fb8aae99d))
+
 # [1.93.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.92.0...v1.93.0) (2023-09-11)
 
 
