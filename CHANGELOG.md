@@ -1,3 +1,10 @@
+# [1.95.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.94.0...v1.95.0) (2023-09-15)
+
+
+### Features
+
+* add getvaluetype docs for android sdk ([#217](https://github.com/Basis-Theory/developers.basistheory.com/issues/217)) ([376e6d5](https://github.com/Basis-Theory/developers.basistheory.com/commit/376e6d5a4ccf432d237b4e88a67387a87bb6e0b6))
+
 # [1.94.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.93.0...v1.94.0) (2023-09-14)
 
 
