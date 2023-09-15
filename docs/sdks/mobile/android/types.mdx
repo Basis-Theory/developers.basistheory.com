@@ -2,7 +2,7 @@
 sidebar_label: Types
 ---
 
-import { Alert } from "@site/src/components/shared/Alert";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import Link from "@docusaurus/Link";
 import CardBrands from "@site/docs/sdks/_card-brands.mdx";
 
@@ -59,6 +59,7 @@ The following additional properties are supported when programmatically interact
 | transform           | `ElementTransform` | Transforms the value of this Element prior to tokenization. See the [Transform](/docs/sdks/mobile/android/options#transform) options for details.                                                                                                  |
 | validator           | `ElementValidator` | Validates the value of this Element. See the [Validator](/docs/sdks/mobile/android/options#validator) options for details.                                                                                                                         |
 | gravity             | `Int`              | The [Gravity](https://developer.android.com/reference/android/view/Gravity) value to apply to the text within the element.                                                                                                                         |                                                                                                                                                                                    |
+| getValueType        | `ElementValueType` | The [value type](/docs/sdks/mobile/android/options#get-value-type) for which the element value is rendered to before being sent to the API.                                                                                                            |    
 
 #### Methods
 
@@ -243,6 +244,11 @@ val tokenizeResponse = bt.tokenize(object {
 The `month()` and `year()` functions expose a reference object that can only be resolved back to the
 original values by the `BasisTheoryElements` service when tokenizing. These methods do not
 provide your application with direct access to the underlying plaintext values.
+
+<Alert type={Alerts.WARNING}>
+  Before SDK version <code>3.0.0</code> the <code>month()</code> and <code>year()</code> methods rendered as <code>String</code> when sending the value to the API.
+  As of version <code>3.0.0</code>, these methods now render as <code>Int</code> when sending the value to the API.
+</Alert>
 
 Also, `format(dateFormat: String)` allows you to customize card expiration dates. It implements Java's [DateTimeFormatter](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html), so all date formats supported by it are also available.
 
