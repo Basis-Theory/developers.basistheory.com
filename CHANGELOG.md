@@ -1,3 +1,10 @@
+# [1.96.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.95.1...v1.96.0) (2023-09-18)
+
+
+### Features
+
+* adds custom headers to response sections ([#218](https://github.com/Basis-Theory/developers.basistheory.com/issues/218)) ([7bfb108](https://github.com/Basis-Theory/developers.basistheory.com/commit/7bfb1083546be90657efcb6e7274814d0fc14bcf))
+
 ## [1.95.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.95.0...v1.95.1) (2023-09-18)
 
 
