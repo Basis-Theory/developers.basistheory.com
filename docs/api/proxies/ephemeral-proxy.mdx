@@ -2,13 +2,11 @@
 title: Ephemeral Proxy
 ---
 
-import {
-  HttpMethod,
-  HttpMethods,
-} from "@site/src/components/shared/HttpMethod";
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import ReservedHeaders from "./_reserved_headers.mdx";
+import CustomHeaders from "./_custom_headers.mdx";
 import { Enterprise } from "@site/src/components/shared/Enterprise";
 
 # Ephemeral Proxy
@@ -22,30 +20,15 @@ as they don't require any up-front setup, and all configuration is self-containe
 
 Detokenize and forward an HTTP request through the proxy.
 
-<HttpMethod
-  method={HttpMethods.POST}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/proxy" />
 
-<HttpMethod
-  method={HttpMethods.GET}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/proxy" />
 
-<HttpMethod
-  method={HttpMethods.PUT}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/proxy" />
 
-<HttpMethod
-  method={HttpMethods.PATCH}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.PATCH} endpoint="https://api.basistheory.com/proxy" />
 
-<HttpMethod
-  method={HttpMethods.DELETE}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.DELETE} endpoint="https://api.basistheory.com/proxy" />
 
 ### Authentication
 
@@ -57,7 +40,8 @@ Any authentication required by the destination service can be set on the request
 ### Permissions
 
 <Permission content="token:use" />
-<br/><br/>
+<br />
+<br />
 
 The `token:use` permission is required for each [Container](/docs/concepts/what-are-containers) of Tokens you wish to detokenize through the Proxy.
 This permission is required to use the Proxy, even if there are no tokens being detokenized within your request.
@@ -93,5 +77,9 @@ The raw response from the destination will be returned from the proxy, unless an
 If an error occurs within the proxy (e.g. an invalid detokenization expression was found), then the following error response will be returned:
 
 | Attribute     | Type  | Description                                       |
-|---------------|-------|---------------------------------------------------|
+| ------------- | ----- | ------------------------------------------------- |
 | `proxy_error` | _any_ | A standard Basis Theory [error](/docs/api/errors) |
+
+#### Custom Headers
+
+<CustomHeaders />

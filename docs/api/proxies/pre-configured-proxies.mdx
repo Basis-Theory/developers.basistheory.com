@@ -2,15 +2,13 @@
 title: Pre-Configured Proxies
 ---
 
-import {
-  HttpMethod,
-  HttpMethods,
-} from "@site/src/components/shared/HttpMethod";
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
 import { Alert } from "@site/src/components/shared/Alert";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import ReservedHeaders from "./_reserved_headers.mdx";
+import CustomHeaders from "./_custom_headers.mdx";
 import { Enterprise } from "@site/src/components/shared/Enterprise";
 
 # Pre-Configured Proxies
@@ -31,10 +29,7 @@ Pre-configured proxies also support additional configuration options, including:
 
 Creates a new Proxy for the Tenant.
 
-<HttpMethod
-  method={HttpMethods.POST}
-  endpoint="https://api.basistheory.com/proxies"
-/>
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/proxies" />
 
 #### Permissions
 
@@ -382,10 +377,7 @@ Returns a [Proxy](#proxy-object) if the Proxy was created. Returns [an error](/d
 
 Get a list of proxies for the Tenant.
 
-<HttpMethod
-  method={HttpMethods.GET}
-  endpoint="https://api.basistheory.com/proxies"
-/>
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/proxies" />
 
 #### Permissions
 
@@ -554,10 +546,7 @@ Returns a [paginated object](/docs/api/pagination) with the `data` property cont
 
 Get a Proxy by ID in the Tenant.
 
-<HttpMethod
-  method={HttpMethods.GET}
-  endpoint="https://api.basistheory.com/proxies/{id}"
-/>
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/proxies/{id}" />
 
 #### Permissions
 
@@ -715,10 +704,7 @@ Returns a [Proxy](#proxy-object) with the `id` provided. Returns [an error](/doc
 
 Update a Proxy by ID in the Tenant.
 
-<HttpMethod
-  method={HttpMethods.PUT}
-  endpoint="https://api.basistheory.com/proxies/{id}"
-/>
+<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/proxies/{id}" />
 
 #### Permissions
 
@@ -1077,27 +1063,15 @@ Returns a [Proxy](#proxy-object) if the Proxy was updated. Returns [an error](/d
 
 Patch a Proxy by ID in the Tenant.
 
-<HttpMethod
-  method={HttpMethods.PATCH}
-  endpoint="https://api.basistheory.com/proxies/{id}"
-/>
+<HttpMethod method={HttpMethods.PATCH} endpoint="https://api.basistheory.com/proxies/{id}" />
 
 #### Permissions
 
 <Permission content="proxy:update" />
 
 <Alert>
-  The Patch Proxies endpoint uses a different content-type to support
-  merge-patch operations. Requests need the <code>Content-Type</code> header to
-  be set to <code>application/merge-patch+json</code>. Requests made with a
-  different <code>Content-Type</code> header value will receive a{" "}
-  <code>415 Unsupported Media Type</code> response code. For more information on
-  merge-patch, see{" "}
-  <a
-    href="https://datatracker.ietf.org/doc/html/rfc7386"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
+  The Patch Proxies endpoint uses a different content-type to support merge-patch operations. Requests need the <code>Content-Type</code> header to be set to <code>application/merge-patch+json</code>. Requests made with a different <code>Content-Type</code> header value will receive a <code>415 Unsupported Media Type</code> response code. For more information on merge-patch, see{" "}
+  <a href="https://datatracker.ietf.org/doc/html/rfc7386" target="_blank" rel="noopener noreferrer">
     RFC 7386
   </a>
   .
@@ -1270,10 +1244,7 @@ Returns `204` if successful. Returns [an error](/docs/api/errors) if there were 
 
 Delete a Proxy by ID in the Tenant.
 
-<HttpMethod
-  method={HttpMethods.DELETE}
-  endpoint="https://api.basistheory.com/proxies/{id}"
-/>
+<HttpMethod method={HttpMethods.DELETE} endpoint="https://api.basistheory.com/proxies/{id}" />
 
 #### Permissions
 
@@ -1411,30 +1382,15 @@ Returns [an error](/docs/api/errors) if the Proxy failed to delete.
 
 Invoke a pre-configured proxy instance.
 
-<HttpMethod
-  method={HttpMethods.POST}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/proxy" />
 
-<HttpMethod
-  method={HttpMethods.GET}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/proxy" />
 
-<HttpMethod
-  method={HttpMethods.PUT}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/proxy" />
 
-<HttpMethod
-  method={HttpMethods.PATCH}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.PATCH} endpoint="https://api.basistheory.com/proxy" />
 
-<HttpMethod
-  method={HttpMethods.DELETE}
-  endpoint="https://api.basistheory.com/proxy"
-/>
+<HttpMethod method={HttpMethods.DELETE} endpoint="https://api.basistheory.com/proxy" />
 
 ### Authentication
 
@@ -1501,6 +1457,10 @@ If an error occurs within the proxy (e.g. an invalid detokenization expression w
 | ------------- | ----- | ------------------------------------------------- |
 | `proxy_error` | _any_ | A standard Basis Theory [error](/docs/api/errors) |
 
+#### Custom Headers
+
+<CustomHeaders />
+
 ## Transforms
 
 Pre-configured proxies allow you to optionally define request or response transforms, which allow custom Node.js code to be
@@ -1508,19 +1468,11 @@ executed before and after the HTTP request is forwarded to the destination URL. 
 your custom Node.js code will execute in Basis Theory's secure [serverless reactor](/docs/concepts/what-are-reactors) environment.
 
 <Alert>
-  Transforms are only currently supported for requests with content type{" "}
-  <code>application/json</code> or{" "}
-  <code>application/x-www-form-urlencoded</code>. Please{" "}
-  <a href="https://basistheory.com/contact">let us know</a> if you would like to
-  use proxy transforms with other content types.
+  Transforms are only currently supported for requests with content type <code>application/json</code> or <code>application/x-www-form-urlencoded</code>. Please <a href="https://basistheory.com/contact">let us know</a> if you would like to use proxy transforms with other content types.
 </Alert>
 
 <Alert>
-  The maximum payload size to invoke a Pre-configured proxy which uses a
-  Transform is 5 MB. You could pull in more data using the injected{" "}
-  <code>BT</code> client from within the Transform code.{" "}
-  <a href="https://basistheory.com/contact">Please reach out</a> if you need
-  help.
+  The maximum payload size to invoke a Pre-configured proxy which uses a Transform is 5 MB. You could pull in more data using the injected <code>BT</code> client from within the Transform code. <a href="https://basistheory.com/contact">Please reach out</a> if you need help.
 </Alert>
 
 ### Testing
@@ -1632,13 +1584,7 @@ where `args` contains:
 | `headers` | _object_ | A JavaScript object containing the response headers returned from the destination endpoint |
 
 <Alert>
-  <span>
-    Request header names can only contain alphanumeric characters, hyphens, and
-    underscores. Headers names containing other characters will be discarded
-    from the request. Response headers are unrestricted. If you must forward a
-    restricted header to the proxy destination, as a workaround, you may add
-    this header manually from within the request transform.
-  </span>
+  <span>Request header names can only contain alphanumeric characters, hyphens, and underscores. Headers names containing other characters will be discarded from the request. Response headers are unrestricted. If you must forward a restricted header to the proxy destination, as a workaround, you may add this header manually from within the request transform.</span>
 </Alert>
 
 #### Response Transform - Response Object
