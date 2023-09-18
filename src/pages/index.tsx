@@ -1,5 +1,5 @@
 import Layout from "@theme/Layout";
-import React, { ComponentProps, useEffect, useState } from "react";
+import React, { ComponentProps, useState } from "react";
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import ThemedImage from "@theme/ThemedImage";
@@ -73,79 +73,11 @@ export default function Home(): JSX.Element {
     <Layout>
       <div className={clsx(["col", styles.container])}>
         <header>
-          <h1>Integrate with Basis Theory</h1>
+          <h1>Basis Theory Docs</h1>
           <p>
             Basis Theory will guide you on how to safely collect, share, process
             and govern your data in your applications.
           </p>
-          <Card className={styles.card} hoverable={false}>
-            <div className={styles["card-body"]}>
-              <Link to="/docs/">
-                <div>
-                  <Step
-                    text="Get Started"
-                    id="getting-started"
-                    sources={{
-                      light: "/img/homepage/light/getting-started.png",
-                      dark: "/img/homepage/dark/getting-started.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/collect/">
-                <div>
-                  <Step
-                    text="Collect Data"
-                    id="collect-data"
-                    sources={{
-                      light: "/img/homepage/light/collect-data.png",
-                      dark: "/img/homepage/dark/collect-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/share/">
-                <div>
-                  <Step
-                    text="Share Data"
-                    id="share-data"
-                    sources={{
-                      light: "/img/homepage/light/share-data.png",
-                      dark: "/img/homepage/dark/share-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/process/">
-                <div>
-                  <Step
-                    text="Process Data"
-                    id="process-data"
-                    sources={{
-                      light: "/img/homepage/light/process-data.png",
-                      dark: "/img/homepage/dark/process-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/govern/">
-                <div>
-                  <Step
-                    text="Govern Data"
-                    id="govern-data"
-                    sources={{
-                      light: "/img/homepage/light/govern-data.png",
-                      dark: "/img/homepage/dark/govern-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-            </div>
-          </Card>
         </header>
         <main>
           <div className={styles["explore-cards-container"]}>
@@ -153,25 +85,40 @@ export default function Home(): JSX.Element {
             <div className={styles["explore-cards"]}>
               <Card
                 href="/docs/guides/collect/collect-data-from-web"
-                img={<Collect />}
-                heading="Collect Data from Web"
+                img={<ThemedImage
+                  alt="Card icon"
+                  sources={{
+                    light: "/img/getting-started/logo.svg",
+                    dark: "/img/getting-started/logo-dark.svg",
+                  }}
+                  className={styles["explore-cards-image"]}
+                />}
+                heading={<Card.PrimaryHeader>Getting Started</Card.PrimaryHeader>}
                 column
               >
-                Securely collect data in your web browser.
+                A quick overview of how Basis Theory works and key concepts.
               </Card>
               <Card
-                href="/docs/guides/collect/collect-inbound-sensitive-data"
+                href="/docs/guides/collect/collect-data-from-web"
                 img={<Collect />}
-                heading="Collect Inbound Sensitive Data"
+                heading={<Card.PrimaryHeader>Cards</Card.PrimaryHeader>}
                 column
               >
-                Tokenize sensitive data before it touches your API.
+                Start collecting, issuing, processing and sharing card data safely.
+              </Card>
+              <Card
+                href="/docs/guides/collect/collect-data-from-web"
+                img={<Collect />}
+                heading={<Card.PrimaryHeader>Any Data</Card.PrimaryHeader>}
+                column
+              >
+                Guides for collecting, sharing and processing any type of data.
               </Card>
             </div>
           </div>
 
           <div className={styles["sdks"]}>
-            <h2>SDKs</h2>
+            <h2>Basis Theory SDKs</h2>
             <div className={styles["sdks-container"]}>
               <div>
                 Server-side SDKs
@@ -299,11 +246,19 @@ export default function Home(): JSX.Element {
               <Card
                 href="/docs/blueprints/"
                 img={<Blueprint />}
-                heading="Blueprints"
+                heading="Guides"
                 column
               >
                 Explore end-to-end guides for your regulatory and compliance use
                 cases.
+              </Card>
+              <Card
+                href="/docs/blueprints/"
+                img={<Blueprint />}
+                heading="Basis Theory Labs"
+                column
+              >
+                Code examples and tools to help you get started faster.
               </Card>
               <Card
                 href="https://support.basistheory.com/"
@@ -312,7 +267,7 @@ export default function Home(): JSX.Element {
                 column
               >
                 Have a question or problem with your integration? Reach out to
-                get support from one of our engineers.
+                get support
               </Card>
             </div>
           </div>

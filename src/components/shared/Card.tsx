@@ -30,7 +30,7 @@ interface Card {
   hoverable?: boolean;
   cta?: React.ReactNode;
   column?: boolean;
-  openInNewWindow: boolean;
+  openInNewWindow?: boolean;
 }
 
 const Card = ({
