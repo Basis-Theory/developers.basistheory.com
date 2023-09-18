@@ -1,3 +1,10 @@
+## [1.95.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.95.0...v1.95.1) (2023-09-18)
+
+
+### Bug Fixes
+
+* add apple pay js dependency doc ([#219](https://github.com/Basis-Theory/developers.basistheory.com/issues/219)) ([61fbb2a](https://github.com/Basis-Theory/developers.basistheory.com/commit/61fbb2a5b0dff61b5b21a3c15705d8699d3e7e3d))
+
 # [1.95.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.94.0...v1.95.0) (2023-09-15)
 
 
