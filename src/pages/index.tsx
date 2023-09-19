@@ -146,18 +146,18 @@ export default function Home(): JSX.Element {
                 Web SDKs
                 <div className={styles["sdk-column"]}>
                   <Card
-                    href="/docs/sdks/web/javascript/"
-                    img={<JavaScript />}
-                    className={styles.sdk}
-                  >
-                    Javascript
-                  </Card>
-                  <Card
                     href="/docs/sdks/web/react/"
                     img={<ReactSvg />}
                     className={styles.sdk}
                   >
                     React
+                  </Card>
+                  <Card
+                    href="/docs/sdks/web/javascript/"
+                    img={<JavaScript />}
+                    className={styles.sdk}
+                  >
+                    Javascript
                   </Card>
                 </div>
               </div>
@@ -204,7 +204,7 @@ export default function Home(): JSX.Element {
                 column
               >
                 API endpoints to manage the full lifecycle of your data and
-                Basis Theory instance.
+                Basis Theory resources.
               </Card>
               <Card
                 href="/docs/concepts/"
@@ -224,7 +224,7 @@ export default function Home(): JSX.Element {
                 cases.
               </Card>
               <Card
-                href="/docs/blueprints/"
+                href="https://github.com/Basis-Theory-Labs"
                 img={<Blueprint />}
                 heading="Basis Theory Labs"
                 column
