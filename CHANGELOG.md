@@ -1,3 +1,10 @@
+# [1.97.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.96.0...v1.97.0) (2023-09-19)
+
+
+### Features
+
+* add enableCopy docs for Android ([#227](https://github.com/Basis-Theory/developers.basistheory.com/issues/227)) ([ca42f17](https://github.com/Basis-Theory/developers.basistheory.com/commit/ca42f17e7f4ea8c2b5a3994d547b94b5e9f0015c))
+
 # [1.96.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.95.1...v1.96.0) (2023-09-18)
 
 
