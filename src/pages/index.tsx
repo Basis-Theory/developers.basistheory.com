@@ -52,6 +52,7 @@ export default function Home(): JSX.Element {
                 />}
                 heading={<Card.PrimaryHeader>Getting Started</Card.PrimaryHeader>}
                 column
+                raised
               >
                 A quick overview of how Basis Theory works and key concepts.
               </Card>
@@ -68,6 +69,7 @@ export default function Home(): JSX.Element {
                 />}
                 heading={<Card.PrimaryHeader>Cards</Card.PrimaryHeader>}
                 column
+                raised
               >
                 Start collecting, issuing, processing and sharing card data safely.
               </Card>
@@ -83,6 +85,7 @@ export default function Home(): JSX.Element {
                 />}
                 heading={<Card.PrimaryHeader>Any Data</Card.PrimaryHeader>}
                 column
+                raised
               >
                 Guides for collecting, sharing and processing any type of data.
               </Card>
