@@ -26,6 +26,28 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Card Data",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/collect-data.svg",
+          dark: "/img/sidebar/dark/collect-data.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/collect/index",
+      },
+      items: [
+        "guides/collect/collect-cards",
+        "guides/share/process-card-payments",
+        "guides/collect/receive-cards",
+        "guides/collect/issue-cards",
+        "guides/collect/set-card-pin",
+        "guides/share/display-cards",
+      ],
+    },
+    {
+      type: "category",
       label: "Collect Data",
       customProps: {
         icon: {
