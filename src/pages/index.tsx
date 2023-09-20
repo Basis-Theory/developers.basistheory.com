@@ -41,9 +41,9 @@ export default function Home(): JSX.Element {
             <h2>Start Building</h2>
             <div className={styles["explore-cards"]}>
               <Card
-                href="/docs/guides/collect/collect-data-from-web"
+                href="/docs/"
                 img={<ThemedImage
-                  alt="Card icon"
+                  alt="Getting Started icon"
                   sources={{
                     light: "/img/homepage/light/getting-started.png",
                     dark: "/img/homepage/dark/getting-started.png",
@@ -57,8 +57,7 @@ export default function Home(): JSX.Element {
                 A quick overview of how Basis Theory works and key concepts.
               </Card>
               <Card
-                href="/docs/guides/collect/collect-data-from-web"
-
+                href="/docs/guides/cards"
                 img={<ThemedImage
                   alt="Card icon"
                   sources={{
@@ -74,9 +73,9 @@ export default function Home(): JSX.Element {
                 Start collecting, issuing, processing and sharing card data safely.
               </Card>
               <Card
-                href="/docs/guides/collect/collect-data-from-web"
+                href="/docs/guides/any"
                 img={<ThemedImage
-                  alt="Card icon"
+                  alt="Any Data icon"
                   sources={{
                     light: "/img/homepage/light/any-data.png",
                     dark: "/img/homepage/dark/any-data.png",
