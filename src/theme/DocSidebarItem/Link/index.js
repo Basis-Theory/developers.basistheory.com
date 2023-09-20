@@ -2,7 +2,6 @@ import isInternalUrl from "@docusaurus/isInternalUrl";
 import Link from "@docusaurus/Link";
 import { ThemeClassNames } from "@docusaurus/theme-common";
 import { isActiveSidebarItem } from "@docusaurus/theme-common/internal";
-import IconExternalLink from "@theme/Icon/ExternalLink";
 import ThemedImage from "@theme/ThemedImage";
 import clsx from "clsx";
 import React from "react";
@@ -57,8 +56,11 @@ export default function DocSidebarItemLink({
             sources={item.customProps?.icon}
           />
         )}
-        {label} {item.customProps?.beta && <Beta />}
-        {!isInternalLink && <IconExternalLink />}
+        <span className={styles.label}>{label}</span> {item.customProps?.beta && <Beta />}
+        {!isInternalLink && <ThemedImage sources={{
+          light: "/img/sidebar/light/external.svg",
+          dark: "/img/sidebar/dark/external.svg"
+        }}/>}
       </Link>
     </li>
   );

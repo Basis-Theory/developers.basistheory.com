@@ -151,7 +151,7 @@ const sidebars = {
       items: [
         {
           type: "link",
-          label: "Import your Cards on File",
+          label: "Import Cards on File",
           href: "https://blog.basistheory.com/migrate-card-data-to-basis-theory"
         },
         {
@@ -234,7 +234,7 @@ const sidebars = {
       href: "https://github.com/Basis-Theory-Labs",
       customProps: {
         icon: {
-          light: "/img/sidebar/light/document.svg",
+          light: "/img/sidebar/light/labs.svg",
           dark: "/img/sidebar/dark/labs.svg",
         },
       }
