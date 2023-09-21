@@ -1,5 +1,5 @@
 import Layout from "@theme/Layout";
-import React, { ComponentProps, useEffect, useState } from "react";
+import React from "react";
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import ThemedImage from "@theme/ThemedImage";
@@ -12,9 +12,7 @@ import Collect from "@site/static/img/getting-started/icons/collect.svg";
 
 import ApiReference from "@site/static/img/homepage/console.svg";
 import Info from "@site/static/img/homepage/info.svg";
-import Package from "@site/static/img/homepage/package.svg";
 import Question from "@site/static/img/homepage/question.svg";
-import Arrow from "@site/static/img/homepage/arrow.svg";
 import Blueprint from "@site/static/img/homepage/blueprint.svg";
 
 import Android from "@site/static/img/sdk/logos/android.svg";
@@ -26,152 +24,75 @@ import Python from "@site/static/img/sdk/logos/python.svg";
 import ReactSvg from "@site/static/img/sdk/logos/react.svg";
 import Terraform from "@site/static/img/sdk/logos/terraform.svg";
 import Java from "@site/static/img/sdk/logos/java.svg";
-import Link from "@docusaurus/Link";
-
-interface Step {
-  id: string;
-  sources: ComponentProps<typeof ThemedImage>["sources"];
-  text: string;
-}
-
-const Step = ({ sources, id, text }: Step) => {
-  const [hover, setHover] = useState(false);
-
-  const toggleState = () => setHover(!hover);
-
-  return (
-    <div
-      onMouseEnter={toggleState}
-      onMouseLeave={toggleState}
-      className={clsx({
-        [styles.step]: hover,
-      })}
-    >
-      <div
-        className={clsx({
-          [styles[`${id}-img--hover`]]: hover,
-          [styles["img-container--hover"]]: hover,
-          [styles[`${id}-img-container`]]: true,
-          [styles["img-container"]]: true,
-        })}
-      >
-        <ThemedImage
-          id={id}
-          sources={{
-            light: useBaseUrl(sources.light),
-            dark: useBaseUrl(sources.dark),
-          }}
-        />
-      </div>
-      <p>{text}</p>
-    </div>
-  );
-};
 
 export default function Home(): JSX.Element {
   return (
     <Layout>
       <div className={clsx(["col", styles.container])}>
         <header>
-          <h1>Integrate with Basis Theory</h1>
+          <h1>Basis Theory Docs</h1>
           <p>
             Basis Theory will guide you on how to safely collect, share, process
             and govern your data in your applications.
           </p>
-          <Card className={styles.card} hoverable={false}>
-            <div className={styles["card-body"]}>
-              <Link to="/docs/">
-                <div>
-                  <Step
-                    text="Get Started"
-                    id="getting-started"
-                    sources={{
-                      light: "/img/homepage/light/getting-started.png",
-                      dark: "/img/homepage/dark/getting-started.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/collect/">
-                <div>
-                  <Step
-                    text="Collect Data"
-                    id="collect-data"
-                    sources={{
-                      light: "/img/homepage/light/collect-data.png",
-                      dark: "/img/homepage/dark/collect-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/share/">
-                <div>
-                  <Step
-                    text="Share Data"
-                    id="share-data"
-                    sources={{
-                      light: "/img/homepage/light/share-data.png",
-                      dark: "/img/homepage/dark/share-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/process/">
-                <div>
-                  <Step
-                    text="Process Data"
-                    id="process-data"
-                    sources={{
-                      light: "/img/homepage/light/process-data.png",
-                      dark: "/img/homepage/dark/process-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-              <Arrow className={styles.arrow} />
-              <Link to="/docs/guides/govern/">
-                <div>
-                  <Step
-                    text="Govern Data"
-                    id="govern-data"
-                    sources={{
-                      light: "/img/homepage/light/govern-data.png",
-                      dark: "/img/homepage/dark/govern-data.png",
-                    }}
-                  />
-                </div>
-              </Link>
-            </div>
-          </Card>
         </header>
         <main>
           <div className={styles["explore-cards-container"]}>
             <h2>Start Building</h2>
             <div className={styles["explore-cards"]}>
               <Card
-                href="/docs/guides/collect/collect-data-from-web"
-                img={<Collect />}
-                heading="Collect Data from Web"
+                href="/docs/"
+                img={<ThemedImage
+                  alt="Getting Started icon"
+                  sources={{
+                    light: "/img/homepage/light/getting-started.png",
+                    dark: "/img/homepage/dark/getting-started.png",
+                  }}
+                  className={styles["explore-cards-image"]}
+                />}
+                heading={<Card.PrimaryHeader>Getting Started</Card.PrimaryHeader>}
                 column
+                raised
               >
-                Securely collect data in your web browser.
+                A quick overview of how Basis Theory works and key concepts.
               </Card>
               <Card
-                href="/docs/guides/collect/collect-inbound-sensitive-data"
-                img={<Collect />}
-                heading="Collect Inbound Sensitive Data"
+                href="/docs/guides/cards"
+                img={<ThemedImage
+                  alt="Card icon"
+                  sources={{
+                    light: "/img/homepage/light/cards.png",
+                    dark: "/img/homepage/dark/cards.png",
+                  }}
+                  className={styles["explore-cards-image"]}
+                />}
+                heading={<Card.PrimaryHeader>Cards</Card.PrimaryHeader>}
                 column
+                raised
               >
-                Tokenize sensitive data before it touches your API.
+                Start collecting, issuing, processing and sharing card data safely.
+              </Card>
+              <Card
+                href="/docs/guides/any"
+                img={<ThemedImage
+                  alt="Any Data icon"
+                  sources={{
+                    light: "/img/homepage/light/any-data.png",
+                    dark: "/img/homepage/dark/any-data.png",
+                  }}
+                  className={styles["explore-cards-image"]}
+                />}
+                heading={<Card.PrimaryHeader>Any Data</Card.PrimaryHeader>}
+                column
+                raised
+              >
+                Guides for collecting, sharing and processing any type of data.
               </Card>
             </div>
           </div>
 
           <div className={styles["sdks"]}>
-            <h2>SDKs</h2>
+            <h2>Basis Theory SDKs</h2>
             <div className={styles["sdks-container"]}>
               <div>
                 Server-side SDKs
@@ -224,18 +145,18 @@ export default function Home(): JSX.Element {
                 Web SDKs
                 <div className={styles["sdk-column"]}>
                   <Card
-                    href="/docs/sdks/web/javascript/"
-                    img={<JavaScript />}
-                    className={styles.sdk}
-                  >
-                    Javascript
-                  </Card>
-                  <Card
                     href="/docs/sdks/web/react/"
                     img={<ReactSvg />}
                     className={styles.sdk}
                   >
                     React
+                  </Card>
+                  <Card
+                    href="/docs/sdks/web/javascript/"
+                    img={<JavaScript />}
+                    className={styles.sdk}
+                  >
+                    Javascript
                   </Card>
                 </div>
               </div>
@@ -282,11 +203,7 @@ export default function Home(): JSX.Element {
                 column
               >
                 API endpoints to manage the full lifecycle of your data and
-                Basis Theory instance.
-              </Card>
-              <Card href="/docs/sdks/" img={<Package />} heading="SDKs" column>
-                Libraries and tools for interacting with your Basis Theory
-                integration.
+                Basis Theory resources.
               </Card>
               <Card
                 href="/docs/concepts/"
@@ -297,13 +214,21 @@ export default function Home(): JSX.Element {
                 Learn about key concepts of Basis Theory's platform.
               </Card>
               <Card
-                href="/docs/blueprints/"
+                href="/docs/"
                 img={<Blueprint />}
-                heading="Blueprints"
+                heading="Guides"
                 column
               >
                 Explore end-to-end guides for your regulatory and compliance use
                 cases.
+              </Card>
+              <Card
+                href="https://github.com/Basis-Theory-Labs"
+                img={<Blueprint />}
+                heading="Basis Theory Labs"
+                column
+              >
+                Code examples and tools to help you get started faster.
               </Card>
               <Card
                 href="https://support.basistheory.com/"
@@ -312,7 +237,7 @@ export default function Home(): JSX.Element {
                 column
               >
                 Have a question or problem with your integration? Reach out to
-                get support from one of our engineers.
+                get support
               </Card>
             </div>
           </div>

@@ -11,6 +11,18 @@
 
 // @ts-check
 
+const apiLink = {
+  type: "link",
+  label: "API Reference",
+  href: "/docs/api",
+  customProps: {
+    icon: {
+      light: "/img/sidebar/light/terminal.svg",
+      dark: "/img/sidebar/dark/terminal.svg",
+    },
+  }
+}
+
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   docs: [
@@ -26,22 +38,41 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Collect Data",
+      label: "Card Data",
       customProps: {
         icon: {
-          light: "/img/sidebar/light/collect-data.svg",
-          dark: "/img/sidebar/dark/collect-data.svg",
+          light: "/img/sidebar/light/card.svg",
+          dark: "/img/sidebar/dark/card.svg",
         },
       },
       link: {
         type: "doc",
-        id: "guides/collect/index",
+        id: "guides/cards/index",
       },
       items: [
         "guides/collect/collect-cards",
-        "guides/collect/issue-cards",
+        "guides/share/process-card-payments",
         "guides/collect/receive-cards",
+        "guides/process/extract-cards",
+        "guides/collect/issue-cards",
+        "guides/share/display-cards",
         "guides/collect/set-card-pin",
+      ],
+    },
+    {
+      type: "category",
+      label: "Any Data",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/any-data.svg",
+          dark: "/img/sidebar/dark/any-data.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/any/index",
+      },
+      items: [
         "guides/collect/collect-data-from-web",
         "guides/collect/collect-data-with-react",
         "guides/collect/collect-data-with-android",
@@ -49,63 +80,12 @@ const sidebars = {
         "guides/collect/collect-data-with-react-native-on-ios",
         "guides/collect/collect-inbound-sensitive-data",
         "guides/collect/customize-web-form",
-      ],
-    },
-    {
-      type: "category",
-      label: "Share Data",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/share-data.svg",
-          dark: "/img/sidebar/dark/share-data.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "guides/share/index",
-      },
-      items: [
-        "guides/share/process-card-payments",
-        "guides/share/display-cards",
         "guides/share/send-data-to-third-party",
         "guides/share/display-masked-data",
         "guides/share/reveal-tokenized-data",
         "guides/share/reveal-data-from-third-party",
-      ],
-    },
-    {
-      type: "category",
-      label: "Process Data",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/process-data.svg",
-          dark: "/img/sidebar/dark/process-data.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "guides/process/index",
-      },
-      items: [
         "guides/process/search-data",
         "guides/process/analyze-data",
-        "guides/process/extract-data",
-      ],
-    },
-    {
-      type: "category",
-      label: "Govern Data",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/govern-data.svg",
-          dark: "/img/sidebar/dark/govern-data.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "guides/govern/index",
-      },
-      items: [
         "guides/govern/control-data-access",
         "guides/govern/audit-data-access",
         "guides/govern/sessions",
@@ -114,55 +94,6 @@ const sidebars = {
     {
       type: "html",
       value: "<hr />",
-    },
-    {
-      type: "category",
-      label: "Blueprints",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/blueprint.svg",
-          dark: "/img/sidebar/dark/blueprint.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "blueprints/index",
-      },
-      items: [
-        {
-          type: "category",
-          label: "Cards",
-          link: {
-            type: "doc",
-            id: "blueprints/cards/index",
-          },
-          items: [
-            "blueprints/cards/collect-and-process-cards",
-            "blueprints/cards/issue-and-display-cards",
-          ],
-        },
-        {
-          type: "category",
-          label: "Personal Information",
-          link: {
-            type: "doc",
-            id: "blueprints/personal-information/index",
-          },
-          items: ["blueprints/personal-information/query-user-data-from-api"],
-        },
-        {
-          type: "category",
-          label: "Migrations",
-          link: {
-            type: "doc",
-            id: "blueprints/migrations/index",
-          },
-          items: [
-            "blueprints/migrations/import-from-database",
-            "blueprints/migrations/migrate-off-basis-theory",
-          ],
-        },
-      ],
     },
     {
       type: "category",
@@ -215,6 +146,110 @@ const sidebars = {
         "expressions/masks",
         "expressions/search-indexes",
       ],
+    },
+    {
+      type: "category",
+      label: "Migrations",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/document.svg",
+          dark: "/img/sidebar/dark/document.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "blueprints/migrations/index",
+      },
+      items: [
+        {
+          type: "link",
+          label: "Import Cards on File",
+          href: "https://blog.basistheory.com/migrate-card-data-to-basis-theory"
+        },
+        {
+          type: "doc",
+          id: "blueprints/migrations/import-from-database",
+        },
+        {
+          type: "doc",
+          id: "blueprints/migrations/migrate-off-basis-theory",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Blueprints",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/blueprint.svg",
+          dark: "/img/sidebar/dark/blueprint.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "blueprints/index",
+      },
+      items: [
+        {
+          type: "category",
+          label: "Cards",
+          link: {
+            type: "doc",
+            id: "blueprints/cards/index",
+          },
+          items: [
+            "blueprints/cards/collect-and-process-cards",
+            "blueprints/cards/issue-and-display-cards",
+          ],
+        },
+        {
+          type: "category",
+          label: "Personal Information",
+          link: {
+            type: "doc",
+            id: "blueprints/personal-information/index",
+          },
+          items: ["blueprints/personal-information/query-user-data-from-api"],
+        },
+
+      ],
+    },
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    {
+      type: "link",
+      label: "API Reference",
+      href: "/docs/api",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/terminal.svg",
+          dark: "/img/sidebar/dark/terminal.svg",
+        },
+      }
+    },
+    {
+      type: "link",
+      label: "SDKs",
+      href: "/docs/sdks",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/cube.svg",
+          dark: "/img/sidebar/dark/cube.svg",
+        },
+      }
+    },
+    {
+      type: "link",
+      label: "Basis Theory Labs",
+      href: "https://github.com/Basis-Theory-Labs",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/labs.svg",
+          dark: "/img/sidebar/dark/labs.svg",
+        },
+      }
     },
   ],
   api: [
@@ -312,6 +347,43 @@ const sidebars = {
       ],
     },
     "api/deprecations",
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    {
+      type: "link",
+      label: "Guides",
+      href: "/docs",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/document.svg",
+          dark: "/img/sidebar/dark/document.svg",
+        },
+      }
+    },
+    {
+      type: "link",
+      label: "SDKs",
+      href: "/docs/sdks",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/cube.svg",
+          dark: "/img/sidebar/dark/cube.svg",
+        },
+      }
+    },
+    {
+      type: "link",
+      label: "Basis Theory Labs",
+      href: "https://github.com/Basis-Theory-Labs",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/labs.svg",
+          dark: "/img/sidebar/dark/labs.svg",
+        },
+      }
+    },
   ],
   sdk: [
     "sdks/index",
@@ -408,6 +480,43 @@ const sidebars = {
           ],
         },
       ],
+    },
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    {
+      type: "link",
+      label: "Guides",
+      href: "/docs",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/document.svg",
+          dark: "/img/sidebar/dark/document.svg",
+        },
+      }
+    },
+    {
+      type: "link",
+      label: "API Reference",
+      href: "/docs/api",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/terminal.svg",
+          dark: "/img/sidebar/dark/terminal.svg",
+        },
+      }
+    },
+    {
+      type: "link",
+      label: "Basis Theory Labs",
+      href: "https://github.com/Basis-Theory-Labs",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/labs.svg",
+          dark: "/img/sidebar/dark/labs.svg",
+        },
+      }
     },
   ],
 };

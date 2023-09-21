@@ -30,7 +30,8 @@ interface Card {
   hoverable?: boolean;
   cta?: React.ReactNode;
   column?: boolean;
-  openInNewWindow: boolean;
+  openInNewWindow?: boolean;
+  raised?: boolean;
 }
 
 const Card = ({
@@ -44,6 +45,7 @@ const Card = ({
   hoverable = true,
   column = false,
   openInNewWindow = false,
+  raised = false,
   ...otherProps
 }: PropsWithChildren<
   DetailedHTMLProps<HtmlHTMLAttributes<HTMLDivElement>, HTMLDivElement> & Card
@@ -67,6 +69,7 @@ const Card = ({
     [styles["flex-direction"]]: column,
     [styles.clickable]: href != undefined && !cta,
     [styles.hoverable]: hoverable,
+    [styles.raised]: raised,
   });
 
   return (
