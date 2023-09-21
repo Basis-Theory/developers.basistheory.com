@@ -1,3 +1,10 @@
+# [1.98.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.97.0...v1.98.0) (2023-09-21)
+
+
+### Features
+
+* new sidebar ([#220](https://github.com/Basis-Theory/developers.basistheory.com/issues/220)) ([0cc4310](https://github.com/Basis-Theory/developers.basistheory.com/commit/0cc4310498e21ceba79d5c1d6b490b795c96c60d))
+
 # [1.97.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.96.0...v1.97.0) (2023-09-19)
 
 
