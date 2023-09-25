@@ -152,8 +152,8 @@ const sidebars = {
       label: "Migrations",
       customProps: {
         icon: {
-          light: "/img/sidebar/light/document.svg",
-          dark: "/img/sidebar/dark/document.svg",
+          light: "/img/sidebar/light/migration.svg",
+          dark: "/img/sidebar/dark/migration.svg",
         },
       },
       link: {
