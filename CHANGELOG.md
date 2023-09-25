@@ -1,3 +1,10 @@
+## [1.98.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.98.0...v1.98.1) (2023-09-25)
+
+
+### Bug Fixes
+
+* icons and colors ([#228](https://github.com/Basis-Theory/developers.basistheory.com/issues/228)) ([50f966d](https://github.com/Basis-Theory/developers.basistheory.com/commit/50f966dd4c80f499ac77faba3917206c4512e59c))
+
 # [1.98.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.97.0...v1.98.0) (2023-09-21)
 
 
