@@ -1,6 +1,7 @@
 ---
 toc_max_heading_level: 2
 ---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
@@ -23,7 +24,7 @@ Unlock a seamless experience with Basis Theory by **ensuring you have card token
 - [Receive Cards via API](/docs/guides/collect/receive-cards) - receive cards in API requests;
 - [Import from a Database](/docs/blueprints/migrations/import-from-database) - migrate to Basis Theory.
 
-[//]: # (Replace #4 link above with "Migrating from a Payments Processor" when the guide is available)
+[//]: # 'Replace #4 link above with "Migrating from a Payments Processor" when the guide is available'
 
 ## Getting Started
 
@@ -39,22 +40,19 @@ You will need a [Public Application](/docs/api/applications) to initialize Basis
 
 [Click here to create it](https://portal.basistheory.com/applications/create?name=Frontend&type=public). Notice how no permissions are assigned at this point. They will be programmatically granted later using sessions.
 
-<Alert>
-  Save the API Key from the created Public Application as it will be used later in this guide.
-</Alert>
+<Alert>Save the API Key from the created Public Application as it will be used later in this guide.</Alert>
 
 ### Private Application
 
-Next, you will need a [Private Application](/docs/api/applications) using our PCI-compliant template `Read PCI Tokens`.  This application represents your Backend.
+Next, you will need a [Private Application](/docs/api/applications) using our PCI-compliant template `Read PCI Tokens`. This application represents your Backend.
 
 [Click here to create it](https://portal.basistheory.com/applications/create?application_template_id=e6d4c554-6703-4bbb-b351-42cd2ee5cb5a) with the following [Access Controls](/docs/concepts/access-controls):
-* Permissions: `token:read`
-* Containers: `/pci/`
-* Transform: `mask`
 
-<Alert>
-  Save the API Key from the created Private Application as it will be used later in this guide.
-</Alert>
+- Permissions: `token:read`
+- Containers: `/pci/`
+- Transform: `mask`
+
+<Alert>Save the API Key from the created Private Application as it will be used later in this guide.</Alert>
 
 ## Configuring Basis Theory Elements
 
@@ -74,8 +72,9 @@ Once installed and configured, add the Card Elements to your application. This w
   <div id="cardVerificationCode" style="width: 100%;"></div>
 </div>
 ```
+
 ```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
 let bt;
 let cardNumberElement;
@@ -83,38 +82,35 @@ let cardExpirationDateElement;
 let cardVerificationCodeElement;
 
 async function init() {
-  bt = await new BasisTheory().init('<API_KEY>', { elements: true });
+  bt = await new BasisTheory().init("<API_KEY>", { elements: true });
 
   //highlight-start
   // Creates Elements instances
-  cardNumberElement = bt.createElement('cardNumber', {
-    targetId: 'myCardNumber' // (custom) used for tracking validation errors
+  cardNumberElement = bt.createElement("cardNumber", {
+    targetId: "myCardNumber", // (custom) used for tracking validation errors
   });
-  cardExpirationDateElement = bt.createElement('cardExpirationDate', {
-    targetId: 'myCardExpiration'
+  cardExpirationDateElement = bt.createElement("cardExpirationDate", {
+    targetId: "myCardExpiration",
   });
-  cardVerificationCodeElement = bt.createElement('cardVerificationCode', {
-    targetId: 'myCardVerification'
+  cardVerificationCodeElement = bt.createElement("cardVerificationCode", {
+    targetId: "myCardVerification",
   });
   //highlight-end
 
   //highlight-start
   // Mounts Elements in the DOM in parallel
-  await Promise.all([
-    cardNumberElement.mount('#cardNumber'),
-    cardExpirationDateElement.mount('#cardExpirationDate'),
-    cardVerificationCodeElement.mount('#cardVerificationCode'),
-  ]);
+  await Promise.all([cardNumberElement.mount("#cardNumber"), cardExpirationDateElement.mount("#cardExpirationDate"), cardVerificationCodeElement.mount("#cardVerificationCode")]);
   //highlight-end
 }
 
 init();
 ```
+
   </TabItem>
   <TabItem value="react" label="React">
 
 ```jsx showLineNumbers title=App.jsx
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
   BasisTheoryProvider,
   // highlight-start
@@ -123,10 +119,10 @@ import {
   CardVerificationCodeElement,
   //highlight-end
   useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+} from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  const { bt } = useBasisTheory("<API_KEY>", { elements: true });
   // highlight-start
   // Refs to get access to the Elements instance
   const cardNumberRef = useRef(null);
@@ -137,26 +133,17 @@ export default function App() {
   return (
     <BasisTheoryProvider bt={bt}>
       // highlight-start
-      <CardNumberElement
-        id="myCardNumber"
-        ref={cardNumberRef}
-      />
+      <CardNumberElement id="myCardNumber" ref={cardNumberRef} />
       // highlight-end
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: "flex" }}>
         <div style={{ width: "100%" }}>
           // highlight-start
-          <CardExpirationDateElement
-            id="myCardExpiration"
-            ref={cardExpirationRef}
-          />
+          <CardExpirationDateElement id="myCardExpiration" ref={cardExpirationRef} />
           // highlight-end
         </div>
         <div style={{ width: "100%" }}>
           // highlight-start
-          <CardVerificationCodeElement
-            id="myCardVerification"
-            ref={cardVerificationRef}
-          />
+          <CardVerificationCodeElement id="myCardVerification" ref={cardVerificationRef} />
           // highlight-end
         </div>
       </div>
@@ -164,6 +151,7 @@ export default function App() {
   );
 }
 ```
+
   </TabItem>
   <TabItem value="ios" label="iOS">
 
@@ -236,6 +224,7 @@ class ViewController: UIViewController {
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+
 ```kotlin showLineNumbers title=MainActivity.kt
 // highlight-start
 import com.basistheory.android.view.TextElement
@@ -261,6 +250,59 @@ class MainActivity : AppCompatActivity() {
         // highlight-end
     }
 }
+```
+
+  </TabItem>
+
+  <TabItem value="react-native" label="React Native">
+
+```typescript showLineNumbers title=App.tsx
+import React, { useRef } from "react";
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import type { BTRef } from "./src";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "./src";
+
+const App = (): JSX.Element => {
+  // highlight-start
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+  // highlight-end
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          // highlight-start
+          <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" style={styles.elements} />
+          <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" style={styles.elements} />
+          <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" style={styles.elements} />
+          // highlight-end
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
+    borderWidth: 2,
+    color: "purple",
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 32,
+  },
+});
+
+export default App;
 ```
 
   </TabItem>
@@ -290,6 +332,7 @@ The first step of securely fetching the card data is creating a [Session](/docs/
 // highlight-next-line
 <button onclick="display();">Display</button>
 ```
+
 ```javascript showLineNumbers title=index.js
 import { BasisTheory } from '@basis-theory/basis-theory-js';
 
@@ -312,21 +355,16 @@ async function display () {
 
 init();
 ```
+
   </TabItem>
   <TabItem value="react" label="React">
 
 ```jsx showLineNumbers title=App.jsx
-import React, { useRef, useState } from 'react';
-import {
-  BasisTheoryProvider,
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+import React, { useRef, useState } from "react";
+import { BasisTheoryProvider, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  const { bt } = useBasisTheory("<API_KEY>", { elements: true });
   // Refs to get access to the Elements instance
   const cardNumberRef = useRef(null);
   const cardExpirationRef = useRef(null);
@@ -339,18 +377,18 @@ export default function App() {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
   // highlight-end
 
   return (
     <BasisTheoryProvider bt={bt}>
-      ...
-      // highlight-next-line
+      ... // highlight-next-line
       <button onClick={display}>Display</button>
     </BasisTheoryProvider>
   );
 }
 ```
+
   </TabItem>
   <TabItem value="ios" label="iOS">
 
@@ -419,6 +457,7 @@ class ViewController: UIViewController {
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+
 ```kotlin showLineNumbers title=MainActivity.kt
 class MainActivity : AppCompatActivity() {
 
@@ -457,6 +496,68 @@ class MainActivity : AppCompatActivity() {
 ```
 
   </TabItem>
+
+   <TabItem value="react-native" label="React Native">
+
+```typescript showLineNumbers title=App.tsx
+import React, { useRef } from "react";
+import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import type { BTRef } from "./src";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "./src";
+
+const App = (): JSX.Element => {
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+
+  // highlight-start
+  const display = async () => {
+    try {
+      const session = await BasisTheoryElements.createSession("<PUBLIC_API_KEY>");
+    } catch (error) {
+      console.error(JSON.stringify(error));
+    }
+  };
+  // highlight-end
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" style={styles.elements} />
+          <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" style={styles.elements} />
+          <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" style={styles.elements} />
+        </View>
+        // highlight-start
+        <Button onPress={display} title="Display" />
+        // highlight-end
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
+    borderWidth: 2,
+    color: "purple",
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+  </TabItem>
 </Tabs>
 
 <Alert>
@@ -471,7 +572,7 @@ For example, given you have a previously stored card token with the following id
 
 ```json showLineNumbers title=token.json
 {
-// highlight-next-line
+  // highlight-next-line
   "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
   "type": "card",
   "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
@@ -493,9 +594,7 @@ For example, given you have a previously stored card token with the following id
     "restriction_policy": "mask"
   },
   "search_indexes": [],
-  "containers": [
-    "/pci/high/"
-  ]
+  "containers": ["/pci/high/"]
 }
 ```
 
@@ -743,10 +842,7 @@ func authorizeSession(rw http.ResponseWriter, r *http.Request) {
   </TabItem>
 </Tabs>
 
-
-<Alert type={Alerts.WARNING}>
-  On a production environment, your endpoint to authorize session should be behind your own authorization scheme.
-</Alert>
+<Alert type={Alerts.WARNING}>On a production environment, your endpoint to authorize session should be behind your own authorization scheme.</Alert>
 
 <Alert>
   Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.
@@ -786,21 +882,16 @@ async function display () {
 
 init();
 ```
+
   </TabItem>
   <TabItem value="react" label="React">
 
 ```jsx showLineNumbers title=App.jsx
-import React, { useRef, useState } from 'react';
-import {
-  BasisTheoryProvider,
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+import React, { useRef, useState } from "react";
+import { BasisTheoryProvider, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  const { bt } = useBasisTheory("<API_KEY>", { elements: true });
   // Refs to get access to the Elements instance
   const cardNumberRef = useRef(null);
   const cardExpirationRef = useRef(null);
@@ -810,10 +901,10 @@ export default function App() {
     try {
       const session = await bt.sessions.create();
       // highlight-start
-      await fetch('http://localhost:4242/authorize', {
-        method: 'POST',
+      await fetch("http://localhost:4242/authorize", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ nonce: session.nonce }),
       });
@@ -821,17 +912,17 @@ export default function App() {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   return (
     <BasisTheoryProvider bt={bt}>
-      ...
-      // highlight-next-line
+      ... // highlight-next-line
       <button onClick={display}>Display</button>
     </BasisTheoryProvider>
   );
 }
 ```
+
   </TabItem>
   <TabItem value="ios" label="iOS">
 
@@ -959,6 +1050,79 @@ class MainActivity : AppCompatActivity() {
 ```
 
   </TabItem>
+
+   <TabItem value="react-native" label="React Native">
+
+```typescript showLineNumbers title=App.tsx
+import React, { useRef } from "react";
+import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import type { BTRef } from "./src";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "./src";
+
+const App = (): JSX.Element => {
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+
+  const display = async () => {
+    try {
+      const session = await BasisTheoryElements.createSession("<PUBLIC_API_KEY>");
+
+      // authorize the session
+      // highlight-start
+      await fetch("https://localhost:4242/authorize", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nonce: session.nonce,
+          tokenId,
+        }),
+      });
+      // highlight-end
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" style={styles.elements} />
+          <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" style={styles.elements} />
+          <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" style={styles.elements} />
+        </View>
+        <Button onPress={display} title="Display" />
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
+    borderWidth: 2,
+    color: "purple",
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+  </TabItem>
 </Tabs>
 
 ### Retrieving the Card Token
@@ -1006,21 +1170,16 @@ async function display () {
 
 init();
 ```
+
   </TabItem>
   <TabItem value="react" label="React">
 
 ```jsx showLineNumbers title=App.jsx
-import React, { useRef, useState } from 'react';
-import {
-  BasisTheoryProvider,
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+import React, { useRef, useState } from "react";
+import { BasisTheoryProvider, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  const { bt } = useBasisTheory("<API_KEY>", { elements: true });
   // Refs to get access to the Elements instance
   const cardNumberRef = useRef(null);
   const cardExpirationRef = useRef(null);
@@ -1029,16 +1188,16 @@ export default function App() {
   const display = async () => {
     try {
       const session = await bt.sessions.create();
-      await fetch('http://localhost:4242/authorize', {
-        method: 'POST',
+      await fetch("http://localhost:4242/authorize", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ nonce: session.nonce }),
       });
       // highlight-start
-      const token = await bt.tokens.retrieve('d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4', {
-        apiKey: session.sessionKey
+      const token = await bt.tokens.retrieve("d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4", {
+        apiKey: session.sessionKey,
       });
       cardNumberRef.current.setValue(token.data.number);
       cardExpirationRef.current.setValue({
@@ -1050,7 +1209,7 @@ export default function App() {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   return (
     <BasisTheoryProvider bt={bt}>
@@ -1060,6 +1219,7 @@ export default function App() {
   );
 }
 ```
+
   </TabItem>
   <TabItem value="ios" label="iOS">
 
@@ -1141,6 +1301,109 @@ class MainActivity : AppCompatActivity() {
 ```
 
   </TabItem>
+
+   <TabItem value="react-native" label="React Native">
+
+```typescript showLineNumbers title=App.tsx
+import React, { useRef } from "react";
+import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import type { BTRef } from "./src";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "./src";
+
+// highlight-start
+interface CardToken {
+  expiration_year: InputBTRef;
+  expiration_month: InputBTRef;
+  number: InputBTRef;
+  cvc?: InputBTRef;
+}
+// highlight-end
+
+const App = (): JSX.Element => {
+  const { bt } = useBasisTheory("<API_KEY>");
+
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+
+  const display = async () => {
+    try {
+      const session = await BasisTheoryElements.createSession("<PUBLIC_API_KEY>");
+
+      // authorize the session
+      await fetch("https://localhost:4242/authorize", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nonce: session.nonce,
+          tokenId,
+        }),
+      });
+
+      // highlight-start
+
+      const token = await BasisTheoryElements.getTokenById(tokenId, session.sessionKey);
+
+      /**
+       * Sometimes, we can't infer the token type; therefore,
+       * we must resort to type casting in order to specify
+       * its interface for TypeScript to work correctly.
+       */
+
+      cardNumberRef.current?.setValue((token.data as CardToken).number);
+
+      cardExpirationDateRef.current?.setValue({
+        year: (token.data as CardToken).expiration_year,
+        month: (token.data as CardToken).expiration_month,
+      });
+
+      cardVerificationCodeRef.current?.setValue((token.data as CardToken).cvc);
+
+      // highlight-end
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" style={styles.elements} />
+          <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" style={styles.elements} />
+          <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" style={styles.elements} />
+        </View>
+        <Button onPress={display} title="Display" />
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
+    borderWidth: 2,
+    color: "purple",
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+  </TabItem>
 </Tabs>
 
 In the steps above, we had retrieved the card token data within the secure Elements context. This means we can set Elements value, and therefore display it, but without interacting with the data directly.
@@ -1157,10 +1420,9 @@ Card tokens retain verification code for 1 hour. This limitation is enforced by 
 
 ### Security
 
-Data security and compliance are major concerns when dealing with cardholder data. By using the Application Templates provided in the  [Provisioning Resources](#provisioning-resources) section, you can rest assured that your applications won't directly access sensitive data at any given moment.
+Data security and compliance are major concerns when dealing with cardholder data. By using the Application Templates provided in the [Provisioning Resources](#provisioning-resources) section, you can rest assured that your applications won't directly access sensitive data at any given moment.
 
 To display the cardholder to the end user, the temporary frontend session is briefly granted escalated privilege of reading unmasked tokenized data, while the secure Elements context is used for making the HTTPS request and manipulating the data.
-
 
 ## Conclusion
 
