@@ -1,3 +1,10 @@
+# [1.101.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.100.0...v1.101.0) (2023-10-03)
+
+
+### Features
+
+* adding europe ips ([#234](https://github.com/Basis-Theory/developers.basistheory.com/issues/234)) ([c378f70](https://github.com/Basis-Theory/developers.basistheory.com/commit/c378f70fae13b3fa0ed188517bcf4e7abc7c3663))
+
 # [1.100.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.99.0...v1.100.0) (2023-09-27)
 
 
