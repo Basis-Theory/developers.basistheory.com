@@ -14,8 +14,8 @@ The proxy destination may return an error response, the format of which is compl
 When an error occurs at the destination, the response is forwarded through the Basis Theory proxy as-is. In particular, these types of
 errors will have the same status code, headers, and response body as returned by the destination API.
 
-Keep in mind, the destination response may be modified by a response [transform](/docs/api/proxies/pre-configured-proxies#transforms)
-on a pre-configured proxy. Response transforms will only be executed when the destination returns a 2xx status code, and other non-2xx
+Keep in mind, the destination response may be modified by a [response transform](/docs/api/proxies/pre-configured-proxies#response-transforms)
+on a pre-configured proxy. Response transforms will only be executed when the destination returns a `2xx` status code, and other non-`2xx`
 statuses will result in an immediate response from the proxy.
 
 You can identify whether an error was returned by the destination by inspecting the `BT-PROXY-DESTINATION-STATUS` response header,
@@ -23,9 +23,10 @@ which will indicate the status code that Basis Theory received from the destinat
 
 ## Basis Theory Errors
 
-If the proxy request is invalid (e.g. Basis Theory authentication failed, invalid `BT-PROXY-KEY`, invalid [detokenization expression](/docs/expressions/detokenization))
+If the proxy request is invalid (e.g. Basis Theory authentication fails, an invalid `BT-PROXY-KEY` is provided,
+an invalid [detokenization expression](/docs/expressions/detokenization) is specified)
 or if a transform fails (e.g. code contains a syntax error, code throws an error), then the proxy will wrap a standard
-RFC 7807 [API error](/docs/api/errors) inside a `proxy_error` property to distinguish between Basis Theory errors and destination errors.
+[RFC 7807 error](/docs/api/errors) inside a `proxy_error` property to distinguish between Basis Theory errors and destination errors.
 For example, an invalid detokenization expression on a proxy request such as:
 
 ```json
@@ -53,7 +54,7 @@ Custom errors can be returned from request and response transforms by throwing [
 [@basis-theory/basistheory-reactor-formulas-sdk-js](https://www.npmjs.com/package/@basis-theory/basis-theory-reactor-formulas-sdk-js)
 npm package (proxy transforms are executed in Basis Theory's secure [serverless reactor](/docs/concepts/what-are-reactors) environment).
 
-All errors thrown from a transform will cause the proxy request to be terminated and the HTTP response to be immediately returned.
+Any errors thrown from a transform will cause the proxy request to be terminated and the HTTP response to be immediately returned.
 In particular, errors thrown from a request transform will cause the proxy request to terminate _before_ calling the destination API.
 
 ### Reactor Errors
@@ -76,7 +77,7 @@ module.exports = async function (req) {
 }
 ```
 
-would result in the following error response with a `401` status code:
+would result in the following error response with a `401` status code if the `MY-CUSTOM-API-KEY` header is omitted:
 
 ```json
 {
