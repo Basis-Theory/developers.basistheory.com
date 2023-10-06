@@ -31,14 +31,14 @@ or a runtime error occurred within the code due to a bug. The following section 
 
 ## Handling Errors in Reactor Code
 
-The [basistheory-reactor-formulas-sdk-js](https://github.com/Basis-Theory/basistheory-reactor-formulas-sdk-js) package can be referenced
-within your reactor code to better control the status codes and messages included on reactor errors.
+The [@basis-theory/basistheory-reactor-formulas-sdk-js](https://www.npmjs.com/package/@basis-theory/basis-theory-reactor-formulas-sdk-js)
+npm package can be referenced within your reactor code to better control the status codes and messages included on reactor errors.
 
 ### Error Types
 
 This package includes several error types that can be thrown from your code, including:
 
-| Type                        | Status Code | Message                |
+| Type                        | Status Code | Detail                 |
 |-----------------------------|-------------|------------------------|
 | `AuthenticationError`       | `401`       | Authentication Failed  |
 | `AuthorizationError`        | `403`       | Forbidden              |
@@ -46,16 +46,20 @@ This package includes several error types that can be thrown from your code, inc
 | `InvalidPaymentMethodError` | `402`       | Invalid Payment Method |
 | `RateLimitError`            | `429`       | Rate Limit Exceeded    |
 | `ReactorRuntimeError`       | `500`       | Reactor Runtime Error  |
+| `CustomHttpResponseError`   | `any`       | N/A                    |
 
-If your reactor code throws any of these standard error types, they will be caught and translated into
-the corresponding status code and message specified in the table above.
+If your reactor code throws any of these standard error types, with the exception of `CustomHttpResponseError`, they will be caught and translated into
+a standard API [error response](/docs/api/errors) with the corresponding status code and detail specified in the table above.
+
+If a [CustomHttpResponseError](#custom-errors) is thrown from a reactor, the status code, headers,
+and body defined by the error will be used to construct a custom API response.
 
 Any other errors raised from reactor code will result in a `ReactorRuntimeError` containing the original error object
 and the response will have status code `500`.
 
 ### Error Constructors
 
-Each of the [error types](#error-types) accepts a constructor argument that will be returned within the `errors` block.
+Each of the [error types](#error-types) (excluding `CustomHttpResponseError`) accepts a constructor argument that will be returned within the `errors` block.
 The constructor argument for each type supports several error formats, for example:
 
 <Tabs className="bt-tabs" groupId="languages">
@@ -70,7 +74,7 @@ throw new ReactorRuntimeError('My error message');
 // Would result in the following error response:
 {
   "status": 500,
-  "message": "Reactor Runtime Error",
+  "detail": "Reactor Runtime Error",
   "errors": {
     "error": ["My error message"]
   }
@@ -89,7 +93,7 @@ throw new ReactorRuntimeError(["error 1", "error 2"]);
 // Would result in the following error response:
 {
   "status": 500,
-  "message": "Reactor Runtime Error",
+  "detail": "Reactor Runtime Error",
   "errors": {
     "error": ["error 1", "error 2"]
   }
@@ -111,7 +115,7 @@ throw new ReactorRuntimeError({
 // Would result in the following error response:
 {
   "status": 500,
-  "message": "Reactor Runtime Error",
+  "detail": "Reactor Runtime Error",
   "errors": {
     "error1": ["description 1"],
     "error2": ["description 2", "description 3"]
@@ -121,6 +125,48 @@ throw new ReactorRuntimeError({
 
   </TabItem>
 </Tabs>
+
+### Custom Errors
+
+To have complete control over the response body that is returned, including custom status codes, custom headers,
+or to have complete control over the response body, a `CustomHttpResponseError` can be thrown from a reactor.
+
+For example, throwing the following error:
+
+```javascript
+const { CustomHttpResponseError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+throw new CustomHttpResponseError({
+  status: 400,
+  headers: {
+      "Custom-Response-Header-1": "custom-value-1",
+      "Custom-Response-Header-2": "custom-value-2"
+  },
+  body: {
+      "custom_property": "value",
+      "custom_object": {
+          "custom_nested_property": "value"
+      }
+  }
+});
+```
+
+results in an API response with status code `400`, having the headers:
+
+```text
+Custom-Response-Header-1: custom-value-1
+Custom-Response-Header-2: custom-value-2
+```
+
+and the response body:
+
+```json
+{
+  "custom_property": "value",
+  "custom_object": {
+    "custom_nested_property": "value"
+  }
+}
+```
 
 ### Best Practices
 

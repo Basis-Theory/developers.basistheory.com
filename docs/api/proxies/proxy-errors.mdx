@@ -1,0 +1,133 @@
+---
+title: Proxy Errors
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Errors that occur during a [proxy](/docs/api/proxies) request can be due to several different underlying causes.
+The sections below describe each type of proxy error, and how to identify and distinguish between each error scenario.
+
+## Proxy Destination Errors
+
+The proxy destination may return an error response, the format of which is completely controlled by the destination API.
+When an error occurs at the destination, the response is forwarded through the Basis Theory proxy as-is. In particular, these types of
+errors will have the same status code, headers, and response body as returned by the destination API.
+
+Keep in mind, the destination response may be modified by a response [transform](/docs/api/proxies/pre-configured-proxies#transforms)
+on a pre-configured proxy. Response transforms will only be executed when the destination returns a 2xx status code, and other non-2xx
+statuses will result in an immediate response from the proxy.
+
+You can identify whether an error was returned by the destination by inspecting the `BT-PROXY-DESTINATION-STATUS` response header,
+which will indicate the status code that Basis Theory received from the destination API.
+
+## Basis Theory Errors
+
+If the proxy request is invalid (e.g. Basis Theory authentication failed, invalid `BT-PROXY-KEY`, invalid [detokenization expression](/docs/expressions/detokenization))
+or if a transform fails (e.g. code contains a syntax error, code throws an error), then the proxy will wrap a standard
+RFC 7807 [API error](/docs/api/errors) inside a `proxy_error` property to distinguish between Basis Theory errors and destination errors.
+For example, an invalid detokenization expression on a proxy request such as:
+
+```json
+{
+    "invalid": "{{ unknown_token_id }}"
+}
+```
+
+would result in the following error response:
+
+```json
+{
+     "proxy_error": {
+        "errors": {},
+        "title": "Invalid proxy request",
+        "status": 400,
+        "detail": "Failed to detokenize some tokens: unknown_token_id"
+    }
+}
+```
+
+## Proxy Transform Errors
+
+Custom errors can be returned from request and response transforms by throwing [reactor errors](/docs/api/reactors/reactor-errors#error-types) defined in the
+[@basis-theory/basistheory-reactor-formulas-sdk-js](https://www.npmjs.com/package/@basis-theory/basis-theory-reactor-formulas-sdk-js)
+npm package (proxy transforms are executed in Basis Theory's secure [serverless reactor](/docs/concepts/what-are-reactors) environment).
+
+All errors thrown from a transform will cause the proxy request to be terminated and the HTTP response to be immediately returned.
+In particular, errors thrown from a request transform will cause the proxy request to terminate _before_ calling the destination API.
+
+### Reactor Errors
+
+All pre-defined [reactor error types](/docs/api/reactors/reactor-errors#error-types), excluding errors of type `CustomHttpResponseError`,
+will be returned in their standard format and wrapped in a `proxy_error` property to distinguish these errors from destination API errors.
+
+For example, a transform containing the following code:
+
+```javascript
+const { AuthenticationError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+module.exports = async function (req) {
+    const apiKey = req.args.headers['MY-CUSTOM-API-KEY'];
+
+    if (!apiKey)
+        throw new AuthenticationError('MY-CUSTOM-API-KEY header is required');
+
+    // ...
+}
+```
+
+would result in the following error response with a `401` status code:
+
+```json
+{
+    "proxy_error": {
+        "errors": {
+            "error": [
+                "MY-CUSTOM-API-KEY header is required"
+            ]
+        },
+        "title": "One or more validation errors occurred.",
+        "status": 401,
+        "detail": "Authentication Failed"
+    }
+}
+```
+
+### Custom Errors
+
+To provide more control over the errors returned from a proxy transform, a [CustomHttpResponseError](/docs/api/reactors/reactor-errors#custom-errors) can be thrown from the transform.
+This will enable you to specify a status code, custom headers, and have complete control over the response body that is returned.
+
+For example, a transform containing the following code:
+
+```javascript
+const { CustomHttpResponseError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+module.exports = async function (req) {
+  throw new CustomHttpResponseError({
+    status: 400,
+    headers: {
+        "Custom-Response-Header-1": "custom-value-1",
+        "Custom-Response-Header-2": "custom-value-2"
+    },
+    body: {
+        myCustomError: "My custom error message"
+    }
+  });
+};
+```
+
+results in an API response with status code `400`, having the headers:
+
+```text
+Custom-Response-Header-1: custom-value-1
+Custom-Response-Header-2: custom-value-2
+```
+
+and the response body:
+
+```json
+{
+    "myCustomError": "My custom error message"
+}
+```

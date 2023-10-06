@@ -7,6 +7,13 @@ import TabItem from "@theme/TabItem";
 
 # Errors
 
+Basis Theory uses standard HTTP status codes to indicate whether an API request succeeded or failed.
+A response with a 2xx status code indicates success, a 4xx status code indicates a failure due to information provided with the request,
+and a 5xx status code indicates an unexpected error occurred within Basis Theory.
+
+In general, errors are returned with a response body that conforms to the "Problem Details"
+[RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807) specification, as documented below.
+
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
@@ -132,8 +139,14 @@ func main() {
 | `429`      | Request has been [rate limited](#limits)                         |
 | `500`      | Something went wrong on Basis Theory's side                      |
 
+## Proxy Errors
+
+Failed [Proxy](/docs/api/proxies) requests can be due to several different reasons, such as an error being returned
+by the proxy destination, an error was thrown from a custom transform, or the proxy request was invalid.
+For further details about possible proxy errors, or how to return errors from a custom proxy transform, see [Proxy Errors](/docs/api/proxies/proxy-errors).
+
 ## Reactor Errors
 
-Failed [Reactors](/docs/concepts/what-are-reactors) will respond with an error that follow the standard error schema described above.
-For further details about types of reactor errors, or best practices around handling errors within your reactor code,
+Failed [Reactors](/docs/concepts/what-are-reactors) will respond with an error that follows the standard error schema described above.
+For further details about how to return custom errors of reactor errors, or best practices around handling errors within your reactor code,
 see [Reactor Errors](/docs/api/reactors/reactor-errors).
