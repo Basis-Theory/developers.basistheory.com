@@ -24,27 +24,24 @@ Next you will need a [Management Application](/docs/api/applications#application
 
 [Click here](https://portal.basistheory.com/applications/create?application_template_id=931b306f-6be7-405d-9a8d-1442a99dd2d7) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application from the **Full Management Access** template.
 
-<Alert>
-  Save the API Key from the created Management Application as it will be used in this guide to provision the reactor.
-</Alert>
+<Alert>Save the API Key from the created Management Application as it will be used in this guide to provision the reactor.</Alert>
 
 ## Create a Reactor
 
-Reactors provide a secure Node.js 16 runtime environment to be able to execute custom code. Reactors consist of two parts. The Reactor Formula is a re-usable template that can be used to [create multiple Reactors](/docs/api/reactors#create-reactor).
+Reactors provide a secure Node.js 16 runtime environment to be able to execute custom code.
 
 First, we want to write some code that will take in a list of users and return the average age of all of the users:
 
 ```javascript showLineNumbers
 module.exports = async function (req) {
   // 3.15576e+10 is number of milliseconds in a year
-  const ages = req.args.map(user =>
-    Math.floor((new Date() - new Date(user.date_of_birth).getTime()) / 3.15576e+10));
+  const ages = req.args.map((user) => Math.floor((new Date() - new Date(user.date_of_birth).getTime()) / 3.15576e10));
   const averageAge = ages.reduce((a, b) => a + b) / ages.length;
 
   return {
     raw: {
-      averageAge
-    }
+      averageAge,
+    },
   };
 };
 ```
@@ -65,26 +62,7 @@ javascript='module.exports = async function (req) {
 };'
 ```
 
-Now, let's [create a Reactor Formula](/docs/api/reactors/reactor-formulas#create-reactor-formula) with the variable we created:
-
-```shell showLineNumbers
-curl "https://api.basistheory.com/reactor-formulas" \
-  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "name": "Average User Reactor",
-    "description": "Compute average age of users",
-    "type": "private",
-    "code": '"$(echo $javascript | jq -Rsa .)"'
-  }'
-```
-
-<Alert>
-  Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created in the <a href="#getting-started">Getting Started</a>.
-</Alert>
-
-Finally, we need to create a Reactor from the formula we just created:
+Now, let's [create a Reactor](/docs/api/reactors/#create-reactor):
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/reactors" \
@@ -93,14 +71,12 @@ curl "https://api.basistheory.com/reactors" \
   -X "POST" \
   -d '{
     "name": "Average User Reactor",
-    "formula": {
-      "id": "17069df1-80f4-439e-86a7-4121863e4678"
-    }
+    "code": '"$(echo $javascript | jq -Rsa .)"'
   }'
 ```
 
 <Alert>
-  Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created in the <a href="#getting-started">Getting Started</a> step and replace <code>17069df1-80f4-439e-86a7-4121863e4678</code> with the <code>id</code> of the Reactor Formula you created.
+  Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created in the <a href="#getting-started">Getting Started</a> step.
 </Alert>
 
 <Alert>
@@ -130,9 +106,7 @@ curl "https://api.basistheory.com/applications" \
   Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created in the <a href="#getting-started">Getting Started</a> step.
 </Alert>
 
-<Alert>
-  Save the API Key from the created Private Application as it will be used in this guide to create tokens and invoke our reactor.
-</Alert>
+<Alert>Save the API Key from the created Private Application as it will be used in this guide to create tokens and invoke our reactor.</Alert>
 
 ## Create Tokens
 
@@ -210,9 +184,15 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
 <Alert>
   Be sure to replace the following:
   <ul>
-    <li><code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created in the <a href="#create-a-private-application">Create a Private Application</a> step</li>
-    <li><code>5b493235-6917-4307-906a-2cd6f1a90b13</code> with the Reactor <code>id</code> you created in the <a href="#create-a-reactor">Create a Reactor</a> step</li>
-    <li>Token identifiers in the expressions with the tokens you created in the <a href="#create-tokens">Create Tokens</a> step</li>
+    <li>
+      <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created in the <a href="#create-a-private-application">Create a Private Application</a> step
+    </li>
+    <li>
+      <code>5b493235-6917-4307-906a-2cd6f1a90b13</code> with the Reactor <code>id</code> you created in the <a href="#create-a-reactor">Create a Reactor</a> step
+    </li>
+    <li>
+      Token identifiers in the expressions with the tokens you created in the <a href="#create-tokens">Create Tokens</a> step
+    </li>
   </ul>
 </Alert>
 
