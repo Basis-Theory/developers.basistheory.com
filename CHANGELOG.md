@@ -1,3 +1,10 @@
+# [1.103.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.102.0...v1.103.0) (2023-10-06)
+
+
+### Features
+
+* update guides to use reactor code instead of formulas ([#236](https://github.com/Basis-Theory/developers.basistheory.com/issues/236)) ([a689d1f](https://github.com/Basis-Theory/developers.basistheory.com/commit/a689d1fdd26face456f7cf6328e9e450adc50883))
+
 # [1.102.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.101.0...v1.102.0) (2023-10-03)
 
 
