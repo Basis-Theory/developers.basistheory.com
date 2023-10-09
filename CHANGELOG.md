@@ -1,3 +1,10 @@
+## [1.104.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.104.0...v1.104.1) (2023-10-09)
+
+
+### Bug Fixes
+
+* add content type consideration to transform body ([#238](https://github.com/Basis-Theory/developers.basistheory.com/issues/238)) ([b66ea5d](https://github.com/Basis-Theory/developers.basistheory.com/commit/b66ea5d96210bae7bcbeba51b26a1f49e6153f4d))
+
 # [1.104.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.103.0...v1.104.0) (2023-10-09)
 
 
