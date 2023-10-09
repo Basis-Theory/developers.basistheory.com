@@ -1,3 +1,10 @@
+# [1.104.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.103.0...v1.104.0) (2023-10-09)
+
+
+### Features
+
+* Adds proxy error docs ([#237](https://github.com/Basis-Theory/developers.basistheory.com/issues/237)) ([3e892e2](https://github.com/Basis-Theory/developers.basistheory.com/commit/3e892e22bd5353f0c4d89300f0e9291891e68670))
+
 # [1.103.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.102.0...v1.103.0) (2023-10-06)
 
 
