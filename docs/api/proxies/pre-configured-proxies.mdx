@@ -1468,10 +1468,6 @@ executed before and after the HTTP request is forwarded to the destination URL. 
 your custom Node.js code will execute in Basis Theory's secure [serverless reactor](/docs/concepts/what-are-reactors) environment.
 
 <Alert>
-  Transforms are only currently supported for requests with content type <code>application/json</code> or <code>application/x-www-form-urlencoded</code>. Please <a href="https://basistheory.com/contact">let us know</a> if you would like to use proxy transforms with other content types.
-</Alert>
-
-<Alert>
   The maximum payload size to invoke a Pre-configured proxy which uses a Transform is 5 MB. You could pull in more data using the injected <code>BT</code> client from within the Transform code. <a href="https://basistheory.com/contact">Please reach out</a> if you need help.
 </Alert>
 
@@ -1522,13 +1518,13 @@ The request transform function receives the following object:
 
 where `args` contains:
 
-| Attribute | Type     | Description                                                                                                                                                    |
-| --------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `body`    | _object_ | The request body parsed as a JavaScript object                                                                                                                 |
-| `headers` | _object_ | A JavaScript object containing the headers received on the proxy request                                                                                       |
-| `method`  | _string_ | The HTTP method of the proxy request (e.g. "GET", "POST", "PUT", "PATCH", "DELETE")                                                                            |
-| `path`    | _string_ | The path suffix received on the proxy request after `/proxy` (e.g. a request to `/proxy/sub/path?param=value` would result in a `path` of `/sub/path`)         |
-| `query`   | _string_ | The unparsed query string that was received on the proxy request (e.g. a request to `/proxy/sub/path?param=value` would result in a `query` of `?param=value`) |
+| Attribute | Type                 | Description                                                                                                                                                    |
+| --------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `body`    | _object_ or _string_ | The request body parsed as a JavaScript `object` when `Content-Type` is `application/json`, or `string` for other content types.                               |
+| `headers` | _object_             | A JavaScript object containing the headers received on the proxy request                                                                                       |
+| `method`  | _string_             | The HTTP method of the proxy request (e.g. "GET", "POST", "PUT", "PATCH", "DELETE")                                                                            |
+| `path`    | _string_             | The path suffix received on the proxy request after `/proxy` (e.g. a request to `/proxy/sub/path?param=value` would result in a `path` of `/sub/path`)         |
+| `query`   | _string_             | The unparsed query string that was received on the proxy request (e.g. a request to `/proxy/sub/path?param=value` would result in a `query` of `?param=value`) |
 
 #### Request Transform - Response Object
 
@@ -1578,13 +1574,13 @@ The response transform function receives the following object:
 
 where `args` contains:
 
-| Attribute | Type     | Description                                                                                |
-| --------- | -------- | ------------------------------------------------------------------------------------------ |
-| `body`    | _object_ | The response body returned from the destination endpoint, parsed as a JavaScript object    |
-| `headers` | _object_ | A JavaScript object containing the response headers returned from the destination endpoint |
+| Attribute | Type                 | Description                                                                                                                                                               |
+| --------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `body`    | _object_ or _string_ | The response body returned from the destination endpoint, parsed as a JavaScript `object` when `Content-Type` is `application/json`, or `string` for other content types. |
+| `headers` | _object_             | A JavaScript object containing the response headers returned from the destination endpoint                                                                                |
 
 <Alert>
-  <span>Request header names can only contain alphanumeric characters, hyphens, and underscores. Headers names containing other characters will be discarded from the request. Response headers are unrestricted. If you must forward a restricted header to the proxy destination, as a workaround, you may add this header manually from within the request transform.</span>
+  <span>Request header names are case-sensitive and can only contain alphanumeric characters, hyphens, and underscores. Headers names containing other characters will be discarded from the request. Response headers are unrestricted. If you must forward a restricted header to the proxy destination, as a workaround, you may add this header manually from within the request transform.</span>
 </Alert>
 
 #### Response Transform - Response Object
