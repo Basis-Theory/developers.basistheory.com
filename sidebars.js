@@ -299,6 +299,7 @@ const sidebars = {
         "api/proxies/proxies",
         "api/proxies/ephemeral-proxy",
         "api/proxies/pre-configured-proxies",
+        "api/proxies/proxy-errors",
       ],
     },
     {
