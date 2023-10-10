@@ -1,3 +1,10 @@
+# [1.105.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.104.1...v1.105.0) (2023-10-10)
+
+
+### Features
+
+* bump deps ([#241](https://github.com/Basis-Theory/developers.basistheory.com/issues/241)) ([b797457](https://github.com/Basis-Theory/developers.basistheory.com/commit/b79745776c08ce95304d37e27f1a8272f917aed3))
+
 ## [1.104.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.104.0...v1.104.1) (2023-10-09)
 
 
