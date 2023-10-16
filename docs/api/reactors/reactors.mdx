@@ -16,7 +16,7 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 ## Create Reactor
 
-Create a new Reactor from a Reactor Formula for the Tenant.
+Create a new Reactor for the Tenant.
 
 <HttpMethod
   method={HttpMethods.POST}
@@ -33,17 +33,25 @@ Create a new Reactor from a Reactor Formula for the Tenant.
   <TabItem value="shell" label="cURL">
 
 ```shell showLineNumbers
+javascript='module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
+
+  return {
+    raw: {
+      foo: "bar"
+    }
+  };
+};'
+
 curl "https://api.basistheory.com/reactors" \
   -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -X "POST" \
   -d '{
     "name": "My Reactor",
+    "code": '"$(echo $javascript | jq -Rsa .)"',
     "configuration": {
       "SERVICE_API_KEY": "key_abcd1234"
-    },
-    "formula": {
-      "id": "17069df1-80f4-439e-86a7-4121863e4678"
     },
     "application": {
       "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
@@ -61,11 +69,19 @@ const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const reactor = await bt.reactors.create({
   name: "My Reactor",
+    code: '
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: "bar"
+        }
+      };
+    };
+  ',
   configuration: {
     SERVICE_API_KEY: "key_abcd1234",
-  },
-  formula: {
-    id: "17069df1-80f4-439e-86a7-4121863e4678",
   },
   application: {
     id: "45c124e7-6ab2-4899-b4d9-1388b0ba9d04",
@@ -83,11 +99,19 @@ var client = new ReactorClient("<MANAGEMENT_API_KEY>");
 
 var reactor = await client.CreateAsync(new Reactor {
   Name = "My Reactor",
+  Code = @"
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: 'bar'
+        }
+      };
+    };
+  ",
   Configuration = new Dictionary<string, string> {
     { "SERVICE_API_KEY", "key_abcd1234" }
-  },
-  Formula = new Formula {
-    Id = new Guid("17069df1-80f4-439e-86a7-4121863e4678")
   },
   Application = new Application {
     Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
@@ -115,8 +139,18 @@ public class Example {
         CreateReactorRequest createReactorRequest = new CreateReactorRequest(); // CreateReactorRequest |
         Reactor reactor = apiInstance.create(createReactorRequest
                 .name("My Reactor")
+                .code("""
+                    module.exports = async function (req) {
+                      // Do something with `req.configuration.SERVICE_API_KEY`
+
+                      return {
+                        raw: {
+                          foo: 'bar'
+                        }
+                      };
+                    };
+                  """)
                 ._configuration(Map.of("SERVICE_API_KEY", "key_abcd134"))
-                .formula(ReactorFormula.fromJson("17069df1-80f4-439e-86a7-4121863e4678"))
                 .application(Application.fromJson("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")));
     }
 }
@@ -129,7 +163,6 @@ public class Example {
 import basistheory
 from basistheory.api import reactors_api
 from basistheory.model.create_reactor_request import CreateReactorRequest
-from basistheory.model.reactor_formula import ReactorFormula
 from basistheory.model.application import Application
 
 with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
@@ -137,12 +170,19 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MAN
 
     reactor = reactors_client.create(create_reactor_request=CreateReactorRequest(
         name="My Reactor",
+        code=" \
+            module.exports = async function (req) { \
+                // Do something with req.configuration.SERVICE_API_KEY \
+
+                return { \
+                    raw: { \
+                        foo: 'bar' \
+                    } \
+                }; \
+            };",
         configuration={
             "SERVICE_API_KEY": "key_abcd134"
         },
-        formula=ReactorFormula(
-            id="17069df1-80f4-439e-86a7-4121863e4678"
-        ),
         application=Application(
             id="45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
         )
@@ -168,12 +208,20 @@ func main() {
   })
 
   createReactorRequest := *basistheory.NewCreateReactorRequest("My Reactor")
+  createReactorRequest.SetCode(`
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+      raw: {
+        foo: 'bar'
+      }
+      };
+    };
+  `)
   createReactorRequest.SetConfiguration(map[string]string{
     "SERVICE_API_KEY": "key_abcd134",
   })
-  reactorFormula := *basistheory.NewReactorFormula()
-  reactorFormula.SetId("17069df1-80f4-439e-86a7-4121863e4678")
-  createReactorRequest.SetFormula(reactorFormula)
   application := *basistheory.NewApplication()
   application.SetId("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
   createReactorRequest.SetApplication(application)
@@ -190,11 +238,9 @@ func main() {
 | Attribute        | Required | Type     | Default | Description                                                                                                                                                                                                                                                                               |
 | ---------------- | -------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`           | true     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                                                                                                                                                    |
-| `configuration`  | true     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                                                                             |
-| `formula.id`     | true     | _uuid_   | `null`  | Unique identifier of the [Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object) to configure a Reactor for                                                                                                                                                         |
-| `application.id` | false    | _uuid_   | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
-
-The `configuration` object must satisfy the name and type constraints defined by the [Reactor Formula's](/docs/api/reactors/reactor-formulas#reactor-formula-object) `configuration` property.
+| `code`           | true     | _string_ | `null`  | [Reactor code](#reactor-code) which will be executed when the Reactor is processed                                                                                                                                                                                                        |
+| `configuration`  | true     | _object_ | `null`  | A key-value map of predefined configuration names and values accessible from the [Reactor code](#reactor-code)                                                                                                                                                                            |
+| `application.id` | false    | _uuid_   | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types).                                  |
 
 ### Response
 
@@ -205,7 +251,17 @@ Returns a [Reactor](#reactor-object) if the Reactor was created. Returns [an err
   "id": "5b493235-6917-4307-906a-2cd6f1a90b13",
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Reactor",
-  "formula": {...},
+  "code": "
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: 'bar',
+        }
+      };
+    };
+  ",
   "application": {...},
   "configuration": {
     "SERVICE_API_KEY": "key_abcd1234"
@@ -347,7 +403,17 @@ Returns a [paginated object](/docs/api/pagination) with the `data` property cont
       "id": "5b493235-6917-4307-906a-2cd6f1a90b13",
       "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
       "name": "My Reactor",
-      "formula": {...},
+      "code": "
+        module.exports = async function (req) {
+          // Do something with req.configuration.SERVICE_API_KEY
+
+          return {
+            raw: {
+              foo: 'bar',
+            }
+          };
+        };
+      ",
       "configuration": {
         "SERVICE_API_KEY": "key_abcd1234"
       },
@@ -484,7 +550,17 @@ Returns a [Reactor](#reactor-object) with the `id` provided. Returns [an error](
   "id": "5b493235-6917-4307-906a-2cd6f1a90b13",
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Reactor",
-  "formula": {...},
+  "code": "
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: 'bar',
+        }
+      };
+    };
+  ",
   "configuration": {
     "SERVICE_API_KEY": "key_abcd1234"
   },
@@ -514,12 +590,23 @@ Update a Reactor by ID in the Tenant.
   <TabItem value="shell" label="cURL">
 
 ```shell showLineNumbers
+javascript='module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
+
+  return {
+    raw: {
+      foo: "bar"
+    }
+  };
+};'
+
 curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13" \
   -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -X "PUT" \
   -d '{
     "name": "My Reactor",
+    "code": '"$(echo $javascript | jq -Rsa .)"',
     "configuration": {
       "SERVICE_API_KEY": "key_abcd1234"
     },
@@ -541,6 +628,17 @@ const reactor = await bt.reactors.update(
   "5b493235-6917-4307-906a-2cd6f1a90b13",
   {
     name: "My Reactor",
+    code: '
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          raw: {
+            foo: "bar"
+          }
+        };
+      };
+    ',
     configuration: {
       SERVICE_API_KEY: "key_abcd1234",
     },
@@ -562,6 +660,17 @@ var client = new ReactorClient("<MANAGEMENT_API_KEY>");
 var reactor = await client.UpdateAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
   new Reactor {
     Name = "My Reactor",
+    Code = @"
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          raw: {
+            foo: 'bar'
+          }
+        };
+      };
+    ",
     Configuration = new Dictionary<string, string> {
       { "SERVICE_API_KEY", "key_abcd1234" }
     },
@@ -592,6 +701,17 @@ public class Example {
         UpdateReactorRequest updateReactorRequest = new UpdateReactorRequest(); // CreateReactorRequest |
         Reactor reactor = apiInstance.update(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"),updateReactorRequest
                 .name("My Reactor")
+                .code("""
+                  module.exports = async function (req) {
+                    // Do something with `req.configuration.SERVICE_API_KEY`
+
+                    return {
+                      raw: {
+                        foo: 'bar'
+                      }
+                    };
+                  };
+                    """)
                 ._configuration(Map.of("SERVICE_API_KEY", "key_abcd134"))
                 .application(Application.fromJson("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")));
     }
@@ -611,6 +731,16 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MAN
 
     reactor = reactors_client.update("5b493235-6917-4307-906a-2cd6f1a90b13", update_reactor_request=UpdateReactorRequest(
         name="My Reactor",
+        code=" \
+            module.exports = async function (req) { \
+                // Do something with req.configuration.SERVICE_API_KEY \
+
+                return { \
+                    raw: { \
+                        foo: 'bar' \
+                    } \
+                }; \
+            };",
         configuration={
             "SERVICE_API_KEY": "key_abcd134"
         },
@@ -639,6 +769,17 @@ func main() {
   })
 
   updateReactorRequest := *basistheory.NewUpdateReactorRequest("My Reactor")
+  updateReactorRequest.SetCode(`
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+      raw: {
+        foo: 'bar'
+      }
+      };
+    };
+  `)
   updateReactorRequest.SetConfiguration(map[string]string{
     "SERVICE_API_KEY": "key_abcd134",
   })
@@ -664,7 +805,8 @@ func main() {
 | Attribute        | Required | Type     | Default | Description                                                                                                                                                                                                                                                                               |
 | ---------------- | -------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`           | true     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                                                                                                                                                    |
-| `configuration`  | true     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                                                                             |
+| `code`           | true     | _string_ | `null`  | [Reactor code](#reactor-code) which will be executed when the Reactor is processed                                                                                                                                                                                                        |
+| `configuration`  | true     | _object_ | `null`  | A key-value map of predefined configuration names and values accessible from the [Reactor code](#reactor-code)                                                                                                                                                                            |
 | `application.id` | false    | _uuid_   | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
 
 ### Response
@@ -676,7 +818,17 @@ Returns a [Reactor](#reactor-object) if the Reactor was updated. Returns [an err
   "id": "5b493235-6917-4307-906a-2cd6f1a90b13",
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Reactor",
-  "formula": {...},
+  "code": "
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: 'bar'
+        }
+      };
+    };
+  ",
   "configuration": {
     "SERVICE_API_KEY": "key_abcd1234"
   },
@@ -853,11 +1005,12 @@ func main() {
 
 #### Request Parameters
 
-| Attribute        | Required | Type     | Default | Description                                                                                                                                                                                                                                                                               |
-| ---------------- | -------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Attribute        | Required  | Type     | Default | Description                                                                                                                                                                                                                                                                               |
+| ---------------- | --------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`           | false     | _string_ | `null`  | The name of the reactor. Has a maximum length of `200`                                                                                                                                                                                                                                    |
-| `configuration`  | false     | _object_ | `null`  | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                                                                             |
-| `application.id` | false    | _uuid_   | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
+| `code`           | false     | _string_ | `null`  | [Reactor code](#reactor-code) which will be executed when the Reactor is processed                                                                                                                                                                                                        |
+| `configuration`  | false     | _object_ | `null`  | A key-value map of predefined configuration names and values accessible from the [Reactor code](#reactor-code)                                                                                                                                                                            |
+| `application.id` | false     | _uuid_   | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types).                                  |
 
 ### Response
 
@@ -1145,7 +1298,7 @@ func main() {
 
 | Parameter      | Required | Type     | Default | Description                                                                                                                                                                                                       |
 | -------------- | -------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `args`         | false    | _object_ | `null`  | Arguments to provide to the reactor. These are required when arguments have been defined as [request parameters](/docs/api/reactors/reactor-formulas#reactor-formula-request-parameters) on a Reactor Formula.    |
+| `args`         | false    | _object_ | `null`  | Arguments to provide to the reactor.                                                                                                                                                                              |
 | `callback_url` | false    | _string_ | `null`  | Indicates that the reactor should be invoked asynchronously and the result delivered as a webhook to this URL. See [Asynchronous Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) for more info. |
 | `timeout_ms`   | false    | _int_    | `10000` | The maximum execution time for the reactor. Value must be between `10000` (10s) and `210000` (3.5m). Only supported for [Asynchronous Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) requests. |
 
@@ -1156,7 +1309,7 @@ The reactor will be executed with a `req` object that contains the following pro
 | Parameter       | Description                                                                                                                                                          |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `args`          | Detokenized arguments to provided to the reactor.                                                                                                                    |
-| `configuration` | A key-value map of all configuration name and values when creating the [Reactor](#reactor-object)                                                                    |
+| `configuration` | A key-value map of all configuration name and values defined when creating the [Reactor](#reactor-object)                                                            |
 | `bt`            | A pre-configured Basis Theory JS instance for the [application](/docs/api/applications) defined with the Reactor. This will be `null` if no application was defined. |
 
 ### Response
@@ -1168,52 +1321,8 @@ Errors generated from Reactors will be translated to the common Basis Theory Err
 
 | Attribute     | Type     | Description                                                                                                                                                                                   |
 | ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tokens`      | _object_ | (Optional) [Token(s)](/docs/api/tokens#token-object) created from the `tokenize` block of the Reactor Formula [response](/docs/api/reactors/reactor-formulas#reactor-formula-response-object) |
+| `tokens`      | _object_ | (Optional) [Token(s)](/docs/api/tokens#token-object) created from the `tokenize` block of the Reactor code [response](#reactor-code-response-object) |
 | `raw`         | _object_ | (Optional) Raw output returned from the Reactor                                                                                                                                               |
-
-### Validation
-
-When invoking a reactor, you may provide any `args` within your request without first pre-declaring `request_parameters` within the [Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object).
-However, if the formula declares any `request_parameters`, then matching `args` will be validated against this contract.
-Argument validation occurs when a property within `args` exactly matches the name of a request parameter - this comparison is case-sensitive.
-Additional arguments included within `args` that are not declared as request parameters will not be validated and will be passed into the reactor.
-
-Nested objects may be declared as request parameters by dot-separating levels of the object hierarchy.
-For example, we may have a Reactor Formula with complex request parameters declared as:
-
-| name                 | type     | optional |
-| -------------------- | -------- | -------- |
-| `request_id`         | _string_ | false    |
-| `user.first_name`    | _string_ | false    |
-| `user.last_name`     | _string_ | false    |
-| `user.address.city`  | _string_ | true     |
-| `user.address.state` | _string_ | true     |
-
-Then the following arguments would constitute a valid Reactor request:
-
-```json showLineNumbers
-{
-  "args": {
-    "request_id": "d29e8a27-bfdb-4d26-9f13-29bdeafc9bfe",
-    "user": {
-      "first_name": "John",
-      "last_name": "Doe",
-      "address": {
-        "city": "Seattle",
-        "state": "WA"
-      }
-    }
-  }
-}
-```
-
-All required `request_parameters` (those with `optional: false`) must be included within the `args` on each request or the request will be rejected with a 400 error.
-If a request parameter is declared as optional, then a value for this parameter may be omitted within `args`.
-
-Each validated argument must match the `type` on the corresponding request parameter, and if the type does not match, auto casting to the declared type will be attempted.
-For example, say a request parameter is declared with type `number` but the string value `"123"` is provided. This value can be cast to a number, so the reactor would receive the numeric value `123`.
-However, if the string value `"non-numeric"` were provided, a 400 error would be returned because the value cannot be cast to a number.
-If an expression is provided within the `args` for a declared request parameter, then auto type casting is performed after detokenization.
 
 ### Detokenization
 
@@ -1225,9 +1334,6 @@ Reactor request `args` may contain a mixture of detokenization expressions and r
 Tokens containing complex data may be detokenized into a Reactor request, including Bank and Card token types.
 When tokens with complex data are detokenized, the entire JSON data payload will be included within the `args`.
 For an example, see [Use Complex Tokens](/docs/expressions/detokenization#examples).
-
-If the `args` passed into a Reactor contain additional properties that have not been declared as request parameters on the Reactor Formula,
-those properties will be automatically removed and not sent on the request to the Reactor function.
 
 Validation is performed on the resulting request after detokenization, so several required request parameters may be supplied by detokenizing
 a single complex token that contains several of the request parameters.
@@ -1250,10 +1356,46 @@ At most, 100 tokens may be detokenized within a single Reactor request.
 | `id`            | _uuid_                                                                          | Unique identifier of the Reactor which can be used to [get a Reactor](/docs/api/reactors#get-a-reactor)                                                                                                                                                                                              |
 | `tenant_id`     | _uuid_                                                                          | The [Tenant](/docs/api/tenants) ID which owns the reactor                                                                                                                                                                                                                                            |
 | `name`          | _string_                                                                        | The name of the reactor                                                                                                                                                                                                                                                                              |
-| `formula`       | _[Reactor Formula](/docs/api/reactors/reactor-formulas#reactor-formula-object)_ | Reactor Formula this Reactor is configured for                                                                                                                                                                                                                                                       |
-| `configuration` | _map_                                                                           | A key-value map of all configuration name and values for a [Reactor Formula configuration](/docs/api/reactors/reactor-formulas#reactor-formula-configuration)                                                                                                                                        |
+| `code`          | _string_                                                                        | [Reactor code](#reactor-code) which will be executed when the Reactor is processed                                                                                                                                                                                                                   |
+| `configuration` | _map_                                                                           | A key-value map of predefined configuration names and values accessible from the [Reactor code](#reactor-code)                                                                                                                                                                                       |
 | `application`   | _[Application](/docs/api/applications#application-object)_                      | (Optional) This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the Reactor's runtime. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
 | `created_by`    | _uuid_                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Reactor                                                                                                                                                                                                      |
 | `created_at`    | _string_                                                                        | (Optional) Created date of the Reactor in ISO 8601 format                                                                                                                                                                                                                                            |
 | `modified_by`   | _uuid_                                                                          | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Reactor                                                                                                                                                                                                |
 | `modified_at`   | _date_                                                                          | (Optional) Last modified date of the Reactor in ISO 8601 format                                                                                                                                                                                                                                      |
+
+### Reactor Code
+
+All Reactor `code` snippets must export a function which takes in a [request object](#reactor-code-request-object) and returns a [response object](#reactor-code-response-object).
+The snippet should be written in Javascript (targeting Node.js v16) and generally follows the following structure:
+
+```javascript showLineNumbers
+module.exports = async function (req) {
+  const { my_arg } = req.args; // access any args provided with the request
+  const { MY_CONFIG } = req.configuration; // access any static config defined on the Reactor
+
+  // do anything here!
+
+  return {
+    raw: {}, // non-sensitive data that should be returned in plaintext
+    tokenize: {}, // sensitive data that should be tokenized
+  };
+};
+```
+
+#### Reactor Code Request Object
+
+| Attribute       | Type     | Description                                                                                               |
+| --------------- | -------- | --------------------------------------------------------------------------------------------------------- |
+| `args`          | _object_ | The arguments that were provided when the [reactor was invoked](/docs/api/reactors#invoke-a-reactor)      |
+| `configuration` | _object_ | A key-value map of all configuration name and values defined when creating the [Reactor](#reactor-object) |
+
+#### Reactor Code Response Object
+
+| Attribute  | Type     | Description                                                               |
+| ---------- | -------- | ------------------------------------------------------------------------- |
+| `raw`      | _object_ | (Optional) Raw output returned from the Reactor                           |
+| `tokenize` | _object_ | (Optional) A payload that will be tokenized to produce one or more tokens |
+
+The payload returned in the `tokenize` property will be tokenized in the same way that requests are tokenized via the Tokenize endpoint.
+For more information, see [Tokenize](/docs/api/tokens/tokenize).

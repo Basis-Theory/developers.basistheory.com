@@ -18,13 +18,12 @@ Reactors are serverless function runtimes, similar to AWS Lambda, Azure Function
 
 ![Reactors Overview](/img/concepts/reactors_overview.png)
 
-## Reactor Formulas
+## Reactor Code
 
-Using a Reactor starts with the code you’d like to execute - this code block is referred to as a Reactor Formula.
-When creating a Reactor Formula you will define the `code`, expected request parameters, and any up-front configuration - like secrets - required to execute your function.
-Find _an exhaustive list of all configuration options in our [Reactor Formula API Reference.](/docs/api/reactors/reactor-formulas#reactor-formula-object)_
+Using a Reactor starts with the code you’d like to execute.
+When creating a Reactor you will define the `code` and any up-front `configuration` - like secrets - required to execute your function.
 
-Formulas support two different response types, giving you the flexibility to either securely tokenize sensitive outputs or to return raw outputs in the response:
+Reactor code support two different response types, giving you the flexibility to either securely tokenize sensitive outputs or to return raw outputs in the response:
 
 - `tokenize`
   - Any object passed will be [tokenized](/docs/api/tokens/tokenize).
@@ -46,9 +45,9 @@ module.exports = async function (req) {
 ```
 
 <Alert title="Quickstart hint">
-  You can find a list of pre-defined Reactor Formulas for common integration
+  You can find a list of pre-defined Reactor Templates for common integration
   scenarios within our{" "}
-  <a href="https://portal.basistheory.com/reactors/formulas" target="_blank">
+  <a href="https://portal.basistheory.com/reactors/templates" target="_blank">
     Portal
   </a>
   .
@@ -56,20 +55,29 @@ module.exports = async function (req) {
 
 ## Creating a Reactor
 
-Reactors are created with our [Create Reactor endpoint](/docs/api/reactors#create-reactor). Once configured each Reactor can be invoked - executing the formula it has been configured with. Creating a new Reactor is as simple as passing in the configuration and Formula to be invoked.
+Reactors are created with our [Create Reactor endpoint](/docs/api/reactors#create-reactor).
+Once configured each Reactor can be invoked - executing the code it has been configured with. Creating a new Reactor is as simple as passing in the code and configuration to be invoked.
 
 ```shell showLineNumbers
+javascript='module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
+
+  return {
+    raw: {
+      foo: "bar"
+    }
+  };
+};'
+
 curl "https://api.basistheory.com/reactors" \
   -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -X "POST" \
   -d '{
     "name": "My First Reactor",
+    "code": '"$(echo $javascript | jq -Rsa .)"',
     "configuration": {
       "SERVICE_API_KEY": "key_abcd1234"
-    },
-    "formula": {
-      "id": "17069df1-80f4-439e-86a7-4121863e4678"
     }
   }'
 ```
@@ -310,7 +318,7 @@ When making a simple HTTP request, a simpler implementation can be created using
 
 ### What does the development lifecycle look like for building Reactors?
 
-Each Reactor runs a single function which can be scoped, coded, and tested all within your normal development tooling and lifecycles. Code written and pushed to your own Github repositories can be used to create new Reactor Formulas using our Terraform Provider or [API](/docs/api/reactors/reactor-formulas#reactor-formula-object) integrations.
+Each Reactor runs a single function which can be scoped, coded, and tested all within your normal development tooling and lifecycles. Code written and pushed to your own Github repositories can be used to create new Reactors using our Terraform Provider or [API](/docs/api/reactors/#create-reactor) integrations.
 
 ### Can we run the reactor code locally to test?
 

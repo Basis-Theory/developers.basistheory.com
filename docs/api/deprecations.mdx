@@ -2,6 +2,9 @@
 title: Deprecations
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 # Deprecations
 
 ## Deprecated Features
@@ -12,6 +15,7 @@ The following table lists deprecated features and their respective shutdown date
 | ------------------------------------------------------------------- | ----------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `request_reactor_id` and `response_reactor_id` removed from Proxies | November 30, 2022 | March 31, 2023   | In order to simplify management of Proxies, use of `request_transform` and `response_tramsform` has been recommended over Reactors.                                                                                                                                                                                                                                                                             |
 | Token Privacy Settings                                              | October 13, 2022  | February 1, 2023 | Privacy settings (i.e. classification, impact level, and restriction policy) have been deprecated and replaced by a more flexible authorization model based upon [Containers](/docs/concepts/what-are-containers) and [Access Rules](/docs/concepts/access-controls#what-are-access-rules). For more information, see the section below on [Migrating from Privacy Settings](#migrating-from-privacy-settings). |
+| Reactor Formulas                                                    | October 16, 2022  | TBD              | Reactor Formulas have been deprecated in favor of Reactors with `code`. For more information, see the section below on [Migrating from Reactor Formulas](#migrating-from-reactor-formulas).                                                                                                                                                                                             | 
 
 ## Migrating From Privacy Settings
 
@@ -31,3 +35,147 @@ impact, and were replaced by transforms applied via [Access Rules](/docs/concept
 
 If your systems are using the `privacy` attribute of the [Token Object](/docs/api/tokens#token-object) in API responses, please
 update your integration to ignore this attribute as it will be removed on February 1, 2023.
+
+## Migrating From Reactor Formulas
+
+Reactor Formulas were how you added code to a Reactor and configured some of its behavior.
+To offer less friction when creating Reactors, we have introduced a new `code` attribute to the Reactor Object.
+This attribute is a `string` containing the code that will be executed when the Reactor is triggered.
+
+Alongside not having to create a new formula for each Reactor with different code, this new approach also removes some previous restrictions on `configuration` and `request_parameters`.
+Reactors with `code` will not provide validation of the `configuration` attribute or its request parameters, so you will need to perform this validation directly in your code if necessary.
+
+If your systems are using the `formula` attribute of the [Reactor Object](/docs/api/reactors#reactor-object) in API responses, please update to use `code` instead.
+This can be done simply by taking the value for the `code` attribute on the formula and setting it as the value for the `code` attribute on the Reactor.
+
+Below there are some examples on how this operation can be performed by retrieving the formula object and performing a [patch operation] in the Reactor:
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactor-formulas/17069df1-80f4-439e-86a7-4121863e4678" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const reactor = await bt.reactors.retrieve(
+  "5b493235-6917-4307-906a-2cd6f1a90b13"
+);
+
+const reactorFormula = await bt.reactorFormulas.retrieve(reactor.formula.id);
+
+const patchedReactor = await bt.reactors.patch(reactor.id,
+  {
+    code: reactorFormula.code,
+  }
+); 
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Reactors;
+using BasisTheory.net.ReactorFormulas;
+
+var reactorClient = new ReactorClient("<MANAGEMENT_API_KEY>");
+var reactor = await reactorClient.GetByIdAsync("5b493235-6917-4307-906a-2cd6f1a90b13");
+
+var formulaClient = new ReactorFormulaClient("<MANAGEMENT_API_KEY>");
+var reactorFormula = await formulaClient.GetByIdAsync(reactor.Formula.Id);
+
+var patchedReactor = await reactorClient.PatchAsync(Reactor.Id,
+  new Reactor {
+    Code = reactorFormula.Code
+  });
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
+
+        ReactorsApi apiInstance = new ReactorsApi(defaultClient);
+        Reactor reactor = apiInstance.getById(UUID.fromString("5b493235-6917-4307-906a-2cd6f1a90b13"));
+
+        ReactorFormulasApi apiInstance = new ReactorFormulasApi(defaultClient);
+        ReactorFormula reactorFormula = apiInstance.getById(reactor.getFormula().getId());
+
+        PatchReactorRequest patchReactorRequest = new PatchReactorRequest();
+        Reactor patchedReactor = apiInstance.patch(reactor.getId(), patchReactorRequest
+          .code(reactorFormula.getCode()));
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import reactors_api
+from basistheory.api import reactor_formulas_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
+    reactors_client = reactors_api.ReactorsApi(api_client)
+    reactor = reactors_client.get_by_id("5b493235-6917-4307-906a-2cd6f1a90b13")
+
+    reactor_formulas_client = reactor_formulas_api.ReactorFormulasApi(api_client)
+    reactor_formula = reactor_formulas_client.get_by_id(reactor.formula.id)
+
+    patched_reactor = reactors_client.patch(reactor.id, patch_reactor_request=PatchReactorRequest(
+      code=reactor_formula.code
+    ))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
+  })
+
+  reactor, httpResponse, err := apiClient.ReactorsApi.GetById(contextWithAPIKey, "5b493235-6917-4307-906a-2cd6f1a90b13").Execute()
+  reactorFormula, httpResponse, err := apiClient.ReactorFormulasApi.GetById(contextWithAPIKey, reactor.GetFormula().GetId()).Execute()
+
+  patchReactorRequest := *basistheory.NewPatchReactorRequest()
+  patchReactorRequest.SetCode(reactorFormula.GetCode())
+  patchedReactor, httpResponse, err := apiClient.ReactorsApi.Patch(contextWithAPIKey, reactor.GetId()).PatchReactorRequest(patchReactorRequest).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+You can continue to use your existing Reactors with `formula` until they are removed on a future date, but we advise you to migrate to `code` as soon as possible.
+Keep in mind that after migrating to `code` the `formula` will be removed from the Reactor but can still be retrieved for consulting purposes until the shutdown date.
