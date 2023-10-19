@@ -1,3 +1,10 @@
+# [1.106.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.105.0...v1.106.0) (2023-10-19)
+
+
+### Features
+
+* deprecate reactor formulas and remove references to it ([#249](https://github.com/Basis-Theory/developers.basistheory.com/issues/249)) ([69dd6b2](https://github.com/Basis-Theory/developers.basistheory.com/commit/69dd6b23afbc06369d05cfcc2eb79f01308b39a0))
+
 # [1.105.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.104.1...v1.105.0) (2023-10-10)
 
 
