@@ -14,9 +14,9 @@ This can help you to isolate test data from production data and allow you to mor
 
 ## Testing Reactors
 
-[Reactor formula code](/docs/api/reactors/reactor-formulas#reactor-formula-code) is simply an ES module that exports a default function.
+[Reactor code](/docs/api/reactors#reactor-code) is simply an ES module that exports a default function.
 This can be tested like any JavaScript code or ES module using the tooling of your choice.
-Internally at Basis Theory, we unit and integration test our reactor formulas using Jest to ensure the JavaScript code itself works as expected.
+Internally at Basis Theory, we have automated tests for our reactor code using Jest to ensure the JavaScript code itself works as expected.
 
 ### Unit Testing
 
@@ -41,10 +41,10 @@ jest.mock('node-fetch', () =>
 );
 
 describe('Example reactor unit test', () => {
-  const reactorFormula = require('./reactor');
+  const reactorFunction = require('./reactor');
 
   it('should call third party service', async () => {
-    // this is the request we will pass into the reactor formula
+    // this is the request we will pass into the reactor function
     const reactorRequest = {
       configuration: {
         THIRD_PARTY_API_KEY: chance.string()
@@ -63,7 +63,7 @@ describe('Example reactor unit test', () => {
       }
     };
 
-    const reactorResponse = await reactorFormula(reactorRequest);
+    const reactorResponse = await reactorFunction(reactorRequest);
 
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(fetch).toHaveBeenCalledWith(
@@ -95,12 +95,12 @@ For integration testing, we ensure the reactor code actually works against the d
 As an example, the following snippet shows a sample reactor integration test:
 
 ```javascript
-const reactorFormula = require('./reactor'); // this file exports our reactor function as an ES module
+const reactorFunction = require('./reactor'); // this file exports our reactor function as an ES module
 const { AuthenticationError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
 
 describe('Example reactor integration test', () => {
   it('should return expected response', async () => {
-    const actualResponse = await reactorFormula({
+    const actualResponse = await reactorFunction({
       configuration: {
         // this is a real api key for an external service called by our reactor
         THIRD_PARTY_API_KEY: process.env.THIRD_PARTY_API_KEY
@@ -119,7 +119,7 @@ describe('Example reactor integration test', () => {
 
   it('should throw an AuthenticationError when using an invalid API key', async () => {
     await expect(
-      reactorFormula({
+      reactorFunction({
         configuration: {
           // pass in a fake api key that will be rejected by the third party service
           THIRD_PARTY_API_KEY: chance.string()
