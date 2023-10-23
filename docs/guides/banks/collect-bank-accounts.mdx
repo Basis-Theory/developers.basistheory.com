@@ -200,31 +200,25 @@ init();
 import React, { useRef, useState } from 'react';
 import {
   BasisTheoryProvider,
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
+  TextElement,
   useBasisTheory,
 } from '@basis-theory/basis-theory-react';
 
 export default function App() {
   const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+
   // Refs to get access to the Elements instance
-  const cardNumberRef = useRef(null);
-  const cardExpirationRef = useRef(null);
-  const cardVerificationRef = useRef(null);
-  // stores the current card brand in state, to pass to CardVerificationCodeElement
-  const [cardBrand, setCardBrand] = useState();
+  const routingNumberRef = useRef(null);
+  const accountNumberRef = useRef(null);
 
   // highlight-start
   const submit = async () => {
     try {
       const token = await bt?.tokens.create({
-        type: 'card',
+        type: 'bank',
         data: {
-          number: cardNumberRef.current,
-          expiration_month: cardExpirationRef.current.month(),
-          expiration_year: cardExpirationRef.current.year(),
-          cvc: cardVerificationRef.current,
+          routing_number: routingNumberRef.current,
+          account_number: accountNumberRef.current,
         }
       });
       // store token.id in your database
