@@ -1,0 +1,257 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+
+
+# Collect Bank Accounts
+
+When building an e-commerce application, subscription service, payroll solution, or just need to enabling one-time purchases via direct debt (pay by bank) or fund transfers, one of the critical requirements is collecting and storing bank accounts information securely. However, bank routing numbers paired with account numbers, are considered sensitive data, and need to be securely collected in user forms and stored encrypted in special databases.
+
+In this guide, we will set up Basis Theory SDKs to capture Bank Accounts in a frontend application, Web or Mobile, and securely store the data as tokens in Basis Theory Platform, [NACHA preferred partner for data tokenization and encryption](https://www.nacha.org/news/basis-theory-becomes-nacha-preferred-partner-data-tokenization-and-encryption). Given this guide is followed step by step, you can rest assured that you are complying to world's class security and privacy standards.
+
+> TODO DIAGRAM
+
+## Getting Started
+
+<GettingStartedSection />
+
+### Creating a Public Application
+
+Next you will need a [Public Application](/docs/api/applications) using our NACHA-compliant template `Collect Bank Data`. [Click here to create one.](https://portal.basistheory.com/applications/create?application_template_id=d3ea55c1-4008-4703-9d52-db078ca5e245)
+
+This will create an application with the following [Access Controls](/docs/concepts/access-controls):
+* Permissions: `token:create`, `token:update`
+* Containers: `/bank/`
+* Transform: `mask`
+
+<Alert>
+  Save the API Key from the created Public Application as it will be used later in this guide.
+</Alert>
+
+## Configuring Basis Theory Elements
+
+<ConfigureElementsSection />
+
+## Adding Text Elements
+
+Once installed and configured, add the Text Elements to your application. This will enable users to type in their bank account information in your form, while ensuring your systems never come in contact with the data.
+
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+<div id="routingNumber" style="width: 100%;"></div>
+<div id="accountNumber" style="width: 100%;"></div>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let routingNumberElement;
+let accountNumberElement;
+
+async function init() {
+  bt = await new BasisTheory().init('<API_KEY>', { elements: true });
+
+  //highlight-start
+  // Creates Elements instances
+  routingNumberElement = bt.createElement('text', {
+    targetId: 'myRoutingNumber', // (custom) used for tracking validation errors
+    placeholder: 'Routing Number',
+  });
+  accountNumberElement = bt.createElement('text', {
+    targetId: 'myAccountNumber',
+    placeholder: 'Account Number'
+  });
+  //highlight-end
+
+  //highlight-start
+  // Mounts Elements in the DOM in parallel
+  await Promise.all([
+    routingNumberElement.mount('#routingNumber'),
+    accountNumberElement.mount('#accountNumber'),
+  ]);
+  //highlight-end
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef } from 'react';
+import {
+  BasisTheoryProvider,
+  // highlight-start
+  TextElement,
+  //highlight-end
+  useBasisTheory
+} from '@basis-theory/basis-theory-react';
+
+export default function App() {
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+
+  // highlight-start
+  // Refs to get access to the Elements instance
+  const routingNumberRef = useRef(null);
+  const accountNumberRef = useRef(null);
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      // highlight-start
+      <TextElement
+        id="myRoutingNumber"
+        placeholder="Routing Number"
+        ref={routingNumberRef}
+        mask={[
+          /\d/u,
+          /\d/u,
+          /\d/u,
+          /\d/u,
+          ' ',
+          /\d/u,
+          /\d/u,
+          /\d/u,
+          /\d/u,
+          ' ',
+          /\d/u
+        ]}
+        transform={/\s/u}
+      />
+      <TextElement
+        id="myAccountNumber"
+        placeholder="Account Number"
+        ref={accountNumberRef}
+      />
+      // highlight-end
+    </BasisTheoryProvider>
+  );
+}
+
+```
+
+  </TabItem>
+</Tabs>
+
+
+## Storing Bank Accounts
+
+Now that you are securely capturing the bank account data in your user-facing application(s), it is time to store it in your Basis Theory Tenant.
+
+To do this, we will invoke the [Create Token](https://developers.basistheory.com/docs/api/tokens/#create-token) endpoint from the SDK, passing the Text Elements as data points in the payload. This will securely create a `bank` token by transferring the bank information from the frontend Elements to Basis Theory, where the data will be strongly encrypted and stored in a compliant environment.
+
+Add a submit function along with a button to trigger it:
+
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+<div id="cardNumber"></div>
+<div style="display: flex;">
+  <div id="cardExpirationDate" style="width: 100%;"></div>
+  <div id="cardVerificationCode" style="width: 100%;"></div>
+</div>
+// highlight-next-line
+<button id="submit">Submit</button>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let routingNumberElement;
+let accountNumberElement;
+
+async function init () {
+  ...
+  //highlight-next-line
+  document.getElementById("submit").addEventListener("click", submit);
+}
+
+// highlight-start
+async function submit () {
+  try {
+    const token = await bt.tokens.create({
+      type: 'bank',
+      data: {
+        routing_number: routingNumberElement,
+        account_number: accountNumberElement,
+      }
+    });
+    // store token.id in your database
+  } catch (error) {
+    console.error(error);
+  }
+}
+// highlight-end
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef, useState } from 'react';
+import {
+  BasisTheoryProvider,
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+export default function App() {
+  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  // Refs to get access to the Elements instance
+  const cardNumberRef = useRef(null);
+  const cardExpirationRef = useRef(null);
+  const cardVerificationRef = useRef(null);
+  // stores the current card brand in state, to pass to CardVerificationCodeElement
+  const [cardBrand, setCardBrand] = useState();
+
+  // highlight-start
+  const submit = async () => {
+    try {
+      const token = await bt?.tokens.create({
+        type: 'card',
+        data: {
+          number: cardNumberRef.current,
+          expiration_month: cardExpirationRef.current.month(),
+          expiration_year: cardExpirationRef.current.year(),
+          cvc: cardVerificationRef.current,
+        }
+      });
+      // store token.id in your database
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
+      // highlight-next-line
+      <button onClick={submit}>Submit</button>
+    </BasisTheoryProvider>
+  );
+}
+```
+  </TabItem>
+</Tabs>
+
+## Customizing Tokens
+
+### Deduplication
+
+### Masking
+
+### Aliasing
+
+## Conclusion

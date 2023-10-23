@@ -61,6 +61,13 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Bank Data",
+      items: [
+        "guides/banks/collect-bank-accounts"
+      ]
+    },
+    {
+      type: "category",
       label: "Any Data",
       customProps: {
         icon: {
