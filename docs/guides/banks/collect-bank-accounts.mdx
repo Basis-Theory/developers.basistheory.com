@@ -137,6 +137,55 @@ export default function App() {
 ```
 
   </TabItem>
+  <TabItem label="iOS" value="ios">
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+// highlight-next-line
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+    // highlight-start
+    @IBOutlet weak var routingNumberTextField: TextElementUITextField!
+    @IBOutlet weak var accountNumberTextField: TextElementUITextField!
+    // highlight-end
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // highlight-start
+        let regexDigit = try! NSRegularExpression(pattern: "\\d")
+        let routingNumberMask = [
+            regexDigit,
+            regexDigit,
+            regexDigit,
+            regexDigit,
+            " ",
+            regexDigit,
+            regexDigit,
+            regexDigit,
+            regexDigit,
+            " ",
+            regexDigit
+        ] as [Any]
+
+        let transformMatcher = try! NSRegularExpression(pattern: "\\D") // Regex to remove non-digit
+        let routingNumberRegex = try! NSRegularExpression(pattern: "^\\d{9}$"); // Regex to validate routing number after transform
+        let routingNumberOptions = TextElementOptions(mask: routingNumberMask, transform: ElementTransform(matcher: transformMatcher), validation: routingNumberRegex)
+        try! routingNumberTextField.setConfig(options: routingNumberOptions)
+
+        routingNumberTextField.placeholder = "Routing Number"
+        accountNumberTextField.placeholder = "Account Number"
+        // highlight-end
+    }
+}
+```
+
+  </TabItem>
+  <TabItem label="Android" value="android">
+  </TabItem>
 </Tabs>
 
 
@@ -237,6 +286,48 @@ export default function App() {
   );
 }
 ```
+  </TabItem>
+  <TabItem label="iOS" value="ios">
+
+Add a new `UIButton` to your `Main.storyboard` and create a new Action for it called `submit`.
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+    @IBOutlet weak var routingNumberTextField: TextElementUITextField!
+    @IBOutlet weak var accountNumberTextField: TextElementUITextField!
+
+    // highlight-start
+    @IBAction func submit(_ sender: Any) {
+        let body: [String: Any] = [
+            "type": "bank",
+            "data": [
+                "routing_number": self.routingNumberTextField,
+                "account_number": self.accountNumberTextField
+            ]
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: "<API_KEY>") { token, error in
+            guard error == nil else {
+                print(error)
+                return
+            }
+            // store token.id in your database
+        }
+    }
+    // highlight-end
+
+    override func viewDidLoad() { ... }
+
+}
+```
+
+  </TabItem>
+  <TabItem label="Android" value="android">
   </TabItem>
 </Tabs>
 
