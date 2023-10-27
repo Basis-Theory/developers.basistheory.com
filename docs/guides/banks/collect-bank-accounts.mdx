@@ -185,6 +185,90 @@ class ViewController: UIViewController {
 
   </TabItem>
   <TabItem label="Android" value="android">
+
+```xml showLineNumbers title=activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+      // highlight-start
+        <com.basistheory.android.view.TextElement
+            android:id="@+id/routingNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Routing Number" />
+
+        <com.basistheory.android.view.TextElement
+            android:id="@+id/accountNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Account Number"/>
+      // highlight-end
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+```kotlin showLineNumbers title=MainActivity.kt
+// highlight-start
+import com.basistheory.android.view.TextElement
+import com.basistheory.android.service.BasisTheoryElements
+// highlight-end
+
+class MainActivity : AppCompatActivity() {
+
+    // highlight-start
+    private lateinit var routingNumberElement: TextElement
+    private lateinit var accountNumberElement: TextElement
+    // highlight-end
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // highlight-start
+        routingNumberElement = findViewById(R.id.routingNumber)
+        accountNumberElement = findViewById(R.id.accountNumber)
+
+        val digitRegex = Regex("""\d""")
+        routingNumberElement.inputType = InputType.NUMBER
+        routingNumberElement.mask = ElementMask(
+            listOf(
+                digitRegex,
+                digitRegex,
+                digitRegex,
+                digitRegex,
+                " ",
+                digitRegex,
+                digitRegex,
+                digitRegex,
+                digitRegex,
+                " ",
+                digitRegex
+            )
+        )
+        // Regex to remove spaces before tokenization
+        routingNumberElement.transform = RegexReplaceElementTransform(
+            regex = Regex("\\D"),
+            replacement = ""
+        )
+        // highlight-end
+    }
+}
+```
+
   </TabItem>
 </Tabs>
 
@@ -328,13 +412,379 @@ class ViewController: UIViewController {
 
   </TabItem>
   <TabItem label="Android" value="android">
+
+```xml showLineNumbers title=activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        ...
+
+      // highlight-start
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#00A4BA"
+            android:text="Submit" />
+      // highlight-end
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+```kotlin showLineNumbers title=MainActivity.kt
+import com.basistheory.android.view.TextElement
+import com.basistheory.android.service.BasisTheoryElements
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var cardNumberElement: CardNumberElement
+    private lateinit var cardExpirationDateElement: CardExpirationDateElement
+    private lateinit var cardVerificationCodeElement: CardVerificationCodeElement
+    // highlight-start
+    private lateinit var button: Button;
+
+    private val bt = BasisTheoryElements.builder()
+        .apiKey("<API_KEY>")
+        .build()
+    // highlight-end
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        routingNumberElement = findViewById(R.id.routingNumber)
+        accountNumberElement = findViewById(R.id.accountNumber)
+        ...
+        // highlight-start
+        button = findViewById(R.id.submit_button)
+        button.setOnClickListener {
+            submit()
+        }
+        // highlight-end
+    }
+
+    // highlight-start
+    private fun submit() {
+      val token = runBlocking {
+        bt.tokenize(object {
+          val type = "bank"
+          val data = object {
+            val routing_number = routingNumberElement
+            val account_number = accountNumberElement
+          }
+        })
+      }
+      // store token.id in your database
+    }
+    // highlight-end
+}
+```
+
   </TabItem>
 </Tabs>
 
+
+<Alert>
+  Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you
+  created in the <a href="#creating-a-public-application">Creating a Public Application</a> step.
+</Alert>
+
+The created `bank` token object contains the non-sensitive information about the tokenized card, which follows the [Bank Token specification](/docs/api/tokens/token-types#bank):
+
+```json showLineNumbers title=token.json
+{
+  "id": "f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b",
+  "type": "bank",
+  "tenantId": "4aee08b9-5557-474b-a120-252e01fc7b0f",
+  "data": {
+    "routing_number": "021000021",
+    "account_number": "XXXXX3123"
+  },
+  "createdBy": "f5c44560-8433-4dcc-b67f-53594c397a5e",
+  "createdAt": "2023-10-26T14:27:10.6126956+00:00",
+  "mask": {
+    "routingNumber": "{{ data.routing_number }}",
+    "accountNumber": "{{ data.account_number | reveal_last: 4 }}"
+  },
+  "privacy": {
+    "classification": "bank",
+    "impactLevel": "high",
+    "restrictionPolicy": "mask"
+  },
+  "searchIndexes": [],
+  "containers": [
+    "/bank/high/"
+  ]
+}
+```
+
+You can safely store the token's primary key `id` in your database to link it with the appropriate checkout, user profile, subscription, or any other record that requires association with the bank details.
+
+Notice how the bank `account_number`  has been masked before it is returned to your application. This default behavior prevents your application having to deal with the sensitive part of the bank details. Later in this guide we will learn how to [customize masking](#masking).
+
 ## Customizing Tokens
+
+The steps so far cover most cases when you need to collect bank accounts in your frontend and store them in a secure location. However, in some scenarios you may need to customize your bank tokens for specific business needs or technical requirements. In the following sections, you will find optional steps to follow for common problems solved by [Basis Theory Token capabilities](/docs/concepts/what-are-tokens#what-are-the-capabilities-of-a-token).
 
 ### Deduplication
 
+Companies often find it necessary to uniquely identify bank accounts flowing through their systems for various reasons, which may include: preventing fraudulent transactions, detecting abuse, building consumer profiles or streamlining payment processing for a better user experience.
+
+By leveraging [token fingerprinting](/docs/concepts/what-are-tokens#fingerprinting), developers can recognize the tokenized data in a customizable fashion, without having to touch with the plaintext data. For bank details, it is common to index in both Routing Number and Account Number, but in some cases additional consumer details may also be considered.
+
+When making the tokenization request to store the bank data, pass a fingerprint expression to instruct Basis Theory to calculate the fingerprint for the sensitive data field:
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+async function submit () {
+  try {
+    const token = await bt.tokens.create({
+      type: 'bank',
+      data: {
+        routing_number: routingNumberElement,
+        account_number: accountNumberElement,
+      },
+      // highlight-start
+      fingerprintExpression: '{{ data.account_number }}|{{ data.routing_number }}',
+      // highlight-end
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+export default function App() {
+  const submit = async () => {
+    try {
+      const token = await bt?.tokens.create({
+        type: 'bank',
+        data: {
+          routing_number: routingNumberElement,
+          account_number: accountNumberElement,
+        },
+        // highlight-start
+        fingerprintExpression: '{{ data.account_number }}|{{ data.routing_number }}',
+        // highlight-end
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (...);
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+class ViewController: UIViewController {
+    @IBAction func submit(_ sender: Any) {
+        let body: [String: Any] = [
+            "type": "bank",
+            "data": [
+                "routing_number": self.routingNumberTextField,
+                "account_number": self.accountNumberTextField
+            ],
+            // highlight-start
+            "fingerprint_expression": "{{ data.account_number }}|{{ data.routing_number }}"
+            // highlight-end
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: "<API_KEY>") { token, error in
+            guard error == nil else {
+                print(error)
+                return
+            }
+        }
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+
+    private fun submit() {
+      val token = runBlocking {
+        bt.tokens.create(object {
+          val type = "bank"
+          val data = object {
+            val routing_number = routingNumberElement
+            val account_number = accountNumberElement
+          }
+          // highlight-start
+          val fingerprint_expression = "{{ data.account_number }}|{{ data.routing_number }}"
+          // highlight-end
+        })
+      }
+    }
+}
+```
+  </TabItem>
+</Tabs>
+
+The new tokens should now have a fingerprint:
+
+```json showLineNumbers title=token.json
+{
+  "id": "f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b",
+  "type": "bank",
+  "tenantId": "4aee08b9-5557-474b-a120-252e01fc7b0f",
+  "data": {
+    "routing_number": "021000021",
+    "account_number": "XXXXX3123"
+  },
+  "createdBy": "f5c44560-8433-4dcc-b67f-53594c397a5e",
+  "createdAt": "2023-10-26T14:27:10.6126956+00:00",
+  // highlight-start
+  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
+  "fingerprint_expression": "{{ data.number }}",
+  // highlight-end
+  "mask": {
+    "routingNumber": "{{ data.routing_number }}",
+    "accountNumber": "{{ data.account_number | reveal_last: 4 }}"
+  },
+  "privacy": {
+    "classification": "bank",
+    "impactLevel": "high",
+    "restrictionPolicy": "mask"
+  },
+  "searchIndexes": [],
+  "containers": [
+    "/bank/high/"
+  ]
+}
+```
+
+If you want to prevent creation of a duplicate token based on the distinguishable fingerprint, add the flag below:
+
+
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+async function submit () {
+  try {
+    const token = await bt.tokens.create({
+      type: 'bank',
+      data: {
+        routing_number: routingNumberElement,
+        account_number: accountNumberElement,
+      },
+      // highlight-start
+      fingerprintExpression: '{{ data.account_number }}|{{ data.routing_number }}',
+      deduplicateToken: true,
+      // highlight-end
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+export default function App() {
+  const submit = async () => {
+    try {
+      const token = await bt?.tokens.create({
+        type: 'bank',
+        data: {
+          routing_number: routingNumberElement,
+          account_number: accountNumberElement,
+        },
+        // highlight-start
+        fingerprintExpression: '{{ data.account_number }}|{{ data.routing_number }}',
+        // highlight-end
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (...);
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+class ViewController: UIViewController {
+    @IBAction func submit(_ sender: Any) {
+        let body: [String: Any] = [
+            "type": "bank",
+            "data": [
+                "routing_number": self.routingNumberTextField,
+                "account_number": self.accountNumberTextField
+            ],
+            // highlight-start
+            "fingerprint_expression": "{{ data.account_number }}|{{ data.routing_number }}"
+            // highlight-end
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: "<API_KEY>") { token, error in
+            guard error == nil else {
+                print(error)
+                return
+            }
+        }
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+
+    private fun submit() {
+      val token = runBlocking {
+        bt.tokens.create(object {
+          val type = "bank"
+          val data = object {
+            val routing_number = routingNumberElement
+            val account_number = accountNumberElement
+          }
+          // highlight-start
+          val fingerprint_expression = "{{ data.account_number }}|{{ data.routing_number }}"
+          // highlight-end
+        })
+      }
+    }
+}
+```
+  </TabItem>
+</Tabs>
+
+By doing the above, you are instructing Basis Theory to return the existing token if it is found to have the same fingerprint. [Click here to learn more about token deduplication](/docs/concepts/what-are-tokens#deduplication).
 ### Masking
 
 ### Aliasing
