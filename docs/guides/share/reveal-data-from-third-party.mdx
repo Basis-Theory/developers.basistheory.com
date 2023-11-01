@@ -4,7 +4,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { AuthButtons } from "@site/src/components/docs/AuthButtons";
-import { Card } from "@site/src/components/shared/Card"
+import { Card } from "@site/src/components/shared/Card";
 
 import styles from "@site/src/pages/index.module.css";
 import ThemedImage from "@theme/ThemedImage";
@@ -12,7 +12,6 @@ import ThemedImage from "@theme/ThemedImage";
 import Android from "@site/static/img/sdk/logos/android.svg";
 import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
 import ReactSvg from "@site/static/img/sdk/logos/react.svg";
-
 
 # Reveal Data from 3rd Party
 
@@ -31,6 +30,7 @@ To get started, you will need a Basis Theory account.
 <AuthButtons />
 
 ### Creating a Public Application
+
 Next you will need a [Public Application](/docs/api/applications#application-types) in order to create tokens, sessions and initialize our Elements libraries.
 
 [Click here](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&type=public&name=Public%20App) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
@@ -39,62 +39,20 @@ Next you will need a [Public Application](/docs/api/applications#application-typ
 - Application Type - Public
 - Permissions - `token:create`
 
-<Alert>
-  Save the API Key from the created Public Application as it will be used later in this guide.
-</Alert>
-
+<Alert>Save the API Key from the created Public Application as it will be used later in this guide.</Alert>
 
 ## Configuring Basis Theory Elements
 
 [Basis Theory Elements](/docs/concepts/elements) is available for the following technologies. Click below for detailed instructions on how to install and configure it.
 
 <div className={styles["sdk-column"]}>
-<Card
-href="/docs/sdks/web/javascript/"
-img={<JavaScript />}
-className={styles.sdk}
-openInNewWindow={true}
->
-Javascript
-</Card>
+  <Card href="/docs/sdks/web/javascript/" img={<JavaScript />} className={styles.sdk} openInNewWindow={true}>Javascript</Card>
 
-<Card
-href="/docs/sdks/web/react/"
-img={<ReactSvg />}
-className={styles.sdk}
-openInNewWindow={true}
->
-React
-</Card>
+  <Card href="/docs/sdks/web/react/" img={<ReactSvg />} className={styles.sdk} openInNewWindow={true}>React</Card>
 
-<Card
-href="/docs/sdks/mobile/ios/"
-img={
-<div className={styles["logo-container"]}>
-<ThemedImage
-width="100%"
-height="100%"
-sources={{
-light: useBaseUrl("/img/sdk/logos/apple.svg"),
-dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
-}}
-/>
-</div>
-}
-className={styles.sdk}
-openInNewWindow={true}
->
-iOS
-</Card>
+  <Card href="/docs/sdks/mobile/ios/" img={<div className={styles["logo-container"]}><ThemedImage width="100%" height="100%" sources={{ light: useBaseUrl("/img/sdk/logos/apple.svg"), dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"), }}/></div>} className={styles.sdk} openInNewWindow={true}>iOS</Card>
 
-<Card
-href="/docs/sdks/mobile/android/"
-img={<Android />}
-className={styles.sdk}
-openInNewWindow={true}
->
-Android
-</Card>
+  <Card href="/docs/sdks/mobile/android/" img={<Android />} className={styles.sdk} openInNewWindow={true}>Android</Card>
 </div>
 
 ## Creating a Text Element
@@ -106,7 +64,7 @@ In this example we'll create a Text Element, which can hold any `string` value.
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
 let bt;
 //highlight-start
@@ -114,45 +72,43 @@ let textElement;
 //highlight-end
 
 (async () => {
-  bt = await new BasisTheory().init('<API_KEY>', { elements: true });
+  bt = await new BasisTheory().init("<API_KEY>", { elements: true });
 
   //highlight-start
-  textElement = bt.createElement('text', {
-    targetId: 'exampleTextElement',
+  textElement = bt.createElement("text", {
+    targetId: "exampleTextElement",
   });
 
   // here #exampleTextElement is a DOM selector
   // example: <div id="exampleTextElement"></div>
-  await textElement.mount('#exampleTextElement');
+  await textElement.mount("#exampleTextElement");
   //highlight-end
 })();
 ```
+
   </TabItem>
   <TabItem value="react" label="React">
 
 ```tsx showLineNumbers
 // highlight-next-line
-import { useRef } from 'react';
+import { useRef } from "react";
 
 import {
   BasisTheoryProvider,
   // highlight-next-line
   TextElement,
   useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+} from "@basis-theory/basis-theory-react";
 
 function App() {
-  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  const { bt } = useBasisTheory("<API_KEY>", { elements: true });
   // highlight-next-line
   const textRef = useRef(null);
 
   return (
     <BasisTheoryProvider bt={bt}>
       // highlight-start
-      <TextElement
-        id="exampleTextElement"
-        ref={textRef}
-      />
+      <TextElement id="exampleTextElement" ref={textRef} />
       // highlight-end
     </BasisTheoryProvider>
   );
@@ -160,6 +116,7 @@ function App() {
 
 export default App;
 ```
+
   </TabItem>
   <TabItem value="ios" label="iOS">
 
@@ -185,6 +142,7 @@ class ViewController: UIViewController {
     }
 }
 ```
+
   </TabItem>
   <TabItem value="android" label="Android">
 
@@ -193,7 +151,7 @@ To add a Text Element to your Android app, you just have to follow these two ste
 
 1. Add the XML below to your MainActivity layout.
 2. Reference your XML element in the MainActivity class.
-````
+```
 
 ```xml title="res/layout/activity_main.xml"
 <com.basistheory.android.view.TextElement
@@ -222,10 +180,7 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
-<Alert>
-  Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you
-  created in <a href="#getting-started">Getting Started</a>.
-</Alert>
+<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created in <a href="#getting-started">Getting Started</a>.</Alert>
 
 ## Creating a Session
 
@@ -235,67 +190,59 @@ and we'll will use it to safely authenticate the request to the third party. Add
 <Tabs className="bt-tabs" groupId="clients">
   <TabItem value="javascript" label="JavaScript">
 
-
 ```javascript showLineNumbers
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
 let bt;
 let textElement;
 
 (async () => {
-  bt = await new BasisTheory().init('<API_KEY>', { elements: true });
+  bt = await new BasisTheory().init("<API_KEY>", { elements: true });
 
-  textElement = bt.createElement('text', {
-    targetId: 'exampleTextElement',
+  textElement = bt.createElement("text", {
+    targetId: "exampleTextElement",
   });
 
   // here #exampleTextElement is a DOM selector
   // example: <div id="exampleTextElement"></div>
-  await textElement.mount('#exampleTextElement');
+  await textElement.mount("#exampleTextElement");
 
   // this is just an example method that'll have the full lifecycle for revealing
   const reveal = async () => {
     // highlight-next-line
     const session = await bt.sessions.create();
-  }
-
+  };
 })();
 ```
+
   </TabItem>
   <TabItem value="react" label="React">
 
 ```tsx showLineNumbers
+import { useRef } from "react";
 
-import { useRef } from 'react';
-
-import {
-  BasisTheoryProvider,
-  TextElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+import { BasisTheoryProvider, TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 function App() {
-  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  const { bt } = useBasisTheory("<API_KEY>", { elements: true });
   const textRef = useRef(null);
 
   // this is just an example method that'll have the full lifecycle for revealing
   const reveal = async () => {
     // highlight-next-line
     const session = await bt.sessions.create();
-  }
+  };
 
   return (
     <BasisTheoryProvider bt={bt}>
-      <TextElement
-        id="exampleTextElement"
-        ref={textRef}
-      />
+      <TextElement id="exampleTextElement" ref={textRef} />
     </BasisTheoryProvider>
   );
 }
 
 export default App;
 ```
+
   </TabItem>
   <TabItem value="ios" label="iOS">
 
@@ -323,6 +270,7 @@ class ViewController: UIViewController {
     }
 }
 ```
+
   </TabItem>
   <TabItem value="android" label="Android">
 
@@ -355,6 +303,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+
   </TabItem>
 </Tabs>
 
@@ -371,7 +320,6 @@ To create a proxy, you will need a [Management Application](docs/api/application
 - Name - Create Proxy
 - Application Type - Management
 - Permissions: `proxy: create`
-
 
 ### Creating the Proxy in the Backend
 
@@ -406,7 +354,7 @@ app.post("/create-proxy", async (request, response) => {
         };`,
       },
       configuration: {
-        Credentials: "credential_1234567890"
+        Credentials: "credential_1234567890",
       },
       requireAuth: true,
     },
@@ -424,10 +372,9 @@ app.listen(port, () => {
 Notice that we are using a [request transform](/docs/api/proxies/pre-configured-proxies#request-transforms) to add the third party credentials to the `Authorization` header before making the request to the third party.
 These kind of values can be safely stored in the `configuration` object and re-use them for every proxy execution.
 
-
 Start the server with the following command (from the same directory as `backend.js`).
 
-``` bash
+```bash
 node backend.js
 ```
 
@@ -437,15 +384,9 @@ You can now use your favorite API client or just run the following `curl` comman
 curl -X POST http://localhost:4242/create-proxy
 ```
 
-<Alert>
-  Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you
-  created in <a href="#creating-a-management-application">Creating a Management Application</a>, <code>http://third_party_url.com</code> with the third party URL and <code>credential_1234567890</code> with the third party credentials (optionally).
-</Alert>
+<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created in <a href="#creating-a-management-application">Creating a Management Application</a>, <code>http://third_party_url.com</code> with the third party URL and <code>credential_1234567890</code> with the third party credentials (optionally).</Alert>
 
-<Alert>
-    Write down the <code>key</code> value returned from the proxy as its going to be used in the next steps.
-</Alert>
-
+<Alert>Write down the <code>key</code> value returned from the proxy as its going to be used in the next steps.</Alert>
 
 ## Authorizing a Session
 
@@ -459,21 +400,15 @@ First, lets create the [Private Application](docs/api/applications#application-t
 - Application Type - Private
 - Permissions - `token:use`
 
-<Alert>
-    The Private Application must be in the same <a href="/docs/concepts/access-controls#what-are-tenants">Tenant</a> as Public Application used to create the Session.
-</Alert>
+<Alert>The Private Application must be in the same <a href="/docs/concepts/access-controls#what-are-tenants">Tenant</a> as Public Application used to create the Session.</Alert>
 
-<Alert>
-  Save the API Key from the created Private Application as it will be used later in this guide.
-</Alert>
+<Alert>Save the API Key from the created Private Application as it will be used later in this guide.</Alert>
 
 ### Authorizing In the Backend
 
 Using the Private Application API Key and the `nonce` from our session we can grant temporary authorization to invoke the proxy.
 
-<Alert type={Alerts.WARNING}>
-The <b>only way</b> to ensure your private API keys are not publically accessible is for this step to execute in your backend service.
-</Alert>
+<Alert type={Alerts.WARNING}>The <b>only way</b> to ensure your private API keys are not publically accessible is for this step to execute in your backend service.</Alert>
 
 ```javascript showLineNumbers title="backend.js"
 const express = require("express");
@@ -503,7 +438,7 @@ app.post("/create-proxy", async (request, response) => {
         };`,
       },
       configuration: {
-        Credentials: "credential_1234567890"
+        Credentials: "credential_1234567890",
       },
       requireAuth: true,
     },
@@ -518,10 +453,13 @@ app.post("/authorize", async (request, response) => {
   const { nonce } = request.body;
 
   // authorizing a session returns an empty 200 response
-  await bt.sessions.authorize({
-    nonce: nonce,
-    permissions: ['token:use']
-  }, { apiKey: "<PRIVATE_API_KEY>" }); // private application
+  await bt.sessions.authorize(
+    {
+      nonce: nonce,
+      permissions: ["token:use"],
+    },
+    { apiKey: "<PRIVATE_API_KEY>" }
+  ); // private application
 
   // this response is arbitrary and not required
   response.json({
@@ -535,14 +473,9 @@ app.listen(port, () => {
 });
 ```
 
-<Alert>
-  Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you
-  created in the <a href="#creating-a-private-application">Creating a Private Application</a> step.
-</Alert>
+<Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created in the <a href="#creating-a-private-application">Creating a Private Application</a> step.</Alert>
 
-<Alert>
-  In a real world scenario, make sure to include your own form of authentication between your frontend and backend for this request.
-</Alert>
+<Alert>In a real world scenario, make sure to include your own form of authentication between your frontend and backend for this request.</Alert>
 
 ### Calling the Authorization Endpoint
 
@@ -551,55 +484,50 @@ Next, from our client application, we'll call the authorization endpoint created
 <Tabs className="bt-tabs" groupId="clients">
   <TabItem value="javascript" label="JavaScript">
 
-
 ```javascript showLineNumbers
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
 let bt;
 let textElement;
 
 (async () => {
-  bt = await new BasisTheory().init('<API_KEY>', { elements: true });
+  bt = await new BasisTheory().init("<API_KEY>", { elements: true });
 
-  textElement = bt.createElement('text', {
-    targetId: 'exampleTextElement',
+  textElement = bt.createElement("text", {
+    targetId: "exampleTextElement",
   });
 
   // here #exampleTextElement is a DOM selector
   // example: <div id="exampleTextElement"></div>
-  await textElement.mount('#exampleTextElement');
+  await textElement.mount("#exampleTextElement");
 
   // this is just an example method that'll have the full lifecycle for revealing
   const reveal = async () => {
     const session = await bt.sessions.create();
 
     // highlight-start
-    await fetch('http://localhost:4242/authorize', {
-      method: 'POST',
+    await fetch("http://localhost:4242/authorize", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ nonce: session.nonce }),
     });
     // highlight-end
-  }
+  };
 })();
 ```
+
   </TabItem>
   <TabItem value="react" label="React">
 
 ```tsx showLineNumbers
+import { useRef } from "react";
 
-import { useRef } from 'react';
-
-import {
-  BasisTheoryProvider,
-  TextElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+import { BasisTheoryProvider, TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 function App() {
-  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  const { bt } = useBasisTheory("<API_KEY>", { elements: true });
   const textRef = useRef(null);
 
   // this is just an example method that'll have the full lifecycle for revealing
@@ -607,28 +535,26 @@ function App() {
     const session = await bt.sessions.create();
 
     // highlight-start
-    await fetch('http://localhost:4242/authorize', {
-      method: 'POST',
+    await fetch("http://localhost:4242/authorize", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ nonce: session.nonce }),
     });
     // highlight-end
-  }
+  };
 
   return (
     <BasisTheoryProvider bt={bt}>
-      <TextElement
-        id="exampleTextElement"
-        ref={textRef}
-      />
+      <TextElement id="exampleTextElement" ref={textRef} />
     </BasisTheoryProvider>
   );
 }
 
 export default App;
 ```
+
   </TabItem>
   <TabItem value="ios" label="iOS">
 
@@ -696,6 +622,7 @@ class ViewController: UIViewController {
     //highlight-end
 }
 ```
+
   </TabItem>
   <TabItem value="android" label="Android">
 
@@ -754,6 +681,7 @@ class MainActivity : AppCompatActivity() {
   //highlight-end
 }
 ```
+
   </TabItem>
 </Tabs>
 
@@ -764,7 +692,6 @@ We'll add the following code to retrieve the data and set its value to the text 
 
 <Tabs className="bt-tabs" groupId="clients">
   <TabItem value="javascript" label="JavaScript">
-
 
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
@@ -798,7 +725,7 @@ let textElement;
     // highlight-start
     const data = await bt.proxy.get({
       headers: {
-        "BT-PROXY-KEY": "proxy_key_1234567890"
+        "BT-PROXY-KEY": "proxy_key_1234567890",
       },
       apiKey: session.sessionKey,
     });
@@ -809,31 +736,27 @@ let textElement;
   };
 })();
 ```
+
   </TabItem>
   <TabItem value="react" label="React">
 
 ```tsx showLineNumbers
+import { useRef } from "react";
 
-import { useRef } from 'react';
-
-import {
-  BasisTheoryProvider,
-  TextElement,
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+import { BasisTheoryProvider, TextElement, useBasisTheory } from "@basis-theory/basis-theory-react";
 
 function App() {
-  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  const { bt } = useBasisTheory("<API_KEY>", { elements: true });
   const textRef = useRef(null);
 
   // this is just an example method that'll have the full lifecycle for revealing
   const reveal = async () => {
     const session = await bt.sessions.create();
 
-    await fetch('http://localhost:4242/authorize', {
-      method: 'POST',
+    await fetch("http://localhost:4242/authorize", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ nonce: session.nonce }),
     });
@@ -841,7 +764,7 @@ function App() {
     // highlight-start
     const data = await bt.proxy.get({
       headers: {
-        "BT-PROXY-KEY": "proxy_key_1234567890"
+        "BT-PROXY-KEY": "proxy_key_1234567890",
       },
       apiKey: session.sessionKey,
     });
@@ -849,20 +772,18 @@ function App() {
 
     //highlight-next-line
     textElement.setValue(data);
-  }
+  };
 
   return (
     <BasisTheoryProvider bt={bt}>
-      <TextElement
-        id="exampleTextElement"
-        ref={textRef}
-      />
+      <TextElement id="exampleTextElement" ref={textRef} />
     </BasisTheoryProvider>
   );
 }
 
 export default App;
 ```
+
   </TabItem>
   <TabItem value="ios" label="iOS">
 
@@ -935,6 +856,7 @@ class ViewController: UIViewController {
     }
 }
 ```
+
   </TabItem>
   <TabItem value="android" label="Android">
 
@@ -1003,15 +925,13 @@ class MainActivity : AppCompatActivity() {
   }
 }
 ```
+
   </TabItem>
 </Tabs>
 
 🎉 The code above is the last bit that we need to reveal data from a third party!
 
-
-<Alert>
-  The <code>data</code> you receive as response from the proxy is not the raw data, but a synthetic reference to it that can only be used with <code>setValue</code> to display it.
-</Alert>
+<Alert>The <code>data</code> you receive as response from the proxy is not the raw data, but a synthetic reference to it that can only be used with <code>setValue</code> to display it.</Alert>
 
 ## Conclusion
 

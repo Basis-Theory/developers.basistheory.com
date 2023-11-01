@@ -11,11 +11,11 @@ or you may wish to reformat the data before indexing it for search (e.g. use onl
 
 To allow you complete flexibility, transformation functions called **filters** can be applied within any expression.
 Generally, a variable's value can be transformed by specifying a filter after the `|` symbol:
-`{{ <variable> | <filter> }}`
+`\{\{ <variable> | <filter> }}`
 
 You can effectively think of this as "piping" a variable into the filter in the same way you may be familiar with the "pipe" operator from Unix-like systems.
 Multiple filters can be chained together by "piping" the result of each filter into the next, applying in order from left to right:
-`{{ <variable> | <filter1> | <filter2> | ... }}`
+`\{\{ <variable> | <filter1> | <filter2> | ... }}`
 
 All standard [Liquid filters](https://shopify.github.io/liquid/filters/) are supported within expressions.
 For example, given a token containing a `name` object containing both first and last name properties:
@@ -32,7 +32,7 @@ For example, given a token containing a `name` object containing both first and 
 We can create an expression to return the upper-cased last name by splitting on the space character, grabbing the last element, and upper-casing:
 
 ```javascript showLineNumbers
-{{ data.name | split: ' ' | last | upcase }}
+\{\{ data.name | split: ' ' | last | upcase }}
 ```
 
 This expression would evaluate to the value `"DOE"`.
@@ -44,15 +44,15 @@ In addition to the standard Liquid filters, several custom filters are also avai
 Randomly generates a unique alias that preserves the format of the card number, optionally revealing the card's BIN and last 4 digits. If the card's
 length without the preserved character is less than 16 digits, the card BIN will be 6 digits long, 8 otherwise.
 
-The special characters preserved are the traditional card number delimiters such as `" "`  and `"-"`. If the card number length is less than the revealed
+The special characters preserved are the traditional card number delimiters such as `" "` and `"-"`. If the card number length is less than the revealed
 length, an error is returned.
 
 #### Parameters
 
-| Position | Name           | Type     | Required | Default Value | Description                                     |
-| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
-| 0        | reveal_bin   | _bool_    | false    | `false`           | Whether to reveal the card BIN or not |
-| 1        | reveal_last4    | _bool_    | false    | `false`           | Whether to reveal the last 4 digits or not   |
+| Position | Name         | Type   | Required | Default Value | Description                                |
+| -------- | ------------ | ------ | -------- | ------------- | ------------------------------------------ |
+| 0        | reveal_bin   | _bool_ | false    | `false`       | Whether to reveal the card BIN or not      |
+| 1        | reveal_last4 | _bool_ | false    | `false`       | Whether to reveal the last 4 digits or not |
 
 #### Examples
 
@@ -72,13 +72,13 @@ Given a token with the data:
 }
 ```
 
-| Expression                                            | Result                  |
-| ----------------------------------------------------- | ----------------------- |
-| <code>{{ data.number &#124; alias_card }}</code>              | `"3292231249202291"` |
-| <code>{{ data.number &#124; alias_card: 'false', 'false' }}</code>              | `"2012232912901293"` |
-| <code>{{ data.number &#124; alias_card: 'true', 'false' }}</code>              | `"3622720629129014"` |
-| <code>{{ data.number &#124; alias_card: 'true', 'true' }}</code>              | `"3622720639185567"` |
-| <code>{{ data.number &#124; alias_card: 'false', 'true' }}</code>              | `"4024420198125567"` |
+| Expression                                                           | Result               |
+| -------------------------------------------------------------------- | -------------------- |
+| <code>\{\{ data.number &#124; alias_card }}</code>                   | `"3292231249202291"` |
+| <code>\{\{ data.number &#124; alias_card: 'false', 'false' }}</code> | `"2012232912901293"` |
+| <code>\{\{ data.number &#124; alias_card: 'true', 'false' }}</code>  | `"3622720629129014"` |
+| <code>\{\{ data.number &#124; alias_card: 'true', 'true' }}</code>   | `"3622720639185567"` |
+| <code>\{\{ data.number &#124; alias_card: 'false', 'true' }}</code>  | `"4024420198125567"` |
 
 ##### Card number with delimiters
 
@@ -92,13 +92,13 @@ Given a token with the data:
 }
 ```
 
-| Expression                                            | Result                  |
-| ----------------------------------------------------- | ----------------------- |
-| <code>{{ data &#124; alias_card }}</code>              | `"3292-2312-4920-2291"` |
-| <code>{{ data &#124; alias_card: 'false', 'false' }}</code>              | `"2012-2329-1290-1293"` |
-| <code>{{ data &#124; alias_card: 'true', 'false' }}</code>              | `"3622-7206-2912-9014"` |
-| <code>{{ data &#124; alias_card: 'true', 'true' }}</code>              | `"3622-7206-3918-5567"` |
-| <code>{{ data &#124; alias_card: 'false', 'true' }}</code>              | `"4024-4201-9812-5567"` |
+| Expression                                                    | Result                  |
+| ------------------------------------------------------------- | ----------------------- |
+| <code>\{\{ data &#124; alias_card }}</code>                   | `"3292-2312-4920-2291"` |
+| <code>\{\{ data &#124; alias_card: 'false', 'false' }}</code> | `"2012-2329-1290-1293"` |
+| <code>\{\{ data &#124; alias_card: 'true', 'false' }}</code>  | `"3622-7206-2912-9014"` |
+| <code>\{\{ data &#124; alias_card: 'true', 'true' }}</code>   | `"3622-7206-3918-5567"` |
+| <code>\{\{ data &#124; alias_card: 'false', 'true' }}</code>  | `"4024-4201-9812-5567"` |
 
 ## alias_preserve_format
 
@@ -127,12 +127,12 @@ Given a token with the data:
 }
 ```
 
-| Expression                                                 | Example Result       |
-| ---------------------------------------------------------- | -------------------- |
-| <code>{{ data &#124; alias_preserve_format }}</code>       | `"xir83203hqn73599"` |
-| <code>{{ data &#124; alias_preserve_format: 3 }}</code>    | `"ABC83203hqn73599"` |
-| <code>{{ data &#124; alias_preserve_format: 0, 5 }}</code> | `"xir83203hqn67890"` |
-| <code>{{ data &#124; alias_preserve_format: 3, 5 }}</code> | `"ABC83203hqn67890"` |
+| Expression                                                   | Example Result       |
+| ------------------------------------------------------------ | -------------------- |
+| <code>\{\{ data &#124; alias_preserve_format }}</code>       | `"xir83203hqn73599"` |
+| <code>\{\{ data &#124; alias_preserve_format: 3 }}</code>    | `"ABC83203hqn73599"` |
+| <code>\{\{ data &#124; alias_preserve_format: 0, 5 }}</code> | `"xir83203hqn67890"` |
+| <code>\{\{ data &#124; alias_preserve_format: 3, 5 }}</code> | `"ABC83203hqn67890"` |
 
 ## alias_preserve_length
 
@@ -162,12 +162,12 @@ Given a token with the data:
 }
 ```
 
-| Expression                                                 | Example Result       |
-| ---------------------------------------------------------- | -------------------- |
-| <code>{{ data &#124; alias_preserve_length }}</code>       | `"v38anr9m2cx0giw7"` |
-| <code>{{ data &#124; alias_preserve_length: 3 }}</code>    | `"ABCanr9m2cx0giw7"` |
-| <code>{{ data &#124; alias_preserve_length: 0, 5 }}</code> | `"v38anr9m2cx67890"` |
-| <code>{{ data &#124; alias_preserve_length: 3, 5 }}</code> | `"ABCanr9m2cx67890"` |
+| Expression                                                   | Example Result       |
+| ------------------------------------------------------------ | -------------------- |
+| <code>\{\{ data &#124; alias_preserve_length }}</code>       | `"v38anr9m2cx0giw7"` |
+| <code>\{\{ data &#124; alias_preserve_length: 3 }}</code>    | `"ABCanr9m2cx0giw7"` |
+| <code>\{\{ data &#124; alias_preserve_length: 0, 5 }}</code> | `"v38anr9m2cx67890"` |
+| <code>\{\{ data &#124; alias_preserve_length: 3, 5 }}</code> | `"ABCanr9m2cx67890"` |
 
 ## card_mask
 
@@ -177,12 +177,12 @@ If the card's length without the preserved character is less than 16 digits, the
 
 #### Parameters
 
-| Position | Name           | Type     | Required | Default Value | Description                                     |
-| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
-| 0        | reveal_bin   | _bool_    | false    | `false`           | Whether to reveal the card BIN or not |
-| 1        | reveal_last4    | _bool_    | false    | `false`           | Whether to reveal the last 4 digits or not   |
-| 2        | mask_char      | _char_   | false    | `X`           | The masking character                             |
-| 3        | preserve_char | _string_ | false    | ``            | The character to preserve                      |
+| Position | Name          | Type     | Required | Default Value | Description                                |
+| -------- | ------------- | -------- | -------- | ------------- | ------------------------------------------ |
+| 0        | reveal_bin    | _bool_   | false    | `false`       | Whether to reveal the card BIN or not      |
+| 1        | reveal_last4  | _bool_   | false    | `false`       | Whether to reveal the last 4 digits or not |
+| 2        | mask_char     | _char_   | false    | `X`           | The masking character                      |
+| 3        | preserve_char | _string_ | false    | ``            | The character to preserve                  |
 
 #### Examples
 
@@ -202,12 +202,12 @@ Given a token with the data:
 }
 ```
 
-| Expression                                            | Result                  |
-| ----------------------------------------------------- | ----------------------- |
-| <code>{{ data.number &#124; card_mask: 'false', 'false', 'X', '-' }}</code>              | `"XXXXXXXXXXXXXXXX"` |
-| <code>{{ data.number &#124; card_mask: 'true', 'false', 'X', '-' }}</code>              | `"36227206XXXXXXXX"` |
-| <code>{{ data.number &#124; card_mask: 'true', 'true', '#', '-' }}</code>              | `"36227206####5567"` |
-| <code>{{ data.number &#124; card_mask: 'false', 'true', 'X', '-' }}</code>              | `"XXXXXXXXXXXX5567"` |
+| Expression                                                                    | Result               |
+| ----------------------------------------------------------------------------- | -------------------- |
+| <code>\{\{ data.number &#124; card_mask: 'false', 'false', 'X', '-' }}</code> | `"XXXXXXXXXXXXXXXX"` |
+| <code>\{\{ data.number &#124; card_mask: 'true', 'false', 'X', '-' }}</code>  | `"36227206XXXXXXXX"` |
+| <code>\{\{ data.number &#124; card_mask: 'true', 'true', '#', '-' }}</code>   | `"36227206####5567"` |
+| <code>\{\{ data.number &#124; card_mask: 'false', 'true', 'X', '-' }}</code>  | `"XXXXXXXXXXXX5567"` |
 
 ##### Card number with delimiters
 
@@ -221,12 +221,12 @@ Given a token with the data:
 }
 ```
 
-| Expression                                            | Result                  |
-| ----------------------------------------------------- | ----------------------- |
-| <code>{{ data &#124; card_mask: 'false', 'false', 'X', '-' }}</code>              | `"XXXX-XXXX-XXXX-XXXX"` |
-| <code>{{ data &#124; card_mask: 'true', 'false', 'X', '-' }}</code>              | `"3622-7206-XXXX-XXXX"` |
-| <code>{{ data &#124; card_mask: 'true', 'true', '#', '-' }}</code>              | `"3622-7206-####-5567"` |
-| <code>{{ data &#124; card_mask: 'false', 'true', 'X', '-' }}</code>              | `"XXXX-XXXX-XXXX-5567"` |
+| Expression                                                             | Result                  |
+| ---------------------------------------------------------------------- | ----------------------- |
+| <code>\{\{ data &#124; card_mask: 'false', 'false', 'X', '-' }}</code> | `"XXXX-XXXX-XXXX-XXXX"` |
+| <code>\{\{ data &#124; card_mask: 'true', 'false', 'X', '-' }}</code>  | `"3622-7206-XXXX-XXXX"` |
+| <code>\{\{ data &#124; card_mask: 'true', 'true', '#', '-' }}</code>   | `"3622-7206-####-5567"` |
+| <code>\{\{ data &#124; card_mask: 'false', 'true', 'X', '-' }}</code>  | `"XXXX-XXXX-XXXX-5567"` |
 
 ## json
 
@@ -235,7 +235,7 @@ Evaluates a [JSON Path](https://goessner.net/articles/JsonPath/) expression ([pr
 All standard JSON Path syntax is supported, provided that the expression resolves to a single value.
 If the expression resolves to multiple values, the request will result in a 400 error.
 
-While Liquid supports a very similar syntax to JSON path when selecting properties within a JSON object (e.g. `{{ data.bicycle.color }}`),
+While Liquid supports a very similar syntax to JSON path when selecting properties within a JSON object (e.g. `\{\{ data.bicycle.color }}`),
 it does not support more complex JSON Path expressions (e.g. array filter expressions like `$.books[?(@.price < 10)].title`).
 The `json` filter provides further flexibility for evaluating complex JSON Path expressions.
 
@@ -278,16 +278,16 @@ Given a token with the data:
 }
 ```
 
-| Expression                                                            | Result                               |
-| --------------------------------------------------------------------- | ------------------------------------ |
-| <code>{{ data.bicycle.color }}</code>                                 | `"red"`                              |
-| <code>{{ data &#124; json: '$.bicycle.color' }}</code>                | `"red"`                              |
-| <code>{{ data &#124; json: '$.bicycle.price' }}</code>                | `"19.95"`                            |
-| <code>{{ data.bicycle }}</code>                                       | `{ "color": "red", "price": 19.95 }` |
-| <code>{{ data &#124; json: '$.books[0].author' }}</code>              | `"Herman Melville"`                  |
-| <code>{{ data &#124; json: '$.books[?(@.price < 10)].title' }}</code> | `"Moby Dick"`                        |
-| <code>{{ data.nonexistent }}</code>                                   | `null`                               |
-| <code>{{ data &#124; json: '$.book..author' }}</code>                 | `<400 Error>`                        |
+| Expression                                                              | Result                               |
+| ----------------------------------------------------------------------- | ------------------------------------ |
+| <code>\{\{ data.bicycle.color }}</code>                                 | `"red"`                              |
+| <code>\{\{ data &#124; json: '$.bicycle.color' }}</code>                | `"red"`                              |
+| <code>\{\{ data &#124; json: '$.bicycle.price' }}</code>                | `"19.95"`                            |
+| <code>\{\{ data.bicycle }}</code>                                       | `{ "color": "red", "price": 19.95 }` |
+| <code>\{\{ data &#124; json: '$.books[0].author' }}</code>              | `"Herman Melville"`                  |
+| <code>\{\{ data &#124; json: '$.books[?(@.price < 10)].title' }}</code> | `"Moby Dick"`                        |
+| <code>\{\{ data.nonexistent }}</code>                                   | `null`                               |
+| <code>\{\{ data &#124; json: '$.book..author' }}</code>                 | `<400 Error>`                        |
 
 ## last4
 
@@ -313,10 +313,10 @@ Given a token with the data:
 }
 ```
 
-| Expression                                               | Result   |
-| -------------------------------------------------------- | -------- |
-| <code>{{ data.number &#124; last4 }}</code>                     | `"1667"` |
-| <code>{{ data.number &#124; slice: 12, 2 &#124; last4 }}</code> | `"67"`   |
+| Expression                                                        | Result   |
+| ----------------------------------------------------------------- | -------- |
+| <code>\{\{ data.number &#124; last4 }}</code>                     | `"1667"` |
+| <code>\{\{ data.number &#124; slice: 12, 2 &#124; last4 }}</code> | `"67"`   |
 
 ## card_bin
 
@@ -325,10 +325,9 @@ contains a character separator like `4242-4242-4242-4242`, it can be passed in s
 
 #### Parameters
 
-| Position | Name           | Type     | Required | Default Value | Description                                     |
-| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
-| 1        | separator_char | _string_ | false    | ``            | The card number separator character                  |
-
+| Position | Name           | Type     | Required | Default Value | Description                         |
+| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------- |
+| 1        | separator_char | _string_ | false    | ``            | The card number separator character |
 
 #### Examples
 
@@ -346,9 +345,9 @@ Given a token with the data:
 }
 ```
 
-| Expression                                               | Result   |
-| -------------------------------------------------------- | -------- |
-| <code>{{ data.number &#124; card_bin }}</code>                     | `"42424242"` |
+| Expression                                       | Result       |
+| ------------------------------------------------ | ------------ |
+| <code>\{\{ data.number &#124; card_bin }}</code> | `"42424242"` |
 
 ## reveal
 
@@ -377,13 +376,13 @@ Given a token with the data:
 }
 ```
 
-| Expression                                            | Result                  |
-| ----------------------------------------------------- | ----------------------- |
-| <code>{{ data &#124; reveal: 6 }}</code>              | `"3622-7XXXXXXXXXXXXX"` |
-| <code>{{ data &#124; reveal: 7, 5 }}</code>           | `"3622-72XXXXXXX-5567"` |
-| <code>{{ data &#124; reveal: 7, 5, '#' }}</code>      | `"3622-72#######-5567"` |
-| <code>{{ data &#124; reveal: 7, 4, '#', "-" }}</code> | `"3622-72##-####-5567"` |
-| <code>{{ data &#124; reveal: 10, 9 }}</code>          | `"XXXXXXXXXXXXXXXXXXX"` |
+| Expression                                              | Result                  |
+| ------------------------------------------------------- | ----------------------- |
+| <code>\{\{ data &#124; reveal: 6 }}</code>              | `"3622-7XXXXXXXXXXXXX"` |
+| <code>\{\{ data &#124; reveal: 7, 5 }}</code>           | `"3622-72XXXXXXX-5567"` |
+| <code>\{\{ data &#124; reveal: 7, 5, '#' }}</code>      | `"3622-72#######-5567"` |
+| <code>\{\{ data &#124; reveal: 7, 4, '#', "-" }}</code> | `"3622-72##-####-5567"` |
+| <code>\{\{ data &#124; reveal: 10, 9 }}</code>          | `"XXXXXXXXXXXXXXXXXXX"` |
 
 ## pad_left
 
@@ -410,12 +409,12 @@ Given a token with the data:
 }
 ```
 
-| Expression                                      | Result     |
-| ----------------------------------------------- | ---------- |
-| <code>{{ data &#124; pad_left: 6, '0' }}</code> | `"001234"` |
-| <code>{{ data &#124; pad_left: 6, 'X' }}</code> | `"XX1234"` |
-| <code>{{ data &#124; pad_left: 4, '0' }}</code> | `"1234"`   |
-| <code>{{ data &#124; pad_left: 2, '0' }}</code> | `"1234"`   |
+| Expression                                        | Result     |
+| ------------------------------------------------- | ---------- |
+| <code>\{\{ data &#124; pad_left: 6, '0' }}</code> | `"001234"` |
+| <code>\{\{ data &#124; pad_left: 6, 'X' }}</code> | `"XX1234"` |
+| <code>\{\{ data &#124; pad_left: 4, '0' }}</code> | `"1234"`   |
+| <code>\{\{ data &#124; pad_left: 2, '0' }}</code> | `"1234"`   |
 
 ## pad_right
 
@@ -442,12 +441,12 @@ Given a token with the data:
 }
 ```
 
-| Expression                                       | Result     |
-| ------------------------------------------------ | ---------- |
-| <code>{{ data &#124; pad_right: 6, '0' }}</code> | `"123400"` |
-| <code>{{ data &#124; pad_right: 6, 'X' }}</code> | `"1234XX"` |
-| <code>{{ data &#124; pad_right: 4, '0' }}</code> | `"1234"`   |
-| <code>{{ data &#124; pad_right: 2, '0' }}</code> | `"1234"`   |
+| Expression                                         | Result     |
+| -------------------------------------------------- | ---------- |
+| <code>\{\{ data &#124; pad_right: 6, '0' }}</code> | `"123400"` |
+| <code>\{\{ data &#124; pad_right: 6, 'X' }}</code> | `"1234XX"` |
+| <code>\{\{ data &#124; pad_right: 4, '0' }}</code> | `"1234"`   |
+| <code>\{\{ data &#124; pad_right: 2, '0' }}</code> | `"1234"`   |
 
 ## reveal_last
 
@@ -472,10 +471,10 @@ Given a token with the data:
 }
 ```
 
-| Expression                                         | Result             |
-| -------------------------------------------------- | ------------------ |
-| <code>{{ data &#124; reveal_last: 6 }}</code>      | `"XXXXXXXX271667"` |
-| <code>{{ data &#124; reveal_last: 3, '#' }}</code> | `"###########667"` |
+| Expression                                           | Result             |
+| ---------------------------------------------------- | ------------------ |
+| <code>\{\{ data &#124; reveal_last: 6 }}</code>      | `"XXXXXXXX271667"` |
+| <code>\{\{ data &#124; reveal_last: 3, '#' }}</code> | `"###########667"` |
 
 ## stringify
 
@@ -526,12 +525,12 @@ Given a token with the data:
 }
 ```
 
-| Expression                                              | Result                                                                         |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| <code>{{ data.books[0].price &#124; stringify }}</code> | `"8.99"`                                                                       |
-| <code>{{ data.books[1].title &#124; stringify }}</code> | `"The Lord of the Rings"`                                                      |
-| <code>{{ data.bicycles[1] &#124; stringify }}</code>    | `"{\"color\":\"red\",\"price\":19.95}"`                                        |
-| <code>{{ data.bicycles &#124; stringify }}</code>       | `"[{\"color\":\"red\",\"price\":19.95},{\"color\":\"blue\",\"price\":24.95}]"` |
+| Expression                                                | Result                                                                         |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| <code>\{\{ data.books[0].price &#124; stringify }}</code> | `"8.99"`                                                                       |
+| <code>\{\{ data.books[1].title &#124; stringify }}</code> | `"The Lord of the Rings"`                                                      |
+| <code>\{\{ data.bicycles[1] &#124; stringify }}</code>    | `"{\"color\":\"red\",\"price\":19.95}"`                                        |
+| <code>\{\{ data.bicycles &#124; stringify }}</code>       | `"[{\"color\":\"red\",\"price\":19.95},{\"color\":\"blue\",\"price\":24.95}]"` |
 
 ## to_boolean
 
@@ -559,10 +558,10 @@ Given a token with the data:
 }
 ```
 
-| Expression                                             | Result  |
-| ------------------------------------------------------ | ------- |
-| <code>{{ data.true_string &#124; to_boolean }}</code>  | `true`  |
-| <code>{{ data.false_string &#124; to_boolean }}</code> | `false` |
+| Expression                                               | Result  |
+| -------------------------------------------------------- | ------- |
+| <code>\{\{ data.true_string &#124; to_boolean }}</code>  | `true`  |
+| <code>\{\{ data.false_string &#124; to_boolean }}</code> | `false` |
 
 ## to_number
 
@@ -590,10 +589,10 @@ Given a token with the data:
 }
 ```
 
-| Expression                                              | Result    |
-| ------------------------------------------------------- | --------- |
-| <code>{{ data.int_string &#124; to_number }}</code>     | `42`      |
-| <code>{{ data.decimal_string &#124; to_number }}</code> | `3.14159` |
+| Expression                                                | Result    |
+| --------------------------------------------------------- | --------- |
+| <code>\{\{ data.int_string &#124; to_number }}</code>     | `42`      |
+| <code>\{\{ data.decimal_string &#124; to_number }}</code> | `3.14159` |
 
 ## to_string
 
@@ -622,8 +621,8 @@ Given a token with the data:
 }
 ```
 
-| Expression                                             | Result      |
-| ------------------------------------------------------ | ----------- |
-| <code>{{ data.numeric_value &#124; to_string }}</code> | `"3.14159"` |
-| <code>{{ data.boolean_value &#124; to_string }}</code> | `"true"`    |
-| <code>{{ data.string_value &#124; to_string }}</code>  | `"foo"`     |
+| Expression                                               | Result      |
+| -------------------------------------------------------- | ----------- |
+| <code>\{\{ data.numeric_value &#124; to_string }}</code> | `"3.14159"` |
+| <code>\{\{ data.boolean_value &#124; to_string }}</code> | `"true"`    |
+| <code>\{\{ data.string_value &#124; to_string }}</code>  | `"foo"`     |

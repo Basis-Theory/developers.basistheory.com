@@ -13,20 +13,17 @@ For this blueprint, we are going to use iOS as our client application and [Expre
 the blueprint can be modified for your specific framework or language by leveraging any one of our many language-specific [SDKs](/docs/sdks).
 
 This blueprint is a more end-to-end version of the following two guides:
+
 - [Reveal Tokenized Data](/docs/guides/share/reveal-tokenized-data) - For revealing tokenized data such as the card PAN and expiration date.
 - [Reveal Data from Third Party](/docs/guides/share/reveal-data-from-third-party) - For revealing the CVC from a card issue such as [Lithic](https://www.lithic.com/) or [Marqeta](https://www.marqeta.com/).
 
 You can find examples for other languages and frameworks inside those guides.
 
-<Alert>
-  Don't want to complete this blueprint? View the completed example application <a href="https://github.com/Basis-Theory-Labs/display-virtual-cards-blueprint">here</a>.
-</Alert>
+<Alert>Don't want to complete this blueprint? View the completed example application <a href="https://github.com/Basis-Theory-Labs/display-virtual-cards-blueprint">here</a>.</Alert>
 
 ## Getting Started
 
-<Alert>
-If you are already familar with the Basis Theory platform and already created your first token, feel free to jump to the <a href="/docs/blueprints/cards/issue-and-display-cards#setting-up-the-project">Setting Up the Project</a> section of this blueprint.
-</Alert>
+<Alert>If you are already familar with the Basis Theory platform and already created your first token, feel free to jump to the <a href="/docs/blueprints/cards/issue-and-display-cards#setting-up-the-project">Setting Up the Project</a> section of this blueprint.</Alert>
 
 To get started, you will need a Basis Theory account.
 
@@ -42,9 +39,7 @@ Next you will need a [Public Application](/docs/api/applications#application-typ
 - Application Type - Public
 - Permissions - `token:create`
 
-<Alert>
-  Save the API Key from the created Public Application as it will be used later in this guide.
-</Alert>
+<Alert>Save the API Key from the created Public Application as it will be used later in this guide.</Alert>
 
 ## Vault Newly Created Cards
 
@@ -73,9 +68,9 @@ With the Xcode window in focus, select File > Add Packages. In the dialog that a
 ## Adding Your Form Components
 
 For a complete card, we will need to add three iOS elements to our app:
- - A [CardNumberUITextField](/docs/sdks/mobile/ios/types#cardnumberuitextfield)
- - A [CardExpirationDateUITextField](/docs/sdks/mobile/ios/types#cardexpirationdateuitextfield)
- - A [CardVerificationCodeUITextField](/docs/sdks/mobile/ios/types#cardverificationcodeuitextfield)
+- A [CardNumberUITextField](/docs/sdks/mobile/ios/types#cardnumberuitextfield)
+- A [CardExpirationDateUITextField](/docs/sdks/mobile/ios/types#cardexpirationdateuitextfield)
+- A [CardVerificationCodeUITextField](/docs/sdks/mobile/ios/types#cardverificationcodeuitextfield)
 
 The easiest way to add any of our iOS elements is to first drop a `UITextField` onto your `Main.storyboard` file. To do this open the `Main.storyboard` file, and click on plus button on the top right and search for "UITextField" in
 the dialog that appears. Now drag and drop the Text Field component anywhere on the iPhone screen. Feel free to size the `UITextField` to your liking.
@@ -96,12 +91,12 @@ on the top right. Here's a helpful image below:
 
 Clicking on the button above will open the `Main.storyboard` on a new pane on the right. Now in the Project Navigator on the left, click on the `ViewController.swift` file. This should replace the `Main.storyboard` file on the right pane.
 
-Next, we control-drag from each of `CardNumberUITextField`, `CardExpirationDateUITextField` and `CardVerificationCodeUITextField`  in `Main.storyboard` to the top of our `ViewController` class in the `ViewController.swift` file on the right.
+Next, we control-drag from each of `CardNumberUITextField`, `CardExpirationDateUITextField` and `CardVerificationCodeUITextField` in `Main.storyboard` to the top of our `ViewController` class in the `ViewController.swift` file on the right.
 In the window that appears, type in "cardNumberElement", "cardExpirationDateElement" and "cardVerificationCodeElement" respectively for the Name of each element and click Connect. Then Xcode should suggest you import BasisTheoryElements, so let's go ahead and do that now.
 
 You should have something similar to the following for `ViewController.swift` after these steps.
 
-``` swift showLineNumbers title="ViewController.swift"
+```swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -119,7 +114,7 @@ class ViewController: UIViewController {
 
 We'll use the new `cardNumberElement`, `cardExpirationDateElement` and `cardVerificationCodeElement` outlets to style our new elements. Let's write some statements to style our form.
 
-``` swift showLineNumbers title="ViewController.swift"
+```swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -163,9 +158,9 @@ and drop the Filled Button component anywhere under our form elements. Let's cha
 Now we need to add an action for this new button. Follow the previous steps from [Styling Your Form Components](#styling-your-form-components) to get `Main.storyboard` and `ViewController.swift` files side-by-side. Control-drag
 the "Reveal" UIButton into `ViewController.swift`, then choose Action for the Connection and "reveal" for the Name.
 
-Now we'll add the following code to our iOS app to create a session and retrieve the `sessionKey`  and `nonce` from it.
+Now we'll add the following code to our iOS app to create a session and retrieve the `sessionKey` and `nonce` from it.
 
-``` swift showLineNumbers title="ViewController.swift"
+```swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -203,11 +198,7 @@ class ViewController: UIViewController {
 }
 ```
 
-<Alert>
-  Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you
-  created in the <a href="#getting-started">Getting Started</a> step.
-</Alert>
-
+<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created in the <a href="#getting-started">Getting Started</a> step.</Alert>
 
 ## Authorizing a Session
 
@@ -225,27 +216,21 @@ First, lets create the [Private Application](docs/api/applications#application-t
   - Permissions - `token:read` and `token:use`
   - Transform - `reveal`
 
-<Alert>
-    The Private Application must be in the same <a href="/docs/concepts/access-controls#what-are-tenants">Tenant</a> as the token to be revealed.
-</Alert>
+<Alert>The Private Application must be in the same <a href="/docs/concepts/access-controls#what-are-tenants">Tenant</a> as the token to be revealed.</Alert>
 
-<Alert>
-  Save the API Key from the created Private Application as it will be used later in this guide.
-</Alert>
+<Alert>Save the API Key from the created Private Application as it will be used later in this guide.</Alert>
 
 ### Authorizing in the Backend
 
 A session needs to be authorized by a Private Application first before usage.
 Using the Private Application API Key, the `nonce` from our session, and [Condition](/docs/concepts/access-controls#conditions) we ensure we are only granting authorization for the desired token.
 
-<Alert type={Alerts.WARNING}>
-The <b>only way</b> to ensure your private API keys are not publicly accessible is for this step to execute in your backend service.
-</Alert>
+<Alert type={Alerts.WARNING}>The <b>only way</b> to ensure your private API keys are not publicly accessible is for this step to execute in your backend service.</Alert>
 
 For this example, we will use [Express.js](https://expressjs.com/) as our backend and the [Node.js SDK](/docs/sdks/server-side/node) to authorize the session.
 We'll create a `backend.js` file and add the following code to start the Express.js backend and authorize an incoming session.
 
-``` javascript showLineNumbers title="backend.js"
+```javascript showLineNumbers title="backend.js"
 const express = require("express");
 const { BasisTheory } = require("@basis-theory/basis-theory-js");
 
@@ -290,20 +275,17 @@ app.listen(port, () => {
 
 Now we can start the server with the following command (from the same directory as `backend.js`).
 
-``` bash
+```bash
 node backend.js
 ```
 
-<Alert>
-  Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you
-  created in <a href="#creating-a-private-application">Creating a Private Application</a> and <code>token_id_1234567890</code> with the <code>id</code> for the card token you wish to reveal.
-</Alert>
+<Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created in <a href="#creating-a-private-application">Creating a Private Application</a> and <code>token_id_1234567890</code> with the <code>id</code> for the card token you wish to reveal.</Alert>
 
 ### Calling the Authorization Endpoint
 
 Now with our backend running, we'll add the following code to call the authorization endpoint, passing our created session `nonce` to it:
 
-``` swift showLineNumbers title="ViewController.swift"
+```swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -381,10 +363,7 @@ class ViewController: UIViewController {
 }
 ```
 
-<Alert type={Alerts.WARNING}>
-  On a production environment, your endpoint to authorize session should be behind your own authorization scheme.
-</Alert>
-
+<Alert type={Alerts.WARNING}>On a production environment, your endpoint to authorize session should be behind your own authorization scheme.</Alert>
 
 ## Revealing a Card Token
 
@@ -392,7 +371,7 @@ With the authorized session, we can now use the `sessionKey` to retrieve the car
 
 We'll add the following code to retrieve the token and set its values to the individual card elements.
 
-``` swift showLineNumbers title="ViewController.swift"
+```swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -497,7 +476,7 @@ To create a proxy, you will need a [Management Application](docs/api/application
 A proxy can be created [using one of our SDKs or through our API](/docs/api/proxies). In the example below we'll continue to use our Express.js backend.
 Notice that we are using a [request transform](/docs/api/proxies/ephemeral-proxy#invoke-the-proxy) to add our Lithic API key to the header on every proxy request.
 
-``` javascript showLineNumbers title="backend.js"
+```javascript showLineNumbers title="backend.js"
 const express = require("express");
 const { BasisTheory } = require("@basis-theory/basis-theory-js");
 
@@ -575,24 +554,17 @@ You can now use your favorite API client or just run the following `curl` comman
 curl -X POST http://localhost:4242/create-proxy
 ```
 
-<Alert>
-  Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you
-  created in <a href="#creating-a-management-application">Creating a Management Application</a>, and <code>lithic_key_123456789</code> with your Lithic API Key.
-</Alert>
+<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created in <a href="#creating-a-management-application">Creating a Management Application</a>, and <code>lithic_key_123456789</code> with your Lithic API Key.</Alert>
 
-<Alert>
-    Write down the <code>key</code> value returned from the proxy as its going to be used in the next step.
-</Alert>
+<Alert>Write down the <code>key</code> value returned from the proxy as its going to be used in the next step.</Alert>
 
-<Alert>
-    If using Lithic in production, make sure to change the <code>destinationUrl</code> to the production url: <code>https://api.lithic.com/v1/cards</code>
-</Alert>
+<Alert>If using Lithic in production, make sure to change the <code>destinationUrl</code> to the production url: <code>https://api.lithic.com/v1/cards</code></Alert>
 
 ### Retrieving and Revealing CVC Value from Lithic
 
 With the proxy created, we'll add the following code to call it using our previously authorized `sessionKey`, retrieve the CVC number, and then set it onto our element.
 
-``` swift showLineNumbers title="ViewController.swift"
+```swift showLineNumbers title="ViewController.swift"
 import UIKit
 import BasisTheoryElements
 
@@ -690,12 +662,7 @@ class ViewController: UIViewController {
 }
 ```
 
-<Alert>
-  Be sure to replace <code>lithic_token_id</code> with the ID for the Lithic card <code>id</code>, <code>test_proxy_123456789</code> with the proxy <code>key</code> created in the <a href="#creating-a-proxy-to-lithic">Creating a Proxy to Lithic</a> step
-   and <code>card_token_id</code> with your Basis Theory card token <code>id</code>.
-</Alert>
-
-<br></br>
+<Alert>Be sure to replace <code>lithic_token_id</code> with the ID for the Lithic card <code>id</code>, <code>test_proxy_123456789</code> with the proxy <code>key</code> created in the <a href="#creating-a-proxy-to-lithic">Creating a Proxy to Lithic</a> step and <code>card_token_id</code> with your Basis Theory card token <code>id</code>.</Alert>
 
 🎉 The code above is the last bit that we need to reveal a full credit card! Now let's run the app by clicking on the play button on the top left. The screen should look something like this:
 
