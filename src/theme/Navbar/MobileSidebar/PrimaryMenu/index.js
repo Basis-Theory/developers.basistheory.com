@@ -19,19 +19,13 @@ export default function NavbarMobilePrimaryMenu() {
   const items = useNavbarItems();
 
   const excludeCustomItems = (item) => !item.type?.includes("custom");
-  const customItems = (item) =>
-    item.type?.includes("custom") && !item.type?.includes("toggle");
+  const customItems = (item) => item.type?.includes("custom") && !item.type?.includes("toggle");
 
   return (
     <>
       <ul className="menu__list">
         {items.filter(excludeCustomItems).map((item, i) => (
-          <NavbarItem
-            mobile
-            {...item}
-            onClick={() => mobileSidebar.toggle()}
-            key={i}
-          />
+          <NavbarItem mobile {...item} onClick={() => mobileSidebar.toggle()} key={i} />
         ))}
       </ul>
       <hr />

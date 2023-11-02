@@ -34,26 +34,8 @@ function ColorModeToggle({ className, value, onChange }) {
 
   return (
     <div className={clsx(styles.toggle, className)}>
-      <button
-        onMouseEnter={toggleHoverStyles}
-        onMouseLeave={toggleHoverStyles}
-        className={clsx(
-          "clean-btn",
-          styles.toggleButton,
-          !isBrowser && styles.toggleButtonDisabled
-        )}
-        type="button"
-        onClick={() => onChange(value === "dark" ? "light" : "dark")}
-        disabled={!isBrowser}
-        title={title}
-        aria-label={title}
-        aria-live="polite"
-      >
-        {value == "dark" ? (
-          <IconLightMode hover={applyHoverStyles} />
-        ) : (
-          <IconDarkMode hover={applyHoverStyles} />
-        )}
+      <button onMouseEnter={toggleHoverStyles} onMouseLeave={toggleHoverStyles} className={clsx("clean-btn", styles.toggleButton, !isBrowser && styles.toggleButtonDisabled)} type="button" onClick={() => onChange(value === "dark" ? "light" : "dark")} disabled={!isBrowser} title={title} aria-label={title} aria-live="polite">
+        {value == "dark" ? <IconLightMode hover={applyHoverStyles} /> : <IconDarkMode hover={applyHoverStyles} />}
       </button>
     </div>
   );
