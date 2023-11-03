@@ -1,9 +1,6 @@
 import React from "react";
-import { useThemeConfig } from "@docusaurus/theme-common";
-import {
-  splitNavbarItems,
-  useNavbarMobileSidebar,
-} from "@docusaurus/theme-common/internal";
+import { useThemeConfig, ErrorCauseBoundary } from "@docusaurus/theme-common";
+import { splitNavbarItems, useNavbarMobileSidebar } from "@docusaurus/theme-common/internal";
 import NavbarItem from "@theme/NavbarItem";
 import SearchBar from "@theme/SearchBar";
 import NavbarMobileSidebarToggle from "@theme/Navbar/MobileSidebar/Toggle";
@@ -15,10 +12,14 @@ function useNavbarItems() {
   return useThemeConfig().navbar.items;
 }
 function NavbarItems({ items }) {
+  const throwNewError = (error) => new Error(`A theme navbar item failed to render. Please double-check the following navbar item (themeConfig.navbar.items) of your Docusaurus config: ${JSON.stringify(item, null, 2)}`, { cause: error });
+
   return (
     <>
       {items.map((item, i) => (
-        <NavbarItem {...item} key={i} />
+        <ErrorCauseBoundary key={i} onError={throwNewError}>
+          <NavbarItem {...item} />
+        </ErrorCauseBoundary>
       ))}
     </>
   );
@@ -55,9 +56,7 @@ export default function NavbarContent() {
               <SearchBar />
             </NavbarSearch>
           )}
-          {!mobileSidebar.shouldRender ? (
-            <NavbarItems items={rightItems} />
-          ) : null}
+          {!mobileSidebar.shouldRender ? <NavbarItems items={rightItems} /> : null}
           {/*  <NavbarColorModeToggle className={styles.colorModeToggle} /> */}
         </>
       }

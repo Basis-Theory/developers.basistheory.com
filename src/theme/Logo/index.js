@@ -26,23 +26,10 @@ function LogoThemedImage({ logo, alt, imageClassName }) {
     dark: useBaseUrl(src.dark),
   };
 
-  const themedImage = (
-    <ThemedImage
-      className={logo.className}
-      sources={sources}
-      height={logo.height}
-      width={logo.width}
-      alt={alt}
-      style={logo.style}
-    />
-  );
+  const themedImage = <ThemedImage className={logo.className} sources={sources} height={logo.height} width={logo.width} alt={alt} style={logo.style} />;
   // Is this extra div really necessary?
   // introduced in https://github.com/facebook/docusaurus/pull/5666
-  return imageClassName ? (
-    <div className={imageClassName}>{themedImage}</div>
-  ) : (
-    themedImage
-  );
+  return imageClassName ? <div className={imageClassName}>{themedImage}</div> : themedImage;
 }
 export default function Logo(props) {
   const {
@@ -60,18 +47,8 @@ export default function Logo(props) {
   // and provide a sensible fallback otherwise.
   const alt = logo?.alt ?? fallbackAlt;
   return (
-    <Link
-      to={logoLink}
-      {...propsRest}
-      {...(logo?.target && { target: logo.target })}
-    >
-      {logo && (
-        <LogoThemedImage
-          logo={logo}
-          alt={alt}
-          imageClassName={imageClassName}
-        />
-      )}
+    <Link to={logoLink} {...propsRest} {...(logo?.target && { target: logo.target })}>
+      {logo && <LogoThemedImage logo={logo} alt={alt} imageClassName={imageClassName} />}
       {navbarTitle != null && <b className={titleClassName}>{navbarTitle}</b>}
     </Link>
   );
