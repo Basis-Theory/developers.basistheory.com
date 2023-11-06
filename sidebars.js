@@ -63,7 +63,8 @@ const sidebars = {
       type: "category",
       label: "Bank Data",
       items: [
-        "guides/banks/collect-bank-accounts"
+        "guides/banks/collect-bank-accounts",
+        "guides/banks/process-bank-payments"
       ]
     },
     {

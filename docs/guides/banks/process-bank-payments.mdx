@@ -1,0 +1,191 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+
+# Process Bank Payments
+
+Storing your customers' bank accounts with Basis Theory platform grants you the ability to seamlessly shift between payment processors, giving you competitive advantages including payment flexibility, reliability, cost savings, increased acceptance rates, and future-proofing your business against processor downtime or shutdown.
+
+This guide will explore how to forward stored bank account information to any third-party API endpoint, with minimal configuration requirements. The steps below take into consideration NACHA's sensitive financial information requirements related to Data Security,  Data Transmission, Audit Trails and Access Controls.
+
+> TODO diagram
+
+If you are not yet storing your customers' bank accounts with Basis Theory, here are a few guides you can explore:
+
+- [Collect Bank Accounts](/docs/guides/banks/collect-bank-accounts) - capture bank accounts in the frontend;
+- [Collect Inbound Sensitive Data via API](/docs/guides/collect/collect-inbound-sensitive-data) - receive data in API requests;
+- [Import from a Database](/docs/blueprints/migrations/import-from-database) - migrate to Basis Theory.
+
+## Getting Started
+
+<GettingStartedSection />
+
+### Creating a Private Application
+
+Next, you will need a [Private Application](/docs/api/applications) using our NACHA-compliant template `Use Bank Tokens`. [Click here to create one.](https://portal.basistheory.com/applications/create?application_template_id=d6d8c64c-1145-4b7f-a4bc-bb5cd3a40128)
+
+This will create an application with the following [Access Controls](/docs/concepts/access-controls):
+* Permissions: `token:use`
+* Containers: `/bank/`
+* Transform: `reveal`
+
+<Alert>
+  Save the API Key from the created Private Application as it will be used in the next steps of this guide.
+</Alert>
+
+## Send the Data
+
+We will use Basis Theory [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy), a tool that transparently performs detokenization, to share the sensitive banking data to the Payments Processor or Acquirer API. To do this, we will formulate our HTTPS request as if we were directly connecting to the target endpoint, with the following variations:
+
+1. Use the previously-created Private Application Key as the value of the `BT-API-KEY` header;
+2. Specify the target API endpoint as the value for the `BT-PROXY-URL` header;
+3. Pass any additional headers you need the target API to receive, for example `Authorization`, `X-API-KEY`, etc.;
+4. Replace the plaintext sensitive account information in the expected payload contents with [detokenization expressions](/docs/expressions/detokenization) that contains token identifiers.
+
+For example, given you have a previously stored bank token with the following identifier:
+
+```json showLineNumbers title=token.json
+{
+// highlight-next-line
+  "id": "f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b",
+  "type": "bank",
+  "tenantId": "4aee08b9-5557-474b-a120-252e01fc7b0f",
+  "data": {
+    "routing_number": "021000021",
+    "account_number": "XXXXX3123"
+  },
+  "createdBy": "f5c44560-8433-4dcc-b67f-53594c397a5e",
+  "createdAt": "2023-10-26T14:27:10.6126956+00:00",
+  "mask": {
+    "routingNumber": "{{ data.routing_number }}",
+    "accountNumber": "{{ data.account_number | reveal_last: 4 }}"
+  },
+  "privacy": {
+    "classification": "bank",
+    "impactLevel": "high",
+    "restrictionPolicy": "mask"
+  },
+  "searchIndexes": [],
+  "containers": [
+    "/bank/high/"
+  ]
+}
+```
+
+Here are a few integration examples of how to send the detokenized banking information to third party APIs.
+
+<Tabs className="bt-tabs" queryString="processor">
+  <TabItem value="stripe" label="Stripe">
+
+```shell showLineNumbers title="Create a Payment Method"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://api.stripe.com/v1/payment_methods' \
+-H 'Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4' \
+// highlight-end
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'type=us_bank_account' \
+--data-urlencode 'us_bank_account[account_holder_type]=individual' \
+// highlight-start
+--data-urlencode 'us_bank_account[routing_number]={{ f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b | json: "$.routing_number" }}' \
+--data-urlencode 'us_bank_account[account_number]={{ f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b | json: "$.account_number" }}' \
+// highlight-end
+--data-urlencode 'billing_details[name]=John Doe'
+```
+
+[Stripe Payment Method Docs](https://stripe.com/docs/api/payment_methods/create)
+
+  </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+```shell showLineNumbers title="Create Checkout"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://checkout-test.adyen.com/v69/payments' \
+-H 'X-API-KEY: Vt(JJ5U5xuVECtg59fm9hBM+cZMWhw+ms2edxM%Rwmu0=Z2n3rGiQjQr-YEYfAq((It-Ocb03Jfob1JqGhogg:J/skGLIwerM=uAuHQDFHZBh+75pKgznYB3QeL7mrnBSeh34YAxLjdGEJQAhKdaU2' \
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "merchantAccount": "BasisTheoryECOM",
+  "amount": {
+    "value": 100,
+    "currency": "USD"
+  },
+  "reference": "YOUR_ORDER_NUMBER",
+  "paymentMethod": {
+    "type": "ach",
+    // highlight-start
+    "bankLocationId": "{{ f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b | json: \"$.routing_number\" }}",
+    "bankAccountNumber": "{{ f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b | json: \"$.account_number\" }}",
+    // highlight-end
+    "ownerName": "John Smith"
+  },
+  "billingAddress":{
+    "houseNumberOrName":"50",
+    "street":"Test Street",
+    "city":"Amsterdam",
+    "stateOrProvince":"NY",
+    "postalCode":"12010",
+    "country":"US"
+  }
+}'
+```
+
+[Adyen ACH Docs](https://docs.adyen.com/payment-methods/ach-direct-debit/api-only/)
+
+  </TabItem>
+  <TabItem value="chase" label="Dwolla">
+
+```shell showLineNumbers title="Create Funding Source"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://api.dwolla.com/funding-sources' \
+-H 'Authorization: Bearer connect.eyJraWQiOiJPNVVOUVR0VHdDSXBcL0lsYnNlWld...M7YDfoXxH9MqsABvcoRJaQoSMjDCgheu1h0clQ' \
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "_links": {
+    "treasury-account": {
+      "href": "https://api.dwolla.com/treasury-accounts/ea5f9468-4374-410f-b52e-5461d8cbca98"
+    }
+  },
+  "name": "My Savings Bank",
+  "bankAccountType": "savings",
+  // highlight-start
+  "routingNumber": "{{ f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b | json: \"$.routing_number\" }}",
+  "accountNumber": "{{ f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b | json: \"$.account_number\" }}"
+  // highlight-end
+}'
+```
+
+[Dwolla Funding Source Docs](https://developers.dwolla.com/api-reference/connect/funding-sources/create-for-account)
+
+  </TabItem>
+</Tabs>
+
+## Key Considerations
+
+**You are not restricted** to the Payment Processors listed above. As long as your partner can accept banking information through an API endpoint, you can invoke it using the Ephemeral Proxy.
+
+If you find that the HTTPS response from your processor contains sensitive data, you can use a [Pre-Configured Proxy](/docs/api/proxies/pre-configured-proxies) to redact or tokenize the sensitive data points using a [Response Transform](/docs/api/proxies/pre-configured-proxies#response-transforms).
+
+It's important to note that for some acquirers, inbound connections are only accepted from whitelisted IP addresses provided by the client. To help with this, [here](/docs/api/ip-addresses) you can find a compiled list of our IP addresses that you can send to your acquirer. In cases of more restrictive integrations, Basis Theory can provide dedicated IPs upon request. If you're interested in this option, please don't hesitate to [contact us](https://basistheory.com/contact).
+
+During testing phase, make sure to create tokens using test bank accounts documented by your payment processor, following the desired test scenario. Passing incorrect data to test/sandbox endpoints may lead to hard-to-debug rejected transactions.
+
+## Conclusion
+
+By using our Ephemeral Proxy, you can confidently transmit banking data to Payment Processors via API requests without ever touching the account details yourself. This approach not only improves security and reduces compliance risks but also provides the flexibility to establish your own relationships with Payment Processors and the latest payment technologies.
+
+## Learn More
+
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [What is the Proxy?](/docs/concepts/what-is-the-proxy)
