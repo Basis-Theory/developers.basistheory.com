@@ -124,7 +124,13 @@ const sidebars = {
       },
       items: [
         "concepts/what-are-tokens",
-        "concepts/what-is-search",
+        {
+          type: "doc",
+          id: "concepts/what-is-search",
+          customProps: {
+            enterprise: true,
+          },
+        },
         "concepts/what-are-containers",
         "concepts/access-controls",
         "concepts/what-is-the-proxy",
@@ -357,7 +363,13 @@ const sidebars = {
         "api/tokens/tokenize",
         "api/tokens/token-types",
         "api/tokens/token-enrichments",
-        "api/tokens/search",
+        {
+          type: "doc",
+          id: "api/tokens/search",
+          customProps: {
+            enterprise: true,
+          },
+        },
         {
           type: "doc",
           id: "api/tokens/transactions",
