@@ -122,7 +122,7 @@ const sidebars = {
         type: "doc",
         id: "features/index",
       },
-      items: ["features/network-tokens"],
+      items: ["features/network-tokens", "features/account-updater"],
     },
     {
       type: "category",
