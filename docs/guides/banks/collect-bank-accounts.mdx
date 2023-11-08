@@ -8,9 +8,9 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 # Collect Bank Accounts
 
-When building an e-commerce application, subscription service, payroll solution, or just need to enabling one-time purchases via direct debt (pay by bank) or fund transfers, one of the critical requirements is collecting and storing bank accounts information securely. However, bank routing numbers paired with account numbers, are considered sensitive data, and need to be securely collected in user forms and stored encrypted in special databases.
+When building an e-commerce application, subscription service, payroll solution, or just need to enable one-time purchases via direct debt (pay by bank) or fund transfers, one of the critical requirements is to collect and store bank accounts information securely. However, bank routing numbers paired with account numbers, are considered sensitive data and need to be captured and stored following strict security requirements.
 
-In this guide, we will set up Basis Theory SDKs to capture Bank Accounts in a frontend application, Web or Mobile, and securely store the data as tokens in Basis Theory Platform, [NACHA preferred partner for data tokenization and encryption](https://www.nacha.org/news/basis-theory-becomes-nacha-preferred-partner-data-tokenization-and-encryption). Given this guide is followed step by step, you can rest assured that you are complying to world's class security and privacy standards.
+In this guide, we will set up Basis Theory SDKs to capture Bank Accounts in a frontend, Web or Mobile application, and securely store the data as tokens in Basis Theory Platform, [NACHA preferred partner for data tokenization and encryption](https://www.nacha.org/news/basis-theory-becomes-nacha-preferred-partner-data-tokenization-and-encryption). Given this guide is followed step by step, you can rest assured that you are complying to world's class security and privacy standards.
 
 ![Collect Bank Accounts Flowchart](/img/guides/banks/collect-banks-flowchart.png)
 
@@ -35,7 +35,7 @@ This will create an application with the following [Access Controls](/docs/conce
 
 ## Adding Text Elements
 
-Once installed and configured, add the Text Elements to your application. This will enable users to type in their bank account information in your form, while ensuring your systems never come in contact with the data.
+Once installed and configured, add the Text Elements to your application. This will enable users to type in their bank account information in your form, while ensuring your systems never touch the data.
 
 
 <Tabs className="bt-tabs" queryString="sdk">
@@ -558,7 +558,7 @@ The steps so far cover most cases when you need to collect bank accounts in your
 
 Companies often find it necessary to uniquely identify bank accounts flowing through their systems for various reasons, which may include: preventing fraudulent transactions, detecting abuse, building consumer profiles or streamlining payment processing for a better user experience.
 
-By leveraging [token fingerprinting](/docs/concepts/what-are-tokens#fingerprinting), developers can recognize the tokenized data in a customizable fashion, without having to touch with the plaintext data. For bank details, it is common to index in both Routing Number and Account Number, but in some cases additional consumer details may also be considered.
+By leveraging [token fingerprinting](/docs/concepts/what-are-tokens#fingerprinting), developers can recognize the tokenized data in a customizable fashion, without having to interact with the plaintext data. For bank details, it is common to index in both Routing Number and Account Number, but in some cases additional consumer details may also be considered.
 
 When making the tokenization request to store the bank data, pass a fingerprint expression to instruct Basis Theory to calculate the fingerprint for the sensitive data field:
 
@@ -695,8 +695,6 @@ The new tokens should now have a fingerprint:
 
 If you want to prevent creation of a duplicate token based on the distinguishable fingerprint, add the flag below:
 
-
-
 <Tabs className="bt-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
 
@@ -709,10 +707,9 @@ async function submit () {
         routing_number: routingNumberElement,
         account_number: accountNumberElement,
       },
-      // highlight-start
       fingerprintExpression: '{{ data.account_number }}|{{ data.routing_number }}',
+      // highlight-next-line
       deduplicateToken: true,
-      // highlight-end
     });
   } catch (error) {
     console.error(error);
@@ -732,9 +729,9 @@ export default function App() {
           routing_number: routingNumberElement,
           account_number: accountNumberElement,
         },
-        // highlight-start
         fingerprintExpression: '{{ data.account_number }}|{{ data.routing_number }}',
-        // highlight-end
+        // highlight-next-line
+        deduplicateToken: true,
       });
     } catch (error) {
       console.error(error);
@@ -756,9 +753,9 @@ class ViewController: UIViewController {
                 "routing_number": self.routingNumberTextField,
                 "account_number": self.accountNumberTextField
             ],
-            // highlight-start
             "fingerprint_expression": "{{ data.account_number }}|{{ data.routing_number }}"
-            // highlight-end
+            // highlight-next-line
+            "deduplicate_token": true
         ]
 
         BasisTheoryElements.tokenize(body: body, apiKey: "<API_KEY>") { token, error in
@@ -785,9 +782,9 @@ class MainActivity : AppCompatActivity() {
             val routing_number = routingNumberElement
             val account_number = accountNumberElement
           }
-          // highlight-start
           val fingerprint_expression = "{{ data.account_number }}|{{ data.routing_number }}"
-          // highlight-end
+          // highlight-next-line
+          val deduplicate_token = true
         })
       }
     }
@@ -802,8 +799,7 @@ By doing the above, you are instructing Basis Theory to return the existing toke
 
 The best practices prescribed in this guide ensure that your user-facing applications can collect sensitive bank account information securely, while protected. The `token.id` obtained at the end of the [Storing Bank Accounts](#storing-bank-accounts) section is a synthetic replacement for the sensitive data and can be safely stored in your database, or transmitted through your systems, meeting security and privacy requirements while reducing the risk of exposure in case of data breaches.
 
-For next steps, take a look at the following guides to proceed taking the most value of your secured card tokens:
-
+For next steps, take a look at the following guides to proceed taking the most value of your secured bank tokens:
 
 - [Process Bank Payments](/docs/guides/banks/process-bank-payments)
 - [Search Data](/docs/guides/process/search-data)
