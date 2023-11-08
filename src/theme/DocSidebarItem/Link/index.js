@@ -7,6 +7,7 @@ import Link from "@docusaurus/Link";
 import isInternalUrl from "@docusaurus/isInternalUrl";
 import styles from "./styles.module.css";
 import { Beta } from "@site/src/components/shared/Beta";
+import { Enterprise } from "@site/src/components/shared/Enterprise";
 import { Deprecated } from "@site/src/components/shared/Deprecated";
 
 export default function DocSidebarItemLink({ item, onItemClick, activePath, level, index, ...props }) {
@@ -37,7 +38,7 @@ export default function DocSidebarItemLink({ item, onItemClick, activePath, leve
             sources={item.customProps?.icon}
           />
         )}
-        <span className={styles.label}>{label}</span> {item.customProps?.beta && <Beta />} {item.customProps?.deprecated && <Deprecated />}
+        <span className={styles.label}>{label}</span> {item.customProps?.beta && <Beta />} {item.customProps?.enterprise && <Enterprise />} {item.customProps?.deprecated && <Deprecated />}
         {!isInternalLink && (
           <ThemedImage
             sources={{
