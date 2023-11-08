@@ -6,11 +6,11 @@ import {
   usePrevious,
   Collapsible,
   useCollapsible,
-  findFirstSidebarItemLink,
 } from "@docusaurus/theme-common";
 import {
   isActiveSidebarItem,
   useDocSidebarItemsExpandedState,
+  findFirstSidebarItemLink,
   isSamePath,
 } from "@docusaurus/theme-common/internal";
 import Link from "@docusaurus/Link";
