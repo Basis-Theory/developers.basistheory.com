@@ -259,8 +259,8 @@ class MainActivity : AppCompatActivity() {
 ```typescript showLineNumbers title=App.tsx
 import React, { useRef } from "react";
 import { SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
-import type { BTRef } from "./src";
-import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "./src";
+import type { BTRef } from "@basis-theory/basis-theory-react-native";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "@basis-theory/basis-theory-react-native";
 
 const App = (): JSX.Element => {
   // highlight-start
@@ -500,8 +500,8 @@ class MainActivity : AppCompatActivity() {
 ```typescript showLineNumbers title=App.tsx
 import React, { useRef } from "react";
 import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
-import type { BTRef } from "./src";
-import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "./src";
+import type { BTRef } from "@basis-theory/basis-theory-react-native";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react-native";
 
 const App = (): JSX.Element => {
   const cardNumberRef = useRef<BTRef>(null);
@@ -509,9 +509,11 @@ const App = (): JSX.Element => {
   const cardVerificationCodeRef = useRef<BTRef>(null);
 
   // highlight-start
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+
   const display = async () => {
-    try {
-      const session = await BasisTheoryElements.createSession("<PUBLIC_API_KEY>");
+    try {    
+      const session = await bt?.sessions.create();
     } catch (error) {
       console.error(JSON.stringify(error));
     }
@@ -1050,17 +1052,19 @@ class MainActivity : AppCompatActivity() {
 ```typescript showLineNumbers title=App.tsx
 import React, { useRef } from "react";
 import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
-import type { BTRef } from "./src";
-import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "./src";
+import type { BTRef } from "@basis-theory/basis-theory-react-native";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react-native";
 
 const App = (): JSX.Element => {
   const cardNumberRef = useRef<BTRef>(null);
   const cardExpirationDateRef = useRef<BTRef>(null);
   const cardVerificationCodeRef = useRef<BTRef>(null);
 
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+
   const display = async () => {
-    try {
-      const session = await BasisTheoryElements.createSession("<PUBLIC_API_KEY>");
+    try {  
+      const session = await bt?.sessions.create();
 
       // authorize the session
       // highlight-start
@@ -1301,8 +1305,8 @@ class MainActivity : AppCompatActivity() {
 ```typescript showLineNumbers title=App.tsx
 import React, { useRef } from "react";
 import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
-import type { BTRef } from "./src";
-import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "./src";
+import type { BTRef } from "@basis-theory/basis-theory-react-native";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react-native";
 
 // highlight-start
 interface CardToken {
@@ -1314,15 +1318,16 @@ interface CardToken {
 // highlight-end
 
 const App = (): JSX.Element => {
-  const { bt } = useBasisTheory("<API_KEY>");
 
   const cardNumberRef = useRef<BTRef>(null);
   const cardExpirationDateRef = useRef<BTRef>(null);
   const cardVerificationCodeRef = useRef<BTRef>(null);
 
+  const { bt } = useBasisTheory("<PUBLIC_API_KEY>");
+
   const display = async () => {
-    try {
-      const session = await BasisTheoryElements.createSession("<PUBLIC_API_KEY>");
+    try {  
+      const session = await bt?.sessions.create();
 
       // authorize the session
       await fetch("https://localhost:4242/authorize", {
@@ -1339,7 +1344,7 @@ const App = (): JSX.Element => {
 
       // highlight-start
 
-      const token = await BasisTheoryElements.getTokenById(tokenId, session.sessionKey);
+      const token = await bt?.tokens.getById(tokenId, session?.sessionKey);
 
       /**
        * Sometimes, we can't infer the token type; therefore,
