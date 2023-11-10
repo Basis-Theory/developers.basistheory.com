@@ -108,7 +108,11 @@ const sidebars = {
         type: "doc",
         id: "features/index",
       },
-      items: ["features/network-tokens", "features/account-updater"],
+      items: [
+        "features/network-tokens",
+        "features/account-updater",
+        "features/global-data",
+      ],
     },
     {
       type: "category",
