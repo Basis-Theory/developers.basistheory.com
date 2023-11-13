@@ -20,8 +20,8 @@ const apiLink = {
       light: "/img/sidebar/light/terminal.svg",
       dark: "/img/sidebar/dark/terminal.svg",
     },
-  }
-}
+  },
+};
 
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
@@ -70,8 +70,8 @@ const sidebars = {
       },
       items: [
         "guides/banks/collect-bank-accounts",
-        "guides/banks/process-bank-payments"
-      ]
+        "guides/banks/process-bank-payments",
+      ],
     },
     {
       type: "category",
@@ -108,6 +108,25 @@ const sidebars = {
     {
       type: "html",
       value: "<hr />",
+    },
+    {
+      type: "category",
+      label: "Features",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/features.svg",
+          dark: "/img/sidebar/dark/features.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "features/index",
+      },
+      items: [
+        "features/network-tokens",
+        "features/account-updater",
+        "features/global-data",
+      ],
     },
     {
       type: "category",
@@ -184,7 +203,7 @@ const sidebars = {
         {
           type: "link",
           label: "Import Cards on File",
-          href: "https://blog.basistheory.com/migrate-card-data-to-basis-theory"
+          href: "https://blog.basistheory.com/migrate-card-data-to-basis-theory",
         },
         {
           type: "doc",
@@ -231,7 +250,6 @@ const sidebars = {
           },
           items: ["blueprints/personal-information/query-user-data-from-api"],
         },
-
       ],
     },
     {
@@ -247,7 +265,7 @@ const sidebars = {
           light: "/img/sidebar/light/terminal.svg",
           dark: "/img/sidebar/dark/terminal.svg",
         },
-      }
+      },
     },
     {
       type: "link",
@@ -258,7 +276,7 @@ const sidebars = {
           light: "/img/sidebar/light/cube.svg",
           dark: "/img/sidebar/dark/cube.svg",
         },
-      }
+      },
     },
     {
       type: "link",
@@ -269,7 +287,7 @@ const sidebars = {
           light: "/img/sidebar/light/labs.svg",
           dark: "/img/sidebar/dark/labs.svg",
         },
-      }
+      },
     },
   ],
   api: [
@@ -393,7 +411,7 @@ const sidebars = {
           light: "/img/sidebar/light/document.svg",
           dark: "/img/sidebar/dark/document.svg",
         },
-      }
+      },
     },
     {
       type: "link",
@@ -404,7 +422,7 @@ const sidebars = {
           light: "/img/sidebar/light/cube.svg",
           dark: "/img/sidebar/dark/cube.svg",
         },
-      }
+      },
     },
     {
       type: "link",
@@ -415,7 +433,7 @@ const sidebars = {
           light: "/img/sidebar/light/labs.svg",
           dark: "/img/sidebar/dark/labs.svg",
         },
-      }
+      },
     },
   ],
   sdk: [
@@ -527,7 +545,7 @@ const sidebars = {
           light: "/img/sidebar/light/document.svg",
           dark: "/img/sidebar/dark/document.svg",
         },
-      }
+      },
     },
     {
       type: "link",
@@ -538,7 +556,7 @@ const sidebars = {
           light: "/img/sidebar/light/terminal.svg",
           dark: "/img/sidebar/dark/terminal.svg",
         },
-      }
+      },
     },
     {
       type: "link",
@@ -549,7 +567,7 @@ const sidebars = {
           light: "/img/sidebar/light/labs.svg",
           dark: "/img/sidebar/dark/labs.svg",
         },
-      }
+      },
     },
   ],
 };
