@@ -1,3 +1,10 @@
+# [1.109.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.108.0...v1.109.0) (2023-11-13)
+
+
+### Features
+
+* adding feature documentation ([#263](https://github.com/Basis-Theory/developers.basistheory.com/issues/263)) ([f6c5f02](https://github.com/Basis-Theory/developers.basistheory.com/commit/f6c5f028c6bab507acbcfd0df33763795cb7f107))
+
 # [1.108.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.107.0...v1.108.0) (2023-11-13)
 
 
