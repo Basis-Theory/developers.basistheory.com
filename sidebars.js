@@ -61,6 +61,20 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Bank Data",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/bank.svg",
+          dark: "/img/sidebar/dark/bank.svg",
+        },
+      },
+      items: [
+        "guides/banks/collect-bank-accounts",
+        "guides/banks/process-bank-payments",
+      ],
+    },
+    {
+      type: "category",
       label: "Any Data",
       customProps: {
         icon: {
@@ -129,7 +143,13 @@ const sidebars = {
       },
       items: [
         "concepts/what-are-tokens",
-        "concepts/what-is-search",
+        {
+          type: "doc",
+          id: "concepts/what-is-search",
+          customProps: {
+            enterprise: true,
+          },
+        },
         "concepts/what-are-containers",
         "concepts/access-controls",
         "concepts/what-is-the-proxy",
@@ -361,7 +381,13 @@ const sidebars = {
         "api/tokens/tokenize",
         "api/tokens/token-types",
         "api/tokens/token-enrichments",
-        "api/tokens/search",
+        {
+          type: "doc",
+          id: "api/tokens/search",
+          customProps: {
+            enterprise: true,
+          },
+        },
         {
           type: "doc",
           id: "api/tokens/transactions",

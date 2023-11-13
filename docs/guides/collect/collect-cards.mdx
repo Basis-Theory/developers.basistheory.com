@@ -261,7 +261,7 @@ class MainActivity : AppCompatActivity() {
 
 Now that you are securely capturing the cardholder data in your user-facing application(s), it is time to store it in your Basis Theory Tenant.
 
-To do this, we will invoke the [Create Token](https://developers.basistheory.com/docs/api/tokens/#create-token) endpoint from the SDK, passing the Card Elements as data points in the payload. This will securely create a token by transferring the card information from the frontend Elements to Basis Theory, where the card will be strongly encrypted and stored in a compliant environment.
+To do this, we will invoke the [Create Token](https://developers.basistheory.com/docs/api/tokens/#create-token) endpoint from the SDK, passing the Card Elements as data points in the payload. This will securely create a `card` token by transferring the card information from the frontend Elements to Basis Theory, where the data will be strongly encrypted and stored in a compliant environment.
 
 Add a submit function along with a button to trigger it:
 
@@ -275,7 +275,7 @@ Add a submit function along with a button to trigger it:
   <div id="cardVerificationCode" style="width: 100%;"></div>
 </div>
 // highlight-next-line
-<button onclick="submit();">Submit</button>
+<button id="submit">Submit</button>
 ```
 ```javascript showLineNumbers title=index.js
 import { BasisTheory } from '@basis-theory/basis-theory-js';
@@ -285,7 +285,11 @@ let cardNumberElement;
 let cardExpirationDateElement;
 let cardVerificationCodeElement;
 
-async function init () { ... }
+async function init () {
+  ...
+  //highlight-next-line
+  document.getElementById("submit").addEventListener("click", submit);
+}
 
 // highlight-start
 async function submit () {
@@ -438,7 +442,9 @@ class ViewController: UIViewController {
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 ```kotlin showLineNumbers title=MainActivity.kt
-import com.basistheory.android.view.TextElement
+import com.basistheory.android.view.CardNumberElement
+import com.basistheory.android.view.CardExpirationDateElement
+import com.basistheory.android.view.CardVerificationCodeElement
 import com.basistheory.android.service.BasisTheoryElements
 
 class MainActivity : AppCompatActivity() {
@@ -497,7 +503,7 @@ class MainActivity : AppCompatActivity() {
 
 <Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created in the <a href="#creating-a-public-application">Creating a Public Application</a> step.</Alert>
 
-The created card `token` object contains the non-sensitive information about the tokenized card, which follows the [Card Token specification](/docs/api/tokens/token-types#card):
+The created `card` token object contains the non-sensitive information about the tokenized card, which follows the [Card Token specification](/docs/api/tokens/token-types#card):
 
 ```json showLineNumbers title=token.json
 {

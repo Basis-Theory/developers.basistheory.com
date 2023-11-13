@@ -1,3 +1,10 @@
+# [1.107.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.106.0...v1.107.0) (2023-11-08)
+
+
+### Features
+
+* add bank guides ([#252](https://github.com/Basis-Theory/developers.basistheory.com/issues/252)) ([ad2fd20](https://github.com/Basis-Theory/developers.basistheory.com/commit/ad2fd2086f9860bc52aa0381d5414f801dc6c62e))
+
 # [1.106.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.105.0...v1.106.0) (2023-10-19)
 
 
