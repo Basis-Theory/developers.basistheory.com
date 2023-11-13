@@ -255,6 +255,58 @@ class MainActivity : AppCompatActivity() {
 ```
 
   </TabItem>
+   <TabItem value="react-native" label="React Native">
+
+```typescript showLineNumbers title=App.tsx
+import React, { useRef } from "react";
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import type { BTRef } from "@basis-theory/basis-theory-react-native";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement } from "@basis-theory/basis-theory-react-native";
+
+const App = (): JSX.Element => {
+  // highlight-start
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+  // highlight-end
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          // highlight-start
+          <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" style={styles.elements} />
+          <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" style={styles.elements} />
+          <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" style={styles.elements} />
+          // highlight-end
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
+    borderWidth: 2,
+    color: "purple",
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+  </TabItem>
 </Tabs>
 
 ## Storing Cards
@@ -499,6 +551,81 @@ class MainActivity : AppCompatActivity() {
 ```
 
   </TabItem>
+
+
+   <TabItem value="react-native" label="React Native">
+
+```typescript showLineNumbers title=App.tsx
+import React, { useRef } from "react";
+import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import type { BTRef } from "@basis-theory/basis-theory-react-native";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react-native";
+
+const App = (): JSX.Element => {
+  // highlight-next-line
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+
+  // highlight-start
+  const submit = async () => {
+      try {
+        const token = await bt?.tokens.create({
+          type: 'card',
+          data: {
+            number: cardNumberRef.current,
+            expiration_month: cardExpirationRef.current.month(),
+            expiration_year: cardExpirationRef.current.year(),
+            cvc: cardVerificationRef.current,
+          }
+        });
+        // store token.id in your database
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  // highlight-end
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" style={styles.elements} />
+          <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" style={styles.elements} />
+          <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" style={styles.elements} />
+        </View>
+        // highlight-start
+        <Button onPress={submit} title="Submit" />
+        // highlight-end
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
+    borderWidth: 2,
+    color: "purple",
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+  </TabItem>
 </Tabs>
 
 <Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created in the <a href="#creating-a-public-application">Creating a Public Application</a> step.</Alert>
@@ -654,6 +781,33 @@ class MainActivity : AppCompatActivity() {
 }
 ```
   </TabItem>
+   <TabItem value="react-native" label="React Native">
+    ```typescript showLineNumbers title=App.tsx
+    const App = (): JSX.Element => {
+      const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+      ...
+      const submit = async () => {
+            try {
+              const _token = await bt?.tokens.create({
+                type: 'card',
+                data: {
+                  number: cardNumberRef.current,
+                  expiration_month: cardExpirationDateRef.current?.month(),
+                  expiration_year: cardExpirationDateRef.current?.year(),
+                  cvc: cardVerificationCodeRef.current,
+                },
+                // highlight-start
+                fingerprintExpression: '{{ data.number }}',
+                // highlight-end
+              });
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        return (...);
+      };
+    ```
+  </TabItem>
 </Tabs>
 
 The new tokens should now have a fingerprint:
@@ -801,6 +955,35 @@ class MainActivity : AppCompatActivity() {
 }
 ```
   </TabItem>
+
+   <TabItem value="react-native" label="React Native">
+    ```typescript showLineNumbers title=App.tsx
+    const App = (): JSX.Element => {
+      const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+      ...
+      const submit = async () => {
+            try {
+              const _token = await bt?.tokens.create({
+                type: 'card',
+                data: {
+                  number: cardNumberRef.current,
+                  expiration_month: cardExpirationDateRef.current?.month(),
+                  expiration_year: cardExpirationDateRef.current?.year(),
+                  cvc: cardVerificationCodeRef.current,
+                },
+                fingerprintExpression: '{{ data.number }}',
+                // highlight-start   
+                deduplicateToken: true,
+                // highlight-end
+              });
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        return (...);
+      };
+    ```
+  </TabItem>
 </Tabs>
 
 By doing the above, you are instructing Basis Theory to return the existing token if it is found to have the same fingerprint. [Click here to learn more about token deduplication](/docs/concepts/what-are-tokens#deduplication).
@@ -909,6 +1092,8 @@ class ViewController: UIViewController {
 ```
 
   </TabItem>
+
+  
   <TabItem value="android" label="Android">
 
 ```kotlin showLineNumbers title=MainActivity.kt
@@ -938,6 +1123,40 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+  </TabItem>
+
+  <TabItem value="react-native" label="React Native">
+    ```typescript showLineNumbers title=App.tsx
+    const App = (): JSX.Element => {
+      const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+      ...
+      const submit = async () => {
+            try {
+              const _token = await bt?.tokens.create({
+                type: 'card',
+                data: {
+                  number: cardNumberRef.current,
+                  expiration_month: cardExpirationDateRef.current?.month(),
+                  expiration_year: cardExpirationDateRef.current?.year(),
+                  cvc: cardVerificationCodeRef.current,
+                },
+                fingerprintExpression: '{{ data.number }}',
+                deduplicateToken: true,
+                // highlight-start   
+                mask: {
+                  number:'{{ data.number | card_mask: "true", "true" }}',
+                  expiration_month: '{{ data.expiration_month }}',
+                  expiration_year: '{{ data.expiration_year }}',
+                },
+                // highlight-end
+              });
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        return (...);
+      };
+    ```
   </TabItem>
 </Tabs>
 
@@ -1157,6 +1376,52 @@ class MainActivity : AppCompatActivity() {
 }
 ```
   </TabItem>
+
+  <TabItem value="react-native" label="React Native">
+    ```typescript showLineNumbers title=App.tsx
+          // highlight-start
+      function generateTokenId() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let tokenId = 'card_';
+        for (let i = 0; i < 24; i++) {
+          tokenId += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return tokenId;
+      }
+      // highlight-end
+
+    const App = (): JSX.Element => {
+      const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+      ...
+      const submit = async () => {
+            try {
+              const _token = await bt?.tokens.create({        
+                // highlight-next-line
+                id: generateTokenId(),
+                type: 'card',
+                data: {
+                  number: cardNumberRef.current,
+                  expiration_month: cardExpirationDateRef.current?.month(),
+                  expiration_year: cardExpirationDateRef.current?.year(),
+                  cvc: cardVerificationCodeRef.current,
+                },
+                fingerprintExpression: '{{ data.number }}',
+                deduplicateToken: true,
+                mask: {
+                  number:'{{ data.number | card_mask: "true", "true" }}',
+                  expiration_month: '{{ data.expiration_month }}',
+                  expiration_year: '{{ data.expiration_year }}',
+                },
+              });
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        return (...);
+      };
+    ```
+  </TabItem>
+
 </Tabs>
 
 The returned token object should now have a custom identifier:
