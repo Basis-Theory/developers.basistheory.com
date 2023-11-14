@@ -1,3 +1,10 @@
+# [1.110.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.109.0...v1.110.0) (2023-11-14)
+
+
+### Features
+
+* removing ips no longer in service ([#266](https://github.com/Basis-Theory/developers.basistheory.com/issues/266)) ([b61431a](https://github.com/Basis-Theory/developers.basistheory.com/commit/b61431a44d18e81914c91a882375ade01433a79b))
+
 # [1.109.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.108.0...v1.109.0) (2023-11-13)
 
 
