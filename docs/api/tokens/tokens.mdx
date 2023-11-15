@@ -78,21 +78,23 @@ const token = await bt.tokens.create({
 
 ```csharp showLineNumbers
 using BasisTheory.net.Tokens;
+using BasisTheory.net.Tokens.Requests;
 
 var client = new TokenClient("<API_KEY>");
 
-var token = await client.CreateAsync(new Token {
+var token = await client.CreateAsync(new TokenCreateRequest {
   Type = "token",
   Data = "Sensitive Value",
   Mask = "{{ data | reveal_last: 4 }}",
   Containers = new List<string> { "/general/high/" },
-  Metadata = new Dictionary<string, string> {
-    { "nonSensitiveField",  "Non-Sensitive Value" }
-  },
-  SearchIndexes = new List<string> { "{{ data }}", "{{ data | last4 }}" }
+  Metadata = new Dictionary<string, string>
+    {
+      { "nonSensitiveField",  "Non-Sensitive Value" }
+    },
+  SearchIndexes = new List<string> { "{{ data }}", "{{ data | last4 }}" },
   FingerprintExpression = "{{ data }}",
   DeduplicateToken = true,
-  ExpiresAt = "8/26/2030 7:23:57 PM -07:00"
+  ExpiresAt = DateTimeOffset.Now.AddYears(3)
 });
 ```
 
@@ -588,9 +590,9 @@ var token = await client.UpdateAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1", new
   SearchIndexes = new List<string> {
     "{{ data }}",
     "{{ data | last4 }}"
-  }
+  },
   FingerprintExpression = "{{ data }}",
-  DeduplicateToken = true,
+  DeduplicateToken = true
 });
 ```
 

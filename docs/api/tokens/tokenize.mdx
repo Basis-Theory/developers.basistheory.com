@@ -70,7 +70,7 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new {
+var token = await client.TokenizeAsync(new {
   first_name = "John",
   last_name = "Doe"
 });
@@ -203,7 +203,7 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new Token {
+var token = await client.TokenizeAsync(new Token {
   Type = "token",
   Data = "Sensitive Value",
   Metadata = new Dictionary<string, string> {
@@ -374,9 +374,9 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new Token {
+var token = await client.TokenizeAsync(new Token {
   Type = "card",
-  Data = new Card {
+  Data = new {
     CardNumber = "4242424242424242",
     ExpirationMonth = 12,
     ExpirationYear = 2025,
@@ -567,12 +567,12 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new object[
+var token = await client.TokenizeAsync(new object[] {
   "John",
   "Doe",
   new Token {
     Type = "card",
-    Data = new Card {
+    Data = new {
       CardNumber = "4242424242424242",
       ExpirationMonth = 12,
       ExpirationYear = 2025,
@@ -583,7 +583,7 @@ var token = await client.Tokenize(new object[
     Type = "token",
     Data = "Sensitive Value"
   }
-]);
+});
 ```
 
   </TabItem>
@@ -797,12 +797,12 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new {
+var token = await client.TokenizeAsync(new {
   first_name = "John",
   last_name = "Doe",
   primary_card = new Token {
     Type = "card",
-    Data = new Card {
+    Data = new {
       CardNumber = "4242424242424242",
       ExpirationMonth = 12,
       ExpirationYear = 2025,

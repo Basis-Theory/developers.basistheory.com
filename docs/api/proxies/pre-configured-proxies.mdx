@@ -129,7 +129,7 @@ var client = new ProxyClient("<MANAGEMENT_API_KEY>");
 var proxy = await client.CreateAsync(new ProxyCreateRequest {
   Name = "My Proxy",
   DestinationUrl = "https://example.com/api",
-  RequestTransform = new RequestTransform {
+  RequestTransform = new ProxyTransform {
     Code = @"
       module.exports = async function (req) {
         // Do something with req.configuration.SERVICE_API_KEY
@@ -141,7 +141,7 @@ var proxy = await client.CreateAsync(new ProxyCreateRequest {
       };
     "
   },
-  ResponseTransform = new RequestTransform {
+  ResponseTransform = new ProxyTransform {
     Code = @"
       module.exports = async function (req) {
         // Do something with req.configuration.SERVICE_API_KEY
@@ -159,7 +159,7 @@ var proxy = await client.CreateAsync(new ProxyCreateRequest {
   Application = new Application {
     Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
   },
-  RequireAuthentication: true
+  RequireAuthentication = true
 });
 ```
 
@@ -805,7 +805,7 @@ var proxy = await client.UpdateAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
   new ProxyUpdateRequest {
     Name = "My Proxy",
     DestinationUrl = "https://example.com/api",
-    RequestTransform = new RequestTransform {
+    RequestTransform = new ProxyTransform {
       Code = @"
         module.exports = async function (req) {
           // Do something with req.configuration.SERVICE_API_KEY
@@ -817,7 +817,7 @@ var proxy = await client.UpdateAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
         };
       "
     },
-    ResponseTransform = new RequestTransform {
+    ResponseTransform = new ProxyTransform {
       Code = @"
         module.exports = async function (req) {
           // Do something with req.configuration.SERVICE_API_KEY
@@ -836,8 +836,7 @@ var proxy = await client.UpdateAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
       Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
     },
     RequireAuthentication = true
-  }
-);
+  });
 ```
 
   </TabItem>
@@ -1125,7 +1124,7 @@ using BasisTheory.net.Proxies;
 var client = new ProxyClient("<MANAGEMENT_API_KEY>");
 
 var proxy = await client.PatchAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
-  new ProxyUpdateRequest {
+  new ProxyPatchRequest {
     Name = "My Proxy",
     DestinationUrl = "https://example.com/api",
     Configuration = new Dictionary<string, string> {
