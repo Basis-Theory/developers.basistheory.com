@@ -1,3 +1,10 @@
+## [1.110.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.110.0...v1.110.1) (2023-11-16)
+
+
+### Bug Fixes
+
+* fixing code example issues ([#268](https://github.com/Basis-Theory/developers.basistheory.com/issues/268)) ([53cb2f2](https://github.com/Basis-Theory/developers.basistheory.com/commit/53cb2f2a67560bd834faa1ce4f63ad0727cb0a59))
+
 # [1.110.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.109.0...v1.110.0) (2023-11-14)
 
 
