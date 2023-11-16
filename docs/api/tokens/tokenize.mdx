@@ -70,7 +70,7 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new {
+var token = await client.TokenizeAsync(new {
   first_name = "John",
   last_name = "Doe"
 });
@@ -203,7 +203,7 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new Token {
+var token = await client.TokenizeAsync(new Token {
   Type = "token",
   Data = "Sensitive Value",
   Metadata = new Dictionary<string, string> {
@@ -374,13 +374,13 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new Token {
+var token = await client.TokenizeAsync(new Token {
   Type = "card",
-  Data = new Card {
-    CardNumber = "4242424242424242",
-    ExpirationMonth = 12,
-    ExpirationYear = 2025,
-    CardVerificationCode = "123"
+  Data = new {
+    number = "4242424242424242",
+    expiration_month = 12,
+    expiration_year = 2025,
+    cvc = "123"
   },
   Metadata = new Dictionary<string, string> {
     { "nonSensitiveField",  "Non-Sensitive Value" }
@@ -567,23 +567,23 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new object[
+var token = await client.TokenizeAsync(new object[] {
   "John",
   "Doe",
   new Token {
     Type = "card",
-    Data = new Card {
-      CardNumber = "4242424242424242",
-      ExpirationMonth = 12,
-      ExpirationYear = 2025,
-      CardVerificationCode = "123"
+    Data = new {
+      number = "4242424242424242",
+      expiration_month = 12,
+      expiration_year = 2025,
+      cvc = "123"
     }
   },
   new Token {
     Type = "token",
     Data = "Sensitive Value"
   }
-]);
+});
 ```
 
   </TabItem>
@@ -797,16 +797,16 @@ using BasisTheory.net.Tokenize;
 
 var client = new TokenizeClient("<API_KEY>");
 
-var token = await client.Tokenize(new {
+var token = await client.TokenizeAsync(new {
   first_name = "John",
   last_name = "Doe",
   primary_card = new Token {
     Type = "card",
-    Data = new Card {
-      CardNumber = "4242424242424242",
-      ExpirationMonth = 12,
-      ExpirationYear = 2025,
-      CardVerificationCode = "123"
+    Data = new {
+      number = "4242424242424242",
+      expiration_month = 12,
+      expiration_year = 2025,
+      cvc = "123"
     }
   },
   sensitive_tags = new object[] {
