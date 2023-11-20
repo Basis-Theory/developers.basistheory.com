@@ -1,3 +1,10 @@
+## [1.110.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.110.1...v1.110.2) (2023-11-20)
+
+
+### Bug Fixes
+
+* add leading slash to internal links ([#273](https://github.com/Basis-Theory/developers.basistheory.com/issues/273)) ([a70f7a3](https://github.com/Basis-Theory/developers.basistheory.com/commit/a70f7a3c689a95fd3213adb78328733e72f76dba))
+
 ## [1.110.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.110.0...v1.110.1) (2023-11-16)
 
 
