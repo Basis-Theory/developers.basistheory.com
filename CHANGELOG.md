@@ -1,3 +1,10 @@
+# [1.111.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.110.2...v1.111.0) (2023-11-21)
+
+
+### Features
+
+* adding documentation for our 3ds solution ([#275](https://github.com/Basis-Theory/developers.basistheory.com/issues/275)) ([ef7585c](https://github.com/Basis-Theory/developers.basistheory.com/commit/ef7585cdea375a0dad59d39f37a257d57c2c8487))
+
 ## [1.110.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.110.1...v1.110.2) (2023-11-20)
 
 
