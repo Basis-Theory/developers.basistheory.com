@@ -123,9 +123,10 @@ const sidebars = {
         id: "features/index",
       },
       items: [
-        "features/network-tokens",
         "features/account-updater",
         "features/global-data",
+        "features/network-tokens",
+        "features/3d-secure",
       ],
     },
     {
