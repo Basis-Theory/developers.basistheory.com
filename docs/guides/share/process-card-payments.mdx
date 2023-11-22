@@ -93,10 +93,10 @@ curl 'https://api.basistheory.com/proxy' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'type=card' \
 // highlight-start
---data-urlencode 'card[number]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.number" }}' \
---data-urlencode 'card[exp_month]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.expiration_month" }}' \
---data-urlencode 'card[exp_year]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.expiration_year" }}' \
---data-urlencode 'card[cvc]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.cvc" }}'
+--data-urlencode 'card[number]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}' \
+--data-urlencode 'card[exp_month]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_month" }}' \
+--data-urlencode 'card[exp_year]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_year" }}' \
+--data-urlencode 'card[cvc]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
 // highlight-end
 ```
 
@@ -122,10 +122,10 @@ curl 'https://api.basistheory.com/proxy' \
   "paymentMethod": {
     "type": "scheme",
     // highlight-start
-    "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
-    "expiryMonth": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}",
-    "expiryYear": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}",
-    "cvc": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.cvc\" }}",
+    "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiryMonth": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | pad_left: 2, \"0\" }}",
+    "expiryYear": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}",
+    "cvc": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
     // highlight-end
     "holderName": "John Smith"
   },
@@ -168,8 +168,8 @@ curl 'https://api.basistheory.com/proxy' \
     "customerAccountType": "CC",
     "card": {
       // highlight-start
-      "ccAccountNum": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
-      "ccExp": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}"
+      "ccAccountNum": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+      "ccExp": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | pad_left: 2, \"0\" }}"
       // highlight-end
     }
   },
@@ -226,9 +226,9 @@ curl 'https://api.basistheory.com/proxy' \
 -d '{
   "card": {
     // highlight-start
-    "accountNumber": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
-    "expirationDate": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}",
-    "securityCode": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.cvc\" }}"
+    "accountNumber": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expirationDate": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | pad_left: 2, \"0\" }}",
+    "securityCode": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}"
     // highlight-end
   },
   "owner": {
