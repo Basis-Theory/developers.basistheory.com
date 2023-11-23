@@ -127,6 +127,7 @@ const sidebars = {
         "features/global-data",
         "features/network-tokens",
         "features/3d-secure",
+        "features/anti-fraud"
       ],
     },
     {
