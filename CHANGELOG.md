@@ -1,3 +1,10 @@
+## [1.112.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.112.0...v1.112.1) (2023-11-27)
+
+
+### Bug Fixes
+
+* add chase stratus example ([#276](https://github.com/Basis-Theory/developers.basistheory.com/issues/276)) ([a1c35a6](https://github.com/Basis-Theory/developers.basistheory.com/commit/a1c35a65e4a6511399eb73f563387947a9e2c092))
+
 # [1.112.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.111.0...v1.112.0) (2023-11-21)
 
 
