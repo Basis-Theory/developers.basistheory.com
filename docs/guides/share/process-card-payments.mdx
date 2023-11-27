@@ -93,10 +93,10 @@ curl 'https://api.basistheory.com/proxy' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'type=card' \
 // highlight-start
---data-urlencode 'card[number]={{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.number" }}' \
---data-urlencode 'card[exp_month]={{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.expiration_month" }}' \
---data-urlencode 'card[exp_year]={{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.expiration_year" }}' \
---data-urlencode 'card[cvc]={{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.cvc" }}'
+--data-urlencode 'card[number]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}' \
+--data-urlencode 'card[exp_month]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_month" }}' \
+--data-urlencode 'card[exp_year]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_year" }}' \
+--data-urlencode 'card[cvc]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
 // highlight-end
 ```
 
@@ -122,10 +122,10 @@ curl 'https://api.basistheory.com/proxy' \
   "paymentMethod": {
     "type": "scheme",
     // highlight-start
-    "number": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
-    "expiryMonth": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}",
-    "expiryYear": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}",
-    "cvc": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.cvc\" }}",
+    "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiryMonth": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | pad_left: 2, \"0\" }}",
+    "expiryYear": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}",
+    "cvc": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
     // highlight-end
     "holderName": "John Smith"
   },
@@ -142,7 +142,7 @@ curl 'https://api.basistheory.com/proxy' \
 [Adyen Checkout Docs](https://docs.adyen.com/online-payments/tokenization/create-and-use-tokens)
 
   </TabItem>
-  <TabItem value="chase" label="Chase">
+  <TabItem value="chase-orbital" label="Chase (Orbital)">
 
 ```shell showLineNumbers title="Add Profile"
 curl 'https://api.basistheory.com/proxy' \
@@ -168,8 +168,8 @@ curl 'https://api.basistheory.com/proxy' \
     "customerAccountType": "CC",
     "card": {
       // highlight-start
-      "ccAccountNum": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
-      "ccExp": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}"
+      "ccAccountNum": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+      "ccExp": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | pad_left: 2, \"0\" }}"
       // highlight-end
     }
   },
@@ -183,7 +183,33 @@ curl 'https://api.basistheory.com/proxy' \
 }'
 ```
 
-[Chase Payments Docs](https://developer.jpmorgan.com/products/orbital-api/guides/store-a-card)
+[Chase Orbital Docs](https://developer.jpmorgan.com/products/orbital-api/guides/store-a-card)
+
+  </TabItem>
+  <TabItem value="chase-stratus" label="Chase (Stratus)">
+
+```shell showLineNumbers title="Process Transaction"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://netconnectvar1.chasepaymentech.com/NetConnect/controller' \
+-H 'Auth-MID: M987654321012345' \
+-H 'Auth-User: TESTMYCOMPANY1234' \
+-H 'Auth-Password: f1nwbj32VwW36tV16s55' \
+-H 'Stateless-Transaction: true' \
+// highlight-end
+-H 'Content-Type: SALEM05210/SLM' \
+-d 'P74VPMT-18R86WXMM9
+// highlight-next-line
+VI{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" | pad_right: 19, "x" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_month" | to_string | pad_left: 2, "0" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_year" | to_string | slice: 2,2 }}00003319380000000000008407202NVF AB
+XX XXX                        XXXXX XXXXXXX XX
+USABBEVILLE           LA70510-7288AC01YEI10000000014064
+7930f35b3c06cffe           FR1XXXXMTCSTO
+000000000000'
+```
+
+[Chase Stratus Specs](https://secure2.paymentech.com/devcenter/secure/stratus-spec)
 
   </TabItem>
   <TabItem value="tabapay" label="TabaPay">
@@ -200,9 +226,9 @@ curl 'https://api.basistheory.com/proxy' \
 -d '{
   "card": {
     // highlight-start
-    "accountNumber": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.number\" }}",
-    "expirationDate": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_year\" }}{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.expiration_month\" | pad_left: 2, \"0\" }}",
-    "securityCode": "{{ d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.cvc\" }}"
+    "accountNumber": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expirationDate": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | pad_left: 2, \"0\" }}",
+    "securityCode": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}"
     // highlight-end
   },
   "owner": {
