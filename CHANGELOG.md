@@ -1,3 +1,10 @@
+# [1.113.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.112.1...v1.113.0) (2023-11-28)
+
+
+### Features
+
+* add anti-fraud feature page ([#277](https://github.com/Basis-Theory/developers.basistheory.com/issues/277)) ([76d0274](https://github.com/Basis-Theory/developers.basistheory.com/commit/76d02744d3d71a678331e1adff8b907e41c0e173))
+
 ## [1.112.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.112.0...v1.112.1) (2023-11-27)
 
 
