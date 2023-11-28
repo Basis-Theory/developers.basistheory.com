@@ -1,0 +1,75 @@
+# Import Cards on File
+
+Migrate credit card data to Basis Theory by extracting and tokenizing stored information from your current payment provider. This guide will walk you through the process and requirements for achieving it securely.
+
+## Understanding the Migration Process
+Before starting the migration process it is important to gather a few pieces of information:
+
+- A member of the migration team should have an understanding of the existing payment integration
+- Identify the account owner and authorized signers at your organization for the payment processor
+- Documentation or descriptions of the outputs from a data migration from your payment processor
+- The requirements your payment processor has for any party receiving card data
+
+## Initiating the Migration
+Once you have a clear understanding of the migration process, it's time to initiate the actual migration from your payment service provider (PSP) to Basis Theory. This section will guide you through the necessary steps to kick off the migration process smoothly.
+
+### 1. Contacting the Payment Processor
+
+To get started, you need to reach out to the account owners or authorized signers at the payment processor, they hold the authority to initiate the process on your behalf. Depending on the payment processor, there are different methods to initiate the migration, such as submitting a support ticket or sending a signed letter to a designated email address.
+
+Here are a few things to consider in your request:
+
+1. Data Export Format - typically
+
+To assist you in this process, Basis Theory may provide you with a template or guidelines that you can use to communicate effectively with the payment processor. This ensures that all necessary information is provided in a clear and concise manner. Contact us when you are ready to get this started.
+
+### 2. Requirements from the Payment Processor
+
+The payment processor may have specific requirements that need to be fulfilled by the receiving party (Basis Theory). These requirements are put in place to ensure a secure and compliant migration process. They may include the need for Basis Theory to be PCI Level 1 compliant, sharing Basis Theory's Attestation of Compliance (AOC) with the payment processor, or being listed in the Visa SP (Service Provider) Listing. Compliance with these requirements helps maintain the integrity and security of the data during the migration.
+
+### 3. Sharing Basis Theory's Public Key
+
+As part of the secure data transmission process, the payment processor may require the public key from Basis Theory. The public key is used to establish a secure and encrypted channel for data transfer. You can find [Basis Theory's Public Key](https://cdn.basistheory.com/pgp/bt.public.gpg.txt) below:
+
+<iframe src="https://cdn.basistheory.com/pgp/bt.public.gpg.txt" style={{ width: '100%', height: '250px' }} />
+
+## Data Export and Transmission
+Once the migration process has been initiated, the next crucial step is the export and transmission of the data from your current payment service provider (PSP) to Basis Theory.
+
+- Data Export Format: Typically, payment processors provide the exported data in common formats such as `CSV` or `JSON`. When you communicate with your payment processor, they may share the file headers, which provide valuable information about the structure and content of the exported data. Understanding the data export format and file headers is crucial for effectively processing the data during the migration.
+- Processor Documentation: Some payment processors may publicly document the data export format and provide guidelines or resources to help you understand the exported data structure. This documentation can be immensely valuable in ensuring a smooth transition. If such documentation is available, make sure to review it thoroughly to gain insights into the data you will be receiving.
+- Data Transmission Standards: The payment processor will have specific data transmission standards that you need to adhere to. The most common standard is Secure File Transfer Protocol (SFTP), which provides a secure and encrypted channel for transmitting data. However, some processors may also support other standards like Secure Copy Protocol (SCP) or FTP over SSL. It is important to understand the transmission standards supported by your payment processor and coordinate with them to ensure compatibility with Basis Theory's systems.
+
+While Basis Theory prefers data to be transmitted via SFTP, we understand that some payment processors may have limitations or only support alternative transmission methods. In such cases, we are flexible and can accommodate other secure transmission methods to receive your data effectively. Our goal is to work closely with you and the payment processor to establish a secure and reliable data transfer process.
+
+By familiarizing yourself with the data export format, leveraging any available documentation, and coordinating with Basis Theory and the payment processor regarding data transmission standards, you can ensure a seamless and secure transfer of your credit card data. Effective communication and collaboration with all parties involved will contribute to a successful migration process.
+
+## Timelines, Test Runs, and Costs
+As you progress with the migration of your credit card data to Basis Theory, it is essential to consider timelines, conduct test runs, and be mindful of associated costs. This section will guide you through these important aspects to ensure a smooth and cost-effective migration process.
+
+- Timelines: Different payment processors may have varying timelines for providing the exported data. It is crucial to understand the processor's expected timeframe and plan accordingly. Clear communication with the payment processor can help you anticipate when you can expect to receive the data and make necessary arrangements on your end. By aligning your internal timelines with the processor's schedule, you can ensure a seamless transition without disruptions to your business operations.
+- Test Runs: Performing a test run with a subset of the cardholder data is highly recommended to verify the migration process's effectiveness. Basis Theory offers a PCI-compliant temporary server for this purpose. By running a test migration using either a subset of actual cardholder data or synthetic data, you can identify any potential issues or discrepancies early on. This allows you to address them before migrating the complete dataset. Test runs are crucial for validating the migration process and ensuring the accuracy and integrity of the data transferred.
+- Cost Considerations: It is important to be aware of any costs associated with the migration process. While some payment processors may offer the first migration for free, there could be charges for additional migrations or exceeding certain thresholds. To understand the cost structure and estimate the potential expenses involved, it is advisable to consult with your Account Manager at Basis Theory. They can provide you with detailed information about the costs associated with the migration and assist you in planning accordingly.
+
+By carefully considering timelines, conducting test runs, and being aware of potential costs, you can effectively manage the migration process. Aligning your expectations with the payment processor's timeline, performing thorough test runs, and obtaining clarity on costs will contribute to a successful and cost-efficient migration to Basis Theory.
+
+## Results and Data Handling
+Upon completing the migration process of your credit card data to Basis Theory, it is important to understand the results and how the data will be handled in your new environment. This section will delve into the key aspects of the results of the migration and the appropriate handling of the data.
+
+- Tokenization of Card Data: The primary goal of the migration process is to tokenize the credit card data securely. Tokenization replaces sensitive card data, such as Primary Account Numbers (PANs) and Card Verification Values (CVVs), with unique tokens. These tokens are used to represent the original card data securely. Basis Theory's tokenization process ensures that sensitive card information is protected, reducing the risk of data breaches.
+- Resulting File: After the migration process, a resulting file will be generated, containing the tokenized card data, which will serve as the basis for future processing and transactions. It is essential to have a clear understanding of the structure and format of this resulting file to ensure efficient integration with your systems and applications that rely on the tokenized card data.
+- Handling Personally Identifiable Information (PII): While PANs and CVVs are stored as card data and tokenized, the handling of other personally identifiable information (PII) can be more flexible. Depending on your specific requirements and compliance regulations, you can choose to tokenize or store PII data in the Basis Theory environment or your application database. Basis Theory provides the option to store PII data in their vault, allowing you to map the appropriate identifiers to the corresponding tokens securely.
+- Portability and Aliasing: Portability is a crucial aspect of data handling during the migration process. Basis Theory enables using the Account identifier (i.e. customer profile ID) from your payment service provider (PSP) as the token ID. This facilitates retrieval and usage of the appropriate tokens when needed, and maintain the original reference in your system, ensuring seamless integration and consistent data mapping.
+
+By understanding the tokenization process, establishing a well-defined resulting file structure, and making informed decisions about the handling of PII, you can confidently transfer your credit card data to the Basis Theory environment. Leveraging portability and Alias functionality further enhances data integration and simplifies the process of maintaining data consistency and traceability.
+
+As you transition to Basis Theory, ensure that your team is well-informed about the handling of the resulting file and the mechanisms in place for secure data management. By effectively utilizing tokenization and maintaining proper data handling practices, you can enhance security, streamline operations, and protect sensitive customer information.
+
+## Conclusion
+Migrating credit card data from a payment service provider (PSP) to Basis Theory represents a significant step towards unlocking new possibilities and flexibility for your payments flow. Throughout this comprehensive guide, we have explored the essential elements and best practices involved in the migration process.
+
+By extracting all card data and stored personally identifiable information (PII) from your current payment provider and tokenizing the card data in Basis Theory, you ensure the utmost security and compliance for your customers' sensitive information. Storing PII data as tokens in Basis Theory or in your application database allows you to strike the right balance between security and operational flexibility.
+
+Timelines, test runs, and cost considerations are vital aspects of a successful migration. By aligning your timelines with the payment processor's expectations, conducting test runs with subsets of cardholder data, and being aware of any associated costs, you can ensure a smooth transition without disruptions to your business operations.
+
+If you have any questions or want to start a migration, contact us or reach out to your Account Manager, who will be ready to support you throughout the migration journey.

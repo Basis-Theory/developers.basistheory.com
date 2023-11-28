@@ -203,9 +203,8 @@ const sidebars = {
       },
       items: [
         {
-          type: "link",
-          label: "Import Cards on File",
-          href: "https://blog.basistheory.com/migrate-card-data-to-basis-theory",
+          type: "doc",
+          id: "blueprints/migrations/import-cards-on-file",
         },
         {
           type: "doc",
