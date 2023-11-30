@@ -1,3 +1,10 @@
+## [1.114.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.114.0...v1.114.1) (2023-11-30)
+
+
+### Bug Fixes
+
+* add 3ds frictionless faq ([#282](https://github.com/Basis-Theory/developers.basistheory.com/issues/282)) ([d285be9](https://github.com/Basis-Theory/developers.basistheory.com/commit/d285be9df73e57c18d215e9ee8457bcf1e7c35e7))
+
 # [1.114.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.113.0...v1.114.0) (2023-11-30)
 
 
