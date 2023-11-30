@@ -1,6 +1,7 @@
 ---
 title: 3D Secure
 sidebar_label: 3D Secure
+toc_max_heading_level: 2
 ---
 import { Enterprise } from "@site/src/components/shared/Enterprise";
 import { Alert } from "@site/src/components/shared/Alert";
@@ -37,7 +38,7 @@ There are two types of transaction flows that need to be accounted for when a co
 
 The first is a Customer Initiated Transaction (CIT), in this scenario, the customer is purchasing a good or service from your e-commerce solution.
 
-Once the credit card is entered by the Consumer, the company will authenticate the card with our Universal 3DS. Basis Theory will communicate with the Access Control Server (ACS) to determine if a challenge is required. When a challenge is required, Basis Theory shows a window for the customer to verify with their bank (e.g. passwordless, username/password, etc). Finally, once the 3DS verification is complete an authorization token is returned and able to be forwarded along with a charge to the processor.
+Once the credit card is entered by the Consumer, the company will authenticate the card with our Universal 3DS. Basis Theory will communicate with the Access Control Server (ACS) to [determine if a challenge is required or frictionless authentication is possible](#frictionless). When a challenge is required, Basis Theory shows a window for the customer to verify with their bank (e.g. passwordless, username/password, etc). Finally, once the 3DS verification is complete an authorization token is returned and able to be forwarded along with a charge to the processor.
 
 <Alert>A challenge will only be presented if the ACS informs Basis Theory it is required.</Alert>
 
@@ -79,19 +80,25 @@ The second MIT use-case is when a customer’s card is already on file and vault
 
 ## FAQ
 
-**Can we include a merchant’s MID/BIN (acquirerId/acquirerBin) in the 3DS calls?**
+### Can we include a merchant’s MID/BIN (acquirerId/acquirerBin) in the 3DS calls?
 
 Yes. Companies are able to send any of their MIDs to the 3DS flow.
 
-**Does this 3DS implementation support using network tokens in the 3DS call rather than a PAN?**
+### Does this 3DS implementation support using network tokens in the 3DS call rather than a PAN?
 
 Yes. We provide the ability to send EMV Payment Tokens instead of PANs.
 
-**What is the Access Control Server (ACS)?**
+### What is the Access Control Server (ACS)?
 
 The Access Control Server (ACS) in the issuing bank’s domain authenticates cardholders during transactions. Customers verify their identity through the ACS by providing information like passwords or codes, which the ACS checks against the issuing bank’s data. The ACS, integral to customer authentication, plays a role in liability shifts for chargebacks to the issuing bank when merchants utilize 3DS.
 
-**What processors accept third-party 3DS?**
+### Do you support frictionless authentication? {#frictionless}
+
+Yes. The ACS will evaluate risk associated with the transaction, cardholder data, collected device data, regulatory requirements and issuer's authentication policies to decide whether a frictionless authentication is possible or a challenge is necessary.
+
+When frictionless authentication is achieved, the authentication value is returned automatically. When a challenge is required, the challenge window will pop up to the user. No decisioning logic is necessary from the merchant perspective.
+
+### What processors accept third-party 3DS?
 
 These are known partners Basis Theory with the ability will accept a third-party 3DS token. If a processor does not exist in this list, we suggest working directly with the processor to ensure they are capable of accepting a 3DS authentication token.
 
