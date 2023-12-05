@@ -1,3 +1,10 @@
+## [1.114.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.114.1...v1.114.2) (2023-12-05)
+
+
+### Bug Fixes
+
+* grammar ([#287](https://github.com/Basis-Theory/developers.basistheory.com/issues/287)) ([9ff6ff0](https://github.com/Basis-Theory/developers.basistheory.com/commit/9ff6ff097821caa75cc5c3c967e863a0945c3da9))
+
 ## [1.114.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.114.0...v1.114.1) (2023-11-30)
 
 
