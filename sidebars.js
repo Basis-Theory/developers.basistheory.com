@@ -160,7 +160,7 @@ const sidebars = {
           type: "doc",
           id: "concepts/transactions",
           customProps: {
-            beta: true,
+            enterprise: true,
           },
         },
         "concepts/elements",
@@ -394,7 +394,7 @@ const sidebars = {
           type: "doc",
           id: "api/tokens/transactions",
           customProps: {
-            beta: true,
+            enterprise: true,
           },
         },
       ],
