@@ -1,3 +1,10 @@
+# [1.116.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.115.0...v1.116.0) (2023-12-07)
+
+
+### Features
+
+* Adds enterprise label to async reactors and transactions ([#289](https://github.com/Basis-Theory/developers.basistheory.com/issues/289)) ([375fdd5](https://github.com/Basis-Theory/developers.basistheory.com/commit/375fdd5d47d160019ae96f5fcf8dacf8bc960095))
+
 # [1.115.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.114.2...v1.115.0) (2023-12-06)
 
 
