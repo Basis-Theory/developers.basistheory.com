@@ -177,24 +177,25 @@ continue reading below to learn more about when to consider using sessions.
 
 ### Why Use Sessions?
 
-Sessions can help you achieve improved security by limiting the access granted to a public application and its API key.
-Since public API keys are used within frontend applications, they can potentially be accessed by untrusted parties
-who inspect or decompile your web or mobile application source code, or by inspecting network traffic in their browser or device. Because of these risks,
-Basis Theory only allows public applications to be granted permission to create or update tokens to support [collecting data](/docs/guides/collect/),
-and never to read or use tokens.
+Most user-facing applications such as checkout pages, mobile apps, etc. integrate with Basis Theory using [Public Application](#application-type) Keys.
+They are simple to create and use, yet have very narrow permissions available. You can only use such keys to interact with Basis Theory API in order
+to create and update tokens. This intentional design prevents unauthorized disclosure of sensitive information. For instance, if a malicious actor gets hold of the Public Key by
+reverse engineering your code or inspecting application network traffic, their actions are confined by the application's permissions. This limitation ensures
+they cannot read or use any tokenized data.
 
-However, even granting access to create or update tokens introduces risk, as unauthorized third parties could
-potentially gain access to your public API key and perform malicious actions:
+However, there are still some residual risks with such practice. Leaked Public Application keys could still be used to:
 
-- Tokens could be created within your tenant by unauthorized third parties, increasing your MAT count and potentially incurring charges
-- If a token ID were exposed or guessed, that token could be updated by an unauthorized actor without your consent
+- Create tokens within your Tenant by unauthorized third parties.
+- Update existing tokens, if a token ID were exposed or guessed - as long as the Public Application has `token:update` permission.
 
-Using sessions within a public application fully mitigates these risks and offers the following benefits over a public API key-only approach:
+Using sessions within a Public Application fully mitigates these risks and offers the following benefits over a Public API key-only approach:
 
 - **Prevent Anonymous Use**: Since sessions are authorized by a private application in a backend service that you own, you are able to authenticate all requests for a session.
 - **User-Specific Access Controls**: You can apply your own custom authorization logic to limit access to only the tokens that should be accessible by each user.
 - **Ability to Read or Use Tokens**: Sessions can be authorized to perform any token operation, not only creating or updating tokens.
 - **Limited Lifetime**: Sessions are created just-in-time and are intended to be short-lived - by default, sessions expire after 3 minutes.
+
+<Alert type={Alerts.INFO}>Public Application Keys are geared toward integration simplicity, while Sessions provide broader functionality range and more granular access controls.</Alert>
 
 ### Use Cases for Sessions
 
