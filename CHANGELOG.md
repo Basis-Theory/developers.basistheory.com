@@ -1,3 +1,10 @@
+## [1.117.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.117.0...v1.117.1) (2023-12-14)
+
+
+### Bug Fixes
+
+* improve sessions description ([#295](https://github.com/Basis-Theory/developers.basistheory.com/issues/295)) ([6b3f469](https://github.com/Basis-Theory/developers.basistheory.com/commit/6b3f4698ccc1b458551ad6a0bb80a8167d3a842d))
+
 # [1.117.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.116.0...v1.117.0) (2023-12-11)
 
 
