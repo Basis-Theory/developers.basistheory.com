@@ -1,3 +1,10 @@
+## [1.117.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.117.1...v1.117.2) (2023-12-26)
+
+
+### Bug Fixes
+
+* mention webhooks in api guide ([#298](https://github.com/Basis-Theory/developers.basistheory.com/issues/298)) ([352e8c7](https://github.com/Basis-Theory/developers.basistheory.com/commit/352e8c72963246e00e6ea4a355d8c023c9a59d63))
+
 ## [1.117.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.117.0...v1.117.1) (2023-12-14)
 
 
