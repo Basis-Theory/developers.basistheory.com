@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, ReactElement, ReactNode, useEffect, useMemo, useState} from "react";
+import React, { PropsWithChildren, ReactElement, ReactNode, useEffect, useMemo, useState } from "react";
 import { Card } from "@site/src/components/shared/Card";
 
 import { QuestionCheckbox } from "./QuestionCheckbox";
@@ -34,7 +34,6 @@ const resolveState = (answer: Answer, yesType: AnswerType, noType: AnswerType): 
   }
   return "wrong";
 };
-
 export const QuestionCard = ({ question, yesType = "right", noType = "wrong", children }: Props) => {
   const [answer, setAnswer] = useState<Answer>(null);
 
@@ -48,15 +47,15 @@ export const QuestionCard = ({ question, yesType = "right", noType = "wrong", ch
 
   useEffect(() => {
     const value = window.localStorage.getItem(key);
-    if (['yes', 'no', 'na'].includes(value)) {
-      setAnswer(value as Answer)
+    if (["yes", "no", "na"].includes(value)) {
+      setAnswer(value as Answer);
     }
   }, [question]);
 
   const updateAnswer = (value: Answer) => {
     setAnswer(value);
     window.localStorage.setItem(key, value);
-  }
+  };
 
   return (
     <Card className={styles.card}>
