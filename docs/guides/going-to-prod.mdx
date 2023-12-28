@@ -102,7 +102,7 @@ The questions below are designed to help you understand the potential PCI Compli
     <Alert type="warning">I understand that my systems that read plaintext cardholder data from the vault are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
   </Content>
   <Content type="na">
-    <Alert type="neutral">I never read, list or search tokens in my systems.</Alert>
+    <Alert type="neutral">I never retrieve/list/search tokens in my systems.</Alert>
   </Content>
 </QuestionCard>
 
@@ -148,7 +148,7 @@ The questions below are designed to help you understand the potential PCI Compli
 
 <QuestionCard question="Are your systems well represented by Basis Theory Applications?">
   <Content type="no">
-    <Alert type="warning">“iOS app”, “Android app”, “Frontend”, “Backend”, “Jenkins”, “Github Actions” are a few examples of applications that should be directly mapped to a Basis Theory Application and have their own API Key.</Alert>
+    <Alert type="warning">“iOS app”, “Android app”, “Frontend”, “Backend”, “CLI”, “Github Actions” are a few examples of applications that should be directly mapped to a Basis Theory Application and have their own API Key.</Alert>
   </Content>
 </QuestionCard>
 
@@ -180,7 +180,7 @@ The questions below are designed to help you understand the potential PCI Compli
 
 <QuestionCard question="Are you hardcoding or embedding a Public Application Key in your mobile app?" noType="right">
   <Content type="yes">
-    <Alert type="warning">While this is fine for most use-cases, consider that in the event of having to replace/rotate the key, an app distribution may be necessary.</Alert>
+    <Alert type="warning">While this is fine for most use-cases, consider that in the event of having to replace/rotate the key, a new app distribution may be necessary.</Alert>
   </Content>
   <Content type="no">
     <Alert type="info">Ideally, the app would fetch the present Application Key from your server.</Alert>
@@ -196,21 +196,21 @@ The questions below are designed to help you understand the potential PCI Compli
   </Content>
 </QuestionCard>
 
-<QuestionCard question="Are you storing PSP tokens in your own database, next to the Basis Theory Token?">
+<QuestionCard question="Are you storing PSP tokens in your own database, next to the Basis Theory Token?" noType="right">
   <Content type="yes">
     <Alert type="info">Pro: immediate availability for connecting with the Processor<br/>Con: extra DB columns to maintain</Alert>
   </Content>
 </QuestionCard>
 
-<QuestionCard question="Are you storing PSP tokens in Basis Theory Token metadata?">
+<QuestionCard question="Are you storing PSP tokens in Basis Theory Token metadata?" noType="right">
   <Content type="yes">
     <Alert type="info">Pros: single source of truth, no extra columns to maintain<br/>Con: going through Basis Theory whenever connecting with the Processor</Alert>
   </Content>
 </QuestionCard>
 
-<QuestionCard question="Are you storing your Application Keys in a secret manager or using a specialized tool to manage IaC sensitive outputs?">
+<QuestionCard question="Are you storing your Basis Theory API Keys in a secret manager or using a specialized tool to manage IaC sensitive outputs?">
   <Content type="no">
-    <Alert type="warning">Consider using a secret manager to store after provisioning, and inject Basis Theory API Keys into your applications.</Alert>
+    <Alert type="warning">Consider using a secret manager to store keys after they are provisioned, and to inject them into your applications.</Alert>
   </Content>
 </QuestionCard>
 
