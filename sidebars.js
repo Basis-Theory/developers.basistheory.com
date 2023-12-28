@@ -106,6 +106,11 @@ const sidebars = {
       ],
     },
     {
+      id: "guides/going-to-prod",
+      type: "doc",
+
+    },
+    {
       type: "html",
       value: "<hr />",
     },

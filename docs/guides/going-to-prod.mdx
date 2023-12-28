@@ -1,0 +1,231 @@
+---
+toc_max_heading_level: 2
+---
+
+import {QuestionCard, Content} from "@site/src/components/question/QuestionCard";
+import {Alert} from "@site/src/components/shared/Alert";
+
+# Going to Production
+
+## Overview
+
+An interactive guide to help you learn best practices before going to Production with your Basis Theory integration.
+
+The questions are persistent to the browser (local storage), and
+
+## Account
+
+<QuestionCard question="Did you create your account using a business e-mail?">
+  <Content type="no">
+    <Alert type="warning">Create a new account using your business e-mail. Favor using a shared engineering email account (e.g. platform@mycompany.com).</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Did you create at least one Tenant exclusive for Production?">
+  <Content type="yes">
+    <Alert type="info">Share your Tenant ID(s) with your Basis Theory Account Manager to configure it towards your plan</Alert>
+  </Content>
+  <Content type="no">
+    <Alert type="warning">Create a new Tenant easily identifiable as Production-only (e.g. “My Company Prod”).</Alert>
+  </Content>
+</QuestionCard>
+
+## PCI Compliance
+
+<QuestionCard question="Do you know the level of PCI Compliance your business needs?">
+  <Content type="no">
+    <Alert type="warning">We can help. <a href="https://basistheory.com/contact" target="_blank">Contact us</a> to find out more.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">"I don't handle any form of cardholder data in my systems"</Alert>
+  </Content>
+</QuestionCard>
+
+
+<QuestionCard question="Did you complete your PCI DSS SAQ-A with Basis Theory?">
+  <Content type="no">
+    <Alert type="warning"><a href="https://basistheory.com/contact" target="_blank">Contact us</a> to get started.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">"I don't need a PCI DSS SAQ-A"</Alert>
+  </Content>
+</QuestionCard>
+
+
+The questions below are designed to help you understand the potential PCI Compliance impact of your integration. Please note that these are not a substitute for a complete PCI SAQ but can provide valuable insights.
+
+### Data Ingress
+
+<QuestionCard question="Are you using Basis Theory Elements for all user-facing  cardholder data capture?">
+  <Content type="no">
+    <Alert type="warning">I understand that my forms, or the apps that hosts them, along with the networks used to transfer the cardholder data are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">I don't have any UI that captures cardholder data.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are you using Basis Theory Pre-Configured Proxies for all API-based (webhooks, secure APIs, etc.) cardholder data capture?">
+  <Content type="no">
+    <Alert type="warning">I understand that my systems that listen to API requests with payloads containing cardholder data are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">I don't have any APIs that listen to requests containing cardholder data.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are you using Basis Theory Pre-Configured Proxies or Reactors for all queries to 3rd-parties that can potentially return cardholder data?">
+  <Content type="no">
+    <Alert type="warning">I understand that my systems which query 3rd-party services that potentially return cardholder data are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">I don't have any systems that query 3rd-party services that potentially return cardholder data.</Alert>
+  </Content>
+</QuestionCard>
+
+### Data Processing
+
+<QuestionCard question="Are you using Basis Theory Reactors for processing any plaintext cardholder data?">
+  <Content type="no">
+    <Alert type="warning">I understand that my systems that process plaintext cardholder data are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">I don't need to perform any type of processing of plaintext cardholder data</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are you reading only masked cardholder data from the vault in retrieve/list/search operations?">
+  <Content type="yes">
+    <Alert type="info">I don't have any Private Applications with a rule that defines `token:read` permission with `reveal` transform. </Alert>
+  </Content>
+  <Content type="no">
+    <Alert type="warning">I understand that my systems that read plaintext cardholder data from the vault are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">I never read, list or search tokens in my systems.</Alert>
+  </Content>
+</QuestionCard>
+
+### Data Egress
+
+<QuestionCard question="Are you using Basis Theory Proxies or Reactors to send cardholder data to 3rd parties?">
+  <Content type="no">
+    <Alert type="warning">I understand that my systems which process plaintext cardholder data are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">I don't share cardholder data with 3rd parties.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are you using Basis Theory Elements to display cardholder data to users, with the proper use of Sessions and data retrieval through the Elements context?">
+  <Content type="no">
+    <Alert type="warning">I understand that my systems that read, transmit and display plaintext cardholder data are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">I don't display cards to my users.</Alert>
+  </Content>
+</QuestionCard>
+
+## Access Controls
+
+<QuestionCard question="Are you using only Pre-Configured Proxies and have disabled Ephemeral Proxy in your Production Tenant(s)?">
+  <Content type="no">
+    <Alert type="warning">Using Ephemeral Proxies in Production environments make easier for developers and bad actors to replace the destination url. Having it set upfront as part of the Proxy configuration reduces the risk and makes easier to audit destinations.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">I don't use Basis Theory Proxies.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Do you have large customers or business units that require advanced management or specialized data governance rules?" noType="right">
+  <Content type="yes">
+    <Alert type="warning">You probably should have multiple Tenants. <a href="https://basistheory.com/contact" target="_blank">Contact us</a> if you need assistance setting them up.</Alert>
+  </Content>
+  <Content type="no">
+    <Alert type="info">A single tenant for production is likely enough.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are your systems well represented by Basis Theory Applications?">
+  <Content type="no">
+    <Alert type="warning">“iOS app”, “Android app”, “Frontend”, “Backend”, “Jenkins”, “Github Actions” are a few examples of applications that should be directly mapped to a Basis Theory Application and have their own API Key.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are you organizing tokens in containers considering your present and near-future needs?">
+  <Content type="no">
+    <Alert type="warning">Default containers offer generic segmentation by data classification. Find out if they fit your needs or if you should customize them <a href="/docs/concepts/what-are-containers">here</a>.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Do your Applications only have the necessary permissions used in Production?">
+  <Content type="no">
+    <Alert type="warning">Limit the risks of your integration by following the Principle Of Least Privilege.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Do you have a strict list of users that can access your Production Tenant(s)?">
+  <Content type="no">
+    <Alert type="warning">Using a shared engineering account that is managed by a small trusted team is ideal.</Alert>
+  </Content>
+</QuestionCard>
+
+## Operations
+
+<QuestionCard question="Are you using Infrastructure-as-Code (IaC) or other form of automation to provision Basis Theory Resources (Applications, Reactors, Proxies, etc.)?">
+  <Content type="no">
+    <Alert type="warning">Consider provisioning resources in CI/CD environments using some form of automation. Basis Theory has a Terraform module and Management APIs that you can consume directly, via SDKs or CLI.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are you hardcoding or embedding a Public Application Key in your mobile app?" noType="right">
+  <Content type="yes">
+    <Alert type="warning">While this is fine for most use-cases, consider that in the event of having to replace/rotate the key, an app distribution may be necessary.</Alert>
+  </Content>
+  <Content type="no">
+    <Alert type="info">Ideally, the app would fetch the present Application Key from your server.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">I don't maintain a mobile app integration.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Have you implemented retry logic on most critical workflows?">
+  <Content type="no">
+    <Alert type="warning">It is common to retry critical requests, such as when creating a new token to store a credit card, or proxying the token to a payment processor. Look for conditions where retries are applicable, such as client connection errors or server side errors.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are you storing PSP tokens in your own database, next to the Basis Theory Token?">
+  <Content type="yes">
+    <Alert type="info">Pro: immediate availability for connecting with the Processor<br/>Con: extra DB columns to maintain</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are you storing PSP tokens in Basis Theory Token metadata?">
+  <Content type="yes">
+    <Alert type="info">Pros: single source of truth, no extra columns to maintain<br/>Con: going through Basis Theory whenever connecting with the Processor</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Are you storing your Application Keys in a secret manager or using a specialized tool to manage IaC sensitive outputs?">
+  <Content type="no">
+    <Alert type="warning">Consider using a secret manager to store after provisioning, and inject Basis Theory API Keys into your applications.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Do you need to correlate tokenized data? For example: track if the same credit card has been used multiple times by different users." noType="right">
+  <Content type="yes">
+    <Alert type="info">Learn more about <a href="docs/concepts/what-are-tokens#fingerprinting">fingerprinting</a>.</Alert>
+  </Content>
+  <Content type="no">
+    <Alert type="warning">Make sure you are not calculating fingerprint at Tenant-level or during token creation.</Alert>
+  </Content>
+</QuestionCard>
+
+<QuestionCard question="Do you need to prevent creating duplicate tokens? For example: prevent the same data being tokenized more than once." noType="right">
+  <Content type="yes">
+    <Alert type="info">Learn more about <a href="docs/concepts/what-are-tokens#deduplication">deduplication</a>.</Alert>
+  </Content>
+</QuestionCard>
+
