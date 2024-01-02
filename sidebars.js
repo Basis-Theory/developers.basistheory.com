@@ -106,11 +106,6 @@ const sidebars = {
       ],
     },
     {
-      id: "guides/going-to-prod",
-      type: "doc",
-
-    },
-    {
       type: "html",
       value: "<hr />",
     },
@@ -258,6 +253,16 @@ const sidebars = {
           items: ["blueprints/personal-information/query-user-data-from-api"],
         },
       ],
+    },
+    {
+      id: "guides/production-checklist",
+      type: "doc",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/checklist-rocket.svg",
+          dark: "/img/sidebar/dark/checklist-rocket.svg",
+        },
+      },
     },
     {
       type: "html",
