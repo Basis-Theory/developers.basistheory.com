@@ -1,3 +1,10 @@
+## [1.118.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.118.0...v1.118.1) (2024-01-02)
+
+
+### Bug Fixes
+
+* document shopify js package in reactor dependencies ([#300](https://github.com/Basis-Theory/developers.basistheory.com/issues/300)) ([7348f7d](https://github.com/Basis-Theory/developers.basistheory.com/commit/7348f7db1dccbf4bef92f4de4c704d025de8e859))
+
 # [1.118.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.117.2...v1.118.0) (2024-01-02)
 
 
