@@ -1,3 +1,10 @@
+# [1.119.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.118.1...v1.119.0) (2024-01-03)
+
+
+### Features
+
+* adds Production Checklist ([#299](https://github.com/Basis-Theory/developers.basistheory.com/issues/299)) ([f0636a0](https://github.com/Basis-Theory/developers.basistheory.com/commit/f0636a0ca80146039acd38aaa5e151bbc7ee3d49))
+
 ## [1.118.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.118.0...v1.118.1) (2024-01-02)
 
 
