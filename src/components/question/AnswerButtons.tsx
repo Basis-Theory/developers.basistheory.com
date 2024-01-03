@@ -1,4 +1,4 @@
-import React, {PropsWithChildren} from "react";
+import React from "react";
 import clsx from "clsx";
 
 import { Answer, State } from "./types";
