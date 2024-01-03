@@ -1,3 +1,10 @@
+# [1.120.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.119.0...v1.120.0) (2024-01-03)
+
+
+### Features
+
+* add readonly to display card guide web elements ([#307](https://github.com/Basis-Theory/developers.basistheory.com/issues/307)) ([a896104](https://github.com/Basis-Theory/developers.basistheory.com/commit/a896104963e5692011612206a336320cdd9d79e0))
+
 # [1.119.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.118.1...v1.119.0) (2024-01-03)
 
 
