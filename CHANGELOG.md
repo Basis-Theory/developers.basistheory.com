@@ -1,3 +1,10 @@
+## [1.120.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.120.1...v1.120.2) (2024-01-03)
+
+
+### Bug Fixes
+
+* questionnaire dark styles ([#309](https://github.com/Basis-Theory/developers.basistheory.com/issues/309)) ([064c4f1](https://github.com/Basis-Theory/developers.basistheory.com/commit/064c4f1490e4201cde62e570a5e90537d4643422))
+
 ## [1.120.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.120.0...v1.120.1) (2024-01-03)
 
 
