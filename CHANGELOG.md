@@ -1,3 +1,10 @@
+## [1.120.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.120.0...v1.120.1) (2024-01-03)
+
+
+### Bug Fixes
+
+* explicitly set readOnly to ([#308](https://github.com/Basis-Theory/developers.basistheory.com/issues/308)) ([f33965f](https://github.com/Basis-Theory/developers.basistheory.com/commit/f33965f77b05f7cc3bc0b9dccbdcee40be89d96d))
+
 # [1.120.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.119.0...v1.120.0) (2024-01-03)
 
 
