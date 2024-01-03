@@ -13,6 +13,7 @@ export enum Alerts {
   WARNING = "warning",
   INFO = "info",
   SUCCESS = "success",
+  NEUTRAL = "neutral"
 }
 
 interface Alert {
@@ -32,6 +33,7 @@ export const Alert = ({
     [styles.warning]: type == Alerts.WARNING,
     [styles.info]: type == Alerts.INFO,
     [styles.success]: type == Alerts.SUCCESS,
+    [styles.neutral]: type == Alerts.NEUTRAL,
   });
 
   const Svg = {
@@ -43,9 +45,9 @@ export const Alert = ({
 
   return (
     <div className={clsx([styles.container, containerClass])}>
-      <div>
-        <Svg className={styles.svg} />
-      </div>
+      {Svg &&<div>
+         <Svg className={styles.svg} />
+      </div>}
       <div>
         {title && <div className={styles.title}>{title}</div>}
         <div className={styles.content}>{content ?? children}</div>

@@ -255,6 +255,16 @@ const sidebars = {
       ],
     },
     {
+      id: "guides/production-checklist",
+      type: "doc",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/checklist-rocket.svg",
+          dark: "/img/sidebar/dark/checklist-rocket.svg",
+        },
+      },
+    },
+    {
       type: "html",
       value: "<hr />",
     },
