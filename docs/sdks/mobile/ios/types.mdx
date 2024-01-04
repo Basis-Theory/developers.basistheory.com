@@ -153,6 +153,32 @@ Supported card brands are defined in the table below:
 
 <Alert>Some card brands have issued card numbers with multiple lengths. The <code>Card Number Digits</code> column documents all acceptable card number lengths for the brand (in number of digits, excluding formatting characters).</Alert>
 
+
+### Customizing Card Brands
+
+You can extend default card brands to include additional BIN numbers or create custom card brands by modifying the `cardType` property of the `CardNumberUITextField`.
+
+#### Overriding existing card brands
+
+```swift showLineNumbers
+...
+    @IBOutlet weak var cardNumberTextField: CardNumberUITextField!
+
+    var defaultWithCustomVisaCard = CardBrand.DefaultCardBrands.filter { $0.cardBrandName != CardBrandName.visa }
+    
+    defaultWithCustomVisaCard.append(CardBrandDetails(cardBrandName: CardBrandName.visa, cardIdentifiers: [4, 8405],
+                                        cvcMaskInput: [try! NSRegularExpression(pattern: "\\d"), try! NSRegularExpression(pattern: "\\d"), try! NSRegularExpression(pattern: "\\d")],
+                                        gaps: [4, 8, 12], validLengths: [16, 18, 19]))
+    
+    cardNumberTextField.cardTypes = defaultWithCustomVisaCard
+```
+
+<Alert>
+  When adding custom card brands the default list is replaced, and validation will only run against those brands defined in the `cardType`s list.
+
+  For more granular control, [we expose](https://github.com/Basis-Theory/basistheory-ios/blob/master/BasisTheoryElements/Sources/BasisTheoryElements/CardBrand.swift#L64C2-L142C6) card brands individually and a list with all the default card brands.
+</Alert>
+
 ## CardExpirationDateUITextField
 
 The `CardExpirationDateUITextField` element type features a month and year formatted input with validation. The input must be the current month and year or later.

@@ -1,0 +1,167 @@
+import { Alert } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+
+{/* 
+    used in the JS Sdk, the React Sdk and the React Native Sdk
+*/}
+
+### Customizing Card Brands
+
+You can extend default card brands to include additional BIN numbers or create custom card brands by modifying the `cardType` property of the `CardNumberElement`.
+
+#### The `CreditCardType`
+
+We implement [`credit-card-type`](https://github.com/braintree/credit-card-type/tree/main) for our JS SDKs to manage card brands, so we borrow some of their concepts and apply them to all of our SDKs
+
+```typescript showLineNumbers
+type CreditCardType = {
+    code: { 
+        size: number; 
+        name: SecurityCodeLabel | string; // CVV, CVC, CID, etc.
+    };
+    gaps: number[]; 
+    lengths: number[];
+    niceType: CardBrandNiceType | string; // or card brand
+    patterns: (number | [number, number])[];
+    type: CardBrandId | string; // or card identifier
+};
+```
+
+##### `niceType` (or Brand)
+
+A pretty printed representation of the card brand.
+- `Visa`
+- `Mastercard`
+- `American Express`
+- `Diners Club`
+- `Discover`
+- `JCB`
+- `UnionPay`
+- `Maestro`
+- `Mir`
+- `Elo`
+- `Hiper`
+- `Hipercard`
+
+##### `type` (or Identifier)
+
+A code-friendly presentation of the card brand. 
+- `visa`
+- `mastercard`
+- `american-express`
+- `diners-club`
+- `discover`
+- `jcb`
+- `unionpay`
+- `maestro`
+- `mir`
+- `elo`
+- `hiper`
+- `hipercard`
+
+##### `gaps`
+
+The expected indices of gaps in a string representation of the card number. For example, in a Visa card, `4111 1111 1111 1111`, there are expected spaces in the 4th, 8th, and 12th positions.
+
+##### `lengths`
+
+The expected lengths of the card number as an array of strings (excluding spaces and `/` characters).
+
+##### `code`
+
+The information regarding the security code for the determined card.
+
+Card brands provide different nomenclature for their security codes as well as varying lengths.
+
+| Brand              | Name   | Size |
+| ------------------ | ------ | ---- |
+| `Visa`             | `CVV`  | 3    |
+| `Mastercard`       | `CVC`  | 3    |
+| `American Express` | `CID`  | 4    |
+| `Diners Club`      | `CVV`  | 3    |
+| `Discover`         | `CID`  | 3    |
+| `JCB`              | `CVV`  | 3    |
+| `UnionPay`         | `CVN`  | 3    |
+| `Maestro`          | `CVC`  | 3    |
+| `Mir`              | `CVP2` | 3    |
+| `Elo`              | `CVE`  | 3    |
+| `Hiper`            | `CVC`  | 3    |
+| `Hipercard`        | `CVC`  | 4    |
+
+
+#### Example
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+    ```typescript showLineNumbers
+    import { VISA, DEFAULT_CARD_TYPES, type CreditCardType } from "@basis-theory/basis-theory-js/types/elements"
+
+    const CUSTOM_VISA = {
+      ...VISA,
+        // Add new BIN pattern '8456' and maintain pre-existing ones
+      patterns: [...VISA.patterns, 8456],
+    };
+
+    // removes pre-existing Visa CreditCardType
+    const CustomCardTypesList = DEFAULT_CARD_TYPES.filter(({ type }: CreditCardType) => type != 'visa' )
+
+    const cardNumberElement = BasisTheory.createElement('cardNumber', {
+      targetId: 'cardNumberElement',
+      // Adds filtered CreditCardType's list and custom visa CreditCardType
+      cardTypes: [...CustomCardTypesList, CUSTOM_VISA]
+    });
+    ```
+  </TabItem>
+
+  <TabItem value="react" label="React JS">
+    ```typescript showLineNumbers
+    import { VISA, DEFAULT_CARD_TYPES, type CreditCardType } from "@basis-theory/basis-theory-js/types/elements"
+
+    const CUSTOM_VISA = {
+      ...VISA,
+        // Add new BIN pattern '8456' and maintain pre-existing ones
+      patterns: [...VISA.patterns, 8456],
+    };
+
+    // removes pre-existing Visa CreditCardType
+    const CustomCardTypesList = DEFAULT_CARD_TYPES.filter(({ type }: CreditCardType) => type != 'visa' )
+    ...
+    <CardNumberElement
+      btRef={ref}  
+      cardTypes={[...CustomCardTypesList, CUSTOM_VISA]}
+      placeholder="Card Number"
+      style={styles.cardNumber}
+    />
+    ```
+  </TabItem>
+
+  <TabItem value="react-native" label="React Native">
+    ```typescript showLineNumbers
+    import { VISA, DEFAULT_CARD_TYPES, type CreditCardType } from "@basis-theory/basis-theory-js/types/elements"
+
+    const CUSTOM_VISA = {
+      ...VISA,
+        // Add new BIN pattern '8456' and maintain pre-existing ones
+      patterns: [...VISA.patterns, 8456],
+    };
+
+    // removes pre-existing Visa CreditCardType
+    const CustomCardTypesList = DEFAULT_CARD_TYPES.filter(({ type }: CreditCardType) => type != 'visa' )
+    ...
+    <CardNumberElement
+      btRef={ref}  
+      cardTypes={[...CustomCardTypesList, CUSTOM_VISA]}
+      placeholder="Card Number"
+      style={styles.cardNumber}
+    />
+    ```
+  </TabItem>
+</Tabs>
+
+<Alert>
+  When adding custom card brands the default list is replaced, and validation will only run against those brands defined in the `cardType`s list.
+
+  For more granular control, [we expose](https://github.com/Basis-Theory/basis-theory-js/blob/master/src/types/elements/cardTypes.ts) card brands individually and a list with all the default card brands.
+</Alert>
