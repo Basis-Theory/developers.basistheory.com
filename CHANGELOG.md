@@ -1,3 +1,10 @@
+# [1.121.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.120.2...v1.121.0) (2024-01-04)
+
+
+### Features
+
+* adds custom bin validation ([#306](https://github.com/Basis-Theory/developers.basistheory.com/issues/306)) ([8efffec](https://github.com/Basis-Theory/developers.basistheory.com/commit/8efffec9f23a416803a01de16fbe9fba2b87398d))
+
 ## [1.120.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.120.1...v1.120.2) (2024-01-03)
 
 
