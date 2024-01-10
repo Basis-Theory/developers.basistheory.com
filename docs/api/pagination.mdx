@@ -7,80 +7,84 @@ import TabItem from "@theme/TabItem";
 
 # Pagination
 
-All `List` endpoints support pagination to allow bulk fetching multiple items. Each `List` endpoint shares a common response structure. Examples of these requests can be seen in [List Applications](/docs/api/applications#list-applications) and [List Tokens](/docs/api/tokens#list-tokens).
+Most `List` endpoints support offset pagination to allow bulk fetching multiple items. Each `List` endpoint shares a common response structure. Examples of these requests can be seen in [List Applications](/docs/api/applications#list-applications) and [List Tokens](/docs/api/tokens#list-tokens).
 
-## Request
+The [List Logs](/docs/api/logs#list-logs) endpoint supports [cursor pagination](#cursor-pagination).
+
+## Offset Pagination
+
+### Request
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
-```shell showLineNumbers
-curl "https://api.basistheory.com/applications?page=2&size=10" \
-  -H "BT-API-KEY: <API_KEY>"
-```
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/applications?page=2&size=10" \
+    -H "BT-API-KEY: <API_KEY>"
+    ```
 
   </TabItem>
   <TabItem value="javascript" label="JavaScript">
 
-```javascript showLineNumbers
-import { BasisTheory } from "@basis-theory/basis-theory-js";
+    ```javascript showLineNumbers
+    import {BasisTheory} from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+    const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
-const applications = await bt.applications.list({
-  page: 2,
-  size: 10,
-});
-```
+    const applications = await bt.applications.list({
+      page: 2,
+      size: 10,
+    });
+    ```
 
   </TabItem>
   <TabItem value="csharp" label="C#">
 
-```csharp showLineNumbers
-using BasisTheory.net.Applications;
+    ```csharp showLineNumbers
+    using BasisTheory.net.Applications;
 
-var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
+    var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
 
-var applications = await client.GetAsync(new ApplicationGetRequest {
-  Page = 2,
-  PageSize = 10
-});
-```
+    var applications = await client.GetAsync(new ApplicationGetRequest {
+      Page = 2,
+      PageSize = 10
+    });
+    ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
-```python showLineNumbers
-import basistheory
-from basistheory.api import applications_api
+    ```python showLineNumbers
+    import basistheory
+    from basistheory.api import applications_api
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
+    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
     applications_client = applications_api.ApplicationsApi(api_client)
 
     applications = applications_client.get(page=2, size=10)
-```
+    ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
-```go showLineNumbers
-package main
+    ```go showLineNumbers
+    package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
+    import (
+    "context"
+    "github.com/Basis-Theory/basistheory-go/v3"
+    )
 
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    func main() {
+    configuration := basistheory.NewConfiguration()
+    apiClient := basistheory.NewAPIClient(configuration)
+    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
     "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
   })
 
-  applications, httpResponse, err := apiClient.ApplicationsApi.Get(contextWithAPIKey).Page(2).Size(10).Execute()
-}
-```
+    applications, httpResponse, err := apiClient.ApplicationsApi.Get(contextWithAPIKey).Page(2).Size(10).Execute()
+  }
+    ```
 
   </TabItem>
 </Tabs>
@@ -92,7 +96,7 @@ func main() {
 | `page`    | false    | _integer_ | 1       | Page number of the results to return.                              |
 | `size`    | false    | _integer_ | 20      | Number of results per page to return. Maximum size of 100 results. |
 
-## Response
+### Response
 
 ```json showLineNumbers
 {
@@ -110,14 +114,14 @@ func main() {
 }
 ```
 
-## Pagination Object
+### Offset Pagination Object
 
 | Attribute    | Type                                                                              | Description                                                                             |
 | ------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `pagination` | _[pagination metadata](#pagination-pagination-object-pagination-metadata-object)_ | Pagination metadata for the response                                                    |
+| `pagination` | _[offset pagination metadata](#offset-pagination-metadata-object)_                | Pagination metadata for the response                                                    |
 | `data`       | _array_                                                                           | Query results of the request. See list endpoint resource for response schema definition |
 
-### Pagination Metadata Object
+#### Offset Pagination Metadata Object
 
 | Attribute     | Type      | Description                                                 |
 | ------------- | --------- | ----------------------------------------------------------- |
@@ -125,3 +129,118 @@ func main() {
 | `page_number` | _integer_ | Current page number. Should match `page` query parameter.   |
 | `page_size`   | _integer_ | The size of each page. Should match `size` query parameter. |
 | `total_pages` | _integer_ | The total number of pages.                                  |
+
+## Cursor Pagination
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/logs?start=AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD&size=10" \
+    -H "BT-API-KEY: <API_KEY>"
+    ```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+    ```javascript showLineNumbers
+    import {BasisTheory} from "@basis-theory/basis-theory-js";
+
+    const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+    const logs = await bt.logs.list({
+      start: 'AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD',
+      size: 10,
+    });
+    ```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+    ```csharp showLineNumbers
+    using BasisTheory.net.Logs;
+
+    var client = new LogClient("<MANAGEMENT_API_KEY>");
+
+    var logs = await client.GetAsync(new GetLogsRequest {
+      Start = "AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD",
+      PageSize = 10
+    });
+    ```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+    ```python showLineNumbers
+    import basistheory
+    from basistheory.api import logs_api
+
+    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
+    logs_client = logs_api.LogsApi(api_client)
+
+    logs = logs_client.get(start="AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD", size=10)
+    ```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+    ```go showLineNumbers
+    package main
+
+    import (
+    "context"
+    "github.com/Basis-Theory/basistheory-go/v3"
+    )
+
+    func main() {
+    configuration := basistheory.NewConfiguration()
+    apiClient := basistheory.NewAPIClient(configuration)
+    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
+  })
+
+    logs, httpResponse, err := apiClient.LogsApi.Get(contextWithAPIKey).Start("AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD").Size(10).Execute()
+  }
+    ```
+
+  </TabItem>
+</Tabs>
+
+#### Query Parameters
+
+| Parameter | Required | Type      | Default | Description                                                            |
+| --------- | -------- | --------- | ------- | -----------------------------------------------------------------------|
+| `start`   | false    | _string_  | `null`  | Cursor provided in the previous query to get the next set of results.  |
+| `size`    | false    | _integer_ | 20      | The maximum number of results to return. Maximum size of 100 results.  |
+
+### Response
+
+```json showLineNumbers
+{
+  "pagination": {
+    "after": "AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD",
+    "page_size": 10
+  },
+  "data": [
+    {...},
+    {...},
+    {...}
+  ]
+}
+```
+
+### Cursor Pagination Object
+
+| Attribute    | Type                                                                              | Description                                                                             |
+| ------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `pagination` | _[cursor pagination metadata](#cursor-pagination-metadata-object)_                | Pagination metadata for the response                                                    |
+| `data`       | _array_                                                                           | Query results of the request. See list endpoint resource for response schema definition |
+
+#### Cursor Pagination Metadata Object
+
+| Attribute     | Type      | Description                                                                              |
+| ------------- | --------- | -----------------------------------------------------------------------------------------|
+| `after`       | _string_  | Cursor to get the next set of results.                                                   |
+| `page_size`   | _integer_ | The maximum number of results returned. Should match `size` query parameter.             |
