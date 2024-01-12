@@ -1,3 +1,10 @@
+# [1.123.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.122.0...v1.123.0) (2024-01-12)
+
+
+### Features
+
+* document logs cursor pagination ([#311](https://github.com/Basis-Theory/developers.basistheory.com/issues/311)) ([3742bf1](https://github.com/Basis-Theory/developers.basistheory.com/commit/3742bf167e902daea6d1cbc0b4eaff4995cd3861))
+
 # [1.122.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.121.0...v1.122.0) (2024-01-08)
 
 
