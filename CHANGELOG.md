@@ -1,3 +1,10 @@
+# [1.124.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.123.0...v1.124.0) (2024-01-15)
+
+
+### Features
+
+* update dependencies ([#312](https://github.com/Basis-Theory/developers.basistheory.com/issues/312)) ([e0315c2](https://github.com/Basis-Theory/developers.basistheory.com/commit/e0315c25299d15293c425f9331a7ba97f68cb1bf))
+
 # [1.123.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.122.0...v1.123.0) (2024-01-12)
 
 
