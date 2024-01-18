@@ -1,3 +1,10 @@
+## [1.124.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.124.0...v1.124.1) (2024-01-18)
+
+
+### Bug Fixes
+
+* upgrade apple pay js ([#313](https://github.com/Basis-Theory/developers.basistheory.com/issues/313)) ([a547bb1](https://github.com/Basis-Theory/developers.basistheory.com/commit/a547bb137d20d0a54357eaa2402a7961b2819149))
+
 # [1.124.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.123.0...v1.124.0) (2024-01-15)
 
 
