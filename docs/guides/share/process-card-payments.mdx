@@ -249,6 +249,79 @@ curl 'https://api.basistheory.com/proxy' \
 
 [TabaPay Account Docs](https://developers.tabapay.com/reference/accountcreate)
   </TabItem>
+  <TabItem value="authorize.net" label="Authorize.net">
+
+```shell showLineNumbers title="Create Transaction"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://apitest.authorize.net/xml/v1/request.api' \
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "createTransactionRequest": {
+    "merchantAuthentication": {
+      // highlight-start
+      "name": "K5yH8dL2zGx",
+      "transactionKey": "J7rXuPbNvQ9sE3wA"
+      // highlight-end
+    },
+    "refId": "123156121",
+    "transactionRequest": {
+      "transactionType": "authCaptureTransaction",
+      "amount": "25",
+      "payment": {
+        "creditCard": {
+          // highlight-start
+          "cardNumber": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+          "expirationDate": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}-{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | pad_left: 2, \"0\" }}",
+          "cardCode": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}"
+          // highlight-end
+        }
+      }
+    }
+  }
+}'
+```
+
+[Authorize.net Payment Docs](https://developer.authorize.net/api/reference/index.html#payment-transactions-charge-a-credit-card)
+  </TabItem>
+
+  <TabItem value="checkout.com" label="Checkout.com">
+
+
+```shell showLineNumbers title="Accept a Payment"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://api.sandbox.checkout.com/payments' \
+-H 'Authorization: Bearer sk_sbox_p4qr9st2uy7vx1wa3bc8dl5zg6x'
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "source": {
+    "type": "card",
+    "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiry_month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" }}",
+    "expiry_year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}"
+  },
+  "amount": 6500,
+  "currency": "USD",
+  "processing_channel_id": "processing_channel_id",
+  "reference": "ORD-5023-4E89",
+  "metadata": {
+    "udf1": "TEST123",
+    "coupon_code": "NY2018",
+    "partner_id": 123989
+  }
+}'
+```
+
+[Checkout.com Payment Docs](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-using-the-api#Using_full_card_details)
+
+  </TabItem>
 </Tabs>
 
 ## Key Considerations
