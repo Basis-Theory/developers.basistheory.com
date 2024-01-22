@@ -1,3 +1,10 @@
+# [1.125.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.124.1...v1.125.0) (2024-01-22)
+
+
+### Features
+
+* add more examples to guide ([e571b17](https://github.com/Basis-Theory/developers.basistheory.com/commit/e571b17298e94daaed341f2099ed1c91da8cfd24))
+
 ## [1.124.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.124.0...v1.124.1) (2024-01-18)
 
 
