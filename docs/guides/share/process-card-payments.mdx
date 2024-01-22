@@ -249,6 +249,151 @@ curl 'https://api.basistheory.com/proxy' \
 
 [TabaPay Account Docs](https://developers.tabapay.com/reference/accountcreate)
   </TabItem>
+  <TabItem value="authorize.net" label="Authorize.net">
+
+```shell showLineNumbers title="Create Transaction"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://apitest.authorize.net/xml/v1/request.api' \
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "createTransactionRequest": {
+    "merchantAuthentication": {
+      // highlight-start
+      "name": "K5yH8dL2zGx",
+      "transactionKey": "J7rXuPbNvQ9sE3wA"
+      // highlight-end
+    },
+    "refId": "123156121",
+    "transactionRequest": {
+      "transactionType": "authCaptureTransaction",
+      "amount": "25",
+      "payment": {
+        "creditCard": {
+          // highlight-start
+          "cardNumber": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+          "expirationDate": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}-{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | pad_left: 2, \"0\" }}",
+          "cardCode": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}"
+          // highlight-end
+        }
+      }
+    }
+  }
+}'
+```
+
+[Authorize.net Payment Docs](https://developer.authorize.net/api/reference/index.html#payment-transactions-charge-a-credit-card)
+  </TabItem>
+
+  <TabItem value="checkout.com" label="Checkout.com">
+
+```shell showLineNumbers title="Accept a Payment"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://api.sandbox.checkout.com/payments' \
+-H 'Authorization: Bearer sk_sbox_p4qr9st2uy7vx1wa3bc8dl5zg6x'
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "source": {
+    "type": "card",
+    "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiry_month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" }}",
+    "expiry_year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}"
+  },
+  "amount": 6500,
+  "currency": "USD",
+  "processing_channel_id": "processing_channel_id",
+  "reference": "ORD-5023-4E89",
+  "metadata": {
+    "udf1": "TEST123",
+    "coupon_code": "NY2018",
+    "partner_id": 123989
+  }
+}'
+```
+
+[Checkout.com Payment Docs](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-using-the-api#Using_full_card_details)
+
+  </TabItem>
+  <TabItem value="nmi" label="NMI">
+
+```shell showLineNumbers title="Create Transaction"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://secure.safewebservices.com/api/transact.php' \
+// highlight-end
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'type=sale' \
+--data-urlencode 'amount=100.00' \
+--data-urlencode 'orderid=5a4ab2409af89' \
+// highlight-start
+--data-urlencode 'security_key=P4qR9sT2uY7vX1wA3bC8dL5zG6xK9yH2' \
+--data-urlencode 'ccnumber={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}' \
+--data-urlencode 'ccexp={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_month" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_year" | to_string | slice: -2, 2 }}' \
+--data-urlencode 'cvv={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
+// highlight-end
+```
+
+[NMI Transact Docs](https://secure.nmi.com/merchants/resources/integration/integration_portal.php#transaction_variables)
+
+  </TabItem>
+  <TabItem value="paysafe" label="Paysafe">
+
+```shell showLineNumbers title="Create Payment Handle"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://api.test.paysafe.com/paymenthub/v1/paymenthandles' \
+-H 'Authorization: Basic 123'
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "merchantRefNum": "a9b2b8d2b9458c8beeb89dbce669",
+  "transactionType": "ORIGINAL_CREDIT",
+  "accountId": "1009688230",
+  "card": {
+    // highlight-start
+    "cardNum": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "cardExpiry": {
+      "month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | to_number }}",
+      "year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" | to_number }}"
+    },
+    "cvv": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
+    // highlight-end
+    "holderName": "Dilip",
+    "issuingCountry": "US"
+  },
+  "paymentType": "CARD",
+  "amount": 100,
+  "currencyCode": "USD",
+  "customerIp": "172.0.0.1",
+  "billingDetails": {
+    "nickName": "Home",
+    "street": "TEST",
+    "city": "CA",
+    "state": "CA",
+    "country": "US",
+    "zip": "12345"
+  },
+  "merchantDescriptor": {
+    "dynamicDescriptor": "OnlineStore",
+    "phone": "1234567899"
+  }
+}'
+```
+
+[Paysafe Payment Handle Docs](https://developer.paysafe.com/en/payments-api/#/operations/create-payment-handle)
+
+  </TabItem>
 </Tabs>
 
 ## Key Considerations
