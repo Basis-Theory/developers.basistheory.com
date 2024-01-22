@@ -1,3 +1,10 @@
+# [1.126.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.125.0...v1.126.0) (2024-01-22)
+
+
+### Features
+
+* update deps ([#315](https://github.com/Basis-Theory/developers.basistheory.com/issues/315)) ([8a4ea69](https://github.com/Basis-Theory/developers.basistheory.com/commit/8a4ea69e59f8f55a8d763e81d7a04f2f34c094ca))
+
 # [1.125.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.124.1...v1.125.0) (2024-01-22)
 
 
