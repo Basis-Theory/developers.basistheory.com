@@ -345,6 +345,55 @@ curl 'https://api.basistheory.com/proxy' \
 [NMI Transact Docs](https://secure.nmi.com/merchants/resources/integration/integration_portal.php#transaction_variables)
 
   </TabItem>
+  <TabItem value="paysafe" label="Paysafe">
+
+```shell showLineNumbers title="Create Payment Handle"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://api.test.paysafe.com/paymenthub/v1/paymenthandles' \
+-H 'Authorization: Basic 123'
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "merchantRefNum": "a9b2b8d2b9458c8beeb89dbce669",
+  "transactionType": "ORIGINAL_CREDIT",
+  "accountId": "1009688230",
+  "card": {
+    // highlight-start
+    "cardNum": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "cardExpiry": {
+      "month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\" | to_number }}",
+      "year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" | to_number }}"
+    },
+    "cvv": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
+    // highlight-end
+    "holderName": "Dilip",
+    "issuingCountry": "US"
+  },
+  "paymentType": "CARD",
+  "amount": 100,
+  "currencyCode": "USD",
+  "customerIp": "172.0.0.1",
+  "billingDetails": {
+    "nickName": "Home",
+    "street": "TEST",
+    "city": "CA",
+    "state": "CA",
+    "country": "US",
+    "zip": "12345"
+  },
+  "merchantDescriptor": {
+    "dynamicDescriptor": "OnlineStore",
+    "phone": "1234567899"
+  }
+}'
+```
+
+[Paysafe Payment Handle Docs](https://developer.paysafe.com/en/payments-api/#/operations/create-payment-handle)
+
+  </TabItem>
 </Tabs>
 
 ## Key Considerations
