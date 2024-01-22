@@ -290,7 +290,6 @@ curl 'https://api.basistheory.com/proxy' \
 
   <TabItem value="checkout.com" label="Checkout.com">
 
-
 ```shell showLineNumbers title="Accept a Payment"
 curl 'https://api.basistheory.com/proxy' \
 -X 'POST' \
@@ -320,6 +319,30 @@ curl 'https://api.basistheory.com/proxy' \
 ```
 
 [Checkout.com Payment Docs](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-using-the-api#Using_full_card_details)
+
+  </TabItem>
+  <TabItem value="nmi" label="NMI">
+
+```shell showLineNumbers title="Create Transaction"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://secure.safewebservices.com/api/transact.php' \
+// highlight-end
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'type=sale' \
+--data-urlencode 'amount=100.00' \
+--data-urlencode 'orderid=5a4ab2409af89' \
+// highlight-start
+--data-urlencode 'security_key=P4qR9sT2uY7vX1wA3bC8dL5zG6xK9yH2' \
+--data-urlencode 'ccnumber={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}' \
+--data-urlencode 'ccexp={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_month" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.expiration_year" | to_string | slice: -2, 2 }}' \
+--data-urlencode 'cvv={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
+// highlight-end
+```
+
+[NMI Transact Docs](https://secure.nmi.com/merchants/resources/integration/integration_portal.php#transaction_variables)
 
   </TabItem>
 </Tabs>
