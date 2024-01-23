@@ -142,6 +142,53 @@ curl 'https://api.basistheory.com/proxy' \
 [Adyen Checkout Docs](https://docs.adyen.com/online-payments/tokenization/create-and-use-tokens)
 
   </TabItem>
+  <TabItem value="braintree" label="Braintree">
+
+```shell showLineNumbers title="Tokenize Credit Card"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://payments.sandbox.braintree-api.com/graphql' \
+-H 'Authorization: Basic 123' \
+// highlight-end
+-H 'Braintree-Version: 2019-01-01' \
+-H 'Content-Type: application/json' \
+-d '{
+  "query": "mutation TokenizeCreditCard($input: TokenizeCreditCardInput!){
+    tokenizeCreditCard(input: $input){
+      paymentMethod{
+        id
+        legacyId
+        usage
+        details{
+          ... on CreditCardDetails{
+            brandCode
+            last4
+            expirationMonth
+            expirationYear
+          }
+        }
+      }
+    }
+  }",
+  "variables": {
+    "input": {
+      "creditCard": {
+        // highlight-start
+        "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\"}}",
+        "expirationMonth": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_month\"}}",
+        "expirationYear": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\"}}"
+        // highlight-end
+      }
+    }
+  }
+}'
+```
+
+[Braintree Server-side Tokenization Docs](https://graphql.braintreepayments.com/integration_guides/credit_cards/#tokenization)
+
+  </TabItem>
   <TabItem value="chase-orbital" label="Chase (Orbital)">
 
 ```shell showLineNumbers title="Add Profile"
