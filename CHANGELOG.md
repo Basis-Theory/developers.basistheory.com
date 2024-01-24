@@ -1,3 +1,10 @@
+# [1.128.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.127.0...v1.128.0) (2024-01-24)
+
+
+### Features
+
+* Updating search docs for data/metadata only, removes list tokens by type ([#316](https://github.com/Basis-Theory/developers.basistheory.com/issues/316)) ([a049cdd](https://github.com/Basis-Theory/developers.basistheory.com/commit/a049cdd1306ef84b0c50caf8023accef1c59ae11))
+
 # [1.127.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.126.0...v1.127.0) (2024-01-24)
 
 
