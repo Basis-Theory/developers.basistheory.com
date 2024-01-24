@@ -20,24 +20,26 @@ See our docs on [Fingerprints](/docs/expressions/fingerprints) for details.
 
 The `token` type is used for general data types that don't require input validation or formatting restrictions.
 
-| Token Attribute                    | Value                                     |
-| ---------------------------------- | ----------------------------------------- |
-| **Type**                           | `token`                                   |
-| **Default Containers**             | `[ "/general/high/" ]`                    |
-| **Input Validation**               | None                                      |
-| **Input Length**                   | Any                                       |
-| **Default Fingerprint Expression** | <code>\{\{ data &#124; stringify}}</code> |
-| **Default Mask Expression**        | `null`                                    |
+| Token Attribute                    | Value                                      |
+|------------------------------------|--------------------------------------------|
+| **Type**                           | `token`                                    |
+| **Default Container**              | `/general/high/`                           |
+| **Input Validation**               | None                                       |
+| **Input Length**                   | Any                                        |
+| **Default Fingerprint Expression** | <code>\{\{ data &#124; stringify }}</code> |
+| **Default Mask Expression**        | `null`                                     |
+| **Default Search Indexes**         | None                                       |
 
 ## Card
 
 | Token Attribute                    | Value                                                                                                                                                                                                                               |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Type**                           | `card`                                                                                                                                                                                                                              |
-| **Default Containers**             | `[ "/pci/high/" ]`                                                                                                                                                                                                                  |
+| **Default Container**              | `/pci/high/`                                                                                                                                                                                                                        |
 | **Input Validation**               | See [Card Object](/docs/api/tokens#card-object) for validation requirements                                                                                                                                                         |
-| **Default Fingerprint Expression** | `\{\{ data.number }}`                                                                                                                                                                                                               |
+| **Default Fingerprint Expression** | `{{ data.number }}`                                                                                                                                                                                                                 |
 | **Default Mask Expression**        | <code>\{<br/>&nbsp;&nbsp;"number": "\{\{ data.number &#124; reveal_last: 4 }}",<br/>&nbsp;&nbsp;"expiration_month": "\{\{ data.expiration_month }}",<br/>&nbsp;&nbsp;"expiration_year": "\{\{ data.expiration_year }}"<br/>}</code> |
+| **Default Search Indexes**         | None                                                                                                                                                                                                                                |
 
 See [Test Card Numbers](/docs/api/testing#card-numbers) for suggested test data when using `card` tokens.
 
@@ -48,93 +50,99 @@ The `cvc` property within the [Card Object](/docs/api/tokens#card-object) automa
 ## Bank
 
 | Token Attribute                    | Value                                                                                                                                                                        |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Type**                           | `bank`                                                                                                                                                                       |
-| **Default Containers**             | `[ "/bank/high/" ]`                                                                                                                                                          |
+| **Default Container**              | `/bank/high/`                                                                                                                                                                |
 | **Input Validation**               | See [Bank Object](/docs/api/tokens#bank-object) for validation requirements                                                                                                  |
 | **Default Fingerprint Expression** | <code>\{\{ data.account_number }}&#124;\{\{ data.routing_number }}</code>                                                                                                    |
 | **Default Mask Expression**        | <code>\{<br/>&nbsp;&nbsp;"routing_number": "\{\{ data.routing_number }}",<br/>&nbsp;&nbsp;"account_number": "\{\{ data.account_number &#124; reveal_last: 4 }}"<br/>}</code> |
+| **Default Search Indexes**         | None                                                                                                                                                                         |
 
 ## Card Number
 
 | Token Attribute                    | Value                                           |
-| ---------------------------------- | ----------------------------------------------- |
+|------------------------------------|-------------------------------------------------|
 | **Type**                           | `card_number`                                   |
-| **Default Containers**             | `[ "/pci/high/" ]`                              |
+| **Default Container**              | `/pci/high/`                                    |
 | **Input Validation**               | Luhn-valid, numeric                             |
 | **Input Length**                   | 13 - 19                                         |
-| **Default Fingerprint Expression** | `\{\{ data }}`                                  |
+| **Default Fingerprint Expression** | `{{ data }}`                                    |
 | **Default Mask Expression**        | <code>\{\{ data &#124; reveal_last: 4 }}</code> |
+| **Default Search Indexes**         | None                                            |
 
 See [Test Card Numbers](/docs/api/testing#card-numbers) for suggested test data when using `card_number` tokens.
 
 Examples:
 
 | Input Data       | Masked Value     |
-| ---------------- | ---------------- |
+|------------------|------------------|
 | 4242424242424242 | XXXXXXXXXXXX4242 |
 | 36227206271667   | XXXXXXXXXX1667   |
 
 ## US Bank Account Number
 
 | Token Attribute                    | Value                                           |
-| ---------------------------------- | ----------------------------------------------- |
+|------------------------------------|-------------------------------------------------|
 | **Type**                           | `us_bank_account_number`                        |
-| **Default Containers**             | `[ "/bank/high/" ]`                             |
+| **Default Container**              | `/bank/high/`                                   |
 | **Input Validation**               | Numeric                                         |
 | **Input Length**                   | 3 - 17                                          |
-| **Default Fingerprint Expression** | `\{\{ data }}`                                  |
+| **Default Fingerprint Expression** | `{{ data }}`                                    |
 | **Default Mask Expression**        | <code>\{\{ data &#124; reveal_last: 4 }}</code> |
+| **Default Search Indexes**         | None                                            |
 
 Examples:
 
 | Input Data | Masked Value |
-| ---------- | ------------ |
+|------------|--------------|
 | 1234567890 | XXXXXX7890   |
 
 ## US Bank Routing Number
 
 | Token Attribute                    | Value                                           |
-| ---------------------------------- | ----------------------------------------------- |
+|------------------------------------|-------------------------------------------------|
 | **Type**                           | `us_bank_routing_number`                        |
-| **Default Containers**             | `[ "/bank/low/" ]`                              |
+| **Default Container**              | `/bank/low/`                                    |
 | **Input Validation**               | Numeric, ABA-valid                              |
 | **Input Length**                   | 9                                               |
-| **Default Fingerprint Expression** | `\{\{ data }}`                                  |
+| **Default Fingerprint Expression** | `{{ data }}`                                    |
 | **Default Mask Expression**        | <code>\{\{ data &#124; reveal_last: 4 }}</code> |
+| **Default Search Indexes**         | None                                            |
 
 ## Social Security Number
 
-| Token Attribute                    | Value                                           |
-| ---------------------------------- | ----------------------------------------------- |
-| **Type**                           | `social_security_number`                        |
-| **Default Containers**             | `[ "/pii/high/" ]`                              |
-| **Input Validation**               | Numeric with optional delimiter of `"-"`        |
-| **Input Length**                   | 9 (not including delimiting characters)         |
-| **Default Fingerprint Expression** | <code>\{\{ data &#124; remove: '-' }}</code>    |
-| **Default Mask Expression**        | <code>\{\{ data &#124; reveal_last: 4 }}</code> |
+| Token Attribute                    | Value                                                                                                                  |
+|------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| **Type**                           | `social_security_number`                                                                                               |
+| **Default Container**              | `/pii/high/`                                                                                                           |
+| **Input Validation**               | Numeric with optional delimiter of `"-"`                                                                               |
+| **Input Length**                   | 9 (not including delimiting characters)                                                                                |
+| **Default Fingerprint Expression** | <code>\{\{ data &#124; remove: '-' }}</code>                                                                           |
+| **Default Mask Expression**        | <code>\{\{ data &#124; reveal_last: 4 }}</code>                                                                        |
+| **Default Search Indexes**         | <code>\{\{ data }}</code><br/><code>\{\{ data &#124; replace: '-' }}</code><br/><code>\{\{ data &#124; last4 }}</code> |
 
 Examples:
 
 | Input Data  | Masked Value |
-| ----------- | ------------ |
+|-------------|--------------|
 | 123456789   | XXXXX6789    |
 | 123-45-6789 | XXX-XX-6789  |
 
 ## Employer ID Number
 
-| Token Attribute                    | Value                                           |
-| ---------------------------------- | ----------------------------------------------- |
-| **Type**                           | `employer_id_number`                            |
-| **Default Containers**             | `[ "/pii/high/" ]`                              |
-| **Input Validation**               | Numeric with optional delimiter of `"-"`        |
-| **Input Length**                   | 9 (not including delimiting characters)         |
-| **Default Fingerprint Expression** | <code>\{\{ data &#124; remove: '-' }}</code>    |
-| **Default Mask Expression**        | <code>\{\{ data &#124; reveal_last: 4 }}</code> |
+| Token Attribute                    | Value                                                                                                                  |
+|------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| **Type**                           | `employer_id_number`                                                                                                   |
+| **Default Container**              | `/pii/high/`                                                                                                           |
+| **Input Validation**               | Numeric with optional delimiter of `"-"`                                                                               |
+| **Input Length**                   | 9 (not including delimiting characters)                                                                                |
+| **Default Fingerprint Expression** | <code>\{\{ data &#124; remove: '-' }}</code>                                                                           |
+| **Default Mask Expression**        | <code>\{\{ data &#124; reveal_last: 4 }}</code>                                                                        |
+| **Default Search Indexes**         | <code>\{\{ data }}</code><br/><code>\{\{ data &#124; replace: '-' }}</code><br/><code>\{\{ data &#124; last4 }}</code> |
 
 Examples:
 
 | Input Data | Masked Value |
-| ---------- | ------------ |
+|------------|--------------|
 | 123456789  | XXXXX6789    |
 | 12-3456789 | XX-XXX6789   |

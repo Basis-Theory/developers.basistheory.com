@@ -15,9 +15,7 @@ import { Enterprise } from "@site/src/components/shared/Enterprise";
 
 # Search Tokens <Enterprise />
 
-Search for tokens using a Lucene-based [query syntax](#query-syntax).
-Use this endpoint to perform an advanced token search using token data or to build complex searches combining multiple terms with boolean operators.
-For simpler search use cases, see [List Tokens](/docs/api/tokens#list-tokens).
+Search for tokens using a Lucene-based [query syntax](#query-syntax), filtering by token `data` or `metadata`.
 
 <HttpMethod
   method={HttpMethods.POST}
@@ -39,7 +37,7 @@ curl "https://api.basistheory.com/tokens/search" \
   -H "Content-Type: application/json" \
   -X "POST" \
   -d '{
-    "query": "data:6789 AND type:social_security_number",
+    "query": "data:6789",
     "page": 1,
     "size": 20
   }'
@@ -54,7 +52,7 @@ import { BasisTheory } from "@basis-theory/basis-theory-js";
 const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
 
 const tokens = await bt.tokens.search({
-  query: "data:6789 AND type:social_security_number",
+  query: "data:6789",
   page: 1,
   size: 20,
 });
@@ -69,7 +67,7 @@ using BasisTheory.net.Tokens;
 var client = new TokenClient("<PRIVATE_API_KEY>");
 
 var tokens = await client.SearchAsync(new TokenSearchRequest {
-  Query = "data:6789 AND type:social_security_number",
+  Query = "data:6789",
   Page = 1,
   PageSize = 20
 });
@@ -93,7 +91,7 @@ public class Example {
         TokensApi apiInstance = new TokensApi(defaultClient);
         SearchTokensRequest searchTokensRequest = new SearchTokensRequest(); // SearchTokensRequest |
         TokenPaginatedList result = apiInstance.search(searchTokensRequest
-                .query("data:6789 AND type:social_security_number")
+                .query("data:6789")
                 .page(1)
                 .size(20));
     }
@@ -112,7 +110,7 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRI
     token_client = tokens_api.TokensApi(api_client)
 
     tokens = token_client.search(search_tokens_request=SearchTokensRequest(
-        query="data:6789 AND type:social_security_number",
+        query="data:6789",
         page=1,
         size=20
     ))
@@ -137,7 +135,7 @@ func main() {
   })
 
   searchTokenRequest := *basistheory.NewSearchTokensRequest()
-  searchTokenRequest.SetQuery("data:6789 AND type:social_security_number")
+  searchTokenRequest.SetQuery("data:6789")
   searchTokenRequest.SetPage(1)
   searchTokenRequest.SetSize(20)
 
@@ -151,7 +149,7 @@ func main() {
 #### Request Parameters
 
 | Attribute | Required | Type      | Default | Description                                                        |
-| --------- | -------- | --------- | ------- | ------------------------------------------------------------------ |
+|-----------|----------|-----------|---------|--------------------------------------------------------------------|
 | `query`   | false    | _string_  | `null`  | A query string using [Lucene query syntax](#query-syntax).         |
 | `page`    | false    | _integer_ | `1`     | Page number of the results to return.                              |
 | `size`    | false    | _integer_ | `20`    | Number of results per page to return. Maximum size of 100 results. |
@@ -197,25 +195,18 @@ applied within the requesting Application's [Access Controls](/docs/concepts/acc
 
 ## Query Syntax
 
-Token search supports a [Lucene-based query syntax](http://www.lucenetutorial.com/lucene-query-syntax.html) to build complex search criteria.
-A query string is comprised of one or more Terms that can be combined with the `AND` and `OR` Operators.
+Token search supports a [Lucene](http://www.lucenetutorial.com/lucene-query-syntax.html)-based query syntax.
+A query string is comprised of one or more Terms that can be combined with `AND` Operators.
 
 Search terms are formed by combining a field name and a value to search with a `:` - `field:value`.
 See the [Searchable Token Fields](#searchable-token-fields) table below for a complete list of supported fields.
-For example, to search for tokens having a `type` of `card_number`, query for:
 
-```
-  type:card_number
-```
-
-Token data may be searched on some token types, by performing a case-insensitive exact match to one of several indexed data patterns.
-As an example, the following query will search for tokens containing the data `123-45-6789`:
+Token data may be searched on search indexed tokens by performing a case-sensitive exact match to one of several indexed data patterns.
+For example, the following query will search for indexed tokens containing the data `123-45-6789`:
 
 ```
   data:123-45-6789
 ```
-
-For more detailed information about supported data searches, see [Searching Data](#searching-data).
 
 Phrases or values containing spaces may be searched by wrapping the searched value in quotes, for example:
 
@@ -223,94 +214,58 @@ Phrases or values containing spaces may be searched by wrapping the searched val
   data:"data containing multiple words"
 ```
 
+For more detailed information about supported data searches, see [Searching Data](#searching-data).
+
+
 Metadata search terms require both a key and value to be specified in the form of `metadata.key:value`.
 Metadata will be searched for a case-insensitive, exact match.
-For example, to search for tokens having the metadata `{ customer_id: "123456" }`, query for:
+For example, to search for tokens having the metadata `{ customer_id: "cus_12345" }`, query for:
 
 ```
-  metadata.customer_id:123456
+  metadata.customer_id:cus_12345
 ```
 
-Container search terms support both exact and wildcard matches. An exact container search will only return tokens in
-the searched container and will not include tokens in parent or child containers. For example, to return only tokens
-in the `/customer-123/pii/` container, you can query:
+Multiple `metadata` terms may be combined using the `AND` operator. For example:
 
 ```
-  container:"/customer-123/pii/"
+  metadata.customer_id:my_customer AND metadata.user_id:1234
 ```
 
-Wildcard container searches can be used to match on all tokens within a container or its sub-containers.
-The wildcard character `*` can only appear at the end of a container search term.
-For example, to return all tokens for `customer-123` which may be partitioned into sub-containers `/customer-123/pii/` or `/customer-123/general/`, you can query:
-
-```
-  container:"/customer-123/*"
-```
-
-Date range searches are supported using the Lucene bracketed range syntax.
-`[START_DATE TO END_DATE]` denotes an inclusive range and `{START_DATE TO END_DATE}` denotes an exclusive range.
-Values are formatted as a string in ISO 8601 format and can either represent a date or date and time in UTC.
-For example, to search for tokens that were created in the year 2021, you can query:
-
-```
-  created_at:[2021-01-01 TO 2021-12-31T23:59:59Z]
-```
-
-To search a range without a start or end date, use the wildcard `*` in place of the start or end date, for example:
-
-```
-  created_at:{* TO 2022-01-01}
-```
-
-Multiple terms may be combined using the `AND`, `OR` and `NOT` operators (case sensitive) and grouped using parentheses. The `NOT` operator could be interchanged with the `!` or `-` symbols. For example:
-
-```
-  (type:social_security_number AND !metadata.user_id:1234) OR data:111-11-1111
-```
-
-<Alert>The supported Lucene syntax is currently limited to the operations documented above, and not all standard Lucene syntax is supported. If you would like to have support for any additional Lucene features, please <a href="mailto:support@basistheory.com?subject=Token%20Search%20Feature%20Request"> let us know</a>.</Alert>
+<Alert>
+  Only a subset of the full Lucene query syntax is currently supported, and it is limited to the operators and terms documented above.
+  Combining both <code>data</code> and <code>metadata</code> terms in the same query is not currently supported.
+  If you would like to have support for any additional Lucene features or to query on additional token fields, please <a href="mailto:support@basistheory.com?subject=Token%20Search%20Feature%20Request"> let us know</a>.
+</Alert>
 
 ### Searchable Token Fields
 
-| Fields           | Type     | Description                                                             | Example                                            |
-| ---------------- | -------- | ----------------------------------------------------------------------- | -------------------------------------------------- |
-| `id`             | _string_ | Token ID.                                                               | `id:fe24d4cc-de50-4d8c-8da7-8c7483ba21bf`          |
-| `type`           | _string_ | The [token type](/docs/api/tokens/token-types).                         | `type:card_number`                                 |
-| `data`           | _string_ | Token data. See [Searching Data](#searching-data) for supported values. | `data:6789`                                        |
-| `fingerprint`    | _string_ | Token's content unique identifier.                                      | `fingerprint:fe24d4cc-de50-4d8c-8da7-8c7483ba21bf` |
-| `container`      | _string_ | Searches across a token's containers.                                   | `container:"/pci/high/"`                           |
-| `metadata.[key]` | _string_ | Search against token metadata having the given `[key]`.                 | `metadata.user_id:34445`                           |
-| `created_by`     | _string_ | Application ID which created the token.                                 | `created_by:fe24d4cc-de50-4d8c-8da7-8c7483ba21bf`  |
-| `created_at`     | _date_   | The date or date and time a token was created in ISO 8601 format.       | `created_at:[2020-01-01 TO 2020-01-28]`            |
-| `modified_by`    | _string_ | Application ID which last modified the token.                           | `modified_by:fe24d4cc-de50-4d8c-8da7-8c7483ba21bf` |
-| `modified_at`    | _date_   | The last date or date and time a token was modified in ISO 8601 format. | `modified_at:[2020-01-01 TO 2020-01-28]`           |
+| Fields           | Type     | Description                                                             | Example                  |
+|------------------|----------|-------------------------------------------------------------------------|--------------------------|
+| `data`           | _string_ | Token data. See [Searching Data](#searching-data) for supported values. | `data:6789`              |
+| `metadata.[key]` | _string_ | Search against token metadata having the given `[key]`.                 | `metadata.user_id:34445` |
 
 ### Searching Data
 
-Basis Theory currently supports data searches on `social_security_number`, `employer_id_number` and `token` token types.
-When creating tokens of these types, Basis Theory will securely index several data patterns to enable searching on these values
-based on the `search_indexes` provided in the [Create Token Request](/docs/api/tokens#create-token) or [Tokenize Request](/docs/api/tokens/tokenize).
+Basis Theory supports search across sensitive token data by securely creating and storing search indexes at the time of token creation.
+To index a token for data search, one or more `search_indexes` can be specified in the [Create Token Request](/docs/api/tokens#create-token) or [Tokenize Request](/docs/api/tokens/tokenize).
+Some [token types](/docs/api/tokens/token-types) will receive a default set of search indexes if custom `search_indexes` are not specified on the request.
 
-If `search_indexes` are not provided when creating a token, then `social_security_number` and `employer_id_number` will have the following default search indexes:
+The `search_indexes` property supports the use of [expressions](/docs/expressions/search-indexes), which are based on the [Liquid templating language](https://shopify.github.io/liquid/). Each expression must result in a single value, which cannot be null or empty, otherwise a 400 error will be returned.
 
-- `{{ data }}` which results in the input value being indexed, eg. `123-45-6789`
-- `{{ data | remove: '-'}}` which results in the value without delimiters, eg. `123456789`
-- `{{ data | last4 }}` which results in the last 4 digits of the value, eg. `6789`
+Any expressions contained within `search_indexes` will be evaluated against the token data before generating indexes. Token data searches will only return a token if there is an exact match on one of the evaluated `search_indexes`.
 
-For generic tokens (type `token`), default indexes are not applied, and you are free to specify any desired indexes within the `search_indexes` property during [token creation](/docs/api/tokens#create-token). The `search_indexes` property supports the use of [expressions](/docs/expressions/search-indexes), which are based on the [Liquid templating language](https://shopify.github.io/liquid/). Each expression must result in a single value, which cannot be null or empty, otherwise a 400 error will be returned.
+For example, if a `card` token has the number `4242424242424242` and it is created with the search index expressions:
+- `{{ data.number }}`
+- `{{ data.number | last4 }}`
 
-Any expressions contained within `search_indexes` will be evaluated against the token data before generating indexes. Token data searches will only return a token if there is an exact match on one of the evaluated `search_indexes`; full wildcard search is not currently supported.
-
-For example, to search for a `social_security_number` token with the value `123-45-6789`, you may search for:
+Then you may search for this token by querying on either the full card number:
 
 ```
-  data:123-45-6789 AND type:social_security_number
+  data:4242424242424242
 ```
 
-To search for all `social_security_number` tokens with the last 4 digits of `6789`, you may search for:
+or by querying on the last 4 digits:
 
 ```
-  data:6789 AND type:social_security_number
+  data:4242
 ```
-
-Note that the results returned by this query may not be unique if you have stored multiple `social_security_number` tokens ending with the same 4 digits.
