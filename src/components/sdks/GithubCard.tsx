@@ -77,7 +77,7 @@ export const GithubCard = ({ heading, organization, repository, icon }: GithubCa
       className={styles["gh-card"]}
       heading={<Card.PrimaryHeader>{heading}</Card.PrimaryHeader>}
       cta={
-        <Button href={githubUrl ?? placeholderUrl} target="_blank">
+        <Button href={githubUrl ?? placeholderUrl} className={styles["gh-button"]} target="_blank">
           <Github /> See it in GitHub
         </Button>
       }
