@@ -1,3 +1,10 @@
+# [1.127.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.126.0...v1.127.0) (2024-01-24)
+
+
+### Features
+
+* add braintree example ([#317](https://github.com/Basis-Theory/developers.basistheory.com/issues/317)) ([d246960](https://github.com/Basis-Theory/developers.basistheory.com/commit/d2469605c60f31eea995706f335482c1a138f250))
+
 # [1.126.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.125.0...v1.126.0) (2024-01-22)
 
 
