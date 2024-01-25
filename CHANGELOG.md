@@ -1,3 +1,10 @@
+## [1.128.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.128.0...v1.128.1) (2024-01-25)
+
+
+### Bug Fixes
+
+* Adds id search docs and other cleanup ([#318](https://github.com/Basis-Theory/developers.basistheory.com/issues/318)) ([3c9072b](https://github.com/Basis-Theory/developers.basistheory.com/commit/3c9072b0b60a16ccc5a49f0af9cc45926dd2d531))
+
 # [1.128.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.127.0...v1.128.0) (2024-01-24)
 
 
