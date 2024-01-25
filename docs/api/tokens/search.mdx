@@ -31,117 +31,117 @@ Search for tokens using a Lucene-based [query syntax](#query-syntax).
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
-    ```shell showLineNumbers
-    curl "https://api.basistheory.com/tokens/search" \
-    -H "BT-API-KEY: <PRIVATE_API_KEY>" \
-    -H "Content-Type: application/json" \
-    -X "POST" \
-    -d '{
-      "query": "data:6789",
-      "page": 1,
-      "size": 20
-    }'
-    ```
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokens/search" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "query": "data:6789",
+    "page": 1,
+    "size": 20
+  }'
+```
 
   </TabItem>
   <TabItem value="javascript" label="JavaScript">
 
-    ```javascript showLineNumbers
-    import {BasisTheory} from "@basis-theory/basis-theory-js";
+```javascript showLineNumbers
+import {BasisTheory} from "@basis-theory/basis-theory-js";
 
-    const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
 
-    const tokens = await bt.tokens.search({
-      query: "data:6789",
-      page: 1,
-      size: 20,
-    });
-    ```
+const tokens = await bt.tokens.search({
+  query: "data:6789",
+  page: 1,
+  size: 20,
+});
+```
 
   </TabItem>
   <TabItem value="csharp" label="C#">
 
-    ```csharp showLineNumbers
-    using BasisTheory.net.Tokens;
+```csharp showLineNumbers
+using BasisTheory.net.Tokens;
 
-    var client = new TokenClient("<PRIVATE_API_KEY>");
+var client = new TokenClient("<PRIVATE_API_KEY>");
 
-    var tokens = await client.SearchAsync(new TokenSearchRequest {
-      Query = "data:6789",
-      Page = 1,
-      PageSize = 20
-    });
-    ```
+var tokens = await client.SearchAsync(new TokenSearchRequest {
+  Query = "data:6789",
+  Page = 1,
+  PageSize = 20
+});
+```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
-    ```java showLineNumbers
-    import com.basistheory.*;
-    import com.basistheory.auth.*;
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
 
-    public class Example {
+public class Example {
     public static void main(String[] args) throws Exception {
-    ApiClient defaultClient = Configuration.getDefaultApiClient();
-    defaultClient.setBasePath("https://api.basistheory.com");
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
 
-    ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-    ApiKey.setApiKey("<PRIVATE_API_KEY>");
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<PRIVATE_API_KEY>");
 
-    TokensApi apiInstance = new TokensApi(defaultClient);
-    SearchTokensRequest searchTokensRequest = new SearchTokensRequest(); // SearchTokensRequest |
-    TokenPaginatedList result = apiInstance.search(searchTokensRequest
-    .query("data:6789")
-    .page(1)
-    .size(20));
-  }
-  }
-    ```
+        TokensApi apiInstance = new TokensApi(defaultClient);
+        SearchTokensRequest searchTokensRequest = new SearchTokensRequest(); // SearchTokensRequest |
+        TokenPaginatedList result = apiInstance.search(searchTokensRequest
+            .query("data:6789")
+            .page(1)
+            .size(20));
+    }
+}
+```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
-    ```python showLineNumbers
-    import basistheory
-    from basistheory.api import tokens_api
-    from basistheory.model.search_tokens_request import SearchTokensRequest
+```python showLineNumbers
+import basistheory
+from basistheory.api import tokens_api
+from basistheory.model.search_tokens_request import SearchTokensRequest
 
-    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
     token_client = tokens_api.TokensApi(api_client)
 
-    tokens = token_client.search(search_tokens_request=SearchTokensRequest(
+tokens = token_client.search(search_tokens_request=SearchTokensRequest(
     query="data:6789",
     page=1,
     size=20
-    ))
-    ```
+))
+```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
-    ```go showLineNumbers showLineNumbers
-    package main
+```go showLineNumbers showLineNumbers
+package main
 
-    import (
-    "context"
-    "github.com/Basis-Theory/basistheory-go/v3"
-    )
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
 
-    func main() {
-    configuration := basistheory.NewConfiguration()
-    apiClient := basistheory.NewAPIClient(configuration)
-    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
     "ApiKey": {Key: "<PRIVATE_API_KEY>"},
   })
 
-    searchTokenRequest := *basistheory.NewSearchTokensRequest()
-    searchTokenRequest.SetQuery("data:6789")
-    searchTokenRequest.SetPage(1)
-    searchTokenRequest.SetSize(20)
+  searchTokenRequest := *basistheory.NewSearchTokensRequest()
+  searchTokenRequest.SetQuery("data:6789")
+  searchTokenRequest.SetPage(1)
+  searchTokenRequest.SetSize(20)
 
-    tokens, httpResponse, err := apiClient.TokensApi.Search(contextWithAPIKey).SearchTokensRequest(searchTokenRequest).Execute()
-  }
-    ```
+  tokens, httpResponse, err := apiClient.TokensApi.Search(contextWithAPIKey).SearchTokensRequest(searchTokenRequest).Execute()
+}
+```
 
   </TabItem>
 </Tabs>
