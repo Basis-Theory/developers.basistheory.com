@@ -1,3 +1,10 @@
+## [1.128.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.128.1...v1.128.2) (2024-01-26)
+
+
+### Bug Fixes
+
+* tabs text wrap ([#319](https://github.com/Basis-Theory/developers.basistheory.com/issues/319)) ([78f7264](https://github.com/Basis-Theory/developers.basistheory.com/commit/78f726439e2207aa1b3ddc9ba3e4cc3a224b10de))
+
 ## [1.128.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.128.0...v1.128.1) (2024-01-25)
 
 
