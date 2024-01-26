@@ -1,3 +1,10 @@
+## [1.128.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.128.2...v1.128.3) (2024-01-26)
+
+
+### Bug Fixes
+
+* mention migration in production checklist ([#320](https://github.com/Basis-Theory/developers.basistheory.com/issues/320)) ([0ce580c](https://github.com/Basis-Theory/developers.basistheory.com/commit/0ce580c45943422716649e90c6c6562d60b041c3))
+
 ## [1.128.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.128.1...v1.128.2) (2024-01-26)
 
 
