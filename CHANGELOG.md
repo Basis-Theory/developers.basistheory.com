@@ -1,3 +1,10 @@
+# [1.129.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.128.3...v1.129.0) (2024-01-29)
+
+
+### Features
+
+* updating limitations of Reactors ([#321](https://github.com/Basis-Theory/developers.basistheory.com/issues/321)) ([ba80739](https://github.com/Basis-Theory/developers.basistheory.com/commit/ba80739d17e85944c275e0da8617e9acd7ecf895))
+
 ## [1.128.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.128.2...v1.128.3) (2024-01-26)
 
 
