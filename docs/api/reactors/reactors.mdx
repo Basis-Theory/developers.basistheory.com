@@ -1135,8 +1135,6 @@ Invoke a reactor by ID.
 The `token:use` permission is required to use a Reactor, and it is required for each
 [Container](/docs/concepts/what-are-containers) of Tokens you wish to detokenize in a Reactor.
 
-<Alert>The maximum payload size to invoke a Reactor is 5 MB. You could pull in more data using the injected <code>BT</code> client from within the Reactor code. <a href="https://basistheory.com/contact">Please reach out</a> if you need help.</Alert>
-
 ### Request
 
 <Tabs className="bt-tabs" groupId="languages">
@@ -1305,6 +1303,14 @@ Errors generated from Reactors will be translated to the common Basis Theory Err
 | ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `tokens`      | _object_ | (Optional) [Token(s)](/docs/api/tokens#token-object) created from the `tokenize` block of the Reactor code [response](#reactor-code-response-object) |
 | `raw`         | _object_ | (Optional) Raw output returned from the Reactor                                                                                                                                               |
+
+### Limitations
+
+| Limit        | Note                                                                                                                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Payload Size  | The maximum payload size to invoke a Reactor is 5 MB. <a href="https://basistheory.com/contact">Please reach out</a> if your use case requires more than that. |
+| Concurrency   | The default hot concurrency is set to 1 by default, this will fan out and cold start additional Reactors if multiple requests hapeen concurrently. If you need additional hot concurrency, <a href="https://basistheory.com/contact">please reach out</a>.                                                                                                                                               |
+| Synchronous Timeout   | Synchronous Reactor Invoke calls will timeout after 30s.                                                                                                                                               |
 
 ### Detokenization
 
