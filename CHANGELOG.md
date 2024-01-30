@@ -1,3 +1,10 @@
+# [1.131.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.130.0...v1.131.0) (2024-01-30)
+
+
+### Features
+
+* updating section for custom fonts ([6cbdeba](https://github.com/Basis-Theory/developers.basistheory.com/commit/6cbdeba5d758551658be593904fb5d47ec45509e))
+
 # [1.130.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.129.0...v1.130.0) (2024-01-30)
 
 
