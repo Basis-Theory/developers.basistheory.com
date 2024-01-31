@@ -1,3 +1,10 @@
+## [1.131.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.131.0...v1.131.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* move reactors limits to rate limits section ([#325](https://github.com/Basis-Theory/developers.basistheory.com/issues/325)) ([9486b07](https://github.com/Basis-Theory/developers.basistheory.com/commit/9486b0755c8a02e24a97ab6985078db4e5b1993e))
+
 # [1.131.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.130.0...v1.131.0) (2024-01-30)
 
 
