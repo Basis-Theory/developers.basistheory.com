@@ -1,3 +1,10 @@
+# [1.133.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.132.2...v1.133.0) (2024-02-05)
+
+
+### Features
+
+* adds text element to react native sdk ([#329](https://github.com/Basis-Theory/developers.basistheory.com/issues/329)) ([d0cec7d](https://github.com/Basis-Theory/developers.basistheory.com/commit/d0cec7d16f620b7f82ae0af9510c54d83ee6463e))
+
 ## [1.132.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.132.1...v1.132.2) (2024-02-05)
 
 
