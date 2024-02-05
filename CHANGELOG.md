@@ -1,3 +1,10 @@
+## [1.132.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.132.1...v1.132.2) (2024-02-05)
+
+
+### Bug Fixes
+
+* async reactors link ([#328](https://github.com/Basis-Theory/developers.basistheory.com/issues/328)) ([4af006d](https://github.com/Basis-Theory/developers.basistheory.com/commit/4af006dded2c02c2b6969f72a2e452cab2210bcd))
+
 ## [1.132.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.132.0...v1.132.1) (2024-02-05)
 
 
