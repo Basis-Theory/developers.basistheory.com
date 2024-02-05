@@ -1,3 +1,10 @@
+## [1.132.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.132.0...v1.132.1) (2024-02-05)
+
+
+### Bug Fixes
+
+* Update applications.mdx ([#327](https://github.com/Basis-Theory/developers.basistheory.com/issues/327)) ([107e480](https://github.com/Basis-Theory/developers.basistheory.com/commit/107e480748f89b8c1066e836f41ec328169e366f))
+
 # [1.132.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.131.1...v1.132.0) (2024-02-05)
 
 
