@@ -1,3 +1,10 @@
+# [1.132.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.131.1...v1.132.0) (2024-02-05)
+
+
+### Features
+
+* upgrade dependencies ([#326](https://github.com/Basis-Theory/developers.basistheory.com/issues/326)) ([9ada0c4](https://github.com/Basis-Theory/developers.basistheory.com/commit/9ada0c43750f720cf82baaec99ca9521910b4c95))
+
 ## [1.131.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.131.0...v1.131.1) (2024-01-31)
 
 
