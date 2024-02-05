@@ -258,3 +258,102 @@ The methods available to `CardVerificationCodeElement` can be accessed through t
 ### Masking
 
 Element masks enable user input to be restricted and formatted to meet a pre-defined format. The `CardVerificationCodeElement` automatically sets a mask of 4 digits.
+
+
+## TextElement
+
+The `TextElement` component features a text input that wraps the React Native [TextInput component](https://reactnative.dev/docs/textinput),
+which makes its interface similar to working directly with a regular [TextInput](https://reactnative.dev/docs/textinput).
+
+```typescript jsx showLineNumbers
+import React, { useRef } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  BTRef,
+  TextElement,
+} from '@basis-theory/basis-theory-react-native';
+
+const App = () => {
+  const ref = useRef<BTRef>(null);
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <TextElement
+            btRef={ref}
+            placeholder="Phone Number"
+            mask={["(", /\d/, /\d/, /\d/, ")", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/]}
+            style={styles.phoneNumber}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  phoneNumber: {
+    backgroundColor: '#eeeeee',
+    borderColor: 'blue',
+    borderWidth: 2,
+    color: 'purple',
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+### Properties
+
+| Property               | Required | Type              | Description                                                                                                                                                                                                          |
+| ---------------------- | -------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `btRef`                | false    | _object/function_ | [Callback ref function](https://react.dev/learn/referencing-values-with-refs) to store/receive the Element instance. Review the [using refs](/docs/sdks/mobile/react-native#using-refs) section for more information |
+| `editable`             | false    | _boolean_         | Boolean used to set the [editable attribute](https://reactnative.dev/docs/textinput#editable) of the Element                                                                                                         |
+| `mask`                 | false    | _array_           | Restricts and formats input entered into the TextElement. [Masking](#masking-3)                                                                                                                                        |
+| `placeholder`          | false    | _string_          | String used to customize the [placeholder attribute](https://reactnative.dev/docs/textinput#placeholder) of the Element                                                                                              |
+| `placeholderTextColor` | false    | _string_          | String used to customize the [placeholderTextColor attribute](https://reactnative.dev/docs/textinput#placeholdertextcolor) of the Element                                                                            |
+| `style`                | false    | _object_          | [ReactNative styles](https://reactnative.dev/docs/style) used to customize the Element appearance                                                                                                                    |
+
+### Methods
+
+The methods available to `TextElement` can be accessed through the refs. Review the [using refs](/docs/sdks/mobile/react-native#using-refs) section for more information.
+
+### Masking \{#masking-3}
+
+`TextElement`s can restrict and fill user input by using the `mask` attribute. It consists of an array of `RegExp` objects and `string`s used to limit and fill input. 
+The position of each item in the mask array corresponds to the restriction or fill used for that input's position. 
+The array's length determines how long an input is allowed to be. For example, the mask for a US-based phone number shown below will have the following rules:
+
+- The input must be at most 13 characters long.
+- Only digits are allowed in the 2nd to 4th, 6th to 8th, and 10th to 13th positions.
+- `(` will be filled in the 1st position.
+- `)` will be filled in the 5th position.
+- `-` will be filled in the 8th position.
+
+The mask will be displayed as the user is typing and will be used as the value for [tokenization](/docs/sdks/web/javascript/services#tokenization-services)
+performed with that text element. If the value does not satisfy the mask in its entirety, the field is considered incomplete. This is reflected in the [`onChange` events](#element-events-on-change) and will fail validation
+before [tokenization](/docs/sdks/web/javascript/services#tokenization-services).
+
+```jsx showLineNumbers
+<TextElement
+  btRef={ref}
+  placeholder="Phone Number"
+  mask={["(", /\d/, /\d/, /\d/, ")", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/]}
+/>
+```
