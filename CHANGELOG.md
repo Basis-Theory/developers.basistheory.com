@@ -1,3 +1,10 @@
+# [1.134.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.133.0...v1.134.0) (2024-02-07)
+
+
+### Features
+
+* add android proguard rules need warning ([#330](https://github.com/Basis-Theory/developers.basistheory.com/issues/330)) ([5173cc0](https://github.com/Basis-Theory/developers.basistheory.com/commit/5173cc0f0f1fa711e53bcbf850408b0e01249a1a))
+
 # [1.133.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.132.2...v1.133.0) (2024-02-05)
 
 
