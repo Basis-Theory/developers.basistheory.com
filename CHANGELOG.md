@@ -1,3 +1,10 @@
+# [1.135.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.134.0...v1.135.0) (2024-02-09)
+
+
+### Features
+
+* add import cards on file guide ([#332](https://github.com/Basis-Theory/developers.basistheory.com/issues/332)) ([0934367](https://github.com/Basis-Theory/developers.basistheory.com/commit/0934367506976042e95d4037f93e6df09662ad3f))
+
 # [1.134.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.133.0...v1.134.0) (2024-02-07)
 
 
