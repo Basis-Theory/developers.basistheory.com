@@ -156,13 +156,6 @@ const sidebars = {
         "concepts/access-controls",
         "concepts/what-is-the-proxy",
         "concepts/what-are-reactors",
-        {
-          type: "doc",
-          id: "concepts/transactions",
-          customProps: {
-            enterprise: true,
-          },
-        },
         "concepts/elements",
       ],
     },
@@ -395,13 +388,6 @@ const sidebars = {
         {
           type: "doc",
           id: "api/tokens/search",
-          customProps: {
-            enterprise: true,
-          },
-        },
-        {
-          type: "doc",
-          id: "api/tokens/transactions",
           customProps: {
             enterprise: true,
           },
