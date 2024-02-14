@@ -474,7 +474,9 @@ HTTP client services could throw an error based on client-side validations or if
 ```javascript showLineNumbers title="Handling services errors"
 import { HttpClientError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
 
-BasisTheory.post({
+const bt = await new BasisTheory().init("<API_KEY>", { elements: true });
+
+bt.client.post({
   sensitiveData: textElement,
 }).catch((error) => {
   if (error instanceof BasisTheoryValidationError) {
