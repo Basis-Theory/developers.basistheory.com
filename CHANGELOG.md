@@ -1,3 +1,10 @@
+## [1.135.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.135.0...v1.135.1) (2024-02-15)
+
+
+### Bug Fixes
+
+* document container casing behavior ([#336](https://github.com/Basis-Theory/developers.basistheory.com/issues/336)) ([ae3590a](https://github.com/Basis-Theory/developers.basistheory.com/commit/ae3590a44554708f8edc4ac4034f831dc024442e))
+
 # [1.135.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.134.0...v1.135.0) (2024-02-09)
 
 
