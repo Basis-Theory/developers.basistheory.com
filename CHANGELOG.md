@@ -1,3 +1,10 @@
+## [1.135.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.135.1...v1.135.2) (2024-02-15)
+
+
+### Bug Fixes
+
+* update http client code examples ([#335](https://github.com/Basis-Theory/developers.basistheory.com/issues/335)) ([6aeafa0](https://github.com/Basis-Theory/developers.basistheory.com/commit/6aeafa0c5ecd9ead3375f70b6cadfdfffb9b3959))
+
 ## [1.135.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.135.0...v1.135.1) (2024-02-15)
 
 
