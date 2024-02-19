@@ -1,3 +1,10 @@
+## [1.135.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.135.2...v1.135.3) (2024-02-19)
+
+
+### Bug Fixes
+
+* add formula sdk to deps ([#337](https://github.com/Basis-Theory/developers.basistheory.com/issues/337)) ([9810d8b](https://github.com/Basis-Theory/developers.basistheory.com/commit/9810d8ba0aa064eac462b3c52bcda9b9e1db6661))
+
 ## [1.135.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.135.1...v1.135.2) (2024-02-15)
 
 
