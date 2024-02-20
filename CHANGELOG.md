@@ -1,3 +1,10 @@
+## [1.136.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.136.0...v1.136.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* add tos mention to production checklist ([#339](https://github.com/Basis-Theory/developers.basistheory.com/issues/339)) ([cb6392d](https://github.com/Basis-Theory/developers.basistheory.com/commit/cb6392dfc38cdafe8b2dc6127eaa68b69fbe5f55))
+
 # [1.136.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.135.3...v1.136.0) (2024-02-19)
 
 
