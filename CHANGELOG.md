@@ -1,3 +1,10 @@
+## [1.136.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.136.1...v1.136.2) (2024-03-04)
+
+
+### Bug Fixes
+
+* add google pay js to reactor deps ([#341](https://github.com/Basis-Theory/developers.basistheory.com/issues/341)) ([c28176c](https://github.com/Basis-Theory/developers.basistheory.com/commit/c28176c042bc703585ad99f47d809e65b2e5cf37))
+
 ## [1.136.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.136.0...v1.136.1) (2024-02-20)
 
 
