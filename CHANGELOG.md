@@ -1,3 +1,10 @@
+## [1.136.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.136.2...v1.136.3) (2024-03-05)
+
+
+### Bug Fixes
+
+* document reactor code length limit ([#343](https://github.com/Basis-Theory/developers.basistheory.com/issues/343)) ([3425155](https://github.com/Basis-Theory/developers.basistheory.com/commit/3425155868a8b18a6819d3b82f109bc25b8ea0ee))
+
 ## [1.136.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.136.1...v1.136.2) (2024-03-04)
 
 
