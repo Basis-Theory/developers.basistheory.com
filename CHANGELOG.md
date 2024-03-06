@@ -1,3 +1,10 @@
+# [1.137.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.136.3...v1.137.0) (2024-03-06)
+
+
+### Features
+
+* add skipLuhnValidation to JS/React sdk ([#344](https://github.com/Basis-Theory/developers.basistheory.com/issues/344)) ([63a598d](https://github.com/Basis-Theory/developers.basistheory.com/commit/63a598d3a771f5aab1f1453260c575e5b46e8693))
+
 ## [1.136.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.136.2...v1.136.3) (2024-03-05)
 
 
