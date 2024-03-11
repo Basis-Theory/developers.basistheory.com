@@ -77,7 +77,18 @@ const sidebars = {
         type: "doc",
         id: "guides/apple-pay/index",
       },
-      items: ["guides/apple-pay/setup", "guides/apple-pay/accept"],
+      items: [
+        {
+          type: "doc",
+          id: "guides/apple-pay/setup",
+          label: "Setup",
+        },
+        {
+          type: "doc",
+          id: "guides/apple-pay/accept",
+          label: "Accept Payments",
+        },
+      ],
     },
     {
       type: "doc",

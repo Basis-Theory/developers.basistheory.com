@@ -1,7 +1,79 @@
 ---
-title: Accept Payments
-hide_title: true
+toc_max_heading_level: 2
 ---
 
 # Accept Apple Pay
+
+If you haven't yet, please take a look at the [Apple Pay Setup page](/docs/guides/apple-pay/setup) to make sure you have all the necessary resources in place before you can start integrating.
+
+
+
+```mermaid
+  sequenceDiagram
+    title Customer Initiated Transactions (CIT)
+
+    actor u as User
+    participant app as Mobile App / Web Application
+    participant btr as Basis Theory <br> Reactor
+    participant sa as Server Application
+    participant btp as Basis Theory <br> Proxy
+    participant psp as Payment Processor
+
+    u ->>+ app:  Click "Pay" button
+    activate u
+    app ->> app: Initiate Apple Pay Session
+    alt Web only
+        app ->>+ sa: Validate merchant
+        sa -->> app: Merchant Session
+    end
+    app -->> u: Present Apple Payment Sheet
+    u ->> app: Authorize Payment
+    app ->>+ btr: Send PKPaymentToken
+    btr ->> btr: Decrypt PKPaymentToken
+    btr ->> btr: Tokenize DPAN and cryptogram
+    btr ->>- app: Basis Theory Tokens
+    app ->>+ sa: Process CIT <br> (BT Tokens)
+    sa ->> sa: Store BT Tokens
+    sa ->>+ btp: Process CIT <br> (BT Tokens)
+    btp ->>+ psp: Process CIT <br> (DPAN + Cryptogram)
+    psp -->>- btp: Payment Response
+    btp -->>- sa: Payment Response
+    sa ->> sa: Store Response
+    note right of sa: This may contain a Processor reference, used
+    sa -->>- app: OK
+    app -->>- u: Complete Payment
+    deactivate u
+```
+
+
+```mermaid
+  sequenceDiagram
+    title Merchant Initiated Transactions (MIT)
+
+    participant sa as Server Application
+    participant btp as Basis Theory <br> Proxy
+    participant psp as Payment Processor
+
+    sa ->>+ btp: Process MIT <br> (BT Token)
+    btp ->>+ psp: Process MIT <br> (DPAN)
+    psp -->>- btp: Payment Response
+    btp -->>- sa: Payment Response
+    sa ->> sa: Store Response
+```
+
+## Capturing User Payment
+
+TODO: official links
+
+## Provision Resources
+
+### Management Application
+
+### Private Application
+
+### Pre-configured Proxy
+
+## Decrypting PKPaymentToken
+
+## Processing Payment
 
