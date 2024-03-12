@@ -2,23 +2,40 @@
 toc_max_heading_level: 2
 ---
 
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
 # Accept Apple Pay
 
-If you haven't yet, please take a look at the [Apple Pay Setup page](/docs/guides/apple-pay/setup) to make sure you have all the necessary resources in place before you can start integrating.
+This guide will walk you through the process of accepting Apple Pay in your website or iOS app, while leveraging Basis Theory platform to perform all necessary operations in PCI-sensitive data.
 
+<Alert type={Alerts.INFO}>
+  If you haven't yet, please take a look at the [Apple Pay Setup guide](/docs/guides/apple-pay/setup) to make sure you have all the necessary resources in place before you can start integrating.
+</Alert>
 
+First let's take a look at the Apple Pay integration workflow of the two types of transactions: Customer Initiated Transactions (CIT) and Merchant Initiated Transactions (MIT).
+
+## Customer Initiated Transactions (CIT)
+
+This type of transaction occurs when the consumer provides their payment details to the merchant, authorizing a specific transaction. Apple Pay has an interface called Payment Sheet, which you can customize to present details about the CIT, such as amount, description of the product(s) or service(s) being sold, coupons, ability to select delivery and billing address, etc.
+
+When the user clicks the Apple "Pay" button, a sequence of interactions is initiated in three high-level steps:
+
+1. Create Apple Pay Session - the client application (iOS or Web) initiates the Apple Pay Session by specifying the Payment Request object to present the Payment Sheet, which can contain both CIT and MIT information. In case of Web, a merchant validation is necessary in the server-side.
+2. Decrypt Apple Pay Token - technically referred to as `PKPaymentToken`, this object carries encrypted payment information such as DPAN, expiration date, transaction cryptogram, cardholder name, etc. Decryption and storage of the sensitive cardholder data is performed in Basis Theory environment, to prevent you having any PCI scope in your system.
+3. Process Payment - the Basis Theory tokens are forwarded to the Payment Processor via Basis Theory Proxy, which translate them back to raw data before sending the request. When the Payment Response returns, the client application can complete the payment with Apple libraries, which plays the satisfying "ding" and ✅ animation for the user.
 
 ```mermaid
   sequenceDiagram
     title Customer Initiated Transactions (CIT)
 
     actor u as User
-    participant app as Mobile App / Web Application
-    participant btr as Basis Theory <br> Reactor
+    participant app as Client Application
     participant sa as Server Application
+    participant btr as Basis Theory <br> Reactor
     participant btp as Basis Theory <br> Proxy
     participant psp as Payment Processor
 
+    note over u, sa: Step 1 - Create Apple Pay Session
     u ->>+ app:  Click "Pay" button
     activate u
     app ->> app: Initiate Apple Pay Session
@@ -27,19 +44,23 @@ If you haven't yet, please take a look at the [Apple Pay Setup page](/docs/guide
         sa -->> app: Merchant Session
     end
     app -->> u: Present Apple Payment Sheet
+    note over u, btr: Step 2 - Decrypt Apple Pay Token
     u ->> app: Authorize Payment
     app ->>+ btr: Send PKPaymentToken
     btr ->> btr: Decrypt PKPaymentToken
     btr ->> btr: Tokenize DPAN and cryptogram
     btr ->>- app: Basis Theory Tokens
+    note over app, psp: Step 3 - Process Payment
     app ->>+ sa: Process CIT <br> (BT Tokens)
     sa ->> sa: Store BT Tokens
+    note right of sa: Storing the Basis Theory Tokens <br> enables subsequent MITs
     sa ->>+ btp: Process CIT <br> (BT Tokens)
+    btp ->> btp: Detokenize DPAN and Cryptogram
     btp ->>+ psp: Process CIT <br> (DPAN + Cryptogram)
     psp -->>- btp: Payment Response
     btp -->>- sa: Payment Response
     sa ->> sa: Store Response
-    note right of sa: This may contain a Processor reference, used
+    note right of sa: This may contain a Processor reference <br> used for storing the payment method
     sa -->>- app: OK
     app -->>- u: Complete Payment
     deactivate u
