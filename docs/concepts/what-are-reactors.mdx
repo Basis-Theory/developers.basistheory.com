@@ -111,8 +111,7 @@ Reactors are invoked asynchronously by providing a `callback_url` parameter with
 The reactor will perform some synchronous validation to ensure the request is valid,
 then immediately respond with an empty HTTP response with `202 Accepted` status code.
 
-Your reactor code will then be asynchronously executed in our serverless compute environment for up to the configured timeout specified in the `timeout_ms`
-parameter. If not specified, this value defaults to `10000` (i.e. 10 seconds). If the timeout period is exceeded, the reactor will be terminated and you will receive
+Your reactor code will then be asynchronously executed in our serverless compute environment for up to 5 minutes. If the timeout period is exceeded, the reactor will be terminated and you will receive
 a callback containing a [Reactor Runtime Error](/docs/api/reactors/reactor-errors#error-types) indicating that a timeout occurred.
 
 Once the reactor is completed, the response from the reactor code
@@ -132,8 +131,7 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
       "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
       "customer_id": "myCustomerId1234"
     },
-    "callback_url": "https://my-service.com/webhooks/transactions/b1d16efc-f613-45af-a1d5-57b07ddd741b",
-    "timeout_ms": 60000
+    "callback_url": "https://my-service.com/webhooks/transactions/b1d16efc-f613-45af-a1d5-57b07ddd741b"
   }'
 ```
 
