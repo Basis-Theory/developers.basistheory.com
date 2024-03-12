@@ -123,7 +123,7 @@ curl "https://api.basistheory.com/applications" \
   -d '{
     "name": "Server",
     "type": "private",
-    "permissions": [ "token:create", "token:read", "token:use" ]
+    "permissions": [ "token:create", "token:use" ]
   }'
 ```
 
@@ -132,6 +132,124 @@ curl "https://api.basistheory.com/applications" \
 <Alert>Save the <code>key</code> and <code>id</code> from the created Private Application as it will be used later in this guide.</Alert>
 
 ### Reactor
+
+Now let's create a [Reactor](/docs/concepts/what-are-reactors) that can decrypt Apple's `PKPaymentToken` and store the DPAN and cryptogram.
+
+Create a `reactor.js` file and paste the code below. We will use open source [Basis Theory Apple Pay utility](https://www.npmjs.com/package/@basis-theory/apple-pay-js) to easily create a context and perform decryption.
+
+```javascript title="reactor.js" showLineNumbers
+const { Buffer } = require('buffer');
+const { ApplePaymentTokenContext } = require('@basis-theory/apple-pay-js');
+const {
+  CustomHttpResponseError,
+} = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+module.exports = async function (req) {
+  const {
+    bt,
+    args: {
+      applePayToken: { paymentData, ...restApplePayToken },
+    },
+    configuration: {
+      MERCHANT_IDENTITY_CERTIFICATE_PEM,
+      PAYMENT_PROCESSING_PRIVATE_KEY_PEM
+    },
+  } = req;
+
+  // creates token context from certificates / keys configured in Reactor
+  const context = new ApplePaymentTokenContext({
+    merchants: [
+      {
+        certificatePem: Buffer.from(MERCHANT_IDENTITY_CERTIFICATE_PEM),
+        privateKeyPem: Buffer.from(PAYMENT_PROCESSING_PRIVATE_KEY_PEM)
+      }
+      // add more certificates to perform automatic key rotation
+    ]
+  });
+
+  try {
+    // decrypts Apple's PKPaymentToken paymentData
+    const {
+      applicationPrimaryAccountNumber,
+      applicationExpirationDate,
+      onlinePaymentCryptogram,
+      ...restPaymentData
+    } = context.decrypt(paymentData);
+
+    // vaults DPAN and cryptogram
+    const { panToken, cryptogramToken } = await bt.tokenize({
+      panToken: {
+        type: 'card',
+        data: {
+          number: applicationPrimaryAccountNumber,
+          expiration_month: applicationExpirationDate.slice(2, 4),
+          expiration_year: `20${applicationExpirationDate.slice(-2)}`
+        }
+      },
+      cryptogramToken: {
+        type: 'token',
+        containers: ['/pci/high'],
+        data: onlinePaymentCryptogram
+      }
+    });
+
+    // returns transaction details and vaulted tokens, without any sensitive PCI data
+    return {
+      raw: {
+        panToken,
+        cryptogramToken,
+        applePayToken: {
+          paymentData: restPaymentData,
+          ...restApplePayToken
+        }
+      }
+    };
+  } catch (error) {
+    throw new CustomHttpResponseError({
+      status: 500,
+      body: {
+        message: error.message
+      }
+    });
+  }
+};
+```
+
+Let's store the contents of the `reactor.js` file into a variable:
+
+```shell showLineNumbers
+reactor_code=$(cat reactor.js)
+```
+
+And call Basis Theory API to create the Reactor:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactors" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "Apple Pay Reactor",
+    "code": '"$(echo $reactor_code | jq -Rsa .)"',
+    "configuration": {
+      "MERCHANT_IDENTITY_CERTIFICATE_PEM": "-----BEGIN CERTIFICATE-----\nMIIEdTCCBBugAwIBAgIIc5onAJBqqpk...",
+      "PAYMENT_PROCESSING_PRIVATE_KEY_PEM": "-----BEGIN EC PARAMETERS-----\nBggqhkjOPQMBBw==..."
+    },
+    "application": {
+      "id": "<APPLICATION_ID>"
+    }
+  }'
+```
+
+Important things to notice in the request above:
+
+1. `<API_KEY>` is the Management Application Key, used to authenticate the request
+2. `code` is passed in plain text form
+3. Merchant Identifier Certificate and Payment Processing Private Key are passed in plain text form as configuration entries
+
+<Alert>Save the <code>id</code> from the created Reactor as it will be used later to invoke it.</Alert>
+
+Done! These are all the resources necessary. Let's see how to use them.
 
 ## Decrypting PKPaymentToken
 
