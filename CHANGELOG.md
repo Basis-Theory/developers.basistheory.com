@@ -1,3 +1,10 @@
+# [1.138.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.137.1...v1.138.0) (2024-03-13)
+
+
+### Features
+
+* removing timeout_ms from reactor docs and adding tokenize max limit docs ([#348](https://github.com/Basis-Theory/developers.basistheory.com/issues/348)) ([ea683af](https://github.com/Basis-Theory/developers.basistheory.com/commit/ea683af2f4150d2ac6f9758138c8f75bb06dda57))
+
 ## [1.137.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.137.0...v1.137.1) (2024-03-13)
 
 
