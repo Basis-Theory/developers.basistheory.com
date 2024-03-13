@@ -1,3 +1,10 @@
+## [1.137.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.137.0...v1.137.1) (2024-03-13)
+
+
+### Bug Fixes
+
+* move mask from acc to routing nubmer ([#349](https://github.com/Basis-Theory/developers.basistheory.com/issues/349)) ([3065316](https://github.com/Basis-Theory/developers.basistheory.com/commit/30653161717e53893eafcff98641d44eb178e447))
+
 # [1.137.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.136.3...v1.137.0) (2024-03-06)
 
 
