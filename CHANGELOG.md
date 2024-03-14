@@ -1,3 +1,10 @@
+## [1.138.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.138.0...v1.138.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* Updates bin details enrichment documentation ([#342](https://github.com/Basis-Theory/developers.basistheory.com/issues/342)) ([01c2de1](https://github.com/Basis-Theory/developers.basistheory.com/commit/01c2de17576bdfb7f0276627b78c8bff17ce02a2))
+
 # [1.138.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.137.1...v1.138.0) (2024-03-13)
 
 
