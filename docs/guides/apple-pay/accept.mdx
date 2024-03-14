@@ -3,6 +3,10 @@ toc_max_heading_level: 2
 ---
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { SdkList } from "@site/src/components/docs/SdkList";
+
 
 # Accept Apple Pay
 
@@ -95,7 +99,7 @@ The integration between your client application and Apple can be done directly, 
 
 ## Provision Resources
 
-In this section, we will explore the bare minimum resources necessary to securely decrypt the Apple Pay Token and use it to process payments.
+In this section, we will explore the bare minimum resources necessary to securely decrypt the Apple Pay Token and use it to process payments. You only need to provision resources once per environment.
 
 ### Management Application
 
@@ -109,9 +113,31 @@ To create all subsequent resources, you will need a [Management Application](/do
 
 <Alert>Save the API Key from the created Management Application as it will be used later in this guide.</Alert>
 
+### Public Application
+
+To represent your Client, we'll need a [Public Application](/docs/api/applications#application-types) responsible for creating short-lived [Sessions](/docs/concepts/access-controls#what-are-sessions) that are used to authenticate requests made against Reactors.
+
+Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Public Application:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -X "POST" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Client",
+    "type": "public",
+    "permissions": []
+  }'
+```
+
+<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Management API Key you created previously.</Alert>
+
+<Alert>Save the <code>key</code> from the created Public Application as it will be used later in this guide.</Alert>
+
 ### Private Application
 
-Next you will need a [Private Application](/docs/api/applications#application-types) to create tokens within the Reactor, and invoke it from your servers. This application represents your Server Application.
+Next you will need a [Private Application](/docs/api/applications#application-types) to create tokens within the Reactor, and authorize client sessions to invoke it. This application represents your Server.
 
 Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Private Application:
 
@@ -253,9 +279,144 @@ Done! These are all the resources necessary. Let's see how to use them.
 
 ## Decrypting PKPaymentToken
 
+In this section, we will explore how the integration looks like for both the client and server applications.
+
 ### Creating a Session
 
+Chose your preferred language for your client application, and click below for detailed instructions on how to install and configure the SDK.
+
+<SdkList type="client" />
+
+To invoke a Reactor, first we need to create a [Session](/docs/api/applications/sessions) to grant temporary access to our Public Application. It is good practice to create the session when the user enters the checkout page, so it is ready by the time they click on the "Pay" button.
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let sessionKey;
+
+async function init () {
+  try {
+    bt = await new BasisTheory().init("<API_KEY>");
+    // highlight-next-line
+    const session = await bt.sessions.create();
+    sessionKey = session.sessionKey;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+init();
+```
+
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useState } from "react";
+import { useBasisTheory } from "@basis-theory/basis-theory-react";
+
+export default function App() {
+  const { bt } = useBasisTheory("<API_KEY>");
+  const [sessionKey, setSessionKey] = useState();
+
+  useEffect(() => {
+    if (bt) {
+    // highlight-next-line
+      const session = await bt.sessions.create();
+      setSessionKey(session.sessionKey);
+    }
+  }, [bt]);
+}
+```
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+    private var sessionKey: String = ""
+
+    override func viewDidLoad() {
+    // highlight-next-line
+        BasisTheoryElements.createSession(apiKey: "<API_KEY>") { data, error in
+            self.sessionKey = data!.sessionKey!
+            let nonce = data!.nonce!
+        }
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```kotlin showLineNumbers title=MainActivity.kt
+import com.basistheory.android.service.BasisTheoryElements
+import com.basistheory.android.model.CreateSessionResponse
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var sessionKey: String;
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val bt = BasisTheoryElements.builder()
+          .apiKey("<API_KEY>")
+          .build()
+
+        // highlight-next-line
+        this.sessionKey = bt.createSession().sessionKey
+    }
+}
+```
+
+  </TabItem>
+
+   <TabItem value="react-native" label="React Native">
+
+```typescript showLineNumbers title=App.tsx
+import React, { useState } from "react";
+import { useBasisTheory } from "@basis-theory/basis-theory-react-native";
+
+export default function App() {
+  const { bt } = useBasisTheory("<API_KEY>");
+  const [sessionKey, setSessionKey] = useState();
+
+  useEffect(() => {
+    if (bt) {
+     // highlight-next-line
+      const session = await bt.sessions.create();
+      setSessionKey(session.sessionKey);
+    }
+  }, [bt]);
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created previously.</Alert>
+
+
 ### Authorizing a Session
+
+Sessions must be [authorized](/docs/api/applications/sessions#authorize-session) by a Private Application to perform any protected actions. In our case, we want to allow it to invoke the Apple Pay Reactor to decrypt and tokenize the card information.
+
+We will add a new `/authorize` endpoint to our backend that receives the session `nonce` and authorizes it with the `token:use` permission.
+
+
+
+
 
 ### Invoking the Reactor
 
