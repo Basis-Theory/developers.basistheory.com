@@ -122,7 +122,7 @@ Using the Management Application key to authorize the request, call Basis Theory
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications" \
   -X "POST" \
-  -H "BT-API-KEY: <API_KEY>" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Client",
@@ -131,7 +131,7 @@ curl "https://api.basistheory.com/applications" \
   }'
 ```
 
-<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Management API Key you created previously.</Alert>
+<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.</Alert>
 
 <Alert>Save the <code>key</code> from the created Public Application as it will be used later in this guide.</Alert>
 
@@ -144,7 +144,7 @@ Using the Management Application key to authorize the request, call Basis Theory
 ```shell showLineNumbers
 curl "https://api.basistheory.com/applications" \
   -X "POST" \
-  -H "BT-API-KEY: <API_KEY>" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Server",
@@ -153,7 +153,7 @@ curl "https://api.basistheory.com/applications" \
   }'
 ```
 
-<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Management API Key you created previously.</Alert>
+<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.</Alert>
 
 <Alert>Save the <code>key</code> and <code>id</code> from the created Private Application as it will be used later in this guide.</Alert>
 
@@ -251,7 +251,7 @@ And call Basis Theory API to create the Reactor:
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/reactors" \
-  -H "BT-API-KEY: <API_KEY>" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
   -H "Content-Type: application/json" \
   -X "POST" \
   -d '{
@@ -269,7 +269,7 @@ curl "https://api.basistheory.com/reactors" \
 
 Important things to notice in the request above:
 
-1. `<API_KEY>` is the Management Application Key, used to authenticate the request
+1. `<MANAGEMENT_API_KEY>` is the Management Application Key, used to authenticate the request
 2. `code` is passed in plain text form
 3. Merchant Identifier Certificate and Payment Processing Private Key are passed in plain text form as configuration entries
 
@@ -300,7 +300,7 @@ let sessionKey;
 
 async function init () {
   try {
-    bt = await new BasisTheory().init("<API_KEY>");
+    bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
     // highlight-next-line
     const session = await bt.sessions.create();
     sessionKey = session.sessionKey;
@@ -320,7 +320,7 @@ import React, { useState } from "react";
 import { useBasisTheory } from "@basis-theory/basis-theory-react";
 
 export default function App() {
-  const { bt } = useBasisTheory("<API_KEY>");
+  const { bt } = useBasisTheory("<PUBLIC_API_KEY>");
   const [sessionKey, setSessionKey] = useState();
 
   useEffect(() => {
@@ -347,7 +347,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
     // highlight-next-line
-        BasisTheoryElements.createSession(apiKey: "<API_KEY>") { data, error in
+        BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
             self.sessionKey = data!.sessionKey!
             let nonce = data!.nonce!
         }
@@ -365,17 +365,18 @@ import com.basistheory.android.model.CreateSessionResponse
 class MainActivity : AppCompatActivity() {
 
     private lateinit var sessionKey: String;
+    private val bt = BasisTheoryElements.builder()
+      .apiKey("<PUBLIC_API_KEY>")
+      .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bt = BasisTheoryElements.builder()
-          .apiKey("<API_KEY>")
-          .build()
-
-        // highlight-next-line
-        this.sessionKey = bt.createSession().sessionKey
+        runBlocking {
+            // highlight-next-line
+            this@MainActivity.sessionKey = bt.createSession().sessionKey
+        }
     }
 }
 ```
@@ -389,7 +390,7 @@ import React, { useState } from "react";
 import { useBasisTheory } from "@basis-theory/basis-theory-react-native";
 
 export default function App() {
-  const { bt } = useBasisTheory("<API_KEY>");
+  const { bt } = useBasisTheory("<PUBLIC_API_KEY>");
   const [sessionKey, setSessionKey] = useState();
 
   useEffect(() => {
@@ -405,7 +406,7 @@ export default function App() {
   </TabItem>
 </Tabs>
 
-<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created previously.</Alert>
+<Alert>Be sure to replace <code>&lt;PUBLIC_API_KEY></code> with the Public API Key you created previously.</Alert>
 
 
 ### Authorizing a Session
@@ -415,8 +416,201 @@ Sessions must be [authorized](/docs/api/applications/sessions#authorize-session)
 We will add a new `/authorize` endpoint to our backend that receives the session `nonce` and authorizes it with the `token:use` permission.
 
 
+<Tabs className="bt-tabs" queryString="backend">
+  <TabItem value="node" label="Node">
 
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
 
+```javascript showLineNumbers
+const express = require("express");
+const cors = require("cors");
+// highlight-next-line
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+
+const app = express();
+const port = 4242;
+
+app.use(cors());
+app.use(express.json());
+
+// highlight-start
+app.post("/authorize", async (request, response) => {
+  const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+  const { nonce } = request.body;
+  // authorizing a session returns an empty 200 response
+  await bt.sessions.authorize({
+    nonce: nonce,
+    permissions: ["token:use"]
+  });
+  response.status(204).send();
+});
+// highlight-end
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+```
+
+  </TabItem>
+  <TabItem value=".net" label=".NET">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
+
+```csharp showLineNumbers
+using System.Collections.Generic;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+// highlight-start
+using BasisTheory.net.Sessions;
+using BasisTheory.net.Applications.Entities;
+// highlight-end
+
+namespace server.Controllers
+{
+  public class Program
+  {
+    public static void Main(string[] args)
+    {
+      WebHost.CreateDefaultBuilder(args)
+        .UseUrls("http://0.0.0.0:4242")
+        .UseWebRoot("public")
+        .UseStartup<Startup>()
+        .Build()
+        .Run();
+    }
+  }
+
+  public class Startup
+  {
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddMvc().AddNewtonsoftJson();
+    }
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+      if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+      app.UseRouting();
+      app.UseStaticFiles();
+      app.UseEndpoints(endpoints => endpoints.MapControllers());
+    }
+  }
+
+  [Route("authorize")]
+  [ApiController]
+  public class CheckoutApiController : Controller
+  {
+    // highlight-start
+    var client = new SessionClient("<PRIVATE_API_KEY>");
+
+    [HttpPost]
+    public ActionResult AuthorizeSession([FromBody] string nonce)
+    {
+      await client.AuthorizeAsync(new AuthorizeSessionRequest {
+        Nonce = nonce,
+        Permissions = new List<string> { "token:use" }
+      });
+      return new StatusCodeResult(204);
+    }
+    // highlight-end
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
+
+```python showLineNumbers
+import os
+from flask import Flask, request
+
+import basistheory
+# highlight-start
+from basistheory.api import sessions_api
+from basistheory.model.access_rule import AccessRule
+from basistheory.model.condition import Condition
+from basistheory.model.authorize_session_request import AuthorizeSessionRequest
+# highlight-end
+
+app = Flask(__name__)
+
+# highlight-start
+@app.route('/authorize', methods=['POST'])
+def authorize_session():
+  body = request.get_json()
+  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
+    session_client = sessions_api.SessionsApi(api_client)
+
+    session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
+      nonce = body.get("nonce"),
+      permissions = [ "token:use" ]
+    ))
+
+  return '', 204
+# highlight-end
+
+if __name__ == '__main__':
+    app.run(port=4242)
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go) and [Go HTTP package](https://pkg.go.dev/net/http).
+
+```go showLineNumbers
+package main
+
+import (
+    "log"
+    "net/http"
+    "context"
+    "encoding/json"
+    // highlight-next-line
+    "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  // highlight-next-line
+  http.HandleFunc("/authorize", authorizeSession)
+  addr := "localhost:4242"
+  log.Printf("Listening on %s", addr)
+  log.Fatal(http.ListenAndServe(addr, nil))
+}
+
+// highlight-start
+func authorizeSession(rw http.ResponseWriter, r *http.Request) {
+  var payload map[string]interface{}
+  json.NewDecoder(r.Body).Decode(&payload)
+
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
+  })
+
+  authorizeSessionRequest := *basistheory.NewAuthorizeSessionRequest(payload["nonce"].(string))
+  authorizeSessionRequest.SetPermissions([]string{"token:use"})
+
+  authorizedSession, httpResponse, err := apiClient.SessionsApi.Authorize(contextWithAPIKey).AuthorizeSessionRequest(authorizeSessionRequest).Execute()
+
+  w.WriteHeader(http.StatusNoContent)
+}
+// highlight-end
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert type={Alerts.WARNING}>On a production environment, your endpoint to authorize session should be behind your own authorization scheme.</Alert>
+
+<Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.</Alert>
 
 ### Invoking the Reactor
 
