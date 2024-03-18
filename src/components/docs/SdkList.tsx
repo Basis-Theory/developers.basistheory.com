@@ -13,30 +13,30 @@ import Node from "@site/static/img/sdk/logos/nodejs.svg";
 import Python from "@site/static/img/sdk/logos/python.svg";
 import Java from "@site/static/img/sdk/logos/java.svg";
 
-export const SdkList = ({ type }: { type: keyof typeof SDK_TYPES }) => {
+export const SdkList = ({ type, sdks }: { type?: keyof typeof SDK_TYPES; sdks: (keyof typeof SDKS)[] }) => {
   const SDKS = {
     dotnet: (
-      <Card href="/docs/sdks/web/javascript/" img={<DotNet />} className={styles.sdk}>
+      <Card href="/docs/sdks/server-side/dotnet/" img={<DotNet />} className={styles.sdk}>
         .NET
       </Card>
     ),
     go: (
-      <Card href="/docs/sdks/web/javascript/" img={<Go />} className={styles.sdk}>
+      <Card href="/docs/sdks/server-side/go/" img={<Go />} className={styles.sdk}>
         Go
       </Card>
     ),
     node: (
-      <Card href="/docs/sdks/web/javascript/" img={<Node />} className={styles.sdk}>
+      <Card href="/docs/sdks/server-side/node/" img={<Node />} className={styles.sdk}>
         Node
       </Card>
     ),
     python: (
-      <Card href="/docs/sdks/web/javascript/" img={<Python />} className={styles.sdk}>
+      <Card href="/docs/sdks/server-side/python/" img={<Python />} className={styles.sdk}>
         Python
       </Card>
     ),
     java: (
-      <Card href="/docs/sdks/web/javascript/" img={<Java />} className={styles.sdk}>
+      <Card href="/docs/sdks/server-side/java/" img={<Java />} className={styles.sdk}>
         Java
       </Card>
     ),
@@ -76,9 +76,14 @@ export const SdkList = ({ type }: { type: keyof typeof SDK_TYPES }) => {
   };
 
   const SDK_TYPES: { [key: string]: (keyof typeof SDKS)[] } = {
-    server: ["dotnet"],
+    server: ["dotnet", "go", "java", "node", "python"],
     client: ["javascript", "react", "ios", "android", "react-native"],
   };
 
-  return <div className={styles["sdk-column"]}>{SDK_TYPES[type].map((sdk) => SDKS[sdk])}</div>;
+  return (
+    <div className={styles["sdk-column"]}>
+      {type && SDK_TYPES[type].map((sdk) => SDKS[sdk])}
+      {sdks && sdks.map((sdk) => SDKS[sdk])}
+    </div>
+  );
 };

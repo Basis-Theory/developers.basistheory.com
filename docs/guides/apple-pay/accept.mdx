@@ -285,12 +285,12 @@ In this section, we will explore how the integration looks like for both the cli
 
 Chose your preferred language for your client application, and click below for detailed instructions on how to install and configure the SDK.
 
-<SdkList type="client" />
+<SdkList sdks={['javascript', 'react', 'ios', 'react-native']} />
 
 To invoke a Reactor, first we need to create a [Session](/docs/api/applications/sessions) to grant temporary access to our Public Application. It is good practice to create the session when the user enters the checkout page, so it is ready by the time they click on the "Pay" button.
 
 <Tabs className="bt-tabs" queryString="frontend">
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="web" label="Web">
 
 ```javascript showLineNumbers title=index.js
 import { BasisTheory } from '@basis-theory/basis-theory-js';
@@ -298,108 +298,26 @@ import { BasisTheory } from '@basis-theory/basis-theory-js';
 let bt;
 let sessionKey;
 
-async function init () {
-  try {
-    bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
-    // highlight-next-line
-    const session = await bt.sessions.create();
-    sessionKey = session.sessionKey;
-  } catch (error) {
-    console.error(error);
-  }
-}
+// intializes Basis Theory
+bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
 
-init();
-```
-
-  </TabItem>
-  <TabItem value="react" label="React">
-
-```jsx showLineNumbers title=App.jsx
-import React, { useState } from "react";
-import { useBasisTheory } from "@basis-theory/basis-theory-react";
-
-export default function App() {
-  const { bt } = useBasisTheory("<PUBLIC_API_KEY>");
-  const [sessionKey, setSessionKey] = useState();
-
-  useEffect(() => {
-    if (bt) {
-    // highlight-next-line
-      const session = await bt.sessions.create();
-      setSessionKey(session.sessionKey);
-    }
-  }, [bt]);
-}
+// highlight-next-line
+const session = await bt.sessions.create();
+sessionKey = session.sessionKey;
 ```
 
   </TabItem>
   <TabItem value="ios" label="iOS">
 
 ```swift showLineNumbers title=ViewController.swift
-import Foundation
-import UIKit
 import BasisTheoryElements
-import Combine
 
-class ViewController: UIViewController {
-    private var sessionKey: String = ""
+private var sessionKey: String = ""
 
-    override func viewDidLoad() {
-    // highlight-next-line
-        BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
-            self.sessionKey = data!.sessionKey!
-            let nonce = data!.nonce!
-        }
-    }
-}
-```
-
-  </TabItem>
-  <TabItem value="android" label="Android">
-
-```kotlin showLineNumbers title=MainActivity.kt
-import com.basistheory.android.service.BasisTheoryElements
-import com.basistheory.android.model.CreateSessionResponse
-
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var sessionKey: String;
-    private val bt = BasisTheoryElements.builder()
-      .apiKey("<PUBLIC_API_KEY>")
-      .build()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        runBlocking {
-            // highlight-next-line
-            this@MainActivity.sessionKey = bt.createSession().sessionKey
-        }
-    }
-}
-```
-
-  </TabItem>
-
-   <TabItem value="react-native" label="React Native">
-
-```typescript showLineNumbers title=App.tsx
-import React, { useState } from "react";
-import { useBasisTheory } from "@basis-theory/basis-theory-react-native";
-
-export default function App() {
-  const { bt } = useBasisTheory("<PUBLIC_API_KEY>");
-  const [sessionKey, setSessionKey] = useState();
-
-  useEffect(() => {
-    if (bt) {
-     // highlight-next-line
-      const session = await bt.sessions.create();
-      setSessionKey(session.sessionKey);
-    }
-  }, [bt]);
+// highlight-next-line
+BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
+    self.sessionKey = data!.sessionKey!
+    let nonce = data!.nonce!
 }
 ```
 
@@ -413,45 +331,13 @@ export default function App() {
 
 Sessions must be [authorized](/docs/api/applications/sessions#authorize-session) by a Private Application to perform any protected actions. In our case, we want to allow it to invoke the Apple Pay Reactor to decrypt and tokenize the card information.
 
+Chose your preferred language for your client application, and click below for detailed instructions on how to install and configure the SDK.
+
+<SdkList type="server" />
+
 We will add a new `/authorize` endpoint to our backend that receives the session `nonce` and authorizes it with the `token:use` permission.
 
-
 <Tabs className="bt-tabs" queryString="backend">
-  <TabItem value="node" label="Node">
-
-In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
-
-```javascript showLineNumbers
-const express = require("express");
-const cors = require("cors");
-// highlight-next-line
-const { BasisTheory } = require("@basis-theory/basis-theory-js");
-
-const app = express();
-const port = 4242;
-
-app.use(cors());
-app.use(express.json());
-
-// highlight-start
-app.post("/authorize", async (request, response) => {
-  const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
-  const { nonce } = request.body;
-  // authorizing a session returns an empty 200 response
-  await bt.sessions.authorize({
-    nonce: nonce,
-    permissions: ["token:use"]
-  });
-  response.status(204).send();
-});
-// highlight-end
-
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
-```
-
-  </TabItem>
   <TabItem value=".net" label=".NET">
 
 In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
@@ -522,44 +408,6 @@ namespace server.Controllers
 ```
 
   </TabItem>
-  <TabItem value="python" label="Python">
-
-In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
-
-```python showLineNumbers
-import os
-from flask import Flask, request
-
-import basistheory
-# highlight-start
-from basistheory.api import sessions_api
-from basistheory.model.access_rule import AccessRule
-from basistheory.model.condition import Condition
-from basistheory.model.authorize_session_request import AuthorizeSessionRequest
-# highlight-end
-
-app = Flask(__name__)
-
-# highlight-start
-@app.route('/authorize', methods=['POST'])
-def authorize_session():
-  body = request.get_json()
-  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    session_client = sessions_api.SessionsApi(api_client)
-
-    session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
-      nonce = body.get("nonce"),
-      permissions = [ "token:use" ]
-    ))
-
-  return '', 204
-# highlight-end
-
-if __name__ == '__main__':
-    app.run(port=4242)
-```
-
-  </TabItem>
   <TabItem value="go" label="Go">
 
 In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go) and [Go HTTP package](https://pkg.go.dev/net/http).
@@ -606,13 +454,179 @@ func authorizeSession(rw http.ResponseWriter, r *http.Request) {
 ```
 
   </TabItem>
+  <TabItem value="node" label="Node">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript showLineNumbers
+const express = require("express");
+const cors = require("cors");
+// highlight-next-line
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+
+const app = express();
+const port = 4242;
+
+app.use(cors());
+app.use(express.json());
+
+// highlight-start
+app.post("/authorize", async (request, response) => {
+  const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+  const { nonce } = request.body;
+  // authorizing a session returns an empty 200 response
+  await bt.sessions.authorize({
+    nonce: nonce,
+    permissions: ["token:use"]
+  });
+  response.status(204).send();
+});
+// highlight-end
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
+
+```python showLineNumbers
+import os
+from flask import Flask, request
+
+import basistheory
+# highlight-start
+from basistheory.api import sessions_api
+from basistheory.model.access_rule import AccessRule
+from basistheory.model.condition import Condition
+from basistheory.model.authorize_session_request import AuthorizeSessionRequest
+# highlight-end
+
+app = Flask(__name__)
+
+# highlight-start
+@app.route('/authorize', methods=['POST'])
+def authorize_session():
+  body = request.get_json()
+  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
+    session_client = sessions_api.SessionsApi(api_client)
+
+    session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
+      nonce = body.get("nonce"),
+      permissions = [ "token:use" ]
+    ))
+
+  return '', 204
+# highlight-end
+
+if __name__ == '__main__':
+    app.run(port=4242)
+```
+
+  </TabItem>
+
 </Tabs>
 
-<Alert type={Alerts.WARNING}>On a production environment, your endpoint to authorize session should be behind your own authorization scheme.</Alert>
+<Alert type={Alerts.WARNING}>On a production environment, your endpoint to authorize sessions should be behind your own authorization scheme.</Alert>
 
 <Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.</Alert>
+
+Now let's have our frontend call this new endpoint passing the session `nonce`.
+
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="web" label="Web">
+
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let sessionKey;
+
+// intializes Basis Theory
+bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
+
+const session = await bt.sessions.create();
+sessionKey = session.sessionKey;
+
+// highlight-start
+await fetch('http://localhost:4242/authorize', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ nonce: session.nonce }),
+});
+// highlight-end
+```
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+import BasisTheoryElements
+
+private var sessionKey: String = ""
+
+// highlight-start
+func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
+    let parameters = ["nonce": nonce]
+
+    let url = URL(string: "http://localhost:4242/authorize")!
+    let session = URLSession.shared
+
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+
+    do {
+        request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+    } catch let error {
+        completion(nil, error)
+    }
+
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.addValue("application/json", forHTTPHeaderField: "Accept")
+
+    let task = session.dataTask(with: request, completionHandler: { data, response, error in
+        guard error == nil else {
+            completion(nil, error)
+            return
+        }
+
+        do {
+            let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
+            completion(json, nil)
+        } catch let error {
+            completion(nil, error)
+        }
+    })
+
+    task.resume()
+}
+// highlight-end
+
+BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
+    self.sessionKey = data!.sessionKey!
+    let nonce = data!.nonce!
+    // highlight-start
+    self.authorizeSession(nonce: nonce) { result, error in
+
+    }
+    // highlight-end
+}
+```
+
+  </TabItem>
+</Tabs>
 
 ### Invoking the Reactor
 
 ## Processing Payment
 
+Info:
+
+- Increase the `expires_at` to allow longer session, giving more time for the user to authorize the payment
+- The Apple Pay Sheet times out after 30 seconds. If the whole APP > BT > PSP flow takes more than that, process the payment asynchronously.
