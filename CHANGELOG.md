@@ -1,3 +1,10 @@
+# [1.139.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.138.1...v1.139.0) (2024-03-19)
+
+
+### Features
+
+* Add documentation for ephemeral proxy disable ([#350](https://github.com/Basis-Theory/developers.basistheory.com/issues/350)) ([ec67974](https://github.com/Basis-Theory/developers.basistheory.com/commit/ec67974de5e5cb95c48423549c047a573c480681))
+
 ## [1.138.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.138.0...v1.138.1) (2024-03-14)
 
 
