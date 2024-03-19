@@ -131,6 +131,7 @@ Returns a [Tenants](#tenant-object) for the provided `BT-API-KEY`. Returns [an e
   "name": "My Tenant",
   "settings": {
     "fingerprint_tokens": "false",
+    "disable_ephemeral_proxy": "false",
     "deduplicate_tokens": "false"
   },
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -167,6 +168,7 @@ curl "https://api.basistheory.com/tenants/self" \
     "name": "My Example Tenant",
     "settings": {
       "fingerprint_tokens": "true",
+      "disable_ephemeral_proxy": "true",
       "deduplicate_tokens": "true"
     }
   }'
@@ -184,6 +186,7 @@ const tenant = await bt.tenants.update({
   name: "My Example Tenant",
   settings: {
     fingerprint_tokens: "true",
+    disable_ephemeral_proxy: "true",
     deduplicate_tokens: "true",
   },
 });
@@ -203,6 +206,7 @@ var tenant = await client.UpdateAsync(new TenantUpdateRequest
   Settings = new Dictionary<string, string>
   {
     { "fingerprint_tokens", "true" },
+    { "disable_ephemeral_proxy", "true" },
     { "deduplicate_tokens", "true" }
   }
 });
@@ -267,6 +271,7 @@ func main() {
   updateTenantRequest := *basistheory.NewUpdateTenantRequest("My Example Tenant")
   updateTenantRequest.SetSettings(map[string]string{
     "fingerprint_tokens": "true",
+    "disable_ephemeral_proxy": "true",
     "deduplicate_tokens": "true",
   })
 
@@ -295,6 +300,7 @@ Returns a [tenant](#tenant-object) if the Tenant was updated. Returns [an error]
   "name": "My Example Tenant",
   "settings": {
     "fingerprint_tokens": "true",
+    "disable_ephemeral_proxy": "true",
     "deduplicate_tokens": "true"
   },
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -559,10 +565,11 @@ Returns a [Tenant Usage Report](#tenant-usage-report-object) for the provided `B
 
 ### Tenant Settings Object
 
-| Attribute            | Type     | Description                                                                                                                                                                                                                                                                                   |
-|----------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `fingerprint_tokens` | _string_ | (Bool) Whether all tokens will be fingerprinted using the [default fingerprint expression](/docs/api/tokens/token-types) for its token type. When disabled, fingerprinting can still be enabled per token by setting a [fingerprint expression](/docs/expressions/fingerprints) on the token. |
-| `deduplicate_tokens` | _string_ | (Bool) Whether tokens are [deduplicated](/docs/concepts/what-are-tokens#deduplication) on creation and updates                                                                                                                                                                                |
+| Attribute                 | Type     | Description                                                                                                                                                                                                                                                                                   |
+|---------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `fingerprint_tokens`      | _string_ | (Bool) Whether all tokens will be fingerprinted using the [default fingerprint expression](/docs/api/tokens/token-types) for its token type. When disabled, fingerprinting can still be enabled per token by setting a [fingerprint expression](/docs/expressions/fingerprints) on the token. |
+| `disable_ephemeral_proxy` | _string_ | (Bool) When `true`, [ephemeral proxies](/docs/api/proxies/ephemeral-proxy) will not be allowed for the tenant.                                                                                                                                                                                |
+| `deduplicate_tokens`      | _string_ | (Bool) Whether tokens are [deduplicated](/docs/concepts/what-are-tokens#deduplication) on creation and updates                                                                                                                                                                                |
 
 ## Tenant Usage Report Object
 
