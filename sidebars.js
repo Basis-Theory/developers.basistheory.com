@@ -37,16 +37,8 @@ const sidebars = {
       },
     },
     {
-      type: "html",
-      value: "<hr />",
-    },
-    {
-      type: "html",
-      value: "Payments",
-    },
-    {
       type: "category",
-      label: "Cards",
+      label: "Card Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/card.svg",
@@ -57,11 +49,11 @@ const sidebars = {
         type: "doc",
         id: "guides/cards/index",
       },
-      items: ["guides/collect/collect-cards", "guides/share/process-card-payments", "guides/collect/receive-cards", "guides/process/extract-cards"],
+      items: ["guides/collect/collect-cards", "guides/share/process-card-payments", "guides/collect/receive-cards", "guides/process/extract-cards", "guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
     },
     {
       type: "category",
-      label: "Banks",
+      label: "Bank Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/bank.svg",
@@ -93,31 +85,6 @@ const sidebars = {
       ],
     },
     {
-      type: "doc",
-      id: "features/account-updater",
-    },
-    {
-      type: "doc",
-      id: "features/network-tokens",
-    },
-    {
-      type: "doc",
-      id: "features/3d-secure",
-    },
-    {
-      type: "doc",
-      id: "features/anti-fraud",
-    },
-    {
-      type: "html",
-      value: "<hr />",
-    },
-    {
-      type: "category",
-      label: "Card Issuing",
-      items: ["guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
-    },
-    {
       type: "category",
       label: "Any Data",
       customProps: {
@@ -135,6 +102,21 @@ const sidebars = {
     {
       type: "html",
       value: "<hr />",
+    },
+    {
+      type: "category",
+      label: "Features",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/features.svg",
+          dark: "/img/sidebar/dark/features.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "features/index",
+      },
+      items: ["features/account-updater", "features/global-data", "features/network-tokens", "features/3d-secure", "features/anti-fraud"],
     },
     {
       type: "category",
@@ -163,13 +145,6 @@ const sidebars = {
         "concepts/what-is-the-proxy",
         "concepts/what-are-reactors",
         "concepts/elements",
-        {
-          type: "doc",
-          id: "features/global-data",
-          customProps: {
-            enterprise: true,
-          },
-        },
       ],
     },
     {
