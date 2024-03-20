@@ -63,6 +63,19 @@ export const SdkList = ({ type, sdks }: { type?: keyof typeof SDK_TYPES; sdks: (
         iOS
       </Card>
     ),
+    swift: (
+      <Card
+        href="https://github.com/Basis-Theory/basistheory-swift"
+        img={
+          <div className={styles["logo-container"]}>
+            <ThemedImage width="100%" height="100%" sources={{ light: useBaseUrl("/img/sdk/logos/apple.svg"), dark: useBaseUrl("/img/sdk/logos/apple-dark.svg") }} />
+          </div>
+        }
+        className={styles.sdk}
+      >
+        Swift
+      </Card>
+    ),
     android: (
       <Card href="/docs/sdks/mobile/android/" img={<Android />} className={styles.sdk}>
         Android
@@ -77,7 +90,8 @@ export const SdkList = ({ type, sdks }: { type?: keyof typeof SDK_TYPES; sdks: (
 
   const SDK_TYPES: { [key: string]: (keyof typeof SDKS)[] } = {
     server: ["dotnet", "go", "java", "node", "python"],
-    client: ["javascript", "react", "ios", "android", "react-native"],
+    elements: ["javascript", "react", "ios", "android", "react-native"],
+    client: ["javascript", "react", "swift", "android", "react-native"],
   };
 
   return (

@@ -73,10 +73,6 @@ const sidebars = {
     {
       type: "category",
       label: "Apple Pay",
-      link: {
-        type: "doc",
-        id: "guides/apple-pay/index",
-      },
       items: [
         {
           type: "doc",

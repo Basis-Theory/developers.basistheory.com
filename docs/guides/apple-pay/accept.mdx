@@ -285,7 +285,7 @@ In this section, we will explore how the integration looks like for both the cli
 
 Chose your preferred language for your client application, and click below for detailed instructions on how to install and configure the SDK.
 
-<SdkList sdks={['javascript', 'react', 'ios', 'react-native']} />
+<SdkList sdks={['swift', 'javascript', 'react', 'react-native']} />
 
 To invoke a Reactor, first we need to create a [Session](/docs/api/applications/sessions) to grant temporary access to our Public Application. It is good practice to create the session when the user enters the checkout page, so it is ready by the time they click on the "Pay" button.
 
@@ -298,7 +298,7 @@ import { BasisTheory } from '@basis-theory/basis-theory-js';
 let bt;
 let sessionKey;
 
-// intializes Basis Theory
+// initializes Basis Theory
 bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
 
 // highlight-next-line
@@ -310,12 +310,12 @@ sessionKey = session.sessionKey;
   <TabItem value="ios" label="iOS">
 
 ```swift showLineNumbers title=ViewController.swift
-import BasisTheoryElements
+import BasisTheory
 
 private var sessionKey: String = ""
 
 // highlight-next-line
-BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
+SessionsAPI.create(apiKey: "<PUBLIC_API_KEY>") { data, error in
     self.sessionKey = data!.sessionKey!
     let nonce = data!.nonce!
 }
@@ -536,7 +536,6 @@ if __name__ == '__main__':
 
 Now let's have our frontend call this new endpoint passing the session `nonce`.
 
-
 <Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="web" label="Web">
 
@@ -546,7 +545,7 @@ import { BasisTheory } from '@basis-theory/basis-theory-js';
 let bt;
 let sessionKey;
 
-// intializes Basis Theory
+// initializes Basis Theory
 bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
 
 const session = await bt.sessions.create();
@@ -567,7 +566,7 @@ await fetch('http://localhost:4242/authorize', {
   <TabItem value="ios" label="iOS">
 
 ```swift showLineNumbers title=ViewController.swift
-import BasisTheoryElements
+import BasisTheory
 
 private var sessionKey: String = ""
 
@@ -608,7 +607,7 @@ func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Erro
 }
 // highlight-end
 
-BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
+SessionsAPI.create(apiKey: "<PUBLIC_API_KEY>") { data, error in
     self.sessionKey = data!.sessionKey!
     let nonce = data!.nonce!
     // highlight-start
@@ -622,11 +621,193 @@ BasisTheoryElements.createSession(apiKey: "<PUBLIC_API_KEY>") { data, error in
   </TabItem>
 </Tabs>
 
+<Alert type={Alerts.WARNING}>Sessions have a default timeout of 3 minutes before they can be used. You can customize the `expires_at` value when [authorizing the session](/docs/api/applications/sessions#authorize-session), to grant the user more time to customize options in the Apple Pay Sheet and approve the payment.</Alert>
+
 ### Invoking the Reactor
+
+Once the user has authorized the payment with Touch ID, Face ID or passcode, the Apple Pay Session will invoke the payment authorization event handler, passing the `PKPaymentToken` that we will post to the Reactor.
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="web" label="Web">
+
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let sessionKey;
+
+// initializes Basis Theory
+bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
+
+const session = await bt.sessions.create();
+sessionKey = session.sessionKey;
+
+await fetch('http://localhost:4242/authorize', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ nonce: session.nonce }),
+});
+
+session.onpaymentauthorized = async (event: any) => {
+  try {
+    // highlight-start
+    const {
+      raw: {
+        panToken,
+        cryptogramToken,
+        applePayToken
+      }
+    } = await bt.reactors.react('<REACTOR_ID', {
+      args: {
+        applePayToken: event.payment.token,
+      }
+    }, {
+      apiKey: sessionKey
+    });
+    // highlight-end
+  } catch (error) {
+    console.error(error);
+    session.completePayment({
+      status: 1,
+    });
+  }
+};
+
+```
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+import BasisTheory
+
+private var sessionKey: String = ""
+
+...
+
+func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
+// highlight-start
+    let paymentData = try? JSONSerialization.jsonObject(with: payment.token.paymentData)
+
+    let reactRequest = ReactRequest(args: [
+        "applePayToken": [
+            "paymentMethod": [
+                "displayName": payment.token.paymentMethod.displayName,
+                "network": payment.token.paymentMethod.network?.rawValue,
+                "type": payment.token.paymentMethod.type.rawValue
+            ],
+            "transactionIdentifier": payment.token.transactionIdentifier,
+            "paymentData": paymentData
+        ]
+    ])
+
+    ReactorsAPI.reactWithRequestBuilder(id: UUID(uuidString: "<REACTOR_ID>")!, reactRequest: reactRequest).addHeader(name: "BT-API-KEY", value: "<SESSION_KEY>").execute { result in
+        do {
+
+        } catch {
+            print(error)
+        }
+    }
+// highlight-end
+}
+```
+
+  </TabItem>
+</Tabs>
 
 ## Processing Payment
 
-Info:
+Now that the Apple Payment Token has been decrypted and the payment information (DPAN and 3DS cryptogram) have been tokenized, send the tokens to your backend and store them in your database. You will use their identifiers to route the detokenized data to the Payment Processor of your choice.
 
-- Increase the `expires_at` to allow longer session, giving more time for the user to authorize the payment
-- The Apple Pay Sheet times out after 30 seconds. If the whole APP > BT > PSP flow takes more than that, process the payment asynchronously.
+Each Payment Processor have their own specification for receiving DPANs and 3DS cryptograms for CITs, or just DPANs for MITs. Here are a few things to know when looking into their API specification:
+
+- Payment Processor usually have their own Apple Pay solution, which will implement both frontend and backend portions. While it may feel like an easier technical integration, it locks in the merchant and their tokens in their ecosystem.
+- It is not surprising that this sort of payment method acceptance is either buried into Processors technical documentation or not publicly available at all.
+- DPAN acts essentially as Network Tokens downstream in the transaction processing workflow, accompanied by the transaction cryptogram and Electronic Commerce Indicator (ECI).
+
+Take a look on the [Process Card Payments](/docs/guides/share/process-card-payments#send-the-data) guide to learn how to forward tokens to Payment Processors using the Basis Theory Proxy. If you have a hard time figuring out when and which Processor's API endpoints to call, don't hesitate to [contact us](https://basistheory.com/contact). We are happy to support you through your payments journey.
+
+[Apple Pay requires merchants to complete the payment in 30 seconds](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized#discussion), however in many cases that is not possible in practice. So once you have tokenized the payment information, you can call the completion handler to give the user the green check but keep processing in the background.
+
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="web" label="Web">
+
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+...
+
+session.onpaymentauthorized = async (event: any) => {
+  try {
+    const {
+      raw: {
+        panToken,
+        cryptogramToken,
+        applePayToken
+      }
+    } = await bt.reactors.react('<REACTOR_ID', {
+      args: {
+        applePayToken: event.payment.token,
+      }
+    }, {
+      apiKey: sessionKey
+    });
+    // highlight-start
+    session.completePayment({
+      status: 0,
+    });
+    // TODO send tokens to backend for transaction processing
+    // highlight-end
+  } catch (error) {
+    console.error(error);
+    session.completePayment({
+      status: 1,
+    });
+  }
+};
+
+```
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+import BasisTheory
+
+private var sessionKey: String = ""
+
+...
+
+func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
+    let paymentData = try? JSONSerialization.jsonObject(with: payment.token.paymentData)
+
+    let reactRequest = ReactRequest(args: [
+        "applePayToken": [
+            "paymentMethod": [
+                "displayName": payment.token.paymentMethod.displayName,
+                "network": payment.token.paymentMethod.network?.rawValue,
+                "type": payment.token.paymentMethod.type.rawValue
+            ],
+            "transactionIdentifier": payment.token.transactionIdentifier,
+            "paymentData": paymentData
+        ]
+    ])
+
+    ReactorsAPI.reactWithRequestBuilder(id: UUID(uuidString: "<REACTOR_ID>")!, reactRequest: reactRequest).addHeader(name: "BT-API-KEY", value: "<SESSION_KEY>").execute { result in
+        do {
+          // highlight-start
+          completion(PKPaymentAuthorizationResult(status: PKPaymentAuthorizationStatus.success, errors: errors))
+          // TODO send tokens to backend for transaction processing
+          // highlight-end
+        } catch {
+            print(error)
+        }
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
