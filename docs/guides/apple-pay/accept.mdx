@@ -28,47 +28,7 @@ When the user clicks the Apple "Pay" button, a sequence of interactions is initi
 2. Decrypt Apple Pay Token - technically referred to as `PKPaymentToken`, this object carries encrypted payment information such as DPAN, expiration date, transaction cryptogram, cardholder name, etc. Decryption and storage of the sensitive cardholder data is performed in Basis Theory environment, to prevent you having any PCI scope in your system.
 3. Process Payment - the Basis Theory tokens are forwarded to the Payment Processor via Basis Theory Proxy, which translate them back to raw data before sending the request. When the successful Payment Response returns, the client application can complete the payment with Apple libraries, which plays the satisfying "ding" and ✅ animation for the user.
 
-```mermaid
-  sequenceDiagram
-    title Customer Initiated Transactions (CIT)
-
-    actor u as User
-    participant app as Client Application
-    participant sa as Server Application
-    participant btr as Basis Theory <br> Reactor
-    participant btp as Basis Theory <br> Proxy
-    participant psp as Payment Processor
-
-    note over u, sa: Step 1 - Create Apple Pay Session
-    u ->>+ app:  Click "Pay" button
-    activate u
-    app ->> app: Initiate Apple Pay Session
-    alt Web only
-        app ->>+ sa: Validate merchant
-        sa -->> app: Merchant Session
-    end
-    app -->> u: Present Apple Payment Sheet
-    note over u, btr: Step 2 - Decrypt Apple Pay Token
-    u ->> app: Authorize Payment
-    app ->>+ btr: Send PKPaymentToken
-    btr ->> btr: Decrypt PKPaymentToken
-    btr ->> btr: Tokenize DPAN and cryptogram
-    btr ->>- app: Basis Theory Tokens
-    note over app, psp: Step 3 - Process Payment
-    app ->>+ sa: Process CIT <br> (BT Tokens)
-    sa ->> sa: Store BT Tokens
-    note right of sa: Storing the Basis Theory Tokens <br> enables subsequent MITs
-    sa ->>+ btp: Process CIT <br> (BT Tokens)
-    btp ->> btp: Detokenize DPAN and Cryptogram
-    btp ->>+ psp: Process CIT <br> (DPAN + Cryptogram)
-    psp -->>- btp: Payment Response
-    btp -->>- sa: Payment Response
-    sa ->> sa: Store Response details
-    note right of sa: This may contain a Processor reference <br> used for storing the payment method
-    sa -->>- app: OK
-    app -->>- u: Complete Payment
-    deactivate u
-```
+[![Customer Initiated Transactions (CIT)](/img/guides/apple-pay/customer-initiated-transactions.png)](/img/guides/apple-pay/customer-initiated-transactions.png)
 
 ## Merchant Initiated Transactions (MIT)
 
@@ -78,24 +38,14 @@ Apple's Payment Sheet presented to the customer during the initial CIT workflow 
 
 In a single step, merchants can initiate transactions with the Payment Processor using the Basis Theory DPAN Token obtained from the previous workflow.
 
-```mermaid
-  sequenceDiagram
-    title Merchant Initiated Transactions (MIT)
+[![Merchant Initiated Transactions (CIT)](/img/guides/apple-pay/merchant-initiated-transactions.png)](/img/guides/apple-pay/merchant-initiated-transactions.png)
 
-    participant sa as Server Application
-    participant btp as Basis Theory <br> Proxy
-    participant psp as Payment Processor
-
-    sa ->>+ btp: Process MIT <br> (BT Token)
-    btp ->>+ psp: Process MIT <br> (DPAN)
-    psp -->>- btp: Payment Response
-    btp -->>- sa: Payment Response
-    sa ->> sa: Store Response details
-```
 
 ## Collecting Payment Information
 
-The integration between your client application and Apple can be done directly, without any interference from Basis Theory. Please follow Apple's official guides for [Web](https://developer.apple.com/documentation/apple_pay_on_the_web) ([demo](https://applepaydemo.apple.com/)) and [iOS](https://developer.apple.com/documentation/passkit_apple_pay_and_wallet/apple_pay/offering_apple_pay_in_your_app).
+The integration between your client application and Apple can be done directly, without any interference from Basis Theory.
+
+👉 Please follow Apple's official guides for [Web](https://developer.apple.com/documentation/apple_pay_on_the_web) ([demo](https://applepaydemo.apple.com/)) and [iOS](https://developer.apple.com/documentation/passkit_apple_pay_and_wallet/apple_pay/offering_apple_pay_in_your_app).
 
 ## Provision Resources
 
