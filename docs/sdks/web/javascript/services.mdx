@@ -26,15 +26,16 @@ Once you have [created](/docs/sdks/web/javascript/lifecycle#create-element) and 
 </script>
 ```
 
-| Name       | Resulting Type | Eligible Elements                                                                  | Description                                                                                                      |
-| ---------- | -------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `clear`    | _void_         | All                                                                                | Clears the element input(s) value.                                                                               |
-| `focus`    | _void_         | All                                                                                | Focuses on the element input.                                                                                    |
-| `blur`     | _void_         | All                                                                                | Blurs the element input.                                                                                         |
-| `month`    | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the month value of the input date, where "January" = 1.                     |
-| `year`     | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that resolves to the four-digit year value of the input date.                                |
-| `format`\* | _string_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element) | Data-parsing method that takes a date format as an argument and returns the expiration date in the given format. |
-| `setValue` | _void_         | All                                                                                | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.                      |
+| Name            | Resulting Type | Eligible Elements                                                                                                                                                                                                                                                                                                                                                                      | Description                                                                                                      |
+| --------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `clear`         | _void_         | All                                                                                                                                                                                                                                                                                                                                                                                    | Clears the element input(s) value.                                                                               |
+| `focus`         | _void_         | All                                                                                                                                                                                                                                                                                                                                                                                    | Focuses on the element input.                                                                                    |
+| `blur`          | _void_         | All                                                                                                                                                                                                                                                                                                                                                                                    | Blurs the element input.                                                                                         |
+| `month`         | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element)                                                                                                                                                                                                                                                                                                     | Data-parsing method that resolves to the month value of the input date, where "January" = 1.                     |
+| `year`          | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element)                                                                                                                                                                                                                                                                                                     | Data-parsing method that resolves to the four-digit year value of the input date.                                |
+| `format`\*      | _string_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element)                                                                                                                                                                                                                                                                                                     | Data-parsing method that takes a date format as an argument and returns the expiration date in the given format. |
+| `setValue`      | _void_         | All                                                                                                                                                                                                                                                                                                                                                                                    | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.                      |
+| `setValueRef`\* | _void_         | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#ard-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardElement`](/docs/sdks/web/javascript/types#card-element) <br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element) | Sets the element's value to the value of the provided element.                                                   |
 
 #### Format\*
 
@@ -58,6 +59,29 @@ const requestBody = {
   ...
 }
 ```
+
+#### setValueRef\*
+
+Sets the element's value to the value of the provided element.  
+
+```ts title="Card Expiration Date setValueRef example"
+const textElement = BasisTheory.createElement("cardExpirationDate", {
+  targetId: "expirationDate",
+  value: "04/25",
+});
+
+const textElementReadOnly = BasisTheory.createElement("cardExpirationDate", {
+  targetId: "expirationDateReadOnly",
+  readOnly: true
+});
+
+textElementReadOnly.setValueRef(textElement) 
+```
+
+`textElementReadOnly` will be updated every time the value of `textElement` changes.
+
+<Alert>When using <code>setValueRef</code> to keep an element in sync with another element, or to set the text of an element, it is strongly recommended that you make the element that is being acted upon <code>readonly</code>. This is possible by setting <code>readOnly</code> to <code>true</code>.</Alert>
+
 
 ## Tokenization Services
 
