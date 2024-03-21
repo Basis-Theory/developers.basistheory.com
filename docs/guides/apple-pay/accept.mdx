@@ -114,11 +114,9 @@ Now let's create a [Reactor](/docs/concepts/what-are-reactors) that can decrypt 
 Create a `reactor.js` file and paste the code below. We will use open source [Basis Theory Apple Pay utility](https://www.npmjs.com/package/@basis-theory/apple-pay-js) to easily create a context and perform decryption.
 
 ```javascript title="reactor.js" showLineNumbers
-const { Buffer } = require('buffer');
-const { ApplePaymentTokenContext } = require('@basis-theory/apple-pay-js');
-const {
-  CustomHttpResponseError,
-} = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+const { Buffer } = require("buffer");
+const { ApplePaymentTokenContext } = require("@basis-theory/apple-pay-js");
+const { CustomHttpResponseError } = require("@basis-theory/basis-theory-reactor-formulas-sdk-js");
 
 module.exports = async function (req) {
   const {
@@ -126,10 +124,7 @@ module.exports = async function (req) {
     args: {
       applePayToken: { paymentData, ...restApplePayToken },
     },
-    configuration: {
-      MERCHANT_IDENTITY_CERTIFICATE_PEM,
-      PAYMENT_PROCESSING_PRIVATE_KEY_PEM
-    },
+    configuration: { MERCHANT_IDENTITY_CERTIFICATE_PEM, PAYMENT_PROCESSING_PRIVATE_KEY_PEM },
   } = req;
 
   // creates token context from certificates / keys configured in Reactor
@@ -137,10 +132,10 @@ module.exports = async function (req) {
     merchants: [
       {
         certificatePem: Buffer.from(MERCHANT_IDENTITY_CERTIFICATE_PEM),
-        privateKeyPem: Buffer.from(PAYMENT_PROCESSING_PRIVATE_KEY_PEM)
-      }
+        privateKeyPem: Buffer.from(PAYMENT_PROCESSING_PRIVATE_KEY_PEM),
+      },
       // add more certificates to perform automatic key rotation
-    ]
+    ],
   });
 
   try {
@@ -148,44 +143,53 @@ module.exports = async function (req) {
     const {
       applicationPrimaryAccountNumber,
       applicationExpirationDate,
-      onlinePaymentCryptogram,
+      paymentData: { onlinePaymentCryptogram, ...restPaymentDataPaymentData },
       ...restPaymentData
+      // paymentData: { onlinePaymentCryptogram,  },
     } = context.decrypt(paymentData);
 
+    console.log(restPaymentData);
+
     // vaults DPAN and cryptogram
-    const { panToken, cryptogramToken } = await bt.tokenize({
-      panToken: {
-        type: 'card',
+    const { dpanToken, cryptogramToken } = await bt.tokenize({
+      dpanToken: {
+        type: "card",
         data: {
           number: applicationPrimaryAccountNumber,
           expiration_month: applicationExpirationDate.slice(2, 4),
-          expiration_year: `20${applicationExpirationDate.slice(-2)}`
-        }
+          expiration_year: `20${applicationExpirationDate.slice(-2)}`,
+        },
       },
       cryptogramToken: {
-        type: 'token',
-        containers: ['/pci/high'],
-        data: onlinePaymentCryptogram
-      }
+        type: "token",
+        containers: ["/pci/high/"],
+        data: onlinePaymentCryptogram,
+      },
     });
 
     // returns transaction details and vaulted tokens, without any sensitive PCI data
     return {
       raw: {
-        panToken,
+        dpanToken,
         cryptogramToken,
         applePayToken: {
-          paymentData: restPaymentData,
-          ...restApplePayToken
-        }
-      }
+          paymentData: {
+            ...restPaymentData,
+            paymentData: {
+              ...restPaymentDataPaymentData,
+            },
+          },
+          ...restApplePayToken,
+        },
+      },
     };
   } catch (error) {
+    console.error(error);
     throw new CustomHttpResponseError({
       status: 500,
       body: {
-        message: error.message
-      }
+        message: error.message,
+      },
     });
   }
 };
@@ -212,7 +216,7 @@ curl "https://api.basistheory.com/reactors" \
       "PAYMENT_PROCESSING_PRIVATE_KEY_PEM": "-----BEGIN EC PARAMETERS-----\nBggqhkjOPQMBBw==..."
     },
     "application": {
-      "id": "<APPLICATION_ID>"
+      "id": "<PRIVATE_APPLICATION_ID>"
     }
   }'
 ```
@@ -221,7 +225,8 @@ Important things to notice in the request above:
 
 1. `<MANAGEMENT_API_KEY>` is the Management Application Key, used to authenticate the request
 2. `code` is passed in plain text form
-3. Merchant Identifier Certificate and Payment Processing Private Key are passed in plain text form as configuration entries
+3. `<PRIVATE_APPLICATION_ID>` is the Private Application Id, used to inject `req.bt` in the Reactor code
+4. Merchant Identifier Certificate and Payment Processing Private Key are passed in plain text form as configuration entries
 
 <Alert>Save the <code>id</code> from the created Reactor as it will be used later to invoke it.</Alert>
 
@@ -605,11 +610,11 @@ session.onpaymentauthorized = async (event: any) => {
     // highlight-start
     const {
       raw: {
-        panToken,
+        dpanToken,
         cryptogramToken,
         applePayToken
       }
-    } = await bt.reactors.react('<REACTOR_ID', {
+    } = await bt.reactors.react('<REACTOR_ID>', {
       args: {
         applePayToken: event.payment.token,
       }
@@ -667,6 +672,9 @@ func paymentAuthorizationController(_ controller: PKPaymentAuthorizationControll
   </TabItem>
 </Tabs>
 
+<Alert>Be sure to replace <code>&lt;REACTOR_ID></code> with the Reactor Id you created previously.</Alert>
+
+
 ## Processing Payment
 
 Now that the Apple Payment Token has been decrypted and the payment information (DPAN and 3DS cryptogram) have been tokenized, send the tokens to your backend and store them in your database. You will use their identifiers to route the detokenized data to the Payment Processor of your choice.
@@ -694,7 +702,7 @@ session.onpaymentauthorized = async (event: any) => {
   try {
     const {
       raw: {
-        panToken,
+        dpanToken,
         cryptogramToken,
         applePayToken
       }
