@@ -21,9 +21,9 @@ However, some users may face this error and get stuck in a loop:
 
 <img src={EnrollmentError} />
 
-There can be many reasons for such. If Apple portal doesn't give further details, your best option is to [contact support](https://developer.apple.com/contact/) and report the issue.
+There can be many reasons for this. If Apple's portal doesn't give further details, your best option is to [contact support](https://developer.apple.com/contact/) and report the issue.
 
-Support staff may ask for additional verification, such as sending personal documents through Apple's portal to verify identify and unblock the process. This sort of request can happen via e-mail, even after completing the purchase, in order to complete enrollment.
+Support staff may ask for additional verification, such as sending personal documents through Apple's portal to verify your identity and unblock the process. To complete enrollment, this sort of request can happen via e-mail, even after completing the purchase.
 
 ## Create a Merchant ID
 
@@ -44,7 +44,7 @@ In the **Apple Pay Payment Processing Certificate** section, click _Create Certi
 
 <img src={CreatePaymentProcessingCertificate} />
 
-To create a new CSR we will use [OpenSSL](https://www.openssl.org/):
+To create a new CSR we will use the [OpenSSL](https://www.openssl.org/) cli:
 
 <Tabs className="bt-tabs" queryString="encryption">
   <TabItem value="ec" label="Elliptic Curve">
@@ -67,7 +67,7 @@ openssl req -newkey rsa:2048 -keyout apple_pay_private.key -out apple_pay.csr -n
   </TabItem>
 </Tabs>
 
-Upload the `apple_pay.csr` file in Apple portal to create a new Certificate.
+Upload the `apple_pay.csr` file to create a new Certificate in Apple's portal.
 
 Download the `apple_pay.cer` file and convert it to PEM format, for later usage:
 
@@ -75,7 +75,7 @@ Download the `apple_pay.cer` file and convert it to PEM format, for later usage:
 openssl x509 -inform der -in apple_pay.cer -out apple_pay.pem
 ```
 
-<Alert type={Alerts.WARNING}>These files are sensitive and should be stored somewhere safe.</Alert>
+<Alert type={Alerts.WARNING}>These files are sensitive and need to be stored somewhere safe.</Alert>
 
 ## Create a Merchant Identity Certificate
 
@@ -85,7 +85,7 @@ In the **Apple Pay Merchant Identity Certificate** section, click _Create Certif
 
 <img src={CreateMerchantIdentityCertificate}/>
 
-To create a new CSR we will use [OpenSSL](https://www.openssl.org/):
+To create a new CSR we will use the [OpenSSL](https://www.openssl.org/) cli:
 
 First we must create a new private key:
 
@@ -99,7 +99,7 @@ Then, source the private key to create a new CSR:
 openssl req -new -key merchant_id_private.key -out merchant_id.csr -subj "/CN=EnchantedWidgets, Inc./O=EnchantedWidgets, Inc./OU=Product Development/CN=John Doe/UID=johndoe/EMAIL=johndoe@example.com/STREET=123 Fantasy Lane/L=Fairyville/ST=Fairyland/C=FL/POSTALCODE=12345/DC=fantasy/DC=local"
 ```
 
-Upload the `merchant_id.csr` file in Apple portal to create a new Certificate.
+Upload the `merchant_id.csr` file to create a new Certificate in Apple's portal.
 
 Download the `merchant_id.cer` file and convert it to PEM format, for later usage:
 
@@ -107,7 +107,7 @@ Download the `merchant_id.cer` file and convert it to PEM format, for later usag
 openssl x509 -inform der -in merchant_id.cer -out merchant_id.pem
 ```
 
-<Alert type={Alerts.WARNING}>These files are sensitive and should be stored somewhere safe.</Alert>
+<Alert type={Alerts.WARNING}>These files are sensitive and need to be stored somewhere safe.</Alert>
 
 ## Verify a Domain (Web-only)
 
@@ -117,7 +117,7 @@ In the **Merchant Domains** section, click _Add Domain_.
 
 Enter your domain and click save.
 
-In the next page, download the verification file and upload it to the address shown in the screen. Click _Verify_ when the file is available.
+On the next page, download the verification file and upload it to the address shown in the screen. Click _Verify_ when the file is available.
 
 <Alert type={Alerts.INFO}>
   If you are still in POC or development phase, publishing an Apple Pay implementation website under an owned domain with a valid SSL certificate may be tricky.
