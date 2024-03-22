@@ -1,3 +1,10 @@
+# [1.140.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.139.0...v1.140.0) (2024-03-22)
+
+
+### Features
+
+* adds setValueRef ([#352](https://github.com/Basis-Theory/developers.basistheory.com/issues/352)) ([2e2aa5a](https://github.com/Basis-Theory/developers.basistheory.com/commit/2e2aa5a0ffed1ee50a302953d2231127e8d8cd44))
+
 # [1.139.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.138.1...v1.139.0) (2024-03-19)
 
 
