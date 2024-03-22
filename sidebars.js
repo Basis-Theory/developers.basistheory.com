@@ -330,6 +330,24 @@ const sidebars = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "3D Secure",
+      link: {
+        type: "doc",
+        id: "api/3ds/sessions",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/3ds/sessions",
+          customProps: {
+            beta: true,
+          }
+        }
+
+      ],
+    },
     "api/deprecations",
     {
       type: "html",
