@@ -1,3 +1,10 @@
+# [1.141.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.140.0...v1.141.0) (2024-03-25)
+
+
+### Features
+
+* add apple pay accept guide ([#346](https://github.com/Basis-Theory/developers.basistheory.com/issues/346)) ([816d168](https://github.com/Basis-Theory/developers.basistheory.com/commit/816d16834a507002d9075ef4b40133b88c79a45e))
+
 # [1.140.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.139.0...v1.140.0) (2024-03-22)
 
 
