@@ -64,6 +64,28 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Apple Pay",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/apple.svg",
+          dark: "/img/sidebar/dark/apple.svg",
+        },
+      },
+      items: [
+        {
+          type: "doc",
+          id: "guides/apple-pay/setup",
+          label: "Setup",
+        },
+        {
+          type: "doc",
+          id: "guides/apple-pay/accept",
+          label: "Accept Payments",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Any Data",
       customProps: {
         icon: {
