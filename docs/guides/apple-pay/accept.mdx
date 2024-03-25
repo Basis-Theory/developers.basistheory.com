@@ -30,7 +30,7 @@ When the user clicks the Apple "Pay" button, a sequence of interactions is initi
 
 ## Merchant Initiated Transactions (MIT)
 
-This type of transaction occurs when the Merchant process a payment using stored card information, without additional customer validation. It requires a previous CIT to collect consumer authorization. In some cases, the CIT can be a zero-dollar ($0) transaction to verify if the account is active.
+This type of transaction occurs when the Merchant processes a payment using stored card information without additional customer validation. A previous CIT is required to collect consumer authorization. Sometimes, the CIT can be a zero-dollar ($0) transaction to verify if the account is active.
 
 Apple's Payment Sheet presented to the customer during the initial CIT workflow can contain information about the MIT, such as recurring billing amount and period, pay later and automatic reload details, etc.
 
@@ -47,7 +47,7 @@ The integration between your client application and Apple can be done directly, 
 
 ## Provision Resources
 
-In this section, we will explore the bare minimum resources necessary to securely decrypt the Apple Pay Token and use it to process payments. You only need to provision resources once per environment.
+This section will explore the bare minimum resources necessary to securely decrypt the Apple Pay Token and use it to process payments. You only need to provision resources once per environment.
 
 ### Management Application
 
@@ -63,7 +63,7 @@ To create all subsequent resources, you will need a [Management Application](/do
 
 ### Public Application
 
-To represent your Client, we'll need a [Public Application](/docs/api/applications#application-types) responsible for creating short-lived [Sessions](/docs/concepts/access-controls#what-are-sessions) that are used to authenticate requests made against Reactors.
+To represent your pubic facing application, we'll need a [Public Application](/docs/api/applications#application-types) responsible for creating short-lived [Sessions](/docs/concepts/access-controls#what-are-sessions) that are used to authenticate requests made against Reactors.
 
 Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Public Application:
 
@@ -232,11 +232,11 @@ Done! These are all the resources necessary. Let's see how to use them.
 
 ## Decrypting PKPaymentToken
 
-In this section, we will explore how the integration looks like for both the client and server applications.
+In this section, we will explore the integration for both the client and server applications.
 
 ### Creating a Session
 
-Chose your preferred language for your client application, and click below for detailed instructions on how to install and configure the SDK.
+Choose your preferred language for your client application, and click below for detailed instructions on installing and configuring the SDK.
 
 <SdkList sdks={['swift', 'javascript', 'react', 'react-native']} />
 
@@ -282,7 +282,7 @@ SessionsAPI.create(apiKey: "<PUBLIC_API_KEY>") { data, error in
 
 ### Authorizing a Session
 
-Sessions must be [authorized](/docs/api/applications/sessions#authorize-session) by a Private Application to perform any protected actions. In our case, we want to allow it to invoke the Apple Pay Reactor to decrypt and tokenize the card information.
+Sessions must be [authorized](/docs/api/applications/sessions#authorize-session) by a Private Application to perform any protected actions. In our case, we need to allow invoking the Apple Pay Reactor to decrypt and tokenize the card information.
 
 Chose your preferred language for your client application, and click below for detailed instructions on how to install and configure the SDK.
 
@@ -483,7 +483,7 @@ if __name__ == '__main__':
 
 </Tabs>
 
-<Alert type={Alerts.WARNING}>On a production environment, your endpoint to authorize sessions should be behind your own authorization scheme.</Alert>
+<Alert type={Alerts.WARNING}>In production environments, your endpoint to authorize sessions should be behind your authorization scheme.</Alert>
 
 <Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.</Alert>
 
@@ -574,11 +574,11 @@ SessionsAPI.create(apiKey: "<PUBLIC_API_KEY>") { data, error in
   </TabItem>
 </Tabs>
 
-<Alert type={Alerts.WARNING}>Sessions have a default timeout of 3 minutes before they can be used. You can customize the `expires_at` value when [authorizing the session](/docs/api/applications/sessions#authorize-session), to grant the user more time to customize options in the Apple Pay Sheet and approve the payment.</Alert>
+<Alert type={Alerts.WARNING}>Sessions have a default timeout of 3 minutes before expiration. You can customize the `expires_at` value when [authorizing the session](/docs/api/applications/sessions#authorize-session), to ensure users have time to customize options in the Apple Pay Sheet and approve the payment.</Alert>
 
 ### Invoking the Reactor
 
-Once the user has authorized the payment with Touch ID, Face ID or passcode, the Apple Pay Session will invoke the payment authorization event handler, passing the `PKPaymentToken` that we will post to the Reactor.
+Once the user has authorized the payment with Touch ID, Face ID, or passcode, the Apple Pay Session will invoke the payment authorization event handler, passing the `PKPaymentToken`, which we will post to the Reactor.
 
 <Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="web" label="Web">
@@ -677,15 +677,15 @@ func paymentAuthorizationController(_ controller: PKPaymentAuthorizationControll
 
 Now that the Apple Payment Token has been decrypted and the payment information (DPAN and 3DS cryptogram) have been tokenized, send the tokens to your backend and store them in your database. You will use their identifiers to route the detokenized data to the Payment Processor of your choice.
 
-Each Payment Processor have their own specification for receiving DPANs and 3DS cryptograms for CITs, or just DPANs for MITs. Here are a few things to know when looking into their API specification:
+Each Payment Processor has their specification for receiving DPANs and 3DS cryptograms for CITs, or just DPANs for MITs. Here are a few things to know when looking into their API specification:
 
 - Payment Processor usually have their own Apple Pay solution, which will implement both frontend and backend portions. While it may feel like an easier technical integration, it locks in the merchant and their tokens in their ecosystem.
-- It is not surprising that this sort of payment method acceptance is either buried into Processors technical documentation or not publicly available at all.
-- DPAN acts essentially as Network Tokens downstream in the transaction processing workflow, accompanied by the transaction cryptogram and Electronic Commerce Indicator (ECI).
+- It is not surprising that this sort of payment method acceptance is either buried in the Processor's technical documentation or private.
+- DPAN acts as a Network Token downstream in the transaction processing workflow, accompanied by the transaction cryptogram and Electronic Commerce Indicator (ECI).
 
-Take a look on the [Process Card Payments](/docs/guides/share/process-card-payments#send-the-data) guide to learn how to forward tokens to Payment Processors using the Basis Theory Proxy. If you have a hard time figuring out when and which Processor's API endpoints to call, don't hesitate to [contact us](https://basistheory.com/contact). We are happy to support you through your payments journey.
+Look at the [Process Card Payments](/docs/guides/share/process-card-payments#send-the-data) guide to learn how to forward tokens to Payment Processors using the Basis Theory Proxy. If you have difficulty figuring out when and which Processor's API endpoints to call, feel free to [contact us](https://basistheory.com/contact). We are happy to support you through your payment journey.
 
-[Apple Pay requires merchants to complete the payment in 30 seconds](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized#discussion), however in many cases that is not possible in practice. So once you have tokenized the payment information, you can call the completion handler to give the user the green check but keep processing in the background.
+[Apple Pay requires merchants to complete the payment in 30 seconds](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized#discussion); however, in many cases, that is not possible in practice. So once you have tokenized the payment information, you can call the completion handler to give the user the green check but keep processing in the background.
 
 
 <Tabs className="bt-tabs" queryString="frontend">
