@@ -49,7 +49,7 @@ const sidebars = {
         type: "doc",
         id: "guides/cards/index",
       },
-      items: ["guides/collect/collect-cards", "guides/share/process-card-payments", "guides/collect/receive-cards", "guides/process/extract-cards", "guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
+      items: ["guides/collect/collect-cards", "guides/share/process-card-payments", "guides/collect/receive-cards", "guides/process/extract-cards", "guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin", "guides/process/authenticate-with-3ds"],
     },
     {
       type: "category",
@@ -424,6 +424,18 @@ const sidebars = {
             id: "sdks/web/react/index",
           },
           items: ["sdks/web/react/components", "sdks/web/react/events", "sdks/web/react/properties", "sdks/web/react/services"],
+        },
+        {
+          type: "category",
+          label: "3DS SDK",
+          link: {
+            type: "doc",
+            id: "sdks/web/3ds/index",
+          },
+          customProps: {
+            beta: true,
+          },
+          items: ["sdks/web/3ds/methods"],
         },
       ],
     },

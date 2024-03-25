@@ -1,0 +1,93 @@
+---
+sidebar_label: Methods
+---
+
+import {
+  CardElement,
+  CardExpirationDateElement,
+  CardNumberElement,
+  CardVerificationCodeElement,
+  TextElement,
+} from "@basis-theory/basis-theory-react";
+import { BasisTheoryComponentDisplay } from "@site/src/components/sdks/BasisTheoryComponentDisplay";
+
+# 3DS Web SDK Methods
+
+## Create Session
+
+This method collects information from the browser on the background and sends it to the Basis Theory API, which then returns a newly created 3DS section.
+
+### Usage
+
+```javascript
+import { BasisTheory3ds } from "@basis-theory/3ds-web";
+
+const bt3ds = BasisTheory3ds("<API_KEY>");
+
+const session = await bt3ds.createSession({ pan: "<TOKEN_ID>" });
+```
+
+### Parameters
+The `createSession` method takes an object as parameter w/ the following attributes:
+
+| Attribute | Required | Type | Description |
+| --- | --- | --- | --- |
+| `pan` | true | _string_ | The Basis Theory token id for the card token to be used |
+
+### Return
+
+The method returns an object with the following attributes:
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `id` | _string_ | The created session `id` |
+| `cardBrand` | _string_ | The brand for the used card (i.e. Visa) |
+
+## Start Challenge
+
+This method initiates the 3DS challenge process, if it was deemed necessary during the 3DS authentication.
+
+### Usage
+
+```javascript
+import { BasisTheory3ds } from "@basis-theory/3ds-web";
+
+const bt3ds = BasisTheory3ds("<API_KEY>");
+
+const challengeCompletion = await bt3ds.startChallenge({
+  acsChallengeUrl: "https://some-challenge-url.com",
+  acsTransactionId: "5236966c-62be-417b-8f66-dbec6d87911d",
+  sessionId: "9289231e-2c0b-4f38-92fa-dec3c586d58b",
+  threeDSVersion: "2.2.0",
+});
+```
+
+### Parameters
+
+The `startChallenge` method takes in an object with the following attributes:
+
+| Attribute | Required | Type | Description |
+| --- | --- | --- | --- |
+| `acsChallengeUrl` | true | _string_ | The URL for the challenge window. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response |
+| `acsTransactionId` | true | _string_ | The ACS transaction id. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response |
+| `sessionId` | true | _string_ | The created 3DS session id |
+| `threeDSVersion` | true | _string_ | The 3DS message version. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response |
+| `windowSize` | false | _string_ | The code for the pre-configured window size. See [Challenge Window Sizes](#challenge-window-sizes) |
+
+### Return
+The method returns a `Promise`, with the following attributes, that is only resolved once the customer completed or cancelled the challenge:
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `id` | _string_ | The created session id |
+
+
+#### Challenge Window Sizes
+
+| WindowSize ID | Size |
+| --- | --- |
+| `01` | 250px x 400px |
+| `02` | 390px x 400px |
+| `03` | 500px x 600px |
+| `04` | 600px x 400px |
+| `05` | 100% x 100% |
