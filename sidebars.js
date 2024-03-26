@@ -71,7 +71,16 @@ const sidebars = {
           dark: "/img/sidebar/dark/apple.svg",
         },
       },
+      link: {
+        type: "doc",
+        id: "guides/apple-pay/overview",
+      },
       items: [
+        {
+          type: "doc",
+          id: "guides/apple-pay/overview",
+          label: "Overview",
+        },
         {
           type: "doc",
           id: "guides/apple-pay/setup",
