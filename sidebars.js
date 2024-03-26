@@ -84,7 +84,7 @@ const sidebars = {
         {
           type: "doc",
           id: "guides/apple-pay/setup",
-          label: "Setup",
+          label: "Merchant Setup",
         },
         {
           type: "doc",
