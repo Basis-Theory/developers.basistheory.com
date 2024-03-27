@@ -1,0 +1,128 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import EnrollmentError from "@site/static/img/guides/apple-pay/enrollment-error.png";
+import CreateMerchantId from "@site/static/img/guides/apple-pay/create-merchant-id.png";
+import CreatePaymentProcessingCertificate from "@site/static/img/guides/apple-pay/create-payment-processing-certificate.png";
+import CreateMerchantIdentityCertificate from "@site/static/img/guides/apple-pay/create-merchant-identity-certificate.png";
+
+
+# Apple Pay Setup
+
+Before you can accept Apple Pay in your e-commerce or platform, you have to complete Apple's Merchant setup. While the detailed steps can be found in [Apple Pay official documentation](https://developer.apple.com/documentation/applepaywebmerchantregistrationapi/registering_with_apple_pay_and_applying_to_use_the_api), we will cover them in a hands-on approach to streamline the integration process.
+
+## Apple Developer Program Enrollment
+
+An active subscription to [Apple Developer Program](https://developer.apple.com/programs/) is a requirement to accept Apple Pay in your application.
+
+Usually, the steps are straightforward and self-explanatory. You just have visit [this link](https://developer.apple.com/programs/enroll/) and follow the instructions in the page.
+
+However, some users may face this error and get stuck in a loop:
+
+<img src={EnrollmentError} />
+
+There can be many reasons for this. If Apple's portal doesn't give further details, your best option is to [contact support](https://developer.apple.com/contact/) and report the issue.
+
+Support staff may ask for additional verification, such as sending personal documents through Apple's portal to verify your identity and unblock the process. To complete enrollment, this sort of request can happen via e-mail, even after completing the purchase.
+
+## Create a Merchant ID
+
+After the enrollment is complete, developers can create Merchant IDs in [Apple's portal](https://developer.apple.com/account/resources/identifiers/add/merchant).
+Requirements are minimal:
+
+<img src={CreateMerchantId} />
+
+The identifier **can't** be changed later.
+
+Existing Merchant IDs can be found [here](https://developer.apple.com/account/resources/identifiers/list/merchant).
+
+## Create a Payment Processing Certificate
+
+Find your Merchant ID in the [Merchant List](https://developer.apple.com/account/resources/identifiers/list/merchant) and navigate to its detail page.
+
+In the **Apple Pay Payment Processing Certificate** section, click _Create Certificate_ to be directed to the Certificate Signing Request (CSR) upload page.
+
+<img src={CreatePaymentProcessingCertificate} />
+
+To create a new CSR we will use the [OpenSSL](https://www.openssl.org/) cli:
+
+<Tabs className="bt-tabs" queryString="encryption">
+  <TabItem value="ec" label="Elliptic Curve">
+
+```bash
+# First create a new private key
+openssl ecparam -out apple_pay_private.key -name prime256v1 -genkey
+
+# Then, source the private key to create a new CSR:
+openssl req -new -sha256 -key apple_pay_private.key -nodes -out apple_pay.csr -subj "/CN=EnchantedWidgets, Inc./O=EnchantedWidgets, Inc./OU=Product Development/CN=John Doe/UID=johndoe/EMAIL=johndoe@example.com/STREET=123 Fantasy Lane/L=Fairyville/ST=Fairyland/C=FL/POSTALCODE=12345/DC=fantasy/DC=local"
+```
+
+  </TabItem>
+  <TabItem value="rsa" label="RSA (China only)">
+
+```bash
+openssl req -newkey rsa:2048 -keyout apple_pay_private.key -out apple_pay.csr -nodes -subj "/CN=EnchantedWidgets, Inc./O=EnchantedWidgets, Inc./OU=Product Development/CN=John Doe/UID=johndoe/EMAIL=johndoe@example.com/STREET=123 Fantasy Lane/L=Fairyville/ST=Fairyland/C=FL/POSTALCODE=12345/DC=fantasy/DC=local"
+```
+
+  </TabItem>
+</Tabs>
+
+Upload the `apple_pay.csr` file to create a new Certificate in Apple's portal.
+
+Download the `apple_pay.cer` file and convert it to PEM format, for later usage:
+
+```bash
+openssl x509 -inform der -in apple_pay.cer -out apple_pay.pem
+```
+
+<Alert type={Alerts.WARNING}>These files are sensitive and need to be stored somewhere safe.</Alert>
+
+## Create a Merchant Identity Certificate
+
+Find your Merchant ID in the [Merchant List](https://developer.apple.com/account/resources/identifiers/list/merchant) and navigate to its detail page.
+
+In the **Apple Pay Merchant Identity Certificate** section, click _Create Certificate_ to be directed to the Certificate Signing Request (CSR) upload page.
+
+<img src={CreateMerchantIdentityCertificate}/>
+
+To create a new CSR we will use the [OpenSSL](https://www.openssl.org/) cli:
+
+First we must create a new private key:
+
+```bash
+openssl genrsa -out merchant_id_private.key 2048
+```
+
+Then, source the private key to create a new CSR:
+
+```bash
+openssl req -new -key merchant_id_private.key -out merchant_id.csr -subj "/CN=EnchantedWidgets, Inc./O=EnchantedWidgets, Inc./OU=Product Development/CN=John Doe/UID=johndoe/EMAIL=johndoe@example.com/STREET=123 Fantasy Lane/L=Fairyville/ST=Fairyland/C=FL/POSTALCODE=12345/DC=fantasy/DC=local"
+```
+
+Upload the `merchant_id.csr` file to create a new Certificate in Apple's portal.
+
+Download the `merchant_id.cer` file and convert it to PEM format, for later usage:
+
+```bash
+openssl x509 -inform der -in merchant_id.cer -out merchant_id.pem
+```
+
+<Alert type={Alerts.WARNING}>These files are sensitive and need to be stored somewhere safe.</Alert>
+
+## Verify a Domain (Web-only)
+
+Find your Merchant ID in the [Merchant List](https://developer.apple.com/account/resources/identifiers/list/merchant) and navigate to its detail page.
+
+In the **Merchant Domains** section, click _Add Domain_.
+
+Enter your domain and click save.
+
+On the next page, download the verification file and upload it to the address shown in the screen. Click _Verify_ when the file is available.
+
+<Alert type={Alerts.INFO}>
+  If you are still in POC or development phase, publishing an Apple Pay implementation website under an owned domain with a valid SSL certificate may be tricky.
+
+  In such cases, tunneling may represent a good option to preview local projects through a working HTTPS connection. [Cloudflare tunnel](https://developers.cloudflare.com/pages/how-to/preview-with-cloudflare-tunnel/) may be worth checking out.
+</Alert>
+
+
