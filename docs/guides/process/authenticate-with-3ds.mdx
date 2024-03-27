@@ -6,11 +6,11 @@ import GettingStartedSection from "@site/src/components/docs/_getting-started-se
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-# Authenticate With 3DS
+# Authenticate with 3DS
 
 [3DS (3D Secure)](https://developers.basistheory.com/docs/features/3d-secure) is an online payment authentication protocol that enhances anti-fraud efforts. It requires cardholders to undergo an additional layer of verification, such as a one-time password or biometric scan, during online transactions.
 
-In this guide, we will set up Basis Theory SDKs to start a 3DS transaction in a frontend web application,  and securely authenticate it using the  Basis Theory Platform.
+In this guide, we will set up the Basis Theory 3DS SDK to start a 3DS transaction in a frontend web application, and securely authenticate it using the Basis Theory Platform.
 
 <Alert type={Alerts.WARNING}>The 3DS feature is currently in Beta. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
 
@@ -73,7 +73,7 @@ import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
 const checkout = async () => {
   // initializing the 3ds sdk
-  const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>");
+  const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>");
 
   //highlight-start
   // creating the session
@@ -82,11 +82,14 @@ const checkout = async () => {
 }
 ```
 
+<Alert>Be sure to replace <code>&lt;PUBLIC_API_KEY></code> with the Public API Key you created in the <a href="#public-application">Public Application</a> step,
+and <code>&lt;CARD_TOKEN_ID></code> with the token id created in the <a href="#creating-a-card-token">Creating a Card Token</a> step.</Alert>
+
 ## Authenticating a Session
 
-Once the `session` is created, it must be authenticated. In this process, the merchant or requestor must send to the 3DS server, and subsequently the card issuer, information about the transaction.
+Once the `session` is created, it must be [authenticated](/docs/api/3ds/sessions#authenticate-session). In this process, the merchant or requestor must send to the 3DS server, and subsequently the card issuer, information about the transaction.
 
-This is done by calling the Basis Theory backend endpoint `/3ds/sessions/{sessionId}/authenticate` from your own backend, with a suitable private API key.
+This is done by calling the Basis Theory backend endpoint `/3ds/sessions/{sessionId}/authenticate` from your own backend, with the private API key created earlier.
 
 <Tabs className="bt-tabs" queryString="backend">
 <TabItem value="node" label="Node">
@@ -101,6 +104,7 @@ const PORT = 3000;
 
 app.use(express.json());
 
+//highlight-start
 app.post("/:sessionId/authenticate", async (req, res) => {
   const { sessionId } = req.params;
 
@@ -138,7 +142,7 @@ app.post("/:sessionId/authenticate", async (req, res) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "BT-API-KEY": "<YOUR_PRIVATE_API_KEY>",
+          "BT-API-KEY": "<PRIVATE_API_KEY>",
         },
         body: JSON.stringify(authenticateRequest),
       }
@@ -155,6 +159,7 @@ app.post("/:sessionId/authenticate", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+//highlight-end
 
 // Start the server
 app.listen(PORT, () => {
@@ -164,14 +169,18 @@ app.listen(PORT, () => {
 </TabItem>
 </Tabs>
 
-And then passing that information along back to your frontend.
+<Alert type={Alerts.WARNING}>On a production environment, your endpoint to authorize sessions should be behind your own authorization scheme.</Alert>
+
+<Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.</Alert>
+
+And then passing that information back to your frontend.
 
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
 const checkout = async () => {
   // initializing the 3ds sdk
-  const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>");
+  const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>");
 
   // creating the session
   const session = await bt3ds.createSession({ pan: "<CARD_TOKEN_ID>" });
@@ -205,7 +214,7 @@ import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
 const checkout = async () => {
   // initializing the 3ds sdk
-  const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>");
+  const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>");
 
   // creating the session
   const session = await bt3ds.createSession({ pan: "<CARD_TOKEN_ID>" });
@@ -247,12 +256,14 @@ What is possible though, is determining how big that window can be, and style th
 
 #### Changing the Window Size
 
-To change the window sized, use the `windowSize` property on the challenge request, passing along the code for the desired pre-defined size according to the table below.
+To change the window size, use the `windowSize` property on the challenge request, passing along the code for the desired pre-defined size according to the table below.
 
 ```jsx showLineNumbers
 const challengeInfo = {
-	//... other challenge props
-	windowSize = '01'
+  //... other challenge props
+  //highlight-start
+  windowSize = '01'
+  //highlight-end
 };
 
 const challengeCompleted = await basisTheory3ds.startChallenge(challengeInfo);
@@ -272,7 +283,7 @@ By default, the challenge window size is set to `03` or `500px x 600px`
 
 The challenge window is an `iframe` that gets loaded inside a predefined container `div`.
 
-The container div always has the same id - `challengeFrameContainer`, and that can be used to style it:
+The container div always has a default id - `challengeFrameContainer`, and that can be used to style it:
 
 ```css showLineNumbers
 #challengeFrameContainer {
@@ -288,15 +299,17 @@ The container div always has the same id - `challengeFrameContainer`, and that c
 }
 ```
 
-#### Using your own Window Container**
+#### Using your own Window Container
 
 If you want more flexibility in styling, you can use your own container for the challenge window by passing the `id` of it in the `challengeContainerOptions` object during initialization:
 
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
-const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>", {
+const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>", {
+  //highlight-start
   challengeContainerOptions: { id: "your_container_id" },
+  //highlight-end
 });
 ```
 
@@ -356,7 +369,7 @@ app.post("/:sessionId/authenticate", async (req, res) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "BT-API-KEY": "<YOUR_PRIVATE_API_KEY>",
+          "BT-API-KEY": "<PRIVATE_API_KEY>",
         },
         body: JSON.stringify(authenticateRequest),
       }
@@ -383,7 +396,7 @@ app.get("/:sessionId/challenge-result", async (req, res) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "BT-API-KEY": "<YOUR_PRIVATE_API_KEY>",
+          "BT-API-KEY": "<PRIVATE_API_KEY>",
         },
       }
     );
@@ -416,7 +429,7 @@ import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
 const checkout = async () => {
   // initializing the 3ds sdk
-  const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>");
+  const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>");
 
   // creating the session
   const session = await bt3ds.createSession({ pan: "<CARD_TOKEN_ID>" });
