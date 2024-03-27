@@ -49,7 +49,13 @@ const sidebars = {
         type: "doc",
         id: "guides/cards/index",
       },
-      items: ["guides/collect/collect-cards", "guides/share/process-card-payments", "guides/collect/receive-cards", "guides/process/extract-cards", "guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin", "guides/process/authenticate-with-3ds"],
+      items: ["guides/collect/collect-cards", "guides/share/process-card-payments", "guides/collect/receive-cards", "guides/process/extract-cards", "guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin",        {
+        type: "doc",
+        id: "guides/process/authenticate-with-3ds",
+        customProps: {
+          beta: true,
+        },
+      },],
     },
     {
       type: "category",

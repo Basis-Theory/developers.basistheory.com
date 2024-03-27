@@ -1,5 +1,476 @@
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
+import { Card } from "@site/src/components/shared/Card";
+import styles from "@site/src/pages/index.module.css";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 # Authenticate With 3DS
 
-This guide is designed to help you understand how you can extract sensitive information out of images by leveraging Basis Theory secure environment to perform OCR.
+[3DS (3D Secure)](https://developers.basistheory.com/docs/features/3d-secure) is an online payment authentication protocol that enhances anti-fraud efforts. It requires cardholders to undergo an additional layer of verification, such as a one-time password or biometric scan, during online transactions.
 
-The image to be used purposely has poor quality and uneven trim:
+In this guide, we will set up Basis Theory SDKs to start a 3DS transaction in a frontend web application,  and securely authenticate it using the  Basis Theory Platform.
+
+<Alert type={Alerts.WARNING}>The 3DS feature is currently in Beta. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
+
+## Getting Started
+
+<GettingStartedSection />
+
+## Provisioning Resources
+
+In this section, we will explore the bare minimum resources necessary to display cards to your users.
+
+### Public Application
+
+You will need a [Public Application](/docs/api/applications) with permissions to create tokens and 3DS sessions. [Click here to create one](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&permissions=3ds%3Asession%3Acreate&type=public).
+
+This will create an application with the following Permissions:
+* Permissions: `token:create`, `3ds:session:create`
+
+<Alert>Save the API Key from the created Public Application as it will be used later in this guide.</Alert>
+
+### Private Application
+
+Next, you will need a [Private Application](/docs/api/applications) for your backend with the permission to authenticate 3DS sessions.
+
+[Click here to create it](https://portal.basistheory.com/applications/create?type=private&permissions=3ds%3Asession%3Aauthenticate) with the following Permissions:
+
+- Permissions: `3ds:session:authenticate`
+
+<Alert>Save the API Key from the created Private Application as it will be used later in this guide.</Alert>
+
+## Configuring the Basis Theory 3DS Web SDK
+
+The [3DS Web SDK](/docs/sdks/web/3ds/) is available as an NPM package.
+
+See instructions below on how to install and configure it.
+<div className={styles["sdk-column"]}>
+  <Card
+    href="/docs/sdks/web/3ds/"
+    img={<JavaScript />}
+    className={styles.sdk}
+  >Web 3DS SDK Reference</Card>
+  </div>
+
+## Creating a Card Token
+
+In order to run 3DS authentication on a customer card, you need to have the card tokenized with Basis Theory.
+Follow [this guide](https://developers.basistheory.com/docs/guides/collect/collect-cards) on how to create a card token using a variety of different technologies available through the Basis Theory SDKs.
+
+## Creating a Session and Device Fingerprinting
+
+The 3D Secure process starts with identifying certain information about the customer's device to aid in verifying if the transaction is valid.
+The Basis Theory 3DS SDK takes care of that process, collecting all necessary information and sending that over to the 3D secure server for processing.
+
+
+In order to do that, you must create a 3DS `session` and pass the created card token `id` as the `pan` property.
+The SDK will then collect the device info as previously described, and send it alongside the de-tokenized card number (pan) to the 3DS server in order to initiate a 3DS transaction.
+
+```typescript showLineNumbers
+import { BasisTheory3ds } from "@basis-theory/3ds-web";
+
+const checkout = async () => {
+  // initializing the 3ds sdk
+  const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>");
+
+  //highlight-start
+  // creating the session
+  const session = await bt3ds.createSession({ pan: "<CARD_TOKEN_ID>" });
+  //highlight-end
+}
+```
+
+## Authenticating a Session
+
+Once the `session` is created, it must be authenticated. In this process, the merchant or requestor must send to the 3DS server, and subsequently the card issuer, information about the transaction.
+
+This is done by calling the Basis Theory backend endpoint `/3ds/sessions/{sessionId}/authenticate` from your own backend, with a suitable private API key.
+
+<Tabs className="bt-tabs" queryString="backend">
+<TabItem value="node" label="Node">
+
+In this example, we are using the [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript showLineNumbers
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+app.post("/:sessionId/authenticate", async (req, res) => {
+  const { sessionId } = req.params;
+
+  const authenticateRequest = {
+    authentication_category: "payment",
+    authentication_type: "payment-transaction",
+    purchase_info: {
+      amount: "80000",
+      currency: "826",
+      exponent: "2",
+      date: "20240109141010",
+    },
+    requestor_info: {
+      id: "example-3ds-merchant",
+      name: "Example 3DS Merchant",
+      url: "https://www.ravelin.com/example-merchant",
+    },
+    merchant_info: {
+      mid: "9876543210001",
+      acquirer_bin: "000000999",
+      name: "Example 3DS Merchant",
+      category_code: "7922",
+      country_code: "826",
+    },
+    cardholder_info: {
+      name: "John Doe",
+      email: "john@me.com",
+    },
+  };
+
+  try {
+    const response = await fetch(
+      `${process.env.API_HOST}/3ds/sessions/${sessionId}/authenticate`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "BT-API-KEY": "<YOUR_PRIVATE_API_KEY>",
+        },
+        body: JSON.stringify(authenticateRequest),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("API request failed with status" + response.status);
+    }
+
+    const authentication = await response.json();
+
+    res.status(200).send(authentication);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+</TabItem>
+</Tabs>
+
+And then passing that information along back to your frontend.
+
+```typescript showLineNumbers
+import { BasisTheory3ds } from "@basis-theory/3ds-web";
+
+const checkout = async () => {
+  // initializing the 3ds sdk
+  const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>");
+
+  // creating the session
+  const session = await bt3ds.createSession({ pan: "<CARD_TOKEN_ID>" });
+
+  //highlight-start
+  // authenticating the session
+  const authResponse = await fetch(
+    `{your-backend-host}/${session.id}/authenticate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const authentication = await authResponse.json();
+  //highlight-end
+};
+```
+
+If the `status` for the authentication response is `successful`, that means a frictionless authentication happened and the authentication token is available as the `authentication_value` property.
+
+## Performing a Challenge
+
+If after authenticating a 3DS session, the authentication response `status` is set as `challenge` , that means that the customer needs to perform a challenge, like inputting a passcode, before getting the final 3DS authentication value.
+
+The Basis Theory SDK takes care of initiating that challenge by calling the `startChallenge` method, which returns a `Promise` that will only be resolved once the user completes the challenge.
+
+```typescript showLineNumbers
+import { BasisTheory3ds } from "@basis-theory/3ds-web";
+
+const checkout = async () => {
+  // initializing the 3ds sdk
+  const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>");
+
+  // creating the session
+  const session = await bt3ds.createSession({ pan: "<CARD_TOKEN_ID>" });
+
+  // authenticating the session
+  const authResponse = await fetch(
+    `{your-backend-host}/${session.id}/authenticate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const authentication = await authResponse.json();
+
+  //highlight-start
+  if (authentication.status === "challenge") {
+    // some information about the authentication is necessary to start a challenge
+    const challengeInfo = {
+      acsChallengeUrl: authentication.acs_challenge_url,
+      acsTransactionId: authentication.acs_transaction_id,
+      sessionId: session.id,
+      threeDSVersion: authentication.threeds_version,
+    };
+
+    // starting a challenge
+    // the response is just an object w/ the session id: { id: sessionId }
+    const challengeCompleted = await bt3ds.startChallenge(challengeInfo);
+  }
+  //highlight-end
+};
+```
+### Styling the Challenge Window
+
+The actual challenge 'window' is created and handled by card issuer and unfortunately there is not much that can be done to style it to fit with the design of your website.
+
+What is possible though, is determining how big that window can be, and style the container that holds it.
+
+#### Changing the Window Size
+
+To change the window sized, use the `windowSize` property on the challenge request, passing along the code for the desired pre-defined size according to the table below.
+
+```jsx showLineNumbers
+const challengeInfo = {
+	//... other challenge props
+	windowSize = '01'
+};
+
+const challengeCompleted = await basisTheory3ds.startChallenge(challengeInfo);
+```
+
+By default, the challenge window size is set to `03` or `500px x 600px`
+
+| WindowSize ID | Size |
+| --- | --- |
+| 01 | 250px x 400px |
+| 02 | 390px x 400px |
+| 03 | 500px x 600px |
+| 04 | 600px x 400px |
+| 05 | 100% x 100% |
+
+#### Style the Window Container
+
+The challenge window is an `iframe` that gets loaded inside a predefined container `div`.
+
+The container div always has the same id - `challengeFrameContainer`, and that can be used to style it:
+
+```css showLineNumbers
+#challengeFrameContainer {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5)
+}
+```
+
+#### Using your own Window Container**
+
+If you want more flexibility in styling, you can use your own container for the challenge window by passing the `id` of it in the `challengeContainerOptions` object during initialization:
+
+```typescript showLineNumbers
+import { BasisTheory3ds } from "@basis-theory/3ds-web";
+
+const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>", {
+  challengeContainerOptions: { id: "your_container_id" },
+});
+```
+
+## Retrieving a Challenge Result
+
+Once a challenge is complete, to actually see the outcome of it, it is necessary to do an additional backend call to retrieve the results.
+
+This is done by calling the Basis Theory backend endpoint `/3ds/{sessionId}/sessions/challenge-result`  from your own backend, using the same private API key that was used to authenticate.
+
+<Tabs className="bt-tabs" queryString="backend">
+<TabItem value="node" label="Node">
+
+In this example, we are using the [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript showLineNumbers
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+app.post("/:sessionId/authenticate", async (req, res) => {
+  const { sessionId } = req.params;
+
+  const authenticateRequest = {
+    authentication_category: "payment",
+    authentication_type: "payment-transaction",
+    purchase_info: {
+      amount: "80000",
+      currency: "826",
+      exponent: "2",
+      date: "20240109141010",
+    },
+    requestor_info: {
+      id: "example-3ds-merchant",
+      name: "Example 3DS Merchant",
+      url: "https://www.ravelin.com/example-merchant",
+    },
+    merchant_info: {
+      mid: "9876543210001",
+      acquirer_bin: "000000999",
+      name: "Example 3DS Merchant",
+      category_code: "7922",
+      country_code: "826",
+    },
+    cardholder_info: {
+      name: "John Doe",
+      email: "john@me.com",
+    },
+  };
+
+  try {
+    const response = await fetch(
+      `${process.env.API_HOST}/3ds/sessions/${sessionId}/authenticate`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "BT-API-KEY": "<YOUR_PRIVATE_API_KEY>",
+        },
+        body: JSON.stringify(authenticateRequest),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("API request failed with status" + response.status);
+    }
+
+    const authentication = await response.json();
+
+    res.status(200).send(authentication);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
+//highlight-start
+app.get("/:sessionId/challenge-result", async (req, res) => {
+  try {
+    const response = await fetch(
+      `https://api.basistheory.com/3ds/sessions/${sessionId}/challenge-result`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "BT-API-KEY": "<YOUR_PRIVATE_API_KEY>",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("API request failed with status" + response.status);
+    }
+
+    const result = await response.json();
+
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+//highlight-end
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+</TabItem>
+</Tabs>
+
+And then passing that information along back to your frontend.
+
+```typescript showLineNumbers
+import { BasisTheory3ds } from "@basis-theory/3ds-web";
+
+const checkout = async () => {
+  // initializing the 3ds sdk
+  const bt3ds = BasisTheory3ds("<YOUR_PUBLIC_API_KEY>");
+
+  // creating the session
+  const session = await bt3ds.createSession({ pan: "<CARD_TOKEN_ID>" });
+
+  // authenticating the session
+  const authResponse = await fetch(
+    `{your-backend-host}/${session.id}/authenticate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const authentication = await authResponse.json();
+
+  if (authentication.status === "challenge") {
+    // some information about the authentication is necessary to start a challenge
+    const challengeInfo = {
+      acsChallengeUrl: authentication.acs_challenge_url,
+      acsTransactionId: authentication.acs_transaction_id,
+      sessionId: session.id,
+      threeDSVersion: authentication.threeds_version,
+    };
+
+    // starting a challenge
+    // the response is just an object w/ the session id: { id: sessionId }
+    const challengeCompleted = await bt3ds.startChallenge(challengeInfo);
+
+    //highlight-start
+    // getting challenge result
+    const resultResponse = await fetch(
+      `{your-backend-host}/${session.id}/challenge-result`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const result = await resultResponse.json();
+    //highlight-end
+  }
+};
+```
+
+## Conclusion
+
+That's it 🎉!
+
+The result from the `authentication` (in case of frictionless) or `challenge-result` calls contains the authentication token (`authentication_value` attribute) and any other information needed to fully process the 3DS transaction.
+
+## Learn More
+
+- [3DS Web SDK Reference](/docs/sdks/web/3ds/)
+- [3DS API Reference](/docs/api/3ds/sessions)
