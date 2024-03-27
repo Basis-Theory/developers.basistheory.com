@@ -12,7 +12,8 @@ In this page, we will explore Apple Pay concepts and take a deep dive on how it 
 - **DPAN**: Device Primary Account Number. Apple's equivalent to a Network Token. Also known as  "DAN" or "Application PAN".
 - **BIN**: Bank Identifier Number. The first 8 digits of a card number. These are usually preserved when generating DPANs from FPANs.
 - **Apple Pay Token**: [payment token object](https://developer.apple.com/documentation/passkit/apple_pay/payment_token_format_reference) issued by the device upon user approval via biometric authentication (Face ID or Touch ID). It carries transaction information, including an encrypted form of the DPAN and transaction cryptogram.
-- **Issuer Bank**: the financial institution that issues the payment card to the cardholder and is responsible for approving transactions
+- **Issuer**: bank or bank-sponsored financial institution that issues the payment card to the cardholder and is responsible for approving transactions
+- **Acquirer**: bank or bank-sponsored entity
 - **TSP**: Token Service Provider are entities registered with EMVCo to generate unique replacement values for PANs, aka "tokens". In many cases, these are the Card Networks.
 - **Secure Element**: Industry-standard certified chip present in Apple hardware, such as iPhones, iPads, Apple Watch, etc.
 
@@ -26,15 +27,14 @@ Regardless of the method, when a user adds a card to Apple Pay, many systems are
 2. The Issuer Bank validates the FPAN and sends it to the TSP, requesting a new token.
 3. The TSP generates a new DPAN for the received FPAN and stores it next to the FPAN in their token vault. The DPAN and its key are returned to the Issuer Bank.
 4. The Issuer Bank generates a CVV-Key which is later used for authorization, and returns all values to Apple Servers
-5. Apple Servers securely "returns" the information to Apple Wallet, which stores it in the device's Secure Element ¹.
-
+5. Apple Servers securely "returns" the information to Apple Wallet ¹, which stores it in the device's Secure Element.
 
 ```mermaid
 sequenceDiagram
     actor u as User
     participant aw as Apple Wallet
     participant as as Apple Servers
-    participant ib as Issuer Bank
+    participant ib as Issuer
     participant tsp as Token Service Provider
 
     u ->>+ aw: Add Card
@@ -48,10 +48,59 @@ sequenceDiagram
     as -->>- aw: DPAN, Token Key, CVV-key ¹
     aw ->> aw: Store DPAN, Token Key and CVV-Key<br>in Secure Element
     aw -->>- u: Card Ready
-
 ```
-_¹ The actual mechanism of these steps is proprietary, and were outlined as a return for the sake of comprehension only._
+_¹ The actual mechanism of this step is proprietary and was outlined as a return for the sake of comprehension only._
 
 ## Using Apple Pay in Transactions
 
+1. When a user chooses Apple Pay to pay for a good or service:
+
+    - Apple Pay uses NFC to communicate with contactless POS terminals and enable in-person payments. By implementing EMVCo's contactless specifications, Apple Pay passes the payment data (DPAN, Dynamic CVV, etc.) from the device's Secure Element to the reader, which forwards it along with transaction details to the Acquirer.
+
+    - In e-commerce payments, the device generates a payload that contains payment data (DPAN) but tweaked for online transactions (cryptogram), that is made available for the merchant to route to their Acquirer, along with other transaction details.
+
+2. The Acquirer, currently holding the DPAN along with specific authentication data, sends them to the relevant Card Network (such as Visa, Mastercard, American Express, etc.). The Card Network identifies, based on its BIN (Bank Identification Number), that the DPAN needs to be detokenized into the FPAN.
+
+3. Now the Card Network is able to request the Issuer for transaction authorization with the FPAN, Authentication Data and Transaction details.
+
+4. The Payment Authorization Decision is returned from the Issuer, based on many factors such as available funds, transaction amount, velocity and frequency, etc. This decision is returned all the way back to the Merchant, in whatever channel the transaction was initiated.
+
+```mermaid
+sequenceDiagram
+    actor u as User
+    participant aw as Apple Wallet
+    participant mt as Merchant<br>Terminal
+    participant me as Merchant<br>E-commerce
+    participant ab as Acquirer
+    participant cn as Card Network <br> Token Service Provider
+    participant ib as Issuer
+
+    activate u
+    activate ab
+
+    u ->>+ aw: Use Apple Pay
+
+    alt In-person Payment
+        aw ->> mt: DPAN, Dynamic CVV
+        mt ->> ab: DPAN, Dynamic CVV, Transaction details
+    else Online Payment
+        aw ->>+ me: DPAN, Online Cryptogram
+        me ->> ab: DPAN, Online Cryptogram, Transaction details
+    end
+    aw -->> u: OK ✅
+    deactivate u
+
+    ab ->>+ cn: DPAN, Authentication Data, Transaction details
+    cn ->> cn: Detokenize FPAN
+    cn ->>+ ib: FPAN, Authentication Data, Transaction details
+    ib -->>- cn: Authorization Decision
+    cn -->>- ab: Authorization Decision
+
+    alt In-person Payment
+        ab -->> mt: Authorization Decision
+        deactivate ab
+    else Online Payment
+        ab -->> me: Authorization Decision
+    end
+```
 
