@@ -1,0 +1,96 @@
+---
+title: 3DS Web SDK
+description: The Basis Theory 3DS Web SDK makes it easy to start a 3DS transaction from the browser. Learn More.
+sidebar_label: 3DS Web SDK
+toc_max_heading_level: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { GithubCard } from "@site/src/components/sdks/GithubCard";
+import { SDK } from "@site/src/components/types";
+
+# 3DS Web SDK
+
+<Alert type={Alerts.WARNING}>The 3DS feature is currently in Beta. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
+
+The Basis Theory 3DS Web SDK makes it easy to start a 3DS transaction from the browser.
+
+Get started with our [guide](/docs/guides/process/authenticate-with-3ds) or continue reading the [reference docs](/docs/sdks/web/3ds/methods).
+
+## Before You Begin
+
+This SDK requires the use of an API Key associated with a **Public Application**.
+
+To create one, login into our [Portal](https://portal.basistheory.com) and create a new "Public" Application with the `3ds:session:create` permission.
+
+## Installation
+
+
+<Tabs className="bt-tabs">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npm install --save @basis-theory/3ds-web
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn add @basis-theory/3ds-web
+```
+
+  </TabItem>
+</Tabs>
+
+## Initialization
+
+<Tabs className="bt-tabs">
+  <TabItem value="module" label="ES Module">
+
+```javascript showLineNumbers
+import { BasisTheory3ds } from "@basis-theory/3ds-web";
+
+const bt3ds = BasisTheory3ds("<API_KEY>");
+```
+
+  </TabItem>
+</Tabs>
+
+### Initialization Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `apiKey`  | true | _string_ | The API Key used to identify the [Application](/docs/api/applications) |
+| `options` | false | _object_ | [Options](#initialization-options) for customizing the SDK usage |
+
+### Initialization Options
+
+#### Usage
+
+```javascript showLineNumbers
+import { BasisTheory3ds } from "@basis-theory/3ds-web";
+
+const bt3ds = BasisTheory3ds("<API_KEY>", {
+  apiBaseUrl: 'https://some-custom-url',
+  challengeContainerOptions: {
+    id: 'myCustomContainer',
+  },
+});
+```
+
+#### Attributes
+
+| Attribute | Required | Type | Description |
+| --- | --- | --- | --- |
+| `apiBaseUrl` | false | _string_ | The base URL for the Basis Theory API, if using a mock API |
+| `challengeContainerOptions` | false | _object_ | [Customizations](#challenge-container-options) applied to the challenge container |
+
+#### Challenge Container Options
+
+| Attribute | Required | Type | Description |
+| --- | --- | --- | --- |
+| `id` | false | _string_ | The `id` for the HTML container which will hold the challenge window. Set as `challengeFrameContainer` by default |
