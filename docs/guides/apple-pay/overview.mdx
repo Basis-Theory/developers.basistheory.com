@@ -13,7 +13,7 @@ In this page, we will explore Apple Pay concepts and take a deep dive on how it 
 - **BIN**: Bank Identifier Number. The first 8 digits of a card number. These are usually preserved when generating DPANs from FPANs.
 - **Apple Pay Token**: [payment token object](https://developer.apple.com/documentation/passkit/apple_pay/payment_token_format_reference) issued by the device upon user approval via biometric authentication (Face ID or Touch ID). It carries transaction information, including an encrypted form of the DPAN and transaction cryptogram.
 - **Issuer**: bank or bank-sponsored financial institution that issues the payment card to the cardholder and is responsible for approving transactions
-- **Acquirer**: bank or bank-sponsored entity
+- **Acquirer**: bank or bank-sponsored entity that will
 - **TSP**: Token Service Provider are entities registered with EMVCo to generate unique replacement values for PANs, aka "tokens". In many cases, these are the Card Networks.
 - **Secure Element**: Industry-standard certified chip present in Apple hardware, such as iPhones, iPads, Apple Watch, etc.
 
@@ -53,7 +53,9 @@ _¹ The actual mechanism of this step is proprietary and was outlined as a retur
 
 ## Using Apple Pay in Transactions
 
-1. When a user chooses Apple Pay to pay for a good or service:
+When a user chooses Apple Pay to pay for a good or service, the Apple Pay experience kicks in, allowing them to select the card for payment, customize delivery and billing address, contact information, etc. Then, the user is required to authenticate the payment by providing biometrics (Touch ID, Face ID or fallback to PIN). Internally, this will authenticate against the Secure Element to authorize access to the sensitive payment information.
+
+1. Once the user authorizes the payment:
 
     - Apple Pay uses NFC to communicate with contactless POS terminals and enable in-person payments. By implementing EMVCo's contactless specifications, Apple Pay passes the payment data (DPAN, Dynamic CVV, etc.) from the device's Secure Element to the reader, which forwards it along with transaction details to the Acquirer.
 
