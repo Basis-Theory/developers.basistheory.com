@@ -32,18 +32,21 @@ To create one, login into our [Portal](https://portal.basistheory.com) and creat
 
 <Tabs className="bt-tabs">
   <TabItem value="npm" label="npm">
-
-```shell showLineNumbers
-npm install --save @basis-theory/3ds-web
-```
-
+    ```shell showLineNumbers
+    npm install --save @basis-theory/3ds-web
+    ```
   </TabItem>
   <TabItem value="yarn" label="yarn">
+    ```shell showLineNumbers
+    yarn add @basis-theory/3ds-web
+    ```
+  </TabItem>
 
-```shell showLineNumbers
-yarn add @basis-theory/3ds-web
-```
-
+  <TabItem value="cdn" label="CDN">
+    ```html
+    <!-- Including this tag will export a global/window "BasisTheory3ds" method -->
+    <script src="https://3ds.basistheory.com"></script>
+    ```
   </TabItem>
 </Tabs>
 
@@ -51,14 +54,30 @@ yarn add @basis-theory/3ds-web
 
 <Tabs className="bt-tabs">
   <TabItem value="module" label="ES Module">
+    ```javascript showLineNumbers
+    import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
-```javascript showLineNumbers
-import { BasisTheory3ds } from "@basis-theory/3ds-web";
-
-const bt3ds = BasisTheory3ds("<API_KEY>");
-```
-
+    const bt3ds = BasisTheory3ds("<API_KEY>");
+    ```
   </TabItem>
+
+  <TabItem value="cdn" label="CDN">
+    ```html
+      <script>
+        // you can initialize it wherever it suits your workflow best
+        // here we are waiting for the window to load, to make sure BasisTheory3ds method
+        // has been injected in the window variable
+        window.addEventListener("load", async () => {
+          try {
+            // get the SDK methods onto a variable
+            const bt3ds = BasisTheory3ds("<API_KEY>");
+          } catch (e) {
+            // handle errors that could happen during initialization
+          }
+        });
+      </script>
+    ```
+</TabItem>
 </Tabs>
 
 ### Initialization Parameters

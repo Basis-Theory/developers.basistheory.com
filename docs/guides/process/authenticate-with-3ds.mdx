@@ -1,3 +1,7 @@
+---
+toc_max_heading_level: 2
+---
+
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
 import { Card } from "@site/src/components/shared/Card";
@@ -8,7 +12,8 @@ import TabItem from "@theme/TabItem";
 
 # Authenticate with 3DS
 
-[3DS (3D Secure)](https://developers.basistheory.com/docs/features/3d-secure) is an online payment authentication protocol that enhances anti-fraud efforts. It requires cardholders to undergo an additional layer of verification, such as a one-time password or biometric scan, during online transactions.
+[3DS (3D Secure)](/docs/features/3d-secure) is an online payment authentication protocol that enhances anti-fraud efforts. It requires cardholders to undergo an additional layer of verification, such as a one-time password or biometric scan, during online transactions.
+It is also the most common implementation of Secure Customer Authentication (SCA) for regulations such as PSD2.
 
 In this guide, we will set up the Basis Theory 3DS SDK to start a 3DS transaction in a frontend web application, and securely authenticate it using the Basis Theory Platform.
 
@@ -56,8 +61,8 @@ See instructions below on how to install and configure it.
 
 ## Creating a Card Token
 
-In order to run 3DS authentication on a customer card, you need to have the card tokenized with Basis Theory.
-Follow [this guide](https://developers.basistheory.com/docs/guides/collect/collect-cards) on how to create a card token using a variety of different technologies available through the Basis Theory SDKs.
+In order to run 3DS authentication on a customer card, it must be first tokenized with Basis Theory.
+Follow the [Collect Cards Guide](/docs/guides/collect/collect-cards) to learn how to create a card token using a variety of different technologies available through the Basis Theory SDKs.
 
 ## Creating a Session and Device Fingerprinting
 
@@ -65,7 +70,7 @@ The 3D Secure process starts with identifying certain information about the cust
 The Basis Theory 3DS SDK takes care of that process, collecting all necessary information and sending that over to the 3D secure server for processing.
 
 
-In order to do that, you must create a 3DS `session` and pass the created card token `id` as the `pan` property.
+First, let's create a 3DS `session` and pass the created card token `id` as the `pan` property.
 The SDK will then collect the device info as previously described, and send it alongside the de-tokenized card number (pan) to the 3DS server in order to initiate a 3DS transaction.
 
 ```typescript showLineNumbers
@@ -87,9 +92,10 @@ and <code>&lt;CARD_TOKEN_ID></code> with the token id created in the <a href="#c
 
 ## Authenticating a Session
 
-Once the `session` is created, it must be [authenticated](/docs/api/3ds/sessions#authenticate-session). In this process, the merchant or requestor must send to the 3DS server, and subsequently the card issuer, information about the transaction.
+Once the `session` is created, it must be [authenticated](/docs/api/3ds/sessions#authenticate-session).
+In this process, the merchant or requestor must send information about the transaction to the 3DS server.
 
-This is done by calling the Basis Theory backend endpoint `/3ds/sessions/{sessionId}/authenticate` from your own backend, with the private API key created earlier.
+This is done by calling [Authenticate 3DS Session](/docs/api/3ds/sessions#authenticate-session) endpoint from your own backend, with the private API key created earlier.
 
 <Tabs className="bt-tabs" queryString="backend">
 <TabItem value="node" label="Node">
@@ -205,9 +211,9 @@ If the `status` for the authentication response is `successful`, that means a fr
 
 ## Performing a Challenge
 
-If after authenticating a 3DS session, the authentication response `status` is set as `challenge` , that means that the customer needs to perform a challenge, like inputting a passcode, before getting the final 3DS authentication value.
+If after authenticating a 3DS session, the authentication response `status` is set as `challenge`, that means that the customer needs to perform a challenge, like inputting a passcode, before getting the final 3DS authentication value.
 
-The Basis Theory SDK takes care of initiating that challenge by calling the `startChallenge` method, which returns a `Promise` that will only be resolved once the user completes the challenge.
+You can trigger the user challenge by calling the `startChallenge` method, which returns a `Promise` that will only be resolved once the user completes it.
 
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
@@ -250,7 +256,7 @@ const checkout = async () => {
 ```
 ### Styling the Challenge Window
 
-The actual challenge 'window' is created and handled by card issuer and unfortunately there is not much that can be done to style it to fit with the design of your website.
+The internal challenge 'window' is created and handled by card issuer and unfortunately there is not much that can be done to style it to fit with the design of your website.
 
 What is possible though, is determining how big that window can be, and style the container that holds it.
 
@@ -301,7 +307,8 @@ The container div always has a default id - `challengeFrameContainer`, and that 
 
 #### Using your own Window Container
 
-If you want more flexibility in styling, you can use your own container for the challenge window by passing the `id` of it in the `challengeContainerOptions` object during initialization:
+If you want more flexibility in styling, like being able to embed the window on your own content or not having to rely on `absolute` positioning, you can use your own container for the challenge window.
+This can be done by passing the `id` for your desired container in the `challengeContainerOptions` object during initialization:
 
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
@@ -315,7 +322,7 @@ const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>", {
 
 ## Retrieving a Challenge Result
 
-Once a challenge is complete, to actually see the outcome of it, it is necessary to do an additional backend call to retrieve the results.
+Once a challenge is complete, results are retrieved by calling the [Get Challenge Result](/docs/api/3ds/sessions#get-challenge-result) endpoint from your backend.
 
 This is done by calling the Basis Theory backend endpoint `/3ds/{sessionId}/sessions/challenge-result`  from your own backend, using the same private API key that was used to authenticate.
 
@@ -477,10 +484,7 @@ const checkout = async () => {
 };
 ```
 
-## Conclusion
-
 That's it 🎉!
-
 The result from the `authentication` (in case of frictionless) or `challenge-result` calls contains the authentication token (`authentication_value` attribute) and any other information needed to fully process the 3DS transaction.
 
 ## Learn More
