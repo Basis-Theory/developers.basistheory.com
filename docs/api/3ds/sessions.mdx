@@ -1,0 +1,963 @@
+---
+title: 3DS Sessions
+---
+
+import { Beta } from "@site/src/components/shared/Beta";
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# 3D Secure <Enterprise />
+
+<Alert type={Alerts.INFO}>3D Secure is an Enterprise feature. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
+
+## Get a Session
+
+Get a 3DS Session by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/3ds/sessions/{id}"
+/>
+
+#### Permissions
+
+<Permission content="3ds:session:read" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const session = await bt.threeds.getSessionById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.ThreeDS;
+
+var client = new ThreeDSClient("<PRIVATE_API_KEY>");
+
+var session = await client.GetSessionByIdAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<PRIVATE_API_KEY>");
+
+        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
+        ThreeDSSession result = apiInstance.threeDSGetSessionById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import three_ds_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+
+    result = three_ds_client.three_ds_get_session_by_id(id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v5"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
+  })
+
+  result, httpResponse, err := apiClient.ThreeDSApi.ThreeDSGetSessionById(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `id` | true | _string_ | `null` | The ID of the 3DS session |
+
+
+### Response
+Returns a 3DS [session](#session-object) with the `id` provided. Returns [an error](/docs/api/errors) if the session cannot be retrieved.
+
+```json showLineNumbers
+{
+    "id": "be3bec00-a1c3-4ffe-8971-20a30bbee031",
+    "tenant_id": "9f328a79-b397-42ac-9b8d-18312157cc6b",
+    "pan_token_id": "bfe0060c-a465-41a0-a620-c804952d3468",
+    "card_brand": "Visa",
+    "expiration_date": "2024-03-23T14:01:26.4544211+00:00",
+    "created_date": "2024-03-22T14:01:26.455016+00:00",
+    "created_by": "68909d60-3e1d-4b3d-bf68-166c95745c4c",
+    "modified_date": "2024-03-22T14:01:45.3094992+00:00",
+    "modified_by": "7da53434-d814-4bd7-a455-6a4757c5c888",
+    "device": "browser",
+    "device_info": {
+        "browser_accept_header": "*/*",
+        "browser_javascript_enabled": true,
+        "browser_java_enabled": false,
+        "browser_language": "en-US",
+        "browser_color_depth": "24",
+        "browser_screen_height": "1440",
+        "browser_screen_width": "3440",
+        "browser_tz": "180",
+        "browser_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+    },
+    "version": {
+        "recommended_version": "2.2.0",
+        "available_version": [
+            "2.1.0",
+            "2.2.0"
+        ],
+        "earliest_acs_supported_version": "2.1.0",
+        "earliest_ds_supported_version": "2.1.0",
+        "latest_acs_supported_version": "2.2.0",
+        "latest_ds_supported_version": "2.2.0",
+        "acs_information": []
+    },
+    "method": {
+        "method_url": "https://acs.example.com/3ds/acs/browser/method",
+        "method_completion_indicator": "Y"
+    },
+    "authentication": {
+        "threeds_version": "2.2.0",
+        "acs_transaction_id": "50b9c543-4abc-4fbd-8bed-7e1931ed862c",
+        "ds_transaction_id": "497acd8d-4b50-4f55-9e56-c6dcaeff2933",
+        "acs_reference_number": "mock-acs-reference-number",
+        "ds_reference_number": "mock-directory-server-a",
+        "authentication_value": "LVJhdmVsaW4gVGVzdCBWYWx1ZS0=",
+        "authentication_status": "successful",
+        "eci": "05",
+        "acs_challenge_mandated": "N",
+        "authentication_challenge_type": "static",
+        "acs_challenge_url": "https://acs.example.com/3ds/acs/browser/creq",
+        "challenge_attempts": "01",
+        "message_extensions": []
+    }
+}
+```
+
+## Authenticate Session
+
+Authenticate a 3DS Session.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/3ds/sessions/{id}/authenticate"
+/>
+
+#### Permissions
+
+<Permission content="3ds:session:authenticate" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f76f1/authenticate" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "authentication_category": "payment",
+    "authentication_type": "payment-transaction",
+    "purchase_info": {
+        "amount": "80000",
+        "currency": "826",
+        "exponent": "2",
+        "date": "20240109141010"
+    },
+    "requestor_info":  {
+        "id": "example-3ds-merchant",
+        "name": "Example 3DS Merchant",
+        "url": "https://www.example.com/example-merchant"
+    },
+    "merchant_info": {
+        "mid": "9876543210001",
+        "acquirer_bin": "000000999",
+        "name": "Example 3DS Merchant",
+        "category_code": "7922",
+        "country_code": "826"
+    },
+    "cardholder_info": {
+        "name": "John Doe",
+        "email": "john@me.com"
+    }
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const session = await bt.threeds.authenticateSession("c06d0789-0a38-40be-b7cc-c28a718f76f1", {
+  authenticationCategory: "payment",
+  authenticationType: "payment-transaction",
+  purchaseInfo: {
+    amount: "80000",
+    currency: "826",
+    exponent: "2",
+    date: "20240109141010"
+  },
+  requestorInfo: {
+    id: "example-3ds-merchant",
+    name: "Example 3DS Merchant",
+    url: "https://www.example.com/example-merchant"
+  },
+  merchantInfo: {
+    mid: "9876543210001",
+    acquirerBin: "000000999",
+    name: "Example 3DS Merchant",
+    categoryCode: "7922",
+    countryCode: "826"
+  },
+  cardholderInfo: {
+    name: "John Doe",
+    email: "john@me.com"
+  }
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.ThreeDS;
+using BasisTheory.net.ThreeDS.Requests;
+
+var client = new ThreeDSClient("<API_KEY>");
+
+var authentication = await client.AuthenticateThreeDSSessionAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1", new AuthenticateThreeDSSessionRequest {
+  AuthenticationCategory = "payment",
+  AuthenticationType = "payment-transaction",
+  PurchaseInfo = new ThreeDSPurchaseInfo {
+    Amount = "80000",
+    Currency = "826",
+    Exponent = "2",
+    Date = "20240109141010"
+  },
+  RequestorInfo = new ThreeDSRequestorInfo {
+    Id = "example-3ds-merchant",
+    Name = "Example 3DS Merchant",
+    Url = "https://www.example.com/example-merchant"
+  },
+  MerchantInfo = new ThreeDSMerchantInfo {
+    Mid = "9876543210001",
+    AcquirerBin = "000000999",
+    Name = "Example 3DS Merchant",
+    CategoryCode = "7922",
+    CountryCode = "826"
+  },
+  CardholderInfo = new ThreeDSCardholderInfo {
+    Name = "John Doe",
+    Email = "john@me.com"
+  }
+});
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.Map;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<API_KEY>");
+
+        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
+        AuthenticateThreeDSSessionRequest authenticateThreeDSSessionRequest = new AuthenticateThreeDSSessionRequest();
+        ThreeDSAuthentication result = apiInstance.threeDSAuthenticateSession("c06d0789-0a38-40be-b7cc-c28a718f76f1", authenticateThreeDSSessionRequest
+          .authenticationCategory("payment")
+          .authenticationType("payment-transaction")
+          .purchaseInfo(new ThreeDSPurchaseInfo()
+            .amount("80000")
+            .currency("826")
+            .exponent("2")
+            .date("20240109141010"))
+          .requestorInfo(new ThreeDSRequestorInfo()
+            .id("example-3ds-merchant")
+            .name("Example 3DS Merchant")
+            .url("https://www.example.com/example-merchant"))
+          .merchantInfo(new ThreeDSMerchantInfo()
+            .mid("9876543210001")
+            .acquirerBin("000000999")
+            .name("Example 3DS Merchant")
+            .categoryCode("7922")
+            .countryCode("826"))
+          .cardholderInfo(new ThreeDSCardholderInfo()
+            .name("John Doe")
+            .email("john@me.com")));
+        System.out.println(result);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import three_ds_api
+from basistheory.model.authenticate_three_ds_session_request import AuthenticateThreeDSSessionRequest
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+
+    authentication = three_ds_client.three_ds_authenticate_session("c06d0789-0a38-40be-b7cc-c28a718f76f1", authenticate_three_ds_session_request=AuthenticateThreeDSSessionRequest(
+        authentication_category="payment",
+        authentication_type="payment-transaction",
+        purchase_info=basistheory.ThreeDSPurchaseInfo(
+            amount="80000",
+            currency="826",
+            exponent="2",
+            date="20240109141010"
+        ),
+        requestor_info=basistheory.ThreeDSRequestorInfo(
+            id="example-3ds-merchant",
+            name="Example 3DS Merchant",
+            url="https://www.example.com/example-merchant"
+        ),
+        merchant_info=basistheory.ThreeDSMerchantInfo(
+            mid="9876543210001",
+            acquirer_bin="000000999",
+            name="Example 3DS Merchant",
+            category_code="7922",
+            country_code="826"
+        ),
+        cardholder_info=basistheory.ThreeDSCardholderInfo(
+            name="John Doe",
+            email="john@me.com"
+    )))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v5"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<API_KEY>"},
+  })
+
+  sessionId := "c06d0789-0a38-40be-b7cc-c28a718f76f1"
+  authenticateThreeDSSessionRequest := *basistheory.NewAuthenticateThreeDSSessionRequest()
+  authenticateThreeDSSessionRequest.SetAuthenticationCategory("payment")
+  authenticateThreeDSSessionRequest.SetAuthenticationType("payment-transaction")
+
+  purchaseInfo := *basistheory.NewThreeDSPurchaseInfo()
+  purchaseInfo.SetAmount("80000")
+  purchaseInfo.SetCurrency("826")
+  purchaseInfo.SetExponent("2")
+  purchaseInfo.SetDate("20240109141010")
+
+  requestorInfo := *basistheory.NewThreeDSRequestorInfo()
+  requestorInfo.SetId("example-3ds-merchant")
+  requestorInfo.SetName("Example 3DS Merchant")
+  requestorInfo.SetUrl("https://www.example.com/example-merchant")
+
+  merchantInfo := *basistheory.NewThreeDSMerchantInfo()
+  merchantInfo.SetMid("9876543210001")
+  merchantInfo.SetAcquirerBin("000000999")
+  merchantInfo.SetName("Example 3DS Merchant")
+  merchantInfo.SetCategoryCode("7922")
+  merchantInfo.SetCountryCode("826")
+
+  cardholderInfo := *basistheory.NewThreeDSCardholderInfo()
+  cardholderInfo.SetName("John Doe")
+  cardholderInfo.SetEmail("john@me.com")
+
+  authenticateThreeDSSessionRequest.SetPurchaseInfo(purchaseInfo)
+  authenticateThreeDSSessionRequest.SetRequestorInfo(requestorInfo)
+  authenticateThreeDSSessionRequest.SetMerchantInfo(merchantInfo)
+  authenticateThreeDSSessionRequest.SetCardholderInfo(cardholderInfo)
+
+  authenticateResponse, authenticateHttpResponse, authenticateErr := apiClient.ThreeDSApi.ThreeDSAuthenticateSession(contextWithAPIKey, sessionId).AuthenticateThreeDSSessionRequest(authenticateThreeDSSessionRequest).Execute()
+}
+```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `authentication_category` | true | _string_ | The category of the 3DS authentication, see [Authentication Categories](#authentication-categories) for allowed values |
+| `authentication_type` | true | _string_ | The type of 3DS transaction, see [Authentication Types](#authentication-types) for allowed values |
+| `challenge_preference` | false | _string_ | The merchant 3DS challenge preference, see [Challenge Preferences](#challenge-preferences) for allowed values |
+| `purchase_info` | conditional | [Purchase Info](#purchase-info-object) | Information about the purchase (If any). Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
+| `merchant_info` | conditional | [Merchant Info](#merchant-info-object) | Information about the merchant. Required if `authentication_category` is `payment`  |
+| `requestor_info` | true | [Requestor Info](#requestor-info-object) | Information about the 3DS requestor |
+| `cardholder_info` | true | [Cardholder Info](#cardholder-info-object) | Information about the cardholder |
+| `broadcast_info` | false | _object_ | Unstructured information sent to the 3DS Server, Directory Server and Access Control Server |
+| `message_extensions` | false | _array_ | Array of [Message Extensions](#message-extension-object) - Data necessary to support requirements not defined in the standard 3DS format. |
+
+#### Authentication Categories
+- `payment`  - for any 3DS transaction that ends in a purchase / exchange of money.
+- `non-payment` - for just adding cards to accounts.
+
+#### Authentication Types
+- `payment-transaction`
+- `recurring-transaction`
+- `installment-transaction`
+- `add-card`
+- `maintain-card`
+- `cardholder-emv-verification`
+- `account-verification`
+
+#### Challenge Preferences
+- `no-preference`
+- `no-challenge`
+- `challenge-requested`
+- `challenge-mandated`
+- `no-challenge-risk-analysis-performed`
+- `no-challenge-data-sharing-only`
+- `no-challenge-strong-consumer-auth`
+- `no-challenge-whitelist-exemption`
+- `challenge-requested-whitelist-prompt`
+- `cartes-bancaires`
+
+#### Purchase Info Object
+This object contains information about the purchase itself (if the authentication category is a `payment` transaction).
+
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `amount` | conditional | _string_ | The purchase amount without any punctuation (i.e. 80000). Required if ``authentication_category`` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
+| `currency` | conditional | _string_ | The purchase currency in ISO 4217 currency code. Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
+| `exponent` | conditional | _string_ | Minor units of currency as specified in ISO 4217. Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
+| `date` | conditional | _string_ | The purchase date in UTC and `YYYYMMDDhhmmss` format. Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
+| `transaction_type` | conditional | _string_ | The type of purchase transaction. See [Purchase Transaction Types](#purchase-transaction-types) for values. Required if `authentication_category` is `payment` |
+| `installment_count` | conditional | _string_ | Maximum number of installments for installment payments. Required if `authentication_type` is `installment-transaction` |
+| `recurring_expiration` | conditional | _string_ | Final recurring authorization date in `YYYYMMDD` format. Required if `authentication_type` is `recurring-transaction` |
+| `recurring_frequency` | conditional | _string_ | Minimum number of days between recurring authorizations. Required if `authentication_type` is `recurring-transaction` |
+
+##### Purchase Transaction Types
+- `purchase`
+- `check-acceptance`
+- `account-funding`
+- `quasi-cash`
+- `prepaid-activation-load`
+
+#### Merchant Info Object
+This object contain information about the merchant (who is collecting the money from the purchase).
+
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `mid` | conditional | _string_ | The merchant identifier. Required if `authentication_category` is `payment` |
+| `acquirer_bin` | conditional | _string_ | The merchant/acquirer BIN. Required if `authentication_category` is `payment` |
+| `name` | conditional | _string_ | The merchant's name. Required if `authentication_category` is `payment` |
+| `country_code` | conditional | _string_ | ISO 3166-1 numeric three-digit country code of the merchant. Required if `authentication_category` is `payment` |
+| `category_code` | conditional | _string_ | The merchant's category code (mcc). Required if `authentication_category` is `payment` |
+| `risk_info` | false | [Merchant Risk Info](#merchant-info-object) | Optional information to de-risk the transaction |
+
+#### Merchant Risk Info Object
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `delivery_email` | false | _string_ | The delivery email address for electronic delivery merchandise |
+| `delivery_time_frame` | false | _string_ | The merchandise delivery time frame. See [Merchant Risk Delivery Time Frames](#merchant-risk-delivery-time-frames) for allowed values |
+| `gift_card_amount` | false | _string_ | The purchase amount total of prepaid or gift card(s) as an integer |
+| `gift_card_count` | false | _string_ | The total count of individual prepaid or gift cards/codes purchased |
+| `gift_card_currency` | false | _string_ | The ISO 4217 three-digit currency code of the gift card |
+| `pre_order_purchase` | false | _bool_ | If the merchandise order is a pre-order or not |
+| `pre_order_date` | false | _string_ | The date for when the pre-ordered merchandise will be available in `YYYYMMDD` format |
+| `reordered_purchase` | false | _bool_ | If the cardholder is reordering previously purchase merchandise or not |
+| `shipping_method` | false | _string_ | The shipping method chosen. See [Merchant Risk Shipping Methods](#merchant-risk-shipping-methods) for allowed values |
+
+##### Merchant Risk Delivery Time Frames
+- `electronic-delivery`
+- `same-day-shipping`
+- `overnight-shipping`
+- `two-or-more-day-shipping`
+
+##### Merchant Risk Shipping Methods
+- `ship-to-billing-address`
+- `ship-to-verified-address`
+- `ship-to-different-address`
+- `ship-to-store`
+- `digital-goods`
+- `travel-and-event-tickets`
+- `other`
+
+#### Requestor Info Object
+This object contains information about the 3DS requestor, some of it overlap w/ the merchant but has specific rules for different card issuers and brands.
+
+See [Instructions for Different Card Brands](#instructions-for-different-card-brands) on how to properly fill this information for the best results.
+
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `id` | true | _string_ | The 3DS requestor id |
+| `name` | true | _string_ | The 3DS requestor name |
+| `url` | true | _string_ | A business URL for the 3DS requestor |
+
+#### Instructions for Different Card Brands
+See below instructions on how to fill the id and name properties of the Requestor Info Object according to different card brands:
+
+- **Visa**:
+    - `id`: Use the merchant id
+    - `name`: Use the merchant name
+- **Mastercard:**
+    - `id`: Use the merchant id
+    - `name`: Use `Ravelin 3DS Server_{MID}`
+- **Discover:**
+    - `id`: Use the Client ID from enrollment with Discover. Also use the ID assigned to the 3DS requestor if any like so: `Discover ClientID_Merchant Name` or `Discover ClientID_ID`
+    - `name`: Use the 'Merchant DBA' (Doing Business As) name
+- **JCB:**
+    - `id`: Use the Acquirer BIN + 'MCT' + MID like: `{BIN}MCT{MID}`
+    - `name`: Use the merchant id
+- **American Express**:
+    - `id`: Use the relevant 3DS requestor type from the table below together with the merchant id:
+        | Requestor Type | Description |
+        | --- | --- |
+        | MER | General Merchant |
+        | AGG | Aggregator |
+        | JCB | JCB-Acquired Merchant |
+        | OTA | Online Travel Agency |
+        | OPT | OptBlue Seller |
+        | WAL | Digital Wallet |
+    - `name`: Use the merchant id
+- **Cartes Bancaires**:
+    - `id`: If you are using a Carte Bancaire acquirer and it's a wallet transaction, use the merchant SIRET Number+ 'Identifiant Wallet' for payment/enrolment - Or, just the SIRET Number for non-payment/enrolment. For all other scenarios, use merchant name.
+    - `name`: Use the merchant name
+
+#### Cardholder Info Object
+This object has information about who the cardholder is.
+Take note that most issuers tend to request at least the `name` and `email` properties for successful transactions.
+
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `account_id` | false | _string_ | The cardholder account identifier |
+| `account_type` | false | _string_ | The type of cardholder account. See [Cardholder Account Types](#cardholder-account-types) for allowed values |
+| `account_info` | false | [Cardholder Account Info](#cardholder-account-info-object) | Information about the cardholder's account |
+| `authentication_info` | false | [Cardholder Authentication Info](#cardholder-authentication-info-object) | Information on how the cardholder was authenticated in the merchant platform |
+| `prior_authentication_info` | false | [Cardholder Prior Authentication Info](#cardholder-prior-authentication-info-object) | Information about the cardholder's previous 3DS authentication |
+| `name` | true | _string_ | The cardholder name |
+| `email` | true | _string_ | The cardholder email |
+| `phone_number` | false | [Cardholder Phone Number](#cardholder-phone-number-object) | The cardholder main phone number |
+| `mobile_phone_number` | false | [Cardholder Phone Number](#cardholder-phone-number-object) | The cardholder mobile phone number |
+| `work_phone_number` | false | [Cardholder Phone Number](#cardholder-phone-number-object) | The cardholder work phone number |
+| `billing_shipping_address_match` | false | _string_  | If the billing and shipping address match or not. Use `Y` for yes and `N` for no |
+| `billing_address` | false | [Cardholder Address](#cardholder-address-object) | The cardholder billing address |
+| `shipping_address` | false | [Cardholder Address](#cardholder-address-object) | The cardholder shipping address |
+
+##### Cardholder Account Types
+- `debit`
+- `credit`
+
+#### Cardholder Account Info Object
+This object has information about the cardholder's account with the merchant platform.
+
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `account_age` | false | _string_ | Length of time that the cardholder has had the account. See [Cardholder Account Age](#cardholder-account-age) for allowed values |
+| `account_last_changed` | false | _string_ | Time since the account was last changed. See [Cardholder Account Last Changed](#cardholder-account-last-changed) for allowed values |
+| `account_change_date` | false | _string_ | Date the account was last changed in `YYYYMMDD` format |
+| `account_created_date` | false | _string_ | Date the account was created in `YYYYMMDDD` format |
+| `account_pwd_last_changed` | false | _string_ | Time since the account password was last changed. See [Cardholder Account Password Last Changed](#cardholder-account-password-last-changed) for allowed values |
+| `account_pwd_change_date` | false | _string_ | The password change date in `YYYYMMDD` format |
+| `purchase_count_half_year` | false | _string_ | Number of purchases by the cardholder in the last six months |
+| `transaction_count_day` | false | _string_ | Number of transactions by this cardholder in the last 24 hours |
+| `payment_account_age` | false | _string_ | Date the payment method was added to the account in `YYYYMMDD` format |
+| `transaction_count_year` | false | _string_  | Number of transactions by this cardholder in the last year |
+| `payment_account_created` | false | _string_ | Time since the payment method was added to the account. See [Cardholder Payment Account Created](#cardholder-payment-account-created) for allowed values |
+| `shipping_address_first_used` | false | _string_ | Time since the shipping address was first used. See [Cardholder Shipping Address First Used](#cardholder-shipping-address-first-used) for allowed values |
+| `shipping_address_usage_date` | false | _string_ | Date when the shipping address was first used in `YYYYMMDD` format |
+| `shipping_account_name_match` | false | _bool_ | If the cardholder name matches with the shipping name for the transaction |
+| `suspicious_activity_observed` | false | _bool_ | If any suspicious activity was ever observed in the cardholder account or not |
+
+##### Cardholder Account Age
+- `no-account`
+- `created-this-transaction`
+- `less-than-30-days`
+- `30-to-60-days`
+- `more-than-60-days`
+
+##### Cardholder Account Last Changed
+- `changed-this-transaction`
+- `less-than-30-days`
+- `30-to-60-days`
+- `more-than-60-days`
+
+##### Cardholder Account Password Last Changed
+- `no-change`
+- `changed-this-transaction`
+- `less-than-30-days`
+- `30-to-60-days`
+- `more-than-60-days`
+
+##### Cardholder Payment Account Created
+- `no-account`
+- `created-this-transaction`
+- `less-than-30-days`
+- `30-to-60-days`
+- `more-than-60-days`
+
+##### Cardholder Shipping Address First Used
+- `this-transaction`
+- `less-than-30-days`
+- `30-to-60-days`
+- `more-than-60-days`
+
+
+#### Cardholder Authentication Info Object
+This object has information on how the cardholder authenticated with the merchant platform.
+
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `method` | false | Authentication Methods | The cardholder method of authentication. See [Cardholder Authentication Methods](#cardholder-authentication-methods) for allowed values |
+| `timestamp` | false | string | The UTC authentication timestamp in `YYYYMMDDhhmm` format |
+| `data` | false | string | Additional data for a specific authentication process |
+
+##### Cardholder Authentication Methods
+- `no-login`
+- `username-password`
+- `federated-id`
+- `issuer-credentials`
+- `third-party`
+- `fido`
+- `fido-data-signed`
+- `src-assurance-data`
+
+#### Cardholder Prior Authentication Info Object
+This object has information about the cardholder prior 3DS transaction authentication.
+
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `method` | false | _string_ | The cardholder prior 3DS authentication method. See [Cardholder Prior Authentication Methods](#cardholder-prior-authentication-methods) for allowed values |
+| `timestamp` | false | _string_ | The UTC prior authentication timestamp in `YYYYMMDDhhmm` format |
+| `reference_id` | false | _string_ | An ACS Transaction ID for a prior authenticated transaction |
+| `data` | false | _string_ | Additional data for a specific authentication process |
+
+##### Cardholder Prior Authentication Methods
+- `frictionless`
+- `challenged`
+- `avs-verified`
+- `other`
+
+#### Cardholder Phone Number Object
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `country_code` | false | _string_ | Phone country code |
+| `number` | false | _string_ | Phone subscriber number |
+
+#### Cardholder Address Object
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `line1` | false | _string_ | The first line of the address |
+| `line2` | false | _string_ | The second line of the address |
+| `line3` | false | _string_ | The third line of the address |
+| `postal_code` | false | _string_ | Address postal code |
+| `city` | false | _string_ | Address city |
+| `state_code` | false | _string_ | ISO 3166-2 country subdivision code for the state or province of the address |
+| `country_code` | false | _string_ | ISO 3166-1 numeric three-digit country code of the address |
+
+### Response
+Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs/api/errors) if there were validation errors, or the session failed to authenticate.
+
+```json showLineNumbers
+{
+  "threeds_version": "2.2.0",
+  "acs_transaction_id": "5657c648-6e5e-4472-aac6-5400b9dab678",
+  "ds_transaction_id": "6159159e-ad57-43bf-a886-f5328583d5b2",
+  "acs_reference_number": "mock-acs-reference-number",
+  "ds_reference_number": "mock-directory-server-a",
+  "authentication_value": "LVJhdmVsaW4gVGVzdCBWYWx1ZS0=",
+  "authentication_status": "successful",
+  "eci": "05"
+}
+```
+
+## Get Challenge Result
+
+Get the result of a 3DS Challenge for the given session `id`.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/3ds/sessions/{id}/challenge-result"
+/>
+
+#### Permissions
+
+<Permission content="3ds:session:authenticate" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f76f1/challenge-result" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const result = await bt.threeds.getChallengeResult("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.ThreeDS;
+
+var client = new ThreeDSClient("<PRIVATE_API_KEY>");
+
+var result = await client.GetChallengeResultAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<PRIVATE_API_KEY>");
+
+        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
+        ThreeDSAuthentication result = apiInstance.threeDSGetChallengeResult(sessionId);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import three_ds_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+
+    result = three_ds_client.three_ds_get_challenge_result(session_id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v5"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
+  })
+
+  result, httpResponse, err := apiClient.ThreeDSApi.ThreeDSGetChallengeResult(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `id` | true | _string_ | `null` | The ID of the 3DS session |
+
+
+### Response
+Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs/api/errors) if the session was not found or if challenge result cannot be retrieved.
+
+```json showLineNumbers
+{
+  "threeds_version": "2.2.0",
+  "acs_transaction_id": "50b9c543-4abc-4fbd-8bed-7e1931ed862c",
+  "ds_transaction_id": "497acd8d-4b50-4f55-9e56-c6dcaeff2933",
+  "acs_reference_number": "mock-acs-reference-number",
+  "ds_reference_number": "mock-directory-server-a",
+  "authentication_value": "LVJhdmVsaW4gVGVzdCBWYWx1ZS0=",
+  "authentication_status": "successful",
+  "eci": "05",
+  "acs_challenge_mandated": "N",
+  "authentication_challenge_type": "static",
+  "acs_challenge_url": "https://acs.cardissuer.com/3ds/acs/browser/creq",
+  "challenge_attempts": "01",
+  "message_extensions": []
+}
+```
+
+## Session Object
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `id` | _uuid_ | Unique identifier of the session |
+| `tenant_id` | _uuid_ | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the session |
+| `pan_token_id` | _string_ | The ID for the card token used in the 3DS transaction |
+| `card_brand` | _string_ | The brand for the card used in the 3DS transaction |
+| `expiration_date` | _string_ | Date for when the 3DS session will expire |
+| `created_date` | _string_ | Created date of the session in ISO 8601 format |
+| `created_by` | _uuid_ | The [Application](/docs/api/applications#application-object) ID which created the session |
+| `modified_date` | _string_ | (Optional) Last modified date of the session in ISO 8601 format    |
+| `modified_by` | _uuid_ | (Optional) The [Application](/docs/api/applications) ID which last modified the session |
+| `device` | _string_ | The type of device used to create the 3DS session - `browser` or `mobile` |
+| `device_info` | [Device Info](#device-info-object) | Information about the device (collected by the SDKs) used to create the 3DS session |
+| `version` | [Version](#version-object) | Information about the supported 3DS version |
+| `method` | [Method](#method-object) | Information about the 3DS method invocation (device fingerprinting) |
+| `authentication` | [Authentication](#authentication-object) | The 3DS session authentication outcome |
+
+### Device Info Object
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `browser_accept_header` | _string_ | The HTTP accept headers from the browser (`browser` device only) |
+| `browser_ip_address` | _string_ | The browser's IP address (`browser` device only) |
+| `browser_javascript_enabled` | _bool_ | If javascript is enabled on the browser (`browser` device only) |
+| `browser_java_enabled` | _bool_ | If java is enabled on the browser (`browser` device only) |
+| `browser_color_depth` | _string_ | The bit depth of the browser's color palette for displaying images (`browser` device only) |
+| `browser_screen_height` | _string_ | Total height of the device screen (not browser window) in pixels (`browser` device only) |
+| `browser_screen_width` | _string_ |Total width of the device screen (not browser window) in pixels (`browser` device only) |
+| `browser_tz` | _string_ | Timezone offset in minutes between UTC and the browser local time (`browser` device only) |
+| `browser_user_agent` | _string_ | Exact content of the browser HTTP user-agent header (`browser` device only) |
+| `sdk_transaction_id` | _uuid_ | Unique identifier for a mobile SDK transaction (`mobile` device only) |
+| `sdk_application_id` | _uuid_ | Unique identifier created upon installation of the mobile SDK (`mobile` device only) |
+| `sdk_encryption_data` | _uuid_ | Device data encrypted by the SDK (`mobile` device only) |
+| `sdk_ephemeral_public_key` | _object_ | Uublic key component of the ephemeral key pair generated by the SDK (`mobile` device only) |
+| `sdk_max_timeout` | _string_ | Maximum amount of time (in minutes) for all exchanges (`mobile` device only) |
+| `sdk_reference_number` | _string_ | Identifies the version of the 3DS SDK |
+| `sdk_render_options` | [SDK Render Options](#sdk-render-options-object) | The SDK UI types that the device supports (`mobile` device only) |
+
+#### SDK Render Options Object
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `sdk_interface` | _string_ | The interface types the mobile device supports |
+| `sdk_ui_type` | _array_ | The UI types the device supports for displaying challenge UIs |
+
+### Version Object
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `recommended_version` | _string_ | The 3DS version that was used for the transaction |
+| `available_version` | _array_ | The UI types the device supports for displaying challenge UIs |
+
+### Method Object
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `method_url` | _string_ | The URL for the Method request, used by the 3DS SDK |
+| `method_completion_indicator` | _string_ | Indicator of if the method request completed successfully or not |
+
+### Authentication Object
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `threeds_version` | _string_ | The 3DS version used in the transaction |
+| `acs_transaction_id` | _string_ | The transaction ID from the 3DS Access Control Server (ACS) |
+| `ds_transaction_id` | _string_ | The transaction ID from the 3DS Directory Server (DS) |
+| `acs_reference_number` | _string_ | A unique identifier assigned to the DS by EMVCoD |
+| `ds_reference_number` | _string_ | A unique identifier assigned to the ACS by EMVCo |
+| `authentication_value` | _string_ | The token value used to authorize the transaction. Also know as CAVV, AAV, AEVV, etc. |
+| `authentication_status` | _string_ | The outcome of the 3DS authentication |
+| `authentication_status_reason` | _string_  | Additional information about the authentication status if necessary |
+| `eci` | _string_ | Electronic Commerce Indicator  |
+| `acs_challenge_mandated` | _string_ | Indicates whether regional mandates (e.g. PSD2) required a challenge to be performed |
+| `authentication_challenge_type` | _string_ | The type of challenge authentication used (if challenge) |
+| `acs_challenge_url` | _string_ | The URL to be used for the challenge |
+| `challenge_attempts` | _string_ | The number of challenges attempted by the cardholder |
+| `challenge_cancel_reason` | _string_ | The reason why a challenge was cancelled |
+| `cardholder_info` | _string_ | Information from the issuer to be displayed to the cardholder |
+| `whitelist_status` | _string_ | Indicates if the cardholder whitelisted the merchant |
+| `whitelist_status_source` | _string_ | Identifies the system that set the whitelist value |
+| `message_extensions` | _array_ | Array of [Message Extensions](#message-extension-object) - Data necessary to support requirements not defined in the standard 3DS format |
+
+### Message Extension Object
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `id` | _string_ | The id for the extensions |
+| `name` | _string_ | The name for the extension |
+| `critical` | _bool_ | If the extension is critical or not |
+| `data` | _string_ | Data carried in the extension |

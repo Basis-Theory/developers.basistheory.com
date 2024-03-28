@@ -49,7 +49,13 @@ const sidebars = {
         type: "doc",
         id: "guides/cards/index",
       },
-      items: ["guides/collect/collect-cards", "guides/share/process-card-payments", "guides/collect/receive-cards", "guides/process/extract-cards", "guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
+      items: ["guides/collect/collect-cards", "guides/share/process-card-payments", "guides/collect/receive-cards", "guides/process/extract-cards", "guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin",        {
+        type: "doc",
+        id: "guides/process/authenticate-with-3ds",
+        customProps: {
+          enterprise: true,
+        },
+      },],
     },
     {
       type: "category",
@@ -352,6 +358,23 @@ const sidebars = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "3D Secure",
+      link: {
+        type: "doc",
+        id: "api/3ds/sessions",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/3ds/sessions",
+          customProps: {
+            enterprise: true,
+          }
+        }
+      ],
+    },
     "api/deprecations",
     {
       type: "html",
@@ -428,6 +451,18 @@ const sidebars = {
             id: "sdks/web/react/index",
           },
           items: ["sdks/web/react/components", "sdks/web/react/events", "sdks/web/react/properties", "sdks/web/react/services"],
+        },
+        {
+          type: "category",
+          label: "3DS SDK",
+          link: {
+            type: "doc",
+            id: "sdks/web/3ds/index",
+          },
+          customProps: {
+            enterprise: true,
+          },
+          items: ["sdks/web/3ds/methods"],
         },
       ],
     },
