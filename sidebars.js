@@ -53,7 +53,7 @@ const sidebars = {
         type: "doc",
         id: "guides/process/authenticate-with-3ds",
         customProps: {
-          beta: true,
+          enterprise: true,
         },
       },],
     },
@@ -370,7 +370,7 @@ const sidebars = {
           type: "doc",
           id: "api/3ds/sessions",
           customProps: {
-            beta: true,
+            enterprise: true,
           }
         }
 
@@ -461,7 +461,7 @@ const sidebars = {
             id: "sdks/web/3ds/index",
           },
           customProps: {
-            beta: true,
+            enterprise: true,
           },
           items: ["sdks/web/3ds/methods"],
         },
