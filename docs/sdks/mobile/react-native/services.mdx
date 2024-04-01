@@ -3,8 +3,11 @@ sidebar_label: Services
 ---
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import Link from "@docusaurus/Link";
 
 # Services
+
+Basis Theory React Native Elements SDK provides several methods and services for safely collecting, sharing, or manipulating sensitive data.
 
 ## Initialization
 
@@ -14,93 +17,176 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
   const { bt } = useBasisTheory('<PUBLIC API KEY>');
 ```
 
-## Methods
+## Tokens
 
-### Create a Session
+### Create a token
 
-To retrieve sensitive data in React Native, you'll need to create a `session` and use its `sessionKey` for making requests securely.
-To accomplish this, construct your `createSession` request like this:
+This function wraps the [create a token API endpoint](/docs/api/tokens/#create-a-token) to generate a single token.
 
-```typescript showLineNumbers
+```typescript
+const { bt } = useBasisTheory("<PUBLIC API KEY>");
 
-const { bt } = useBasisTheory('<PUBLIC API KEY>');
-
-const session = await bt?.sessions.create('<PUBLIC API KEY>');;
+const token = await bt?.tokens.create({
+  type: "card",
+  data: {
+    number: cardNumberRef.current,
+    expiration_month: cardExpirationRef.current.month(),
+    expiration_year: cardExpirationRef.current.year(),
+    cvc: cardVerificationRef.current,
+  },
+});
 ```
 
-#### Parameters
+Our elements will encapsulate the sensitive data allowing your users to modify the element values without your application directly interacting with it, thereby ensuring compliance within your application.
 
-| Parameter | Type     | Required | Description                                                                |
-|-----------|----------|----------|----------------------------------------------------------------------------|
-| `apiKey`  | `string` | `false`  | The API key to use for this request. Defaults to the globally set API key. |
+<Alert>For detailed instructions on creating tokens with react native, please refer to our guide on [collecting cards](/docs/guides/collect/collect-cards?sdk=react-native#storing-cards).</Alert>
 
-The response returns a [session](/docs/api/applications/sessions#response).
+#### Tokenize
 
-### Get token by ID
+This function wraps the [tokenize API endpoint](/docs/api/tokens/tokenize) to create tokens out of any request and create tokens of different types of tokens in the same request.
 
-This function wraps the [get a token API endpoint](/docs/api/tokens/#get-a-token) to retrieve a single token. The token's data
-is transformed to an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref) which you can use to [set the value](/docs/sdks/mobile/react-native#using-refs)
-of your elements without touching the plaintext value and pulling your application into compliance scope.
+```typescript
+const { bt } = useBasisTheory("<PUBLIC API KEY>");
 
-```typescript showLineNumbers
-const { bt } = useBasisTheory('<PUBLIC API KEY>');
-
-const token = await bt?.tokens.getById(
-    '<YOUR TOKEN ID>'
-);
+const token = await bt?.tokens.tokenize({
+  first_name: "John",
+  last_name: "Doe",
+  primary_card: {
+    type: "card",
+    data: {
+      number: cardNumberRef.current,
+      expiration_month: cardExpirationRef.current.month(),
+      expiration_year: cardExpirationRef.current.year(),
+      cvc: cardVerificationRef.current,
+    },
+  },
+  secondary_card: {
+    type: "card",
+    data: {
+      number: cardNumberRef1.current,
+      expiration_month: cardExpirationRef1.current.month(),
+      expiration_year: cardExpirationRef1.current.year(),
+      cvc: cardVerificationRef1.current,
+    },
+  },
+  sensitive_tags: [
+    "preferred",
+    {
+      type: "token",
+      data: "vip",
+    },
+  ],
+});
 ```
 
-#### Parameters
+### Retrieve a token and display its data
 
-| Parameter | Type     | Required | Description                                                                        |
-|-----------|----------|----------|------------------------------------------------------------------------------------|
-| `id`      | `string` | `true`   | The ID of the token you want to retrieve.                                          |
-| `apiKey`  | `string` | `false`  | The session API key to use for this request. Defaults to the globally set API key. |
+This function wraps the [get a token API endpoint](/docs/api/tokens/#get-a-token), enabling you to fetch a single token by its `id`.
 
-The response returns a [token](/docs/api/tokens/#response-2). All values in the `data` object in the response is converted to an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref).
-This means that you can traverse through the `data` object and set the value of your elements without touching the plaintext value.
-Below is an example of how to do that.
+```typescript
+const { bt } = useBasisTheory("<PUBLIC API KEY>");
 
-```javascript showLineNumbers
-import React, { useRef } from 'react';
-import { Button } from 'react-native';
-import {
-  CardNumberElement,
-  BTRef,
-} from '@basis-theory/basis-theory-react-native';
+const token = await bt?.tokens.retrieve("<TOKEN ID>", <OPTIONAL SESSION KEY>);
+```
+
+If the the optional session key is not passed to `bt.tokens.retrieve`, the function will return a [token object](/docs/api/tokens/#token-object) that does not contain any sensitive data.
+
+<Alert type={Alerts.WARNING}>The <code>data</code> attribute in the token returned by the <code>retrieve</code> method is not the actual data, but a synthetic representation of the sensitive detokenized data.</Alert>
+
+<Alert>Token attributes such as <code>metadata</code> are directly accessible from the <code>retrieve</code> response as they are considered non-sensitive.</Alert>
+
+#### Revealing token data
+
+It's important to note that accessing sensitive data requires creating and authorizing a [`session`](/docs/concepts/access-controls#what-are-sessions), and `bt.tokens.retrieve` takes in its corresponding [`sessionKey`](/docs/api/applications/sessions#create-session-response-object) for secure retrieval of such information.
+
+Once the token data is retrieved, the SDK encapsulates the data into an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref). This reference can then be utilized to [set an element's value](/docs/sdks/mobile/react-native#using-refs). This approach ensures that element values can be displayed without direct interaction with sensitive data, thus maintaining compliance within the application's scope.
+
+Here's how to structure your code to create a session:
+
+```typescript
+const { bt } = useBasisTheory("<PUBLIC API KEY>");
+
+const session = await bt?.sessions.create();
+```
+
+<Alert>For detailed information on the `CreateSessionResponse` object, please refer to [our API documentation](/docs/api/applications/sessions#create-session-response-object).</Alert>
+
+The newly created session needs [authorization](/docs/api/applications/sessions#authorize-session) from a private application before you can reveal the token value. Your backend must perform the authorization call.
+
+<Alert>For detailed instructions on constructing the session authorization request, please refer to our guide on [displaying cards](/docs/guides/share/display-cards#authorizing-a-session).</Alert>
+
+```typescript
+import React, { useRef } from "react";
+import { Button } from "react-native";
+import { CardNumberElement, BTRef } from "@basis-theory/basis-theory-react-native";
 
 const MyForm = () => {
-  const { bt } = useBasisTheory('<PUBLIC API KEY>');
+  const { bt } = useBasisTheory("<PUBLIC API KEY>");
 
   const cardNumberRef = useRef<BTRef>(null);
 
   const getCardNumber = async () => {
-  const token = await bt?.tokens.getById(
-      '<YOUR TOKEN ID>'
-  );
+    // create the session
+    const session = await bt?.sessions.create();
+
+    // authorize the session
+    await fetch("< YOUR_BT_SESSION_AUTH_ENDPOINT >", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nonce: session?.nonce,
+        tokenId,
+      }),
+    });
+
+    const token = await bt?.tokens.retrieve("<YOUR TOKEN ID>", session?.sessionKey);
 
     cardNumberRef.current.setValue(token.data.number);
   };
 
   return (
     <>
-      <CardNumberElement
-        btRef={cardNumberRef}
-        placeholder="Card Number"
-      />
+      <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" />
       <div>
-        <Button type="button" onPress={getCardNumber}/>
+        <Button type="button" onPress={getCardNumber} />
       </div>
     </>
   );
 };
 ```
 
-<Alert type={Alerts.WARNING}>The <code>data</code> attribute in the token returned by the <code>getTokenById</code> method is not the actual data, but a synthetic representation of the sensitive detokenized data.</Alert>
+### Update a token
 
-<Alert>Token attributes such as <code>metadata</code> are directly accessible from the <code>retrieve</code> response as they are considered non-sensitive.</Alert>
+This function wraps the [update token API endpoint](/docs/api/tokens/#update-token) to update a single token.
 
-### proxy
+```typescript
+const { bt } = useBasisTheory("<PUBLIC API KEY>");
+
+const token = await bt?.tokens.update("<TOKEN ID>", {
+  data: {
+    number: cardNumberRef.current,
+    expiration_month: cardExpirationRef.current.month(),
+    expiration_year: cardExpirationRef.current.year(),
+  },
+});
+```
+
+### Delete a token
+
+This function wraps the [delete token API endpoint](/docs/api/tokens/#delete-token) to delete a single token.
+
+```typescript
+const { bt } = useBasisTheory("<PUBLIC API KEY>");
+
+await bt?.tokens.delete("<TOKEN ID>");
+```
+
+<Alert>The <Link to="https://github.com/Basis-Theory/basis-theory-react-native/tree/master/demo" target="_blank">Basis Theory React Native SDK repository</Link> contains code examples demonstrating the implementation of each of the aforementioned methods, adhering to best practices.</Alert>
+
+### Proxy
 
 Proxy provides a simple way to retrieve data back into an element utilizing our [proxy](/docs/api/proxies) service.
 
@@ -126,30 +212,24 @@ const proxyResponse = await bt?.proxy({
 
 #### Parameters
 
-| Parameter                | Type      | Required | Description                                                                               |
-|--------------------------|-----------|----------|-------------------------------------------------------------------------------------------|
-| `method`                 | `string`  | `true`   | The HTTP method to invoke for the proxy request ("post", "put", "patch", "get", "delete") |
-| `headers`                | `object`  | `false`  | The headers to pass into the proxy request                                                |
-| `body`                   | `object`  | `false`  | The request body to pass into the proxy request                                           |
-| `query`                  | `object`  | `false`  | The query params to pass into the proxy request                                           |
-| `path`                   | `string`  | `false`  | The path to pass onto the end of the proxy destination URL                                |
+| Parameter | Type     | Required | Description                                                                               |
+| --------- | -------- | -------- | ----------------------------------------------------------------------------------------- |
+| `method`  | `string` | `true`   | The HTTP method to invoke for the proxy request ("post", "put", "patch", "get", "delete") |
+| `headers` | `object` | `false`  | The headers to pass into the proxy request                                                |
+| `body`    | `object` | `false`  | The request body to pass into the proxy request                                           |
+| `query`   | `object` | `false`  | The query params to pass into the proxy request                                           |
+| `path`    | `string` | `false`  | The path to pass onto the end of the proxy destination URL                                |
 
 The response returns a [proxu](/docs/api/proxies/pre-configured-proxies#response-6). All values in the response is converted to an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref).
 This means that you can traverse through the proxy response and set the value of your elements without touching the plaintext value.
 Below is an example of how to do that.
 
 ```typescript jsx showLineNumbers
-import React, { useRef } from 'react';
-import {
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
-  BasisTheoryElements,
-  BTRef,
-} from '@basis-theory/basis-theory-react-native';
+import React, { useRef } from "react";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BasisTheoryElements, BTRef } from "@basis-theory/basis-theory-react-native";
 
 const MyForm = () => {
-  const { bt } = useBasisTheory('<PUBLIC API KEY>');
+  const { bt } = useBasisTheory("<PUBLIC API KEY>");
 
   const cardNumberRef = useRef<BTRef>(null);
   const cardExpirationDateRef = useRef<BTRef>(null);
@@ -158,10 +238,10 @@ const MyForm = () => {
   const getCardData = async () => {
     const proxyResponse = await bt?.proxy({
       headers: {
-        'BT-API-KEY': '<SESSION_API_KEY>',
-        'BT-PROXY-KEY': '<YOUR PROXY KEY>',
+        "BT-API-KEY": "<SESSION_API_KEY>",
+        "BT-PROXY-KEY": "<YOUR PROXY KEY>",
       },
-      method: 'post',
+      method: "post",
     });
 
     cardNumberRef.current?.setValue(proxyResponse.json.cardNumber);
@@ -171,18 +251,9 @@ const MyForm = () => {
 
   return (
     <>
-      <CardNumberElement
-        btRef={cardNumberRef}
-        placeholder="Card Number"
-      />
-      <CardExpirationDateElement
-        btRef={cardExpirationDateRef}
-        placeholder="Card Expiration Date"
-      />
-      <CardVerificationCodeElement
-        btRef={cardVerificationCodeRef}
-        placeholder="CVC"
-      />
+      <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" />
+      <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" />
+      <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" />
       <div>
         <button type="button" onClick={getCardData}>
           "Get Card Data"

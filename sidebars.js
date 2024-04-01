@@ -490,7 +490,7 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "ReactNative Elements",
+          label: "React Native Elements",
           link: {
             type: "doc",
             id: "sdks/mobile/react-native/index",

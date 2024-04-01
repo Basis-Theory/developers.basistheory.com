@@ -181,12 +181,11 @@ export default function Home(): JSX.Element {
                   >
                     iOS
                   </Card>
-                  <Card
-                    href="/docs/sdks/mobile/android/"
-                    img={<Android />}
-                    className={styles.sdk}
-                  >
+                  <Card href="/docs/sdks/mobile/android/" img={<Android />} className={styles.sdk}>
                     Android
+                  </Card>
+                  <Card href="/docs/sdks/mobile/react-native/" img={<ReactSvg />} className={styles.sdk}>
+                    React Native
                   </Card>
                 </div>
               </div>
