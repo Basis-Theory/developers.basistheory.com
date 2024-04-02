@@ -1,3 +1,10 @@
+# [1.143.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.142.0...v1.143.0) (2024-04-02)
+
+
+### Features
+
+* update react native docs to latest ([#359](https://github.com/Basis-Theory/developers.basistheory.com/issues/359)) ([24514cc](https://github.com/Basis-Theory/developers.basistheory.com/commit/24514cc2eabf2f37e193f5d170c0dd475c2c6f6c))
+
 # [1.142.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.141.0...v1.142.0) (2024-03-28)
 
 
