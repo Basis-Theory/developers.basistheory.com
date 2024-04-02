@@ -1,3 +1,10 @@
+# [1.144.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.143.0...v1.144.0) (2024-04-02)
+
+
+### Features
+
+* add Apple Pay Overview ([#356](https://github.com/Basis-Theory/developers.basistheory.com/issues/356)) ([a2164f2](https://github.com/Basis-Theory/developers.basistheory.com/commit/a2164f2d1d2a683153dfe8fe33603f2202854da9))
+
 # [1.143.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.142.0...v1.143.0) (2024-04-02)
 
 
