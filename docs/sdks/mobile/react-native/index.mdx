@@ -1,6 +1,6 @@
 ---
-title: ReactNative Elements SDK
-sidebar_label: ReactNative Elements
+title: React Native Elements SDK
+sidebar_label: React Native Elements
 ---
 
 import Tabs from "@theme/Tabs";
@@ -10,14 +10,9 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { GithubCard } from "@site/src/components/sdks/GithubCard";
 import { SDK } from "@site/src/components/types";
 
-# React Elements SDK
+# React Native Elements SDK
 
-<GithubCard
-  heading="ReactNative SDK"
-  icon={SDK.REACT}
-  organization="basis-theory"
-  repository="basis-theory-react-native"
-/>
+<GithubCard heading="React Native SDK" icon={SDK.REACT} organization="basis-theory" repository="basis-theory-react-native" />
 
 ###
 
@@ -60,18 +55,9 @@ yarn add @basis-theory/basis-theory-react-native
 ## Using an Element
 
 ```typescript jsx showLineNumbers
-import React, { useRef } from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  View,
-} from 'react-native';
-import {
-  BTRef,
-  CardNumberElement,
-} from '@basis-theory/basis-theory-react-native';
+import React, { useRef } from "react";
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import { BTRef, CardNumberElement } from "@basis-theory/basis-theory-react-native";
 
 const App = () => {
   const ref = useRef<BTRef>(null);
@@ -81,11 +67,7 @@ const App = () => {
       <StatusBar />
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <View style={styles.viewContainer}>
-          <CardNumberElement
-            btRef={ref}
-            placeholder="Card Number"
-            style={styles.cardNumber}
-          />
+          <CardNumberElement btRef={ref} placeholder="Card Number" style={styles.cardNumber} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -94,17 +76,17 @@ const App = () => {
 
 const styles = StyleSheet.create({
   cardNumber: {
-    backgroundColor: '#eeeeee',
-    borderColor: 'blue',
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
     borderWidth: 2,
-    color: 'purple',
+    color: "purple",
     height: 40,
     margin: 12,
     padding: 10,
   },
   viewContainer: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     marginTop: 32,
   },
 });
@@ -120,21 +102,17 @@ we don't return the underlying [TextInput](https://reactnative.dev/docs/textinpu
 is an instance of `BTRef` that has the following methods under the `current` property:
 
 | Methods    | Signature                          | Description                                                                                                                                                         |
-|------------|------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `clear`    | `() => void`                       | Clears the value from the underlying [TextInput](https://reactnative.dev/docs/textinput#clear)                                                                      |
 | `focus`    | `() => void`                       | Focuses the underlying [TextInput](https://reactnative.dev/docs/textinput#focus)                                                                                    |
 | `blur`     | `() => void`                       | Blurs the underlying [TextInput](https://reactnative.dev/docs/textinput#blur)                                                                                       |
 | `setValue` | `(inputBTRef: InputBTRef) => void` | Sets the value of the Element. The function takes in an [InputBTRef](/docs/sdks/mobile/react-native/#inputbtref) which is returned from a Basis Theory service call |
+| `month`    | `() => void`                       | Data-parsing method that resolves to the month value of the input date, where "January" = 1.                                                                        |
+| `year`     | `() => void`                       | Data-parsing method that resolves to the four-digit year value of the input date.                                                                                   |
 
 ```typescript jsx showLineNumbers
-import React, { useRef } from 'react';
-import {
-  Button,
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
-  BTRef,
-} from '@basis-theory/basis-theory-react-native';
+import React, { useRef } from "react";
+import { Button, CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BTRef } from "@basis-theory/basis-theory-react-native";
 
 const MyForm = () => {
   const cardNumberRef = useRef<BTRef>(null);
@@ -149,18 +127,9 @@ const MyForm = () => {
 
   return (
     <>
-      <CardNumberElement
-        btRef={cardNumberRef}
-        placeholder="Card Number"
-      />
-      <CardExpirationDateElement
-        btRef={cardExpirationDateRef}
-        placeholder="Card Expiration Date"
-      />
-      <CardVerificationCodeElement
-        btRef={cardVerificationCodeRef}
-        placeholder="CVC"
-      />
+      <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" />
+      <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" />
+      <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" />
       <div>
         <Button title="Clear" onPress={clear} />
       </div>
@@ -169,35 +138,29 @@ const MyForm = () => {
 };
 ```
 
-### InputBTRef
+### InputBTRef and InputBTDateRef
 
-An `InputBTRef` is an object that contains a reference to a sensitive value returned from a Basis Theory service call. Pass in
-an `inputBTRef` to the `setValue` method of an Element ref to set the value of that Element. Below is an example of how to do that.
+An `InputBTRef` is an object that contains a reference to a sensitive value returned from a Basis Theory service call.
+To set the value of an element, pass in an `InputBTRef` to the `setValue` method of an Element ref as shown below:
 
 ```typescript jsx showLineNumbers
-import React, { useRef } from 'react';
-import {
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
-  BasisTheoryElements,
-  BTRef,
-} from '@basis-theory/basis-theory-react-native';
+import React, { useRef } from "react";
+import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, BasisTheoryElements, BTRef } from "@basis-theory/basis-theory-react-native";
 
 const MyForm = () => {
   const cardNumberRef = useRef<BTRef>(null);
   const cardExpirationDateRef = useRef<BTRef>(null);
   const cardVerificationCodeRef = useRef<BTRef>(null);
 
-  const { bt } = useBasisTheory('<PUBLIC API KEY>');
+  const { bt } = useBasisTheory("<PUBLIC API KEY>");
 
   const getCardData = async () => {
     const proxyResponse = await bt?.proxy({
       headers: {
-        'BT-API-KEY': '<SESSION_API_KEY>',
-        'BT-PROXY-KEY': '<YOUR PROXY KEY>',
+        "BT-API-KEY": "<SESSION_API_KEY>",
+        "BT-PROXY-KEY": "<YOUR PROXY KEY>",
       },
-      method: 'post',
+      method: "post",
     });
 
     cardNumberRef.current?.setValue(proxyResponse.json.cardNumber);
@@ -207,18 +170,9 @@ const MyForm = () => {
 
   return (
     <>
-      <CardNumberElement
-        btRef={cardNumberRef}
-        placeholder="Card Number"
-      />
-      <CardExpirationDateElement
-        btRef={cardExpirationDateRef}
-        placeholder="Card Expiration Date"
-      />
-      <CardVerificationCodeElement
-        btRef={cardVerificationCodeRef}
-        placeholder="CVC"
-      />
+      <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" />
+      <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" />
+      <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" />
       <div>
         <button type="button" onClick={getCardData}>
           "Get Card Data"
