@@ -169,6 +169,79 @@ Given a token with the data:
 | <code>\{\{ data &#124; alias_preserve_length: 0, 5 }}</code> | `"v38anr9m2cx67890"` |
 | <code>\{\{ data &#124; alias_preserve_length: 3, 5 }}</code> | `"ABCanr9m2cx67890"` |
 
+## card_bin
+
+Returns the card's BIN, which is 6 digits for card numbers with less than 16 digits and 8 otherwise. If the card number
+contains a character separator like `4242-4242-4242-4242`, it can be passed in so it is not part of the returned BIN.
+
+#### Parameters
+
+| Position | Name           | Type     | Required | Default Value | Description                         |
+| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------- |
+| 1        | separator_char | _string_ | false    | ``            | The card number separator character |
+
+#### Examples
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
+}
+```
+
+| Expression                                       | Result       |
+| ------------------------------------------------ | ------------ |
+| <code>\{\{ data.number &#124; card_bin }}</code> | `"42424242"` |
+
+## card_exp
+
+Returns the card's expiration date in a given format. The format can be specified using a combination of the following placeholders:
+
+- `MM`: 2-digit month
+- `MMYY`: 2-digit month, year
+- `YYYY`: 4-digit year
+- `YYYY-MM`: 4-digit year ,2-digit month
+
+#### Parameters
+
+| Position | Name            | Type     | Required | Default Value | Description                           |
+| -------- | --------------- | -------- | -------- | ------------- | ------------------------------------- |
+| 1        | date_expression | _string_ | true     | ``            | The card number experation expression |
+
+#### Examples
+
+##### Card token type
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "card",
+  "data": {
+    "number": "3622720627165567",
+    "expiration_month": 10,
+    "expiration_year": 2028
+  }
+}
+```
+
+| Expression                                             | Result      |
+| ------------------------------------------------------ | ----------- |
+| <code>\{\{ data &#124; card_exp: 'MM' }}</code>        | `"10"`      |
+| <code>\{\{ data &#124; card_exp: 'MMYY' }}</code>      | `"1028"`    |
+| <code>\{\{ data &#124; card_exp: 'YYYY' }}</code>      | `"2028"`    |
+| <code>\{\{ data &#124; card_exp: 'YYYY-MM' }}</code>   | `"2028-10"` |
+
+
+
 ## card_mask
 
 Returns a masked version of the card number, optionally revealing the card's BIN and last 4 digits.
@@ -318,72 +391,6 @@ Given a token with the data:
 | <code>\{\{ data.number &#124; last4 }}</code>                     | `"1667"` |
 | <code>\{\{ data.number &#124; slice: 12, 2 &#124; last4 }}</code> | `"67"`   |
 
-## card_bin
-
-Returns the card's BIN, which is 6 digits for card numbers with less than 16 digits and 8 otherwise. If the card number
-contains a character separator like `4242-4242-4242-4242`, it can be passed in so it is not part of the returned BIN.
-
-#### Parameters
-
-| Position | Name           | Type     | Required | Default Value | Description                         |
-| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------- |
-| 1        | separator_char | _string_ | false    | ``            | The card number separator character |
-
-#### Examples
-
-Given a token with the data:
-
-```json showLineNumbers
-{
-  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
-  "type": "card",
-  "data": {
-    "number": "3622720627165567",
-    "expiration_month": 10,
-    "expiration_year": 2028
-  }
-}
-```
-
-| Expression                                       | Result       |
-| ------------------------------------------------ | ------------ |
-| <code>\{\{ data.number &#124; card_bin }}</code> | `"42424242"` |
-
-## reveal
-
-Returns a masked version of the string revealing characters at the start and end whilst preserving others. If the string's
-length is less than or equal to `reveal_first` + `reveal_last`, or the resulting masked string equals the original unmasked value,
-the whole value is masked.
-
-#### Parameters
-
-| Position | Name           | Type     | Required | Default Value | Description                                     |
-| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
-| 0        | reveal_first   | _int_    | false    | `0`           | The number of characters to reveal at the start |
-| 1        | reveal_last    | _int_    | false    | `0`           | The number of characters to reveal at the end   |
-| 2        | mask_char      | _char_   | false    | `X`           | A masking character                             |
-| 3        | preserve_chars | _string_ | false    | ``            | The characters to preserve                      |
-
-#### Examples
-
-Given a token with the data:
-
-```json showLineNumbers
-{
-  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
-  "type": "token",
-  "data": "3622-7206-2716-5567"
-}
-```
-
-| Expression                                              | Result                  |
-| ------------------------------------------------------- | ----------------------- |
-| <code>\{\{ data &#124; reveal: 6 }}</code>              | `"3622-7XXXXXXXXXXXXX"` |
-| <code>\{\{ data &#124; reveal: 7, 5 }}</code>           | `"3622-72XXXXXXX-5567"` |
-| <code>\{\{ data &#124; reveal: 7, 5, '#' }}</code>      | `"3622-72#######-5567"` |
-| <code>\{\{ data &#124; reveal: 7, 4, '#', "-" }}</code> | `"3622-72##-####-5567"` |
-| <code>\{\{ data &#124; reveal: 10, 9 }}</code>          | `"XXXXXXXXXXXXXXXXXXX"` |
-
 ## pad_left
 
 Returns a new string of the desired length by padding the input string on the left with the specified `padChar`.
@@ -447,6 +454,41 @@ Given a token with the data:
 | <code>\{\{ data &#124; pad_right: 6, 'X' }}</code> | `"1234XX"` |
 | <code>\{\{ data &#124; pad_right: 4, '0' }}</code> | `"1234"`   |
 | <code>\{\{ data &#124; pad_right: 2, '0' }}</code> | `"1234"`   |
+
+## reveal
+
+Returns a masked version of the string revealing characters at the start and end whilst preserving others. If the string's
+length is less than or equal to `reveal_first` + `reveal_last`, or the resulting masked string equals the original unmasked value,
+the whole value is masked.
+
+#### Parameters
+
+| Position | Name           | Type     | Required | Default Value | Description                                     |
+| -------- | -------------- | -------- | -------- | ------------- | ----------------------------------------------- |
+| 0        | reveal_first   | _int_    | false    | `0`           | The number of characters to reveal at the start |
+| 1        | reveal_last    | _int_    | false    | `0`           | The number of characters to reveal at the end   |
+| 2        | mask_char      | _char_   | false    | `X`           | A masking character                             |
+| 3        | preserve_chars | _string_ | false    | ``            | The characters to preserve                      |
+
+#### Examples
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "token",
+  "data": "3622-7206-2716-5567"
+}
+```
+
+| Expression                                              | Result                  |
+| ------------------------------------------------------- | ----------------------- |
+| <code>\{\{ data &#124; reveal: 6 }}</code>              | `"3622-7XXXXXXXXXXXXX"` |
+| <code>\{\{ data &#124; reveal: 7, 5 }}</code>           | `"3622-72XXXXXXX-5567"` |
+| <code>\{\{ data &#124; reveal: 7, 5, '#' }}</code>      | `"3622-72#######-5567"` |
+| <code>\{\{ data &#124; reveal: 7, 4, '#', "-" }}</code> | `"3622-72##-####-5567"` |
+| <code>\{\{ data &#124; reveal: 10, 9 }}</code>          | `"XXXXXXXXXXXXXXXXXXX"` |
 
 ## reveal_last
 
