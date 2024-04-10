@@ -1,3 +1,10 @@
+## [1.144.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.144.0...v1.144.1) (2024-04-10)
+
+
+### Bug Fixes
+
+* images ([#363](https://github.com/Basis-Theory/developers.basistheory.com/issues/363)) ([92135c8](https://github.com/Basis-Theory/developers.basistheory.com/commit/92135c877b9e75be2b9c95194f33059c71fa720e))
+
 # [1.144.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.143.0...v1.144.0) (2024-04-02)
 
 
