@@ -1,10 +1,48 @@
-# Apple Pay Overview
+---
+title: Apple Pay Overview
+hide_title: true
+hide_table_of_contents: true
+---
+
+import { Intro } from "@site/src/components/shared/Intro";
+import { Card } from "@site/src/components/shared/Card";
+import MerchantSetup from "@site/static/img/guides/apple-pay/merchant-setup.svg";
+import AcceptPayments from "@site/static/img/guides/apple-pay/accept-payments.svg";
+import AddCardToAppleWallet from "@site/static/img/guides/apple-pay/adding-card-to-apple-wallet.png";
+import UsingApplePayInTransactions from "@site/static/img/guides/apple-pay/using-apple-pay-in-transactions.png";
+
+
+<Intro
+  title="Apple Pay Overview"
+  caption="Securely integrate Apple Pay with Basis Theory for compliant and processor-agnostic operational efficiency."
+  img={{
+    light: "/img/guides/apple-pay/logo.svg",
+    dark: "/img/guides/apple-pay/logo-dark.svg",
+  }}
+/>
 
 Apple Pay is a mobile payment and digital wallet service that offers a convenient and secure way for users to make payments using Apple devices. Merchants can benefit from the enhanced security features of Apple Pay, such as tokenization, which protects sensitive card data during transactions. For European users, Apple Pay is PSD2 SCA-compliant.
 
 By integrating with Basis Theory, merchants can leverage advanced Reactors to decrypt and securely store Apple Pay tokens, ensuring compliance with PCI Level 1 standards without the burden of maintaining complex infrastructure. This model optimizes operational efficiency by enabling merchants to use native Apple Pay integration in the client side, while getting secured access to the authorized payment credentials.
 
-In this page, we will explore Apple Pay concepts and take a deep dive on how it works. If you are looking for hands-on guides, check out the [Merchant Setup](/docs/guides/apple-pay/setup) and [Accept Payments](/docs/guides/apple-pay/accept) pages we prepared for you.
+## Start with a Guide
+
+In this page, we will explore Apple Pay concepts and take a deep dive on how it works. If you are looking for hands-on guides, check out the links below:
+
+<Card.TwoColumnLayout>
+  <Card
+    column
+    img={<MerchantSetup />}
+    href="/docs/guides/apple-pay/setup"
+    heading="Merchant Setup"
+  >Review and complete the requirements to include Apple Pay to your payment stack.</Card>
+  <Card
+    column
+    img={<AcceptPayments />}
+    href="/docs/guides/apple-pay/accept"
+    heading="Accept Payments"
+  >Leverage Basis Theory for a processor-agnostic Apple Pay integration.</Card>
+</Card.TwoColumnLayout>
 
 ## Glossary
 
@@ -29,26 +67,8 @@ Regardless of the method, when a user adds a card to Apple Pay, many systems are
 4. The Issuer Bank generates a CVV-Key which is later used for authorization, and returns all values to Apple Servers
 5. Apple Servers securely "returns" the information to Apple Wallet ¹, which stores it in the device's Secure Element.
 
-```mermaid
-sequenceDiagram
-    actor u as User
-    participant aw as Apple Wallet
-    participant as as Apple Servers
-    participant ib as Issuer
-    participant tsp as Token Service Provider
+<img src={AddCardToAppleWallet}/>
 
-    u ->>+ aw: Add Card
-    aw ->>+ as: Send FPAN, Personal Info
-    as ->>+ ib: Validate and request Token (FPAN, Personal Info)
-    ib ->>+ tsp: Request Token (FPAN)
-    tsp ->> tsp: Store PAN and generate token
-    tsp -->>- ib: DPAN, Token Key
-    ib ->> ib: Generate CVV-key
-    ib -->>- as: DPAN, Token Key, CVV-Key
-    as -->>- aw: DPAN, Token Key, CVV-key ¹
-    aw ->> aw: Store DPAN, Token Key and CVV-Key<br>in Secure Element
-    aw -->>- u: Card Ready
-```
 _¹ The actual mechanism of this step is proprietary and was outlined as a return for the sake of comprehension only._
 
 ## Using Apple Pay in Transactions
@@ -67,42 +87,4 @@ When a user chooses Apple Pay to pay for a good or service, the Apple Pay experi
 
 4. The Payment Authorization Decision is returned from the Issuer, based on many factors such as available funds, transaction amount, velocity and frequency, etc. This decision is returned all the way back to the Merchant, in whatever channel the transaction was initiated.
 
-```mermaid
-sequenceDiagram
-    actor u as User
-    participant aw as Apple Wallet
-    participant mt as Merchant<br>Terminal
-    participant me as Merchant<br>E-commerce
-    participant ab as Acquirer
-    participant cn as Card Network <br> Token Service Provider
-    participant ib as Issuer
-
-    activate u
-    activate ab
-
-    u ->>+ aw: Use Apple Pay
-
-    alt In-person Payment
-        aw ->> mt: DPAN, Dynamic CVV
-        mt ->> ab: DPAN, Dynamic CVV, Transaction details
-    else Online Payment
-        aw ->>+ me: DPAN, Online Cryptogram
-        me ->> ab: DPAN, Online Cryptogram, Transaction details
-    end
-    aw -->> u: OK ✅
-    deactivate u
-
-    ab ->>+ cn: DPAN, Authentication Data, Transaction details
-    cn ->> cn: Detokenize FPAN
-    cn ->>+ ib: FPAN, Authentication Data, Transaction details
-    ib -->>- cn: Authorization Decision
-    cn -->>- ab: Authorization Decision
-
-    alt In-person Payment
-        ab -->> mt: Authorization Decision
-        deactivate ab
-    else Online Payment
-        ab -->> me: Authorization Decision
-    end
-```
-
+<img src={UsingApplePayInTransactions}/>
