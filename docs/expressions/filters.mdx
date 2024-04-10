@@ -11,11 +11,13 @@ or you may wish to reformat the data before indexing it for search (e.g. use onl
 
 To allow you complete flexibility, transformation functions called **filters** can be applied within any expression.
 Generally, a variable's value can be transformed by specifying a filter after the `|` symbol:
-`\{\{ <variable> | <filter> }}`
+
+`{{ <variable> | <filter> }}`
 
 You can effectively think of this as "piping" a variable into the filter in the same way you may be familiar with the "pipe" operator from Unix-like systems.
 Multiple filters can be chained together by "piping" the result of each filter into the next, applying in order from left to right:
-`\{\{ <variable> | <filter1> | <filter2> | ... }}`
+
+`{{ <variable> | <filter1> | <filter2> | ... }}`
 
 All standard [Liquid filters](https://shopify.github.io/liquid/filters/) are supported within expressions.
 For example, given a token containing a `name` object containing both first and last name properties:
@@ -32,7 +34,7 @@ For example, given a token containing a `name` object containing both first and 
 We can create an expression to return the upper-cased last name by splitting on the space character, grabbing the last element, and upper-casing:
 
 ```javascript showLineNumbers
-\{\{ data.name | split: ' ' | last | upcase }}
+{{ data.name | split: ' ' | last | upcase }}
 ```
 
 This expression would evaluate to the value `"DOE"`.
