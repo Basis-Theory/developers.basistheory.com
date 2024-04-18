@@ -1,3 +1,10 @@
+# [1.145.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.144.1...v1.145.0) (2024-04-18)
+
+
+### Features
+
+* adding Application Keys ([#368](https://github.com/Basis-Theory/developers.basistheory.com/issues/368)) ([d87f049](https://github.com/Basis-Theory/developers.basistheory.com/commit/d87f049191956ceeedfdc7c657bc628117c459ec))
+
 ## [1.144.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.144.0...v1.144.1) (2024-04-10)
 
 
