@@ -41,7 +41,8 @@ const config = {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/basis-theory/developers.basistheory.com/tree/master/",
+          editUrl:
+            "https://github.com/basis-theory/developers.basistheory.com/tree/master/",
           showLastUpdateTime: true,
         },
         theme: {
@@ -101,7 +102,15 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["csharp", "hcl", "kotlin", "swift", "java", "bash", "json"],
+        additionalLanguages: [
+          "csharp",
+          "hcl",
+          "kotlin",
+          "swift",
+          "java",
+          "bash",
+          "json",
+        ],
       },
       mermaid: {
         theme: {
@@ -130,11 +139,13 @@ const config = {
       metadata: [
         {
           name: "description",
-          content: "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
+          content:
+            "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
         },
         {
           property: "og:description",
-          content: "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
+          content:
+            "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
         },
         {
           property: "og:image",
@@ -163,6 +174,10 @@ const config = {
           { from: "/getting-started/quickstart-with-nodejs", to: "/docs" },
           { from: "/getting-started/quickstart-with-ruby", to: "/docs" },
           { from: "/getting-started/quickstart-with-python", to: "/docs" },
+          {
+            from: "/docs/api/applications/keys",
+            to: "/docs/api/applications/application-keys",
+          },
 
           {
             from: "/concepts/access-controls",
@@ -281,7 +296,9 @@ const config = {
           if (svgRuleIndex === -1 || svgrConfigIndex === -1) return;
 
           // @ts-ignore
-          config.module.rules[svgRuleIndex].oneOf[svgrConfigIndex].use[0].options.svgoConfig.plugins[0].params.overrides.cleanupIDs = false;
+          config.module.rules[svgRuleIndex].oneOf[
+            svgrConfigIndex
+          ].use[0].options.svgoConfig.plugins[0].params.overrides.cleanupIDs = false;
         },
       };
     },
@@ -312,7 +329,8 @@ const config = {
       "data-website-id": "3755b5a8-e659-404c-9119-8cce3b1e87a7",
       "data-project-name": "Basis Theory",
       "data-project-color": "#45D1DB",
-      "data-project-logo": "https://avatars.githubusercontent.com/u/75859349?s=280&v=4",
+      "data-project-logo":
+        "https://avatars.githubusercontent.com/u/75859349?s=280&v=4",
       async: true,
       "data-search-mode-enabled": "true", // ADD THIS LINE TO ENABLE SEARCH
       // "data-modal-override-open-class": "navbar__search" // OPTIONAL: If you want to override the default search

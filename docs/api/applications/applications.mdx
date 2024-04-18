@@ -4,7 +4,7 @@ title: Applications
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-
+import { Deprecated } from "@site/src/components/shared/Deprecated"
 import {
   HttpMethod,
   HttpMethods,
@@ -14,9 +14,7 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Applications
 
-Your ability to authenticate to the Basis Theory API is granted through an API Key associated with an Application or Session.
-Each Application type enables different use cases, and you should strive to grant the minimal level of access to each
-Application. Below, we describe each Application Type and how to choose between them.
+Applications play a crucial role in facilitating systems' authentication to Basis Theory. They determine the extent of access granted to individual systems and manage [Application Keys](/docs/api/applications/application-keys), which serve as the means for API Authentication. Each type of Application supports different use cases, and it's important to allocate access levels judiciously for each Application. Below, we provide a description of each Application Type and guidance on selecting the appropriate one for your needs
 
 ## Create Application
 
@@ -162,6 +160,7 @@ func main() {
 | `permissions` | false    | _array_  | `[]`    | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application |
 | `rules`       | false    | _array_  | `[]`    | An array of [Access Rules](/docs/api/applications/access-rules) granted to the application                |
 | `expires_at`  | false    | _string_ | `null`  | ISO8601 compatible DateTime in which the application will be deleted                                      |
+| `create_key`  | false    | _boolean_ | `true`  | When `true` will create an [Application Key](/docs/api/applications/application-keys)                                                               |
 
 Either `permissions` or `rules` is required to be non-empty when creating an Application.
 
@@ -175,6 +174,7 @@ Returns an [Application](#application-object) if the application was created. Re
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Example App",
   "key": "<PRIVATE_API_KEY>",
+  "keys": [],
   "type": "private",
   "permissions": ["token:create", "token:read"],
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -310,6 +310,7 @@ Returns a [paginated object](/docs/api/pagination#offset-pagination-object) with
       "id": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
       "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
       "name": "My Example App",
+      "keys": [],
       "type": "private",
       "permissions": [
         "token:create",
@@ -447,6 +448,7 @@ Returns an [Application](#application-object) with the `id` provided. Returns [a
   "id": "fe1f9ba4-474e-44b9-b949-110cdba9d662",
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Management App",
+  "keys": [],
   "type": "management",
   "permissions": ["application:create", "application:read"],
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -569,6 +571,7 @@ Returns an [Application](#application-object) for the provided `BT-API-KEY`. Ret
   "id": "fe1f9ba4-474e-44b9-b949-110cdba9d662",
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Management App",
+  "keys": [],
   "type": "management",
   "permissions": ["application:create", "application:read"],
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
@@ -738,6 +741,7 @@ Returns an [Application](#application-object) if the application was updated. Re
 {
   "id": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "keys": [],
   "name": "My Example App",
   "type": "management",
   "permissions": ["application:create", "application:read"],
@@ -748,9 +752,9 @@ Returns an [Application](#application-object) if the application was updated. Re
 }
 ```
 
-## Regenerate API Key
+## Regenerate API Key <Deprecated />
 
-Regenerate the API key for an application.
+Will delete and recreate an Application Key, when only a single key exists. This endpoint is a helper endpoint to continue to easily regenerate an Application's Key w/o needing to manage Application Keys.
 
 <HttpMethod
   method={HttpMethods.POST}
@@ -758,6 +762,10 @@ Regenerate the API key for an application.
 />
 
 <Alert type={Alerts.WARNING} content="Regenerating the API key for an application will immediately invalidate the previous API key associated with the application."/>
+
+### Considerations
+
+- This endpoint is only available for applications with a single key.
 
 #### Permissions
 
@@ -873,6 +881,7 @@ Returns an [Application](#application-object) with the new `key` property popula
   "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
   "name": "My Example App",
   "key": "<PRIVATE_API_KEY>",
+  "keys": [],
   "type": "private",
   "permissions": ["token:create", "token:read"],
   "created_by": "c57a0d0d-e8e6-495f-9c79-a317cc21996c",
@@ -1005,7 +1014,8 @@ Returns [an error](/docs/api/errors) if the application failed to delete.
 | `id`          | _uuid_   | Unique identifier of the Application which can be used to [get an Application](#get-an-application)   |
 | `tenant_id`   | _uuid_   | The [Tenant](/docs/api/tenants) ID which owns the Application                                         |
 | `name`        | _string_ | The name of the Application                                                                           |
-| `key`         | _string_ | The API key which should be used for authenticating against Basis Theory API endpoints                |
+| `key`         | _string_ | Key of the [Application Key](/docs/api/applications/application-keys) created when `create_key = true` on Create Application.                |
+| `keys`         | _array_ | The [Application Keys](/docs/api/applications/application-keys) associated with the Application                |
 | `type`        | _string_ | [Application type](#application-types) of the Application                                             |
 | `permissions` | _array_  | List of [permissions](/docs/api/applications/permissions#permission-types) granted to the Application |
 | `rules`       | _array_  | List of [access rules](/docs/api/applications/access-rules#access-rules) granted to the Application   |
