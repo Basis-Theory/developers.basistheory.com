@@ -1,3 +1,10 @@
+# [1.146.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.145.0...v1.146.0) (2024-04-22)
+
+
+### Features
+
+* adding section for terraform major version migrations and change_key migration ([7c28e42](https://github.com/Basis-Theory/developers.basistheory.com/commit/7c28e42a2b2735bb8009db6cf6dd9a61a321e773))
+
 # [1.145.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.144.1...v1.145.0) (2024-04-18)
 
 
