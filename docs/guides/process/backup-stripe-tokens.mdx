@@ -1,0 +1,94 @@
+---
+toc_max_heading_level: 2
+---
+
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+
+
+# Backup Your Stripe Tokens
+
+In the ever-evolving world of online transactions, prioritizing data security and operational efficiency is critical for developers integrating payment processing solutions. This guide explores the utilization of the Stripe Forwarding API in tandem with Basis Theory's secure Vault to bolster the protection and management of credit card data, **without making any changes to your existing Stripe integration**.
+
+With the potential for sudden Stripe account terminations and the need for scalable payment processing solutions beyond a single provider, developers seek innovative approaches to ensure a robust and secure payment environment. In some cases, merchants and platforms with a multiprocessor payment ecosystem need to create a unified wallet system or single source of truth for consumer profiles.
+
+![Forward Cards from Stripe](/img/guides/cards/stripe-forward-cards.png)
+
+## Getting Started
+
+<GettingStartedSection />
+
+### Request Access to Stripe Forwarding API
+
+[Click here to create](https://dashboard.stripe.com/login?redirect=https://support.stripe.com%2Fcontact%2Femail%3Fquestion%3Dother%26topic%3Dpayment_apis%26subject%3DI%20need%20access%20to%20the%20Vault%20and%20Forward%20API%26body%3DHi%20Stripe%20team.%20I%20would%20like%20to%20request%20access%20to%20the%20Vault%20and%20Forward%20API%20to%20store%20payment%20method%20details%20with%20my%20own%20token%20vault%2C%20outsourced%20by%20Basis%20Theory%2C%20Inc.%20Please%20find%20their%20PCI%20Attestation%20of%20Compliance%20attached.%20The%20target%20endpoint%20is%20https%3A%2F%2Fapi.basistheory.com%2Ftokens) a Stripe support request following this template:
+
+```text
+Account
+Select your Stripe account
+
+What do you need help with?
+Payment APIs
+
+What is your question?
+I need access to the Vault and Forward API
+
+Tell us more — how can we help?
+I would like to request access to the Vault and Forward API
+to store payment method details with my own token vault,
+outsourced by Basis Theory. Please find their PCI Attestation of Compliance attached.
+The target endpoint is https://api.basistheory.com/tokens
+```
+
+Make sure to attach [Basis Theory PCI DSS Attestation of Compliance](https://trust.basistheory.com/?itemUid=53e1508c-665e-45a8-9ce0-03fdf9ae1efb&source=click) to your request.
+
+If you need help with this step, or anytime along the way, don't hesitate to [reach out to us](https://basistheory.com/contact?how_can_we_help_=I+need+help+vaulting+my+Stripe+tokens).
+
+### Creating a Public Application
+
+Next you will need a [Public Application](/docs/api/applications) using our PCI-compliant template `Collect PCI Data`. [Click here to create one.](https://portal.basistheory.com/applications/create?application_template_id=db9148c1-a55f-4164-b830-a20ab6d720ae)
+
+This will create an application with the following [Access Controls](/docs/concepts/access-controls):
+* Permissions: `token:create`, `token:update`
+* Containers: `/pci/`
+* Transform: `mask`
+
+<Alert>Save the API Key from the created Public Application as it will be used later in this guide.</Alert>
+
+## Vaulting Cards
+
+Once you are granted access to the Stripe's Forwarding API and created the Basis Theory Public API Key, choose your favorite HTTP Client for your server-side language and call the forwarding endpoint:
+
+```shell showLineNumbers title="Vault a Card"
+curl --location 'https://api.stripe.com/v1/forwarding/requests' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+// highlight-next-line
+--header 'Authorization: Bearer <STRIPE_API_KEY>' \
+// highlight-next-line
+--data-urlencode 'payment_method=<STRIPE_PAYMENT_METHOD_ID>' \
+--data-urlencode 'url=https://api.basistheory.com/tokens' \
+--data-urlencode 'request[headers][0][name]=BT-API-KEY' \
+// highlight-next-line
+--data-urlencode 'request[headers][0][value]=<BT_API_KEY>' \
+// highlight-next-line
+--data-urlencode 'request[body]={"type": "card", "data": { "id": "<STRIPE_PAYMENT_METHOD_ID>", "number": "", "expiration_month": "", "expiration_year": "", "cvc": "" }, "metadata": { "cardholder_name": "" } }' \
+--data-urlencode 'replacements[0]=card_number' \
+--data-urlencode 'replacements[1]=card_expiry' \
+--data-urlencode 'replacements[2]=card_cvc'\
+--data-urlencode 'replacements[3]=cardholder_name'
+```
+
+<Alert>Make sure to replace the Stripe API Key, Payment Method Identified (twice) and Basis Theory API Key.</Alert>
+
+You should [receive a response](https://docs.stripe.com/api/forwarding/forwarding_requests/create) containing a new Basis Theory token aliased to the Stripe token. This means the credit card data is backed up in Basis Theory Vault using the same Payment Method identifier by Stripe.
+
+## Keeping Cards In Sync <Enterprise />
+
+Saved Stripe payment methods can receive updates from Networks when consumers receive new cards (e.g. replacing stolen, lost or expired cards). When an update to a payment method happens, Stripe fires [webhooks](https://docs.stripe.com/payments/cards/overview#automatic-card-updates) which can be leveraged to also update your Basis Theory Vault.
+
+1. Setup Stripe webhooks for `payment_method.updated` and `payment_method.automatically_updated` events, following their [documentation](https://docs.stripe.com/webhooks).
+2. When any of those are fired and hits your endpoints, initiate a forward request (see request example above) to Stripe in order to update the existing Basis Theory token.
+
+If you are interested in using Stripe's Account Updater in combination with Basis Theory Vault, [let's talk](https://basistheory.com/contact?how_can_we_help_=I+want+to+learn+more+about+using+Stripe+Card+Account+Updater+with+Basis+Theory+vault).
+
+Alternatively, you can leverage [Basis Theory Account Updater](/docs/features/account-updater) to have a single source of truth for the latest and greatest card information, while keeping multiple Payment Processors tokens up-to-date, including Stripe.
