@@ -1,3 +1,10 @@
+# [1.147.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.146.0...v1.147.0) (2024-04-29)
+
+
+### Features
+
+* add new stripe guide ([#371](https://github.com/Basis-Theory/developers.basistheory.com/issues/371)) ([e408121](https://github.com/Basis-Theory/developers.basistheory.com/commit/e408121e139038c7dd5c8ee11e1ed1f5414a5c56))
+
 # [1.146.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.145.0...v1.146.0) (2024-04-22)
 
 
