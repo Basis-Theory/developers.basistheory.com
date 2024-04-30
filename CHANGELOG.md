@@ -1,3 +1,10 @@
+## [1.147.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.147.0...v1.147.1) (2024-04-30)
+
+
+### Bug Fixes
+
+* grammar ([#372](https://github.com/Basis-Theory/developers.basistheory.com/issues/372)) ([f9cbfb9](https://github.com/Basis-Theory/developers.basistheory.com/commit/f9cbfb936390c81aeb6ca5b1c6275facfdb5b150))
+
 # [1.147.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.146.0...v1.147.0) (2024-04-29)
 
 
