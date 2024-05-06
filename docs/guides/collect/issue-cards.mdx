@@ -69,9 +69,10 @@ Now we will create a Proxy that intercepts the HTTP response from the Issuer API
 module.exports = async function (req) {
   const { bt, args, configuration } = req;
   const { body, headers } = args;
-  const { pan, exp_month, exp_year, cvv, ...rest } = body;
+  const { token: lithicToken, pan, exp_month, exp_year, cvv, ...rest } = body;
 
   const token = await bt.tokens.create({
+    id: lithicToken, // (optional) use the Lithic card token as Basis Theory card token
     type: 'card',
     data: {
       number: pan,
@@ -87,7 +88,7 @@ module.exports = async function (req) {
     headers,
     body: {
       ...rest,
-      token,
+      token, // replaces the Lithic token in the response to the Basis Theory token object
     },
   }
 }
@@ -101,9 +102,10 @@ module.exports = async function (req) {
 module.exports = async function (req) {
   const { bt, args, configuration } = req;
   const { body, headers } = args;
-  const { pan, expiration, cvv_number, ...rest } = body;
+  const { token: marqetaToken, pan, expiration, cvv_number, ...rest } = body;
 
   const token = await bt.tokens.create({
+    id: marqetaToken, // (optional) uses the Marqeta card token as Basis Theory card token
     type: 'card',
     data: {
       number: pan,
@@ -119,7 +121,7 @@ module.exports = async function (req) {
     headers,
     body: {
       ...rest,
-      token,
+      token, // replaces the Marqeta token in the response to the Basis Theory token object
     },
   }
 }
@@ -133,9 +135,10 @@ module.exports = async function (req) {
 module.exports = async function (req) {
   const { bt, args, configuration } = req;
   const { body, headers } = args;
-  const { number, exp_month, exp_year, cvc, ...rest } = body;
+  const { id, number, exp_month, exp_year, cvc, ...rest } = body;
 
   const token = await bt.tokens.create({
+    id, // (optional) uses the Stripe card id as Basis Theory card token id
     type: 'card',
     data: {
       number,
@@ -151,7 +154,7 @@ module.exports = async function (req) {
     headers,
     body: {
       ...rest,
-      token,
+      token, // the Basis Theory token is added to the response
     },
   }
 }
@@ -167,6 +170,7 @@ module.exports = async function (req) {
   const { body, headers } = args;
   const {
     response_data: [{
+      card_id,
       card_number,
       expiry_date,
       card_security_code,
@@ -178,6 +182,7 @@ module.exports = async function (req) {
   const expiration = new Date(expiry_date);
 
   const token = await bt.tokens.create({
+    id: card_id, // (optional) uses the Galileo card id as Basis Theory card token id
     type: 'card',
     data: {
       number: card_number,
@@ -195,7 +200,7 @@ module.exports = async function (req) {
       ...rest,
       response_data: [{
         ...response_data,
-        token,
+        token, // the Basis Theory token is added to the response
       }],
     },
   };
