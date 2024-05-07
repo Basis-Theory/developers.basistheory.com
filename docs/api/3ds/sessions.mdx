@@ -928,7 +928,14 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 | Attribute | Type | Description |
 | --- | --- | --- |
 | `method_url` | _string_ | The URL for the Method request, used by the 3DS SDK |
-| `method_completion_indicator` | _string_ | Indicator of if the method request completed successfully or not |
+| `method_completion_indicator` | _string_ | [Indicator](#method-completion-indicator) of if the method request completed successfully or not |
+
+#### Method Completion Indicator
+| Value | Description |
+| --- | --- |
+| `Y` | Method request completed successfully |
+| `N` | Method request did not complete successfully |
+| `U` | Method request result is unavailable |
 
 ### Authentication Object
 
@@ -940,18 +947,110 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 | `acs_reference_number` | _string_ | A unique identifier assigned to the DS by EMVCoD |
 | `ds_reference_number` | _string_ | A unique identifier assigned to the ACS by EMVCo |
 | `authentication_value` | _string_ | The token value used to authorize the transaction. Also know as CAVV, AAV, AEVV, etc. |
-| `authentication_status` | _string_ | The outcome of the 3DS authentication |
-| `authentication_status_reason` | _string_  | Additional information about the authentication status if necessary |
+| `authentication_status` | _string_ | The outcome of the 3DS authentication. See [Authentication Status](#authentication-status) |
+| `authentication_status_code` | _string_ | Character code for the authentication status |
+| `authentication_status_reason` | _string_  | Additional information about the authentication status if necessary. See [Authentication Status Reason](#authentication-status-reason) |
 | `eci` | _string_ | Electronic Commerce Indicator  |
-| `acs_challenge_mandated` | _string_ | Indicates whether regional mandates (e.g. PSD2) required a challenge to be performed |
-| `authentication_challenge_type` | _string_ | The type of challenge authentication used (if challenge) |
+| `acs_challenge_mandated` | _string_ | Indicates whether regional mandates (e.g. PSD2) required a challenge to be performed. See [ACS Challenge Mandated](#acs-challenge-mandated) |
+| `authentication_challenge_type` | _string_ | The type of challenge authentication used (if challenge). See [Authentication Challenge Type](#authentication-challenge-type) |
 | `acs_challenge_url` | _string_ | The URL to be used for the challenge |
 | `challenge_attempts` | _string_ | The number of challenges attempted by the cardholder |
-| `challenge_cancel_reason` | _string_ | The reason why a challenge was cancelled |
+| `challenge_cancel_reason` | _string_ | The reason why a challenge was cancelled. See [Challenge Cancel Reason](#challenge-cancel-reason) |
 | `cardholder_info` | _string_ | Information from the issuer to be displayed to the cardholder |
-| `whitelist_status` | _string_ | Indicates if the cardholder whitelisted the merchant |
-| `whitelist_status_source` | _string_ | Identifies the system that set the whitelist value |
+| `whitelist_status` | _string_ | Indicates if the cardholder whitelisted the merchant. See [Whitelist Status](#whitelist-status) |
+| `whitelist_status_source` | _string_ | Identifies the system that set the whitelist value. See [Whitelist Status Source](#whitelist-status-source) |
 | `message_extensions` | _array_ | Array of [Message Extensions](#message-extension-object) - Data necessary to support requirements not defined in the standard 3DS format |
+
+#### ACS Challenge Mandated
+
+| Value | Description |
+| --- | --- |
+| `Y` | Challenge is mandated |
+| `N` | Challenge is not mandated |
+
+#### Authentication Status
+
+| Value | Description |
+| --- | --- |
+| `successful` | 3DS authentication was successful |
+| `attempted` | 3DS authentication was attempted but not possible. Successful authentication granted by card brand on issuer's behalf |
+| `failed` | Authentication failed, stop the transaction |
+| `unavailable` | Authentication could not be performed. Try to proceed without the authentication value |
+| `challenge` | A challenge is required, use the SDK to perform the [Challenge](/docs/sdks/web/3ds/methods#start-challenge) |
+| `decoupled_challenge` | A challenge will be performed by the issuer. Get the [Challenge Result](#get-challenge-result) to learn the outcome |
+| `rejected` | The issuer rejected the authentication attempt |
+| `informational` | Authentication not requested, data sent to the ACS for informational purposes |
+
+#### Authentication Status Reason
+
+| Value | Description |
+| --- | --- |
+| `card-authentication-failed` | Card authentication failed |
+| `unknown-device` | Unknown device |
+| `unsupported-device` | Unsupported device |
+| `too-many-authentication-attempts` | Exceeded authentication frequency limit |
+| `card-expired` | Expired card |
+| `invalid-card-number` | Invalid card number |
+| `invalid-transaction` | Invalid transaction |
+| `no-card-record` | No card record |
+| `security-failure` | Security failure |
+| `stolen-card` | Stolen card |
+| `suspected-fraud` | Suspected fraud |
+| `transaction-not-permitted` | Transaction not permitted to cardholder |
+| `cardholder-not-enrolled` | Cardholder not enrolled in service |
+| `timeout-at-acs` | Transaction timed out at the ACS |
+| `low-confidence` | Low confidence |
+| `medium-confidence` | Medium confidence |
+| `high-confidence` | High confidence |
+| `very-high-confidence` | Very high confindence |
+| `max-challenges-exceeded` | Exceeded ACS maximum challenges limit |
+| `non-payment-transaction-not-supported` | Non-payment transaction is not supported |
+| `3ri-not-supported` | 3RI (requestor initiated) transaction not supported |
+| `acs-technical-issue` | ACS technical issue |
+| `decoupled-authentication-required` | Decoupled authentication is required but not requested |
+| `decoupled-authentication-timeout` | Deocupled authentication max expiration time exceeded |
+| `insufficient-decoupled-authentication-time` | Insufficient time provided for decoupled authentication |
+| `authentication-attempted-but-not-performed` | Authentication attempted but not performed by the cardholder |
+
+#### Authentication Challenge Type
+
+| Value | Description |
+| --- | --- |
+| `static` | Static challenge, for example, a password or passcode |
+| `dynamic` | Dynamic challenge, for example, a one time password (OTP) |
+| `out-of-band` | Out-of-Band challenge, for example, using the issuing bank's mobile app |
+| `decoupled` | Decoupled challenge |
+
+#### Challenge Cancel Reason
+
+| Value | Description |
+| --- | --- |
+| `cardholder-canceled` | Cardholder selected 'Cancel' on the challenge |
+| `requestor-canceled` | 3DS requestor cancelled authentication  |
+| `transaction-abandoned` | Transaction was abandoned  |
+| `acs-timeout` | Transaction timed out at ACS  |
+| `acs-timeout-request-not-received` | Transaction timed out at ACS - Challenge request not received  |
+| `error` | Transaction error |
+| `unknown` | Unknown reason |
+
+#### Whitelist Status
+
+| Value | Description |
+| --- | --- |
+| `merchant-trusted` | Merchant is trusted by the cardholder |
+| `merchant-not-trusted` | Merchant has not yet been trusted by the cardholder |
+| `not-eligible` | Not eligible to whitelist as determined by the issuer |
+| `pending-confirmation` | Pending confirmation by the cardholder |
+| `request-to-trust-rejected` | Cardholder rejected the request to trust the merchant |
+| `unknown` | Trusted status unknown |
+
+#### Whitelist Status Source
+
+| Value | Description |
+| --- | --- |
+| `3ds-server` | 3DS Server |
+| `directory-server` | Directory Server (DS) |
+| `acs` | Access Control Server (ACS) |
 
 ### Message Extension Object
 
@@ -961,3 +1060,29 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 | `name` | _string_ | The name for the extension |
 | `critical` | _bool_ | If the extension is critical or not |
 | `data` | _string_ | Data carried in the extension |
+
+## Test Cards
+
+<Alert type={Alerts.INFO}>Please contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> before testing the 3DS feature.</Alert>
+
+See below a pre-defined list of cards that can be used to test different 3DS scenarios.
+
+| Card Number | 3DS Scenario |
+|--- | --- |
+| `4200000000000002` | Successful Frictionless Authentication |
+| `4200000000000003` | Authentication Attempted |
+| `4200000000000005` | Authentication Failed |
+| `4200000000000006` | Authentication Unavailable |
+| `4200000000000007` | Authentication Rejected |
+| `4200000000000004` | Successful Challenge Authentication |
+| `4200000000000014` | Successful Challenge Authentication - Method not Required |
+| `4200000000000015` | Successful Mandated Challenge Authentication |
+| `4200000000000016` | Successful Out-of-Band Challenge Authentication |
+| `4200000000000008` | Attempted Challenge Authentication |
+| `4200000000000009` | Failed Challenge Authentication |
+| `4200000000000017` | Failed Out of Band Challenge Authentication |
+| `4200000000000010` | Unavailable Challenge Authentication |
+| `4200000000000011` | Rejected Challenge Authentication |
+| `4200000000000012` | 3DS Directory Server Error |
+| `4200000000000013` | Internal 3DS Server Error |
+
