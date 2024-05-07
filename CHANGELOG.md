@@ -1,3 +1,10 @@
+## [1.147.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.147.1...v1.147.2) (2024-05-07)
+
+
+### Bug Fixes
+
+* uses alias in card issuance flow ([#373](https://github.com/Basis-Theory/developers.basistheory.com/issues/373)) ([07ce089](https://github.com/Basis-Theory/developers.basistheory.com/commit/07ce089f34cfc545e0097db6451302ac2a8542d3))
+
 ## [1.147.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.147.0...v1.147.1) (2024-04-30)
 
 
