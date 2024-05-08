@@ -1,3 +1,10 @@
+## [1.148.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.148.0...v1.148.1) (2024-05-08)
+
+
+### Bug Fixes
+
+* reactor payload limit ([#375](https://github.com/Basis-Theory/developers.basistheory.com/issues/375)) ([416c7da](https://github.com/Basis-Theory/developers.basistheory.com/commit/416c7dad5e01183dd5f75d7c471a0cad13b31ffc))
+
 # [1.148.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.147.2...v1.148.0) (2024-05-08)
 
 
