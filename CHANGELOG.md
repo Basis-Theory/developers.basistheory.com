@@ -1,3 +1,10 @@
+# [1.148.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.147.2...v1.148.0) (2024-05-08)
+
+
+### Features
+
+* update 3ds documentation ([#374](https://github.com/Basis-Theory/developers.basistheory.com/issues/374)) ([70634dc](https://github.com/Basis-Theory/developers.basistheory.com/commit/70634dc93a13cd09d8c62697c430dcaab93b5f62))
+
 ## [1.147.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.147.1...v1.147.2) (2024-05-07)
 
 
