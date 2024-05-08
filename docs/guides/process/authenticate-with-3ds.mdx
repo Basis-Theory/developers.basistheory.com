@@ -100,9 +100,12 @@ This is done by calling [Authenticate 3DS Session](/docs/api/3ds/sessions#authen
 <Tabs className="bt-tabs" queryString="backend">
 <TabItem value="node" label="Node">
 
-In this example, we are using the [Express framework](https://expressjs.com/) for Node.js.
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
 
 ```javascript showLineNumbers
+//highlight-start
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+//highlight-end
 const express = require("express");
 
 const app = express();
@@ -111,58 +114,47 @@ const PORT = 3000;
 app.use(express.json());
 
 //highlight-start
+let bt;
+(async () => {
+  bt = await new BasisTheory().init("<API_KEY>");
+})();
+//highlight-end
+
+//highlight-start
 app.post("/:sessionId/authenticate", async (req, res) => {
   const { sessionId } = req.params;
 
-  const authenticateRequest = {
-    authentication_category: "payment",
-    authentication_type: "payment-transaction",
-    purchase_info: {
-      amount: "80000",
-      currency: "826",
-      exponent: "2",
-      date: "20240109141010",
-    },
-    requestor_info: {
-      id: "example-3ds-merchant",
-      name: "Example 3DS Merchant",
-      url: "https://www.ravelin.com/example-merchant",
-    },
-    merchant_info: {
-      mid: "9876543210001",
-      acquirer_bin: "000000999",
-      name: "Example 3DS Merchant",
-      category_code: "7922",
-      country_code: "826",
-    },
-    cardholder_info: {
-      name: "John Doe",
-      email: "john@me.com",
-    },
-  };
-
   try {
-    const response = await fetch(
-      `${process.env.API_HOST}/3ds/sessions/${sessionId}/authenticate`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "BT-API-KEY": "<PRIVATE_API_KEY>",
-        },
-        body: JSON.stringify(authenticateRequest),
+    const authentication = await bt.threeds.authenticateSession(sessionId, {
+      authenticationCategory: "payment",
+      authenticationType: "payment-transaction",
+      purchaseInfo: {
+        amount: "80000",
+        currency: "826",
+        exponent: "2",
+        date: "20240109141010"
+      },
+      requestorInfo: {
+        id: "example-3ds-merchant",
+        name: "Example 3DS Merchant",
+        url: "https://www.example.com/example-merchant"
+      },
+      merchantInfo: {
+        mid: "9876543210001",
+        acquirerBin: "000000999",
+        name: "Example 3DS Merchant",
+        categoryCode: "7922",
+        countryCode: "826"
+      },
+      cardholderInfo: {
+        name: "John Doe",
+        email: "john@me.com"
       }
-    );
-
-    if (!response.ok) {
-      throw new Error("API request failed with status" + response.status);
-    }
-
-    const authentication = await response.json();
-
+    });
     res.status(200).send(authentication);
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    console.error('Error during authentication:', error);
+    res.status(500).send({ error: "Internal Server Error" });
   }
 });
 //highlight-end
@@ -171,6 +163,259 @@ app.post("/:sessionId/authenticate", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+```
+</TabItem>
+
+<TabItem value="dotnet" label=".NET">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
+
+```csharp showLineNumbers
+using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+
+//highlight-start
+using BasisTheory.net.ThreeDS;
+using BasisTheory.net.ThreeDS.Requests;
+//highlight-end
+
+namespace server.Controllers
+{
+  public class Program
+  {
+    public static void Main(string[] args)
+    {
+      WebHost.CreateDefaultBuilder(args)
+        .UseUrls("http://0.0.0.0:4242")
+        .UseWebRoot("public")
+        .UseStartup<Startup>()
+        .Build()
+        .Run();
+    }
+  }
+
+  public class Startup
+  {
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddMvc().AddNewtonsoftJson();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+      if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+      app.UseRouting();
+      app.UseStaticFiles();
+      app.UseEndpoints(endpoints => endpoints.MapControllers());
+    }
+  }
+
+  //highlight-start
+  [ApiController]
+  public class ThreeDsApiController : Controller
+  {
+    private readonly ThreeDSClient _client;
+
+    public ThreeDsApiController()
+    {
+      _client = new ThreeDSClient("<PRIVATE_API_KEY>");
+    }
+
+    [HttpPost("{sessionId:guid}/authenticate")]
+    public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
+    {
+      var authentication = await _client.AuthenticateThreeDSSessionAsync(sessionId.ToString(), new AuthenticateThreeDSSessionRequest
+      {
+        AuthenticationCategory = "payment",
+        AuthenticationType = "payment-transaction",
+        PurchaseInfo = new ThreeDSPurchaseInfo
+        {
+          Amount = "80000",
+          Currency = "826",
+          Exponent = "2",
+          Date = "20240109141010"
+        },
+        RequestorInfo = new ThreeDSRequestorInfo
+        {
+          Id = "example-3ds-merchant",
+          Name = "Example 3DS Merchant",
+          Url = "https://www.example.com/example-merchant"
+        },
+        MerchantInfo = new ThreeDSMerchantInfo
+        {
+          Mid = "9876543210001",
+          AcquirerBin = "000000999",
+          Name = "Example 3DS Merchant",
+          CategoryCode = "7922",
+          CountryCode = "826"
+        },
+        CardholderInfo = new ThreeDSCardholderInfo
+        {
+          Name = "John Doe",
+          Email = "john@me.com"
+        }
+      });
+
+      if (authentication == null)
+      {
+        return BadRequest("Failed to authenticate session.");
+      }
+
+      return Ok(authentication);
+    }
+  }
+  //highlight-end
+}
+```
+</TabItem>
+
+<TabItem value="python" label="Python">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
+
+```python showLineNumbers
+import os
+from flask import Flask, request, jsonify
+
+#highlight-start
+import basistheory
+from basistheory.api import three_ds_api
+from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo
+#highlight-end
+
+app = Flask(__name__)
+
+#highlight-start
+@app.route('/<sessionId>/authenticate', methods=['POST'])
+def authenticate_session(sessionId):
+  config = basistheory.Configuration(
+    host="https://api.basistheory.com",
+    api_key="<PRIVATE_API_KEY>"
+  )
+
+  with basistheory.ApiClient(configuration=config) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+    authentication_request = AuthenticateThreeDSSessionRequest(
+      authentication_category="payment",
+      authentication_type="payment-transaction",
+      purchase_info=ThreeDSPurchaseInfo(
+        amount="80000",
+        currency="826",
+        exponent="2",
+        date="20240109141010"
+      ),
+      requestor_info=ThreeDSRequestorInfo(
+        id="example-3ds-merchant",
+        name="Example 3DS Merchant",
+        url="https://www.example.com/example-merchant"
+      ),
+      merchant_info=ThreeDSMerchantInfo(
+        mid="9876543210001",
+        acquirer_bin="000000999",
+        name="Example 3DS Merchant",
+        category_code="7922",
+        country_code="826"
+      ),
+      cardholder_info=ThreeDSCardholderInfo(
+        name="John Doe",
+        email="john@me.com"
+      )
+    )
+    authentication = three_ds_client.three_ds_authenticate_session(sessionId, authenticate_three_ds_session_request=authentication_request)
+    return jsonify(authentication.to_dict()), 200
+    #highlight-end
+
+if __name__ == '__main__':
+  app.run(port=4242, debug=True)
+```
+</TabItem>
+
+<TabItem value="go" label="Go">
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go), [Go HTTP package](https://pkg.go.dev/net/http) and the [Gorilla Mux Router](https://github.com/gorilla/mux).
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "encoding/json"
+  "log"
+  "net/http"
+  //highlight-start
+  "github.com/Basis-Theory/basistheory-go/v5"
+  //highlight-end
+  "github.com/gorilla/mux"
+)
+
+func main() {
+  router := mux.NewRouter()
+  router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
+  addr := "localhost:4242"
+  log.Printf("Listening on %s", addr)
+  log.Fatal(http.ListenAndServe(addr, router))
+}
+
+//highlight-start
+func authenticateSession(rw http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  sessionId := vars["sessionId"]
+
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
+  })
+
+  authenticateThreeDSSessionRequest := *basistheory.NewAuthenticateThreeDSSessionRequest()
+  authenticateThreeDSSessionRequest.SetAuthenticationCategory("payment")
+  authenticateThreeDSSessionRequest.SetAuthenticationType("payment-transaction")
+
+  purchaseInfo := *basistheory.NewThreeDSPurchaseInfo()
+  purchaseInfo.SetAmount("80000")
+  purchaseInfo.SetCurrency("826")
+  purchaseInfo.SetExponent("2")
+  purchaseInfo.SetDate("20240109141010")
+
+  requestorInfo := *basistheory.NewThreeDSRequestorInfo()
+  requestorInfo.SetId("example-3ds-merchant")
+  requestorInfo.SetName("Example 3DS Merchant")
+  requestorInfo.SetUrl("https://www.example.com/example-merchant")
+
+  merchantInfo := *basistheory.NewThreeDSMerchantInfo()
+  merchantInfo.SetMid("9876543210001")
+  merchantInfo.SetAcquirerBin("000000999")
+  merchantInfo.SetName("Example 3DS Merchant")
+  merchantInfo.SetCategoryCode("7922")
+  merchantInfo.SetCountryCode("826")
+
+  cardholderInfo := *basistheory.NewThreeDSCardholderInfo()
+  cardholderInfo.SetName("John Doe")
+  cardholderInfo.SetEmail("john@me.com")
+
+  authenticateThreeDSSessionRequest.SetPurchaseInfo(purchaseInfo)
+  authenticateThreeDSSessionRequest.SetRequestorInfo(requestorInfo)
+  authenticateThreeDSSessionRequest.SetMerchantInfo(merchantInfo)
+  authenticateThreeDSSessionRequest.SetCardholderInfo(cardholderInfo)
+
+  authenticateResponse, _, authenticateErr := apiClient.ThreeDSApi.ThreeDSAuthenticateSession(contextWithAPIKey, sessionId).AuthenticateThreeDSSessionRequest(authenticateThreeDSSessionRequest).Execute()
+  if authenticateErr != nil {
+    rw.WriteHeader(http.StatusInternalServerError)
+    json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
+    return
+  }
+
+  rw.WriteHeader(http.StatusOK)
+  json.NewEncoder(rw).Encode(authenticateResponse)
+}
+//highlight-end
 ```
 </TabItem>
 </Tabs>
@@ -327,11 +572,11 @@ Once a challenge is complete, results are retrieved by calling the [Get Challeng
 This is done by calling the Basis Theory backend endpoint `/3ds/{sessionId}/sessions/challenge-result`  from your own backend, using the same private API key that was used to authenticate.
 
 <Tabs className="bt-tabs" queryString="backend">
-<TabItem value="node" label="Node">
-
-In this example, we are using the [Express framework](https://expressjs.com/) for Node.js.
+  <TabItem value="node" label="Node">
+    In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
 
 ```javascript showLineNumbers
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
 const express = require("express");
 
 const app = express();
@@ -339,84 +584,58 @@ const PORT = 3000;
 
 app.use(express.json());
 
+let bt;
+(async () => {
+  bt = await new BasisTheory().init("<API_KEY>");
+})();
+
 app.post("/:sessionId/authenticate", async (req, res) => {
   const { sessionId } = req.params;
 
-  const authenticateRequest = {
-    authentication_category: "payment",
-    authentication_type: "payment-transaction",
-    purchase_info: {
-      amount: "80000",
-      currency: "826",
-      exponent: "2",
-      date: "20240109141010",
-    },
-    requestor_info: {
-      id: "example-3ds-merchant",
-      name: "Example 3DS Merchant",
-      url: "https://www.ravelin.com/example-merchant",
-    },
-    merchant_info: {
-      mid: "9876543210001",
-      acquirer_bin: "000000999",
-      name: "Example 3DS Merchant",
-      category_code: "7922",
-      country_code: "826",
-    },
-    cardholder_info: {
-      name: "John Doe",
-      email: "john@me.com",
-    },
-  };
-
   try {
-    const response = await fetch(
-      `${process.env.API_HOST}/3ds/sessions/${sessionId}/authenticate`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "BT-API-KEY": "<PRIVATE_API_KEY>",
-        },
-        body: JSON.stringify(authenticateRequest),
+    const authentication = await bt.threeds.authenticateSession(sessionId, {
+      authenticationCategory: "payment",
+      authenticationType: "payment-transaction",
+      purchaseInfo: {
+        amount: "80000",
+        currency: "826",
+        exponent: "2",
+        date: "20240109141010"
+      },
+      requestorInfo: {
+        id: "example-3ds-merchant",
+        name: "Example 3DS Merchant",
+        url: "https://www.example.com/example-merchant"
+      },
+      merchantInfo: {
+        mid: "9876543210001",
+        acquirerBin: "000000999",
+        name: "Example 3DS Merchant",
+        categoryCode: "7922",
+        countryCode: "826"
+      },
+      cardholderInfo: {
+        name: "John Doe",
+        email: "john@me.com"
       }
-    );
-
-    if (!response.ok) {
-      throw new Error("API request failed with status" + response.status);
-    }
-
-    const authentication = await response.json();
-
+    });
     res.status(200).send(authentication);
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    console.error('Error during authentication:', error);
+    res.status(500).send({ error: "Internal Server Error" });
   }
 });
 
 //highlight-start
 app.get("/:sessionId/challenge-result", async (req, res) => {
+  const { sessionId } = req.params;
+
   try {
-    const response = await fetch(
-      `https://api.basistheory.com/3ds/sessions/${sessionId}/challenge-result`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "BT-API-KEY": "<PRIVATE_API_KEY>",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("API request failed with status" + response.status);
-    }
-
-    const result = await response.json();
-
+    const result = await bt.threeds.getChallengeResult(sessionId);
     res.status(200).send(result);
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    console.error('Error getting challenge result:', error);
+    res.status(500).send({ error: "Internal Server Error" });
   }
 });
 //highlight-end
@@ -425,8 +644,304 @@ app.get("/:sessionId/challenge-result", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-```
-</TabItem>
+
+    ```
+  </TabItem>
+
+  <TabItem value="dotnet" label=".NET">
+    In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
+
+    ```csharp showLineNumbers
+    using System;
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using System.Threading.Tasks;
+
+    using BasisTheory.net.ThreeDS;
+    using BasisTheory.net.ThreeDS.Requests;
+
+    namespace server.Controllers
+    {
+      public class Program
+      {
+        public static void Main(string[] args)
+        {
+          WebHost.CreateDefaultBuilder(args)
+            .UseUrls("http://0.0.0.0:4242")
+            .UseWebRoot("public")
+            .UseStartup<Startup>()
+            .Build()
+            .Run();
+        }
+      }
+
+      public class Startup
+      {
+        public void ConfigureServices(IServiceCollection services)
+        {
+          services.AddMvc().AddNewtonsoftJson();
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+          if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+          app.UseRouting();
+          app.UseStaticFiles();
+          app.UseEndpoints(endpoints => endpoints.MapControllers());
+        }
+      }
+
+      [ApiController]
+      public class ThreeDsApiController : Controller
+      {
+        private readonly ThreeDSClient _client;
+
+        public ThreeDsApiController()
+        {
+          _client = new ThreeDSClient("<PRIVATE_API_KEY>");
+        }
+
+        [HttpPost("{sessionId:guid}/authenticate")]
+        public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
+        {
+          var authentication = await _client.AuthenticateThreeDSSessionAsync(sessionId.ToString(), new AuthenticateThreeDSSessionRequest
+          {
+            AuthenticationCategory = "payment",
+            AuthenticationType = "payment-transaction",
+            PurchaseInfo = new ThreeDSPurchaseInfo
+            {
+              Amount = "80000",
+              Currency = "826",
+              Exponent = "2",
+              Date = "20240109141010"
+            },
+            RequestorInfo = new ThreeDSRequestorInfo
+            {
+              Id = "example-3ds-merchant",
+              Name = "Example 3DS Merchant",
+              Url = "https://www.example.com/example-merchant"
+            },
+            MerchantInfo = new ThreeDSMerchantInfo
+            {
+              Mid = "9876543210001",
+              AcquirerBin = "000000999",
+              Name = "Example 3DS Merchant",
+              CategoryCode = "7922",
+              CountryCode = "826"
+            },
+            CardholderInfo = new ThreeDSCardholderInfo
+            {
+              Name = "John Doe",
+              Email = "john@me.com"
+            }
+          });
+
+          if (authentication == null)
+          {
+            return BadRequest("Failed to authenticate session.");
+          }
+
+          return Ok(authentication);
+        }
+
+        //highlight-start
+        [HttpGet("{sessionId:guid}/challenge-result")]
+        public async Task<ActionResult> GetChallengeResult([FromRoute] Guid sessionId)
+        {
+          var result = await _client.GetChallengeResultAsync(sessionId.ToString());
+
+          if (result == null)
+          {
+            return BadRequest("Failed to get challenge result.");
+          }
+
+          return Ok(result);
+        }
+        //highlight-end
+      }
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+    In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
+
+    ```python showLineNumbers
+    import os
+    from flask import Flask, request, jsonify
+
+    import basistheory
+    from basistheory.api import three_ds_api
+    from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo
+
+    app = Flask(__name__)
+
+    @app.route('/<sessionId>/authenticate', methods=['POST'])
+    def authenticate_session(sessionId):
+      config = basistheory.Configuration(
+        host="https://api.basistheory.com",
+        api_key="<PRIVATE_API_KEY>"
+      )
+
+      with basistheory.ApiClient(configuration=config) as api_client:
+        three_ds_client = three_ds_api.ThreeDSApi(api_client)
+        authentication_request = AuthenticateThreeDSSessionRequest(
+          authentication_category="payment",
+          authentication_type="payment-transaction",
+          purchase_info=ThreeDSPurchaseInfo(
+            amount="80000",
+            currency="826",
+            exponent="2",
+            date="20240109141010"
+          ),
+          requestor_info=ThreeDSRequestorInfo(
+            id="example-3ds-merchant",
+            name="Example 3DS Merchant",
+            url="https://www.example.com/example-merchant"
+          ),
+          merchant_info=ThreeDSMerchantInfo(
+            mid="9876543210001",
+            acquirer_bin="000000999",
+            name="Example 3DS Merchant",
+            category_code="7922",
+            country_code="826"
+          ),
+          cardholder_info=ThreeDSCardholderInfo(
+            name="John Doe",
+            email="john@me.com"
+          )
+        )
+        authentication = three_ds_client.three_ds_authenticate_session(sessionId, authenticate_three_ds_session_request=authentication_request)
+        return jsonify(authentication.to_dict()), 200
+
+    #highlight-start
+    @app.route('/<sessionId>/challenge-result', methods=['GET'])
+    def get_challenge_result(sessionId):
+      config = basistheory.Configuration(
+        host="https://api.basistheory.com",
+        api_key="<PRIVATE_API_KEY>"
+      )
+
+      with basistheory.ApiClient(configuration=config) as api_client:
+        three_ds_client = three_ds_api.ThreeDSApi(api_client)
+
+        result = three_ds_client.three_ds_get_challenge_result(session_id=sessionId)
+        return jsonify(result.to_dict()), 200
+    #highlight-end
+
+    if __name__ == '__main__':
+      app.run(port=4242, debug=True)
+    ```
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+    In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go), [Go HTTP package](https://pkg.go.dev/net/http) and the [Gorilla Mux Router](https://github.com/gorilla/mux).
+
+    ```go showLineNumbers
+    package main
+
+    import (
+      "context"
+      "encoding/json"
+      "log"
+      "net/http"
+      "github.com/Basis-Theory/basistheory-go/v5"
+      "github.com/gorilla/mux"
+    )
+
+    func main() {
+      router := mux.NewRouter()
+      router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
+      //highlight-start
+      router.HandleFunc("/{sessionId}/challenge-result", getChallengeResult).Methods("GET")
+      //highlight-end
+      addr := "localhost:4242"
+      log.Printf("Listening on %s", addr)
+      log.Fatal(http.ListenAndServe(addr, router))
+    }
+
+    func authenticateSession(rw http.ResponseWriter, r *http.Request) {
+      vars := mux.Vars(r)
+      sessionId := vars["sessionId"]
+
+      configuration := basistheory.NewConfiguration()
+      apiClient := basistheory.NewAPIClient(configuration)
+      contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+        "ApiKey": {Key: "<PRIVATE_API_KEY>"},
+      })
+
+      authenticateThreeDSSessionRequest := *basistheory.NewAuthenticateThreeDSSessionRequest()
+      authenticateThreeDSSessionRequest.SetAuthenticationCategory("payment")
+      authenticateThreeDSSessionRequest.SetAuthenticationType("payment-transaction")
+
+      purchaseInfo := *basistheory.NewThreeDSPurchaseInfo()
+      purchaseInfo.SetAmount("80000")
+      purchaseInfo.SetCurrency("826")
+      purchaseInfo.SetExponent("2")
+      purchaseInfo.SetDate("20240109141010")
+
+      requestorInfo := *basistheory.NewThreeDSRequestorInfo()
+      requestorInfo.SetId("example-3ds-merchant")
+      requestorInfo.SetName("Example 3DS Merchant")
+      requestorInfo.SetUrl("https://www.example.com/example-merchant")
+
+      merchantInfo := *basistheory.NewThreeDSMerchantInfo()
+      merchantInfo.SetMid("9876543210001")
+      merchantInfo.SetAcquirerBin("000000999")
+      merchantInfo.SetName("Example 3DS Merchant")
+      merchantInfo.SetCategoryCode("7922")
+      merchantInfo.SetCountryCode("826")
+
+      cardholderInfo := *basistheory.NewThreeDSCardholderInfo()
+      cardholderInfo.SetName("John Doe")
+      cardholderInfo.SetEmail("john@me.com")
+
+      authenticateThreeDSSessionRequest.SetPurchaseInfo(purchaseInfo)
+      authenticateThreeDSSessionRequest.SetRequestorInfo(requestorInfo)
+      authenticateThreeDSSessionRequest.SetMerchantInfo(merchantInfo)
+      authenticateThreeDSSessionRequest.SetCardholderInfo(cardholderInfo)
+
+      authenticateResponse, _, authenticateErr := apiClient.ThreeDSApi.ThreeDSAuthenticateSession(contextWithAPIKey, sessionId).AuthenticateThreeDSSessionRequest(authenticateThreeDSSessionRequest).Execute()
+      if authenticateErr != nil {
+        rw.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
+        return
+      }
+
+      rw.WriteHeader(http.StatusOK)
+      json.NewEncoder(rw).Encode(authenticateResponse)
+    }
+
+    //highlight-start
+    func getChallengeResult(rw http.ResponseWriter, r *http.Request) {
+      vars := mux.Vars(r)
+      sessionId := vars["sessionId"]
+
+      configuration := basistheory.NewConfiguration()
+      apiClient := basistheory.NewAPIClient(configuration)
+      contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+        "ApiKey": {Key: "<PRIVATE_API_KEY>"},
+      })
+
+      challengeResult, _, err := apiClient.ThreeDSApi.ThreeDSGetChallengeResult(contextWithAPIKey, sessionId).Execute()
+      if err != nil {
+        rw.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(rw).Encode(map[string]string{"error": err.Error()})
+        return
+      }
+
+      rw.WriteHeader(http.StatusOK)
+      json.NewEncoder(rw).Encode(challengeResult)
+    }
+    //highlight-end
+
+    ```
+  </TabItem>
 </Tabs>
 
 And then passing that information along back to your frontend.
