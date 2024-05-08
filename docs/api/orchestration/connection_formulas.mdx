@@ -1,0 +1,410 @@
+---
+title: Connections Formulas
+---
+
+import { Beta } from "@site/src/components/shared/Beta";
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Connection Formulas
+
+## List Connection Formulas
+
+This resource creates managed connections with vendors in your account, once created a connection is available for use in transactions.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/connection_formulas"
+/>
+
+#### Permissions
+
+<Permission content="orchestration:connection_formulas" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/orchestration/connection/formulas" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>"
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+| Parameter | Type | Description |
+|-|-|-|
+| id | string | Unique identifier for the connection formula |
+| method | string | Type of the connection (e.g. `card`) |
+| display name | string | Friendly name for the connection formula |
+| fields | array | List of configuration values for the connection. |
+| supported_countries | array | Countries to support with connection |
+| supported_currencies | array | Currencies to support with connection |
+| supported_features | array | Object of supported features (e.g. 3D Secure is allowed) |
+| required_checkout_fields | array | Object of supported features (e.g. 3D Secure is allowed) |
+
+```json showLineNumbers
+    {
+      "id": "stripe",
+      "display_name": "Stripe Card",
+      "method": "card",
+      "fields": [
+        {
+          "key": "private_key",
+          "display_name": "Private API Key",
+          "required": true,
+          "format": "text",
+          "secret": true
+        }
+      ],
+      "supported_currencies": [
+        "AUD",
+        "CAD",
+        "NZD",
+        "USD",
+        ...
+      ],
+      "supported_countries": [
+        "AU",
+        "CA",
+        "NZ",
+        "US",
+        ...
+      ],
+      "supported_features": {
+        "three_d_secure_allowed": false
+      },
+      "required_checkout_fields": []
+    }
+```
+
+## Connection Formula Terraform Examples
+
+These are examples of common connection formulas that can be used in Terraform. You're able to utilize Terraform to create any of the connection formulas returned by the List Connection Formulas endpoint, which returns a full list of all of the connections available.
+
+### Adyen
+
+This is an example of an Adyen connection formula that can be used in Terraform.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```hcl showLineNumbers
+    module "basistheory_orchestration_connection" "example_connection" {
+      connection_formula_id = "adyen-card"
+      method                = "card"
+      display_name          = "Adyen"
+      accepted_countries    = ["AE", "AT", "AL"]
+      accepted_currencies   = ["AED", "ALL", "AMD"]
+      active                = true
+
+      fields = [
+        {
+          key   = "api_key"
+          value = "api_key_value_here..."
+        },
+        {
+          key   = "merchant_account"
+          value = "merchant_account_value_here..."
+        },
+        {
+          key   = "live_endpoint_prefix"
+          value = "live_endpoint_prefix_value_here..."
+        }
+          // All required fields for the connection formula
+      ]
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+### Authipay
+
+This is an example of an Authipay connection formula that can be used in Terraform.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```hcl showLineNumbers
+    module "basistheory_orchestration_connection" "example_connection" {
+      connection_formula_id = "authipay-card"
+      method                = "card"
+      display_name          = "Authipay"
+      accepted_countries    = ["GB", "US", "AU"]
+      accepted_currencies   = ["EUR", "GBP", "USD"]
+      active                = true
+
+      fields = [
+        {
+          key   = "api_key"
+          value = "api_key_value_here..."
+        },
+        {
+          key   = "secret_key"
+          value = "secret_key_value_here..."
+        },
+        {
+          key   = "store_id"
+          value = "store_id_value_here..."
+        }
+          // All required fields for the connection formula
+      ]
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+### Authorize.net
+
+This is an example of an Authorize.net connection formula that can be used in Terraform.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```hcl showLineNumbers
+      module "basistheory_orchestration_connection" "example_connection" {
+        connection_formula_id = "authorizenet-card"
+        method                = "card"
+        display_name          = "Authorize.net"
+        accepted_countries    = ["AD", "AE", "AF"]
+        accepted_currencies   = ["AED", "AMD", "AOA"]
+        active                = true
+
+        fields = [
+          {
+            key   = "merchant_account_id"
+            value = "merchant_account_id_value_here..."
+          },
+          {
+            key   = "transaction_key"
+            value = "transaction_key_value_here..."
+          }
+            // All required fields for the connection formula
+        ]
+  }
+    ```
+  </TabItem>
+</Tabs>
+
+### Braintree
+
+This is an example of a Braintree connection formula that can be used in Terraform.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```hcl showLineNumbers
+      module "basistheory_orchestration_connection" "example_connection" {
+      connection_formula_id = "braintree-card"
+      method                = "card"
+      display_name          = "Braintree"
+      accepted_countries    = ["AD", "AE", "AF"]
+      accepted_currencies   = ["AED", "AMD", "AOA"]
+      active                = true
+
+      fields = [
+        {
+          key   = "merchant_id"
+          value = "merchant_id_value_here..."
+        },
+        {
+          key   = "public_key"
+          value = "public_key_value_here..."
+        },
+        {
+          key   = "private_key"
+          value = "private_key_value_here..."
+        },
+        {
+          key   = "tokenization_key"
+          value = "tokenization_key_value_here..."
+        },
+        {
+          key   = "merchant_account_id"
+          value = "merchant_account_id_value_here..."
+        }
+        // All required fields for the connection formula
+      ]
+  }
+    ```
+  </TabItem>
+</Tabs>
+
+### Chase Orbital
+
+This is an example of a Chase Orbital connection formula that can be used in Terraform.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```hcl showLineNumbers
+    module "basistheory_orchestration_connection" "example_connection" {
+      connection_formula_id = "chaseorbital-card"
+      method                = "card"
+      display_name          = "Chase Orbital"
+      accepted_countries    = ["US", "CA", "GB"]
+      accepted_currencies   = ["USD", "CAD", "GBP"]
+      active                = true
+
+      fields = [
+        {
+          key   = "username"
+          value = "orbital_connection_username_here..."
+        },
+        {
+          key   = "password"
+          value = "orbital_connection_password_here..."
+        },
+        {
+          key   = "merchant_id"
+          value = "merchant_id_value_here..."
+        }
+          // All required fields for the connection formula
+      ]
+  }
+    ```
+  </TabItem>
+</Tabs>
+
+### Checkout.com
+
+This is an example of a Checkout.com connection formula that can be used in Terraform.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```hcl showLineNumbers
+    module "basistheory_orchestration_connection" "example_connection" {
+      connection_formula_id = "checkoutcom-card"
+      method                = "card"
+      display_name          = "Checkout.com"
+      accepted_countries    = ["AT", "AU", "BE"]
+      accepted_currencies   = ["EUR", "AUD", "GBP"]
+      active                = true
+
+      fields = [
+        {
+          key   = "public_key"
+          value = "public_key_value_here..."
+        },
+        {
+          key   = "secret_key"
+          value = "secret_key_value_here..."
+        },
+        {
+          key   = "signature_key"
+          value = "signature_key_value_here..."
+        }
+      // All required fields for the connection formula
+      ]
+  }
+    ```
+  </TabItem>
+</Tabs>
+
+### CyberSource
+
+This is an example of a CyberSource connection formula that can be used in Terraform.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```hcl showLineNumbers
+    module "basistheory_orchestration_connection" "example_connection" {
+      connection_formula_id = "cybersource-card"
+      method                = "card"
+      display_name          = "CyberSource"
+      accepted_countries    = ["AT", "AU", "BE"]
+      accepted_currencies   = ["EUR", "AUD", "GBP"]
+      active                = true
+
+      fields = [
+        {
+          key   = "merchantid"
+          value = "merchantid_value_here..."
+        },
+        {
+          key   = "merchant_keyid"
+          value = "merchant_keyid_value_here..."
+        },
+        {
+          key   = "merchant_secretkey"
+          value = "merchant_secretkey_value_here..."
+        }
+          // All required fields for the connection formula
+      ]
+  }
+    ```
+  </TabItem>
+</Tabs>
+
+### dLocal
+
+This is an example of a dLocal connection formula that can be used in Terraform.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```hcl showLineNumbers
+    module "basistheory_orchestration_connection" "example_connection" {
+      connection_formula_id = "dlocal-card"
+      method                = "card"
+      display_name          = "dLocal"
+      accepted_countries    = ["AR", "BD", "BO"]
+      accepted_currencies   = ["ARS", "BDT", "BOB"]
+      active                = true
+
+      fields = [
+        {
+          key   = "x_login"
+          value = "x_login_value_here..."
+        },
+        {
+          key   = "x_trans_key"
+          value = "x_trans_key_value_here..."
+        },
+        {
+          key   = "client_secret"
+          value = "client_secret_value_here..."
+        },
+        {
+          key   = "merchant_name"
+          value = "merchant_name_value_here..."
+        }
+          // All required fields for the connection formula
+      ]
+  }
+    ```
+  </TabItem>
+</Tabs>
+
+### Stripe
+
+This is an example of a Stripe account setup that can be used in Terraform.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```hcl showLineNumbers
+    module "basistheory_orchestration_connection" "example_connection" {
+      connection_formula_id = "stripe"
+      method                = "card"
+      display_name          = "Stripe (Production)"
+      accepted_countries    = ["US", "GB", "DE"]
+      accepted_currencies   = ["EUR", "USD", "GBP"]
+      active                = true
+
+      fields = [
+        {
+          key   = "private_key"
+          value = "sk_test_26PHem9A..."
+        }
+          // All required fields for the connection formula
+      ]
+  }
+    ```
+  </TabItem>
+</Tabs>

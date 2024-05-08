@@ -1,0 +1,178 @@
+---
+title: Transactions
+---
+
+import { Beta } from "@site/src/components/shared/Beta";
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Transactions <Enterprise />
+
+## Create Transaction
+
+Attempts to create an authorization for a payment method. In some cases it is not possible to create the authorization without redirecting the user for their authorization. In these cases the status is set to indicate buyer approval is pending and an approval URL is returned.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/transactions"
+/>
+
+#### Permissions
+
+<Permission content="orchestration:transaction:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/orchestration/transactions" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>"
+    -d '{
+          "connection_id": "f4c57207-ebd9-4909-af79-350d3d45392a",
+          "amount": 1299,
+          "currency": "USD",
+          "token": "",
+      }'
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+Here are the descriptions summarized to under 22 words:
+
+| Parameter | Required | Type | Default | Description |
+|-|-|-|-|-|
+| amount | `true` | integer | | Transaction amount in cents. |
+| connnection_id | `true` | string | | Managed Connection to use. |
+| currency | `true` | string | | ISO-4217 currency code. |
+| token | `true` | uuid | | Basis Theory Token to use for the transaction |
+| async_capture | `false` | boolean | false | Capture transaction asynchronously or not. |
+| country | `false` | string | `null` | 2-letter ISO country code. |
+| external_identifier | `false` | string | `null` | External ID for transaction. |
+| subsequent_payment | `false` | boolean | `false` | Indicates subsequent recurring payment. |
+| merchant_initiated | `false` | boolean | `false` | If merchant or customer initiated. |
+| previous_transaction | `false` | string | `null` | Connect to previous customer transaction. |
+| three_d_secure_data | `false` | object | `null` | 3DS data for external authorization. |
+
+### Response
+
+| Parameter | Type | Default | Description |
+|-|-|-|-|
+| payment_method | object | | Payment method object. |
+| buyer_external_identifier | string | | External ID of buyer. |
+| buyer_id | string | | ID of buyer. |
+| cart_items | object[] | | Cart line item array. |
+| connection_options | object | | Optional config per conn. |
+| country | string | | 2-letter ISO country. |
+| external_identifier | string | | External trans ID. |
+
+```json showLineNumbers
+{
+
+}
+```
+
+## Capture Transaction
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/transactions/{id}/capture"
+/>
+
+#### Permissions
+
+<Permission content="orchestration:transaction:capture" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+```shell showLineNumbers
+curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-b7cc-c28a718f76f1/capture" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "amount": 1490,
+  }'
+```
+  </TabItem>
+</Tabs>
+
+#### URL Parameters
+
+| Parameter | Required | Type | Description |
+|-|-|-|-|-|
+| transaction_id | true | uuid | Existing transaction id |
+
+#### Request Parameters
+
+| Parameter | Required | Type | Default | Description |
+|-|-|-|-|-|
+| amount | true | integer | | The monetary amount to capture an authorization for, in the smallest currency unit for the given currency, for example 1299 cents to create an authorization for $12.99. When omitted blank, this will capture the entire amount. |
+
+#### Response
+
+| Parameter | Type | Default | Description |
+|-|-|-|-|
+| payment_method | object | | Payment method object. |
+| buyer_external_identifier | string | | External ID of buyer. |
+| buyer_id | string | | ID of buyer. |
+| cart_items | object[] | | Cart line item array. |
+| connection_options | object | | Optional config per conn. |
+| country | string | | 2-letter ISO country. |
+| external_identifier | string | | External trans ID. |
+
+## Void Transaction
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/transactions/{id}/void"
+/>
+
+#### Permissions
+
+<Permission content="orchestration:transaction:void" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-b7cc-c28a718f76f1/void" \
+    -H "BT-API-KEY: <API_KEY>" \
+    -H "Content-Type: application/json" \
+    -X "POST" \
+    ```
+  </TabItem>
+</Tabs>
+
+#### URL Parameters
+
+| Parameter | Required | Type | Description |
+|-|-|-|-|-|
+| transaction_id | true | uuid | Existing transaction id |
+
+#### Response
+
+| Parameter | Type | Default | Description |
+|-|-|-|-|
+| payment_method | object | | Payment method object. |
+| buyer_external_identifier | string | | External ID of buyer. |
+| buyer_id | string | | ID of buyer. |
+| cart_items | object[] | | Cart line item array. |
+| connection_options | object | | Optional config per conn. |
+| country | string | | 2-letter ISO country. |
+| external_identifier | string | | External trans ID. |
