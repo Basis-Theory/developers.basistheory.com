@@ -1,0 +1,490 @@
+---
+title: Account Updater
+---
+
+import { Alert } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+
+Account Updater is managed through the concept of Jobs, which tracks the progress of individual requests for account numbers to be updated. Jobs are submitted in a 2-step process - first, create the account updater job and receive an upload URL in the response, then upload your file directly through the upload URL. Once the update has been completed with the Networks, you will receive a webhook to request the download URL for where the file will be placed.
+
+## Create Account Updater Job
+
+An Account Updater Job creates the first step in uploading a list of tokens to be submitted to the Networks for update requests. When a job is created, you will receive an [Account Updater Job](#account-updater-job) including an `upload_url` to submit the file for processing.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/account-updater/jobs"
+/>
+
+### Permissions
+<Permission content="account-updater:job:create" />
+
+### Expiration
+
+If a file is not uploaded before the `expries_at` time limit, the job will be removed, and a `404` status code will be returned in an attempt to retrieve it. To start the process again, create a new job.
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/account-updater/jobs" \
+  -X POST \
+  -H 'Content-Type: application/json' \
+  -H 'BT-API-KEY: ...' \
+  -d '{ "callback_url": "https://api.merchant.com/account_updater/job_notification" }'
+```
+  </TabItem>
+</Tabs>
+
+**Request Parmeters**
+
+| Parameter | Required | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `callback_url` | true | _string_ | | This is the URL that will be called once a job as completed |
+
+### Response
+
+```json
+{
+  "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
+  "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
+  "status": "pending",
+  "callback_url": "[.](https://mycallback.com/).",
+  "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
+  "created_at": "2024-04-09T13:56:37.864Z",
+  "expires_at": "2024-04-09T14:56:37.864Z",
+  "upload_url": "[h](http://bt-local-us-east-2-account-updater-data.localstack:14566/requests/inbox/93f3da5e-7887-408c-88ed-b10a5fdb423a/request.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=LSIAQAAAAAAAI53EHEMR%2F20240409%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20240409T135637Z&X-Amz-Expires=3600&X-Amz-Security-Token=FQoGZXIvYXdzEBYaDfzNFKzi%2Blr3hHsNl%2F4yOJv%2BfdzsSmhzseNGEl%2Bf9iOuw7iRObMNxI6PH1TIxczD63Y8kqgmsgvUust1s56eiHSuVRxSuX4rvusfgYJL7wH1dTe2pljIXX8yj4NTkfiTu%2BBs4qv9xLmjwDjB7147omuoHKanAag2oObq4oSQ%2FT5hzhznxrtARImuyiBh%2BWgdtFgoE4oeR6lOz73cDkIC%2FIDB91iCnDlBIXkMWH3tD1gSeHHKEM6xcFIc5ouVSvx371WsYO1SL3LZxnF%2BLA3bn1%2FJKGQArEjEz9O3F7MAv%2Bzr7TzslC7Z7%2F%2BPWS53zKVIrpUPGX0cRfUvg5a%2BhB8%3D&X-Amz-Signature=782e61b29633d757949634a0ca7508adab4d2f449c62e6f6d06cda212a18e3d2&X-Amz-SignedHeaders=host&x-id=PutObject)ttps://url.to.upload/…"
+}
+```
+
+## Upload File
+
+You will utilize the `upload_url` from the Job to submit the file for processing. These URLs are compatible with any protocol an [S3 pre-signed URL can accept](https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html).
+
+<Alert> The maximum upload file size is 40 MBs per file (approx. 200k tokens)</Alert>
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+```shell showLineNumbers
+curl -X PUT -T "/path/to/file" "https://upload.basistheory.com/..."
+```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+```jsx
+const fileName = `.data/${jobId}/request.csv`;
+const fileStats = fs.statSync(fileName);
+
+const response = await fetch(uploadUrl, {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'text/csv',
+    'Content-Length': fileStats.size,
+  },
+  body: fs.createReadStream(fileName),
+  duplex: 'half',
+});
+```
+  </TabItem>
+</Tabs>
+
+## Get Account Updater Job
+
+The job status endpoint returns the current state of an [Account Updater Job](#account-updater-job). Each status contains additional details, including a successful file's errors or download URL.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/account-updater/jobs/:id"
+/>
+
+### Permissions
+<Permission content="account-updater:job:read" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+```shell showLineNumbers
+curl "https://api.basistheory.com/account-updater/jobs/:id" \
+  -H 'BT-API-KEY: ...'
+```
+  </TabItem>
+</Tabs>
+
+### Response
+```jsx
+{
+  "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
+  "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
+  "status": "pending",
+  "callback_url": "[.](https://mycallback.com/).",
+  "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
+  "created_at": "2024-04-09T13:56:37.864Z",
+  "expires_at": "2024-04-09T14:56:37.864Z",
+  "upload_url": "[h](http://bt-local-us-east-2-account-updater-data.localstack:14566/requests/inbox/93f3da5e-7887-408c-88ed-b10a5fdb423a/request.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=LSIAQAAAAAAAI53EHEMR%2F20240409%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20240409T135637Z&X-Amz-Expires=3600&X-Amz-Security-Token=FQoGZXIvYXdzEBYaDfzNFKzi%2Blr3hHsNl%2F4yOJv%2BfdzsSmhzseNGEl%2Bf9iOuw7iRObMNxI6PH1TIxczD63Y8kqgmsgvUust1s56eiHSuVRxSuX4rvusfgYJL7wH1dTe2pljIXX8yj4NTkfiTu%2BBs4qv9xLmjwDjB7147omuoHKanAag2oObq4oSQ%2FT5hzhznxrtARImuyiBh%2BWgdtFgoE4oeR6lOz73cDkIC%2FIDB91iCnDlBIXkMWH3tD1gSeHHKEM6xcFIc5ouVSvx371WsYO1SL3LZxnF%2BLA3bn1%2FJKGQArEjEz9O3F7MAv%2Bzr7TzslC7Z7%2F%2BPWS53zKVIrpUPGX0cRfUvg5a%2BhB8%3D&X-Amz-Signature=782e61b29633d757949634a0ca7508adab4d2f449c62e6f6d06cda212a18e3d2&X-Amz-SignedHeaders=host&x-id=PutObject)ttps://url.to.upload/…"
+}
+```
+
+## List Account Updater Jobs
+
+Return a list of all [Account Updater Job](#account-updater-job) created for the tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/account-updater/jobs"
+/>
+
+### Permissions
+<Permission content="account-updater:job:read" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/account-updater/jobs" \
+    -H 'BT-API-KEY: ...'
+    ```
+  </TabItem>
+</Tabs>
+
+#### Sort Order
+
+This endpoint is returned the newest first.
+
+#### Query Params
+
+| Param | Description |
+| --- | --- |
+| `size` | The maximum number of jobs to return in the response. Defaults to 20. |
+| `start` | The cursor at which the result set should start. This is the value of the next cursor returned in the previous response. |
+
+### Response
+
+```jsx
+{
+  "pagination": {
+    "page_size": 20,
+    "next": "Q1JFQVRFRF9BVCMyMDI0LTA0LTI1VDE2OjU4OjA3LjgyMVo="
+  },
+  "data": [
+   {
+     "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
+     "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
+     "status": "pending",
+     "callback_url": "https://mycallback.com/",
+     "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
+     "created_at": "2024-04-09T13:56:37.864Z",
+     "expires_at": "2024-04-09T14:56:37.864Z",
+     "upload_url": "https://url.to.upload/…"
+   },
+  ...
+  ]
+}
+```
+
+## Account Updater Job Webhook
+
+When a job status changes, we will notify the job’s webhook.
+
+### Webhook Payload
+
+```jsx
+{
+ "type": "account-updater.job.failed",
+ "timestamp": "",
+ "data": {
+   "job_id": "b4c1a8f0-9a17-4d80-849e-32e4bf5b7c61",
+   "status": "success",
+ }
+}
+```
+
+### Webhook Types
+
+`account-updater.job.failed`  , `account-updater.job.completed`
+
+### Properties
+
+| Property | Description |
+| --- | --- |
+| `job_id` | The identifier of the job the webhook is for |
+| `status` | The status of the job: failed, completed, pending , processing |
+
+## Download File
+
+You will utilize the `download_url` to download the [Completed Job File](#completed-job-file-format).
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+```shell showLineNumbers
+    curl -o "output-file-name" "https://download.basistheory.com/..."
+```
+  </TabItem>
+  <TabItem value="javascript" label="Javascript">
+```javascript showLineNumbers
+await axios.get("https://download.basistheory.com/...", { responseType: 'stream' })
+  .then(response => {
+  // Create a write stream to save the file
+  const writer = fs.createWriteStream("completed.csv");
+
+  // Pipe the response stream into the write stream
+  response.data.pipe(writer);
+
+  // Return a promise that resolves when the file has been downloaded
+  return new Promise((resolve, reject) => {
+    writer.on('finish', resolve);
+    writer.on('error', reject);
+  });
+})
+```
+  </TabItem>
+</Tabs>
+
+
+## File Details
+
+### **Create Job File Format**
+
+The file format will follow the following format for all Account Updater requests:
+
+```csv
+token,merchant_id,expiration_month,expiration_year
+d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,1234,,
+f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,1234,02,30
+```
+
+**Properties**
+
+| Property | Definition | Required |
+| --- | --- | --- |
+| `token` | A card token, allowing account number details to be extracted  | true |
+| `merchant_id` | The sub-merchant identifier | true |
+| `expiration_month` | The 2-digit expiration month of the account number. This is not required if the card token has expiration_month stored. | false |
+| `expiration_year` | The 2-digit expiration year of the account number. This is not required if the card token has expiration_year stored. | false |
+
+### **Completed Job File Format**
+
+The file format for any tokens created resulted from an updated account number. This includes only rows that resulted in a successful update, warning, or error - accounts that did not update are not included in the completed file.
+
+```csv
+token,expiration_month,expiration_year,new_token,new_expiration_month,new_expiration_year,result_code
+d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,b2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,account_updated
+f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,02,30,,,,account_closed
+```
+
+**Properties**
+
+| Property | Definition | Always Returned |
+| --- | --- | --- |
+| `token` | The card or card_number token originally sent to be updated | true |
+| `expiration_month` | The expiration month that was originally sent. | false |
+| `expiration_year` | The expiration year that was originally sent. | false |
+| `new_token` | The new card or card_number token created with new card details | false, only on successful update |
+| `new_expiration_month` | The new expiration month returned from the update. | false |
+| `new_expiration_year` | The new expiration year returned from the update. | false |
+| `result_code` | Code correlating to the status of the row. Examples of this are account_updated and account_closed (full list to come) | true |
+
+### Result Codes
+
+**Code Prefixes**
+
+| Prefix | Description |
+| --- | --- |
+| `UPD` | A new account was received from the network; update your records with the updated token. |
+| `WRN` | The token was correctly processed, although it did not result in an update. Action is potentially required. |
+| `ERR` | An error occurred while processing the file or token, requiring action. |
+
+**Result Codes**
+
+| Result Code | Description | Action |
+| --- | --- | --- |
+| `UPD_PAN` | The account number, or account number and expiration date, are updated. | The account was updated. Update your records. |
+| `UPD_EXP_DATE` | The issuer updated the expiration date. | The account number has a new expiration date. Update your records. |
+| `UPD_BRAND_CONV` | The issuer corrected a previous update. | A property of the account number was updated. Update your records. |
+| `UPD_CORRECTED` | The issuer corrected a previous update. | A property of the account number was updated. Update your records. |
+| `WRN_CLOSED_ACCOUNT` | The issuer closed the account holder’s account. | Remove the account number from future files. |
+| `WRN_CONTACT_CARDHOLDER` | The merchant should contact the account holder for additional information on the account. | No Update - Reach out |
+| `WRN_ISSUER_NOT_ENROLLED` | The Issuer BIN for the requested account number does not participate in the Account Updater program. | No update - consider removing this token from future files. |
+| `WRN_ISSUER_NO_DATA` | The issuer provided no information regarding the specific account number account number requested. | No update - consider removing this token from future files. |
+| `WRN_OPT_OUT` | The account number opted out. | No update - consider removing this token from future files. |
+| `ERR_UNDEFINED` | Undefined error. | Contact support. |
+| `ERR_INVALID_PAN` | The account number is invalid. | Check that this account number is in the supported Networks. Omit from future requests. |
+| `ERR_INVALID_TOKEN` | Token not found. | - Check that the token type is the account number
+- Check token exists in this tenant |
+| `ERR_INVALID_EXP_DATE` | The expiration date was invalid. | Check expiration month and year exist on the token or in the row using expiration_month and expiration_year |
+| `ERR_INVALID_CONFIG` | Account Updater configuration issues. | Check if the merchant_id matches the one given to you during onboarding.
+
+If your merchant_id matches, contact support. |
+
+## Test Cards
+
+The following cards can be used to test the Result Codes.
+
+| PAN | Exp. Month | Exp. Year | Result Code |
+| --- | --- | --- | --- |
+| `4111111111111111` | `12` | `2023` | `UPD_PAN` |
+| `6011690151507086` | `12` | `2023` | `UPD_EXP_DATE` |
+| `6011760519541711` | `12` | `2023` | `UPD_BRAND_CONV` |
+| `6011490740263725` | `12` | `2023` | `UPD_CORRECTED` |
+| `5461310156953048` | `12` | `2023` | `WRN_CLOSED_ACCOUNT` |
+| `4929980395567582` | `12` | `2023` | `WRN_CONTACT_CARDHOLDER` |
+| `4916725297925395` | `12` | `2023` | `WRN_ISSUER_NO_DATA` |
+| `5580422612666704` | `12` | `2023` | `WRN_ISSUER_NOT_ENROLLED` |
+| `4035501000000008` | `12` | `2023` | `WRN_OPT_OUT` |
+| `6011178332216017` | `12` | `2023` | `ERR_UNDEFINED` |
+| `6011648103759866` | `12` | `2023` | `ERR_INVALID_EXP_DATE` |
+| `378025849667382` | `12` | `2023` | `ERR_INVALID_PAN` |
+| `370000000000002` | `12` | `2023` | `ERR_INVALID_CONFIG` |
+| `4711358892785746` | `12` | `2023` | (No change and not returned in file) |
+
+### Code Sample to generate test cards
+
+```bash
+#You will need an API Key with `token:create`
+
+curl --location 'api.flock-dev.com/tokenize' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header 'BT-API-KEY: <BT API KEY>' \
+--data '[
+    {
+        "type": "card",
+        "data": {
+            "number": 4111111111111111,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 6011690151507086,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 6011760519541711,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 6011490740263725,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 5461310156953048,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 4929980395567582,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 4916725297925395,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 5580422612666704,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 4035501000000008,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 4711358892785746,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 6011178332216017,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 6011648103759866,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 378025849667382,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 370000000000002,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    }
+]
+'
+```
+
+## Resources
+
+### Account Updater Job
+
+| Property | Description |
+| --- | --- |
+| `id` | Identifier for the created job |
+| `tenant_id` | The tenant of this job is associated with  |
+| `status` | The job status: failed, completed, pending , processing |
+| `callback_url` | This URL will be called once a job is completed |
+| `expires_at`  | Time the upload URL will expire - This is 1hr from the time the job was created. This property is only returned during pending. |
+| `created_by` | The Actor Id(application) used to create the job |
+| `created_at` | Time this job was created |
+| `upload_url` | The URL to upload the [Create Job File](#create-job-file-format). This will only return when the job is in the `pending` status. |
+| `errors` (TBD) | An array of errors encountered when attempting to process the job |
+| `download_url` | The URL of the file containing the [Completed Job File](#completed-job-file-format). This will only return when the job is in the `completed` status. |
+``
