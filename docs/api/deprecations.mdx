@@ -16,7 +16,8 @@ The following table lists deprecated features and their respective shutdown date
 | `request_reactor_id` and `response_reactor_id` removed from Proxies | November 30, 2022 | March 31, 2023                 | In order to simplify management of Proxies, use of `request_transform` and `response_tramsform` has been recommended over Reactors.                                                                                                                                                                                                                                                                             |
 | Token Privacy Settings                                              | October 13, 2022  | February 1, 2023               | Privacy settings (i.e. classification, impact level, and restriction policy) have been deprecated and replaced by a more flexible authorization model based upon [Containers](/docs/concepts/what-are-containers) and [Access Rules](/docs/concepts/access-controls#what-are-access-rules). For more information, see the section below on [Migrating from Privacy Settings](#migrating-from-privacy-settings). |
 | Reactor Formulas                                                    | October 16, 2022  | February 14, 2024              | Reactor Formulas have been deprecated in favor of Reactors with `code`. For more information, see the section below on [Migrating from Reactor Formulas](#migrating-from-reactor-formulas).                                                                                                                                                                                                                     |
-| Application Key Regenerate                                          | April 17, 2024    | July 17, 2024                  | Regenerating API Keys for an Application has been replaced with [Application Keys](/docs/api/applications/application-keys), to Migrate you will Create a new Application Key and remove the old key. |
+| Application Key Regenerate                                          | April 17, 2024    | October 17, 2024               | Regenerating API Keys for an Application has been replaced with [Application Keys](/docs/api/applications/application-keys), to Migrate you will Create a new Application Key and remove the old key. |
+| Rate Limits                                                         | May 10, 2024      | June 10, 2024                  | Rate limits have been deprecated in favor of [Rate Limits](/docs/api/platform-limits).                                                                                                                                                                                                                                                                                               |
 
 ## Application Key Regenerate Deprecation
 
@@ -26,6 +27,32 @@ To recreate the Regeneration action you'll need to:
 
 1. [Create a new Application Key](/docs/api/applications/application-keys#create-application-key)
 2. [Remove the old Application Key](/docs/api/applications/application-keys#delete-application-key)
+
+## Rate Limit Deprecation
+
+The existing rate limits will be deprecated in favor of new rate limits capable of being customized.
+
+- Globale Rate Limit
+  - Counter: IP
+  - Rate: 1000 Requests / 10 Seconds
+  - Block Duration: 10 Seconds
+- Portal:
+  - Counter: IP
+  - Rate: 600 Requests / 10 Seconds
+  - Block Duration: 10 Seconds
+- API
+  - POST /tokens/search
+    - Counter: IP
+    - Rate 50 Requests / 10 Seconds
+    - Block Duration: 10 Seconds
+  - GET /tokens
+    - Counter: IP
+    - Rate 100 Requests / 10 Seconds
+    - Block Duration: 10 Seconds
+  - POST (/tokens | /tokenize)
+    - Counter: IP
+    - Rate 200 Requests / 10 Seconds
+    - Block Duration: 10 Seconds
 
 ## Migrating From Privacy Settings
 

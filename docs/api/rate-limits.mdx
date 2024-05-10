@@ -1,32 +1,62 @@
 ---
-title: Rate Limits
+title: Platform Limits
 ---
 
-# Rate Limits
+import { Alert } from "@site/src/components/shared/Alert";
+
+<Alert>These new rate limits will go into affect on June 10, 2024. If you have any questions or concerns, please reach out to your account manager or [contact us](https://basistheory.com/contact).</Alert>
+
+## Rate Limits
 
 The Basis Theory API has rate limits applied to ensure the speed and consistency of our systems.
 
-- Globale Rate Limit
-  - Counter: IP
-  - Rate: 1000 Requests / 10 Seconds
-  - Block Duration: 10 Seconds
-- Portal:
-  - Counter: IP
-  - Rate: 600 Requests / 10 Seconds
-  - Block Duration: 10 Seconds
-- API
-  - POST /tokens/search
-    - Counter: IP
-    - Rate 50 Requests / 10 Seconds
-    - Block Duration: 10 Seconds
-  - GET /tokens
-    - Counter: IP
-    - Rate 100 Requests / 10 Seconds
-    - Block Duration: 10 Seconds
-  - POST (/tokens | /tokenize)
-    - Counter: IP
-    - Rate 200 Requests / 10 Seconds
-    - Block Duration: 10 Seconds 
+### Tenant Type Rate Limits
+
+#### Test Tenant
+| Method | Resource | Counter | Rate | Action |
+| -------- | -------- | ------- | ---- | ------ |
+| ANY | ANY      | IP and API Key      | 50 req / 10 s | Throttle |
+
+### API Resource Rate Limits
+
+| Resource | Counter | Rate | Action |
+| -------- | ------- | ---- | ------ |
+| POST /tokens/search | IP | 50 req / 10 s | 10s Block |
+| GET /tokens | IP | 100 req / 10 s | 10s Block |
+| POST /tokens OR /tokenize | IP | 200 req / 10 s | 10s Block |
+| ANY /account-updater/* | IP | 10 req / 10 s | Throttle |
+
+### Application Type Rate Limits
+
+#### Private Application
+| Resource | Counter | Rate | Action |
+| -------- | ------- | ---- | ------ |
+| ANY      | API Key      | 1000 req / 10 s | 10s Block |
+
+#### Public Application
+| Resource | Counter | Rate | Action |
+| -------- | ------- | ---- | ------ |
+| ANY | IP and API Key | 50 req / 1 min | 30s Block |
+
+#### Management Application
+| Resource | Counter | Rate | Action |
+| -------- | ------- | ---- | ------ |
+|  ANY | API Key | 200 req / 1 min | 30s Block |
+
+### FAQ
+
+#### How are Rate Limits applied?
+
+Rate Limits will always apply to the lowest Rate available for a given request. For example, if a request is made to `POST /tokens` with on a `Test Tenant` the rate limit for that request is `50 Requests / 10 Seconds`.
+
+#### What is the rate limit status code?
+
+| Status Code | Meaning                       |
+| ---------- | ----------------------------- |
+| `429`      | Request has been rate limited |
+
+
+## Other Limits
 
 ### Reactors
 
@@ -38,9 +68,3 @@ Applicable to [invoking Reactors](/docs/api/reactors/#invoke-a-reactor) or [invo
 | Payload Size  | The maximum payload size to invoke a Reactor is 1 MB. <a href="https://basistheory.com/contact">Please reach out</a> if your use case requires more than that. |
 | Concurrency   | The default hot concurrency is set to 1 by default, this will fan out and cold start additional Reactors if multiple requests happen concurrently. If you need additional hot concurrency, <a href="https://basistheory.com/contact">please reach out</a>.                                                                                                                                               |
 | Synchronous Timeout   | Synchronous Reactor Invoke calls will timeout after 30s.
-
-### Error Codes
-
-| Error Code | Meaning                       |
-| ---------- | ----------------------------- |
-| `429`      | Request has been rate limited |
