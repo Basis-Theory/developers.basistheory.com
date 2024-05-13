@@ -157,7 +157,12 @@ const sidebars = {
         id: "concepts/index",
       },
       items: [
+        "concepts/access-controls",
         "concepts/what-are-tokens",
+        "concepts/what-are-containers",
+        "concepts/elements",
+        "concepts/what-is-the-proxy",
+        "concepts/what-are-reactors",
         {
           type: "doc",
           id: "concepts/what-is-search",
@@ -165,11 +170,6 @@ const sidebars = {
             enterprise: true,
           },
         },
-        "concepts/what-are-containers",
-        "concepts/access-controls",
-        "concepts/what-is-the-proxy",
-        "concepts/what-are-reactors",
-        "concepts/elements",
       ],
     },
     {
