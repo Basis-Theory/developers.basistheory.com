@@ -649,11 +649,6 @@ The created `card` token object contains the non-sensitive information about the
     "expiration_month": "{{ data.expiration_month }}",
     "expiration_year": "{{ data.expiration_year }}"
   },
-  "privacy": {
-    "classification": "pci",
-    "impact_level": "high",
-    "restriction_policy": "mask"
-  },
   "search_indexes": [],
   "containers": [
     "/pci/high/"
@@ -833,11 +828,6 @@ The new tokens should now have a fingerprint:
     "expiration_month": "{{ data.expiration_month }}",
     "expiration_year": "{{ data.expiration_year }}"
   },
-  "privacy": {
-    "classification": "pci",
-    "impact_level": "high",
-    "restriction_policy": "mask"
-  },
   "search_indexes": [],
   "containers": [
     "/pci/high/"
@@ -972,7 +962,7 @@ class MainActivity : AppCompatActivity() {
                   cvc: cardVerificationCodeRef.current,
                 },
                 fingerprintExpression: '{{ data.number }}',
-                // highlight-start   
+                // highlight-start
                 deduplicateToken: true,
                 // highlight-end
               });
@@ -1093,7 +1083,7 @@ class ViewController: UIViewController {
 
   </TabItem>
 
-  
+
   <TabItem value="android" label="Android">
 
 ```kotlin showLineNumbers title=MainActivity.kt
@@ -1142,7 +1132,7 @@ class MainActivity : AppCompatActivity() {
                 },
                 fingerprintExpression: '{{ data.number }}',
                 deduplicateToken: true,
-                // highlight-start   
+                // highlight-start
                 mask: {
                   number:'{{ data.number | card_mask: "true", "true" }}',
                   expiration_month: '{{ data.expiration_month }}',
@@ -1182,11 +1172,6 @@ Now, the created token should also reveal the BIN:
     "number": "{{ data.number | card_mask: 'true', 'true' }}",
     "expiration_month": "{{ data.expiration_month }}",
     "expiration_year": "{{ data.expiration_year }}"
-  },
-  "privacy": {
-    "classification": "pci",
-    "impact_level": "high",
-    "restriction_policy": "mask"
   },
   "search_indexes": [],
   "containers": [
@@ -1395,7 +1380,7 @@ class MainActivity : AppCompatActivity() {
       ...
       const submit = async () => {
             try {
-              const _token = await bt?.tokens.create({        
+              const _token = await bt?.tokens.create({
                 // highlight-next-line
                 id: generateTokenId(),
                 type: 'card',
@@ -1446,11 +1431,7 @@ The returned token object should now have a custom identifier:
     "expiration_month": "{{ data.expiration_month }}",
     "expiration_year": "{{ data.expiration_year }}"
   },
-  "privacy": {
-    "classification": "pci",
-    "impact_level": "high",
-    "restriction_policy": "mask"
-  },
+
   "search_indexes": [],
   "containers": [
     "/pci/high/"
