@@ -2,7 +2,8 @@
 title: Account Updater
 ---
 
-import { Alert } from "@site/src/components/shared/Alert";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Enterprise } from "@site/src/components/shared/Enterprise";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import {
@@ -11,11 +12,19 @@ import {
 } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
 
-Account Updater is managed through the concept of Jobs, which tracks the progress of individual requests for account numbers to be updated. Jobs are submitted in a 2-step process - first, create the account updater job and receive an upload URL in the response, then upload your file directly through the upload URL. Once the update has been completed with the Networks, you will receive a webhook to request the download URL for where the file will be placed.
+# Account Updater <Enterprise />
+
+<Alert type={Alerts.INFO}>Account Updater is an Enterprise feature. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
+
+Basis Theory supports merchants who leverage [card-on-file transactions](https://blog.basistheory.com/card-on-file-transactions) or [subscription](https://blog.basistheory.com/subscription-payment-processing) billing models by allowing payment card data to be collected and securely vaulted for future transactions. However, vaulted card details can become outdated when cards are re-issued due to card expiration, account closures, lost or stolen cards, or fraud prevention. This can result in failed transactions and billing disruptions, leading to involuntary customer churn or lost revenue. Account Updater enables you to keep vaulted card tokens up to date with the latest information from the card networks, improving transaction success rates.
+
+Each request to update a batch of cards is referred to as an Account Updater Job. Job requests and results are transmitted using CSV-formatted flat files containing Basis Theory tokens. Jobs are submitted in a 2-step process - first, [create an account updater job](#create-account-updater-job) and receive an upload URL in the response, then [upload your request CSV file](#upload-request-file) directly through the upload URL. Once all updates have been received from the card networks and the job has been completed, you will receive a webhook reporting the overall job status. If successful, the job's result details can be [downloaded](#download-result-file) in CSV format, which you can use to update token id references in your system.
+
+Basis Theory currently supports updating `card` tokens against the Visa, Mastercard, American Express, and Discover networks.
 
 ## Create Account Updater Job
 
-An Account Updater Job creates the first step in uploading a list of tokens to be submitted to the Networks for update requests. When a job is created, you will receive an [Account Updater Job](#account-updater-job) including an `upload_url` to submit the file for processing.
+Creates an Account Updater Job to update a batch of `card` tokens. Responds with an [Account Updater Job](#account-updater-job) including an `upload_url` to submit a request CSV file for processing.
 
 <HttpMethod
   method={HttpMethods.POST}
@@ -27,7 +36,7 @@ An Account Updater Job creates the first step in uploading a list of tokens to b
 
 ### Expiration
 
-If a file is not uploaded before the `expries_at` time limit, the job will be removed, and a `404` status code will be returned in an attempt to retrieve it. To start the process again, create a new job.
+You have one hour to upload a request file, at which time the job and upload url will expire and the job will be removed. Attempting to retrieve an expired job will result in a `404` status code. If a job expires, simply start the process again by creating a new job.
 
 ### Request
 
@@ -46,9 +55,9 @@ curl "https://api.basistheory.com/account-updater/jobs" \
 
 **Request Parmeters**
 
-| Parameter | Required | Type | Default | Description |
-| --- | --- | --- | --- | --- |
-| `callback_url` | true | _string_ | | This is the URL that will be called once a job as completed |
+| Parameter      | Required | Type     | Default | Description                                          |
+|----------------|----------|----------|---------|------------------------------------------------------|
+| `callback_url` | false    | _string_ |         | The URL that will be called once a job has completed |
 
 ### Response
 
@@ -57,29 +66,29 @@ curl "https://api.basistheory.com/account-updater/jobs" \
   "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
   "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
   "status": "pending",
-  "callback_url": "[.](https://mycallback.com/).",
+  "callback_url": "https://mycallback.com",
   "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
   "created_at": "2024-04-09T13:56:37.864Z",
   "expires_at": "2024-04-09T14:56:37.864Z",
-  "upload_url": "[h](http://bt-local-us-east-2-account-updater-data.localstack:14566/requests/inbox/93f3da5e-7887-408c-88ed-b10a5fdb423a/request.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=LSIAQAAAAAAAI53EHEMR%2F20240409%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20240409T135637Z&X-Amz-Expires=3600&X-Amz-Security-Token=FQoGZXIvYXdzEBYaDfzNFKzi%2Blr3hHsNl%2F4yOJv%2BfdzsSmhzseNGEl%2Bf9iOuw7iRObMNxI6PH1TIxczD63Y8kqgmsgvUust1s56eiHSuVRxSuX4rvusfgYJL7wH1dTe2pljIXX8yj4NTkfiTu%2BBs4qv9xLmjwDjB7147omuoHKanAag2oObq4oSQ%2FT5hzhznxrtARImuyiBh%2BWgdtFgoE4oeR6lOz73cDkIC%2FIDB91iCnDlBIXkMWH3tD1gSeHHKEM6xcFIc5ouVSvx371WsYO1SL3LZxnF%2BLA3bn1%2FJKGQArEjEz9O3F7MAv%2Bzr7TzslC7Z7%2F%2BPWS53zKVIrpUPGX0cRfUvg5a%2BhB8%3D&X-Amz-Signature=782e61b29633d757949634a0ca7508adab4d2f449c62e6f6d06cda212a18e3d2&X-Amz-SignedHeaders=host&x-id=PutObject)ttps://url.to.upload/…"
+  "upload_url": "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
 }
 ```
 
-## Upload File
+## Upload Request File
 
-You will utilize the `upload_url` from the Job to submit the file for processing. These URLs are compatible with any protocol an [S3 pre-signed URL can accept](https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html).
+Once you have created a [Request CSV File](#request-file-format), you can use the `upload_url` for the Job to submit your file for processing. You can use the `upload_url` to upload your file using any usage patterns supported by [S3 pre-signed URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html).
 
-<Alert> The maximum upload file size is 40 MBs per file (approx. 200k tokens)</Alert>
+<Alert> The maximum upload file size is 30 MB per file (approx. 300k tokens)</Alert>
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 ```shell showLineNumbers
-curl -X PUT -T "/path/to/file" "https://upload.basistheory.com/..."
+curl -X PUT -T "/local/path/to/file" "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
 ```
   </TabItem>
   <TabItem value="javascript" label="JavaScript">
 ```jsx
-const fileName = `.data/${jobId}/request.csv`;
+const fileName = `.data/${jobId}/request.csv`; // create your csv request file here
 const fileStats = fs.statSync(fileName);
 
 const response = await fetch(uploadUrl, {
@@ -97,11 +106,11 @@ const response = await fetch(uploadUrl, {
 
 ## Get Account Updater Job
 
-The job status endpoint returns the current state of an [Account Updater Job](#account-updater-job). Each status contains additional details, including a successful file's errors or download URL.
+Retrieves an [Account Updater Job](#account-updater-job). This endpoint can be used to poll for job failure or completion if webhook callbacks are not desired.
 
 <HttpMethod
   method={HttpMethods.GET}
-  endpoint="https://api.basistheory.com/account-updater/jobs/:id"
+  endpoint="https://api.basistheory.com/account-updater/jobs/{id}"
 />
 
 ### Permissions
@@ -112,7 +121,7 @@ The job status endpoint returns the current state of an [Account Updater Job](#a
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 ```shell showLineNumbers
-curl "https://api.basistheory.com/account-updater/jobs/:id" \
+curl "https://api.basistheory.com/account-updater/jobs/93f3da5e-7887-408c-88ed-b10a5fdb423a" \
   -H 'BT-API-KEY: ...'
 ```
   </TabItem>
@@ -124,17 +133,17 @@ curl "https://api.basistheory.com/account-updater/jobs/:id" \
   "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
   "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
   "status": "pending",
-  "callback_url": "[.](https://mycallback.com/).",
+  "callback_url": "https://mycallback.com",
   "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
   "created_at": "2024-04-09T13:56:37.864Z",
   "expires_at": "2024-04-09T14:56:37.864Z",
-  "upload_url": "[h](http://bt-local-us-east-2-account-updater-data.localstack:14566/requests/inbox/93f3da5e-7887-408c-88ed-b10a5fdb423a/request.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=LSIAQAAAAAAAI53EHEMR%2F20240409%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20240409T135637Z&X-Amz-Expires=3600&X-Amz-Security-Token=FQoGZXIvYXdzEBYaDfzNFKzi%2Blr3hHsNl%2F4yOJv%2BfdzsSmhzseNGEl%2Bf9iOuw7iRObMNxI6PH1TIxczD63Y8kqgmsgvUust1s56eiHSuVRxSuX4rvusfgYJL7wH1dTe2pljIXX8yj4NTkfiTu%2BBs4qv9xLmjwDjB7147omuoHKanAag2oObq4oSQ%2FT5hzhznxrtARImuyiBh%2BWgdtFgoE4oeR6lOz73cDkIC%2FIDB91iCnDlBIXkMWH3tD1gSeHHKEM6xcFIc5ouVSvx371WsYO1SL3LZxnF%2BLA3bn1%2FJKGQArEjEz9O3F7MAv%2Bzr7TzslC7Z7%2F%2BPWS53zKVIrpUPGX0cRfUvg5a%2BhB8%3D&X-Amz-Signature=782e61b29633d757949634a0ca7508adab4d2f449c62e6f6d06cda212a18e3d2&X-Amz-SignedHeaders=host&x-id=PutObject)ttps://url.to.upload/…"
+  "upload_url": "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
 }
 ```
 
 ## List Account Updater Jobs
 
-Return a list of all [Account Updater Job](#account-updater-job) created for the tenant.
+Return a list of all [Account Updater Jobs](#account-updater-job) created for the tenant.
 
 <HttpMethod
   method={HttpMethods.GET}
@@ -157,13 +166,13 @@ Return a list of all [Account Updater Job](#account-updater-job) created for the
 
 #### Sort Order
 
-This endpoint is returned the newest first.
+This endpoint returns newest jobs first.
 
 #### Query Params
 
-| Param | Description |
-| --- | --- |
-| `size` | The maximum number of jobs to return in the response. Defaults to 20. |
+| Param   | Description                                                                                                              |
+|---------|--------------------------------------------------------------------------------------------------------------------------|
+| `size`  | The maximum number of jobs to return in the response. Defaults to 20.                                                    |
 | `start` | The cursor at which the result set should start. This is the value of the next cursor returned in the previous response. |
 
 ### Response
@@ -183,7 +192,7 @@ This endpoint is returned the newest first.
      "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
      "created_at": "2024-04-09T13:56:37.864Z",
      "expires_at": "2024-04-09T14:56:37.864Z",
-     "upload_url": "https://url.to.upload/…"
+     "upload_url": "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
    },
   ...
   ]
@@ -192,45 +201,46 @@ This endpoint is returned the newest first.
 
 ## Account Updater Job Webhook
 
-When a job status changes, we will notify the job’s webhook.
+When a job status changes to either `completed` or `failed`, the following webhook will be sent to the configured `callback_url`.
 
 ### Webhook Payload
 
 ```jsx
 {
- "type": "account-updater.job.failed",
- "timestamp": "",
+ "type": "account-updater.job.completed",
+ "timestamp": "2024-04-10T11:45:13.877Z",
  "data": {
    "job_id": "b4c1a8f0-9a17-4d80-849e-32e4bf5b7c61",
-   "status": "success",
+   "status": "completed"
  }
 }
 ```
 
 ### Webhook Types
 
-`account-updater.job.failed`  , `account-updater.job.completed`
+- `account-updater.job.completed`
+- `account-updater.job.failed`
 
 ### Properties
 
-| Property | Description |
-| --- | --- |
-| `job_id` | The identifier of the job the webhook is for |
-| `status` | The status of the job: failed, completed, pending , processing |
+| Property | Description               |
+|----------|---------------------------|
+| `job_id` | The identifier of the job |
+| `status` | The status of the job     |
 
-## Download File
+## Download Result File
 
-You will utilize the `download_url` to download the [Completed Job File](#completed-job-file-format).
+Once a job is in the `completed` status, you can use the `download_url` returned when [retrieving a job](#get-account-updater-job) to download the [Result File](#result-file-format).
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 ```shell showLineNumbers
-    curl -o "output-file-name" "https://download.basistheory.com/..."
+    curl -o "output-file-name" "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
 ```
   </TabItem>
   <TabItem value="javascript" label="Javascript">
 ```javascript showLineNumbers
-await axios.get("https://download.basistheory.com/...", { responseType: 'stream' })
+await axios.get("https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/...", { responseType: 'stream' })
   .then(response => {
   // Create a write stream to save the file
   const writer = fs.createWriteStream("completed.csv");
@@ -249,101 +259,100 @@ await axios.get("https://download.basistheory.com/...", { responseType: 'stream'
 </Tabs>
 
 
-## File Details
+## File Format Specifications
 
-### **Create Job File Format**
+### **Request File Format**
 
-The file format will follow the following format for all Account Updater requests:
+Account Updater request CSV files must use the following format:
 
 ```csv
-token,merchant_id,expiration_month,expiration_year
-d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,1234,,
-f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,1234,02,30
+token,expiration_year,expiration_month,merchant_id
+d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,1234
+f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,30,02,1234
 ```
 
 **Properties**
 
-| Property | Definition | Required |
-| --- | --- | --- |
-| `token` | A card token, allowing account number details to be extracted  | true |
-| `merchant_id` | The sub-merchant identifier | true |
-| `expiration_month` | The 2-digit expiration month of the account number. This is not required if the card token has expiration_month stored. | false |
-| `expiration_year` | The 2-digit expiration year of the account number. This is not required if the card token has expiration_year stored. | false |
+| Property           | Definition                                                                                                                                         | Required |
+|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|----------|
+| `token`            | A `card` token to be updated. The expiration date in this token is optional, and if present, will be sent to the networks when requesting updates. | true     |
+| `expiration_year`  | The 2-digit expiration year of the account number. This is not required if the `card` token has `expiration_year` stored.                          | false    |
+| `expiration_month` | The 2-digit expiration month of the account number. This is not required if the `card` token has `expiration_month` stored.                        | false    |
+| `merchant_id`      | The merchant identifier (provided by Basis Theory) under which this update request is submitted                                                    | true     |
 
-### **Completed Job File Format**
+### **Result File Format**
 
-The file format for any tokens created resulted from an updated account number. This includes only rows that resulted in a successful update, warning, or error - accounts that did not update are not included in the completed file.
+The result file is used to communicate any tokens created as a result of an updated account number or expiration date. This file only includes rows that resulted in a successful update, a warning, or an error (see [Result Codes](#result-codes) for details). Rows that did not result in any updates are omitted from the result file.
+
+Account Updater result CSV files will use the following format:
 
 ```csv
-token,expiration_month,expiration_year,new_token,new_expiration_month,new_expiration_year,result_code
-d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,b2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,account_updated
-f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,02,30,,,,account_closed
+token,expiration_year,expiration_month,new_token,new_expiration_year,new_expiration_month,result_code
+d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,b2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,UPD_PAN
+f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,30,02,,,,WRN_CLOSED_ACCOUNT
 ```
 
 **Properties**
 
-| Property | Definition | Always Returned |
-| --- | --- | --- |
-| `token` | The card or card_number token originally sent to be updated | true |
-| `expiration_month` | The expiration month that was originally sent. | false |
-| `expiration_year` | The expiration year that was originally sent. | false |
-| `new_token` | The new card or card_number token created with new card details | false, only on successful update |
-| `new_expiration_month` | The new expiration month returned from the update. | false |
-| `new_expiration_year` | The new expiration year returned from the update. | false |
-| `result_code` | Code correlating to the status of the row. Examples of this are account_updated and account_closed (full list to come) | true |
+| Property               | Definition                                                                                                   | Always Returned                   |
+|------------------------|--------------------------------------------------------------------------------------------------------------|-----------------------------------|
+| `token`                | The `card` token to be updated, as sent in the request file                                                  | true                              |
+| `expiration_month`     | The `expiration_month` that was sent in the request file.                                                    | false                             |
+| `expiration_year`      | The expiration year that was originally sent.                                                                | false                             |
+| `new_token`            | The new `card` token created with updated card details. Update any references to this token in your systems. | false (only on successful update) |
+| `new_expiration_month` | The new expiration month returned from the update.                                                           | false                             |
+| `new_expiration_year`  | The new expiration year returned from the update.                                                            | false                             |
+| `result_code`          | Code summarizing the processing status of the row. See [Result Codes](#result-codes) below for details.      | true                              |
 
 ### Result Codes
 
 **Code Prefixes**
 
-| Prefix | Description |
-| --- | --- |
-| `UPD` | A new account was received from the network; update your records with the updated token. |
-| `WRN` | The token was correctly processed, although it did not result in an update. Action is potentially required. |
-| `ERR` | An error occurred while processing the file or token, requiring action. |
+| Prefix | Description                                                                                                 |
+|--------|-------------------------------------------------------------------------------------------------------------|
+| `UPD`  | A update was received from the network; update your records with the updated token.                         |
+| `WRN`  | The token was correctly processed, although it did not result in an update. Action is potentially required. |
+| `ERR`  | An error occurred while processing the file or token, requiring action.                                     |
 
 **Result Codes**
 
-| Result Code | Description | Action |
-| --- | --- | --- |
-| `UPD_PAN` | The account number, or account number and expiration date, are updated. | The account was updated. Update your records. |
-| `UPD_EXP_DATE` | The issuer updated the expiration date. | The account number has a new expiration date. Update your records. |
-| `UPD_BRAND_CONV` | The issuer corrected a previous update. | A property of the account number was updated. Update your records. |
-| `UPD_CORRECTED` | The issuer corrected a previous update. | A property of the account number was updated. Update your records. |
-| `WRN_CLOSED_ACCOUNT` | The issuer closed the account holder’s account. | Remove the account number from future files. |
-| `WRN_CONTACT_CARDHOLDER` | The merchant should contact the account holder for additional information on the account. | No Update - Reach out |
-| `WRN_ISSUER_NOT_ENROLLED` | The Issuer BIN for the requested account number does not participate in the Account Updater program. | No update - consider removing this token from future files. |
-| `WRN_ISSUER_NO_DATA` | The issuer provided no information regarding the specific account number account number requested. | No update - consider removing this token from future files. |
-| `WRN_OPT_OUT` | The account number opted out. | No update - consider removing this token from future files. |
-| `ERR_UNDEFINED` | Undefined error. | Contact support. |
-| `ERR_INVALID_PAN` | The account number is invalid. | Check that this account number is in the supported Networks. Omit from future requests. |
-| `ERR_INVALID_TOKEN` | Token not found. | - Check that the token type is the account number
-- Check token exists in this tenant |
-| `ERR_INVALID_EXP_DATE` | The expiration date was invalid. | Check expiration month and year exist on the token or in the row using expiration_month and expiration_year |
-| `ERR_INVALID_CONFIG` | Account Updater configuration issues. | Check if the merchant_id matches the one given to you during onboarding.
-
-If your merchant_id matches, contact support. |
+| Result Code               | Description                                                                                                             | Action                                                                                                                                                             |
+|---------------------------|-------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `UPD_PAN`                 | The issuer updated the account number, or account number and expiration date.                                           | A new token has been created. Update your records.                                                                                                                 |
+| `UPD_EXP_DATE`            | The issuer updated the expiration date.                                                                                 | A new token has been created. Update your records.                                                                                                                 |
+| `UPD_BRAND_CONV`          | The card brand has changed but the issuer remains the same. The account number or expiration may or may not be changed. | If a new token has been created, update your records.                                                                                                              |
+| `UPD_CORRECTED`           | The issuer corrected a previous update.                                                                                 | A new token has been created. Update your records.                                                                                                                 |
+| `WRN_CLOSED_ACCOUNT`      | The issuer closed the account holder’s account.                                                                         | Exclude the token from future account updater requests.                                                                                                            |
+| `WRN_CONTACT_CARDHOLDER`  | The merchant should contact the account holder for additional information on the account.                               | No Update - Reach out                                                                                                                                              |
+| `WRN_ISSUER_NOT_ENROLLED` | The issuer for the requested card number does not participate in the Account Updater program.                           | No update - consider removing this token from future requests.                                                                                                     |
+| `WRN_ISSUER_NO_DATA`      | The issuer provided no information regarding the specific card number requested.                                        | No update - consider removing this token from future requests.                                                                                                     |
+| `WRN_OPT_OUT`             | The cardholder has opted out of the account updater service.                                                            | No update - consider removing this token from future requests.                                                                                                     |
+| `ERR_UNDEFINED`           | Undefined error.                                                                                                        | Contact support.                                                                                                                                                   |
+| `ERR_INVALID_PAN`         | The card number is invalid.                                                                                             | Check that this token contains a valid card number for one of the supported networks (Visa, Mastercard, American Express, or Discover). Omit from future requests. |
+| `ERR_INVALID_TOKEN`       | Token not found.                                                                                                        | Check that the token is of type `card` and that the token exists in this tenant.                                                                                   |
+| `ERR_INVALID_EXP_DATE`    | The expiration date was invalid.                                                                                        | Check expiration month and year exist on the token or in the row's expiration_month and expiration_year fields                                                     |
+| `ERR_INVALID_CONFIG`      | Invalid Account Updater configuration.                                                                                  | Verify that the merchant_id matches the one given to you during onboarding. If your merchant_id matches, contact support.                                          |
 
 ## Test Cards
 
 The following cards can be used to test the Result Codes.
 
-| PAN | Exp. Month | Exp. Year | Result Code |
-| --- | --- | --- | --- |
-| `4111111111111111` | `12` | `2023` | `UPD_PAN` |
-| `6011690151507086` | `12` | `2023` | `UPD_EXP_DATE` |
-| `6011760519541711` | `12` | `2023` | `UPD_BRAND_CONV` |
-| `6011490740263725` | `12` | `2023` | `UPD_CORRECTED` |
-| `5461310156953048` | `12` | `2023` | `WRN_CLOSED_ACCOUNT` |
-| `4929980395567582` | `12` | `2023` | `WRN_CONTACT_CARDHOLDER` |
-| `4916725297925395` | `12` | `2023` | `WRN_ISSUER_NO_DATA` |
-| `5580422612666704` | `12` | `2023` | `WRN_ISSUER_NOT_ENROLLED` |
-| `4035501000000008` | `12` | `2023` | `WRN_OPT_OUT` |
-| `6011178332216017` | `12` | `2023` | `ERR_UNDEFINED` |
-| `6011648103759866` | `12` | `2023` | `ERR_INVALID_EXP_DATE` |
-| `378025849667382` | `12` | `2023` | `ERR_INVALID_PAN` |
-| `370000000000002` | `12` | `2023` | `ERR_INVALID_CONFIG` |
-| `4711358892785746` | `12` | `2023` | (No change and not returned in file) |
+| PAN                | Exp. Month | Exp. Year | Result Code                          |
+|--------------------|------------|-----------|--------------------------------------|
+| `4111111111111111` | `12`       | `2023`    | `UPD_PAN`                            |
+| `6011690151507086` | `12`       | `2023`    | `UPD_EXP_DATE`                       |
+| `6011760519541711` | `12`       | `2023`    | `UPD_BRAND_CONV`                     |
+| `6011490740263725` | `12`       | `2023`    | `UPD_CORRECTED`                      |
+| `5461310156953048` | `12`       | `2023`    | `WRN_CLOSED_ACCOUNT`                 |
+| `4929980395567582` | `12`       | `2023`    | `WRN_CONTACT_CARDHOLDER`             |
+| `4916725297925395` | `12`       | `2023`    | `WRN_ISSUER_NO_DATA`                 |
+| `5580422612666704` | `12`       | `2023`    | `WRN_ISSUER_NOT_ENROLLED`            |
+| `4035501000000008` | `12`       | `2023`    | `WRN_OPT_OUT`                        |
+| `6011178332216017` | `12`       | `2023`    | `ERR_UNDEFINED`                      |
+| `6011648103759866` | `12`       | `2023`    | `ERR_INVALID_EXP_DATE`               |
+| `378025849667382`  | `12`       | `2023`    | `ERR_INVALID_PAN`                    |
+| `370000000000002`  | `12`       | `2023`    | `ERR_INVALID_CONFIG`                 |
+| `4711358892785746` | `12`       | `2023`    | (No change and not returned in file) |
 
 ### Code Sample to generate test cards
 
@@ -475,16 +484,15 @@ curl --location 'api.flock-dev.com/tokenize' \
 
 ### Account Updater Job
 
-| Property | Description |
-| --- | --- |
-| `id` | Identifier for the created job |
-| `tenant_id` | The tenant of this job is associated with  |
-| `status` | The job status: failed, completed, pending , processing |
-| `callback_url` | This URL will be called once a job is completed |
-| `expires_at`  | Time the upload URL will expire - This is 1hr from the time the job was created. This property is only returned during pending. |
-| `created_by` | The Actor Id(application) used to create the job |
-| `created_at` | Time this job was created |
-| `upload_url` | The URL to upload the [Create Job File](#create-job-file-format). This will only return when the job is in the `pending` status. |
-| `errors` (TBD) | An array of errors encountered when attempting to process the job |
-| `download_url` | The URL of the file containing the [Completed Job File](#completed-job-file-format). This will only return when the job is in the `completed` status. |
-``
+| Property       | Type                  | Description                                                                                                                                       |
+|----------------|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`           | _string_              | Identifier for the account updater job                                                                                                            |
+| `tenant_id`    | _uuid_                | The tenant this job is associated with                                                                                                            |
+| `status`       | _string_              | The job status, values include: `failed`, `completed`, `pending`, `processing`                                                                    |
+| `callback_url` | _string_              | The URL that will be called once a job has completed                                                                                              |
+| `expires_at`   | _datetime_            | Time the upload URL will expire. This property is only returned while the job is in the `pending` status.                                         |
+| `created_by`   | _uuid_                | The id of the application used to create the job                                                                                                  |
+| `created_at`   | _datetime_            | Timestamp when this job was created                                                                                                               |
+| `upload_url`   | _string_              | The URL to which the [Request File](#upload-request-file) should be uploaded. This will only be returned when the job is in the `pending` status. |
+| `errors`       | _array&lt;string&gt;_ | An array of error messages encountered when attempting to process the job                                                                         |
+| `download_url` | _string_              | The URL to download the [Result File](#download-result-file). This will only be returned when the job is in the `completed` status.               |
