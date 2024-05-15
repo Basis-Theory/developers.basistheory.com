@@ -1,3 +1,10 @@
+# [1.150.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.149.0...v1.150.0) (2024-05-15)
+
+
+### Features
+
+* adding account updater ([#379](https://github.com/Basis-Theory/developers.basistheory.com/issues/379)) ([9197a32](https://github.com/Basis-Theory/developers.basistheory.com/commit/9197a32f9867754293bf3b098663f5858f421a97))
+
 # [1.149.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.148.1...v1.149.0) (2024-05-15)
 
 
