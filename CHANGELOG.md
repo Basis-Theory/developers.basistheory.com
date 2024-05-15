@@ -1,3 +1,10 @@
+# [1.151.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.150.0...v1.151.0) (2024-05-15)
+
+
+### Features
+
+* add treasury prime example ([#382](https://github.com/Basis-Theory/developers.basistheory.com/issues/382)) ([966cb5d](https://github.com/Basis-Theory/developers.basistheory.com/commit/966cb5d31f72929d35b4164f3b790b815c9ac44d))
+
 # [1.150.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.149.0...v1.150.0) (2024-05-15)
 
 
