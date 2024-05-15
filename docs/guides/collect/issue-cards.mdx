@@ -109,8 +109,8 @@ module.exports = async function (req) {
     type: 'card',
     data: {
       number: pan,
-      expiration_month: expiration.substring(0, 2),
-      expiration_year: `20${expiration.substring(2, 4)}`,
+      expiration_month: expiration.slice(0, 2),
+      expiration_year: `20${expiration.slice(-2)}`,
       cvc: cvv_number
     },
     fingerprintExpression: '{{ data.number }}',
@@ -209,6 +209,39 @@ module.exports = async function (req) {
 
 [Galileo Create Virtual Card Account Docs](https://docs.galileo-ft.com/pro/reference/post_createvirtualcard)
 
+  </TabItem>
+  <TabItem value="treasuryprime" label="Treasury Prime">
+
+```javascript showLineNumbers title="responseTransform.js"
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers } = args;
+  const { id, pan, expiration, cvv, ...rest } = body;
+
+  const token = await bt.tokens.create({
+    id, // (optional) use the TP card id as Basis Theory card token
+    type: 'card',
+    data: {
+      number: pan,
+      expiration_month: expiration.slice(0, 2),
+      expiration_year: `20${expiration.slice(-2)}`,
+      cvc: cvv
+    },
+    fingerprintExpression: '{{ data.number }}',
+    deduplicateToken: true,
+  });
+
+  return {
+    headers,
+    body: {
+      ...rest,
+      token, // the Basis Theory token is added to the response
+    },
+  }
+}
+```
+
+[Treasure Prime Retrieve Card Docs](https://developers.treasuryprime.com/docs/card#retrieve-a-card)
   </TabItem>
   <TabItem value="mastercard" label="Mastercard">
 
@@ -368,6 +401,26 @@ curl "https://api.basistheory.com/proxies" \
 ```
 
   </TabItem>
+  <TabItem value="treasuryprime" label="Treasury Prime">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -X "POST" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Issuer Proxy",
+    "destination_url": "https://api.sandbox.treasuryprime.com/card",
+    "response_transform": {
+      "code": '"$(echo $response_transform_code | jq -Rsa .)"'
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    }
+  }'
+```
+
+  </TabItem>
   <TabItem value="mastercard" label="Mastercard">
 
 ```shell showLineNumbers
@@ -424,7 +477,6 @@ The `Authorization` header includes Lithic API Key.
 ```json showLineNumbers title="Create Card (Transformed) Response"
 {
   "created": "2023-05-25T13:15:15Z",
-  "token": "f122d84b-f8ce-4f0f-899b-44ff5eb6a720",
   "last_four": "3671",
   "hostname": "",
   "memo": "VIRTUAL card",
@@ -494,7 +546,6 @@ The `Authorization` header includes Marqeta's Application token and Admin access
 {
   "created_time": "2023-05-25T13:33:22Z",
   "last_modified_time": "2023-05-25T13:33:22Z",
-  "token": "5880854a-0ed8-4943-9488-389bd7b4a6b8",
   "user_token": "fc601fb6-4b8b-4670-bad6-c1875cee7657",
   "card_product_token": "45d0d874-2b89-487a-9296-ea92a9c6dc68",
   "last_four": "3181",
@@ -541,7 +592,7 @@ The `Authorization` header includes Marqeta's Application token and Admin access
   <TabItem value="stripe" label="Stripe">
 
 ```shell showLineNumbers title="Retrieve Card Request"
-curl 'https://api.basistheory.com/proxy/ic_1ND8RgGuvJF9SIWEmUMy57D9?expand[]=number&expand[]=cvc' \
+curl 'https://api.basistheory.com/proxy/<CARD_ID>?expand[]=number&expand[]=cvc' \
   -X "GET" \
   -H "Content-Type: application/json" \
   -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
@@ -549,7 +600,7 @@ curl 'https://api.basistheory.com/proxy/ic_1ND8RgGuvJF9SIWEmUMy57D9?expand[]=num
   -H "Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4" \
 ```
 
-The `Authorization` header includes the Stripe API Key, and `ic_1ND8RgGuvJF9SIWEmUMy57D9` is the card id added to the the URL. Notice that we also must instruct Stripe to expand the card `number` and `cvc` using the URL.
+The `Authorization` header includes the Stripe API Key, and `<CARD_ID>` is added to the the URL. Notice that we also must instruct Stripe to expand the card `number` and `cvc` using the URL.
 
 ```json showLineNumbers title="Retrieve Card (Transformed) Response"
 {
@@ -660,7 +711,7 @@ The `Authorization` header includes the Stripe API Key, and `ic_1ND8RgGuvJF9SIWE
 }
 ```
 
-Stripe only returns `number` and `cvc` when retrieving an existing card. So you first must [create](https://stripe.com/docs/api/issuing/cards/create) the card directly calling Stripe API, and then [retrieve](https://stripe.com/docs/api/issuing/cards/retrieve) it using the Proxy.
+Stripe only returns `number` and `cvc` when retrieving an existing card. So you first must [create](https://stripe.com/docs/api/issuing/cards/create) the card directly, and then [retrieve](https://stripe.com/docs/api/issuing/cards/retrieve) it using the Proxy.
   </TabItem>
   <TabItem value="galileo" label="Galileo">
 
@@ -743,6 +794,68 @@ The data parameters `apiLogin`, `apiTransKey` `providerId` and `transactionId` a
   "system_timestamp": "2020-07-13 10:37:52"
 }
 ```
+  </TabItem>
+  <TabItem value="treasuryprime" label="Treasury Prime">
+
+```shell showLineNumbers title="Retrieve a Card Request"
+curl 'https://api.basistheory.com/proxy/<CARD_ID>?show_pan=true&show_cvv=true' \
+  -X "POST" \
+  -H "Content-Type: application/json" \
+  -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Authorization: Basic OGIyZjM3ZTUtYWU0My00YTM2LTljZjYtOTFjYmI5N2E4ZjkxOmY1YzllZDQ3LTNhODEtNDlkZi1hN2MyLWI5ODcyYjU2M2MxNw=="
+```
+
+The `Authorization` header includes Treasury Prime's API Key ID and API Key Value in the form of Basic HTTP Auth, while the `<CARD_ID>` is added to the the URL. Notice that we also must instruct Treasury Prime to show pan and cvc using query parameters.
+
+```json showLineNumbers title="Retrieve Card (Transformed) Response"
+{
+  "account_id": "acct_291u96075mva",
+  "card_controls": null,
+  "card_product_id": "cdpt_w10r2sebv0nl",
+  "created_at": "2021-02-19T20:42:40Z",
+  "fulfillment": {
+    "status": "issued",
+    "shipping_method": "USPS Mail (5-7 business days)",
+    "tracking_number": null
+  },
+  "id": "card_zuhqnmz7e085",
+  "last4": "3385",
+  "person_id": "psn_5vyzn6sveupa",
+  "pin_is_set": false,
+  "status": "unactivated",
+  "updated_at": "2021-02-19T20:42:41Z",
+  "userdata": null
+  "token": {
+    "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+    "type": "card",
+    "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+    "data": {
+      "number": "XXXXXXXXXXXX4242",
+      "expiration_month": 12,
+      "expiration_year": 2025
+    },
+    "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+    "created_at": "2023-04-17T12:54:44.8320458+00:00",
+    "mask": {
+      "number": "{{ data.number | reveal_last: 4 }}",
+      "expiration_month": "{{ data.expiration_month }}",
+      "expiration_year": "{{ data.expiration_year }}"
+    },
+    "privacy": {
+      "classification": "pci",
+      "impact_level": "high",
+      "restriction_policy": "mask"
+    },
+    "search_indexes": [],
+    "containers": [
+      "/pci/high/"
+    ]
+  }
+}
+```
+
+Treasury Prime only returns `pan` and `cvv` when retrieving an existing card. So you first must [create](https://developers.treasuryprime.com/docs/card#create-a-card) the card directly, and then [retrieve](https://developers.treasuryprime.com/docs/card#retrieve-a-card) it using the Proxy.
   </TabItem>
   <TabItem value="mastercard" label="Mastercard">
 
