@@ -14,8 +14,8 @@ While randomly generated IDs may be sufficient for many use cases, there are sev
 valuable for a generated token ID to satisfy a specific format, or to allow a custom token ID to be specified within
 the request:
 
-- You would like the ID to resemble the format of the underlying token data (e.g. to satisfy validation constraints)
-- Due to technical constraints, your system requires the token ID to have a prescribed size or format (e.g. to store the
+- You would like the ID to resemble the format of the underlying token data (e.g., to satisfy validation constraints)
+- Due to technical constraints, your system requires the token ID to have a prescribed size or format (e.g., to store the
   ID within a legacy database column having a certain data type)
 - You wish to pre-generate token IDs within your system
 - You wish to define your own custom algorithm for generating token IDs
@@ -41,7 +41,7 @@ dynamically evaluated expression, and can be provided within the `id` property o
 You are able to reference the `data` property within an [object](/docs/expressions#language-objects) expression -
 `data` will be bound to the provided token data.
 
-Typically, alias expressions are used in conjunction with one of the `alias_*` filters (e.g. [alias_preserve_format](/docs/expressions/filters#alias_preserve_format)
+Typically, alias expressions are used in conjunction with one of the `alias_*` filters (e.g., [alias_preserve_format](/docs/expressions/filters#alias_preserve_format)
 or [alias_preserve_length](/docs/expressions/filters#alias_preserve_length)). These filters randomly generate a secure pseudonym based on the token's data.
 For example, if a token contains the credit card number `4242-4242-4242-4242`, the alias expression `{{ data | alias_preserve_format: 0, 4 }}`
 could be used to reveal the last 4 digits in the ID while replacing all the other non-revealed digits with random digits,
@@ -121,4 +121,4 @@ This example assumes you do not know the length of the email domain, and want to
 Example ID Value: `k7dn59wb@gmail.com`
 
 If you know the length of the domain ahead of time, you can simplify this expression by revealing the number of
-characters in the domain, e.g. `{{ data.email | alias_preserve_length: 0, 10 }}`.
+characters in the domain, e.g., `{{ data.email | alias_preserve_length: 0, 10 }}`.

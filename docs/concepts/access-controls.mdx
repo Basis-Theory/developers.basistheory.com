@@ -8,25 +8,48 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Access Controls
 
-Basis Theory secures sensitive data as [Tokens](/docs/concepts/what-are-tokens) that are stored within an isolated
-compliant environment, called a [Tenant](#what-are-tenants).
-Your systems interact with Tokens or Services (e.g. Proxy, Reactors) through the Basis Theory API using an API key that is issued to
-an [Application](#what-are-applications).
-Access to your Tenant's data is limited by applying access controls to an Application via
-[Permissions](/docs/api/applications/permissions) and [Access Rules](#what-are-access-rules)
-to ensure services and users only have access to the data they need.
+Basis Theory secures sensitive data as [Tokens](/docs/concepts/what-are-tokens) that are stored within an isolated compliant environment, called a [Tenant](#what-are-tenants). Your systems interact with Tokens or Services (e.g., Proxy, Reactors) through the Basis Theory API using an API key that is issued to an [Application](#what-are-applications). Access to your Tenant's data is limited by applying access controls to an Application via [Permissions](/docs/api/applications/permissions) and [Access Rules](#what-are-access-rules) to ensure services and users only have access to the data they need.
+
+## Basis Theory Account
+
+It is strongly recommended to register for a Basis Theory Account using your **work email address**. This practice enhances accountability and aligns with security best practices for online platform access.
+
+<Alert>Basis Theory supports Single Sign-On (SSO) for simplified access management. If you are interested in using it, please [reach out to us](https://basistheory.com/contact?how_can_we_help_=I+want+to+use+SSO+to+manage+Basis+Theory+accounts.).</Alert>
+
+Basis Theory accounts are usually created after one of the following patterns:
+
+- 🧑‍💻 **Personal Accounts** (e.g., _john.doe@<span>yourcompany.com</span>_) are used in local development situations such as learning, testing, contributing, POC, etc.
+- 🏢 **Managed Accounts** (e.g., _payments@<span>yourcompany.com</span>_, _platform@<span>yourcompany.com</span>_) are team or company-owned accounts used to manage environments, such as Shared Development, Staging and Production.
+
+See below an example of an optimal Account and Tenant setup for a cross-region deployment:
+
+[![Account x Tenant Setup](/img/concepts/account_tenant_setup.png)](/img/concepts/account_tenant_setup.png)
+
+<Alert type={Alerts.WARNING}>
+  Protecting the Basis Theory Account is entirely the user's responsibility. Make sure to:
+  - Turn on Two-Factor Authentication (2FA)
+  - Use a Password or Secret Manager to generate and store passwords securely
+  - Follow internal policies for Managed Accounts defined by your security team
+</Alert>
 
 ## What are Tenants?
 
-Everything starts with a Tenant in your Basis Theory account. Tenants represent an isolated environment in which your
-[Tokens](/docs/concepts/what-are-tokens) and other resources are defined, managed, and stored.
-Data is not shared between Tenants, but you're allowed to create as many Tenants as you'd like within Basis Theory.
-You can use multiple Tenants to isolate different domains of data, and to support your Software Development Life Cycle (SDLC).
+Everything starts with a Tenant in your Basis Theory account. Tenants represent an isolated environment in which your [Tokens](/docs/concepts/what-are-tokens) and other resources are defined, managed, and stored. Data is not shared between Tenants, but you're allowed to create as many Tenants as you'd like within Basis Theory.
 
-The user account that was used to create a Tenant in the [Portal](https://portal.basistheory.com)
-will be designated as the Tenant Owner. New members can be invited to an existing Tenant through the
-[Members](https://portal.basistheory.com/members) tab.
-Managing Tenant Members can also be done directly through the [API](/docs/api/tenants/tenant-members).
+There are two types of Tenants:
+
+1. 🛠️ `TEST` Tenants are used for everything non-production, and should only be used to store synthetic data.
+2. 🚀 `PRODUCTION` Tenants are used for storing real-world sensitive data.
+
+Currently available deployment locations for Tenants are:
+
+- 🇺🇸 United States
+- 🇪🇺 Europe (GDPR compliant)
+- 🇮🇳 India (DPDPA compliant)
+
+<Alert> 🌍 With Basis Theory deployable stack, new region deployments are rapidly provisioned. If you are interested in one that is not listed above, please [reach out to us](https://basistheory.com/contact?how_can_we_help_=I+am+interested+in+a+region-specific+deployment.+&lt;INSERT+REGION&gt;).</Alert>
+
+The user account used to create a Tenant in the [Portal](https://portal.basistheory.com) is the designated Tenant Owner. New members can be invited to an existing Tenant through the [Members](https://portal.basistheory.com/members) tab. Managing Tenant Members can also be done directly through the [API](/docs/api/tenants/tenant-members).
 
 ### Common Use Cases for Tenants
 
@@ -64,9 +87,9 @@ A short description of the Application describing its intended use, for example 
 
 ### Application Type
 
-- **Private**: Used by a backend system or service that runs primarily on a server or in a serverless environment (e.g. NodeJs, .NET, Java, or Ruby). Private Applications allow the broadest access to Token data as the API Key is expected to be kept private and secured within your systems.
+- **Private**: Used by a backend system or service that runs primarily on a server or in a serverless environment (e.g., NodeJs, .NET, Java, or Ruby). Private Applications allow the broadest access to Token data as the API Key is expected to be kept private and secured within your systems.
 
-- **Public**: Used for Browser, Mobile, or Desktop applications running natively on a device (e.g. iOS, Android, Windows, etc) where the application is collecting data for tokenization via an API call or using Basis Theory Elements. Public Applications have limited permissions available to ensure the API Key can be safely used within publicly available code.
+- **Public**: Used for Browser, Mobile, or Desktop applications running natively on a device (e.g., iOS, Android, Windows, etc) where the application is collecting data for tokenization via an API call or using Basis Theory Elements. Public Applications have limited permissions available to ensure the API Key can be safely used within publicly available code.
 
 - **Management**: Used with scripts or the [Basis Theory Terraform Provider](https://registry.terraform.io/providers/Basis-Theory/basistheory) to manage your Tenant's settings and services (Applications, Reactors, Proxy, etc) without logging into our Portal.
 
