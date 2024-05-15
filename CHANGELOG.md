@@ -1,3 +1,10 @@
+# [1.149.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.148.1...v1.149.0) (2024-05-15)
+
+
+### Features
+
+* document tenant types and account management ([#380](https://github.com/Basis-Theory/developers.basistheory.com/issues/380)) ([8540bb8](https://github.com/Basis-Theory/developers.basistheory.com/commit/8540bb8ad14fb8f2f8128e9464265888909f4490))
+
 ## [1.148.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.148.0...v1.148.1) (2024-05-08)
 
 
