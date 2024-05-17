@@ -1,3 +1,10 @@
+## [1.151.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.151.0...v1.151.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* new container breakpoints ([#383](https://github.com/Basis-Theory/developers.basistheory.com/issues/383)) ([d7fa14c](https://github.com/Basis-Theory/developers.basistheory.com/commit/d7fa14c571765716db5ac65848d4f5aa991a0bc8))
+
 # [1.151.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.150.0...v1.151.0) (2024-05-15)
 
 
