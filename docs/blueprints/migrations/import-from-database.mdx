@@ -301,11 +301,6 @@ function createSsnTokenPayload(data: string) {
     id: "{{ data | alias_preserve_format }}",
     data,
     containers: ["/pii/high/"],
-    privacy: {
-      classification: "pii",
-      impact_level: "high",
-      restriction_policy: "mask",
-    },
   };
 }
 
@@ -316,11 +311,6 @@ function createEmailTokenPayload(data: string) {
     data,
     mask: '{{ data | slice: 0 }}XXXXX@{{ data | split: "@" | last }}',
     containers: ["/pii/high/"],
-    privacy: {
-      classification: "pii",
-      impact_level: "high",
-      restriction_policy: "mask",
-    },
   };
 }
 
@@ -331,11 +321,6 @@ function createPhoneNumberTokenPayload(data: string) {
     data,
     mask: "{{ data | reveal_last: 4 }}",
     containers: ["/pii/high/"],
-    privacy: {
-      classification: "pii",
-      impact_level: "high",
-      restriction_policy: "mask",
-    },
   };
 }
 // highlight-end
