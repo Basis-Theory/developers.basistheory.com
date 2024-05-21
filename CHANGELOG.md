@@ -1,3 +1,10 @@
+## [1.151.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.151.1...v1.151.2) (2024-05-21)
+
+
+### Bug Fixes
+
+* removing invalid field ([#381](https://github.com/Basis-Theory/developers.basistheory.com/issues/381)) ([f312633](https://github.com/Basis-Theory/developers.basistheory.com/commit/f31263375c8467afd85e4c8df0e7f94bd0d688c4))
+
 ## [1.151.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.151.0...v1.151.1) (2024-05-17)
 
 
