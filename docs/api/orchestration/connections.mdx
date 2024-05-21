@@ -2,8 +2,6 @@
 title: Connections
 ---
 
-import { Beta } from "@site/src/components/shared/Beta";
-import { Enterprise } from "@site/src/components/shared/Enterprise";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
@@ -12,13 +10,12 @@ import {
   HttpMethods,
 } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Connections <Enterprise />
 
 ## Create Connection
 
-This resource creates managed connections with vendors in your account, once created a connection is available for use in transactions.
+Creates a new connections based on a Connection Formula, once created a connection is available for use in transactions.
 
 <HttpMethod
   method={HttpMethods.POST}
@@ -99,25 +96,13 @@ curl "https://api.basistheory.com/orchestration/connections" \
 
 ### Response
 
-| Parameter | Type | Description |
-|-|-|-|
-| id | string | Unique identifier for the connection |
-| connection_formula_id | string | The connection formula to use to create the connection |
-| method | string | Type of connection |
-| display_name | string | Name to identify the connection. |
-| fields | array | Fields needed to meet the requirements of the connection formula |
-| accepted_countries | array | Countries to support with connection |
-| accepted_currencies | array | Currencies to support with connection |
-| active | boolean | Determines if the connection is usable for transactions. |
-| status | enum | Returns if connection is `available`, `failed`, or `pending` |
-
+Returns a connection object if the connection was created with the connection. Returns an error if there were validation errors.
 
 ```json showLineNumbers
 {
   "id": "faaad066-30b4-4997-a438-242b0752d7e1",
   "connection_formula_id": "stripe",
   "display_name": "Stripe (Production)",
-  "method": "card",
   "status": "pending",
   "accepted_countries": [
     "US",
@@ -130,7 +115,7 @@ curl "https://api.basistheory.com/orchestration/connections" \
   "GBP"
   ],
   "three_d_secure_enabled": true,
-  "active": true,
+  "active": true
 }
 ```
 
@@ -231,18 +216,7 @@ curl "https://api.basistheory.com/orchestration/connections/c06d0789-0a38-40be-b
 
 ### Response
 
-| Parameter | Type | Description |
-|-|-|-|
-| id | string | Unique identifier for the connection |
-| connection_formula_id | string | The connection formula to use to create the connection |
-| method | string | Type of connection |
-| display_name | string | Name to identify the connection. |
-| fields | array | Fields needed to meet the requirements of the connection formula |
-| accepted_countries | array | Countries to support with connection |
-| accepted_currencies | array | Currencies to support with connection |
-| active | boolean | Determines if the connection is usable for transactions. |
-| status | enum | Returns if connection is `available`, `failed`, or `pending` |
-
+Returns a connection object if the connection was created with the connection. Returns an error if there were validation errors.
 
 ```json showLineNumbers
 {
@@ -265,3 +239,67 @@ curl "https://api.basistheory.com/orchestration/connections/c06d0789-0a38-40be-b
   "active": true,
 }
 ```
+
+## List Connections
+
+<HttpMethod
+  method={HttpMethods.PUT}
+  endpoint="https://api.basistheory.com/orchestration/connections"
+/>
+
+#### Permissions
+
+<Permission content="orchestration:connections:update" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/orchestration/connections" -H "BT-API-KEY: <API_KEY>"
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a list of connection objects if the connection was created with the connection. Returns an error if there were validation errors.
+
+```json showLineNumbers
+[
+  {
+    "id": "faaad066-30b4-4997-a438-242b0752d7e1",
+    "connection_formula_id": "stripe",
+    "display_name": "Stripe (Production)",
+    "method": "card",
+    "status": "pending",
+    "accepted_countries": [
+      "US",
+      "GB",
+      "DE"
+    ],
+    "accepted_currencies": [
+    "EUR",
+    "USD",
+    "GBP"
+    ],
+    "three_d_secure_enabled": true,
+    "active": true,
+  },
+]
+```
+
+## Resources
+
+### Connection Object
+
+| Parameter | Type | Description |
+|-|-|-|
+| id | string | Unique identifier for the connection |
+| connection_formula_id | string | The connection formula to use to create the connection |
+| display_name | string | Name to identify the connection. |
+| fields | array | Fields needed to meet the requirements of the connection formula |
+| accepted_countries | array | Countries to support with connection |
+| accepted_currencies | array | Currencies to support with connection |
+| active | boolean | Determines if the connection is usable for transactions. |
+| status | enum | Returns if connection is `available`, `failed`, or `pending` |
+|three_d_secure_enabled| boolean | Determines if 3D Secure is enabled for the connection |

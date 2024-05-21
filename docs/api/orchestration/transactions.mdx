@@ -27,7 +27,7 @@ Attempts to create an authorization for a payment method. In some cases it is no
 
 #### Permissions
 
-<Permission content="orchestration:transaction:create" />
+<Permission content="token:use" />
 
 ### Request
 
@@ -50,37 +50,32 @@ curl "https://api.basistheory.com/orchestration/transactions" \
 
 #### URI Parameters
 
-Here are the descriptions summarized to under 22 words:
-
 | Parameter | Required | Type | Default | Description |
 |-|-|-|-|-|
-| amount | `true` | integer | | Transaction amount in cents. |
-| connnection_id | `true` | string | | Managed Connection to use. |
-| currency | `true` | string | | ISO-4217 currency code. |
-| token | `true` | uuid | | Basis Theory Token to use for the transaction |
-| async_capture | `false` | boolean | false | Capture transaction asynchronously or not. |
+| amount | `true` | integer | | Transaction amount in cents |
+| connection_id | `true` | string | | Connection to create this transaction with |
+| currency | `true` | string | | ISO-4217 currency code |
+| token | `true` | uuid | | Basis Theory Card Token used as the payment method |
+| async_capture | `false` | boolean | false | Capture the transaction asynchronously, when `false` will capture during transaction creation. |
 | country | `false` | string | `null` | 2-letter ISO country code. |
-| external_identifier | `false` | string | `null` | External ID for transaction. |
-| subsequent_payment | `false` | boolean | `false` | Indicates subsequent recurring payment. |
-| merchant_initiated | `false` | boolean | `false` | If merchant or customer initiated. |
-| previous_transaction | `false` | string | `null` | Connect to previous customer transaction. |
-| three_d_secure_data | `false` | object | `null` | 3DS data for external authorization. |
+| external_identifier | `false` | string | `null` | External identification returned in the completed transaction to match your records. |
+| merchant_initiated | `false` | boolean | `false` | Indicates whether the transaction was initiated by the merchant |
+| three_d_session_id | `false` | object | `null` | Identifier for Basis Theory 3DS Session. |
+|metadata | `false` | object | `null` | Metadata key-values to store with the transaction. |
+|intent | `false` | string | `null` | Either `authorize` or `capture` to define the intent of this API call. |
 
 ### Response
 
-| Parameter | Type | Default | Description |
-|-|-|-|-|
-| payment_method | object | | Payment method object. |
-| buyer_external_identifier | string | | External ID of buyer. |
-| buyer_id | string | | ID of buyer. |
-| cart_items | object[] | | Cart line item array. |
-| connection_options | object | | Optional config per conn. |
-| country | string | | 2-letter ISO country. |
-| external_identifier | string | | External trans ID. |
+Returns a transaction object if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
 
 ```json showLineNumbers
 {
-
+  "type": "transaction",
+  "id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "amount": 1299,
+  "authorized_amount": 1299,
+  "authorized_at": "2013-07-16T19:23:00.000+00:00",
+  ...
 }
 ```
 
@@ -125,15 +120,18 @@ curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-
 
 #### Response
 
-| Parameter | Type | Default | Description |
-|-|-|-|-|
-| payment_method | object | | Payment method object. |
-| buyer_external_identifier | string | | External ID of buyer. |
-| buyer_id | string | | ID of buyer. |
-| cart_items | object[] | | Cart line item array. |
-| connection_options | object | | Optional config per conn. |
-| country | string | | 2-letter ISO country. |
-| external_identifier | string | | External trans ID. |
+Returns a transaction object if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
+
+```json showLineNumbers
+{
+  "type": "transaction",
+  "id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "amount": 1299,
+  "authorized_amount": 1299,
+  "authorized_at": "2013-07-6T19:23:00.000+00:00",
+  ..
+}
+```
 
 ## Void Transaction
 
@@ -144,7 +142,7 @@ curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-
 
 #### Permissions
 
-<Permission content="orchestration:transaction:void" />
+<Permission content="token:use" />
 
 ### Request
 
@@ -167,12 +165,90 @@ curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-
 
 #### Response
 
+Returns a transaction object if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
+
+```json showLineNumbers
+{
+  "type": "transaction",
+  "id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "amount": 1299,
+  "authorized_amount": 1299,
+  "authorized_at": "2013-07-16T19:23:00.000+00:00",
+  ...
+}
+```
+
+# Resources
+
+## Statuses
+
+| Status | Description |
+| - | - |
+| processing | |
+| buyer_approval_pending | |
+| authorization_succeeded | |
+| authorization_failed | |
+| authorization_declined | |
+| capture_pending | |
+| capture_succeeded | |
+| authorization_void_pending | |
+| authorization_voided | |
+
+## 3DS Object
+
 | Parameter | Type | Default | Description |
 |-|-|-|-|
+| version | string | | Ther version |
+| status | object | | The status of the 3DS challenge for this transaction. [`setup_error`, `error`, `declined`, `cancelled`, `complete`]|
+| method | string | | The method used for the 3DS challenge. [`challenge`, `frictionless`] |
+| error_data | object | | The error data for the 3DS challenge. |
+
+### 3DS Error Data Object
+
+| Parameter | Type | Default | Description |
+|-|-|-|-|
+| description | string | | Description of the error returned by the ACS |
+| detail | object | | Details of the error returned from the ACS|
+| code | string | | The method used for the 3DS challenge. [`challenge`, `frictionless`] |
+| component | object | | The component within the 3DS flow that identified the error. |
+
+
+## CVV Response Codes
+
+| Code | Description |
+
+| no_match | the CVV does not match the expected value |
+| match |  the CVV matches the expected value |
+| unavailable | CVV check unavailable for card our country |
+| not_provided | CVV not provided |
+
+## Transaction Object
+
+| Parameter | Type | Default | Description |
+|-|-|-|-|
+| id | string | | Transaction Identifier |
 | payment_method | object | | Payment method object. |
-| buyer_external_identifier | string | | External ID of buyer. |
-| buyer_id | string | | ID of buyer. |
-| cart_items | object[] | | Cart line item array. |
-| connection_options | object | | Optional config per conn. |
+| connection | object | | Connection used for the transaction. |
+| amount | integer | | The amount in cents for the transaction |
+| currency | `true` | string | | ISO-4217 currency code |
+| authorized_amount | integer | | The amount authorized in cents for the transaction |
+| captured_amount | integer | | The amount captured in cents for the transaction |
+| refunded_amount | integer | | The amount refunded in cents for the transaction |
 | country | string | | 2-letter ISO country. |
 | external_identifier | string | | External trans ID. |
+| authorized_at | string | | The date and time the transaction was authorized. |
+| captured_at | string | | The date and time the transaction was captured. |
+| voided_at | string | | The date and time the transaction was voided. |
+| created_at | string | | The date and time the transaction was created. |
+| updated_at | string | | The date and time the transaction was updated. |
+| approval_expires_at| string | | The date and time the transaction approval expires. |
+| metadata | object | | Metadata key-values stored with the transaction. |
+| reconciliation_id | string | | The base62 encoded transaction ID. This represents a shorter version of this transaction's id which is sent to payment services, anti-fraud services, and other connectors. You can use this ID to reconcile a payment service's transaction against our system. |
+| error_code | string | | Error code for the transaction. |
+|intent | string | | The intent of the transaction. |
+|intent_outcome | string | | The outcome of the intent. |
+|status | string | | The status of the transaction. |
+| connection_transaction_id | string | | The transaction id from the underlying connection. |
+| three_d_secure | object | | 3D Secure object. |
+|auth_response_code | string | | Authorization response code returned from the connection. |
+|cvv_response_code | string | | CVV response code returned from the connection. |
