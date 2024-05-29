@@ -1,3 +1,7 @@
+---
+toc_max_heading_level: 2
+---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
@@ -8,7 +12,7 @@ import GettingStartedSection from "@site/src/components/docs/_getting-started-se
 
 Storing your customers' cards with Basis Theory platform grants you the ability to seamlessly shift between payment processors, giving you competitive advantages including payment flexibility, reliability, cost savings, increased acceptance rates, and future-proofing your business against processor downtime or shutdown.
 
-This guide will explore how to process card payments using managed connections via a unified Transactions API, bearing minimal configuration requirements. By following the steps presented below, you are substantially de-scoping your servers and database from PCI DSS compliance. If you want to learn more about how we can help you meet up to 95% of the PCI requirements or if you need help filling out your SAQ, [reach out to our team](https://basistheory.com/contact)!
+This guide will explore how to process card payments using unified Payment Orchestration APIs, bearing minimal configuration requirements. By following the steps presented below, you are substantially de-scoping your servers and database from PCI DSS compliance. If you want to learn more about how we can help you meet up to 95% of the PCI requirements or if you need help filling out your SAQ, [reach out to our team](https://basistheory.com/contact)!
 
 [![Charge Stored Cards](/img/guides/share/process-card-payments-flowchart.png)](https://mermaid.live/edit#pako:eNpdUctOwzAQ_BVrT1RKSvNuckAqICQkkCpacSDpYalNY5HYkeMApeq_s0kfAnzx7Hh2Z-TdwVpzARm4rlsoK20lMnZTotkItrDaCM5u0PCW3VX6c028LdQgfTvV7OGpUIxOK8yHMPliuNisaSq5Riu1Wh3eA8Mb0m9zAmzeo9XvRkZTYY7bSiNn7POSLfW7UBftqOizXTFs5EFO4I-WpH3EUlecpnC02Hdcnf2OJt3rxmBTMsmFx_JrbGXLlqXQ5hSD5uaz-f2x-sCusvnFc3-NfnOu-8-NvM7ZhOLgQC1MjZLTr-56ugBbiloUkBHkaN4LKNSedNhZvdiqNWTWdMKBrqF54lYiJa0he8OqJbZBBdkOviBLxmkY-2ns-dM4SBIHtpC5wdjz_SgO09CPwsiLwr0D31pTvzeeJFGa-t5kmsZxEkw8BwSXtNXHw86H1Q8GL0PDYLj_AYXeqCw)
 
@@ -175,435 +179,48 @@ curl --location "https://api.basistheory.com/orchestration/connections" \
 
   </TabItem>
   <TabItem value="other" label="Other">
-    Find our list of supported connections [here](/docs/)
+    Click [here](/docs/api/orchestration/connection_formulas#supported-connection-formulas) to see our list of supported connections.
   </TabItem>
 </Tabs>
+
+<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.</Alert>
+
+<Alert>Save the `id` from the created Connection as it will be used later in this guide.</Alert>
 
 ## Process a Payment
 
-We will use Basis Theory [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy), a tool that transparently performs detokenization, to share the sensitive cardholder data to the Payments Processor or Acquirer API. To do this, we will formulate our HTTPS request as if we were directly connecting to the target endpoint, with the following variations:
+Now that we have our setup ready, it is time to use Basis Theory's [Transactions API](/docs/api/orchestration/transactions) to process payments against a selected Connection. To do this, we simply call the API passing a previously created `card` token identifier:
 
-1. Use the previously-created Private Application Key as the value of the `BT-API-KEY` header;
-2. Specify the target API endpoint as the value for the `BT-PROXY-URL` header;
-3. Pass any additional headers you need the target API to receive, for example `Authorization`, `X-API-KEY`, etc.;
-4. Replace the plaintext sensitive cardholder data in the expected payload contents with [detokenization expressions](/docs/expressions/detokenization) that contains token identifiers.
-
-For example, given you have a previously stored card token with the following identifier:
-
-```json showLineNumbers title=token.json
-{
-// highlight-next-line
-  "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
-  "type": "card",
-  "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
-  "data": {
-    "number": "XXXXXXXXXXXX4242",
-    "expiration_month": 12,
-    "expiration_year": 2025
-  },
-  "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
-  "created_at": "2023-04-17T12:54:44.8320458+00:00",
-  "mask": {
-    "number": "{{ data.number | reveal_last: 4 }}",
-    "expiration_month": "{{ data.expiration_month }}",
-    "expiration_year": "{{ data.expiration_year }}"
-  },
-  "privacy": {
-    "classification": "pci",
-    "impact_level": "high",
-    "restriction_policy": "mask"
-  },
-  "search_indexes": [],
-  "containers": [
-    "/pci/high/"
-  ]
-}
-```
-
-Here are a few integration examples of how to send the detokenized card information to third party APIs.
-
-<Tabs className="bt-tabs" queryString="processor">
-  <TabItem value="stripe" label="Stripe">
-
-```shell showLineNumbers title="Create a Payment Method"
-curl 'https://api.basistheory.com/proxy' \
+```shell showLineNumbers
+curl 'https://api.basistheory.com/orchestration/transaction' \
 -X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://api.stripe.com/v1/payment_methods' \
--H 'Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4' \
-// highlight-end
--H 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'type=card' \
-// highlight-start
---data-urlencode 'card[number]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}' \
---data-urlencode 'card[exp_month]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" |  card_exp: "MM" }}' \
---data-urlencode 'card[exp_year]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" | card_exp: "YYYY" }}' \
---data-urlencode 'card[cvc]={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
-// highlight-end
-```
-
-[Stripe Payment Method Docs](https://stripe.com/docs/api/payment_methods/create)
-
-  </TabItem>
-  <TabItem value="adyen" label="Adyen">
-
-```shell showLineNumbers title="Create Checkout"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://checkout-test.adyen.com/v69/payments' \
--H 'X-API-KEY: Vt(JJ5U5xuVECtg59fm9hBM+cZMWhw+ms2edxM%Rwmu0=Z2n3rGiQjQr-YEYfAq((It-Ocb03Jfob1JqGhogg:J/skGLIwerM=uAuHQDFHZBh+75pKgznYB3QeL7mrnBSeh34YAxLjdGEJQAhKdaU2' \
-// highlight-end
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
 -H 'Content-Type: application/json' \
 -d '{
-  "amount": {
-    "value": 100,
-    "currency": "USD"
-  },
-  "paymentMethod": {
-    "type": "scheme",
-    // highlight-start
-    "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
-    "expiryMonth": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
-    "expiryYear": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
-    "cvc": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
-    // highlight-end
-    "holderName": "John Smith"
-  },
-  "reference": "YOUR_ORDER_NUMBER",
-  "shopperInteraction": "Ecommerce",
-  "recurringProcessingModel": "CardOnFile",
-  "storePaymentMethod": "true",
-  "merchantAccount": "BasisTheoryECOM",
-  "shopperReference": "YOUR_UNIQUE_SHOPPER_ID",
-  "returnUrl": "https://your-company.com/..."
-}'
-```
-
-[Adyen Checkout Docs](https://docs.adyen.com/online-payments/tokenization/create-and-use-tokens)
-
-  </TabItem>
-  <TabItem value="chase-orbital" label="Chase (Orbital)">
-
-```shell showLineNumbers title="Add Profile"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://orbitalvar1.chasepaymentech.com/profile' \
--H 'orbitalConnectionUsername: TESTMYCOMPANY1234' \
--H 'orbitalConnectionPassword: f1nwbj32VwW36tV16s55' \
--H 'merchantID: MERCHANTID1234' \
-// highlight-end
--H 'Content-Type: application/json' \
--d '{
-  "version": "4.3",
-  "merchant": {
-    "bin": "000001"
-  },
-  "order": {
-    "customerProfileFromOrderInd": "A",
-    "customerProfileOrderOverideInd": "NO"
-  },
-  "paymentInstrument": {
-    "customerAccountType": "CC",
-    "card": {
-      // highlight-start
-      "ccAccountNum": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
-      "ccExp": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYYMM\" }}"
-      // highlight-end
-    }
-  },
-  "profile": {
-    "customerName": "John Smith",
-    "customerAddress1": "123 Main St",
-    "customerCity": "Tampa",
-    "customerState": "FL",
-    "customerZIP": "33601"
-  }
-}'
-```
-
-[Chase Orbital Docs](https://developer.jpmorgan.com/products/orbital-api/guides/store-a-card)
-
-  </TabItem>
-  <TabItem value="chase-stratus" label="Chase (Stratus)">
-
-```shell showLineNumbers title="Process Transaction"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://netconnectvar1.chasepaymentech.com/NetConnect/controller' \
--H 'Auth-MID: M987654321012345' \
--H 'Auth-User: TESTMYCOMPANY1234' \
--H 'Auth-Password: f1nwbj32VwW36tV16s55' \
--H 'Stateless-Transaction: true' \
-// highlight-end
--H 'Content-Type: SALEM05210/SLM' \
--d 'P74VPMT-18R86WXMM9
-// highlight-next-line
-VI{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" | pad_right: 19, "x" }}{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" | card_exp: "MMYYYY" }}00003319380000000000008407202NVF AB
-XX XXX                        XXXXX XXXXXXX XX
-USABBEVILLE           LA70510-7288AC01YEI10000000014064
-7930f35b3c06cffe           FR1XXXXMTCSTO
-000000000000'
-```
-
-[Chase Stratus Specs](https://secure2.paymentech.com/devcenter/secure/stratus-spec)
-
-  </TabItem>
-  <TabItem value="braintree" label="Braintree">
-
-```shell showLineNumbers title="Tokenize Credit Card"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://payments.sandbox.braintree-api.com/graphql' \
--H 'Authorization: Basic 123' \
-// highlight-end
--H 'Braintree-Version: 2019-01-01' \
--H 'Content-Type: application/json' \
--d '{
-  "query": "mutation TokenizeCreditCard($input: TokenizeCreditCardInput!){
-    tokenizeCreditCard(input: $input){
-      paymentMethod{
-        id
-        legacyId
-        usage
-        details{
-          ... on CreditCardDetails{
-            brandCode
-            last4
-            expirationMonth
-            expirationYear
-          }
-        }
-      }
-    }
-  }",
-  "variables": {
-    "input": {
-      "creditCard": {
-        // highlight-start
-        "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\"}}",
-        "expirationMonth": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\"}}",
-        "expirationYear": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\"}}",
-        "cvv": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\"}}"
-        // highlight-end
-      }
-    }
-  }
-}'
-```
-
-[Braintree Server-side Tokenization Docs](https://graphql.braintreepayments.com/integration_guides/credit_cards/#tokenization)
-
-  </TabItem>
-  <TabItem value="tabapay" label="TabaPay">
-
-```shell showLineNumbers title="Create Account"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://api.tabapay.net/v1/clients/MyClientID/accounts' \
--H 'Authorization: Bearer 123' \
-// highlight-end
--H 'Content-Type: application/json' \
--d '{
-  "card": {
-    // highlight-start
-    "accountNumber": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
-    "expirationDate": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYYMM\" }}",
-    "securityCode": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}"
-    // highlight-end
-  },
-  "owner": {
-    "name": {
-      "first": "John",
-      "last": "Smith"
-    },
-    "address": {
-      "line1": "123 Main St",
-      "city": "Tampa",
-      "state": "FL",
-      "zipcode": "33601"
-    }
-  },
-  "referenceID": "reference_123"
-}'
-```
-
-[TabaPay Account Docs](https://developers.tabapay.com/reference/accountcreate)
-  </TabItem>
-  <TabItem value="authorize.net" label="Authorize.net">
-
-```shell showLineNumbers title="Create Transaction"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://apitest.authorize.net/xml/v1/request.api' \
-// highlight-end
--H 'Content-Type: application/json' \
--d '{
-  "createTransactionRequest": {
-    "merchantAuthentication": {
-      // highlight-start
-      "name": "K5yH8dL2zGx",
-      "transactionKey": "J7rXuPbNvQ9sE3wA"
-      // highlight-end
-    },
-    "refId": "123156121",
-    "transactionRequest": {
-      "transactionType": "authCaptureTransaction",
-      "amount": "25",
-      "payment": {
-        "creditCard": {
-          // highlight-start
-          "cardNumber": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
-          "expirationDate": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY-MM\" }}",
-          "cardCode": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}"
-          // highlight-end
-        }
-      }
-    }
-  }
-}'
-```
-
-[Authorize.net Payment Docs](https://developer.authorize.net/api/reference/index.html#payment-transactions-charge-a-credit-card)
-  </TabItem>
-
-  <TabItem value="checkout.com" label="Checkout.com">
-
-```shell showLineNumbers title="Accept a Payment"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://api.sandbox.checkout.com/payments' \
--H 'Authorization: Bearer sk_sbox_p4qr9st2uy7vx1wa3bc8dl5zg6x'
-// highlight-end
--H 'Content-Type: application/json' \
--d '{
-  "source": {
-    "type": "card",
-    // highlight-start
-    "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
-    "expiry_month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
-    "expiry_year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}"
-    // highlight-end
-  },
-  "amount": 6500,
+  "connection_id": "<CONNECTION_ID>",
+  "amount": 1299,
   "currency": "USD",
-  "processing_channel_id": "processing_channel_id",
-  "reference": "ORD-5023-4E89",
-  "metadata": {
-    "udf1": "TEST123",
-    "coupon_code": "NY2018",
-    "partner_id": 123989
-  }
+  // highlight-next-line
+  "token": "<BT_TOKEN_ID>",
+  "intent": "capture"
 }'
 ```
 
-[Checkout.com Payment Docs](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-using-the-api#Using_full_card_details)
+<Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.</Alert>
 
-  </TabItem>
-  <TabItem value="nmi" label="NMI">
-
-```shell showLineNumbers title="Create Transaction"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://secure.safewebservices.com/api/transact.php' \
-// highlight-end
--H 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'type=sale' \
---data-urlencode 'amount=100.00' \
---data-urlencode 'orderid=5a4ab2409af89' \
-// highlight-start
---data-urlencode 'security_key=P4qR9sT2uY7vX1wA3bC8dL5zG6xK9yH2' \
---data-urlencode 'ccnumber={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}' \
---data-urlencode 'ccexp={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: "MMYYYY" }}' \
---data-urlencode 'cvv={{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
-// highlight-end
-```
-
-[NMI Transact Docs](https://secure.nmi.com/merchants/resources/integration/integration_portal.php#transaction_variables)
-
-  </TabItem>
-  <TabItem value="paysafe" label="Paysafe">
-
-```shell showLineNumbers title="Create Payment Handle"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <API_KEY>' \
--H 'BT-PROXY-URL: https://api.test.paysafe.com/paymenthub/v1/paymenthandles' \
--H 'Authorization: Basic 123'
-// highlight-end
--H 'Content-Type: application/json' \
--d '{
-  "merchantRefNum": "a9b2b8d2b9458c8beeb89dbce669",
-  "transactionType": "ORIGINAL_CREDIT",
-  "accountId": "1009688230",
-  "card": {
-    // highlight-start
-    "cardNum": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
-    "cardExpiry": {
-      "month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: \"MM\" | to_number }}",
-      "year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" | to_number }}"
-    },
-    "cvv": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
-    // highlight-end
-    "holderName": "Dilip",
-    "issuingCountry": "US"
-  },
-  "paymentType": "CARD",
-  "amount": 100,
-  "currencyCode": "USD",
-  "customerIp": "172.0.0.1",
-  "billingDetails": {
-    "nickName": "Home",
-    "street": "TEST",
-    "city": "CA",
-    "state": "CA",
-    "country": "US",
-    "zip": "12345"
-  },
-  "merchantDescriptor": {
-    "dynamicDescriptor": "OnlineStore",
-    "phone": "1234567899"
-  }
-}'
-```
-
-[Paysafe Payment Handle Docs](https://developer.paysafe.com/en/payments-api/#/operations/create-payment-handle)
-
-  </TabItem>
-</Tabs>
+<Alert>Be sure to replace <code>&lt;CONNECTION_ID></code> with the Processor Connection's Id you created previously.</Alert>
 
 ## Key Considerations
 
-**You are not restricted** to the Payment Processors listed above. As long as your partner can accept cards through an API endpoint, you can invoke it using the Ephemeral Proxy.
-
-If you find that the HTTPS response from your processor contains cardholder data, you can use a [Pre-Configured Proxy](/docs/api/proxies/pre-configured-proxies) to redact or tokenize the sensitive data points using a [Response Transform](/docs/api/proxies/pre-configured-proxies#response-transforms).
-
-It's important to note that for some acquirers, inbound connections are only accepted from whitelisted IP addresses provided by the client. To help with this, [here](/docs/api/ip-addresses) you can find a compiled list of our IP addresses that you can send to your acquirer. In cases of more restrictive integrations, Basis Theory can provide dedicated IPs upon request. If you're interested in this option, please don't hesitate to [contact us](https://basistheory.com/contact).
+**You are not restricted** to the Payment Processors listed above. [Click here](/docs/api/orchestration/connection_formulas#supported-connection-formulas) to explore our list of supported connections.
 
 During testing phase, make sure to create tokens using test cards documented by your payment processor, following the desired test scenario. Passing incorrect cards to test/sandbox endpoints may lead to hard-to-debug rejected transactions.
 
 ## Conclusion
 
-By using our Ephemeral Proxy, you can confidently transmit cardholder data to Payment Processors via API requests without ever touching the card details yourself. This approach not only improves security and reduces compliance risks but also provides the flexibility to establish your own relationships with Payment Processors and the latest payment technologies.
+By using our Payments Orchestration APIs, you can confidently transmit cardholder data to Payment Processors in a simple manner without ever touching the card details yourself. This approach not only improves security and mitigates compliance risks but also reduces engineering efforts to maintain connections on your side.
 
 ## Learn More
 
 - [What are tokens?](/docs/concepts/what-are-tokens)
-- [What is the Proxy?](/docs/concepts/what-is-the-proxy)
+- [Processing Card Payments with the Proxy](/docs/guides/share/process-card-payments)
