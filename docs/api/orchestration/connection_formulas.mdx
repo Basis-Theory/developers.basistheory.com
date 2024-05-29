@@ -1,0 +1,142 @@
+---
+title: Connections Formulas
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert } from "@site/src/components/shared/Alert";
+
+# Connection Formulas
+
+## List Connection Formulas
+
+This resource creates managed connections with vendors in your account, once created a connection is available for use in transactions.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/connection_formulas"
+/>
+
+#### Permissions
+
+<Permission content="orchestration:connection_formulas" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/orchestration/connection/formulas" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>"
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+```json showLineNumbers
+    {
+      "id": "stripe",
+      "display_name": "Stripe Card",
+      "method": "card",
+      "fields": [
+        {
+          "key": "private_key",
+          "display_name": "Private API Key",
+          "required": true,
+          "format": "text",
+          "secret": true
+        }
+      ],
+      "supported_currencies": [
+        "AUD",
+        "CAD",
+        "NZD",
+        "USD",
+        ...
+      ],
+      "supported_countries": [
+        "AU",
+        "CA",
+        "NZ",
+        "US",
+        ...
+      ],
+      "supported_features": {
+        "three_d_secure_pass_through": false
+      }
+    }
+```
+
+## Resources
+
+### Connection Formula Object
+
+| Parameter | Type | Description |
+|-|-|-|
+| id | string | Unique identifier for the connection formula |
+| display name | string | Friendly name for the connection formula |
+| fields | array | List of configuration values for the connection. |
+| supported_countries | array | Countries to support with connection |
+| supported_currencies | array | Currencies to support with connection |
+| supported_features | array | Object of supported features (e.g. 3D Secure is allowed) |
+
+### Supported Features
+
+Here is a table with the requested features and their descriptions:
+
+| Feature | Description |
+|---------|-------------|
+| three_d_secure_pass_through | Allows merchants to pass through 3D Secure authentication data to the connection. |
+| delayed_capture | Enables merchants to authorize a payment but delay the actual capture of funds until a later time, such as when goods are shipped or services are rendered. |
+| partial_capture | Allows merchants to capture only a portion of the authorized amount, rather than the full amount. |
+| partial_refunds | Enables merchants to issue partial refunds for a portion of a captured payment, rather than refunding the entire amount. |
+| refunds | Allows merchants to issue full refunds for captured payments. |
+| zero_auth | Enables merchants to perform a zero-dollar authorization, which can be useful for validating card details or performing account verification. |
+| void: voidAllowed | Indicates whether the payment gateway supports voiding (canceling) authorized payments that have not yet been captured. |
+
+### Supported Connection Formulas
+
+We are currently working to add 100+ connections to the supported connections list. The ones below are available for testing and production traffic.
+
+<Alert>Don't see your Payment Processor listed? [Click here](https://basistheory.com/contact?how_can_we_help_=My+Payments+Processor+&lt;PROCESSOR_NAME&gt;+is+not+listed+under+supported+Connection+Formulas.) to reach out and request a specific Connection Formula or learn more.</Alert>
+
+#### Card
+
+|id |connection |
+|-- |---------- |
+| adyen-card  |  Adyen |
+| authipay-card  |  Authipay |
+| authorizenet-card  |  Authorize.net |
+| braintree-card  |  Braintree |
+| chaseorbital-card  |  Chase Orbital |
+| checkoutcom-card  |  Checkout.com |
+| cybersource-card  |  CyberSource |
+| dlocal-card  |  dlocal |
+| ebanx-card  |  EBANX |
+| fiserv-card  |  Fiserv |
+| nmi-card  |  NMI |
+| nuvei-card  |  Nuvei |
+| planet-card  |  Planet |
+| razorpay-card  |  Razorpay |
+| stripe-card  |  Stripe |
+| trustpayments-card  |  Trust Payments |
+| usaepay-card  |  USAePay |
+| worldpayvap-card  |  Worldpay (VAP) |
+
+### Bank
+
+Coming soon.
+
+### Wallets
+
+Coming soon.
+

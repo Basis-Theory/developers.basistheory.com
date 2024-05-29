@@ -1,0 +1,228 @@
+---
+toc_max_heading_level: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+
+# Process Card Payments (Connections)
+
+Storing your customers' cards with Basis Theory platform grants you the ability to seamlessly shift between payment processors, giving you competitive advantages including payment flexibility, reliability, cost savings, increased acceptance rates, and future-proofing your business against processor downtime or shutdown.
+
+This guide will explore how to process card payments using unified Payment Orchestration APIs, bearing minimal configuration requirements. By following the steps presented below, you are substantially de-scoping your servers and database from PCI DSS compliance. If you want to learn more about how we can help you meet up to 95% of the PCI requirements or if you need help filling out your SAQ, [reach out to our team](https://basistheory.com/contact)!
+
+<Alert type={Alerts.INFO}>Connections are an Enterprise feature. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
+
+[![Charge Stored Cards](/img/guides/share/process-card-payments-flowchart.png)](https://mermaid.live/edit#pako:eNpdUctOwzAQ_BVrT1RKSvNuckAqICQkkCpacSDpYalNY5HYkeMApeq_s0kfAnzx7Hh2Z-TdwVpzARm4rlsoK20lMnZTotkItrDaCM5u0PCW3VX6c028LdQgfTvV7OGpUIxOK8yHMPliuNisaSq5Riu1Wh3eA8Mb0m9zAmzeo9XvRkZTYY7bSiNn7POSLfW7UBftqOizXTFs5EFO4I-WpH3EUlecpnC02Hdcnf2OJt3rxmBTMsmFx_JrbGXLlqXQ5hSD5uaz-f2x-sCusvnFc3-NfnOu-8-NvM7ZhOLgQC1MjZLTr-56ugBbiloUkBHkaN4LKNSedNhZvdiqNWTWdMKBrqF54lYiJa0he8OqJbZBBdkOviBLxmkY-2ns-dM4SBIHtpC5wdjz_SgO09CPwsiLwr0D31pTvzeeJFGa-t5kmsZxEkw8BwSXtNXHw86H1Q8GL0PDYLj_AYXeqCw)
+
+If you are not yet storing your customers' cards with Basis Theory, here are a few guides you can explore:
+
+- [Collect Cards](/docs/guides/collect/collect-cards) - capture cards in the frontend;
+- [Receive Cards via API / Webhooks](/docs/guides/collect/receive-cards) - receive cards in API requests;
+- [Issue Cards](/docs/guides/collect/issue-cards) - create brand-new cards using an Issuer API;
+- [Import Cards from a Payments Processor](/docs/blueprints/migrations/import-cards-on-file) - migrate to Basis Theory.
+
+[//]: # (Replace #4 link above with "Migrating from a Payments Processor" when the guide is available)
+
+## Getting Started
+
+<GettingStartedSection />
+
+## Provisioning Resources
+
+In this section, we will explore the bare minimum resources to create a new Connection that will process card transactions.
+
+<Alert>This is a one-time setup that takes about 10 minutes to complete ⏰.</Alert>
+
+### Management Application
+
+To create all subsequent resources, you will need a [Management Application](/docs/api/applications#application-types).
+
+[Click here](https://portal.basistheory.com/applications/create?name=Resource+Creator&permissions=application%3Acreate&permissions=orchestration%3Aconnections%3Acreate&type=management) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Resource Creator
+- Application Type - Management
+- Permissions: `application:create`, `orchestration:connections:create`
+
+<Alert>Save the API Key from the created Management Application as it will be used later in this guide.</Alert>
+
+### Private Application
+
+Next you will need a [Private Application](/docs/api/applications#application-types) to create tokens within the Proxy, and invoke it from your servers. This application represents your Backend.
+
+Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Private Application:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications" \
+  -X "POST" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Backend",
+    "type": "private",
+    "permissions": [ "token:create", "token:read", "token:use" ]
+  }'
+```
+
+<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.</Alert>
+
+<Alert>Save the API Key from the created Private Application as it will be used later in this guide.</Alert>
+
+### Connection
+
+The last resource to create is a [Connection](/docs/api/orchestration/connections#create-connection), which will be responsible for transacting with the Payment Processor.
+
+<Tabs className="bt-tabs" queryString="processor">
+  <TabItem value="stripe" label="Stripe">
+
+```shell showLineNumbers
+curl --location "https://api.basistheory.com/orchestration/connections" \
+-H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+-H "Content-Type: application/json" \
+-d '{
+  "connection_formula_id": "stripe-card",
+  "display_name": "Stripe",
+  "fields": [
+    {
+      "key": "secret_key",
+      "value": "<STRIPE_SECRET_KEY>"
+    }
+  ],
+  "accepted_countries": [ "US" ],
+  "accepted_currencies": [ "USD" ],
+  "active": true
+}'
+```
+
+  </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+```shell showLineNumbers
+curl --location "https://api.basistheory.com/orchestration/connections" \
+-H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+-H "Content-Type: application/json" \
+-d '{
+  "connection_formula_id": "adyen-card",
+  "display_name": "Adyen",
+  "fields": [
+    {
+      "key": "api_key",
+      "value": "<ADYEN_API_KEY>"
+    },
+    {
+      "key": "merchant_account",
+      "value": "<ADYEN_MERCHANT_ACCOUNT>"
+    }
+  ],
+  "accepted_countries": [ "US" ],
+  "accepted_currencies": [ "USD" ],
+  "active": true
+}'
+```
+
+  </TabItem>
+  <TabItem value="dlocal" label="dLocal">
+
+```shell showLineNumbers
+curl --location "https://api.basistheory.com/orchestration/connections" \
+-H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+-H "Content-Type: application/json" \
+-d '{
+  "connection_formula_id": "dlocal-card",
+  "display_name": "dLocal",
+  "fields": [
+    {
+      "key": "x_login",
+      "value": "<DLOCAL_X_LOGIN>"
+    },
+    {
+      "key": "x_trans_key",
+      "value": "<DLOCAL_TRANS_KEY>"
+    }
+  ],
+  "accepted_countries": [ "US" ],
+  "accepted_currencies": [ "USD" ],
+  "active": true
+}'
+```
+
+  </TabItem>
+  <TabItem value="checkout.com" label="Checkout.com">
+
+```shell showLineNumbers
+curl --location "https://api.basistheory.com/orchestration/connections" \
+-H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+-H "Content-Type: application/json" \
+-d '{
+  "connection_formula_id": "checkoutcom-card",
+  "display_name": "dLocal",
+  "fields": [
+    {
+      "key": "public_key",
+      "value": "<CHECKOUTCOM_PUBLIC_KEY>"
+    },
+    {
+      "key": "secret_key",
+      "value": "<CHECKOUTCOM_SECRET_KEY>"
+    },
+    {
+      "key": "client_secret",
+      "value": "<DLOCAL_SECRET_KEY>"
+    }
+  ],
+  "accepted_countries": [ "US" ],
+  "accepted_currencies": [ "USD" ],
+  "active": true
+}'
+```
+
+  </TabItem>
+  <TabItem value="other" label="Other">
+    Click [here](/docs/api/orchestration/connection_formulas#supported-connection-formulas) to see our list of supported connections.
+  </TabItem>
+</Tabs>
+
+<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.</Alert>
+
+<Alert>Save the `id` from the created Connection as it will be used later in this guide.</Alert>
+
+## Process a Payment
+
+Now that we have our setup ready, it is time to use Basis Theory's [Transactions API](/docs/api/orchestration/transactions) to process payments against a selected Connection. To do this, we simply call the API passing a previously created `card` token identifier:
+
+```shell showLineNumbers
+curl 'https://api.basistheory.com/orchestration/transaction' \
+-X 'POST' \
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "connection_id": "<CONNECTION_ID>",
+  "amount": 1299,
+  "currency": "USD",
+  // highlight-next-line
+  "token": "<BT_TOKEN_ID>",
+  "intent": "capture"
+}'
+```
+
+<Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.</Alert>
+
+<Alert>Be sure to replace <code>&lt;CONNECTION_ID></code> with the Processor Connection's Id you created previously.</Alert>
+
+## Key Considerations
+
+**You are not restricted** to the Payment Processors listed above. [Click here](/docs/api/orchestration/connection_formulas#supported-connection-formulas) to explore our list of supported connections.
+
+During testing phase, make sure to create tokens using test cards documented by your payment processor, following the desired test scenario. Passing incorrect cards to test/sandbox endpoints may lead to hard-to-debug rejected transactions.
+
+## Conclusion
+
+By using our Payments Orchestration APIs, you can confidently transmit cardholder data to Payment Processors in a simple manner without ever touching the card details yourself. This approach not only improves security and mitigates compliance risks but also reduces engineering efforts to maintain connections on your side.
+
+## Learn More
+
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [Processing Card Payments with the Proxy](/docs/guides/share/process-card-payments)

@@ -139,9 +139,12 @@ The questions below are designed to help you understand the potential PCI Compli
 
 ## Access Controls
 
-<QuestionCard question="Are you using only Pre-Configured Proxies and have disabled Ephemeral Proxy in your Production Tenant(s)?">
+<QuestionCard question="Have you disabled Ephemeral Proxies in your Production Tenant(s)?" noType="right">
+  <Content type="yes">
+    <Alert type="info">Even though Ephemeral Proxies are production-ready, some companies find it harder to manage and audit data egress when such feature is enabled, given the dynamic nature of its [destination URLs](/docs/api/proxies/#destination-urls), and opt to use [Pre-Configured Proxies](/docs/api/proxies/pre-configured-proxies) instead.</Alert>
+  </Content>
   <Content type="no">
-    <Alert type="warning">Using Ephemeral Proxies in Production environments make easier for developers and bad actors to replace the destination url. Having it set upfront as part of the Proxy configuration reduces the risk and makes easier to audit destinations.</Alert>
+    <Alert type="warning">Make sure the Proxy [destination URLs](/docs/api/proxies/#destination-urls) are auditable and follow a strict change management process. We recommend that specified through configuration and injected into your running application instead of being hardcoded.</Alert>
   </Content>
   <Content type="na">
     <Alert type="neutral">I don't use Basis Theory Proxies.</Alert>
