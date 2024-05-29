@@ -16,9 +16,12 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Transactions <Enterprise />
 
+
 ## Create Transaction
 
 Attempts to create an authorization for a payment method. In some cases it is not possible to create the authorization without redirecting the user for their authorization. In these cases the status is set to indicate buyer approval is pending and an approval URL is returned.
+
+You can find more information on how to use this endpoint for [certain use-cases below](#common-transaction-use-cases).
 
 <HttpMethod
   method={HttpMethods.POST}
@@ -55,18 +58,21 @@ curl "https://api.basistheory.com/orchestration/transactions" \
 | amount | `true` | integer | | Transaction amount in cents |
 | connection_id | `true` | string | | Connection to create this transaction with |
 | currency | `true` | string | | ISO-4217 currency code |
-| token | `true` | uuid | | Basis Theory Card Token used as the payment method |
-| async_capture | `false` | boolean | false | Capture the transaction asynchronously, when `false` will capture during transaction creation. |
 | country | `false` | string | `null` | 2-letter ISO country code. |
 | external_identifier | `false` | string | `null` | External identification returned in the completed transaction to match your records. |
+| intent | `false` | string | `null` | Either `authorize` or `capture` to define the intent of this API call. |
+| is_subsequent_payment | `false` | boolean | `false` | Set to `true` when transaction is from an on-going subscription. |
 | merchant_initiated | `false` | boolean | `false` | Indicates whether the transaction was initiated by the merchant |
+| metadata | `false` | object | `null` | Metadata key-values to store with the transaction. |
+| payment_source | `false` | string | `ecommerce` | The [payment source](#payment-sources) for the transaction. |
+| previous_scheme_transaction_id | `false` | string | `null` | A scheme's transaction identifier to use in connecting a merchant initiated transaction to a previous customer initiated transaction. This is returned as `scheme_transaction_id` on each transaction response. |
 | three_d_session_id | `false` | object | `null` | Identifier for Basis Theory 3DS Session. |
-|metadata | `false` | object | `null` | Metadata key-values to store with the transaction. |
-|intent | `false` | string | `null` | Either `authorize` or `capture` to define the intent of this API call. |
+| token | `true` | uuid | | Basis Theory Card Token used as the payment method |
+
 
 ### Response
 
-Returns a transaction object if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
+Returns a [transaction object](#transaction-object) if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
 
 ```json showLineNumbers
 {
@@ -120,7 +126,7 @@ curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-
 
 #### Response
 
-Returns a transaction object if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
+Returns a [transaction object](#transaction-object) if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
 
 ```json showLineNumbers
 {
@@ -165,7 +171,7 @@ Returns a transaction object if the transaction was created with the connection.
 
 #### Response
 
-Returns a transaction object if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
+Returns a [transaction object](#transaction-object) if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
 
 ```json showLineNumbers
 {
@@ -179,6 +185,21 @@ Returns a transaction object if the transaction was created with the connection.
 ```
 
 ## Resources
+
+### Common Transaction Use-cases
+| Type | CVV | `merchant_initiated` | `payment_source` | `is_subsequent_payment` | `previous_scheme_transaction_id` |
+| --- | --- | --- | --- | --- | --- |
+| First transaction for a card | Commonly required | `false` | `ecommerce` | `false` | `null` |
+| Express checkout / Card on File | Optional | `false` | `card_on_file` | `false` | `null` |
+| Subscription (after first transaction) | Never | `true` | `recurring`  | `true` | First transaction's `scheme_transaction_id` |
+| Consumption-based  | Never | `true` | `card_on_file` | `false` | First purchase `scheme_transaction_id` |
+
+### Payment Sources
+| Source | Description |
+| - | - |
+| card_on_file | Used when utilizing a token without a CVC |
+| ecommerce | Used on the first transaction when the CVC is present |
+| recurring | Used when the transaction from an on-going subscription |
 
 ### Statuses
 
@@ -227,6 +248,7 @@ Returns a transaction object if the transaction was created with the connection.
 | Parameter | Type | Default | Description |
 |-|-|-|-|
 | id | string | | Transaction Identifier |
+| scheme_transaction_id | string | | The scheme identifier to be used on additional transactions |
 | payment_method | object | | Payment method object. |
 | connection | object | | Connection used for the transaction. |
 | amount | integer | | The amount in cents for the transaction |
