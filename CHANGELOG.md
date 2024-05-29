@@ -1,3 +1,10 @@
+## [1.151.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.151.2...v1.151.3) (2024-05-29)
+
+
+### Bug Fixes
+
+* typo ([#385](https://github.com/Basis-Theory/developers.basistheory.com/issues/385)) ([a88cbf3](https://github.com/Basis-Theory/developers.basistheory.com/commit/a88cbf3edc9a9893fe474a61d3687c0bde4cf04e))
+
 ## [1.151.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.151.1...v1.151.2) (2024-05-21)
 
 
