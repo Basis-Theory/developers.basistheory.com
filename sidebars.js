@@ -52,6 +52,7 @@ const sidebars = {
       items: [
         "guides/collect/collect-cards",
         "guides/share/process-card-payments",
+        "guides/share/process-card-payments-connections",
         "guides/collect/receive-cards",
         "guides/process/extract-cards",
         "guides/collect/issue-cards",
