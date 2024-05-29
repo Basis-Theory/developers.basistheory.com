@@ -1,3 +1,10 @@
+# [1.152.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.151.3...v1.152.0) (2024-05-29)
+
+
+### Features
+
+* managed connections ([9731bed](https://github.com/Basis-Theory/developers.basistheory.com/commit/9731bed4895d6c59669709ca2c47d64ffec5fec3))
+
 ## [1.151.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.151.2...v1.151.3) (2024-05-29)
 
 
