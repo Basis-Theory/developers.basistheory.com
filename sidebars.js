@@ -52,7 +52,13 @@ const sidebars = {
       items: [
         "guides/collect/collect-cards",
         "guides/share/process-card-payments",
-        "guides/share/process-card-payments-connections",
+        {
+          type: "doc",
+          id: "guides/share/process-card-payments-connections",
+          customProps: {
+            enterprise: true,
+          },
+        },
         "guides/collect/receive-cards",
         "guides/process/extract-cards",
         "guides/collect/issue-cards",
@@ -77,7 +83,10 @@ const sidebars = {
           dark: "/img/sidebar/dark/bank.svg",
         },
       },
-      items: ["guides/banks/collect-bank-accounts", "guides/banks/process-bank-payments"],
+      items: [
+        "guides/banks/collect-bank-accounts",
+        "guides/banks/process-bank-payments",
+      ],
     },
     {
       type: "category",
@@ -123,7 +132,24 @@ const sidebars = {
         type: "doc",
         id: "guides/any/index",
       },
-      items: ["guides/collect/collect-data-from-web", "guides/collect/collect-data-with-react", "guides/collect/collect-data-with-android", "guides/collect/collect-data-with-ios", "guides/collect/collect-data-with-react-native-on-ios", "guides/collect/collect-inbound-sensitive-data", "guides/collect/customize-web-form", "guides/share/send-data-to-third-party", "guides/share/display-masked-data", "guides/share/reveal-tokenized-data", "guides/share/reveal-data-from-third-party", "guides/process/search-data", "guides/process/analyze-data", "guides/govern/control-data-access", "guides/govern/audit-data-access", "guides/govern/sessions"],
+      items: [
+        "guides/collect/collect-data-from-web",
+        "guides/collect/collect-data-with-react",
+        "guides/collect/collect-data-with-android",
+        "guides/collect/collect-data-with-ios",
+        "guides/collect/collect-data-with-react-native-on-ios",
+        "guides/collect/collect-inbound-sensitive-data",
+        "guides/collect/customize-web-form",
+        "guides/share/send-data-to-third-party",
+        "guides/share/display-masked-data",
+        "guides/share/reveal-tokenized-data",
+        "guides/share/reveal-data-from-third-party",
+        "guides/process/search-data",
+        "guides/process/analyze-data",
+        "guides/govern/control-data-access",
+        "guides/govern/audit-data-access",
+        "guides/govern/sessions",
+      ],
     },
     {
       type: "html",
@@ -142,7 +168,13 @@ const sidebars = {
         type: "doc",
         id: "features/index",
       },
-      items: ["features/account-updater", "features/global-data", "features/network-tokens", "features/3d-secure", "features/anti-fraud"],
+      items: [
+        "features/account-updater",
+        "features/global-data",
+        "features/network-tokens",
+        "features/3d-secure",
+        "features/anti-fraud",
+      ],
     },
     {
       type: "category",
@@ -186,7 +218,14 @@ const sidebars = {
         type: "doc",
         id: "expressions/index",
       },
-      items: ["expressions/filters", "expressions/detokenization", "expressions/aliasing", "expressions/fingerprints", "expressions/masks", "expressions/search-indexes"],
+      items: [
+        "expressions/filters",
+        "expressions/detokenization",
+        "expressions/aliasing",
+        "expressions/fingerprints",
+        "expressions/masks",
+        "expressions/search-indexes",
+      ],
     },
     {
       type: "category",
@@ -237,7 +276,10 @@ const sidebars = {
             type: "doc",
             id: "blueprints/cards/index",
           },
-          items: ["blueprints/cards/collect-and-process-cards", "blueprints/cards/issue-and-display-cards"],
+          items: [
+            "blueprints/cards/collect-and-process-cards",
+            "blueprints/cards/issue-and-display-cards",
+          ],
         },
         {
           type: "category",
@@ -307,7 +349,17 @@ const sidebars = {
         type: "doc",
         id: "api/index",
       },
-      items: ["api/index", "api/authentication", "api/request-correlation", "api/pagination", "api/errors", "api/ip-addresses", "api/rate-limits", "api/idempotency", "api/testing"],
+      items: [
+        "api/index",
+        "api/authentication",
+        "api/request-correlation",
+        "api/pagination",
+        "api/errors",
+        "api/ip-addresses",
+        "api/rate-limits",
+        "api/idempotency",
+        "api/testing",
+      ],
     },
     {
       type: "category",
@@ -316,7 +368,13 @@ const sidebars = {
         type: "doc",
         id: "api/applications/applications",
       },
-      items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
+      items: [
+        "api/applications/applications",
+        "api/applications/access-rules",
+        "api/applications/application-keys",
+        "api/applications/permissions",
+        "api/applications/sessions",
+      ],
     },
     "api/logs",
     {
@@ -326,7 +384,12 @@ const sidebars = {
         type: "doc",
         id: "api/proxies/proxies",
       },
-      items: ["api/proxies/proxies", "api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies", "api/proxies/proxy-errors"],
+      items: [
+        "api/proxies/proxies",
+        "api/proxies/ephemeral-proxy",
+        "api/proxies/pre-configured-proxies",
+        "api/proxies/proxy-errors",
+      ],
     },
     {
       type: "category",
@@ -503,7 +566,13 @@ const sidebars = {
             type: "doc",
             id: "sdks/web/javascript/index",
           },
-          items: ["sdks/web/javascript/types", "sdks/web/javascript/options", "sdks/web/javascript/lifecycle", "sdks/web/javascript/events", "sdks/web/javascript/services"],
+          items: [
+            "sdks/web/javascript/types",
+            "sdks/web/javascript/options",
+            "sdks/web/javascript/lifecycle",
+            "sdks/web/javascript/events",
+            "sdks/web/javascript/services",
+          ],
         },
         {
           type: "category",
@@ -512,7 +581,12 @@ const sidebars = {
             type: "doc",
             id: "sdks/web/react/index",
           },
-          items: ["sdks/web/react/components", "sdks/web/react/events", "sdks/web/react/properties", "sdks/web/react/services"],
+          items: [
+            "sdks/web/react/components",
+            "sdks/web/react/events",
+            "sdks/web/react/properties",
+            "sdks/web/react/services",
+          ],
         },
         {
           type: "category",
@@ -539,7 +613,12 @@ const sidebars = {
             type: "doc",
             id: "sdks/mobile/android/index",
           },
-          items: ["sdks/mobile/android/types", "sdks/mobile/android/options", "sdks/mobile/android/events", "sdks/mobile/android/services"],
+          items: [
+            "sdks/mobile/android/types",
+            "sdks/mobile/android/options",
+            "sdks/mobile/android/events",
+            "sdks/mobile/android/services",
+          ],
         },
         {
           type: "category",
@@ -548,7 +627,12 @@ const sidebars = {
             type: "doc",
             id: "sdks/mobile/ios/index",
           },
-          items: ["sdks/mobile/ios/types", "sdks/mobile/ios/options", "sdks/mobile/ios/events", "sdks/mobile/ios/services"],
+          items: [
+            "sdks/mobile/ios/types",
+            "sdks/mobile/ios/options",
+            "sdks/mobile/ios/events",
+            "sdks/mobile/ios/services",
+          ],
         },
         {
           type: "category",
@@ -557,7 +641,10 @@ const sidebars = {
             type: "doc",
             id: "sdks/mobile/react-native/index",
           },
-          items: ["sdks/mobile/react-native/components", "sdks/mobile/react-native/services"],
+          items: [
+            "sdks/mobile/react-native/components",
+            "sdks/mobile/react-native/services",
+          ],
         },
       ],
     },
