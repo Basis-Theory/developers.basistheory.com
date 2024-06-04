@@ -1,3 +1,10 @@
+## [1.152.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.152.0...v1.152.1) (2024-06-04)
+
+
+### Bug Fixes
+
+* document 409 ([#386](https://github.com/Basis-Theory/developers.basistheory.com/issues/386)) ([397b222](https://github.com/Basis-Theory/developers.basistheory.com/commit/397b2221d3d427861bb8a78d0b24cb82c6210638))
+
 # [1.152.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.151.3...v1.152.0) (2024-05-29)
 
 
