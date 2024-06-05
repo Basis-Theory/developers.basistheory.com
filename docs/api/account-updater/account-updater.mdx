@@ -48,17 +48,10 @@ You have one hour to upload a request file, at which time the job and upload url
 curl "https://api.basistheory.com/account-updater/jobs" \
   -X POST \
   -H 'Content-Type: application/json' \
-  -H 'BT-API-KEY: ...' \
-  -d '{ "callback_url": "https://api.merchant.com/account_updater/job_notification" }'
+  -H 'BT-API-KEY: ...'
 ```
   </TabItem>
 </Tabs>
-
-**Request Parmeters**
-
-| Parameter      | Required | Type     | Default | Description                                          |
-|----------------|----------|----------|---------|------------------------------------------------------|
-| `callback_url` | false    | _string_ |         | The URL that will be called once a job has completed |
 
 ### Response
 
@@ -67,7 +60,6 @@ curl "https://api.basistheory.com/account-updater/jobs" \
   "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
   "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
   "status": "pending",
-  "callback_url": "https://mycallback.com",
   "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
   "created_at": "2024-04-09T13:56:37.864Z",
   "expires_at": "2024-04-09T14:56:37.864Z",
@@ -134,7 +126,6 @@ curl "https://api.basistheory.com/account-updater/jobs/93f3da5e-7887-408c-88ed-b
   "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
   "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
   "status": "pending",
-  "callback_url": "https://mycallback.com",
   "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
   "created_at": "2024-04-09T13:56:37.864Z",
   "expires_at": "2024-04-09T14:56:37.864Z",
@@ -189,7 +180,6 @@ This endpoint returns newest jobs first.
      "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
      "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
      "status": "pending",
-     "callback_url": "https://mycallback.com/",
      "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
      "created_at": "2024-04-09T13:56:37.864Z",
      "expires_at": "2024-04-09T14:56:37.864Z",
@@ -202,32 +192,32 @@ This endpoint returns newest jobs first.
 
 ## Account Updater Job Webhook
 
-When a job status changes to either `completed` or `failed`, the following webhook will be sent to the configured `callback_url`.
+<Alert type={Alerts.INFO}>Webhooks are coming soon. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request notification when they are publically available.</Alert>
+
+
+
+Configure a webhook to retrieve notifications for job status changes. You are able to subscribe to webhooks for both `account-updater.job.created`, `account-updater.job.completed`, or `account-updater.job.failed`.
 
 ### Webhook Payload
 
 ```jsx
 {
- "type": "account-updater.job.completed",
- "timestamp": "2024-04-10T11:45:13.877Z",
- "data": {
-   "job_id": "b4c1a8f0-9a17-4d80-849e-32e4bf5b7c61",
-   "status": "completed"
- }
+  "id": "e99b3bb9-25e4-484f-8a6d-6bc28edbbf39",
+  "type": "token.created",
+  "timestamp": "2024-04-09T13:56:37.864Z",
+  "tenant_id": "869d5b1c-1ae8-4ce6-96c6-73a602b407ff",
+  "trace_id": "0f777425-9080-4d82-b557-799f43aefcba",
+  "data": {
+    ...
+  }
 }
 ```
 
 ### Webhook Types
 
+- `account-updater.job.created`
 - `account-updater.job.completed`
 - `account-updater.job.failed`
-
-### Properties
-
-| Property | Description               |
-|----------|---------------------------|
-| `job_id` | The identifier of the job |
-| `status` | The status of the job     |
 
 ## Download Result File
 
@@ -475,7 +465,6 @@ curl --location 'api.flock-dev.com/tokenize' \
 | `id`           | _string_              | Identifier for the account updater job                                                                                                            |
 | `tenant_id`    | _uuid_                | The tenant this job is associated with                                                                                                            |
 | `status`       | _string_              | The job status, values include: `failed`, `completed`, `pending`, `processing`                                                                    |
-| `callback_url` | _string_              | The URL that will be called once a job has completed                                                                                              |
 | `expires_at`   | _datetime_            | Time the upload URL will expire. This property is only returned while the job is in the `pending` status.                                         |
 | `created_by`   | _uuid_                | The id of the application used to create the job                                                                                                  |
 | `created_at`   | _datetime_            | Timestamp when this job was created                                                                                                               |
