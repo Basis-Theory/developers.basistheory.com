@@ -1,3 +1,10 @@
+# [1.153.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.152.1...v1.153.0) (2024-06-07)
+
+
+### Features
+
+* add server unavailable error ([#390](https://github.com/Basis-Theory/developers.basistheory.com/issues/390)) ([d53e590](https://github.com/Basis-Theory/developers.basistheory.com/commit/d53e590c428ba694b46581340287944eaee39fb2))
+
 ## [1.152.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.152.0...v1.152.1) (2024-06-04)
 
 
