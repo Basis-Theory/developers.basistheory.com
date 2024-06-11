@@ -1,3 +1,10 @@
+## [1.153.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.153.1...v1.153.2) (2024-06-11)
+
+
+### Bug Fixes
+
+* fixing typo on guide ([#392](https://github.com/Basis-Theory/developers.basistheory.com/issues/392)) ([6fd0e51](https://github.com/Basis-Theory/developers.basistheory.com/commit/6fd0e51871be2a6c7e76841ce9c35627f75c5055))
+
 ## [1.153.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.153.0...v1.153.1) (2024-06-11)
 
 
