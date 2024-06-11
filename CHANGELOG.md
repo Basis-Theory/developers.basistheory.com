@@ -1,3 +1,10 @@
+## [1.153.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.153.0...v1.153.1) (2024-06-11)
+
+
+### Bug Fixes
+
+* document fast-xml-parser dep ([#391](https://github.com/Basis-Theory/developers.basistheory.com/issues/391)) ([ce38366](https://github.com/Basis-Theory/developers.basistheory.com/commit/ce38366f9e09bcfed3344e76a824f3f472208e52))
+
 # [1.153.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.152.1...v1.153.0) (2024-06-07)
 
 
