@@ -4,9 +4,9 @@ title: Platform Limits
 
 import { Alert } from "@site/src/components/shared/Alert";
 
-<Alert>These new rate limits will go into affect on June 10, 2024. If you have any questions or concerns, please reach out to your account manager or [contact us](https://basistheory.com/contact).</Alert>
+<Alert>These new rate limits will go into affect on July 16, 2024, read more about it in our blog [Introducing New Rate Limits](https://blog.basistheory.com/introducing-new-rate-limits). Reach out to your account manager or [contact us](https://basistheory.com/contact) with any questions or concerns.</Alert>
 
-## Rate Limits
+## Default Rate Limits
 
 The Basis Theory API has rate limits applied to ensure the speed and consistency of our systems. Rate Limits will always apply to the lowest Rate available for a given request. For example, if a request is made to `POST /tokens` with on a `Test Tenant` the rate limit for that request is `50 Requests / 10 Seconds`.
 
@@ -18,7 +18,6 @@ The Basis Theory API has rate limits applied to ensure the speed and consistency
 | ANY | ANY      | IP and API Key      | 50 req / 10 s | Throttle |
 
 ### API Resource Rate Limits
-
 | Resource | Counter | Rate | Action |
 | -------- | ------- | ---- | ------ |
 | POST /tokens/search | IP | 50 req / 10 s | 10s Block |
@@ -31,7 +30,7 @@ The Basis Theory API has rate limits applied to ensure the speed and consistency
 #### Private Application
 | Resource | Counter | Rate | Action |
 | -------- | ------- | ---- | ------ |
-| ANY      | API Key      | 1000 req / 10 s | 10s Block |
+| ANY      | API Key OR IP     | 2000 req / 10 s | Throttle |
 
 #### Public Application
 | Resource | Counter | Rate | Action |
@@ -42,6 +41,24 @@ The Basis Theory API has rate limits applied to ensure the speed and consistency
 | Resource | Counter | Rate | Action |
 | -------- | ------- | ---- | ------ |
 |  ANY | API Key | 200 req / 1 min | 30s Block |
+
+### Proxies
+
+#### Unauthenticated / Whitelabel Proxies
+
+| Resource | Counter | Rate | Action |
+| -------- | ------- | ---- | ------ |
+|  ANY | Proxy Key or Hostname | 500 req / 10 s | Throttle |
+
+## Legacy Rate Limits
+
+### Legacy API Keys
+
+This only applies to keys without `_prod_` or `_test_` in the key or are denoted by a `Legacy` badge on your API Key in an [Application](https://portal.basistheory.com/applications) on the Portal.
+
+| Method | Resource | Counter | Rate | Action |
+| -------- | -------- | ------- | ---- | ------ |
+| ANY | ANY      | IP and API Key      | 100 req / 1 m | Block |
 
 ## Error Codes
 
