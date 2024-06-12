@@ -1,3 +1,10 @@
+## [1.153.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.153.2...v1.153.3) (2024-06-12)
+
+
+### Bug Fixes
+
+* document snakecase-keys dep ([#394](https://github.com/Basis-Theory/developers.basistheory.com/issues/394)) ([2a8ce9e](https://github.com/Basis-Theory/developers.basistheory.com/commit/2a8ce9e2a2a97536f8ec6744c0b13b61af588ec3))
+
 ## [1.153.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.153.1...v1.153.2) (2024-06-11)
 
 
