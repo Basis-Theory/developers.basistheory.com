@@ -1,3 +1,10 @@
+# [1.154.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.153.3...v1.154.0) (2024-06-13)
+
+
+### Features
+
+* adds copyIconStyles to JS and React SDKs ([#395](https://github.com/Basis-Theory/developers.basistheory.com/issues/395)) ([e023400](https://github.com/Basis-Theory/developers.basistheory.com/commit/e02340089d7bc801a7f7d32026f18b86fab9437d))
+
 ## [1.153.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.153.2...v1.153.3) (2024-06-12)
 
 
