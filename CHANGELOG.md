@@ -1,3 +1,10 @@
+# [1.155.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.154.0...v1.155.0) (2024-06-17)
+
+
+### Features
+
+* upgrade dependencies ([#397](https://github.com/Basis-Theory/developers.basistheory.com/issues/397)) ([c0793f4](https://github.com/Basis-Theory/developers.basistheory.com/commit/c0793f4e381503d7f9cbd0d4077ed0f14192426b))
+
 # [1.154.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.153.3...v1.154.0) (2024-06-13)
 
 
