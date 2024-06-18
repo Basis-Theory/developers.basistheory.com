@@ -1,3 +1,10 @@
+# [1.156.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.155.0...v1.156.0) (2024-06-18)
+
+
+### Features
+
+* adding how to request different quotas ([#398](https://github.com/Basis-Theory/developers.basistheory.com/issues/398)) ([f63db8e](https://github.com/Basis-Theory/developers.basistheory.com/commit/f63db8e881997c6a700720ed14752e2aac41f118))
+
 # [1.155.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.154.0...v1.155.0) (2024-06-17)
 
 
