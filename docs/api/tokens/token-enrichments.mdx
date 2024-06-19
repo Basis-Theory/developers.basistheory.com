@@ -1,7 +1,4 @@
----
-title: Token Enrichments
----
-
+import {Alert} from "../../../src/components/shared/Alert";
 import { Enterprise } from "@site/src/components/shared/Enterprise";
 import BinDetailsTestCards from "@site/docs/api/tokens/_bin-details-test-cards.mdx";
 
@@ -11,13 +8,26 @@ Basis Theory offers several features that can be used to enrich the tokens that 
 
 | Attribute     | Type     | Token Types                                                                                    | Description                                                        |
 | ------------- | -------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `bin_details` | _object_ | [`card`](/docs/api/tokens/token-types#card) , [`card_number`](/docs/api/tokens/token-types#card) | Object containing information related to the tokenized credit card |
+| `bin_details` | _object_ | [`card`](/docs/api/tokens/token-types#card) , [`card_number`](/docs/api/tokens/token-types#card) | Object containing information related to the BIN of the tokenized credit card |
+| `card_details` | _object_ | [`card`](/docs/api/tokens/token-types#card) , [`card_number`](/docs/api/tokens/token-types#card) | Object containing card details related to the tokenized credit card |
 
 ## Using Token Enrichments
 
 When a specific Enrichment is activated for a Tenant, each is added as a token property and returned during every [token operation](/docs/api/tokens/) and is available to be used within [Detokenization Expressions](/docs/expressions/detokenization#using-token-properties).
 
-## BIN Details <Enterprise /> \{#bin-details}
+## Card Details <Enterprise />
+
+Card details include specific details on the card to enable better visibility into the card's origin and function. These values are derived from BIN Details to ensure accuracy of the information and also making the BIN Details enrichment a pre-requisite for this enrichment.
+
+| Property            | Type   | Description                                                       |
+| ------------------- | ------ | ------------------------------------------------------------------------------        |
+| last4               | string | Last four digits of the tokenized card number                                         |
+| bin                 | string | BIN based on the details found in the `bin_details.bin_length` enrichment property    |
+
+
+## BIN Details <Enterprise />
+
+<Alert>Request access to this feature in your [Tenant's Quota Page](https://portal.basistheory.com/settings?tab=quotas).</Alert>
 
 BIN details, or Bank Identification Number details, represent a fundamental aspect of credit card processing.
 Each credit card is associated with a unique BIN, which serves as a numerical identifier for the issuing bank
