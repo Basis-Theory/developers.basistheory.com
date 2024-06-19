@@ -1,3 +1,10 @@
+## [1.156.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.156.0...v1.156.1) (2024-06-19)
+
+
+### Bug Fixes
+
+* Updates account updater docs to make merchant_id optional ([#396](https://github.com/Basis-Theory/developers.basistheory.com/issues/396)) ([4b6810c](https://github.com/Basis-Theory/developers.basistheory.com/commit/4b6810cf7f67255938b121639cfafe833ec678a9))
+
 # [1.156.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.155.0...v1.156.0) (2024-06-18)
 
 
