@@ -1,3 +1,10 @@
+# [1.158.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.157.0...v1.158.0) (2024-06-20)
+
+
+### Features
+
+* rate limits for custom hostnames wrong ([#400](https://github.com/Basis-Theory/developers.basistheory.com/issues/400)) ([121175f](https://github.com/Basis-Theory/developers.basistheory.com/commit/121175f96e9bb51fcbd4b5a82e40be85b02a8821))
+
 # [1.157.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.156.1...v1.157.0) (2024-06-19)
 
 
