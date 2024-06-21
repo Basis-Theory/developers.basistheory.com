@@ -4,6 +4,8 @@ sidebar_label: Tokens
 ---
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # What are Tokens?
 
@@ -75,28 +77,65 @@ This can be useful for correlating purchases with the same credit card for multi
 master data management of multiple user accounts. Token fingerprints are also used for automatic [deduplication](#deduplication) of tokens within a tenant.
 For more details about fingerprinting, check out the [docs](/docs/expressions/fingerprints).
 
-In the following example, we will create a token with user data, but we want to fingerprint on the email address:
+The following examples show how to use our default fingerprinting capabilities on a Card token and a custom fingerprint expression on a Generic Token.
 
-```json showLineNumbers title=Request
-{
-  "type": "token",
-  "data": {
-    "first_name": "John",
-    "last_name": "Doe",
-    "email_address": "johndoe@basistheory.com"
-  },
-  "fingerprint_expression": "{{ data.email_address }}"
-}
-```
+<Tabs className="bt-tabs">
+  <TabItem value="card" label="Card Example">
+    Card token is automatically fingerprint on the card number:
 
-```json showLineNumbers title=Response
-{
-  "id": "1e7f0dde-5442-40ab-b244-5e02bcd5f86d",
-  "type": "token",
-  "fingerprint": "PH12E7vY7HfRTdGVUDeLzRcP8",
-  "fingerprint_expression": "{{ data.email_address }}"
-}
-```
+    ```json showLineNumbers title=Request
+    {
+      "type": "card",
+      "data": {
+        "number": "4242424242424242",
+        "expiration_month": "02",
+        "expiration_year": "2030",
+        "cvc": "123"
+      }
+    }
+    ```
+
+    ```json showLineNumbers title=Response
+    {
+      "id": "6345e9ca-6746-4a4e-8a92-c5d25e1dd410",
+      "type": "card",
+      "data": {
+        "number": "XXXXXXXXXXXX1111",
+        "expiration_month": 12,
+        "expiration_year": 2023
+      },
+      ...
+      "fingerprint": "6toma1DUM2LsitNBYG1YoJiHVra2ygBWcXoJTqX3gBN9",
+      "fingerprint_expression": "{{ data.number }}",
+    }
+    ```
+  </TabItem>
+  <TabItem value="pii" label="PII Example">
+    Creating a token with user data and fingerprint on the email address:
+
+    ```json showLineNumbers title=Request
+    {
+      "type": "token",
+      "data": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "email_address": "johndoe@basistheory.com"
+      },
+      "fingerprint_expression": "{{ data.email_address }}"
+    }
+    ```
+
+    ```json showLineNumbers title=Response
+    {
+      "id": "1e7f0dde-5442-40ab-b244-5e02bcd5f86d",
+      "type": "token",
+      "fingerprint": "PH12E7vY7HfRTdGVUDeLzRcP8",
+      "fingerprint_expression": "{{ data.email_address }}"
+    }
+    ```
+  </TabItem>
+</Tabs>
+
 
 In the above example, if another token is created with the `email_address` of `johndoe@basistheory.com`, the same fingerprint value of `PH12E7vY7HfRTdGVUDeLzRcP8` will be returned. If a token with a different `email_address` is created, a different fingerprint value will be returned.
 
