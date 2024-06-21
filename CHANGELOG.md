@@ -1,3 +1,10 @@
+# [1.160.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.159.0...v1.160.0) (2024-06-21)
+
+
+### Features
+
+* adding card fingerprint example ([#402](https://github.com/Basis-Theory/developers.basistheory.com/issues/402)) ([83a7528](https://github.com/Basis-Theory/developers.basistheory.com/commit/83a7528a14f8f80dfd29bdca435233841656ccb2))
+
 # [1.159.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.158.0...v1.159.0) (2024-06-21)
 
 
