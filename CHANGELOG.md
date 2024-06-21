@@ -1,3 +1,10 @@
+# [1.159.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.158.0...v1.159.0) (2024-06-21)
+
+
+### Features
+
+* updating limit actions ([#401](https://github.com/Basis-Theory/developers.basistheory.com/issues/401)) ([db2b97b](https://github.com/Basis-Theory/developers.basistheory.com/commit/db2b97b0fac1139f4a704adf504f7e7cc3b2d938))
+
 # [1.158.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.157.0...v1.158.0) (2024-06-20)
 
 
