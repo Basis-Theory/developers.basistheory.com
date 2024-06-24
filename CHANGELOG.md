@@ -1,3 +1,10 @@
+## [1.160.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.0...v1.160.1) (2024-06-24)
+
+
+### Bug Fixes
+
+* adding information about delay it tokens in list and search ([#403](https://github.com/Basis-Theory/developers.basistheory.com/issues/403)) ([c7b6c64](https://github.com/Basis-Theory/developers.basistheory.com/commit/c7b6c64477e161eacaec081f9b227a856d493cb9))
+
 # [1.160.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.159.0...v1.160.0) (2024-06-21)
 
 
