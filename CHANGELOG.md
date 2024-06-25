@@ -1,3 +1,10 @@
+## [1.160.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.2...v1.160.3) (2024-06-25)
+
+
+### Bug Fixes
+
+* Updates cursor pagination docs ([#406](https://github.com/Basis-Theory/developers.basistheory.com/issues/406)) ([a442f63](https://github.com/Basis-Theory/developers.basistheory.com/commit/a442f6331f69793a6a38ab10f437e603f270e3ab))
+
 ## [1.160.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.1...v1.160.2) (2024-06-25)
 
 
