@@ -1,3 +1,10 @@
+## [1.160.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.1...v1.160.2) (2024-06-25)
+
+
+### Bug Fixes
+
+* explicit string key/value map for reactors ([#404](https://github.com/Basis-Theory/developers.basistheory.com/issues/404)) ([2813f29](https://github.com/Basis-Theory/developers.basistheory.com/commit/2813f299bb6ed53fb0c5fd35f877a8a7aa5e406b))
+
 ## [1.160.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.0...v1.160.1) (2024-06-24)
 
 
