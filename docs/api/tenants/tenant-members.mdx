@@ -55,11 +55,21 @@ const tenantMembers = await bt.tenants.listMembers();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var tenantMembers = await client.GetMembersAsync();
+var apiInstance = new TenantsApi(config);
+var userId = new List<Guid>();
+var page = 1;
+var start = "";
+var size = 1;
+
+TenantMemberResponsePaginatedList result = apiInstance.GetMembers(userId, page, start, size);
 ```
 
   </TabItem>
@@ -204,11 +214,18 @@ await bt.tenants.deleteMember("5540a02f-99e7-46de-8f41-1b3cf7b2a3d2");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-await client.DeleteMemberAsync("5540a02f-99e7-46de-8f41-1b3cf7b2a3d2");
+var apiInstance = new TenantsApi(config);
+var memberId = Guid.Parse("");
+
+apiInstance.DeleteMember(memberId);
 ```
 
   </TabItem>
@@ -326,14 +343,22 @@ const createdInvitation = await bt.tenants.createInvitations({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var createdInvitation = await client.CreateInvitationAsync(new TenantInvitation
+var apiInstance = new TenantsApi(config);
+var createTenantInvitationRequest = new CreateTenantInvitationRequest()
 {
-    Email = "jane@doe.com"
-});
+    Email = ...
+    Role = ...
+};
+
+TenantInvitationResponse result = apiInstance.CreateInvitation(createTenantInvitationRequest);
 ```
 
   </TabItem>
@@ -406,6 +431,7 @@ func main() {
 | Attribute | Required | Type     | Default | Description                                                                                                                       |
 | --------- | -------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | `email`   | true     | _string_ | `null`  | The invitee's e-mail address. Has to be a well-formed e-mail address ([RFC 5322](https://datatracker.ietf.org/doc/html/rfc5322)). |
+| `role`    | false    | _string_ | `ADMIN` | The invitee's role once accepted. Valid values: `ADMIN` or `READ_ONLY`                                                            |
 
 ### Response
 
@@ -465,11 +491,18 @@ const resentInvitation = await bt.tenants.resendInvitation(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var resentInvitation = await client.ResendInvitationAsync("fb32ea26-2185-4ad2-a7bf-2fe69c00ae13");
+var apiInstance = new TenantsApi(config);
+var invitationId = Guid.Parse("");
+
+TenantInvitationResponse result = apiInstance.ResendInvitation(invitationId);
 ```
 
   </TabItem>
@@ -592,11 +625,21 @@ const invitations = await bt.tenants.listInvitations();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var invitations = await client.GetInvitationsAsync();
+var apiInstance = new TenantsApi(config);
+var status = TenantInvitationStatus.PENDING;
+var page = 1;
+var start = "";
+var size = 1;
+
+TenantInvitationResponsePaginatedList result = apiInstance.GetInvitations(status, page, start, size);
 ```
 
   </TabItem>
@@ -733,11 +776,7 @@ const invitation = await bt.tenants.retrieveInvitation(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
-
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
-
-var invitation = await client.GetInvitationByIdAsync("fb32ea26-2185-4ad2-a7bf-2fe69c00ae13");
+    Not Available.
 ```
 
   </TabItem>
@@ -846,11 +885,18 @@ await bt.tenants.deleteInvitation("fb32ea26-2185-4ad2-a7bf-2fe69c00ae13");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-await client.DeleteInvitationAsync("fb32ea26-2185-4ad2-a7bf-2fe69c00ae13");
+var apiInstance = new TenantsApi(config);
+var invitationId = Guid.Parse("");
+
+apiInstance.DeleteInvitation(invitationId);
 ```
 
   </TabItem>
