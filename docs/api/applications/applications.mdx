@@ -65,15 +65,31 @@ const application = await bt.applications.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Applications;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var application = await client.CreateAsync(new Application {
-  Name = "My Example App",
-  Type = "private",
-  Permissions = new List<string> { "token:create", "token:read" }
-});
+var apiInstance = new ApplicationsApi(config);
+var createApplicationRequest = new CreateApplicationRequest(/*required parameters*/)
+{
+    // Additional parameters
+};
+
+try
+{
+    Application result = apiInstance.Create(createApplicationRequest);
+    Console.WriteLine(result);
+}
+catch (ApiException  e)
+{
+    Console.WriteLine("Exception when calling ApplicationsApi.Create: " + e.Message);
+    Console.WriteLine("Status Code: " + e.ErrorCode);
+    Console.WriteLine(e.StackTrace);
+}
 ```
 
   </TabItem>
@@ -220,11 +236,32 @@ const applications = await bt.applications.list();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Applications;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var applications = await client.GetAsync();
+var apiInstance = new ApplicationsApi(config);
+var id = new List<Guid>();
+var type = new List<string>();
+var page = 1;
+var start = "";
+var size = 1;
+
+try
+{
+    ApplicationPaginatedList result = apiInstance.Get(id, type, page, start, size);
+    Console.WriteLine(result);
+}
+catch (ApiException  e)
+{
+    Console.WriteLine("Exception when calling ApplicationsApi.Get: " + e.Message);
+    Console.WriteLine("Status Code: " + e.ErrorCode);
+    Console.WriteLine(e.StackTrace);
+}
 ```
 
   </TabItem>
@@ -367,11 +404,28 @@ const application = await bt.applications.retrieve(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Applications;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var application = await client.GetByIdAsync("fe1f9ba4-474e-44b9-b949-110cdba9d662");
+var apiInstance = new ApplicationsApi(config);
+var id = "";
+
+try
+{
+    Application result = apiInstance.GetById(id);
+    Console.WriteLine(result);
+}
+catch (ApiException  e)
+{
+    Console.WriteLine("Exception when calling ApplicationsApi.GetById: " + e.Message);
+    Console.WriteLine("Status Code: " + e.ErrorCode);
+    Console.WriteLine(e.StackTrace);
+}
 ```
 
   </TabItem>
@@ -496,11 +550,27 @@ const application = await bt.applications.retrieveByKey();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Applications;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var application = await client.GetByKeyAsync();
+var apiInstance = new ApplicationsApi(config);
+
+try
+{
+    Application result = apiInstance.GetByKey();
+    Console.WriteLine(result);
+}
+catch (ApiException  e)
+{
+    Console.WriteLine("Exception when calling ApplicationsApi.GetByKey: " + e.Message);
+    Console.WriteLine("Status Code: " + e.ErrorCode);
+    Console.WriteLine(e.StackTrace);
+}
 ```
 
   </TabItem>
@@ -634,16 +704,32 @@ const application = await bt.applications.update(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Applications;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var application = await client.UpdateAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a",
-  new Application {
-    Name = "My Example App",
-    Permissions = new List<string> { "application:create", "application:read" }
-  }
-);
+var apiInstance = new ApplicationsApi(config);
+var id = "";
+var updateApplicationRequest = new UpdateApplicationRequest(/*required parameters*/)
+{
+    // Additional parameters
+};
+
+try
+{
+    Application result = apiInstance.Update(id, updateApplicationRequest);
+    Console.WriteLine(result);
+}
+catch (ApiException  e)
+{
+    Console.WriteLine("Exception when calling ApplicationsApi.Update: " + e.Message);
+    Console.WriteLine("Status Code: " + e.ErrorCode);
+    Console.WriteLine(e.StackTrace);
+}
 ```
 
   </TabItem>
@@ -799,11 +885,28 @@ const application = await bt.applications.regenerateKey(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Applications;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var application = await client.RegenerateKeyAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
+var apiInstance = new ApplicationsApi(config);
+var id = "";
+
+try
+{
+    Application result = apiInstance.RegenerateKey(id);
+    Console.WriteLine(result);
+}
+catch (ApiException  e)
+{
+    Console.WriteLine("Exception when calling ApplicationsApi.RegenerateKey: " + e.Message);
+    Console.WriteLine("Status Code: " + e.ErrorCode);
+    Console.WriteLine(e.StackTrace);
+}
 ```
 
   </TabItem>
@@ -930,11 +1033,27 @@ await bt.applications.delete("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Applications;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ApplicationClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-await client.DeleteAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
+var apiInstance = new ApplicationsApi(config);
+var id = "";
+
+try
+{
+    apiInstance.Delete(id);
+}
+catch (ApiException  e)
+{
+    Console.WriteLine("Exception when calling ApplicationsApi.Delete: " + e.Message);
+    Console.WriteLine("Status Code: " + e.ErrorCode);
+    Console.WriteLine(e.StackTrace);
+}
 ```
 
   </TabItem>
