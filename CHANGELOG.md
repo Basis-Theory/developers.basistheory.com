@@ -1,3 +1,10 @@
+## [1.160.4](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.3...v1.160.4) (2024-07-01)
+
+
+### Bug Fixes
+
+* stress deduplication behavior ([#407](https://github.com/Basis-Theory/developers.basistheory.com/issues/407)) ([575068f](https://github.com/Basis-Theory/developers.basistheory.com/commit/575068f7d2b72bd8b16cc7eedebaef961d17723f))
+
 ## [1.160.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.2...v1.160.3) (2024-06-25)
 
 
