@@ -94,13 +94,16 @@ const reactor = await bt.reactors.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Reactors;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactor = await client.CreateAsync(new Reactor {
-  Name = "My Reactor",
-  Code = @"
+var apiInstance = new ReactorsApi(config);
+var code = @"
     module.exports = async function (req) {
       // Do something with req.configuration.SERVICE_API_KEY
 
@@ -110,14 +113,18 @@ var reactor = await client.CreateAsync(new Reactor {
         }
       };
     };
-  ",
-  Configuration = new Dictionary<string, string> {
+";
+var createReactorRequest = new CreateReactorRequest("My Reactor", code)
+{
+  _Configuration = new Dictionary<string, string> {
     { "SERVICE_API_KEY", "key_abcd1234" }
   },
   Application = new Application {
     Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
   }
-});
+};
+
+Reactor result = apiInstance.Create(createReactorRequest);
 ```
 
   </TabItem>
@@ -310,11 +317,22 @@ const reactors = await bt.reactors.list();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Reactors;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactors = await client.GetAsync();
+var apiInstance = new ReactorsApi(config);
+var id = new List<Guid>();
+var name = "";
+var page = 1;
+var start = "";
+var size = 1;
+
+ReactorPaginatedList result = apiInstance.Get(id, name, page, start, size);
 ```
 
   </TabItem>
@@ -469,11 +487,18 @@ const reactor = await bt.reactors.retrieve(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Reactors;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactor = await client.GetByIdAsync("5b493235-6917-4307-906a-2cd6f1a90b13");
+var apiInstance = new ReactorsApi(config);
+var id = "";
+
+Reactor result = apiInstance.GetById(id);
 ```
 
   </TabItem>
@@ -654,14 +679,17 @@ const reactor = await bt.reactors.update(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Reactors;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactor = await client.UpdateAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
-  new Reactor {
-    Name = "My Reactor",
-    Code = @"
+var apiInstance = new ReactorsApi(config);
+var id = new Guid("9fd32800-f0a6-4bc2-8335-4390faa61476");
+var code = @"
       module.exports = async function (req) {
         // Do something with req.configuration.SERVICE_API_KEY
 
@@ -671,15 +699,18 @@ var reactor = await client.UpdateAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
           }
         };
       };
-    ",
-    Configuration = new Dictionary<string, string> {
-      { "SERVICE_API_KEY", "key_abcd1234" }
-    },
-    Application = new Application {
-      Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
-    }
+    ";
+var updateReactorRequest = new UpdateReactorRequest("My Reactor", code: code)
+{
+  _Configuration = new Dictionary<string, string> {
+    { "SERVICE_API_KEY", "key_abcd1234" }
+  },
+  Application = new Application {
+    Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
   }
-);
+};
+
+Reactor result = apiInstance.Update(id, updateReactorRequest);
 ```
   </TabItem>
   <TabItem value="java" label="Java">
@@ -896,17 +927,22 @@ const reactor = await bt.reactors.patch(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Reactors;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactor = await client.PatchAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
-  new Reactor {
-    Name = "My Reactor",
-    Configuration = new Dictionary<string, string> {
-      { "SERVICE_API_KEY", "key_abcd1234" }
-    }
-  });
+var apiInstance = new ReactorsApi(config);
+var id = "";
+var patchReactorRequest = new PatchReactorRequest()
+{
+    // Additional parameters
+};
+
+apiInstance.Patch(id, patchReactorRequest);
 ```
   </TabItem>
   <TabItem value="java" label="Java">
@@ -1041,11 +1077,18 @@ await bt.reactors.delete("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Reactors;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-await client.DeleteAsync("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
+var apiInstance = new ReactorsApi(config);
+var id = "";
+
+apiInstance.Delete(id);
 ```
 
   </TabItem>
@@ -1176,18 +1219,26 @@ const reactResponse = await bt.reactors.react(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Reactors;
-using BasisTheory.net.Reactors.Requests;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorClient("<PRIVATE_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactResponse = await client.ReactAsync("5b493235-6917-4307-906a-2cd6f1a90b13",
-  new ReactRequest {
-    Arguments = new {
-      card = "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
-      customer_id = "myCustomerId1234"
+var apiInstance = new ReactorsApi(config);
+var id = new Guid("9fd32800-f0a6-4bc2-8335-4390faa61476");
+var reactRequest = new ReactRequest
+{
+    Args = new
+    {
+        card = "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+        customer_id = "myCustomerId1234"
     }
-  });
+};
+
+ReactResponse result = apiInstance.React(id, reactRequest);
 ```
 
   </TabItem>
