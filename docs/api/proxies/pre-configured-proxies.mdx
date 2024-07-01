@@ -122,45 +122,52 @@ const proxy = await bt.proxies.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Proxies;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ProxyClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "http://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var proxy = await client.CreateAsync(new ProxyCreateRequest {
-  Name = "My Proxy",
-  DestinationUrl = "https://example.com/api",
-  RequestTransform = new ProxyTransform {
-    Code = @"
-      module.exports = async function (req) {
-        // Do something with req.configuration.SERVICE_API_KEY
+var apiInstance = new ProxiesApi(config);
+var createProxyRequest = new CreateProxyRequest("My Proxy", "https://example.com/api")
+{
+    RequestTransform = new ProxyTransform
+    {
+        Code = @"
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
 
-        return {
-          headers: req.args.headers,
-          body: req.args.body
-        };
-      };
-    "
-  },
-  ResponseTransform = new ProxyTransform {
-    Code = @"
-      module.exports = async function (req) {
-        // Do something with req.configuration.SERVICE_API_KEY
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        "
+    },
+    ResponseTransform = new ProxyTransform {
+        Code = @"
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
 
-        return {
-          headers: req.args.headers,
-          body: req.args.body
-        };
-      };
-    "
-  },
-  Configuration = new Dictionary<string, string> {
-    { "SERVICE_API_KEY", "key_abcd1234" }
-  },
-  Application = new Application {
-    Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
-  },
-  RequireAuthentication = true
-});
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        "
+    },
+    _Configuration = new Dictionary<string, string> {
+        { "SERVICE_API_KEY", "key_abcd1234" }
+    },
+    Application = new Application {
+        Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
+    },
+    RequireAuth = true
+};
+
+Proxy result = apiInstance.Create(createProxyRequest);
 ```
 
   </TabItem>
@@ -408,11 +415,22 @@ const proxies = await bt.proxies.list();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Proxies;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ProxyClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var proxies = await client.GetAsync();
+var apiInstance = new ProxiesApi(config);
+var id = new List<Guid>();
+var name = "";
+var page = 1;
+var start = "";
+var size = 1;
+
+ProxyPaginatedList result = apiInstance.Get(id, name, page, start, size);
 ```
 
   </TabItem>
@@ -577,11 +595,18 @@ const proxy = await bt.proxies.retrieve("5b493235-6917-4307-906a-2cd6f1a90b13");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Proxies;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ProxyClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var proxy = await client.GetByIdAsync("5b493235-6917-4307-906a-2cd6f1a90b13");
+var apiInstance = new ProxiesApi(config);
+var id = "";
+
+Proxy result = apiInstance.GetById(id);
 ```
 
   </TabItem>
@@ -797,46 +822,53 @@ const proxy = await bt.proxies.update('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Proxies;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ProxyClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "http://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var proxy = await client.UpdateAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
-  new ProxyUpdateRequest {
-    Name = "My Proxy",
-    DestinationUrl = "https://example.com/api",
-    RequestTransform = new ProxyTransform {
-      Code = @"
-        module.exports = async function (req) {
-          // Do something with req.configuration.SERVICE_API_KEY
+var apiInstance = new ProxiesApi(config);
+var id = "";
+var updateProxyRequest = new UpdateProxyRequest("My Proxy", "https://echo.basistheory.com")
+{
+    RequestTransform = new ProxyTransform
+    {
+        Code = @"
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
 
-          return {
-            headers: req.args.headers,
-            body: req.args.body
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
           };
-        };
-      "
+        "
     },
     ResponseTransform = new ProxyTransform {
-      Code = @"
-        module.exports = async function (req) {
-          // Do something with req.configuration.SERVICE_API_KEY
+        Code = @"
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
 
-          return {
-            headers: req.args.headers,
-            body: req.args.body
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
           };
-        };
-      "
+        "
     },
-    Configuration = new Dictionary<string, string> {
-      { "SERVICE_API_KEY", "key_abcd1234" }
+    _Configuration = new Dictionary<string, string> {
+        { "SERVICE_API_KEY", "key_abcd1234" }
     },
     Application = new Application {
-      Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
+        Id = new Guid("45c124e7-6ab2-4899-b4d9-1388b0ba9d04")
     },
-    RequireAuthentication = true
-  });
+    RequireAuth = true
+};
+
+Proxy result = apiInstance.Update(id, updateProxyRequest);
 ```
 
   </TabItem>
@@ -1119,18 +1151,22 @@ const proxy = await bt.proxies.patch("433013a6-a614-4e1e-b2aa-5fba67aa85e6", {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Proxies;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ProxyClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var proxy = await client.PatchAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6",
-  new ProxyPatchRequest {
-    Name = "My Proxy",
-    DestinationUrl = "https://example.com/api",
-    Configuration = new Dictionary<string, string> {
-      { "SERVICE_API_KEY", "key_abcd1234" }
-    }
-  });
+var apiInstance = new ProxiesApi(config);
+var id = "";
+var patchProxyRequest = new PatchProxyRequest()
+{
+    // Additional parameters
+};
+
+apiInstance.Patch(id, patchProxyRequest);
 ```
 
   </TabItem>
@@ -1269,11 +1305,18 @@ await bt.proxies.delete("433013a6-a614-4e1e-b2aa-5fba67aa85e6");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Proxies;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ProxyClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-await client.DeleteAsync("433013a6-a614-4e1e-b2aa-5fba67aa85e6");
+var apiInstance = new ProxiesApi(config);
+var id = "";
+
+apiInstance.Delete(id);
 ```
 
   </TabItem>
