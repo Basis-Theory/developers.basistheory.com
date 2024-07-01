@@ -77,25 +77,31 @@ const token = await bt.tokens.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokens;
-using BasisTheory.net.Tokens.Requests;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenClient("<API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var token = await client.CreateAsync(new TokenCreateRequest {
-  Type = "token",
-  Data = "Sensitive Value",
-  Mask = "{{ data | reveal_last: 4 }}",
-  Containers = new List<string> { "/general/high/" },
-  Metadata = new Dictionary<string, string>
-    {
-      { "nonSensitiveField",  "Non-Sensitive Value" }
-    },
-  SearchIndexes = new List<string> { "{{ data }}", "{{ data | last4 }}" },
-  FingerprintExpression = "{{ data }}",
-  DeduplicateToken = true,
-  ExpiresAt = DateTimeOffset.Now.AddYears(3)
-});
+var apiInstance = new TokensApi(config);
+var createTokenRequest = new CreateTokenRequest()
+{
+    Id = ...
+    Type = ...
+    Data = ...
+    Privacy = ...
+    Metadata = ...
+    SearchIndexes = ...
+    FingerprintExpression = ...
+    Mask = ...
+    DeduplicateToken = ...
+    ExpiresAt = ...
+    Containers = ...
+};
+
+Token result = apiInstance.Create(createTokenRequest);
 ```
 
   </TabItem>
@@ -276,11 +282,22 @@ const tokens = await bt.tokens.list();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokens;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenClient("<PRIVATE_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var tokens = await client.GetAsync();
+var apiInstance = new TokensApi(config);
+var id = new List<string>();
+var metadata = new Dictionary<string, string>()
+var page = 1;
+var start = "";
+var size = 1;
+
+TokenPaginatedList result = apiInstance.Get(id, metadata, page, start, size);
 ```
 
   </TabItem>
@@ -422,11 +439,18 @@ const token = await bt.tokens.retrieve("c06d0789-0a38-40be-b7cc-c28a718f76f1");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokens;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenClient("<PRIVATE_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var token = await client.GetByIdAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+var apiInstance = new TokensApi(config);
+var id = "";
+
+Token result = apiInstance.GetById(id);
 ```
 
   </TabItem>
@@ -577,23 +601,30 @@ const token = await bt.tokens.update("c06d0789-0a38-40be-b7cc-c28a718f76f1", {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokens;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenClient("<API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var token = await client.UpdateAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1", new TokenUpdateRequest {
-  Data = "Sensitive Value",
-  Mask = "{{ data | reveal_last: 4 }}",
-  Metadata = new Dictionary<string, string> {
-    { "nonSensitiveField",  "Non-Sensitive Value" }
-  },
-  SearchIndexes = new List<string> {
-    "{{ data }}",
-    "{{ data | last4 }}"
-  },
-  FingerprintExpression = "{{ data }}",
-  DeduplicateToken = true
-});
+var apiInstance = new TokensApi(config);
+var id = "";
+var updateTokenRequest = new UpdateTokenRequest()
+{
+    Data = ...
+    Privacy = ...
+    Metadata = ...
+    SearchIndexes = ...
+    FingerprintExpression = ...
+    Mask = ...
+    ExpiresAt = ...
+    DeduplicateToken = ...
+    Containers = ...
+};
+
+Token result = apiInstance.Update(id, updateTokenRequest);
 ```
 
   </TabItem>
@@ -761,11 +792,18 @@ await bt.tokens.delete("c06d0789-0a38-40be-b7cc-c28a718f76f1");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokens;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenClient("<PRIVATE_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-await client.DeleteAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+var apiInstance = new TokensApi(config);
+var id = "";
+
+apiInstance.Delete(id);
 ```
 
   </TabItem>
