@@ -1,3 +1,10 @@
+# [1.161.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.4...v1.161.0) (2024-07-02)
+
+
+### Features
+
+* add adyen issuing example ([#408](https://github.com/Basis-Theory/developers.basistheory.com/issues/408)) ([8a13f4c](https://github.com/Basis-Theory/developers.basistheory.com/commit/8a13f4c328bb39edaf28f5bd217bc3238833c235))
+
 ## [1.160.4](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.3...v1.160.4) (2024-07-01)
 
 
