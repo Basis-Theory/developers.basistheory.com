@@ -64,15 +64,24 @@ const tokens = await bt.tokens.search({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokens;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenClient("<PRIVATE_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var tokens = await client.SearchAsync(new TokenSearchRequest {
-  Query = "data:6789",
-  Page = 1,
-  PageSize = 20
-});
+var apiInstance = new TokensApi(config);
+var searchTokensRequest = new SearchTokensRequest()
+{
+    Query = ...
+    Page = ...
+    Start = ...
+    Size = ...
+};
+
+TokenPaginatedList result = apiInstance.Search(searchTokensRequest);
 ```
 
   </TabItem>
