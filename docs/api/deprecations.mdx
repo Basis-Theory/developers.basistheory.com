@@ -36,6 +36,22 @@ Learn more about these Rate Limit changes in our blog [Introducing New Rate Limi
 
 No changes are required for Test Tenants. If you need a higher rate limit for these tenants, please contact [`support@basistheory.com`](mailto:support@basistheory.com) or your account representative.
 
+### How to rotate your Private API keys
+
+- Rotate Via the Portal
+  - If you created your keys via the [Portal](https://portal.basistheory.com) - follow this guide:
+    - Go to the [Applications List](https://portal.basistheory.com/applications)
+    - Find the Applications needing keys rotated and Edit.
+  - In the Application details page, find the "API Keys" section and create a new API Key. (Don't worry, this will not stop the existing keys from working.)
+  - Copy the new generated key and update your systems with the new value.
+  - Once you are done updating all your systems with the new value, click the "trash" icon to delete the "Legacy" key. (Only do this once all usages of the keys have been updated)
+- Rotate via Terraform
+  - You are able to manage API Keys via Terraform with the Guide found in v2 of our [Terraform Provider](https://registry.terraform.io/providers/Basis-Theory/basistheory/latest/docs/guides/v1_v2_migration).
+- Rotate via API
+  - [Create a new key](https://developers.basistheory.com/docs/api/applications/application-keys#create-application-key) for the Applications
+  - Update your systems with the new key
+  - Once all systems have been updated, delete the [old key](/docs/api/applications/application-keys#delete-application-key)
+
 ## Application Key Regenerate Deprecation
 
 Regenerating an application's API key used to involve calling the `Regenerate` endpoint on the Application. With the introduction of Application keys, this functionality has been replaced with the ability to create new Application Keys and remove the old key.
