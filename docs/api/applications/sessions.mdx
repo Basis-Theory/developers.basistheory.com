@@ -49,11 +49,17 @@ const session = await bt.sessions.create();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Sessions;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new SessionClient("<PUBLIC_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var session = await client.CreateAsync();
+var apiInstance = new SessionsApi(config);
+
+CreateSessionResponse result = apiInstance.Create();
 ```
 
   </TabItem>
@@ -151,14 +157,24 @@ const authorizedSession = await bt.sessions.authorize({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Sessions;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new SessionClient("<PRIVATE_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-await client.AuthorizeAsync(new AuthorizeSessionRequest {
-  Nonce = "4J7SiRvfADwJ9ZqwviJJs8",
-  Permissions = new List<string> { "token:create", "token:read" }
-});
+var apiInstance = new SessionsApi(config);
+var authorizeSessionRequest = new AuthorizeSessionRequest()
+{
+    Nonce = ...
+    ExpiresAt = ...
+    Permissions = ...
+    Rules = ...
+};
+
+apiInstance.Authorize(authorizeSessionRequest);
 ```
 
   </TabItem>

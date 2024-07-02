@@ -57,11 +57,18 @@ const session = await bt.threeds.getSessionById("c06d0789-0a38-40be-b7cc-c28a718
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.ThreeDS;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ThreeDSClient("<PRIVATE_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var session = await client.GetSessionByIdAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+var apiInstance = new ThreeDSApi(config);
+var id = Guid.Parse("");
+
+ThreeDSSession result = apiInstance.ThreeDSGetSessionById(id);
 ```
 
   </TabItem>
@@ -281,37 +288,45 @@ const authentication = await bt.threeds.authenticateSession("c06d0789-0a38-40be-
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.ThreeDS;
-using BasisTheory.net.ThreeDS.Requests;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ThreeDSClient("<API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var authentication = await client.AuthenticateThreeDSSessionAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1", new AuthenticateThreeDSSessionRequest {
-  AuthenticationCategory = "payment",
-  AuthenticationType = "payment-transaction",
-  PurchaseInfo = new ThreeDSPurchaseInfo {
-    Amount = "80000",
-    Currency = "826",
-    Exponent = "2",
-    Date = "20240109141010"
-  },
-  RequestorInfo = new ThreeDSRequestorInfo {
-    Id = "example-3ds-merchant",
-    Name = "Example 3DS Merchant",
-    Url = "https://www.example.com/example-merchant"
-  },
-  MerchantInfo = new ThreeDSMerchantInfo {
-    Mid = "9876543210001",
-    AcquirerBin = "000000999",
-    Name = "Example 3DS Merchant",
-    CategoryCode = "7922",
-    CountryCode = "826"
-  },
-  CardholderInfo = new ThreeDSCardholderInfo {
-    Name = "John Doe",
-    Email = "john@me.com"
-  }
-});
+var apiInstance = new ThreeDSApi(config);
+var sessionId = Guid.Parse("");
+var authenticateThreeDSSessionRequest = new AuthenticateThreeDSSessionRequest()
+{
+    AuthenticationCategory = "payment",
+    AuthenticationType = "payment-transaction",
+    PurchaseInfo = new ThreeDSPurchaseInfo {
+        Amount = "80000",
+        Currency = "826",
+        Exponent = "2",
+        Date = "20240109141010"
+    },
+    RequestorInfo = new ThreeDSRequestorInfo {
+        Id = "example-3ds-merchant",
+        Name = "Example 3DS Merchant",
+        Url = "https://www.example.com/example-merchant"
+    },
+    MerchantInfo = new ThreeDSMerchantInfo {
+        Mid = "9876543210001",
+        AcquirerBin = "000000999",
+        Name = "Example 3DS Merchant",
+        CategoryCode = "7922",
+        CountryCode = "826"
+    },
+    CardholderInfo = new ThreeDSCardholderInfo {
+        Name = "John Doe",
+        Email = "john@me.com"
+    }
+};
+
+ThreeDSAuthentication result = apiInstance.ThreeDSAuthenticateSession(sessionId, authenticateThreeDSSessionRequest);
 ```
 
   </TabItem>
@@ -779,11 +794,18 @@ const result = await bt.threeds.getChallengeResult("c06d0789-0a38-40be-b7cc-c28a
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.ThreeDS;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ThreeDSClient("<PRIVATE_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var result = await client.GetChallengeResultAsync("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+var apiInstance = new ThreeDSApi(config);
+var sessionId = Guid.Parse("");
+
+ThreeDSAuthentication result = apiInstance.ThreeDSGetChallengeResult(sessionId);
 ```
 
   </TabItem>

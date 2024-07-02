@@ -54,11 +54,17 @@ const tenant = await bt.tenants.retrieve();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var tenant = await client.GetSelfAsync();
+var apiInstance = new TenantsApi(config);
+
+Tenant result = apiInstance.Get();
 ```
 
   </TabItem>
@@ -197,20 +203,22 @@ const tenant = await bt.tenants.update({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var tenant = await client.UpdateAsync(new TenantUpdateRequest
+var apiInstance = new TenantsApi(config);
+var updateTenantRequest = new UpdateTenantRequest()
 {
-  Name = "My Example Tenant",
-  Settings = new Dictionary<string, string>
-  {
-    { "fingerprint_tokens", "true" },
-    { "disable_ephemeral_proxy", "true" },
-    { "deduplicate_tokens", "true" }
-  }
-});
+    Name = ...
+    Settings = ...
+};
+
+Tenant result = apiInstance.Update(updateTenantRequest);
 ```
 
   </TabItem>
@@ -351,11 +359,17 @@ await bt.tenants.delete();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-await client.DeleteAsync();
+var apiInstance = new TenantsApi(config);
+
+apiInstance.Delete();
 ```
 
   </TabItem>
@@ -459,11 +473,17 @@ const tenantUsageReport = await bt.tenants.retrieveUsageReport();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tenants;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TenantClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var tenantUsageReport = await client.GetTenantUsageReportAsync();
+var apiInstance = new TenantsApi(config);
+
+TenantUsageReport result = apiInstance.GetTenantUsageReport();
 ```
 
   </TabItem>
