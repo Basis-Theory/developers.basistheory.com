@@ -1,3 +1,10 @@
+# [1.163.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.162.0...v1.163.0) (2024-07-03)
+
+
+### Features
+
+* updating timing and test data ([#411](https://github.com/Basis-Theory/developers.basistheory.com/issues/411)) ([6eba89d](https://github.com/Basis-Theory/developers.basistheory.com/commit/6eba89d55732746f84ae96c77bd4f8168d49a706))
+
 # [1.162.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.161.0...v1.162.0) (2024-07-03)
 
 
