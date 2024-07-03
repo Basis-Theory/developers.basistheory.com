@@ -1,3 +1,10 @@
+# [1.162.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.161.0...v1.162.0) (2024-07-03)
+
+
+### Features
+
+* updating deprecation to include guide on how to update ([#410](https://github.com/Basis-Theory/developers.basistheory.com/issues/410)) ([3998027](https://github.com/Basis-Theory/developers.basistheory.com/commit/3998027e0286d89c297906ad0d026db650e880d3))
+
 # [1.161.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.160.4...v1.161.0) (2024-07-02)
 
 
