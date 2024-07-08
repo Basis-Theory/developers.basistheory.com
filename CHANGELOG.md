@@ -1,3 +1,10 @@
+# [1.164.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.163.0...v1.164.0) (2024-07-08)
+
+
+### Features
+
+* adding reactor application limits that were in the email ([#413](https://github.com/Basis-Theory/developers.basistheory.com/issues/413)) ([09c4074](https://github.com/Basis-Theory/developers.basistheory.com/commit/09c407471326e95fee906d297951232aba2abce8))
+
 # [1.163.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.162.0...v1.163.0) (2024-07-03)
 
 
