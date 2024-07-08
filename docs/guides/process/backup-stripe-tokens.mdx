@@ -59,6 +59,8 @@ This will create an application with the following [Access Controls](/docs/conce
 
 Once you are granted access to the Stripe's Forwarding API and created the Basis Theory Public API Key, choose your favorite HTTP Client for your server-side language and call the forwarding endpoint:
 
+In the metadata object you can pass any of the Basis Theory token properties documented [here](/docs/api/orchestration/stripe-forward#stripe-metadata).
+
 ```shell showLineNumbers title="Vault a Card"
 curl --location 'https://api.stripe.com/v1/forwarding/requests' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
@@ -66,12 +68,12 @@ curl --location 'https://api.stripe.com/v1/forwarding/requests' \
 --header 'Authorization: Bearer <STRIPE_API_KEY>' \
 // highlight-next-line
 --data-urlencode 'payment_method=<STRIPE_PAYMENT_METHOD_ID>' \
---data-urlencode 'url=https://api.basistheory.com/tokens' \
+--data-urlencode 'url=https://api.basistheory.com/connections/stripe-forward/tokenize' \
 --data-urlencode 'request[headers][0][name]=BT-API-KEY' \
 // highlight-next-line
 --data-urlencode 'request[headers][0][value]=<BT_API_KEY>' \
 // highlight-next-line
---data-urlencode 'request[body]={"type": "card", "data": { "id": "<STRIPE_PAYMENT_METHOD_ID>", "number": "", "expiration_month": "", "expiration_year": "", "cvc": "" }, "metadata": { "cardholder_name": "" } }' \
+--data-urlencode 'request[body]={"card": { "number": "", "exp_month": "", "exp_year": "", "cvc": "", "name: "" }, "metadata": { "containers": ["/pci/high/"] } }' \
 --data-urlencode 'replacements[0]=card_number' \
 --data-urlencode 'replacements[1]=card_expiry' \
 --data-urlencode 'replacements[2]=card_cvc'\

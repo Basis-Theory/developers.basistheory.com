@@ -1,5 +1,5 @@
 ---
-title: Search Tokens
+title: Search Tokens V2
 ---
 
 import Tabs from "@theme/Tabs";
@@ -9,17 +9,17 @@ import {
   HttpMethod,
   HttpMethods,
 } from "@site/src/components/shared/HttpMethod";
-import { Permission } from "@site/src/components/shared/Permission";
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
-import { Enterprise } from "@site/src/components/shared/Enterprise";
+import {Permission} from "@site/src/components/shared/Permission";
+import {Alert, Alerts} from "@site/src/components/shared/Alert";
+import {Enterprise} from "@site/src/components/shared/Enterprise";
 
-# Search Tokens <Enterprise />
+# Search Tokens V2 <Enterprise />
 
-<Alert type={Alerts.INFO}>Most tokens will be searchable within seconds, although it may take up to a few minutes.</Alert>
+<Alert type={Alerts.INFO}>Most tokens will be searchable within seconds, although it may take up to a few
+  minutes.</Alert>
 
 Search for tokens using a Lucene-based [query syntax](#query-syntax).
 
-## Search v2
 <HttpMethod
   method={HttpMethods.POST}
   endpoint="https://api.basistheory.com/v2/tokens/search"
@@ -29,7 +29,7 @@ Search for tokens using a Lucene-based [query syntax](#query-syntax).
 
 <Permission content="token:search"/>
 
-### Request
+## Request
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
@@ -151,184 +151,9 @@ Search for tokens using a Lucene-based [query syntax](#query-syntax).
 | `start`    | false    | _string_ | `null`     | Cursor provided in the previous query to get the next set of results.                              |
 | `size`    | false    | _integer_ | `20`    | Number of results per page to return. Maximum size of 100 results. |
 
-### Response
+## Response
 
 Returns a [cursor paginated object](/docs/api/pagination#cursor-pagination-object) with the `data` property containing an array of [tokens](/docs/api/tokens#token-object).
-Token data will be returned according to the [transform](/docs/concepts/access-controls#transform)
-applied to the requesting Application's [Access Controls](/docs/concepts/access-controls).
-Returns [an error](/docs/api/errors) if tokens could not be retrieved or when an invalid [query](#query-syntax) is submitted.
-
-```json showLineNumbers
-{
-  "pagination": {...},
-  "data": [
-    {
-      "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
-      "type": "social_security_number",
-      "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
-      "data": "XXX-XX-6789",
-      "fingerprint": "AKCUXS83DokKo4pDRKSAy4d42t9i8dcP1X2jijwEBCQH",
-      "containers": ["/pii/high/"],
-      "metadata": {
-        "nonSensitiveField": "Non-Sensitive Value"
-      },
-      "search_indexes": [
-        "{{ data }}",
-        "{{ data | replace: '-' }}",
-        "{{ data | last4 }}"
-      ],
-      "fingerprint_expression": "{{ data }}",
-      "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
-      "created_at": "2021-03-01T08:23:14+00:00"
-    },
-    {...},
-    {...}
-  ]
-}
-```
-
-## Search v1
-
-<HttpMethod
-  method={HttpMethods.POST}
-  endpoint="https://api.basistheory.com/tokens/search"
-/>
-
-#### Permissions
-
-<Permission content="token:search"/>
-
-### Request
-
-<Tabs className="bt-tabs" groupId="languages">
-  <TabItem value="shell" label="cURL">
-
-```shell showLineNumbers
-curl "https://api.basistheory.com/tokens/search" \
-  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "query": "data:6789",
-    "page": 1,
-    "size": 20
-  }'
-```
-
-  </TabItem>
-  <TabItem value="javascript" label="JavaScript">
-
-```javascript showLineNumbers
-import { BasisTheory } from "@basis-theory/basis-theory-js";
-
-const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
-
-const tokens = await bt.tokens.search({
-  query: "data:6789",
-  page: 1,
-  size: 20,
-});
-```
-
-  </TabItem>
-  <TabItem value="csharp" label="C#">
-
-```csharp showLineNumbers
-using BasisTheory.net.Tokens;
-
-var client = new TokenClient("<PRIVATE_API_KEY>");
-
-var tokens = await client.SearchAsync(new TokenSearchRequest {
-  Query = "data:6789",
-  Page = 1,
-  PageSize = 20
-});
-```
-
-  </TabItem>
-  <TabItem value="java" label="Java">
-
-```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        TokensApi apiInstance = new TokensApi(defaultClient);
-        SearchTokensRequest searchTokensRequest = new SearchTokensRequest(); // SearchTokensRequest |
-        TokenPaginatedList result = apiInstance.search(searchTokensRequest
-                .query("data:6789")
-                .page(1)
-                .size(20));
-    }
-}
-```
-
-  </TabItem>
-  <TabItem value="python" label="Python">
-
-```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
-from basistheory.model.search_tokens_request import SearchTokensRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    token_client = tokens_api.TokensApi(api_client)
-
-    tokens = token_client.search(search_tokens_request=SearchTokensRequest(
-        query="data:6789",
-        page=1,
-        size=20
-    ))
-```
-
-  </TabItem>
-  <TabItem value="go" label="Go">
-
-```go showLineNumbers showLineNumbers
-package main
-
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  searchTokenRequest := *basistheory.NewSearchTokensRequest()
-  searchTokenRequest.SetQuery("data:6789")
-  searchTokenRequest.SetPage(1)
-  searchTokenRequest.SetSize(20)
-
-  tokens, httpResponse, err := apiClient.TokensApi.Search(contextWithAPIKey).SearchTokensRequest(searchTokenRequest).Execute()
-}
-```
-
-  </TabItem>
-</Tabs>
-
-#### Request Parameters
-
-| Attribute | Required | Type      | Default | Description                                                        |
-|-----------|----------|-----------|---------|--------------------------------------------------------------------|
-| `query`   | false    | _string_  | `null`  | A query string using [Lucene query syntax](#query-syntax).         |
-| `page`    | false    | _integer_ | `1`     | Page number of the results to return.                              |
-| `size`    | false    | _integer_ | `20`    | Number of results per page to return. Maximum size of 100 results. |
-
-### Response
-
-Returns a [paginated object](/docs/api/pagination#offset-pagination-object) with the `data` property containing an array of [tokens](/docs/api/tokens#token-object).
 Token data will be returned according to the [transform](/docs/concepts/access-controls#transform)
 applied to the requesting Application's [Access Controls](/docs/concepts/access-controls).
 Returns [an error](/docs/api/errors) if tokens could not be retrieved or when an invalid [query](#query-syntax) is submitted.
@@ -401,9 +226,12 @@ Multiple `metadata` terms may be combined using the `AND` operator. For example:
 ```
 
 <Alert>
-  Only a subset of the full Lucene query syntax is currently supported, and it is limited to the operators and terms documented above.
-  Combining terms for multiple <a href="#searchable-token-fields">token fields</a> in the same query is not currently supported.
-  If you would like to have support for any additional Lucene features or to query on additional token fields, please <a href="mailto:support@basistheory.com?subject=Token%20Search%20Feature%20Request"> let us know</a>.
+  Only a subset of the full Lucene query syntax is currently supported, and it is limited to the operators and terms
+  documented above.
+  Combining terms for multiple <a href="#searchable-token-fields">token fields</a> in the same query is not currently
+  supported.
+  If you would like to have support for any additional Lucene features or to query on additional token fields, please <a
+  href="mailto:support@basistheory.com?subject=Token%20Search%20Feature%20Request"> let us know</a>.
 </Alert>
 
 ### Searchable Token Fields

@@ -1,0 +1,342 @@
+---
+title: Stripe Forward
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Stripe Forward
+
+## Tokenize
+
+Endpoint conforming to Stripe's API contract to use their Forwarding API and create a card token.
+
+To achieve this, this endpoint is different from the normal [Create token](/docs/api/tokens/#create-token) endpoint since it receives the card details
+under the card field, and all the Basis Theory specific attributes under the metadata object, which Stripes puts any
+additional data and forwards it. The nested metadata is Basis Theory's token metadata, whilst the root level one is Stripe's.
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/stripe-forward/tokenize" />
+
+#### Permissions
+
+<Permission content="token:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/connections/stripe-forward/tokenize" \
+    -H "BT-API-KEY: <API_KEY>" \
+    -H "Content-Type: application/json" \
+    -X "POST" \
+    -d '{
+      "card": {
+      "number": "4242424242424242",
+      "exp_month": "07",
+      "exp_year": "2030"
+      "cvc": "123",
+      "name": "John Doe"
+    },
+      "metadata": {
+      "mask": {
+      "number": "{{ data.number | reveal_last: 4 }}",
+      "expiration_month": "{{ data.expiration_month }}",
+      "expiration_year": "{{ data.expiration_year }}",
+      "name": "{{ data.name }}"
+    },
+      "containers": [ "/pci/high/" ],
+      "metadata": {
+      "nonSensitiveField": "Non-Sensitive Value"
+    },
+      "search_indexes": [
+      "{{ data.number | last4 }}"
+      ],
+      "fingerprint_expression": "{{ data.number }}",
+      "deduplicate_token": true,
+      "expires_at": "8/26/2030 7:23:57 PM -07:00"
+    }
+    }'
+    ```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+    ```javascript showLineNumbers
+    import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+    const bt = await new BasisTheory().init("<API_KEY>");
+
+    const token = await bt.connections.stripeForwardTokenize({
+      card: {
+      number: "4242424242424242",
+      exp_month: "07",
+      exp_year: "2030"
+      cvc: "123",
+      name: "John Doe"
+      },
+      metadata: {
+      mask: {
+      "number": "{{ data.number | reveal_last: 4 }}",
+      "expiration_month": "{{ data.expiration_month }}",
+      "expiration_year": "{{ data.expiration_year }}",
+      "name": "{{ data.name }}"
+      },
+      containers: ["/pci/high/"],
+      metadata: {
+        nonSensitiveField: "Non-Sensitive Value",
+      },
+      searchIndexes: ["{{ data.number | last4 }}"],
+      fingerprintExpression: "{{ data.number }}",
+      deduplicateToken: true,
+      expiresAt: "8/26/2030 7:23:57 PM -07:00",
+      }
+    });
+    ```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+    ```csharp showLineNumbers
+    using BasisTheory.net.Connections;
+    using BasisTheory.net.Connections.Requests;
+
+    var client = new ConnectionsClient("<API_KEY>");
+
+    var token = await client.StripeForwardTokenize(new StripeTokenizeRequest {
+      Card = new {
+        number = "4242424242424242",
+        exp_month = "07",
+        exp_year = "2030"
+        cvc = "123",
+        name = "John Doe"
+    },
+      Metadata = new {
+      Mask: {
+      number = "{{ data.number | reveal_last: 4 }}",
+      expiration_month = "{{ data.expiration_month }}",
+      expiration_year = "{{ data.expiration_year }}",
+      name = "{{ data.name }}"
+    },
+      Containers = new List<string> { "/pci/high/" },
+      Metadata = new Dictionary<string, string>
+    {
+    { "nonSensitiveField",  "Non-Sensitive Value" }
+    },
+      SearchIndexes = new List<string> { "{{ data.number | last4 }}" },
+      FingerprintExpression = "{{ data.number }}",
+      DeduplicateToken = true,
+      ExpiresAt = DateTimeOffset.Now.AddYears(3)
+    }
+    });
+    ```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+    ```java showLineNumbers
+    import com.basistheory.*;
+    import com.basistheory.auth.*;
+    import java.util.Arrays;
+    import java.util.Map;
+
+    public class Example {
+    public static void main(String[] args) throws Exception {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.basistheory.com");
+
+    ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+    ApiKey.setApiKey("<API_KEY>");
+
+    ConnectionsApi apiInstance = new ConnectionsApi(defaultClient);
+    StripeTokenizeRequest stripeTokenizeRequest = new StripeTokenizeRequest();
+    CreateTokenResponse result = apiInstance.stripeForwardTokenize(stripeTokenizeRequest
+    .card(Map.of(
+      "number", "4242424242424242",
+      "exp_month", "07",
+      "exp_year", "2030"
+      "cvc", "123",
+      "name", "John Doe"
+    ))
+    .metadata(Map.of(
+    "mask", Map.of(
+    number, "{{ data.number | reveal_last: 4 }}",
+    expiration_month, "{{ data.expiration_month }}",
+    expiration_year, "{{ data.expiration_year }}",
+    name, "{{ data.name }}"
+    ),
+    "containers", Arrays.asList("/pci/high/"),
+    "metadata", Map.of("nonSensitiveField",  "Non-Sensitive Value")
+    "searchIndexes", Arrays.asList("{{ data.number | last4 }}")
+    "fingerprintExpression", "{{ data.number }}"
+    "deduplicateToken", true
+    "expiresAt", "8/26/2030 7:23:57 PM -07:00")
+    )
+    )
+    System.out.println(result);
+  }
+  }
+    ```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+    ```python showLineNumbers
+    import basistheory
+    from basistheory.api import connections_api
+    from basistheory.model.stripe_tokenize_request import StripeTokenizeRequest
+
+    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
+    connections_client = connections_api.StripeForwardApi(api_client)
+
+    token = connections_client.create(stripe_tokenize_request=StripeTokenizeRequest(
+    card={
+      "number": "4242424242424242",
+      "exp_month": "07",
+      "exp_year": "2030"
+      "cvc": "123",
+      "name": "John Doe"
+    },
+    metadata={
+      "mask": {
+        "number": "{{ data.number | reveal_last: 4 }}",
+        "expiration_month": "{{ data.expiration_month }}",
+        "expiration_year": "{{ data.expiration_year }}",
+        "name": "{{ data.name }}"
+      },
+      metadata: {
+      "nonSensitiveField": "Non-Sensitive Value"
+    },
+      containers: ["/pci/high/"],
+      search_indexes: [
+      "{{ data.number | last4 }}"
+      ],
+      fingerprint_expression: "{{ data.number }}",
+      expires_at: "8/26/2030 7:23:57 PM -07:00"
+    }
+    ))
+    ```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+    ```go showLineNumbers
+    package main
+
+    import (
+    "context"
+    "github.com/Basis-Theory/basistheory-go/v3"
+    )
+
+    func main() {
+    configuration := basistheory.NewConfiguration()
+    apiClient := basistheory.NewAPIClient(configuration)
+    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<API_KEY>"},
+  })
+
+    stripeTokenizeRequest := *basistheory.NewStripeTokenizeRequest()
+    stripeTokenizeRequest.SetCard(map[string]interface{}{
+      "number":           "4242424242424242",
+      "exp_month": 12,
+      "exp_year":  2025,
+      "cvc": "123",
+      "name": "John Doe"
+  })
+    stripeTokenizeRequest.SetMetadata(map[string]interface{}{
+    "mask": map[string]interface{}{
+      "number": "{{ data.number | reveal_last: 4 }}",
+      "expiration_month": "{{ data.expiration_month }}",
+      "expiration_year": "{{ data.expiration_year }}",
+      "name": "{{ data.name }}"
+  },
+    "metadata": map[string]string{
+      "myMetadata": "myMetadataValue",
+  },
+    "search_indexes": []string{"{{ data.number | last4 }}"},
+    "fingerprint_expression": "{{ data.number }}",
+    "deduplicate_token": true,
+    "containers": []string{"/pci/high/"},
+    "expires_at": "8/26/2030 7:23:57 PM -07:00"
+  })
+
+    createTokenResponse, createTokenHttpResponse, createErr := apiClient.ConnectionsApi.StripeForwardTokenize(contextWithAPIKey).StripeTokenizeRequest(stripeTokenizeRequest).Execute()
+  }
+    ```
+
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute                | Required | Type                   | Default                                                   | Description                                                                                                                                                                                  |
+| ------------------------ | -------- | ---------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `card`                     | true    | _[Stripe Card](#stripe-card)_                | `null`                             | The card details to tokenize.                                                                  |
+| `metadata`                   | false     | _[Stripe Metadata](#stripe-metadata)_     | `null`                            | Basis Theory's token attributes used when creating the card token.                                                                                                                                     |
+
+#### Stripe Card
+
+| Attribute          | Required | Type      | Default | Description                                                          |
+| ------------------ | -------- | --------- | ------- | -------------------------------------------------------------------- |
+| `number`           | true     | _string_  | `null`  | The card number without any separators                               |
+| `exp_month`        | false    | _string_ | `null`  | Two-digit string representing the card's expiration month                   |
+| `exp_year`  | false    | _string_ | `null`  | Four-digit string representing the card's expiration year                   |
+| `cvc`              | false    | _string_  | `null`  | Three or four-digit card verification code with automatic expiration |
+| `name`              | false    | _string_  | `null`  | The Cardholder Name |
+
+#### Stripe Metadata
+
+| Attribute                | Required | Type                   | Default                                                   | Description                                                                                                                                                                                  |
+| ------------------------ | -------- | ---------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                     | false    | _string_               | `null`                                                    | A value or [expression](/docs/expressions/aliasing) specifying the token's ID. If not specified, a UUID will be assigned.                                                                    |
+| `mask`                   | false    | _any_                  | Depends on the [token type](/docs/api/tokens/token-types) | Token data mask. Can be an object, array, or any primitive type such as an integer, boolean, or string. See [mask expressions](/docs/expressions/masks).                                     |
+| `containers`             | false    | _array_                | Depends on the [token type](/docs/api/tokens/token-types) | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details. |
+| `metadata`               | false    | _map\<string, string>_ | `null`                                                    | A key-value map of strings containing non-sensitive data.                                                                                                                                    |
+| `search_indexes`         | false    | _array_                | `null`                                                    | Array of [expressions](/docs/expressions/search-indexes) used to generate indexes to be able to search against.                                                                              |
+| `fingerprint_expression` | false    | _string_               | <code>\{\{ data &#124; stringify }}</code>                | [Expressions](/docs/expressions/fingerprints) used to fingerprint your token.                                                                                                                |
+| `deduplicate_token`      | false    | _bool_                 | `null`                                                    | Whether the token is deduplicated on creation.                                                                                                                                               |
+| `expires_at`             | false    | _string_               | `null`                                                    | ISO8601 compatible Token expiration DateTime. See [Token Expiration](/docs/api/tokens/#token-expiration) for more details.                                                                   |
+
+<Alert type={Alerts.WARNING}>Never reveal sensitive information in the <code>id</code> of your token. See the documentation on <a href="/docs/expressions/aliasing#best-practices">Aliasing</a> to learn more about best practices when specifying your own token ID.</Alert>
+
+<Alert type={Alerts.WARNING}>Never store sensitive plaintext information in the <code>metadata</code> of your token.</Alert>
+
+### Response
+
+Returns a [token](#token-object) if the token was created. Returns [an error](/docs/api/errors) if there were validation errors, or the token failed to create.
+
+```json showLineNumbers
+{
+"id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "type": "card",
+  "data": {
+    "number": "XXXXXXXXXXXX4242",
+      "expiration_month": "07",
+      "expiration_year": "2030"
+      "name": "John Doe"
+  },
+  "mask": {
+    "number": "{{ data.number | reveal_last: 4 }}",
+      "expiration_month": "{{ data.expiration_month }}",
+      "expiration_year": "{{ data.expiration_year }}",
+      "name": "{{ data.name }}"
+  },
+  "containers": ["/pci/high/"],
+  "metadata": {
+  "nonSensitiveField": "Non-Sensitive Value"
+},
+"search_indexes": ["{{ data.number | last4 }}"],
+  "fingerprint_expression": "{{ data.number }}",
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "expires_at": "2030-08-26T19:23:57-07:00"
+}
+```
+
+<Alert type={Alerts.WARNING}>For security reasons, the `data` and `metadata` attributes are redacted from the response when a token is deduplicated, unless the API Key has `token:read` permission in the targeted container. [Click here](/docs/concepts/what-are-tokens#deduplication) to learn more about this behavior.</Alert>
