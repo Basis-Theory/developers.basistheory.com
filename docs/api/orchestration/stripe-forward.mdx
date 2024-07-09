@@ -36,237 +36,32 @@ additional data and forwards it. The nested metadata is Basis Theory's token met
     -H "Content-Type: application/json" \
     -X "POST" \
     -d '{
-      "card": {
-      "number": "4242424242424242",
-      "exp_month": "07",
-      "exp_year": "2030"
-      "cvc": "123",
-      "name": "John Doe"
-    },
-      "metadata": {
-      "mask": {
-      "number": "{{ data.number | reveal_last: 4 }}",
-      "expiration_month": "{{ data.expiration_month }}",
-      "expiration_year": "{{ data.expiration_year }}",
-      "name": "{{ data.name }}"
-    },
-      "containers": [ "/pci/high/" ],
-      "metadata": {
-      "nonSensitiveField": "Non-Sensitive Value"
-    },
-      "search_indexes": [
-      "{{ data.number | last4 }}"
-      ],
-      "fingerprint_expression": "{{ data.number }}",
-      "deduplicate_token": true,
-      "expires_at": "8/26/2030 7:23:57 PM -07:00"
-    }
+          "card": {
+            "number": "4242424242424242",
+            "exp_month": "07",
+            "exp_year": "2030"
+            "cvc": "123",
+            "name": "John Doe"
+          },
+          "metadata": {
+            "mask": {
+              "number": "{{ data.number | reveal_last: 4 }}",
+              "expiration_month": "{{ data.expiration_month }}",
+              "expiration_year": "{{ data.expiration_year }}",
+              "name": "{{ data.name }}"
+            },
+            "containers": [ "/pci/high/" ],
+            "metadata": {
+              "nonSensitiveField": "Non-Sensitive Value"
+            },
+            "search_indexes": [
+              "{{ data.number | last4 }}"
+            ],
+            "fingerprint_expression": "{{ data.number }}",
+            "deduplicate_token": true,
+            "expires_at": "8/26/2030 7:23:57 PM -07:00"
+          }
     }'
-    ```
-
-  </TabItem>
-  <TabItem value="javascript" label="JavaScript">
-
-    ```javascript showLineNumbers
-    import { BasisTheory } from "@basis-theory/basis-theory-js";
-
-    const bt = await new BasisTheory().init("<API_KEY>");
-
-    const token = await bt.connections.stripeForwardTokenize({
-      card: {
-      number: "4242424242424242",
-      exp_month: "07",
-      exp_year: "2030"
-      cvc: "123",
-      name: "John Doe"
-      },
-      metadata: {
-      mask: {
-      "number": "{{ data.number | reveal_last: 4 }}",
-      "expiration_month": "{{ data.expiration_month }}",
-      "expiration_year": "{{ data.expiration_year }}",
-      "name": "{{ data.name }}"
-      },
-      containers: ["/pci/high/"],
-      metadata: {
-        nonSensitiveField: "Non-Sensitive Value",
-      },
-      searchIndexes: ["{{ data.number | last4 }}"],
-      fingerprintExpression: "{{ data.number }}",
-      deduplicateToken: true,
-      expiresAt: "8/26/2030 7:23:57 PM -07:00",
-      }
-    });
-    ```
-
-  </TabItem>
-  <TabItem value="csharp" label="C#">
-
-    ```csharp showLineNumbers
-    using BasisTheory.net.Connections;
-    using BasisTheory.net.Connections.Requests;
-
-    var client = new ConnectionsClient("<API_KEY>");
-
-    var token = await client.StripeForwardTokenize(new StripeTokenizeRequest {
-      Card = new {
-        number = "4242424242424242",
-        exp_month = "07",
-        exp_year = "2030"
-        cvc = "123",
-        name = "John Doe"
-    },
-      Metadata = new {
-      Mask: {
-      number = "{{ data.number | reveal_last: 4 }}",
-      expiration_month = "{{ data.expiration_month }}",
-      expiration_year = "{{ data.expiration_year }}",
-      name = "{{ data.name }}"
-    },
-      Containers = new List<string> { "/pci/high/" },
-      Metadata = new Dictionary<string, string>
-    {
-    { "nonSensitiveField",  "Non-Sensitive Value" }
-    },
-      SearchIndexes = new List<string> { "{{ data.number | last4 }}" },
-      FingerprintExpression = "{{ data.number }}",
-      DeduplicateToken = true,
-      ExpiresAt = DateTimeOffset.Now.AddYears(3)
-    }
-    });
-    ```
-
-  </TabItem>
-  <TabItem value="java" label="Java">
-
-    ```java showLineNumbers
-    import com.basistheory.*;
-    import com.basistheory.auth.*;
-    import java.util.Arrays;
-    import java.util.Map;
-
-    public class Example {
-    public static void main(String[] args) throws Exception {
-    ApiClient defaultClient = Configuration.getDefaultApiClient();
-    defaultClient.setBasePath("https://api.basistheory.com");
-
-    ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-    ApiKey.setApiKey("<API_KEY>");
-
-    ConnectionsApi apiInstance = new ConnectionsApi(defaultClient);
-    StripeTokenizeRequest stripeTokenizeRequest = new StripeTokenizeRequest();
-    CreateTokenResponse result = apiInstance.stripeForwardTokenize(stripeTokenizeRequest
-    .card(Map.of(
-      "number", "4242424242424242",
-      "exp_month", "07",
-      "exp_year", "2030"
-      "cvc", "123",
-      "name", "John Doe"
-    ))
-    .metadata(Map.of(
-    "mask", Map.of(
-    number, "{{ data.number | reveal_last: 4 }}",
-    expiration_month, "{{ data.expiration_month }}",
-    expiration_year, "{{ data.expiration_year }}",
-    name, "{{ data.name }}"
-    ),
-    "containers", Arrays.asList("/pci/high/"),
-    "metadata", Map.of("nonSensitiveField",  "Non-Sensitive Value")
-    "searchIndexes", Arrays.asList("{{ data.number | last4 }}")
-    "fingerprintExpression", "{{ data.number }}"
-    "deduplicateToken", true
-    "expiresAt", "8/26/2030 7:23:57 PM -07:00")
-    )
-    )
-    System.out.println(result);
-  }
-  }
-    ```
-
-  </TabItem>
-  <TabItem value="python" label="Python">
-
-    ```python showLineNumbers
-    import basistheory
-    from basistheory.api import connections_api
-    from basistheory.model.stripe_tokenize_request import StripeTokenizeRequest
-
-    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    connections_client = connections_api.StripeForwardApi(api_client)
-
-    token = connections_client.create(stripe_tokenize_request=StripeTokenizeRequest(
-    card={
-      "number": "4242424242424242",
-      "exp_month": "07",
-      "exp_year": "2030"
-      "cvc": "123",
-      "name": "John Doe"
-    },
-    metadata={
-      "mask": {
-        "number": "{{ data.number | reveal_last: 4 }}",
-        "expiration_month": "{{ data.expiration_month }}",
-        "expiration_year": "{{ data.expiration_year }}",
-        "name": "{{ data.name }}"
-      },
-      metadata: {
-      "nonSensitiveField": "Non-Sensitive Value"
-    },
-      containers: ["/pci/high/"],
-      search_indexes: [
-      "{{ data.number | last4 }}"
-      ],
-      fingerprint_expression: "{{ data.number }}",
-      expires_at: "8/26/2030 7:23:57 PM -07:00"
-    }
-    ))
-    ```
-
-  </TabItem>
-  <TabItem value="go" label="Go">
-
-    ```go showLineNumbers
-    package main
-
-    import (
-    "context"
-    "github.com/Basis-Theory/basistheory-go/v3"
-    )
-
-    func main() {
-    configuration := basistheory.NewConfiguration()
-    apiClient := basistheory.NewAPIClient(configuration)
-    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-    stripeTokenizeRequest := *basistheory.NewStripeTokenizeRequest()
-    stripeTokenizeRequest.SetCard(map[string]interface{}{
-      "number":           "4242424242424242",
-      "exp_month": 12,
-      "exp_year":  2025,
-      "cvc": "123",
-      "name": "John Doe"
-  })
-    stripeTokenizeRequest.SetMetadata(map[string]interface{}{
-    "mask": map[string]interface{}{
-      "number": "{{ data.number | reveal_last: 4 }}",
-      "expiration_month": "{{ data.expiration_month }}",
-      "expiration_year": "{{ data.expiration_year }}",
-      "name": "{{ data.name }}"
-  },
-    "metadata": map[string]string{
-      "myMetadata": "myMetadataValue",
-  },
-    "search_indexes": []string{"{{ data.number | last4 }}"},
-    "fingerprint_expression": "{{ data.number }}",
-    "deduplicate_token": true,
-    "containers": []string{"/pci/high/"},
-    "expires_at": "8/26/2030 7:23:57 PM -07:00"
-  })
-
-    createTokenResponse, createTokenHttpResponse, createErr := apiClient.ConnectionsApi.StripeForwardTokenize(contextWithAPIKey).StripeTokenizeRequest(stripeTokenizeRequest).Execute()
-  }
     ```
 
   </TabItem>
