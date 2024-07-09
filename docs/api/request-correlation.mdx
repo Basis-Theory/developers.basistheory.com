@@ -44,13 +44,15 @@ const applications = await bt.applications.list(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokens;
+var correlationId = Guid.NewGuid().ToString();
+var apiInstance = new TokensApi(configuration);
+var response = await apiInstance.GetByIdWithHttpInfoAsync("...", 
+  requestOptions: new RequestOptions
+  {
+      CorrelationId = correlationId
+  });
 
-var client = new TokenClient("<PRIVATE_API_KEY>");
-
-await client.GetAsync(requestOptions: new RequestOptions {
-  CorrelationId = "aa5d3379-6385-4ef4-9fdb-ca1341572153"
-});
+response.Headers.TryGetValue("BT-TRACE-ID", out IList<string> correlationIds);
 ```
 
   </TabItem>
