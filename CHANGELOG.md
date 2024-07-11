@@ -1,3 +1,10 @@
+## [1.164.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.164.0...v1.164.1) (2024-07-11)
+
+
+### Bug Fixes
+
+* fallback pgp key ([#416](https://github.com/Basis-Theory/developers.basistheory.com/issues/416)) ([555c9ed](https://github.com/Basis-Theory/developers.basistheory.com/commit/555c9eda3d666b5a1bc3c640ebd93a7bf10d854d))
+
 # [1.164.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.163.0...v1.164.0) (2024-07-08)
 
 
