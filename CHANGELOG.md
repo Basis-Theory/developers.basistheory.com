@@ -1,3 +1,10 @@
+# [1.165.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.164.1...v1.165.0) (2024-07-15)
+
+
+### Features
+
+* documents account updater 'WRN_UNSUPPORTED_NETWORK' result code ([#417](https://github.com/Basis-Theory/developers.basistheory.com/issues/417)) ([998ce55](https://github.com/Basis-Theory/developers.basistheory.com/commit/998ce55e775bfcb7f58b8503a5f434ad11bcceaf))
+
 ## [1.164.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.164.0...v1.164.1) (2024-07-11)
 
 
