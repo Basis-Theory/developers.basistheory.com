@@ -15,7 +15,23 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 Endpoint conforming to Stripe's API contract to use their Forwarding API and create a card token.
 
-This endpoint differs from the [Create Token](/docs/api/tokens/#create-token) endpoint by conforming to Stripe's Forwarding API contract: `card` contains Stripe's payment method details, and `metadata` contains any Basis Theory specific token attributes that were specified when calling the Forwarding API.
+This endpoint differs from the [Create Token](/docs/api/tokens/#create-token) endpoint by conforming to Stripe's Forwarding API
+contract: `card` contains Stripe's payment method details, and `metadata` contains any Basis Theory specific token attributes that
+were specified when calling the Forwarding API.
+
+The `card` object will then be transformed to the Basis Theory's [card token data](/docs/api/tokens#card-object), so any expression used in the original
+request to the Forwarding API referring to card data must reference the final transformed data object as shown in the example request below.
+Specifically, in line `16` when referencing the card's expiration month, it is `data.expiration_month` and not `card.exp_month`.
+```json showLineNumbers
+{
+  "data": {
+    "number": "...",
+    "expiration_month": "...",
+    "expiration_year": "...",
+    "name": "..."
+  }
+}
+```
 
 <HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/stripe-forward/tokenize" />
 
@@ -37,7 +53,7 @@ This endpoint differs from the [Create Token](/docs/api/tokens/#create-token) en
           "card": {
             "number": "4242424242424242",
             "exp_month": "07",
-            "exp_year": "2030"
+            "exp_year": "2030",
             "cvc": "123",
             "name": "John Doe"
           },
@@ -125,6 +141,7 @@ Returns a [token](#token-object) if the token was created. Returns [an error](/d
     "nonSensitiveField": "Non-Sensitive Value"
   },
   "search_indexes": ["{{ data.number | last4 }}"],
+  "fingerprint": "2W6iy15GJoqj5V696BnsadZVTst5fjJf24iW9Kg6hFDa",
   "fingerprint_expression": "{{ data.number }}",
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00",
