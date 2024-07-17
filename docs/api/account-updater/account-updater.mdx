@@ -338,6 +338,7 @@ f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,30,02,,,,WRN_CLOSED_ACCOUNT
 | `WRN_ISSUER_NOT_ENROLLED` | The issuer for the requested card number does not participate in the Account Updater program.                           | No update - consider removing this token from future requests.                                                                                                     |
 | `WRN_ISSUER_NO_DATA`      | The issuer provided no information regarding the specific card number requested.                                        | No update - consider removing this token from future requests.                                                                                                     |
 | `WRN_OPT_OUT`             | The cardholder has opted out of the account updater service.                                                            | No update - consider removing this token from future requests.                                                                                                     |
+| `WRN_UNSUPPORTED_NETWORK` | The card number corresponds to a card network that does not participate in the Account Updater program.                 | No update - consider removing this token from future requests.                                                                                                     |
 | `ERR_UNDEFINED`           | Undefined error.                                                                                                        | Contact support.                                                                                                                                                   |
 | `ERR_INVALID_PAN`         | The card number is invalid.                                                                                             | Check that this token contains a valid card number for one of the supported networks (Visa, Mastercard, American Express, or Discover). Omit from future requests. |
 | `ERR_INVALID_TOKEN`       | Token not found.                                                                                                        | Check that the token is of type `card` and that the token exists in this tenant.                                                                                   |
@@ -474,6 +475,14 @@ curl --location 'api.flock-dev.com/tokenize' \
         "type": "card",
         "data": {
             "number": 370000000000002,
+            "expiration_month": "12",
+            "expiration_year": "2023"
+        }
+    },
+    {
+        "type": "card",
+        "data": {
+            "number": 201400000000009,
             "expiration_month": "12",
             "expiration_year": "2023"
         }
