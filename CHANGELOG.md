@@ -1,3 +1,10 @@
+# [1.166.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.165.0...v1.166.0) (2024-07-17)
+
+
+### Features
+
+* documenting tokens list v2, search v2, detokenize and stripe forward endpoints ([#415](https://github.com/Basis-Theory/developers.basistheory.com/issues/415)) ([512df61](https://github.com/Basis-Theory/developers.basistheory.com/commit/512df61ea90ee1aa0f20ee8b8716272e53b2ce0a))
+
 # [1.165.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.164.1...v1.165.0) (2024-07-15)
 
 
