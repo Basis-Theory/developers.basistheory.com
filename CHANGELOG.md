@@ -1,3 +1,10 @@
+# [1.167.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.166.0...v1.167.0) (2024-07-18)
+
+
+### Features
+
+* adds new props to text element and updates deps ([#418](https://github.com/Basis-Theory/developers.basistheory.com/issues/418)) ([1b8dff3](https://github.com/Basis-Theory/developers.basistheory.com/commit/1b8dff36296ec841719764b3de016c55f59abc67))
+
 # [1.166.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.165.0...v1.166.0) (2024-07-17)
 
 
