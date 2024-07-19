@@ -1,3 +1,17 @@
+# [1.167.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.166.0...v1.167.0) (2024-07-18)
+
+
+### Features
+
+* adds new props to text element and updates deps ([#418](https://github.com/Basis-Theory/developers.basistheory.com/issues/418)) ([1b8dff3](https://github.com/Basis-Theory/developers.basistheory.com/commit/1b8dff36296ec841719764b3de016c55f59abc67))
+
+# [1.166.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.165.0...v1.166.0) (2024-07-17)
+
+
+### Features
+
+* documenting tokens list v2, search v2, detokenize and stripe forward endpoints ([#415](https://github.com/Basis-Theory/developers.basistheory.com/issues/415)) ([512df61](https://github.com/Basis-Theory/developers.basistheory.com/commit/512df61ea90ee1aa0f20ee8b8716272e53b2ce0a))
+
 # [1.165.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.164.1...v1.165.0) (2024-07-15)
 
 
