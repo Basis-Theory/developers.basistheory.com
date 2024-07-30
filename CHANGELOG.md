@@ -1,3 +1,10 @@
+## [1.167.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.167.0...v1.167.1) (2024-07-30)
+
+
+### Bug Fixes
+
+* updating to include correct counter ([#423](https://github.com/Basis-Theory/developers.basistheory.com/issues/423)) ([cbf0137](https://github.com/Basis-Theory/developers.basistheory.com/commit/cbf01371d06e6f491043a64239588cc713b768b2))
+
 # [1.167.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.166.0...v1.167.0) (2024-07-18)
 
 
