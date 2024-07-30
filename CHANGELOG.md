@@ -1,3 +1,10 @@
+# [1.168.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.167.1...v1.168.0) (2024-07-30)
+
+
+### Features
+
+* adding fake bin data ([#424](https://github.com/Basis-Theory/developers.basistheory.com/issues/424)) ([018e831](https://github.com/Basis-Theory/developers.basistheory.com/commit/018e8311f4177259de39f971821c678cb5e04509))
+
 ## [1.167.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.167.0...v1.167.1) (2024-07-30)
 
 
