@@ -1,3 +1,10 @@
+## [1.168.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.168.0...v1.168.1) (2024-07-31)
+
+
+### Bug Fixes
+
+* removing 'real' as its not a real value ([#425](https://github.com/Basis-Theory/developers.basistheory.com/issues/425)) ([fd2d0ea](https://github.com/Basis-Theory/developers.basistheory.com/commit/fd2d0eaa9fe7669184aa6cc9bc27e237e586d2a9))
+
 # [1.168.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.167.1...v1.168.0) (2024-07-30)
 
 
