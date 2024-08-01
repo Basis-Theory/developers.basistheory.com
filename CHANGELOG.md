@@ -1,3 +1,10 @@
+## [1.168.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.168.1...v1.168.2) (2024-08-01)
+
+
+### Bug Fixes
+
+* document dependency ([#426](https://github.com/Basis-Theory/developers.basistheory.com/issues/426)) ([0e64031](https://github.com/Basis-Theory/developers.basistheory.com/commit/0e64031c65386902e86806ceb1a6babe779d8b96))
+
 ## [1.168.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.168.0...v1.168.1) (2024-07-31)
 
 
