@@ -1,3 +1,10 @@
+# [1.169.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.168.2...v1.169.0) (2024-08-07)
+
+
+### Features
+
+* add nuvei example ([#428](https://github.com/Basis-Theory/developers.basistheory.com/issues/428)) ([25f2724](https://github.com/Basis-Theory/developers.basistheory.com/commit/25f2724bff7ab753c280ee9392613f5e4ba7cf20))
+
 ## [1.168.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.168.1...v1.168.2) (2024-08-01)
 
 
