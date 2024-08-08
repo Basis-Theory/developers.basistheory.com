@@ -1,3 +1,10 @@
+# [1.170.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.169.0...v1.170.0) (2024-08-08)
+
+
+### Features
+
+* add finix examples ([#430](https://github.com/Basis-Theory/developers.basistheory.com/issues/430)) ([8d7c4a0](https://github.com/Basis-Theory/developers.basistheory.com/commit/8d7c4a0381859d07e6abef60a7866385a293f92a))
+
 # [1.169.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.168.2...v1.169.0) (2024-08-07)
 
 
