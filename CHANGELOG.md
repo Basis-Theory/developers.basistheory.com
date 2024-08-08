@@ -1,3 +1,10 @@
+## [1.170.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.170.0...v1.170.1) (2024-08-08)
+
+
+### Bug Fixes
+
+* add patch rate limit ([#414](https://github.com/Basis-Theory/developers.basistheory.com/issues/414)) ([dde8ab5](https://github.com/Basis-Theory/developers.basistheory.com/commit/dde8ab5fe5e2c89dd478fda5bc3d729d6730c93a))
+
 # [1.170.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.169.0...v1.170.0) (2024-08-08)
 
 
