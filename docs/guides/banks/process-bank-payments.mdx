@@ -162,6 +162,30 @@ curl 'https://api.basistheory.com/proxy' \
 [Dwolla Funding Source Docs](https://developers.dwolla.com/api-reference/connect/funding-sources/create-for-account)
 
   </TabItem>
+  <TabItem value="finix" label="Finix">
+
+```shell showLineNumbers title="Create Payment Instrument"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://finix.sandbox-payments-api.com/payment_instruments' \
+-u 'USsRhsHYZGBPnQw8CByJyEQW:8a14c2f9-d94b-4c72-8f5c-a62908e5b30e'
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "account_number": "{{ f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b | json: \"$.account_number\" }}",
+  "account_type": "BUSINESS_CHECKING",
+  "bank_code": "{{ f910b9aa-a4a6-4f24-9ec4-2de1a5731d0b | json: \"$.routing_number\" }}",
+  "identity": "IDpYDM7J9n57q849o9E9yNrG",
+  "name": "Smith & Associates Consulting",
+  "type": "BANK_ACCOUNT"
+}'
+```
+
+[Finix Payment Instrument Docs](https://finix.com/docs/api/tag/Payment-Instruments/)
+
+  </TabItem>
 </Tabs>
 
 ## Key Considerations
