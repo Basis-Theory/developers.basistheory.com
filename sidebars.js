@@ -430,6 +430,7 @@ const sidebars = {
       items: [
         "api/tokens/tokens",
         "api/tokens/tokenize",
+        "api/tokens/detokenize",
         "api/tokens/token-types",
         "api/tokens/token-enrichments",
         {
@@ -497,6 +498,10 @@ const sidebars = {
           customProps: {
             enterprise: true,
           },
+        },
+        {
+          type: "doc",
+          id: "api/orchestration/stripe-forward",
         },
       ],
     },

@@ -1,3 +1,73 @@
+# [1.170.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.169.0...v1.170.0) (2024-08-08)
+
+
+### Features
+
+* add finix examples ([#430](https://github.com/Basis-Theory/developers.basistheory.com/issues/430)) ([8d7c4a0](https://github.com/Basis-Theory/developers.basistheory.com/commit/8d7c4a0381859d07e6abef60a7866385a293f92a))
+
+# [1.169.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.168.2...v1.169.0) (2024-08-07)
+
+
+### Features
+
+* add nuvei example ([#428](https://github.com/Basis-Theory/developers.basistheory.com/issues/428)) ([25f2724](https://github.com/Basis-Theory/developers.basistheory.com/commit/25f2724bff7ab753c280ee9392613f5e4ba7cf20))
+
+## [1.168.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.168.1...v1.168.2) (2024-08-01)
+
+
+### Bug Fixes
+
+* document dependency ([#426](https://github.com/Basis-Theory/developers.basistheory.com/issues/426)) ([0e64031](https://github.com/Basis-Theory/developers.basistheory.com/commit/0e64031c65386902e86806ceb1a6babe779d8b96))
+
+## [1.168.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.168.0...v1.168.1) (2024-07-31)
+
+
+### Bug Fixes
+
+* removing 'real' as its not a real value ([#425](https://github.com/Basis-Theory/developers.basistheory.com/issues/425)) ([fd2d0ea](https://github.com/Basis-Theory/developers.basistheory.com/commit/fd2d0eaa9fe7669184aa6cc9bc27e237e586d2a9))
+
+# [1.168.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.167.1...v1.168.0) (2024-07-30)
+
+
+### Features
+
+* adding fake bin data ([#424](https://github.com/Basis-Theory/developers.basistheory.com/issues/424)) ([018e831](https://github.com/Basis-Theory/developers.basistheory.com/commit/018e8311f4177259de39f971821c678cb5e04509))
+
+## [1.167.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.167.0...v1.167.1) (2024-07-30)
+
+
+### Bug Fixes
+
+* updating to include correct counter ([#423](https://github.com/Basis-Theory/developers.basistheory.com/issues/423)) ([cbf0137](https://github.com/Basis-Theory/developers.basistheory.com/commit/cbf01371d06e6f491043a64239588cc713b768b2))
+
+# [1.167.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.166.0...v1.167.0) (2024-07-18)
+
+
+### Features
+
+* adds new props to text element and updates deps ([#418](https://github.com/Basis-Theory/developers.basistheory.com/issues/418)) ([1b8dff3](https://github.com/Basis-Theory/developers.basistheory.com/commit/1b8dff36296ec841719764b3de016c55f59abc67))
+
+# [1.166.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.165.0...v1.166.0) (2024-07-17)
+
+
+### Features
+
+* documenting tokens list v2, search v2, detokenize and stripe forward endpoints ([#415](https://github.com/Basis-Theory/developers.basistheory.com/issues/415)) ([512df61](https://github.com/Basis-Theory/developers.basistheory.com/commit/512df61ea90ee1aa0f20ee8b8716272e53b2ce0a))
+
+# [1.165.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.164.1...v1.165.0) (2024-07-15)
+
+
+### Features
+
+* documents account updater 'WRN_UNSUPPORTED_NETWORK' result code ([#417](https://github.com/Basis-Theory/developers.basistheory.com/issues/417)) ([998ce55](https://github.com/Basis-Theory/developers.basistheory.com/commit/998ce55e775bfcb7f58b8503a5f434ad11bcceaf))
+
+## [1.164.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.164.0...v1.164.1) (2024-07-11)
+
+
+### Bug Fixes
+
+* fallback pgp key ([#416](https://github.com/Basis-Theory/developers.basistheory.com/issues/416)) ([555c9ed](https://github.com/Basis-Theory/developers.basistheory.com/commit/555c9eda3d666b5a1bc3c640ebd93a7bf10d854d))
+
 # [1.164.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.163.0...v1.164.0) (2024-07-08)
 
 
