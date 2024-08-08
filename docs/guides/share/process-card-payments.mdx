@@ -487,6 +487,40 @@ curl 'https://api.basistheory.com/proxy' \
 [Nuvei Payment Docs](https://docs.nuvei.com/api/main/indexMain_v1_0.html?json#payment)
 
   </TabItem>
+  <TabItem value="finix" label="Finix">
+
+    ```shell showLineNumbers title="Create Payment Instrument"
+    curl 'https://api.basistheory.com/proxy' \
+    -X 'POST' \
+    // highlight-start
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'BT-PROXY-URL: https://finix.sandbox-payments-api.com/payment_instruments' \
+    -u 'USsRhsHYZGBPnQw8CByJyEQW:8a14c2f9-d94b-4c72-8f5c-a62908e5b30e'
+    // highlight-end
+    -H 'Content-Type: application/json' \
+    -d '{
+      "address": {
+        "city": "San Francisco",
+        "country": "USA",
+        "line1": "900 Metro Center Blv",
+        "postal_code": "94404",
+        "region": "CA"
+      },
+// highlight-start
+      "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+      "security_code": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
+      "expiration_month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: \"MM\" | to_number }}",
+      "expiration_year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: \"YYYY\" | to_number }}",
+// highlight-end
+      "identity": "IDgWxBhfGYLLdkhxx2ddYf9K",
+      "name": "John Smith",
+      "type": "PAYMENT_CARD"
+    }'
+    ```
+
+    [Finix Payment Instrument Docs](https://finix.com/docs/api/tag/Payment-Instruments/)
+
+  </TabItem>
 </Tabs>
 
 ## Key Considerations
