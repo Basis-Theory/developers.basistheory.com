@@ -221,6 +221,7 @@ const sidebars = {
       items: [
         "expressions/filters",
         "expressions/detokenization",
+        "expressions/configuration",
         "expressions/aliasing",
         "expressions/fingerprints",
         "expressions/masks",
