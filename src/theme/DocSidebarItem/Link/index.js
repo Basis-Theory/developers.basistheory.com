@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import { ThemeClassNames } from "@docusaurus/theme-common";
-import { isActiveSidebarItem } from "@docusaurus/theme-common/internal";
+import { isActiveSidebarItem } from "@docusaurus/plugin-content-docs/client";
 import ThemedImage from "@theme/ThemedImage";
 import Link from "@docusaurus/Link";
 import isInternalUrl from "@docusaurus/isInternalUrl";
