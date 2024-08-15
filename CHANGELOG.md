@@ -1,3 +1,10 @@
+# [1.171.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.170.1...v1.171.0) (2024-08-15)
+
+
+### Features
+
+* adding configuration expressions ([#431](https://github.com/Basis-Theory/developers.basistheory.com/issues/431)) ([2b8d114](https://github.com/Basis-Theory/developers.basistheory.com/commit/2b8d11435bfff282ceb4d82b5544a68d754409ad))
+
 ## [1.170.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.170.0...v1.170.1) (2024-08-08)
 
 
