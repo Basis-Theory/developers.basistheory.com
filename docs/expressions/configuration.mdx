@@ -1,0 +1,68 @@
+---
+title: Configuration
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Configuration
+
+Configuration Expressions allow the ability to inject configuration values from your Reactor and Proxy into the headers and body of your requests. You can use the configuration to store sensitive information like API keys, tokens, or any other configuration that you don't want to hardcode in your requests. As an example `{{ config: <configuration attribute> | <filter1> | <filter2> | ... }}` can be used to inject the value at `<configuration attribute>` into your request.
+
+## Using Configuration Expression in Request Body
+
+The following configuration is stored in the Reactor or Proxy:
+
+```json showLineNumbers
+{
+  ...
+  "configuration": {
+    "api_key": "my-api-key",
+    "secret": "my-secret"
+  },
+  ...
+}
+```
+
+Then a request containing the configuration expression:
+
+```bash showLineNumbers
+curl --location --request GET 'http://api.basistheory.com/proxy?bt-proxy-key=<proxy_key>' \
+--data '{ "api_key": "{{ config: api_key }}" }'
+```
+
+will be injected into the request body:
+
+```json showLineNumbers
+  { "api_key": "my-api-key" }
+```
+
+## Using Configuration Expression in Proxy Request Header
+
+The following configuration is stored in the Proxy:
+
+```json showLineNumbers
+{
+  ...
+  "configuration": {
+    "api_key": "my-api-key",
+    "secret": "my-secret"
+  },
+  ...
+}
+```
+
+Then a request containing the configuration expression:
+
+```json showLineNumbers
+curl --location --request GET 'http://api.basistheory.com/proxy?bt-proxy-key=<proxy_key>' \
+--header 'X-Username: {{ config: secret }}' \
+--header 'Content-Type: text/plain' \
+--data '{ "foo": "bar" }'
+```
+
+will be injected into the request header:
+
+```json showLineNumbers
+X-Username: my-secret
+```
