@@ -1,3 +1,10 @@
+# [1.172.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.171.0...v1.172.0) (2024-08-20)
+
+
+### Features
+
+* Proxy Mask response transform ([#435](https://github.com/Basis-Theory/developers.basistheory.com/issues/435)) ([01ea24a](https://github.com/Basis-Theory/developers.basistheory.com/commit/01ea24a9f8b7e2252eb68a96720d3ea781ebf157))
+
 # [1.171.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.170.1...v1.171.0) (2024-08-15)
 
 
