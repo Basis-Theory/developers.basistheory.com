@@ -1377,7 +1377,7 @@ See [Response Transforms](#response-transforms) for details regarding the variou
 
 | Attribute | Type     | Description                                                                                                                                                                            |
 | --------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type` | _string_ | The type of response transform. One of `code` or `mask`
+| `type` | _string_ | The type of response transform. One of `code` or `mask`. Default: `code`.
 | `code`    | _string_ | Transform code which will be executed when the Proxy transform is processed. *Required* when `type` is `code` |
 | `matcher` | _string_ | The type of matching. One of `regex` or `chase_stratus_pan`. *Required* when `type` is `mask` |
 | `replacement` | _string_ | The replacement character for masking. Must be only one character in length. *Required* when `type` is `mask` |
@@ -1619,26 +1619,40 @@ Mask response transforms using the `regex` matcher are defined as regular expres
         "type":"mask",
         "matcher":"regex",
         "replacement":"*",
-        "expression":"\"method\":\\s*\"(.*?)\""
+        "expression":"\"accountNumber\":\\s*\"(.*?)\""
     }
 }
 ```
 
 The regular expression must contain at least one capture group.
-In the example above, the value of the `method` json attribute will be replaced with `*`.
-If the method were `GET`, the replacement would be `***`. 
-If the method were `POST`, then `****` would be the replacement.
+In the example above, the `expression` will capture the value of an `accountNumber` attribute of a JSON payload.
+Given the proxied service responds with a JSON similar to the following:
+```json
+{
+    "username": "bsmith1486",
+    "accountNumber": "56834512" 
+}
+```
+Then the sample proxy will mask the response as:
+```json
+{
+    "username": "bsmith1486",
+    "accountNumber": "********"
+}
+```
+
 When a response body matches the given expression, the matched part of the body will be processed.
 During processing, any portion of the matched body section that is equivalent to any value of a capture group defined in the regex will be replaced.
+In this case, the matched body section is `"accountNumber": "56834512"`.
 
 The best practice is to limit the match scope to be as narrow as possible.
 There could be unintended or unexpected side effects if the match string is larger than necessary.
 
 For example, given a regex defined as `^(aa).*?$`, a match will occur when the line starts with "aa".
 However, since the regular expression uses the beginning, `^`, and end `$` syntax, the whole string will be matched and eligible for replacements.
-Given an input string of `aabbccaabbccaa`, the entire string will processed during masking. 
+Given a response body of `aabbccaabbccaa`, the entire body will processed during masking. 
 *ALL* values that match the capture group value, in this case `aa`, will be replaced.
-The string will then be masked as `**bbcc**bbcc**`.
+The response body will then be masked as `**bbcc**bbcc**`.
 
 ##### Chase Stratus PAN Matcher
 
