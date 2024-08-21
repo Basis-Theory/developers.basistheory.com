@@ -1,0 +1,85 @@
+---
+toc_max_heading_level: 2
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+
+# Configure SSO with OIDC
+
+OpenID Connect (OIDC) is a simple identity layer on top of the OAuth 2.0 protocol, which allows your application to verify the identity of users based on the authentication performed by an authorization server.
+This guide will walk you through setting up SSO with OIDC in the Basis Theory Customer Portal.
+
+<Alert>If you have any trouble during the SSO configuration process, contact <a href="mailto:support@basistheory.com">support@basistheory.com</a></Alert>
+
+## Configuring OIDC Application
+
+When configuring SSO with Basis Theory, you can choose from two main OAuth 2.0 flows depending on your application's requirements and security considerations: Implicit Authorization and Authorization Code.
+
+### Using Authorization Code (Back Channel)
+
+The Authorization Code flow is more secure and involves an additional step of exchanging an authorization code for an access token.
+
+The steps to configure your application for authorization code vary from one provider to another.
+Check your provider's documentation to know more.
+
+When requested, you should set the following values on your application:
+- **Callback/Login URL**: `https://auth.basistheory.com/login/callback`
+
+After creation, your application must be able to provide the following:
+
+- **Discovery URL**: The OIDC discovery URL for your provider.
+- **Client ID**: The client ID of the OIDC application.
+- **Client Secret**: The client secret of the OIDC application.
+
+<Alert type={Alerts.WARNING}>The `Client Secret` is sensitive information and should be kept secure.</Alert>
+
+### Using Implicit Authorization (Front Channel)
+
+The Implicit flow is typically used by client-side applications where the access token is returned immediately without an authorization code exchange step.
+This method is less secure than the Authorization Code flow and is generally recommended for applications unable to securely store the client secret, which is not the case for Basis Theory.
+
+The steps to configure your application for implicit authorization vary from one provider to another.
+Check your provider's documentation to know more.
+
+When requested, you should set the following values on your application:
+- **Callback/Login URL**: `https://auth.basistheory.com/login/callback`
+
+After creation, your application must be able to provide the following:
+
+- **Discovery URL**: The OIDC discovery URL for your provider.
+- **Client ID**: The client ID of the OIDC application.
+
+
+## Configuring SSO in the Basis Theory Customer Portal
+
+After the configuration on your identity provider, you will need to configure the SSO settings in the Basis Theory Customer Portal.
+To do that, follow these simple steps:
+
+1. Log in to the Basis Theory Customer portal.
+2. Go to the `Settings` section.
+3. Click on the `Identity` tab.
+4. Click on the `Create Connection` button.
+5. Select `OpenID Connect (OIDC)`.
+6. Fill in the required fields:
+   - **Discovery URL**: The OIDC discovery URL for your provider.
+   - **Connection Type**: Choose between `Back Channel` for [Authorization Code](#using-authorization-code-back-channel) and `Front Channel` for [Implicit](#using-implicit-authorization-front-channel).
+   - **Client ID**: The Client ID of the OIDC application.
+   - **Client Secret**: The Client Secret of the OIDC application. (Required only for `Back Channel`)
+7. Click on the `Create Connection` button.
+
+That's it! You have successfully configured SSO with your OIDC application.
+
+## Using the SSO Connection
+
+To use the SSO connection, follow these simple steps:
+
+1. Go to the Basis Theory Customer Portal.
+2. On the login page, click on the `SSO` button.
+3. Fill in your company email and click on `Continue`.
+4. You will be redirected to your provider login page, where you will need to put in your credentials.
+
+After that, you will be redirected back to the Basis Theory Customer Portal, where you will be logged in.
+
+<Alert>On first SSO login, a new account is created. Any accounts you have created previously with other authentication methods will not be linked to your SSO account.
+If you wish to add the SSO account as a tenant member instead of a previously created account, you will have to re-invite the SSO account and use the SSO login method when accepting the invite.</Alert>
