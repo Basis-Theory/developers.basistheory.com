@@ -485,6 +485,7 @@ const sidebars = {
         id: "api/webhooks/webhooks",
       },
       items: [
+        "api/webhooks/api",
         "api/webhooks/eventdata"
       ],
     },
