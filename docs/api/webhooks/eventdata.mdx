@@ -4,6 +4,27 @@ title: Event Data
 
 # Webhook Event Data
 
+## Structure of Events
+
+All event data will contain similar metadata.
+The structure of a webhook event is as follows:
+
+```json title="Event Structure"
+{
+  "event": {
+    "id": "e99b3bb9-25e4-484f-8a6d-6bc28edbbf39",
+    "type": "<TYPE OF EVENT DEFINED BELOW>",
+    "timestamp": "2024-04-09T13:56:37.864Z",
+    "tenant_id": "869d5b1c-1ae8-4ce6-96c6-73a602b407ff",
+    "trace_id": "0f777425-9080-4d82-b557-799f43aefcba",
+    "data": { DEFINED_BELOW }
+  },
+  "delivered_at": "2024-04-09T13:56:42.673Z"
+}
+```
+
+The individual data objects are defined below by type.
+
 ## 3DS Sessions
 ```json title="3ds.session.authenticated"
 {
@@ -82,16 +103,44 @@ title: Event Data
 
 ## Account Updater
 ```json title="account-updater.job.completed"
-{}
+{
+  "job": {
+    "id": "55256454-c9f9-4e79-bc9e-24bd38af5c21",
+    "status": "..."
+  }
+}
 ```
+| Name        | Type   | Description                                          |
+|-------------|--------|------------------------------------------------------|
+| job.id      | String | The unique identifier of the job.                    |
+| job.status  | String | The current status of the job.   |
 
 ```json title="account-updater.job.created"
-{}
+{
+  "job": {
+    "id": "55256454-c9f9-4e79-bc9e-24bd38af5c21",
+    "status": "..."
+  }
+}
 ```
 
+| Name        | Type   | Description                                          |
+|-------------|--------|------------------------------------------------------|
+| job.id      | String | The unique identifier of the job.                    |
+| job.status  | String | The current status of the job.   |
+
 ```json title="account-updater.job.failed"
-{}
+{
+  "job": {
+    "id": "55256454-c9f9-4e79-bc9e-24bd38af5c21",
+    "status": "..."
+  }
+}
 ```
+| Name        | Type   | Description                                          |
+|-------------|--------|------------------------------------------------------|
+| job.id      | String | The unique identifier of the job.                    |
+| job.status  | String | The current status of the job.   |
 
 ## Applications
 ```json title="application.created"
