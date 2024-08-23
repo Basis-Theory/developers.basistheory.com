@@ -1,3 +1,10 @@
+# [1.174.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.173.0...v1.174.0) (2024-08-23)
+
+
+### Features
+
+* surface refunds documentation ([#438](https://github.com/Basis-Theory/developers.basistheory.com/issues/438)) ([6b5bb5a](https://github.com/Basis-Theory/developers.basistheory.com/commit/6b5bb5a51bfc91f7152f57fda9163214ca1cdb16))
+
 # [1.173.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.172.0...v1.173.0) (2024-08-23)
 
 
