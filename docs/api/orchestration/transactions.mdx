@@ -233,7 +233,7 @@ Returns a [refund object](#refund-object) if the transaction was refunded. Retur
   "type": "refund",
   "id": "8724fd24-5489-4a5d-90fd-0604df7d3b83",
   "transaction_id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
-  "payment_service_refund_id": "refund_xYqd43gySMtori",
+  "connection_refund_id": "refund_xYqd43gySMtori",
   "status": "processing",
   "currency": "USD",
   "amount": 1490,
@@ -265,16 +265,46 @@ Returns a [refund object](#refund-object) if the transaction was refunded. Retur
   "type": "refund",
   "id": "8724fd24-5489-4a5d-90fd-0604df7d3b83",
   "transaction_id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
-  "payment_service_refund_id": "refund_xYqd43gySMtori",
+  "connection_refund_id": "refund_xYqd43gySMtori",
   "status": "processing",
   "currency": "USD",
   "amount": 1299,
   "reason": "Refund due to user request",
   "created_at": "2013-07-16T19:23:00.000+00:00",
   "updated_at": "2013-07-16T19:23:00.000+00:00",
-  "target_type": "payment-method",
-  "target_id": "c23ea83f-1b1c-4584-a0e8-78ef8c041949"
 }
+```
+
+
+## List Refunds
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/orchestration/transactions/{transaction_id}/refunds"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+
+### Response
+
+```json
+[
+  {
+    "type": "refund",
+    "id": "8724fd24-5489-4a5d-90fd-0604df7d3b83",
+    "transaction_id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+    "connection_refund_id": "refund_xYqd43gySMtori",
+    "status": "processing",
+    "currency": "USD",
+    "amount": 1299,
+    "reason": "Refund due to user request",
+    "created_at": "2013-07-16T19:23:00.000+00:00",
+    "updated_at": "2013-07-16T19:23:00.000+00:00",
+  },
+  ...
+]
 ```
 
 ## Resources
@@ -375,12 +405,10 @@ Returns a [refund object](#refund-object) if the transaction was refunded. Retur
 | `type`                      | enum        | refund  | The type of this resource. Is always refund. Available options: refund                                                                                        |
 | `id`                        | string      |         | The unique ID of the refund.                                                                                                                                  |
 | `transaction_id`            | string      |         | The ID of the transaction associated with this refund.                                                                                                        |
-| `payment_service_refund_id` | string      |         | The payment service's unique ID for the refund.                                                                                                               |
+| `connection_refund_id`      | string      |         | The payment service's unique ID for the refund.                                                                                                               |
 | `status`                    | enum        |         | The status of the refund. It may change over time as asynchronous processing events occur. Available options: processing, succeeded, declined, failed, voided |
 | `currency`                  | string      |         | The currency code for this refund. Will always match that of the associated transaction.                                                                      |
 | `amount`                    | integer     |         | The amount requested for this refund.                                                                                                                         |
 | `reason`                    | string      |         | The reason for this refund. Could be a multiline string.                                                                                                      |
 | `created_at`                | string      |         | The date and time when this refund was created.                                                                                                               |
 | `updated_at`                | string      |         | The date and time when this refund was last updated.                                                                                                          |
-| `target_type`               | enum        |         | The type of the instrument that was refunded. Available options: payment-method, gift-card-redemption                                                         |
-| `target_id`                 | string      |         | The optional ID of the instrument that was refunded. This may be null if the instrument was not stored.                                                       |
