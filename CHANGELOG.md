@@ -1,3 +1,10 @@
+# [1.173.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.172.0...v1.173.0) (2024-08-23)
+
+
+### Features
+
+* add guides for configuring sso ([#436](https://github.com/Basis-Theory/developers.basistheory.com/issues/436)) ([8cc3ed5](https://github.com/Basis-Theory/developers.basistheory.com/commit/8cc3ed59e7d47b7302eb54f1db02fcba33ae7041))
+
 # [1.172.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.171.0...v1.172.0) (2024-08-20)
 
 
