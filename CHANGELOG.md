@@ -1,3 +1,10 @@
+# [1.175.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.174.0...v1.175.0) (2024-08-23)
+
+
+### Features
+
+* adding list refunds and updating contracts ([#439](https://github.com/Basis-Theory/developers.basistheory.com/issues/439)) ([e37b201](https://github.com/Basis-Theory/developers.basistheory.com/commit/e37b2014e7633b1654b41c076504c61b1d98b758))
+
 # [1.174.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.173.0...v1.174.0) (2024-08-23)
 
 
