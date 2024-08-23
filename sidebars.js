@@ -174,6 +174,31 @@ const sidebars = {
         "features/network-tokens",
         "features/3d-secure",
         "features/anti-fraud",
+        {
+          type: "category",
+          label: "Single Sign-On (SSO)",
+          link: {
+            type: "doc",
+            id: "features/sso/index",
+          },
+          items: [
+            {
+              type: "doc",
+              id: "features/sso/configure-sso-with-okta",
+              label: "Configure SSO with Okta",
+            },
+            {
+              type: "doc",
+              id: "features/sso/configure-sso-with-oidc",
+              label: "Configure SSO with OIDC",
+            },
+            {
+              type: "doc",
+              id: "features/sso/configure-sso-with-saml",
+              label: "Configure SSO with SAML",
+            },
+          ],
+        },
       ],
     },
     {
