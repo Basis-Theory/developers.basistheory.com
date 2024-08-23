@@ -40,12 +40,12 @@ You can find more information on how to use this endpoint for [certain use-cases
 ```shell showLineNumbers
 curl "https://api.basistheory.com/orchestration/transactions" \
   -H "BT-API-KEY: <PRIVATE_API_KEY>"
-    -d '{
-          "connection_id": "f4c57207-ebd9-4909-af79-350d3d45392a",
-          "amount": 1299,
-          "currency": "USD",
-          "token": "",
-      }'
+  -d '{
+    "connection_id": "f4c57207-ebd9-4909-af79-350d3d45392a",
+    "amount": 1299,
+    "currency": "USD",
+    "token": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4"
+  }'
 ```
 
   </TabItem>
@@ -89,7 +89,7 @@ Returns a [transaction object](#transaction-object) if the transaction was creat
 
 <HttpMethod
   method={HttpMethods.POST}
-  endpoint="https://api.basistheory.com/orchestration/transactions/{id}/capture"
+  endpoint="https://api.basistheory.com/orchestration/transactions/{transaction_id}/capture"
 />
 
 #### Permissions
@@ -135,7 +135,7 @@ Returns a [transaction object](#transaction-object) if the transaction was captu
   "amount": 1299,
   "authorized_amount": 1299,
   "authorized_at": "2013-07-6T19:23:00.000+00:00",
-  ..
+  ...
 }
 ```
 
@@ -143,7 +143,7 @@ Returns a [transaction object](#transaction-object) if the transaction was captu
 
 <HttpMethod
   method={HttpMethods.POST}
-  endpoint="https://api.basistheory.com/orchestration/transactions/{id}/void"
+  endpoint="https://api.basistheory.com/orchestration/transactions/{transaction_id}/void"
 />
 
 #### Permissions
@@ -181,6 +181,99 @@ Returns a [transaction object](#transaction-object) if the transaction was voide
   "authorized_amount": 1299,
   "authorized_at": "2013-07-16T19:23:00.000+00:00",
   ...
+}
+```
+
+## Refund Transaction
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/transactions/{transaction_id}/refunds"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-b7cc-c28a718f76f1/refunds" \
+    -H "BT-API-KEY: <API_KEY>" \
+    -H "Content-Type: application/json" \
+    -X "POST" \
+    -d '{
+      "amount": 1490
+    }'
+    ```
+  </TabItem>
+</Tabs>
+
+#### URL Parameters
+
+| Parameter | Required | Type | Description |
+|-|-|-|-|
+| transaction_id | true | uuid | Existing transaction id |
+
+#### Request Parameters
+
+| Parameter | Required | Type    | Default | Description                                                                                                                                                                                                                                                           |
+|-----------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| amount    | false    | integer |         | The amount requested to refund. If omitted, a full refund will be requested for the main payment method. When set, the amount must be lower than or equal to the remaining balance in the associated transaction. Negative and zero-amount refunds are not supported. |
+| reason    | false    | string |         | An optional reason to attach extra context to the refund request.|
+
+### Response
+
+Returns a [refund object](#refund-object) if the transaction was refunded. Returns an error if there were validation errors before the refund could be created.
+
+```json
+{
+  "type": "refund",
+  "id": "8724fd24-5489-4a5d-90fd-0604df7d3b83",
+  "transaction_id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "payment_service_refund_id": "refund_xYqd43gySMtori",
+  "status": "processing",
+  "currency": "USD",
+  "amount": 1490,
+  ...
+}
+```
+
+## Get Refund
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/orchestration/refunds/{refund_id}"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+
+#### URL Parameters
+
+| Parameter | Required | Type | Description |
+|-|-|-|-|
+| refund_id | true | uuid | The unique ID of the refund. |
+
+### Response
+
+```json
+{
+  "type": "refund",
+  "id": "8724fd24-5489-4a5d-90fd-0604df7d3b83",
+  "transaction_id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "payment_service_refund_id": "refund_xYqd43gySMtori",
+  "status": "processing",
+  "currency": "USD",
+  "amount": 1299,
+  "reason": "Refund due to user request",
+  "created_at": "2013-07-16T19:23:00.000+00:00",
+  "updated_at": "2013-07-16T19:23:00.000+00:00",
+  "target_type": "payment-method",
+  "target_id": "c23ea83f-1b1c-4584-a0e8-78ef8c041949"
 }
 ```
 
@@ -274,3 +367,20 @@ Returns a [transaction object](#transaction-object) if the transaction was voide
 | three_d_secure | object | | 3D Secure object. |
 |auth_response_code | string | | Authorization response code returned from the connection. |
 |cvv_response_code | string | | CVV response code returned from the connection. |
+
+### Refund Object
+
+| Parameter                   | Type        | Default | Description                                                                                                                                                   |
+|-----------------------------|-------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `type`                      | enum        | refund  | The type of this resource. Is always refund. Available options: refund                                                                                        |
+| `id`                        | string      |         | The unique ID of the refund.                                                                                                                                  |
+| `transaction_id`            | string      |         | The ID of the transaction associated with this refund.                                                                                                        |
+| `payment_service_refund_id` | string      |         | The payment service's unique ID for the refund.                                                                                                               |
+| `status`                    | enum        |         | The status of the refund. It may change over time as asynchronous processing events occur. Available options: processing, succeeded, declined, failed, voided |
+| `currency`                  | string      |         | The currency code for this refund. Will always match that of the associated transaction.                                                                      |
+| `amount`                    | integer     |         | The amount requested for this refund.                                                                                                                         |
+| `reason`                    | string      |         | The reason for this refund. Could be a multiline string.                                                                                                      |
+| `created_at`                | string      |         | The date and time when this refund was created.                                                                                                               |
+| `updated_at`                | string      |         | The date and time when this refund was last updated.                                                                                                          |
+| `target_type`               | enum        |         | The type of the instrument that was refunded. Available options: payment-method, gift-card-redemption                                                         |
+| `target_id`                 | string      |         | The optional ID of the instrument that was refunded. This may be null if the instrument was not stored.                                                       |
