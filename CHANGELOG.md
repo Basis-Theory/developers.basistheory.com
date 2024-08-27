@@ -1,3 +1,10 @@
+## [1.175.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.175.0...v1.175.1) (2024-08-27)
+
+
+### Bug Fixes
+
+* Updates array detokenization example syntax ([#441](https://github.com/Basis-Theory/developers.basistheory.com/issues/441)) ([326ac6c](https://github.com/Basis-Theory/developers.basistheory.com/commit/326ac6c747b115d51455a11daf1cc732d6746d73))
+
 # [1.175.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.174.0...v1.175.0) (2024-08-23)
 
 
