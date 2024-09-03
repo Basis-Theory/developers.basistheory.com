@@ -1,3 +1,10 @@
+# [1.176.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.175.1...v1.176.0) (2024-09-03)
+
+
+### Features
+
+* Document Webhooks ([#440](https://github.com/Basis-Theory/developers.basistheory.com/issues/440)) ([33b7603](https://github.com/Basis-Theory/developers.basistheory.com/commit/33b7603b06d87ce98dc84e7a541ee9f33ed23f90))
+
 ## [1.175.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.175.0...v1.175.1) (2024-08-27)
 
 
