@@ -61,8 +61,9 @@ const verifyWebhook = (webhookRequest) => {
 
 The webhook receiver should respond to the sending application with an HTTP 2xx status code to acknowledge receipt of the webhook.
 This informs the Basis Theory that the request was successful.
-The response should be sent within 500 milliseconds of receiving the webhook.
-If your processing takes longer than that, you will need to persist the message and asynchronously process it.
+Basis Theory may close the HTTP request if a response is not returned in a timely manner.
+In this case, the webhook will be retried until the retry limit is reached or a successful response is returned.
+If your processing will take a while, consider persisting the message to asynchronously process it.
 
 ### Idempotency
 
