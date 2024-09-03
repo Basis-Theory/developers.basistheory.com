@@ -1,0 +1,87 @@
+---
+title: Webhooks
+---
+
+# Webhooks
+
+Webhooks are a method for Basis Theory to send real-time data to your application when a specific event occurs.
+Unlike traditional APIs that require you to request data from Basis Theory, webhooks automatically push data to a designated URL as soon as the event is triggered.
+
+## Getting started
+
+There are several general requirements needed to accept webhooks.
+
+### Publicly Accessible Endpoint
+
+The webhook receiver must have a publicly accessible URL where Basis Theory can send HTTP requests.
+This URL will be registered with Basis Theory when you setup the webhook.
+
+The receiver should be capable of handling HTTP POST requests.
+It's required to use HTTPS to secure the data in transit, protecting it from potential interception.
+
+### Signature Verification
+
+Basis Theory will send a signature along with the payload that can be used to verify the authenticity of the request.
+Signature verification is not a requirement, but is highly recommended.
+The version of the signature will be in the `BT-SIGNATURE-VERSION` header in the webhook request.
+
+#### v1 Signing
+
+The body of the webhook will be signed using an HMAC key.
+The signing key can be retrieved at https://cdn.basistheory.com/keys/webhooks.v1.key
+
+The signature of each request will be in the `BT-SIGNATURE` header.
+It is encoded using base64.
+
+```javascript title="Sample Javascript Signature Verification"
+const crypto = require('crypto');
+const stringify = require('json-stable-stringify');
+
+const verifyWebhook = (webhookRequest) => {
+    const body = JSON.parse(webhookRequest.request.body);
+    const signature = webhookRequest.request.headers['BT-SIGNATURE'];
+    const publicKey = ''; // Retrieve the signing key from https://cdn.basistheory.com/keys/webhooks.v1.key
+    const verifier = crypto.createVerify('SHA256');
+
+    verifier.update(stringify(body));
+
+    const isVerified = verifier.verify(
+        {
+            key: publicKey,
+            padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
+        },
+        Buffer.from(signature, 'base64')
+    );
+
+    return isVerified;
+};
+```
+
+### Response Handling
+
+The webhook receiver should respond to the sending application with an HTTP 2xx status code to acknowledge receipt of the webhook.
+This informs the Basis Theory that the request was successful.
+Basis Theory may close the HTTP request if a response is not returned in a timely manner.
+In this case, the webhook will be retried until the retry limit is reached or a successful response is returned.
+If your processing will take a while, consider persisting the message to asynchronously process it.
+
+### Idempotency
+
+Design the receiver to gracefully handle duplicate requests.
+Basis Theory may send the same event multiple times.
+Implementing idempotency ensures that repeated processing of the same request does not lead to unintended side effects.
+
+### Replay Attacks
+
+To help guard against [replay attacks](https://hookdeck.com/webhooks/guides/webhook-security-vulnerabilities-guide#replay-attacks), each event includes a `delivered_at` attribute.
+The `delivered_at` attribute can be validated to be "close to now".
+Implementing idempotency is another method to limit the affects of replay attacks.
+
+### Register the Webhook
+
+Using the Basis Theory Portal or [API](/docs/api/webhooks/api), register your webhook and the events that should be sent.
+Each tenant may have up to five webhook URLs registered at one time.
+
+
+
+
