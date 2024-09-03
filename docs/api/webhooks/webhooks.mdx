@@ -71,6 +71,12 @@ Design the receiver to gracefully handle duplicate requests.
 Basis Theory may send the same event multiple times.
 Implementing idempotency ensures that repeated processing of the same request does not lead to unintended side effects.
 
+### Replay Attacks
+
+To help guard against [replay attacks](https://hookdeck.com/webhooks/guides/webhook-security-vulnerabilities-guide#replay-attacks), each event includes a `delivered_at` attribute.
+The `delivered_at` attribute can be validated to be "close to now".
+Implementing idempotency is another method to limit the affects of replay attacks.
+
 ### Register the Webhook
 
 Using the Basis Theory Portal or [API](/docs/api/webhooks/api), register your webhook and the events that should be sent.
