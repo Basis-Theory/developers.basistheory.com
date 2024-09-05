@@ -308,6 +308,37 @@ module.exports = async function (req) {
 
 [Mastercard ICCP Submit Purchase Request](https://developer.mastercard.com/iccp/documentation/05_api_reference/purchaserequest/submitpurchaserequest/)
   </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+```javascript showLineNumbers title="responseTransform.js"
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers } = args;
+  const { pan, expiration: { month, year }, cvc } = body;
+
+  const token = await bt.tokens.create({
+    type: 'card',
+    data: {
+      number: pan,
+      expiration_month: month,
+      expiration_year: year,
+      cvc
+    },
+    fingerprintExpression: '{{ data.number }}',
+    deduplicateToken: true,
+  });
+
+  return {
+    headers,
+    body: {
+      token, // the Basis Theory token is added to the response
+    },
+  }
+}
+```
+
+[Adyen Reveal Payment Instrument Docs](https://docs.adyen.com/api-explorer/balanceplatform/2/get/paymentInstruments/(id)/reveal)
+  </TabItem>
 </Tabs>
 
 Notice how we are using `fingerprintExpression` and `deduplicateToken` properties to make sure we only create one card token per unique each card number, also known as Primary Account Number (PAN). [Click here to learn more about deduplication](/docs/concepts/what-are-tokens#deduplication).
@@ -431,6 +462,26 @@ curl "https://api.basistheory.com/proxies" \
   -d '{
     "name": "Issuer Proxy",
     "destination_url": "https://sandbox.api.mastercard.com/iccp/financial",
+    "response_transform": {
+      "code": '"$(echo $response_transform_code | jq -Rsa .)"'
+    },
+    "application": {
+      "id": "45c124e7-6ab2-4899-b4d9-1388b0ba9d04"
+    }
+  }'
+```
+
+  </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxies" \
+  -X "POST" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Issuer Proxy",
+    "destination_url": "https://balanceplatform-api-test.adyen.com/bcl/v2/paymentInstruments",
     "response_transform": {
       "code": '"$(echo $response_transform_code | jq -Rsa .)"'
     },
@@ -587,7 +638,7 @@ curl 'https://api.basistheory.com/proxy/<CARD_ID>?expand[]=number&expand[]=cvc' 
   -H "Content-Type: application/json" \
   -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
   -H "BT-API-KEY: <API_KEY>" \
-  -H "Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4" \
+  -H "Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4"
 ```
 
 The `Authorization` header includes the Stripe API Key, and `<CARD_ID>` is added to the the URL. Notice that we also must instruct Stripe to expand the card `number` and `cvc` using the URL.
@@ -921,6 +972,47 @@ Remember to change the URL to target the Proxy, and add the `BT-API-KEY` header.
   </S:Body>
 </S:Envelope>
 ```
+  </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+```shell showLineNumbers title="Retrieve Card Request"
+curl 'https://api.basistheory.com/proxy/<PAYMENT_INSTRUMENT>/reveal' \
+  -X "GET" \
+  -H "Content-Type: application/json" \
+  -H "BT-PROXY-KEY: TDEyQmkhQMpGiZd13FSRQ9" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H 'X-API-KEY: Vt(JJ5U5xuVECtg59fm9hBM+cZMWhw+ms2edxM%Rwmu0=Z2n3rGiQjQr-YEYfAq((It-Ocb03Jfob1JqGhogg:J/skGLIwerM=uAuHQDFHZBh+75pKgznYB3QeL7mrnBSeh34YAxLjdGEJQAhKdaU2'
+```
+
+The `Authorization` header includes the Adyen API Key, and `<PAYMENT_INSTRUMENT>` is added to the the URL.
+
+```json showLineNumbers title="Reveal (Transformed) Response"
+{
+  "token": {
+    "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+    "type": "card",
+    "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+    "data": {
+      "number": "XXXXXXXXXXXX4242",
+      "expiration_month": 12,
+      "expiration_year": 2025
+    },
+    "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+    "created_at": "2023-04-17T12:54:44.8320458+00:00",
+    "mask": {
+      "number": "{{ data.number | reveal_last: 4 }}",
+      "expiration_month": "{{ data.expiration_month }}",
+      "expiration_year": "{{ data.expiration_year }}"
+    },
+    "search_indexes": [],
+    "containers": [
+      "/pci/high/"
+    ]
+  }
+}
+```
+
+Adyen only returns `pan` and `cvc` when calling the special `/reveal` endpoint for a payment instrument an existing card. So you first must [create](https://docs.adyen.com/api-explorer/balanceplatform/2/post/paymentInstruments) the payment instrument directly, and then [reveal](https://docs.adyen.com/api-explorer/balanceplatform/2/get/paymentInstruments/(id)/reveal) it using the Proxy.
   </TabItem>
 </Tabs>
 

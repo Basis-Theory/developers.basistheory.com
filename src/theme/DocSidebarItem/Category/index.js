@@ -1,18 +1,8 @@
 import React, { useEffect, useMemo } from "react";
 import clsx from "clsx";
-import {
-  ThemeClassNames,
-  useThemeConfig,
-  usePrevious,
-  Collapsible,
-  useCollapsible,
-} from "@docusaurus/theme-common";
-import {
-  isActiveSidebarItem,
-  useDocSidebarItemsExpandedState,
-  findFirstSidebarItemLink,
-  isSamePath,
-} from "@docusaurus/theme-common/internal";
+import { ThemeClassNames, useThemeConfig, usePrevious, Collapsible, useCollapsible } from "@docusaurus/theme-common";
+import { isActiveSidebarItem, useDocSidebarItemsExpandedState, findFirstSidebarItemLink } from "@docusaurus/plugin-content-docs/client";
+import { isSamePath } from "@docusaurus/theme-common/internal";
 import Link from "@docusaurus/Link";
 import { translate } from "@docusaurus/Translate";
 import useIsBrowser from "@docusaurus/useIsBrowser";
@@ -84,14 +74,7 @@ function CollapseButton({ collapsed, categoryLabel, onClick }) {
     />
   );
 }
-export default function DocSidebarItemCategory({
-  item,
-  onItemClick,
-  activePath,
-  level,
-  index,
-  ...props
-}) {
+export default function DocSidebarItemCategory({ item, onItemClick, activePath, level, index, ...props }) {
   const { items, label, collapsible, className, href } = item;
   const {
     docs: {
@@ -119,12 +102,7 @@ export default function DocSidebarItemCategory({
   };
   useAutoExpandActiveCategory({ isActive, collapsed, updateCollapsed });
   useEffect(() => {
-    if (
-      collapsible &&
-      expandedItem != null &&
-      expandedItem !== index &&
-      autoCollapseCategories
-    ) {
+    if (collapsible && expandedItem != null && expandedItem !== index && autoCollapseCategories) {
       setCollapsed(true);
     }
   }, [collapsible, expandedItem, index, setCollapsed, autoCollapseCategories]);
@@ -194,13 +172,7 @@ export default function DocSidebarItemCategory({
       </div>
 
       <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>
-        <DocSidebarItems
-          items={items}
-          tabIndex={collapsed ? -1 : 0}
-          onItemClick={onItemClick}
-          activePath={activePath}
-          level={level + 1}
-        />
+        <DocSidebarItems items={items} tabIndex={collapsed ? -1 : 0} onItemClick={onItemClick} activePath={activePath} level={level + 1} />
       </Collapsible>
     </li>
   );

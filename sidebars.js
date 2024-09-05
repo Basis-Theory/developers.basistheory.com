@@ -174,6 +174,31 @@ const sidebars = {
         "features/network-tokens",
         "features/3d-secure",
         "features/anti-fraud",
+        {
+          type: "category",
+          label: "Single Sign-On (SSO)",
+          link: {
+            type: "doc",
+            id: "features/sso/index",
+          },
+          items: [
+            {
+              type: "doc",
+              id: "features/sso/configure-sso-with-okta",
+              label: "Configure SSO with Okta",
+            },
+            {
+              type: "doc",
+              id: "features/sso/configure-sso-with-oidc",
+              label: "Configure SSO with OIDC",
+            },
+            {
+              type: "doc",
+              id: "features/sso/configure-sso-with-saml",
+              label: "Configure SSO with SAML",
+            },
+          ],
+        },
       ],
     },
     {
@@ -221,6 +246,7 @@ const sidebars = {
       items: [
         "expressions/filters",
         "expressions/detokenization",
+        "expressions/configuration",
         "expressions/aliasing",
         "expressions/fingerprints",
         "expressions/masks",
@@ -430,6 +456,7 @@ const sidebars = {
       items: [
         "api/tokens/tokens",
         "api/tokens/tokenize",
+        "api/tokens/detokenize",
         "api/tokens/token-types",
         "api/tokens/token-enrichments",
         {
@@ -477,6 +504,18 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Webhooks",
+      link: {
+        type: "doc",
+        id: "api/webhooks/webhooks",
+      },
+      items: [
+        "api/webhooks/api",
+        "api/webhooks/eventdata"
+      ],
+    },
+    {
+      type: "category",
       label: "Orchestration",
       link: {
         type: "doc",
@@ -497,6 +536,10 @@ const sidebars = {
           customProps: {
             enterprise: true,
           },
+        },
+        {
+          type: "doc",
+          id: "api/orchestration/stripe-forward",
         },
       ],
     },

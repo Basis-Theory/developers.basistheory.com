@@ -439,6 +439,88 @@ curl 'https://api.basistheory.com/proxy' \
 [Paysafe Payment Handle Docs](https://developer.paysafe.com/en/payments-api/#/operations/create-payment-handle)
 
   </TabItem>
+  <TabItem value="nuvei" label="Nuvei">
+
+```shell showLineNumbers title="Create Payment"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <API_KEY>' \
+-H 'BT-PROXY-URL: https://ppp-test.nuvei.com/ppp/api/v1/payment.do' \
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+//highlight-next-line
+  "sessionToken": "3993eb0c-5f64-4a6c-b16c-485818eb76eb",
+  "merchantId": "427583496191624621",
+  "merchantSiteId": "142033",
+  "clientRequestId": "1C6CT7V1L",
+  "amount": "100",
+  "currency": "USD",
+  "userTokenId": "230811147",
+  "clientUniqueId": "12345",
+  "paymentOption": {
+    "card": {
+// highlight-start
+      "cardNumber": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+      "expirationMonth": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: \"MM\" }}",
+      "expirationYear": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: \"YYYY\" }}",
+      "CVV": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
+// highlight-end
+      "cardHolderName": "John Smith"
+    }
+  },
+  "deviceDetails": {
+    "ipAddress": "192.168.2.38"
+  },
+  "billingAddress": {
+    "firstName": "John",
+    "lastName": "Smith",
+    "email": "john.smith@email.com",
+    "country": "US"
+  },
+  "timeStamp": "20241105081132",
+  "checksum": "5582d0189dd440f4bbf960569ec22e77"
+}'
+```
+
+[Nuvei Payment Docs](https://docs.nuvei.com/api/main/indexMain_v1_0.html?json#payment)
+
+  </TabItem>
+  <TabItem value="finix" label="Finix">
+
+    ```shell showLineNumbers title="Create Payment Instrument"
+    curl 'https://api.basistheory.com/proxy' \
+    -X 'POST' \
+    // highlight-start
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'BT-PROXY-URL: https://finix.sandbox-payments-api.com/payment_instruments' \
+    -u 'USsRhsHYZGBPnQw8CByJyEQW:8a14c2f9-d94b-4c72-8f5c-a62908e5b30e'
+    // highlight-end
+    -H 'Content-Type: application/json' \
+    -d '{
+      "address": {
+        "city": "San Francisco",
+        "country": "USA",
+        "line1": "900 Metro Center Blv",
+        "postal_code": "94404",
+        "region": "CA"
+      },
+// highlight-start
+      "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+      "security_code": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
+      "expiration_month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: \"MM\" | to_number }}",
+      "expiration_year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: \"YYYY\" | to_number }}",
+// highlight-end
+      "identity": "IDgWxBhfGYLLdkhxx2ddYf9K",
+      "name": "John Smith",
+      "type": "PAYMENT_CARD"
+    }'
+    ```
+
+    [Finix Payment Instrument Docs](https://finix.com/docs/api/tag/Payment-Instruments/)
+
+  </TabItem>
 </Tabs>
 
 ## Key Considerations

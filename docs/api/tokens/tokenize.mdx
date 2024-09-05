@@ -4,6 +4,7 @@ title: Tokenize
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 import {
   HttpMethod,
@@ -16,6 +17,8 @@ import { Permission } from "@site/src/components/shared/Permission";
 The `tokenize` endpoint enables you to tokenize any request and tokenize several [types of tokens](/docs/api/tokens/token-types) in the same request. It can be utilized to combine multiple API calls into a single request to match your current data structure or bulk token creation.
 
 The maximum number of tokens that can be created within a single request is defined by your Tenant's "Tokenize Limit" [Quota](/docs/api/rate-limits#default-quotas).
+
+<Alert><span>If a request contains multiple tokens and one token is invalid, the entire request will fail.</span></Alert>
 
 <HttpMethod
   method={HttpMethods.POST}
@@ -31,6 +34,8 @@ The maximum number of tokens that can be created within a single request is defi
 The `token:create` permission must be granted on each destination container, and the required scope of this permission
 is determined by the [containers](/docs/concepts/what-are-containers)
 specified in the tokenize request.
+
+<Alert type={Alerts.WARNING}>For security reasons, the `data` and `metadata` attributes are redacted from the response when a token is deduplicated, unless the API Key has `token:read` permission in the targeted container. [Click here](/docs/concepts/what-are-tokens#deduplication) to learn more about this behavior.</Alert>
 
 ## Create Basic Token
 
@@ -331,6 +336,7 @@ func main() {
     "nonSensitiveField": "Non-Sensitive Value"
   },
   "search_indexes": ["{{ data }}"],
+  "fingerprint": "AKCUXS83DokKo4pDRKSAy4d42t9i8dcP1X2jijwEBCQH",
   "fingerprint_expression": "{{ data }}",
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00"
@@ -518,6 +524,7 @@ func main() {
   "metadata": {
     "nonSensitiveField": "Non-Sensitive Value"
   },
+  "fingerprint": "AKCUXS83DokKo4pDRKSAy4d42t9i8dcP1X2jijwEBCQH",
   "fingerprint_expression": "{{ data.number }}",
   "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
   "created_at": "2020-09-15T15:53:00+00:00"
@@ -744,6 +751,7 @@ func main() {
       "expiration_month": 12,
       "expiration_year": 2025
     },
+    "fingerprint": "AKCUXS83DokKo4pDRKSAy4d42t9i8dcP1X2jijwEBCQH",
     "fingerprint_expression": "{{ data.number }}",
     "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
     "created_at": "2020-09-15T15:53:00+00:00"
@@ -950,6 +958,7 @@ func main() {
       "expiration_month": 12,
       "expiration_year": 2025
     },
+    "fingerprint": "AKCUXS83DokKo4pDRKSAy4d42t9i8dcP1X2jijwEBCQH",
     "fingerprint_expression": "{{ data.number }}",
     "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
     "created_at": "2020-09-15T15:53:00+00:00"

@@ -1,0 +1,72 @@
+---
+toc_max_heading_level: 2
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Configure SSO with SAML
+
+Security Assertion Markup Language (SAML) is an XML-based protocol used for exchanging authentication and authorization data between an identity provider (IdP) and a service provider (SP).
+This guide will walk you through setting up SSO with SAML in the Basis Theory Customer Portal.
+
+<Alert>If you encounter any issues during the SSO configuration process, contact <a href="mailto:support@basistheory.com">support@basistheory.com</a>.</Alert>
+
+## Configuring the SAML Application
+
+When configuring Basis Theory SSO with SAML, you will need to set up your identity provider to communicate with the Basis Theory service provider.
+The specific steps may vary depending on your identity provider, but the general requirements are similar.
+Refer to your provider's documentation for more details.
+
+When prompted, set the following values in your application:
+- **Callback/Login URL**: `https://auth.basistheory.com/login/callback?connection=samlp-<YOUR_TENANT_ID>`
+- **Entity ID**: `urn:auth0:basistheory:samlp-<YOUR_TENANT_ID>`
+
+<Alert>If you don't know your Tenant ID, these values are also displayed in the portal after step `5` in the [Configuring SSO in the Basis Theory Customer Portal](#configuring-sso-in-the-basis-theory-customer-portal) section.</Alert>
+
+After creating your application, ensure it can provide the following:
+
+- **Login URL**: The SAML login URL for your provider.
+- **X509 Certificate**: The X509 signing certificate for your application, in `.cert`, `.cer`, or `.pem` format.
+
+<Alert type={Alerts.WARNING}>The `X509 Certificate` is sensitive information and should be kept secure.</Alert>
+
+### Attribute Mappings
+
+When configuring your SAML application, provide the following attribute mappings:
+- `email`: The user's email address.
+- `name`: The user's full name.
+- `given_name`: The user's first name.
+- `family_name`: The user's last name.
+- `nickname`: The user's nickname (optional).
+- `picture`: The user's profile picture URL (optional).
+
+## Configuring SSO in the Basis Theory Customer Portal
+
+After configuring your identity provider, you will need to configure the SSO settings in the Basis Theory Customer Portal. Follow these steps:
+
+1. Log in to the Basis Theory Customer Portal.
+2. Navigate to the `Settings` section.
+3. Click on the `Identity` tab.
+4. Click the `Create Connection` button.
+5. Select `SAML`.
+6. Complete the required fields:
+   - **Login URL**: Enter the login URL provided by your application.
+   - **X509 Certificate**: Click on `Upload File` and upload the X509 certificate for your application.
+7. Complete the [Attribute Mappings](#attribute-mappings) as required.
+8. Click the `Create Connection` button.
+
+That's it! You have successfully configured SSO with your SAML application.
+
+## Using the SSO Connection
+
+To use the SSO connection, follow these steps:
+
+1. Go to the Basis Theory Customer Portal.
+2. On the login page, click the `SSO` button.
+3. Enter your company email and click `Continue`.
+4. You will be redirected to your provider's login page, where you will need to enter your credentials.
+
+Afterward, you will be redirected back to the Basis Theory Customer Portal, where you will be logged in.
+
+<Alert>On your first SSO login, a new account will be created. Any accounts previously created with other authentication methods will not be linked to your SSO account.
+If you wish to add the SSO account as a tenant member instead of a previously created account, you will need to re-invite the SSO account and use the SSO login method when accepting the invite.</Alert>
