@@ -17,11 +17,32 @@ The structure of a webhook event is as follows:
     "timestamp": "2024-04-09T13:56:37.864Z",
     "tenant_id": "869d5b1c-1ae8-4ce6-96c6-73a602b407ff",
     "trace_id": "0f777425-9080-4d82-b557-799f43aefcba",
-    "data": { DEFINED_BELOW }
+    "data": {
+      "EVENT-SPECIFIC-OBJECT": {...},
+      "actor": {
+        "id": "...",
+        "type": "...",
+        "name": "..."
+      }
+    }
   },
   "delivered_at": "2024-04-09T13:56:42.673Z"
 }
 ```
+| Name                              | Type   | Description                                                       |
+|-----------------------------------|--------|-------------------------------------------------------------------|
+| event                             | object | The main event object containing event details                    |
+| event.id                          | string | Unique identifier for the event                                   |
+| event.type                        | string | Type of event (see details below for each event)                  |
+| event.timestamp                   | string | ISO 8601 formatted timestamp of when the event occurred          |
+| event.tenant_id                  | string | Unique identifier for the tenant associated with the event       |
+| event.trace_id                    | string | Unique identifier for tracing this event across systems          |
+| event.data.EVENT-SPECIFIC-OBJECT | object | Object containing data specific to the event type. The property name will be different based on the event.         |
+| event.data.actor                  | object | Information about the actor who triggered the event (if available)  |
+| event.data.actor.id               | string | Unique identifier for the actor                                  |
+| event.data.actor.type             | string | Type of the actor (application, user, admin, system)             |
+| event.data.actor.name             | string | Name or identifier of the actor                                   |
+| delivered_at                      | string | ISO 8601 formatted timestamp of when the event was delivered     |
 
 The individual data objects are defined below by type.
 
