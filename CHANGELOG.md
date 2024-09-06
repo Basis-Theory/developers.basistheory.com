@@ -1,3 +1,10 @@
+# [1.177.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.176.0...v1.177.0) (2024-09-06)
+
+
+### Features
+
+* dotnet 3.x documentation ([#409](https://github.com/Basis-Theory/developers.basistheory.com/issues/409)) ([5196835](https://github.com/Basis-Theory/developers.basistheory.com/commit/5196835c4ebab5a155ceda6189eab00b9ed80407))
+
 # [1.176.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.175.1...v1.176.0) (2024-09-03)
 
 
