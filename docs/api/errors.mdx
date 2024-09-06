@@ -52,20 +52,15 @@ try {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Common.Errors;
-using BasisTheory.net.Tokens;
-
-try {
-  var client = new TokenClient("<API_KEY>");
-  var token = await client.CreateAsync(new Token {...});
+try
+{
+    var apiInstance = new TokensApi(config);
+    var response = await apiInstance.CreateAsync(new CreateTokenRequest {...});
 }
-catch (BasisTheoryException btex) {
-  Console.WriteLine(btex.Message);
-  Console.WriteLine(btex.Error.Status); // HTTP status code
-  Console.WriteLine(btex.Error.Title);  // error title from HTTP response
-  Console.WriteLine(btex.Error.Detail); // error detail from HTTP response
-
-  // (optionally) btex.Error.Errors contains Dictionary of validation errors
+catch (ApiException e)
+{
+    Console.WriteLine("Error Content: " + e.Message);
+    Console.WriteLine("Status Code: " + e.ErrorCode);
 }
 ```
 

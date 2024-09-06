@@ -53,11 +53,24 @@ const logs = await bt.logs.list();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Logs;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new LogClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var logs = await client.GetAsync();
+var apiInstance = new LogsApi(config);
+var entityType = "";
+var entityId = "";
+var startDate = DateTime.Parse("2013-10-20T19:20:30+01:00");
+var endDate = DateTime.Parse("2013-10-20T19:20:30+01:00");
+var page = 1;
+var start = "";
+var size = 1;
+
+LogPaginatedList result = apiInstance.Get(entityType, entityId, startDate, endDate, page, start, size);
 ```
 
   </TabItem>

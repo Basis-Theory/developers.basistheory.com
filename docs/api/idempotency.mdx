@@ -65,13 +65,16 @@ const applications = await bt.tokens.create(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokens;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenClient("<API_KEY>");
-
-await client.GetAsync(requestOptions: new RequestOptions {
-IdempotencyKey = "aa5d3379-6385-4ef4-9fdb-ca1341572153"
-});
+var apiInstance = new TokensApi(config);
+var response = await apiInstance.CreateAsync(new CreateTokenRequest {...}, 
+    requestOptions: new RequestOptions
+    {
+        IdempotencyKey = "aa5d3379-6385-4ef4-9fdb-ca1341572153"
+    });
 ```
 
   </TabItem>
