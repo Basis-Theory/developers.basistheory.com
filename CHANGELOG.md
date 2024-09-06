@@ -1,3 +1,10 @@
+## [1.177.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.177.0...v1.177.1) (2024-09-06)
+
+
+### Bug Fixes
+
+* Add actor information to event data ([#443](https://github.com/Basis-Theory/developers.basistheory.com/issues/443)) ([7326b41](https://github.com/Basis-Theory/developers.basistheory.com/commit/7326b41822fd883e9cc72dc884017a4d087c6a06))
+
 # [1.177.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.176.0...v1.177.0) (2024-09-06)
 
 
