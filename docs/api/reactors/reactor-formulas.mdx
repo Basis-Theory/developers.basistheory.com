@@ -135,16 +135,20 @@ const reactorFormula = await bt.reactorFormulas.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.ReactorFormulas;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorFormulaClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactorFormula = await client.CreateAsync(new ReactorFormula {
-  Name = "My Private Reactor",
-  Description = "Securely exchange token for another token",
-  Type = "private",
-  Icon = "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
-  Code = @"
+var apiInstance = new ReactorFormulasApi(config);
+var createReactorFormulaRequest = new CreateReactorFormulaRequest(name: "My Private Reactor", type: "private")
+{
+    Description = "Securely exchange token for another token",
+    Icon = "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+    Code = @"
     module.exports = async function (req) {
       // Do something with req.configuration.SERVICE_API_KEY
 
@@ -155,27 +159,29 @@ var reactorFormula = await client.CreateAsync(new ReactorFormula {
       };
     };
   ",
-  Configuration = new List<ReactorFormulaConfiguration> {
-    new ReactorFormulaConfiguration {
-      Name = "SERVICE_API_KEY",
-      Description = "Configuration description",
-      Type = "string"
-    }
-  },
-  RequestParameters = new List<ReactorFormulaRequestParameter> {
-    new ReactorFormulaRequestParameter {
-      Name = "request_parameter_1",
-      Description = "Request parameter description",
-      Type = "string"
-    },
-    new ReactorFormulaRequestParameter {
-      Name = "request_parameter_2",
-      Description = "Request parameter description",
-      Type = "boolean",
-      IsOptional = true
-    }
-  }
-});
+    _Configuration =
+    [
+        new("SERVICE_API_KEY", type: "string")
+        {
+            Description = "Configuration description"
+        }
+    ],
+    RequestParameters =
+    [
+        new("request_parameter_1", type: "string")
+        {
+            Description = "Request parameter description"
+        },
+
+        new("request_parameter_2", type: "boolean")
+        {
+            Description = "Request parameter description",
+            Optional = true
+        }
+    ]
+};
+
+ReactorFormula result = apiInstance.Create(createReactorFormulaRequest);
 ```
 
   </TabItem>
@@ -434,11 +440,21 @@ const reactorFormulas = await bt.reactorFormulas.list();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.ReactorFormulas;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorFormulaClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactorFormulas = await client.GetAsync();
+var apiInstance = new ReactorFormulasApi(config);
+var name = "";
+var page = 1;
+var start = "";
+var size = 1;
+
+ReactorFormulaPaginatedList result = apiInstance.Get(name, page, start, size);
 ```
 
   </TabItem>
@@ -606,11 +622,18 @@ const reactorFormula = await bt.reactorFormulas.retrieve(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.ReactorFormulas;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorFormulaClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactorFormula = await client.GetByIdAsync("17069df1-80f4-439e-86a7-4121863e4678");
+var apiInstance = new ReactorFormulasApi(config);
+var id = Guid.Parse("");
+
+ReactorFormula result = apiInstance.GetById(id);
 ```
 
   </TabItem>
@@ -842,49 +865,55 @@ const reactorFormula = await bt.reactorFormulas.update('17069df1-80f4-439e-86a7-
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.ReactorFormulas;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorFormulaClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var reactorFormula = await client.UpdateAsync("17069df1-80f4-439e-86a7-4121863e4678",
-  new ReactorFormula {
-    Name = "My Private Reactor",
+var id = Guid.Parse("");
+
+var apiInstance = new ReactorFormulasApi(config);
+var updateReactorFormulaRequest = new UpdateReactorFormulaRequest(name: "My Private Reactor", type: "private")
+{
     Description = "Securely exchange token for another token",
-    Type = "private",
     Icon = "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
     Code = @"
-      module.exports = async function (req) {
-        // Do something with req.configuration.SERVICE_API_KEY
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
 
-        return {
-          raw: {
-            foo: 'bar'
-          }
-        };
+      return {
+        raw: {
+          foo: 'bar'
+        }
       };
-    ",
-    Configuration = new List<ReactorFormulaConfiguration> {
-      new ReactorFormulaConfiguration {
-        Name = "SERVICE_API_KEY",
-        Description = "Configuration description",
-        Type = "string"
-      }
-    },
-    RequestParameters = new List<ReactorFormulaRequestParameter> {
-      new ReactorFormulaRequestParameter {
-        Name = "request_parameter_1",
-        Description = "Request parameter description",
-        Type = "string"
-      },
-      new ReactorFormulaRequestParameter {
-        Name = "request_parameter_2",
-        Description = "Request parameter description",
-        Type = "boolean",
-        IsOptional = true
-      }
-    }
-  }
-);
+    };
+  ",
+    _Configuration =
+    [
+        new("SERVICE_API_KEY", type: "string")
+        {
+            Description = "Configuration description"
+        }
+    ],
+    RequestParameters =
+    [
+        new("request_parameter_1", type: "string")
+        {
+            Description = "Request parameter description"
+        },
+
+        new("request_parameter_2", type: "boolean")
+        {
+            Description = "Request parameter description",
+            Optional = true
+        }
+    ]
+};
+
+ReactorFormula result = apiInstance.Update(id, updateReactorFormulaRequest);
 ```
 
   </TabItem>
@@ -1155,11 +1184,18 @@ await bt.reactorFormulas.delete("17069df1-80f4-439e-86a7-4121863e4678");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.ReactorFormulas;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new ReactorFormulaClient("<MANAGEMENT_API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-await client.DeleteAsync("17069df1-80f4-439e-86a7-4121863e4678");
+var apiInstance = new ReactorFormulasApi(config);
+var id = Guid.Parse("");
+
+apiInstance.Delete(id);
 ```
 
   </TabItem>

@@ -55,11 +55,18 @@ const permissions = await bt.permissions.list();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Permissions;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new PermissionClient("<API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var permissions = await client.GetAsync();
+var apiInstance = new PermissionsApi(config);
+var applicationType = "";
+
+List<Permission> result = apiInstance.Get(applicationType);
 ```
 
   </TabItem>

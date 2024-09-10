@@ -18,6 +18,8 @@ The `tokenize` endpoint enables you to tokenize any request and tokenize several
 
 The maximum number of tokens that can be created within a single request is defined by your Tenant's "Tokenize Limit" [Quota](/docs/api/rate-limits#default-quotas).
 
+<Alert><span>If a request contains multiple tokens and one token is invalid, the entire request will fail.</span></Alert>
+
 <HttpMethod
   method={HttpMethods.POST}
   endpoint="https://api.basistheory.com/tokenize"
@@ -71,14 +73,21 @@ const token = await bt.tokenize({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokenize;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenizeClient("<API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var token = await client.TokenizeAsync(new {
-  first_name = "John",
-  last_name = "Doe"
-});
+var apiInstance = new TokenizeApi(config);
+var body = new {
+    first_name = "John",
+    last_name = "Doe"
+};
+
+Object result = apiInstance.Tokenize(body);
 ```
 
   </TabItem>
@@ -204,21 +213,31 @@ const token = await bt.tokenize({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokenize;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenizeClient("<API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var token = await client.TokenizeAsync(new Token {
-  Type = "token",
-  Data = "Sensitive Value",
-  Metadata = new Dictionary<string, string> {
-    { "nonSensitiveField",  "Non-Sensitive Value" }
-  },
-  SearchIndexes = new List<string> {
-    "{{ data }}"
-  },
-  FingerprintExpression = "{{ data }}"
-});
+var apiInstance = new TokenizeApi(config);
+var body = new Token
+{
+    Type = "token",
+    Data = "Sensitive Value",
+    Metadata = new Dictionary<string, string>
+    {
+        { "nonSensitiveField", "Non-Sensitive Value" }
+    },
+    SearchIndexes = new List<string>
+    {
+        "{{ data }}"
+    },
+    FingerprintExpression = "{{ data }}"
+};
+
+Object result = apiInstance.Tokenize(body);
 ```
 
   </TabItem>
@@ -376,22 +395,29 @@ const token = await bt.tokenize({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokenize;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenizeClient("<API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var token = await client.TokenizeAsync(new Token {
-  Type = "card",
-  Data = new {
-    number = "4242424242424242",
-    expiration_month = 12,
-    expiration_year = 2025,
-    cvc = "123"
-  },
-  Metadata = new Dictionary<string, string> {
-    { "nonSensitiveField",  "Non-Sensitive Value" }
-  }
-});
+var apiInstance = new TokenizeApi(config);
+var body = new Token {
+    Type = "card",
+    Data = new {
+        number = "4242424242424242",
+        expiration_month = 12,
+        expiration_year = 2025,
+        cvc = "123"
+    },
+    Metadata = new Dictionary<string, string> {
+        { "nonSensitiveField",  "Non-Sensitive Value" }
+    }
+};
+
+Object result = apiInstance.Tokenize(body);
 ```
 
   </TabItem>
@@ -570,27 +596,34 @@ const token = await bt.tokenize([
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokenize;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenizeClient("<API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var token = await client.TokenizeAsync(new object[] {
-  "John",
-  "Doe",
-  new Token {
-    Type = "card",
-    Data = new {
-      number = "4242424242424242",
-      expiration_month = 12,
-      expiration_year = 2025,
-      cvc = "123"
+var apiInstance = new TokenizeApi(config);
+var body = new object[] {
+    "John",
+    "Doe",
+    new Token {
+        Type = "card",
+        Data = new {
+            number = "4242424242424242",
+            expiration_month = 12,
+            expiration_year = 2025,
+            cvc = "123"
+        }
+    },
+    new Token {
+        Type = "token",
+        Data = "Sensitive Value"
     }
-  },
-  new Token {
-    Type = "token",
-    Data = "Sensitive Value"
-  }
-});
+};
+
+Object result = apiInstance.Tokenize(body);
 ```
 
   </TabItem>
@@ -801,30 +834,37 @@ const token = await bt.tokenize({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Tokenize;
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
 
-var client = new TokenizeClient("<API_KEY>");
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 
-var token = await client.TokenizeAsync(new {
-  first_name = "John",
-  last_name = "Doe",
-  primary_card = new Token {
-    Type = "card",
-    Data = new {
-      number = "4242424242424242",
-      expiration_month = 12,
-      expiration_year = 2025,
-      cvc = "123"
+var apiInstance = new TokenizeApi(config);
+var body = new {
+    first_name = "John",
+    last_name = "Doe",
+    primary_card = new Token {
+        Type = "card",
+        Data = new {
+            number = "4242424242424242",
+            expiration_month = 12,
+            expiration_year = 2025,
+            cvc = "123"
+        }
+    },
+    sensitive_tags = new object[] {
+        "preferred",
+        new Token {
+            Type = "token",
+            Data = "vip"
+        }
     }
-  },
-  sensitive_tags = new object[] {
-    "preferred",
-    new Token {
-      Type = "token",
-      Data = "vip"
-    }
-  }
-});
+};
+
+Object result = apiInstance.Tokenize(body);
 ```
 
   </TabItem>

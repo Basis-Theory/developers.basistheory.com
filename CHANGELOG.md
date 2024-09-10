@@ -1,3 +1,66 @@
+## [1.177.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.177.0...v1.177.1) (2024-09-06)
+
+
+### Bug Fixes
+
+* Add actor information to event data ([#443](https://github.com/Basis-Theory/developers.basistheory.com/issues/443)) ([7326b41](https://github.com/Basis-Theory/developers.basistheory.com/commit/7326b41822fd883e9cc72dc884017a4d087c6a06))
+
+# [1.177.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.176.0...v1.177.0) (2024-09-06)
+
+
+### Features
+
+* dotnet 3.x documentation ([#409](https://github.com/Basis-Theory/developers.basistheory.com/issues/409)) ([5196835](https://github.com/Basis-Theory/developers.basistheory.com/commit/5196835c4ebab5a155ceda6189eab00b9ed80407))
+
+# [1.176.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.175.1...v1.176.0) (2024-09-03)
+
+
+### Features
+
+* Document Webhooks ([#440](https://github.com/Basis-Theory/developers.basistheory.com/issues/440)) ([33b7603](https://github.com/Basis-Theory/developers.basistheory.com/commit/33b7603b06d87ce98dc84e7a541ee9f33ed23f90))
+
+## [1.175.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.175.0...v1.175.1) (2024-08-27)
+
+
+### Bug Fixes
+
+* Updates array detokenization example syntax ([#441](https://github.com/Basis-Theory/developers.basistheory.com/issues/441)) ([326ac6c](https://github.com/Basis-Theory/developers.basistheory.com/commit/326ac6c747b115d51455a11daf1cc732d6746d73))
+
+# [1.175.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.174.0...v1.175.0) (2024-08-23)
+
+
+### Features
+
+* adding list refunds and updating contracts ([#439](https://github.com/Basis-Theory/developers.basistheory.com/issues/439)) ([e37b201](https://github.com/Basis-Theory/developers.basistheory.com/commit/e37b2014e7633b1654b41c076504c61b1d98b758))
+
+# [1.174.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.173.0...v1.174.0) (2024-08-23)
+
+
+### Features
+
+* surface refunds documentation ([#438](https://github.com/Basis-Theory/developers.basistheory.com/issues/438)) ([6b5bb5a](https://github.com/Basis-Theory/developers.basistheory.com/commit/6b5bb5a51bfc91f7152f57fda9163214ca1cdb16))
+
+# [1.173.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.172.0...v1.173.0) (2024-08-23)
+
+
+### Features
+
+* add guides for configuring sso ([#436](https://github.com/Basis-Theory/developers.basistheory.com/issues/436)) ([8cc3ed5](https://github.com/Basis-Theory/developers.basistheory.com/commit/8cc3ed59e7d47b7302eb54f1db02fcba33ae7041))
+
+# [1.172.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.171.0...v1.172.0) (2024-08-20)
+
+
+### Features
+
+* Proxy Mask response transform ([#435](https://github.com/Basis-Theory/developers.basistheory.com/issues/435)) ([01ea24a](https://github.com/Basis-Theory/developers.basistheory.com/commit/01ea24a9f8b7e2252eb68a96720d3ea781ebf157))
+
+# [1.171.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.170.1...v1.171.0) (2024-08-15)
+
+
+### Features
+
+* adding configuration expressions ([#431](https://github.com/Basis-Theory/developers.basistheory.com/issues/431)) ([2b8d114](https://github.com/Basis-Theory/developers.basistheory.com/commit/2b8d11435bfff282ceb4d82b5544a68d754409ad))
+
 ## [1.170.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.170.0...v1.170.1) (2024-08-08)
 
 
