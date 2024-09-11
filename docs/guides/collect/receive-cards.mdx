@@ -556,6 +556,40 @@ module.exports = async function (req) {
 
 ```
 
+Alternatively, if you use JSON Web Tokens (JWT), you can verify the JWT's signature using a public key before the Proxy processes the payload for tokenization. This approach eliminates the need for an additional network request to your APIs, streamlining client authentication and improving performance.
+
+
+```javascript showLineNumbers title=requestTransform.js
+const jose = require('node-jose');
+const { AuthenticationError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+const verifySignature = async (token, publicKeyPem) => {
+  const key = await jose.JWK.asKey(publicKeyPem, "pem");
+  const verifier = await jose.JWS.createVerify(key);
+  const result = await verifier.verify(token);
+  return JSON.parse(result.payload.toString());
+};
+
+module.exports = async function (req) {
+  const { bt, args, configuration } = req;
+  const { body, headers } = args;
+
+  try {
+    const jwtPayload = await verifySignature(
+      headers['Authorization'], // getting the JWT from the Authorization header
+      configuration.PUBLIC_KEY_PEM // getting PEM-encoded RSA public key from the Proxy configuration
+    );
+  } catch (error) {
+    // returns a 401 to the requester
+    throw new AuthenticationError();
+  }
+
+  // do tokenization
+  ...
+}
+
+```
+
 ### Custom Hostname
 
 Requesting your customers or partners to invoke an API such as `https://api.basistheory.com/proxy?bt-proxy-key=TDEyQmkhQMpGiZd13FSRQ9` may not be the most elegant approach in some circumstances.
