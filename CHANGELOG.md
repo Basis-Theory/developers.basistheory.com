@@ -1,3 +1,10 @@
+# [1.178.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.177.1...v1.178.0) (2024-09-11)
+
+
+### Features
+
+* add jwt example to inbound proxy ([#444](https://github.com/Basis-Theory/developers.basistheory.com/issues/444)) ([3da1d67](https://github.com/Basis-Theory/developers.basistheory.com/commit/3da1d679d0e4d063b7fd4e9ad945f23ba91716c8))
+
 ## [1.177.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.177.0...v1.177.1) (2024-09-06)
 
 
