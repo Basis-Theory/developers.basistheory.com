@@ -85,7 +85,7 @@ const proxy = await bt.proxies.create({
   name: 'My Proxy',
   destinationUrl: 'https://example.com/api',
   requestTransform: {
-    code: '
+    code: `
       module.exports = async function (req) {
         // Do something with req.configuration.SERVICE_API_KEY
 
@@ -94,10 +94,10 @@ const proxy = await bt.proxies.create({
           body: req.args.body
         };
       };
-    '
+    `
   },
   responseTransform: {
-    code: '
+    code: `
       module.exports = async function (req) {
         // Do something with req.configuration.SERVICE_API_KEY
 
@@ -106,7 +106,7 @@ const proxy = await bt.proxies.create({
           body: req.args.body
         };
       };
-    '
+    `
   },
   configuration: {
     SERVICE_API_KEY: 'key_abcd1234',
@@ -785,7 +785,7 @@ const proxy = await bt.proxies.update('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
   name: 'My Proxy',
   destinationUrl: 'https://example.com/api',
   requestTransform: {
-    code: '
+    code: `
       module.exports = async function (req) {
         // Do something with req.configuration.SERVICE_API_KEY
 
@@ -794,10 +794,10 @@ const proxy = await bt.proxies.update('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
           body: req.args.body
         };
       };
-    '
+    `
   },
   responseTransform: {
-    code: '
+    code: `
       module.exports = async function (req) {
         // Do something with req.configuration.SERVICE_API_KEY
 
@@ -806,7 +806,7 @@ const proxy = await bt.proxies.update('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
           body: req.args.body
         };
       };
-    '
+    `
   },
   configuration: {
     SERVICE_API_KEY: 'key_abcd1234',
@@ -1679,7 +1679,7 @@ Given the proxied service responds with a JSON similar to the following:
 ```json title="Original Response"
 {
     "username": "bsmith1486",
-    "accountNumber": "56834512" 
+    "accountNumber": "56834512"
 }
 ```
 Then the sample proxy will mask the response as:
@@ -1699,7 +1699,7 @@ There could be unintended or unexpected side effects if the match string is larg
 
 For example, given a regex defined as `^(aa).*?$`, a match will occur when the line starts with "aa".
 However, since the regular expression uses the beginning, `^`, and end `$` syntax, the whole string will be matched and eligible for replacements.
-Given a response body of `aabbccaabbccaa`, the entire body will processed during masking. 
+Given a response body of `aabbccaabbccaa`, the entire body will processed during masking.
 *ALL* values that match the capture group value, in this case `aa`, will be replaced.
 The response body will then be masked as `**bbcc**bbcc**`.
 
