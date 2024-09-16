@@ -12,6 +12,7 @@ import {
 } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Deprecated } from "@site/src/components/shared/Deprecated"
 
 # Reactors
 
@@ -1330,7 +1331,7 @@ func main() {
 | Parameter      | Required | Type     | Default | Description                                                                                                                                                                                                                      |
 | -------------- | -------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `args`         | false    | _object_ | `null`  | Arguments to provide to the reactor.                                                                                                                                                                                             |
-| `callback_url` | false    | _string_ | `null`  | Indicates that the reactor should be invoked asynchronously and the result delivered as a webhook to this URL. See [Asynchronous Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) for more info. <Enterprise /> |
+| `callback_url` | false    | _string_ | `null`  | Indicates that the reactor should be invoked asynchronously and the result delivered as a webhook to this URL. See [Asynchronous Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) for more info. <Enterprise />  <Deprecated /> |
 
 #### Reactor Request Parameters
 
@@ -1375,6 +1376,118 @@ a single complex token that contains several of the request parameters.
 At most, 100 tokens may be detokenized within a single Reactor request.
 
 <Alert>For more detailed examples about how to detokenize within Reactors, check out our <a href="/docs/expressions/detokenization#examples">Detokenization Examples</a>.</Alert>
+
+## Invoke a Reactor Asynchronously <Enterprise />
+
+Invoke a reactor by ID asynchronously. See [Asynchronous Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) for more info.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/reactors/{id}/react-async"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+<br/><br/>
+
+The `token:use` permission is required to use a Reactor, and it is required for each
+[Container](/docs/concepts/what-are-containers) of Tokens you wish to detokenize in a Reactor.
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "args": {
+      "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      "customer_id": "myCustomerId1234"
+    }
+  }'
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description           |
+| --------- | -------- | ------ | ------- | --------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the Reactor |
+
+#### Request Parameters
+
+| Parameter      | Required | Type     | Default | Description                                                                                                                                                                                                                      |
+| -------------- | -------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `args`         | false    | _object_ | `null`  | Arguments to provide to the reactor.                                                                                                                                                                                             |
+
+### Response
+
+```json
+{
+    "asyncReactorRequestId": "3254626a-e1cf-4616-968f-e08a7ade4fce"
+}
+```
+
+Returns a request ID that can be used later to [retrieve the results](/docs/api/reactors#retrieve-result-)   of the asynchronous invocation.
+
+## Retrieve Result <Enterprise />
+
+Will retrieve the results of an asynchronous invocation.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/reactors/{id}/requests/{request_id}"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+<br/><br/>
+
+The `token:use` permission is required to read the result of reactors.
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+```shell showLineNumbers
+curl --location 'https://api.basistheory.com/reactors/7001A144-96D0-4401-9D96-13557824A9E0/requests/369a879e-338d-4f52-83cf-53a6af3f3f18' \
+--header 'BT-API-KEY: <PRIVATE_API_KEY>'
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description           |
+| --------- | -------- | ------ | ------- | --------------------- |
+| `id`      | true     | _uuid_ | `null`  | The ID of the Reactor |
+| `request_id`      | true     | _uuid_ | `null`  | The ID of the Reactor request id. Retrieved from either the response of `react-async` or the `reactor.completed-async` [webhook event](/docs/api/webhooks/eventdata#reactor-completed-asynchronously) |
+
+#### Request Parameters
+
+| Parameter      | Required | Type     | Default | Description                                                                                                                                                                                                                      |
+| -------------- | -------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `args`         | false    | _object_ | `null`  | Arguments to provide to the reactor.                                                                                                                                                                                             |
+
+### Response
+
+Returns a response object the same as the [synchronous response](/docs/api/reactors#response-6).
+
+#### Reactor Response Object
+
+| Attribute     | Type     | Description                                                                                                                                                                                   |
+| ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tokens`      | _object_ | (Optional) [Token(s)](/docs/api/tokens#token-object) created from the `tokenize` block of the Reactor code [response](#reactor-code-response-object) |
+| `raw`         | _object_ | (Optional) Raw output returned from the Reactor                                                                                                                                               |
+
 
 ## Reactor Object
 
