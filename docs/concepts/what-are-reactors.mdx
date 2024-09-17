@@ -113,10 +113,10 @@ The reactor will perform some synchronous validation to ensure the request is va
 then immediately respond with an empty HTTP response with `202 Accepted` status code.
 
 Your reactor code will then be asynchronously executed in our serverless compute environment for up to 5 minutes. If the timeout period is exceeded, the reactor will be terminated and you will receive
-a callback containing a [Reactor Runtime Error](/docs/api/reactors/reactor-errors#error-types) indicating that a timeout occurred.
+a `reactor.failed` webhook containing a [Reactor Runtime Error](/docs/api/reactors/reactor-errors#error-types) indicating that a timeout occurred.
 
-Once the reactor is completed, the `reactor.completed-async`  [webhook event](/docs/api/webhooks/eventdata#reactor-completed-asynchronously) will be raised.
-To retrieve the result of the asynchronous invocation, make a [request](/docs/api/reactors#retrieve-result) to the Retrieve Result using the reactor and request ID provided in the webhook.
+Once the reactor is completed, the `reactor.completed`  [webhook event](/docs/api/webhooks/eventdata#reactor-completed) will be raised.
+To retrieve the result of the asynchronous invocation, make a [request](/docs/api/reactors#retrieve-result) to the Retrieve Result endpoint using the reactor and request ID provided in the webhook.
 
 Any errors that occur while executing the reactor will be returned from the same result endpoint. See [Reactor Errors](/docs/api/reactors/reactor-errors) for details.
 
