@@ -6,6 +6,7 @@ sidebar_label: Reactors
 
 import { Alert } from "@site/src/components/shared/Alert";
 import { Enterprise } from "@site/src/components/shared/Enterprise";
+import { Deprecated } from "@site/src/components/shared/Deprecated";
 
 # What are Reactors?
 
@@ -106,6 +107,22 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
 ```
 
 ### Asynchronous Reactors <Enterprise /> \{#asynchronous-reactors}
+
+Reactors are invoked asynchronously by calling the react-async [request](/docs/api/reactors#invoke-a-reactor-async).
+The reactor will perform some synchronous validation to ensure the request is valid,
+then immediately respond with an empty HTTP response with `202 Accepted` status code.
+
+Your reactor code will then be asynchronously executed in our serverless compute environment for up to 5 minutes. If the timeout period is exceeded, the reactor will be terminated and you will receive
+a `reactor.failed` webhook containing a [Reactor Runtime Error](/docs/api/reactors/reactor-errors#error-types) indicating that a timeout occurred.
+
+Once the reactor is completed, the `reactor.completed`  [webhook event](/docs/api/webhooks/eventdata#reactor-completed) will be raised.
+To retrieve the result of the asynchronous invocation, make a [request](/docs/api/reactors#retrieve-result) to the Retrieve Result endpoint using the reactor and request ID provided in the webhook.
+
+Any errors that occur while executing the reactor will be returned from the same result endpoint. See [Reactor Errors](/docs/api/reactors/reactor-errors) for details.
+
+### Asynchronous Reactors with Callback URL <Enterprise /> <Deprecated />
+
+<Alert>This functionality is deprecated and will be removed at some time in the future.</Alert>
 
 Reactors are invoked asynchronously by providing a `callback_url` parameter within the [request](/docs/api/reactors#invoke-a-reactor).
 The reactor will perform some synchronous validation to ensure the request is valid,
