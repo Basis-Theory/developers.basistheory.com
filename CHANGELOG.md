@@ -1,3 +1,10 @@
+# [1.179.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.178.0...v1.179.0) (2024-09-17)
+
+
+### Features
+
+* Convert async reactor callback url into proper webhook ([#448](https://github.com/Basis-Theory/developers.basistheory.com/issues/448)) ([9e69c3c](https://github.com/Basis-Theory/developers.basistheory.com/commit/9e69c3ce25f08840cca83d22411e37a622af6b80))
+
 # [1.178.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.177.1...v1.178.0) (2024-09-11)
 
 
