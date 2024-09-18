@@ -1,3 +1,10 @@
+## [1.179.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.179.0...v1.179.1) (2024-09-18)
+
+
+### Bug Fixes
+
+* update custom hostname guide ([#449](https://github.com/Basis-Theory/developers.basistheory.com/issues/449)) ([f7bfa36](https://github.com/Basis-Theory/developers.basistheory.com/commit/f7bfa36a2ce8e6bd579f0f7d9f8c89160871a939))
+
 # [1.179.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.178.0...v1.179.0) (2024-09-17)
 
 
