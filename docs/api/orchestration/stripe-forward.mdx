@@ -50,31 +50,31 @@ Specifically, in line `16` when referencing the card's expiration month, it is `
     -H "Content-Type: application/json" \
     -X "POST" \
     -d '{
-          "card": {
-            "number": "4242424242424242",
-            "exp_month": "07",
-            "exp_year": "2030",
-            "cvc": "123",
-            "name": "John Doe"
-          },
-          "metadata": {
-            "mask": {
-              "number": "{{ data.number | reveal_last: 4 }}",
-              "expiration_month": "{{ data.expiration_month }}",
-              "expiration_year": "{{ data.expiration_year }}",
-              "name": "{{ data.name }}"
-            },
-            "containers": [ "/pci/high/" ],
-            "metadata": {
-              "nonSensitiveField": "Non-Sensitive Value"
-            },
-            "search_indexes": [
-              "{{ data.number | last4 }}"
-            ],
-            "fingerprint_expression": "{{ data.number }}",
-            "deduplicate_token": true,
-            "expires_at": "8/26/2030 7:23:57 PM -07:00"
-          }
+      "card": {
+        "number": "4242424242424242",
+        "exp_month": "07",
+        "exp_year": "2030",
+        "cvc": "123",
+        "name": "John Doe"
+      },
+      "metadata": {
+        "mask": {
+          "number": "{{ data.number | reveal_last: 4 }}",
+          "expiration_month": "{{ data.expiration_month }}",
+          "expiration_year": "{{ data.expiration_year }}",
+          "name": "{{ data.name }}"
+        },
+        "containers": [ "/pci/high/" ],
+        "metadata": {
+          "nonSensitiveField": "Non-Sensitive Value"
+        },
+        "search_indexes": [
+          "{{ data.number | last4 }}"
+        ],
+        "fingerprint_expression": "{{ data.number }}",
+        "deduplicate_token": true,
+        "expires_at": "8/26/2030 7:23:57 PM -07:00"
+      }
     }'
     ```
 
@@ -83,10 +83,10 @@ Specifically, in line `16` when referencing the card's expiration month, it is `
 
 #### Request Parameters
 
-| Attribute                | Required | Type                   | Default                                                   | Description                                                                                                                                                                                  |
-| ------------------------ | -------- | ---------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `card`                     | true    | _[Stripe Card](#stripe-card)_                | `null`                             | The card details to tokenize.                                                                  |
-| `metadata`                   | false     | _[Stripe Metadata](#stripe-metadata)_     | `null`                            | Basis Theory's token attributes used when creating the card token.                                                                                                                                     |
+| Attribute  | Required | Type                                  | Default | Description                                                        |
+|------------|----------|---------------------------------------|---------|--------------------------------------------------------------------|
+| `card`     | true     | _[Stripe Card](#stripe-card)_         | `null`  | The card details to tokenize.                                      |
+| `metadata` | false    | _[Stripe Metadata](#stripe-metadata)_ | `null`  | Basis Theory's token attributes used when creating the card token. |
 
 #### Stripe Card
 
