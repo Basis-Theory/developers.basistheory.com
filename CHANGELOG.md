@@ -1,3 +1,10 @@
+## [1.179.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.179.1...v1.179.2) (2024-09-27)
+
+
+### Bug Fixes
+
+* table formatting and orchestration examples ([#450](https://github.com/Basis-Theory/developers.basistheory.com/issues/450)) ([0f9f9e9](https://github.com/Basis-Theory/developers.basistheory.com/commit/0f9f9e9c13aa8cdb40c0c8144448ffc99de35899))
+
 ## [1.179.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.179.0...v1.179.1) (2024-09-18)
 
 
