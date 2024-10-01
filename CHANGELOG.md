@@ -1,3 +1,10 @@
+# [1.180.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.179.2...v1.180.0) (2024-10-01)
+
+
+### Features
+
+* adds keyboardType to rn card* elements ([#451](https://github.com/Basis-Theory/developers.basistheory.com/issues/451)) ([dc062fc](https://github.com/Basis-Theory/developers.basistheory.com/commit/dc062fcc8da3349a14f44e34192cb5d62d160359))
+
 ## [1.179.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.179.1...v1.179.2) (2024-09-27)
 
 
