@@ -1,3 +1,10 @@
+# [1.181.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.180.1...v1.181.0) (2024-10-16)
+
+
+### Features
+
+* add notify email to webhooks ([#453](https://github.com/Basis-Theory/developers.basistheory.com/issues/453)) ([9543e6e](https://github.com/Basis-Theory/developers.basistheory.com/commit/9543e6ec457c0dcdffd8db670cb59048fa9bf23b))
+
 ## [1.180.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.180.0...v1.180.1) (2024-10-08)
 
 
