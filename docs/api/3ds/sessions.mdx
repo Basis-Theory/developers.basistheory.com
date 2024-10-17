@@ -19,6 +19,185 @@ import TestCards from "@site/docs/api/3ds/_test-cards.mdx";
 
 <Alert type={Alerts.INFO}>3D Secure is an Enterprise feature. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
 
+## Create a Customer Session
+
+Create a 3DS Session for a customer initiated transaction (CIT).
+
+<Alert type={Alerts.WARNING}>Customer 3DS session creation is only supported through our web <a href="/docs/sdks/web/3ds/">SDK</a>.</Alert>
+
+## Create a Merchant Session
+
+Create a 3DS Session for a merchant initiated transaction (MIT).
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/3ds/sessions"
+/>
+
+#### Permissions
+
+<Permission content="3ds:session:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/3ds/sessions" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "pan": "bfe0060c-a465-41a0-a620-c804952d3468",
+    "type": "merchant"
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const result = await bt.threeds.createSession({
+  pan: "bfe0060c-a465-41a0-a620-c804952d3468",
+  type: "merchant"
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
+
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
+
+var apiInstance = new ThreeDSApi(config);
+var createThreeDSSessionRequest = new CreateThreeDSSessionRequest()
+{
+    Pan = "bfe0060c-a465-41a0-a620-c804952d3468",
+    Type = "merchant"
+};
+
+CreateThreeDSSessionResponse result = apiInstance.ThreeDSCreateSession(createThreeDSSessionRequest);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.ApiClient;
+import com.basistheory.ApiException;
+import com.basistheory.Configuration;
+import com.basistheory.auth.*;
+import com.basistheory.models.*;
+import com.basistheory.ThreeDsApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<PUBLIC_API_KEY>");
+
+        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
+        CreateThreeDSSessionRequest createThreeDSSessionRequest = new CreateThreeDSSessionRequest();
+        CreateThreeDSSessionResponse result = apiInstance.threeDSCreateSession(createThreeDSSessionRequest
+          .pan("bfe0060c-a465-41a0-a620-c804952d3468")
+          .type("merchant"));
+        System.out.println(result);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import three_ds_api
+from basistheory.model.create_three_ds_session_request import CreateThreeDSSessionRequest
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+
+    result = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
+        pan="bfe0060c-a465-41a0-a620-c804952d3468",
+        type="merchant"))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v5"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<API_KEY>"},
+  })
+
+  createThreeDSSessionRequest := *basistheory.NewCreateThreeDSSessionRequest()
+  createThreeDSSessionRequest.SetPan("bfe0060c-a465-41a0-a620-c804952d3468")
+  createThreeDSSessionRequest.SetType("merchant")
+
+  createResponse, createHttpResponse, createErr := apiClient.ThreeDSApi.ThreeDSCreateSession(contextWithAPIKey).CreateThreeDSSessionRequest(createThreeDSSessionRequest).Execute()
+}
+```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute | Required | Type | Description
+| --- | --- | --- | --- |
+| `pan` | true | _string_ | A card type token `id` |
+| `type` | true | _string_ | The 3DS session type. Use `merchant` for merchant initiated transactions |
+
+### Response
+
+Returns relevant information about the created 3DS session in a [Create Session Response](#create-session-response-object) object. Returns [an error](/docs/api/errors) if the session cannot be retrieved.
+
+```json showLineNumbers
+{
+    "id": "be3bec00-a1c3-4ffe-8971-20a30bbee031",
+    "type": "merchant",
+    "card_brand": "Visa",
+    "method_url": "https://acs.example.com/3ds/acs/browser/method",
+    "method_notification_url": "https://api.basistheory.com/3ds/sessions/be3bec00-a1c3-4ffe-8971-20a30bbee031/method-notification",
+    "directory_server_id": "M000000003",
+    "recommended_version": "2.2.0",
+}
+```
+
+#### Create Session Response Object
+
+| Attribute | Type | Description
+| --- | --- | --- |
+| `id` | _string_ | The ID of the 3DS session |
+| `type` | _string_ | The 3DS session type |
+| `card_brand` | _string_ | The brand for the card used in the 3DS transaction |
+| `method_url` | _string_ | The URL for the Method request, used by the 3DS SDK |
+| `method_notification_url` | _string_ | The URL for which to send the method completion notification, used by the 3DS SDK |
+| `directory_server_id` | _string_ | The 3DS directory server ID, used by the 3DS SDK |
+| `recommended_version` | _string_ | The 3DS version that was used for the transaction |
+
 ## Get a Session
 
 Get a 3DS Session by ID in the Tenant.
@@ -144,6 +323,7 @@ Returns a 3DS [session](#session-object) with the `id` provided. Returns [an err
 {
     "id": "be3bec00-a1c3-4ffe-8971-20a30bbee031",
     "tenant_id": "9f328a79-b397-42ac-9b8d-18312157cc6b",
+    "type": "customer",
     "pan_token_id": "bfe0060c-a465-41a0-a620-c804952d3468",
     "card_brand": "Visa",
     "expiration_date": "2024-03-23T14:01:26.4544211+00:00",
@@ -487,13 +667,24 @@ func main() {
 - `non-payment` - for just adding cards to accounts.
 
 #### Authentication Types
-- `payment-transaction`
-- `recurring-transaction`
-- `installment-transaction`
-- `add-card`
-- `maintain-card`
-- `cardholder-emv-verification`
-- `account-verification`
+The authentication type can differt depending on the 3DS session type. See table below for details.
+
+| Authentication Type | Allowed Session Type(s) |
+| --- | --- |
+| `payment-transaction` | `customer` |
+| `cardholder-emv-verification`| `customer` |
+| `split-or-delayed-shipment` | `merchant` |
+| `top-up` | `merchant` |
+| `mail-order` | `merchant` |
+| `telephone-order` | `merchant` |
+| `whitelist-status-check` | `merchant` |
+| `other-payment` | `merchant` |
+| `billing-agreement` | `merchant` |
+| `recurring-transaction` | `customer`, `merchant` |
+| `installment-transaction` | `customer`, `merchant` |
+| `add-card` | `customer`, `merchant` |
+| `maintain-card` | `customer`, `merchant` |
+| `account-verification` | `customer`, `merchant` |
 
 #### Challenge Preferences
 - `no-preference`
@@ -900,6 +1091,7 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 | --- | --- | --- |
 | `id` | _uuid_ | Unique identifier of the session |
 | `tenant_id` | _uuid_ | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the session |
+| `type` | _string_ | The type of 3DS session - `customer` or `merchant` |
 | `pan_token_id` | _string_ | The ID for the card token used in the 3DS transaction |
 | `card_brand` | _string_ | The brand for the card used in the 3DS transaction |
 | `expiration_date` | _string_ | Date for when the 3DS session will expire |
