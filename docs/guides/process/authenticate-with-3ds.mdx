@@ -459,6 +459,7 @@ If the `status` for the authentication response is `successful`, that means a fr
 If after authenticating a 3DS session, the authentication response `status` is set as `challenge`, that means that the customer needs to perform a challenge, like inputting a passcode, before getting the final 3DS authentication value.
 
 You can trigger the user challenge by calling the `startChallenge` method, which returns a `Promise` that will only be resolved once the user completes it.
+By default, `startChallenge` will time out and reject the `Promise` if the user does not complete the challenge within 60000ms (1 minute). This can be configured by passing the `timeout` property in the challenge object.
 
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
