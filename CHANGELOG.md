@@ -1,3 +1,10 @@
+# [1.183.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.182.0...v1.183.0) (2024-10-18)
+
+
+### Features
+
+* add timeout prop for 3ds start challenge ([#456](https://github.com/Basis-Theory/developers.basistheory.com/issues/456)) ([219f78c](https://github.com/Basis-Theory/developers.basistheory.com/commit/219f78ce62d609dbaa07cfb16b7b9222d5794bf5))
+
 # [1.182.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.181.0...v1.182.0) (2024-10-18)
 
 
