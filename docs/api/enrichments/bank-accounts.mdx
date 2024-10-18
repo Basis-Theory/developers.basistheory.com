@@ -1,0 +1,79 @@
+---
+title: Bank Account Verification
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+
+# Bank Account Verification
+
+## Verify Bank Account
+
+Returns a status indicating that bank account information is valid for receiving transactions.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/enrichments/bank-account-verify"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers title="Using &#8220;bank&#8220; token type"
+curl --location 'https://api.basistheory.com/enrichments/bank-account-verify' \
+--header 'BT-API-KEY: <API_KEY>' \
+--header 'Content-Type: application/json' \
+--data '{
+    "token_id":"5dae2960-8d7d-11ef-806c-1b5325d52a83",
+    "country_code": "US"
+}'
+```
+
+```shell showLineNumbers title="Using &#8220;us_bank_account_number&#8220; token type"
+curl --location 'https://api.basistheory.com/enrichments/bank-account-verify' \
+--header 'BT-API-KEY: <API_KEY>' \
+--header 'Content-Type: application/json' \
+--data '{
+    "token_id":"5dae2960-8d7d-11ef-806c-1b5325d52a83",
+    "country_code": "US",
+    "routing_number": "021000021"
+}'
+```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Name   | Type   | Description                                                                  |
+|--------|--------|------------------------------------------------------------------------------|
+| token_id   | String | The ID of the token containing the bank information. Token type must be either [`bank`](/docs/api/tokens/token-types#bank) or [`us_bank_account_number`](/docs/api/tokens/token-types#us-bank-account-number).  |
+| country_code    | String (Optional) | The two character ISO country code. Default: `US` |
+| routing_number    | String (Optional) | The routing number of the bank account. Only applicable if the token referenced by `token_id` is of type [`us_bank_account_number`](/docs/api/tokens/token-types#us-bank-account-number) |
+
+### Response
+
+Returns the status of the bank account.
+If the status is `enabled`, then the bank account is available to receive ACH transactions.
+When the status is `disabled`, then the bank account is either closed or could not be found.
+Disabled accounts are not available to receive ACH transactions.
+
+```json showLineNumbers
+{
+  "status": "enabled"
+}
+```
+
+| Name   | Type   | Description                                                                  |
+|--------|--------|------------------------------------------------------------------------------|
+| status   | String | Either `enabled` or `disabled`  |
