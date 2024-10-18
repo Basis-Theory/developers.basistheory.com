@@ -1,3 +1,10 @@
+## [1.184.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.184.0...v1.184.1) (2024-10-18)
+
+
+### Bug Fixes
+
+* remove legacy alert ([#457](https://github.com/Basis-Theory/developers.basistheory.com/issues/457)) ([13f3827](https://github.com/Basis-Theory/developers.basistheory.com/commit/13f38270d66a23fac772c4129913eb466f80b4b8))
+
 # [1.184.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.183.0...v1.184.0) (2024-10-18)
 
 
