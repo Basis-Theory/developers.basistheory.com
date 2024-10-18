@@ -1,3 +1,10 @@
+# [1.182.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.181.0...v1.182.0) (2024-10-18)
+
+
+### Features
+
+* add 3ds session type and create session docs ([#454](https://github.com/Basis-Theory/developers.basistheory.com/issues/454)) ([751b701](https://github.com/Basis-Theory/developers.basistheory.com/commit/751b7013e27e21e880927a25023e61900e46705b))
+
 # [1.181.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.180.1...v1.181.0) (2024-10-16)
 
 
