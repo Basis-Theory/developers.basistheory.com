@@ -1,3 +1,10 @@
+# [1.184.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.183.0...v1.184.0) (2024-10-18)
+
+
+### Features
+
+* adding test cards ([#455](https://github.com/Basis-Theory/developers.basistheory.com/issues/455)) ([78144fb](https://github.com/Basis-Theory/developers.basistheory.com/commit/78144fb4eacb2173a74335a885bdc9f736c95257))
+
 # [1.183.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.182.0...v1.183.0) (2024-10-18)
 
 
