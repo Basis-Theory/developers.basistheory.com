@@ -73,6 +73,8 @@ The Basis Theory 3DS SDK takes care of that process, collecting all necessary in
 First, let's create a 3DS `session` and pass the created card token `id` as the `pan` property.
 The SDK will then collect the device info as previously described, and send it alongside the de-tokenized card number (pan) to the 3DS server in order to initiate a 3DS transaction.
 
+<Tabs className="bt-tabs">
+  <TabItem value="ts" label="Web">
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
@@ -86,6 +88,72 @@ const checkout = async () => {
   //highlight-end
 }
 ```
+</TabItem>
+
+  <TabItem value="ios" label="iOS">
+```swift showLineNumbers
+let customHeaders: [String: String] = [
+    "Authorization": "Bearer your_token_here",
+    "Trace-Id": "your_trace_id_here"
+]
+
+private var threeDSService: ThreeDSService!
+private var sessionId: String? = nil
+
+threeDSService = try ThreeDSService.builder()
+  .withApiKey("<PUBLIC_API_KEY>")
+  .withAuthenticationEndpoint("Your 3DS authentication endpoint URL") // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
+  .withSandbox()   // make sure withSandbox is removed in production environments
+  .build()
+
+Task {
+  try await threeDSService.initialize { [weak self] warnings in
+      if let warnings = warnings, !warnings.isEmpty {
+          // inspect warnings
+      }
+  }
+
+  //highlight-start
+  // creating the session
+  let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
+  //highlight-end
+      
+}
+```
+</TabItem>
+  <TabItem value="android" label="Android">
+```kotlin showLineNumbers
+val customHeaders = Headers.Builder()
+        .add("Authorization", "Bearer your_token_here")
+        .add("Trace-Id", "your_trace_id_here")
+        .build();
+
+val threeDSService = ThreeDsService.Builder()
+  .withApiKey("<PUBLIC_API_KEY>")
+  .withApplicationContext(context)
+  .withAuthenticationEndpoint("Your 3DS authentication endpoint URL", customHeaders) // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
+  .apply {
+      // make sure withSandbox is removed in production environments
+      if (BuildConfig.DEBUG) {
+        withSandbox()
+      }
+  }
+  .build()
+
+val warnings = threeDSService.initialize()
+
+if (!warnings.isNullOrEmpty()) {
+  // inspect warnings
+}
+
+//highlight-start
+// creating the session
+val session = threeDSService.createSession("<CARD_TOKEN_ID>")
+//highlight-end
+```
+</TabItem>
+
+</Tabs>
 
 <Alert>Be sure to replace <code>&lt;PUBLIC_API_KEY></code> with the Public API Key you created in the <a href="#public-application">Public Application</a> step,
 and <code>&lt;CARD_TOKEN_ID></code> with the token id created in the <a href="#creating-a-card-token">Creating a Card Token</a> step.</Alert>
@@ -426,6 +494,9 @@ func authenticateSession(rw http.ResponseWriter, r *http.Request) {
 
 And then passing that information back to your frontend.
 
+<Alert>You need to pass your authentication endpoint URL and any additional headers to the `withAuthenticationEndpoint` function in the `ThreeDSServiceBuilder` for both native mobile SDK's. The authentication step is executed when the `startChallenge` method is invoked.</Alert>
+
+
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
@@ -461,6 +532,9 @@ If after authenticating a 3DS session, the authentication response `status` is s
 You can trigger the user challenge by calling the `startChallenge` method, which returns a `Promise` that will only be resolved once the user completes it.
 By default, `startChallenge` will time out and reject the `Promise` if the user does not complete the challenge within 60000ms (1 minute). This can be configured by passing the `timeout` property in the challenge object.
 
+
+<Tabs className="bt-tabs">
+  <TabItem value="ts" label="Web">
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
@@ -500,7 +574,111 @@ const checkout = async () => {
   //highlight-end
 };
 ```
-### Styling the Challenge Window
+</TabItem>
+
+<TabItem value="ios" label="iOS">
+```swift showLineNumbers
+let customHeaders: [String: String] = [
+    "Authorization": "Bearer your_token_here",
+    "Trace-Id": "your_trace_id_here"
+]
+
+private var threeDSService: ThreeDSService!
+private var sessionId: String? = nil
+
+threeDSService = try ThreeDSService.builder()
+  .withApiKey("<PUBLIC_API_KEY>")
+  .withAuthenticationEndpoint("Your 3DS authentication endpoint URL", customHeaders) // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
+  .withSandbox()   // make sure withSandbox is removed in production environments
+  .build()
+
+
+Task {
+  try await threeDSService.initialize { [weak self] warnings in
+      if let warnings = warnings, !warnings.isEmpty {
+          // inspect warnings
+      }
+  }
+
+  let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
+  
+  //highlight-start
+  // start challenge
+  try await self.threeDSService.startChallenge(
+      sessionId: session.id, viewController: self,
+      onCompleted: { result in
+          print("Challenge completed with status: \(result.status)")
+            
+          guard let details = result.details else {
+              return
+          }
+          
+          print(details)
+      },
+      onFailure: { result in
+          print("Challenge failed with status: \(result.status)")
+      })
+  //highlight-end
+}
+```
+</TabItem>
+<TabItem value="android" label="Android">
+```kotlin showLineNumbers
+val customHeaders = Headers.Builder()
+        .add("Authorization", "Bearer your_token_here")
+        .add("Trace-Id", "your_trace_id_here")
+        .build();
+
+val threeDSService = ThreeDsService.Builder()
+  .withApiKey("<PUBLIC_API_KEY>")
+  .withApplicationContext(context)
+  .withAuthenticationEndpoint("Your 3DS authentication endpoint URL", customHeaders) // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
+  .apply {
+      // make sure withSandbox is removed in production environments
+      if (BuildConfig.DEBUG) {
+        withSandbox()
+      }
+  }
+  .build()
+
+val warnings = threeDSService.initialize()
+
+if (!warnings.isNullOrEmpty()) {
+  // inspect warnings
+}
+
+
+val session = threeDSService.createSession("<CARD_TOKEN_ID>")
+
+//highlight-start  
+// start challenge
+threeDsService.startChallenge(
+  sessionId,
+  activity,
+  ::onChallengeCompleted,
+  ::onChallengeFailed
+)
+        
+fun onChallengeCompleted(result: ChallengeResponse) {
+  Log.i("3ds_service", "Challenge completed with status: ${result.status}");
+
+  result.details?.let {
+    Log.i("3ds_service", it);
+  }
+}
+
+fun onChallengeFailed(result: ChallengeResponse) {
+  Log.i("Challenge failed with status: ${result.status}")
+}
+//highlight-end
+```
+</TabItem>
+</Tabs>
+
+### Styling the Challenge Window (Web)
+
+<Alert>Styling of the challenge window is not supported in the mobile SDK\'s. Contact <a href="mailto:support@basistheory.com?subject=Styling 3DS mobile">support@basistheory.com</a> for more information.</Alert>
+
 
 The internal challenge 'window' is created and handled by card issuer and unfortunately there is not much that can be done to style it to fit with the design of your website.
 
@@ -947,6 +1125,8 @@ app.listen(PORT, () => {
 
 And then passing that information along back to your frontend.
 
+<Tabs className="bt-tabs">
+  <TabItem value="ts" label="Web">
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
@@ -999,6 +1179,152 @@ const checkout = async () => {
   }
 };
 ```
+      </TabItem>
+  <TabItem value="ios" label="iOS">
+```swift showLineNumbers
+let customHeaders: [String: String] = [
+    "Authorization": "Bearer your_token_here",
+    "Trace-Id": "your_trace_id_here"
+]
+
+private var threeDSService: ThreeDSService!
+private var sessionId: String? = nil
+
+threeDSService = try ThreeDSService.builder()
+  .withApiKey("<PUBLIC_API_KEY>")
+  .withAuthenticationEndpoint("Your 3DS authentication endpoint URL", customHeaders) // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
+  .withSandbox()   // make sure withSandbox is removed in production environments
+  .build()
+
+
+Task {
+  try await threeDSService.initialize { [weak self] warnings in
+      if let warnings = warnings, !warnings.isEmpty {
+          // inspect warnings
+      }
+  }
+
+  let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
+  
+  try await self.threeDSService.startChallenge(
+      sessionId: session.id, viewController: self,
+      onCompleted: { result in
+          print("Challenge completed with status: \(result.status)")
+            
+          guard let details = result.details else {
+              return
+          }
+          
+          print(details)
+      },
+      onFailure: { result in
+          print("Challenge failed with status: \(result.status)")
+      })
+
+
+  //highlight-start
+  // getting challenge result
+  let endpoint = URL(string: "{your-backend-host}/challenge-result")!
+
+  let jsonBody: [String: String] = [
+      "sessionId": session.id
+  ]
+
+  let requestBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
+
+  var request = URLRequest(url: endpoint)
+  request.httpMethod = "POST"
+  request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+  request.httpBody = requestBody
+
+  let (data, _) = try await URLSession.shared.data(for: request)
+  
+  let decodedResponse = try JSONDecoder().decode(ChallengeResult.self, from: data)
+
+  print(decodedResponse.authenticationStatus)
+
+  guard let reason = decodedResponse.authenticationStatusReason else {
+    return
+  }
+
+  print(reason)
+  //highlight-end
+}
+```
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+```kotlin showLineNumbers
+val customHeaders = Headers.Builder()
+        .add("Authorization", "Bearer your_token_here")
+        .add("Trace-Id", "your_trace_id_here")
+        .build();
+
+val threeDSService = ThreeDsService.Builder()
+  .withApiKey("<PUBLIC_API_KEY>")
+  .withApplicationContext(context)
+  .withAuthenticationEndpoint("Your 3DS authentication endpoint URL", customHeaders) // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
+  .apply {
+      // make sure withSandbox is removed in production environments
+      if (BuildConfig.DEBUG) {
+        withSandbox()
+      }
+  }
+  .build()
+
+val warnings = threeDSService.initialize()
+
+if (!warnings.isNullOrEmpty()) {
+  // inspect warnings
+}
+
+
+val session = threeDSService.createSession("<CARD_TOKEN_ID>")
+
+threeDsService.startChallenge(
+  sessionId,
+  activity,
+  ::onChallengeCompleted,
+  ::onChallengeFailed
+)
+        
+fun onChallengeCompleted(result: ChallengeResponse) {
+  Log.i("3ds_service", "Challenge completed with status: ${result.status}");
+
+  result.details?.let {
+    Log.i("3ds_service", it);
+  }
+}
+
+fun onChallengeFailed(result: ChallengeResponse) {
+  Log.i("Challenge failed with status: ${result.status}")
+}
+//highlight-start    
+// getting challenge result
+val client = OkHttpClient()
+val payload = JSONObject().apply {
+  put("sessionId", sessionId)
+}.toString()
+
+val req = Request.Builder()
+  .url("{your-backend-host}/challenge-result")
+  .post(payload.toRequestBody("application/json".toMediaType()))
+  .build()
+
+client.newCall(req)
+    .execute().use {
+        val responseBody = requireNotNull(it.body?.string())
+        it.body?.close()
+        
+        if (!it.isSuccessful) {
+            throw Error("Unable to authenticate, downstream service responded ${it.code} for session $sessionId, ${it.message}")
+        }
+        Log.i(responseBody)
+    }
+//highlight-end
+  ```
+  </TabItem>
+</Tabs>
 
 That's it 🎉!
 The result from the `authentication` (in case of frictionless) or `challenge-result` calls contains the authentication token (`authentication_value` attribute) and any other information needed to fully process the 3DS transaction.
