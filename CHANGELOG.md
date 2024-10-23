@@ -1,3 +1,10 @@
+# [1.185.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.184.1...v1.185.0) (2024-10-23)
+
+
+### Features
+
+* add new ravelin test cards ([#459](https://github.com/Basis-Theory/developers.basistheory.com/issues/459)) ([6e2d658](https://github.com/Basis-Theory/developers.basistheory.com/commit/6e2d658d624527c6e4abafd30c7493a2e3e41374))
+
 ## [1.184.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.184.0...v1.184.1) (2024-10-18)
 
 
