@@ -4,11 +4,16 @@ toc_max_heading_level: 2
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
+import Android from "@site/static/img/sdk/logos/android.svg";
+import AppleDark from "@site/static/img/sdk/logos/apple-dark.svg";
+import Apple from "@site/static/img/sdk/logos/apple.svg";
 import { Card } from "@site/src/components/shared/Card";
 import styles from "@site/src/pages/index.module.css";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import ThemedImage from "@theme/ThemedImage";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 # Authenticate with 3DS
 
@@ -46,9 +51,9 @@ Next, you will need a [Private Application](/docs/api/applications) for your bac
 
 <Alert>Save the API Key from the created Private Application as it will be used later in this guide.</Alert>
 
-## Configuring the Basis Theory 3DS Web SDK
+## Configuring the Basis Theory 3DS SDK
 
-The [3DS Web SDK](/docs/sdks/web/3ds/) is available as an NPM package.
+The 3DS SDK is available as an NPM package and also available for Android and iOS apps.
 
 See instructions below on how to install and configure it.
 <div className={styles["sdk-column"]}>
@@ -57,6 +62,25 @@ See instructions below on how to install and configure it.
     img={<JavaScript />}
     className={styles.sdk}
   >Web 3DS SDK Reference</Card>
+
+ <Card
+    href="/docs/sdks/mobile/3ds"
+    img={<Android />}
+    className={styles.sdk}
+  >Android 3DS SDK Reference</Card>
+
+ <Card
+    href="/docs/sdks/mobile/3ds"
+    img={<ThemedImage
+           width="100%"
+           height="100%"
+           sources={{
+              light: useBaseUrl("/img/sdk/logos/apple.svg"),
+              dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
+            }}
+        />
+      }
+    className={styles.sdk}>iOS 3DS SDK Reference</Card>
   </div>
 
 ## Creating a Card Token
@@ -73,7 +97,7 @@ The Basis Theory 3DS SDK takes care of that process, collecting all necessary in
 First, let's create a 3DS `session` and pass the created card token `id` as the `pan` property.
 The SDK will then collect the device info as previously described, and send it alongside the de-tokenized card number (pan) to the 3DS server in order to initiate a 3DS transaction.
 
-<Tabs className="bt-tabs">
+<Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="ts" label="Web">
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
@@ -533,7 +557,7 @@ You can trigger the user challenge by calling the `startChallenge` method, which
 By default, `startChallenge` will time out and reject the `Promise` if the user does not complete the challenge within 60000ms (1 minute). This can be configured by passing the `timeout` property in the challenge object.
 
 
-<Tabs className="bt-tabs">
+<Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="ts" label="Web">
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
@@ -1125,7 +1149,7 @@ app.listen(PORT, () => {
 
 And then passing that information along back to your frontend.
 
-<Tabs className="bt-tabs">
+<Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="ts" label="Web">
 ```typescript showLineNumbers
 import { BasisTheory3ds } from "@basis-theory/3ds-web";
