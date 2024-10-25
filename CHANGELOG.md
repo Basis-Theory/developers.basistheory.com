@@ -1,3 +1,10 @@
+# [1.187.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.186.0...v1.187.0) (2024-10-25)
+
+
+### Features
+
+* Add documentation for Bank Account Verification ([#458](https://github.com/Basis-Theory/developers.basistheory.com/issues/458)) ([d145d38](https://github.com/Basis-Theory/developers.basistheory.com/commit/d145d38fd10a4ab40fcbe83fa1565cefb221041a))
+
 # [1.186.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.185.0...v1.186.0) (2024-10-23)
 
 
