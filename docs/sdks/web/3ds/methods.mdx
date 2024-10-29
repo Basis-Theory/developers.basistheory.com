@@ -10,6 +10,7 @@ import {
   TextElement,
 } from "@basis-theory/basis-theory-react";
 import { BasisTheoryComponentDisplay } from "@site/src/components/sdks/BasisTheoryComponentDisplay";
+import { Deprecated } from "@site/src/components/shared/Deprecated";
 
 # 3DS Web SDK Methods
 
@@ -24,23 +25,27 @@ import { BasisTheory3ds } from "@basis-theory/3ds-web";
 
 const bt3ds = BasisTheory3ds("<API_KEY>");
 
-const session = await bt3ds.createSession({ pan: "<TOKEN_ID>" });
+const session = await bt3ds.createSession({ tokenId: "<TOKEN_ID>" });
 ```
 
 ### Parameters
 The `createSession` method takes an object as parameter w/ the following attributes:
 
-| Attribute | Required | Type | Description |
-| --- | --- | --- | --- |
-| `pan` | true | _string_ | The Basis Theory token id for the card token to be used |
+| Attribute         | Required | Type     | Description                                                           |
+|-------------------|----------|----------|-----------------------------------------------------------------------|
+| `token_id`        | false    | _string_ | The Basis Theory token id for the card token to be used               |
+| `token_intent_id` | false    | _string_ | The Basis Theory token id for the card token intent to be used        |
+| `pan`             | false    | _string_ | <Deprecated/> The Basis Theory token id for the card token to be used |
+
+Either `token_id` or `token_intent_id` is required.
 
 ### Return
 
 The method returns an object with the following attributes:
 
-| Attribute | Type | Description |
-| --- | --- | --- |
-| `id` | _string_ | The created session `id` |
+| Attribute   | Type     | Description                             |
+|-------------|----------|-----------------------------------------|
+| `id`        | _string_ | The created session `id`                |
 | `cardBrand` | _string_ | The brand for the used card (i.e. Visa) |
 
 ## Start Challenge
@@ -66,29 +71,29 @@ const challengeCompletion = await bt3ds.startChallenge({
 
 The `startChallenge` method takes in an object with the following attributes:
 
-| Attribute | Required | Type | Description |
-| --- | --- | --- | --- |
-| `acsChallengeUrl` | true | _string_ | The URL for the challenge window. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response |
-| `acsTransactionId` | true | _string_ | The ACS transaction id. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response |
-| `sessionId` | true | _string_ | The created 3DS session id |
-| `threeDSVersion` | true | _string_ | The 3DS message version. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response |
-| `windowSize` | false | _string_ | The code for the pre-configured window size. See [Challenge Window Sizes](#challenge-window-sizes) |
-| `timeout`| false | _number_ | The time in miliseconds to wait for challenge completion before considering it timed out. Defaults to 60000ms (1 minute) |
+| Attribute          | Required | Type     | Description                                                                                                                        |
+|--------------------|----------|----------|------------------------------------------------------------------------------------------------------------------------------------|
+| `acsChallengeUrl`  | true     | _string_ | The URL for the challenge window. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response |
+| `acsTransactionId` | true     | _string_ | The ACS transaction id. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response           |
+| `sessionId`        | true     | _string_ | The created 3DS session id                                                                                                         |
+| `threeDSVersion`   | true     | _string_ | The 3DS message version. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response          |
+| `windowSize`       | false    | _string_ | The code for the pre-configured window size. See [Challenge Window Sizes](#challenge-window-sizes)                                 |
+| `timeout`          | false    | _number_ | The time in miliseconds to wait for challenge completion before considering it timed out. Defaults to 60000ms (1 minute)           |
 
 ### Return
 The method returns a `Promise`, with the following attributes, that is only resolved once the customer completed or cancelled the challenge:
 
-| Attribute | Type | Description |
-| --- | --- | --- |
-| `id` | _string_ | The created session id |
+| Attribute | Type     | Description            |
+|-----------|----------|------------------------|
+| `id`      | _string_ | The created session id |
 
 
 #### Challenge Window Sizes
 
-| WindowSize ID | Size |
-| --- | --- |
-| `01` | 250px x 400px |
-| `02` | 390px x 400px |
-| `03` | 500px x 600px |
-| `04` | 600px x 400px |
-| `05` | 100% x 100% |
+| WindowSize ID | Size          |
+|---------------|---------------|
+| `01`          | 250px x 400px |
+| `02`          | 390px x 400px |
+| `03`          | 500px x 600px |
+| `04`          | 600px x 400px |
+| `05`          | 100% x 100%   |
