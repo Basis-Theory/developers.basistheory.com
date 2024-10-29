@@ -215,8 +215,9 @@ const sidebars = {
         id: "concepts/index",
       },
       items: [
-        "concepts/access-controls",
         "concepts/what-are-tokens",
+        "concepts/token-intents",
+        "concepts/access-controls",
         "concepts/what-are-containers",
         "concepts/elements",
         "concepts/what-is-the-proxy",

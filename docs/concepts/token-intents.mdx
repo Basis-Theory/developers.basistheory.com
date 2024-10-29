@@ -1,0 +1,76 @@
+---
+title: What are Token Intents?
+sidebar_label: Token Intents
+---
+
+import {Alert, Alerts} from "@site/src/components/shared/Alert";
+
+# What are Token Intents?
+
+A **Token Intent** is a short-lived resource that streamlines data collection and validation before being committed to a token for long term retention.
+Token Intents enable [public applications](/docs/concepts/access-controls#what-are-applications), such as web or mobile apps,
+to focus on data collection while offloading validation and data governance concerns to the backend (e.g. metadata enrichment, aliasing, deduplication, search indexing).
+
+Token Intents are particularly useful for applications where data authorization or validation (e.g. 3DS, Card Authorization, or $0 Authorization when adding a Card On File) is necessary before creating or updating a token.
+
+---
+
+## How do Token Intents work?
+
+When you create a Token Intent, the data is securely stored using the same NIST and FIPS-compliant encryption algorithms that power the Basis Theory platform.
+Each Token Intent is uniquely encrypted, ensuring the integrity and security of the data for its short lifespan.
+
+Token Intents automatically expire when:
+
+1. They've reached the predefined TTL (defaults to **24 hours**).
+2. They've been [converted into a Token](/docs/api/tokens/token-intents#convert-token-intent-to-token).
+
+This behavior ensures no unused or stale data persists longer than is necessary.
+
+---
+
+## Why use Token Intents?
+
+**Token Intents** provide several key advantages over Tokens:
+
+- **Performance Optimization:** By reducing overhead (e.g. data governance, metadata enrichment), Token Intents can optimize workflows that only require temporary data storage, especially in scenarios like mobile app data handling, pre-tokenization, or proxying for card authorization.
+- **Simplified Frontend Logic:**
+  - Token Intents allow sensitive data to be handled without implementing complex aliasing or deduplication logic on the frontend, shifting decision-making to the backend.
+  - This is especially helpful if you have multiple mediums for data capture (APIs, Mobile, Web applications) to keep tokenization logic centralized.
+- **Risk Mitigation:**
+  - Token Intents can be used to mitigate exploitation of public API keys, such as fraudulent creation of tokens within a Tenant, by providing a two-step validation process before commiting data to your vault.
+  - Untrusted data will be automatically discarded after TTL expiration
+- **Cost Optimization**
+  - Token Intents help reduce the risks associated with public API key abuse, preventing unexpected costs from unwanted Tokens.
+  - By using Token Intents, cost management responsibility over ephemeral untrusted data is shifted to Basis Theory.
+- **Flexibility:**
+  - Token Intents offer a way to easily manage unvalidated data, giving control over how and when to commit that data to a Token.
+
+---
+
+## What types of data can I store with Token Intents?
+
+Similar to Tokens, Token Intents can handle various data types, including sensitive financial information like credit cards, bank details, and PII.
+
+<Alert>Only `card` Token Intents are generally available at this time. Please [reach out](https://www.basistheory.com/contact) to request access to other [token types](/docs/api/tokens/token-types).</Alert>
+
+---
+
+## What operations can I perform with Token Intents?
+
+Token Intents are capable of being utilized with the following services where Tokens are used today:
+
+- Proxies with Token Intent Expressions
+- Reactors with Token Intent Expressions
+- 3DS with Token Intents
+
+This makes Token Intents ideal for scenarios where the data captured may not be valid or accurate and will require additional validation before accepting this data into a Token.
+
+---
+
+## What if I am delayed in converting a Token Intent into a Token?
+
+Unexpected vendor downtime (e.g. a PSP or Basis Theory outage) or other unforeseen circumstances may prevent you from validating or converting a Token Intent into a Token before its expiration.
+
+In order to mitigate this risk, Basis Theory retains Token Intents for 24 hours by default, allowing you to retry validation and conversion operations within this time window.
+If you believe you will require a longer Token Intent TTL, a longer TTL can be requested (up to 48 hours) within in your [Tenant Quotas](/docs/api/rate-limits#default-quotas) in the portal.
