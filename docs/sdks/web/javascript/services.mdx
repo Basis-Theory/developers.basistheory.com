@@ -62,7 +62,7 @@ const requestBody = {
 
 #### setValueRef\*
 
-Sets the element's value to the value of the provided element.  
+Sets the element's value to the value of the provided element.
 
 ```ts title="Card Expiration Date setValueRef example"
 const cardExpirationDateElement = BasisTheory.createElement("cardExpirationDate", {
@@ -75,7 +75,7 @@ const cardExpirationDateElementReadOnly = BasisTheory.createElement("cardExpirat
   readOnly: true
 });
 
-cardExpirationDateElementReadOnly.setValueRef(cardExpirationDateElement) 
+cardExpirationDateElementReadOnly.setValueRef(cardExpirationDateElement)
 ```
 
 `cardExpirationDateElementReadOnly` will be updated every time the value of `cardExpirationDateElement` changes.
@@ -190,6 +190,21 @@ BasisTheory.tokens
   })
   .then((token) => {
     console.log(JSON.stringify(token.data)); // redacted updated token data
+  });
+```
+
+### Create Token Intent
+
+The examples below show how to use Elements' instances in the payload of the [`tokenIntents.create`](/docs/api/tokens/token-intents#create-token-intent) service.
+
+```javascript showLineNumbers title="Create card token intent"
+BasisTheory.tokenIntents
+  .create({
+    type: "card",
+    data: cardElement
+  })
+  .then((tokenIntent) => {
+    console.log(tokenIntent.id); // token intent id to validate and convert to a token
   });
 ```
 
