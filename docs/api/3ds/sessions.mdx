@@ -2,7 +2,7 @@
 title: 3DS Sessions
 ---
 
-import { Beta } from "@site/src/components/shared/Beta";
+import { Deprecated } from "@site/src/components/shared/Deprecated";
 import { Enterprise } from "@site/src/components/shared/Enterprise";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
@@ -49,7 +49,7 @@ curl "https://api.basistheory.com/3ds/sessions" \
   -H "Content-Type: application/json" \
   -X "POST" \
   -d '{
-    "pan": "bfe0060c-a465-41a0-a620-c804952d3468",
+    "token_id": "bfe0060c-a465-41a0-a620-c804952d3468",
     "type": "merchant"
   }'
 ```
@@ -63,7 +63,7 @@ import { BasisTheory } from "@basis-theory/basis-theory-js";
 const bt = await new BasisTheory().init("<API_KEY>");
 
 const result = await bt.threeds.createSession({
-  pan: "bfe0060c-a465-41a0-a620-c804952d3468",
+  tokenId: "bfe0060c-a465-41a0-a620-c804952d3468",
   type: "merchant"
 });
 ```
@@ -83,7 +83,7 @@ config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
 var apiInstance = new ThreeDSApi(config);
 var createThreeDSSessionRequest = new CreateThreeDSSessionRequest()
 {
-    Pan = "bfe0060c-a465-41a0-a620-c804952d3468",
+    TokenId = "bfe0060c-a465-41a0-a620-c804952d3468",
     Type = "merchant"
 };
 
@@ -112,7 +112,7 @@ public class Example {
         ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
         CreateThreeDSSessionRequest createThreeDSSessionRequest = new CreateThreeDSSessionRequest();
         CreateThreeDSSessionResponse result = apiInstance.threeDSCreateSession(createThreeDSSessionRequest
-          .pan("bfe0060c-a465-41a0-a620-c804952d3468")
+          .tokenId("bfe0060c-a465-41a0-a620-c804952d3468")
           .type("merchant"));
         System.out.println(result);
     }
@@ -131,7 +131,7 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API
     three_ds_client = three_ds_api.ThreeDSApi(api_client)
 
     result = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
-        pan="bfe0060c-a465-41a0-a620-c804952d3468",
+        token_id="bfe0060c-a465-41a0-a620-c804952d3468",
         type="merchant"))
 ```
 
@@ -154,7 +154,7 @@ func main() {
   })
 
   createThreeDSSessionRequest := *basistheory.NewCreateThreeDSSessionRequest()
-  createThreeDSSessionRequest.SetPan("bfe0060c-a465-41a0-a620-c804952d3468")
+  createThreeDSSessionRequest.SetTokenId("bfe0060c-a465-41a0-a620-c804952d3468")
   createThreeDSSessionRequest.SetType("merchant")
 
   createResponse, createHttpResponse, createErr := apiClient.ThreeDSApi.ThreeDSCreateSession(contextWithAPIKey).CreateThreeDSSessionRequest(createThreeDSSessionRequest).Execute()
@@ -165,10 +165,14 @@ func main() {
 
 #### Request Parameters
 
-| Attribute | Required | Type | Description
-| --- | --- | --- | --- |
-| `pan` | true | _string_ | A card type token `id` |
-| `type` | true | _string_ | The 3DS session type. Use `merchant` for merchant initiated transactions |
+| Attribute         | Required | Type     | Description                                                              |
+|-------------------|----------|----------|--------------------------------------------------------------------------|
+| `token_id`        | false    | _string_ | A card type token `id`                                                   |
+| `token_intent_id` | false    | _string_ | A card type token intent `id`                                            |
+| `pan`             | false    | _string_ | <Deprecated/> A card type token `id`                                     |
+| `type`            | true     | _string_ | The 3DS session type. Use `merchant` for merchant initiated transactions |
+
+Either `token_id` or `token_intent_id` are required.
 
 ### Response
 
@@ -324,7 +328,7 @@ Returns a 3DS [session](#session-object) with the `id` provided. Returns [an err
     "id": "be3bec00-a1c3-4ffe-8971-20a30bbee031",
     "tenant_id": "9f328a79-b397-42ac-9b8d-18312157cc6b",
     "type": "customer",
-    "pan_token_id": "bfe0060c-a465-41a0-a620-c804952d3468",
+    "token_id": "bfe0060c-a465-41a0-a620-c804952d3468",
     "card_brand": "Visa",
     "expiration_date": "2024-03-23T14:01:26.4544211+00:00",
     "created_date": "2024-03-22T14:01:26.455016+00:00",
@@ -1087,23 +1091,25 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 ```
 
 ## Session Object
-| Attribute | Type | Description |
-| --- | --- | --- |
-| `id` | _uuid_ | Unique identifier of the session |
-| `tenant_id` | _uuid_ | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the session |
-| `type` | _string_ | The type of 3DS session - `customer` or `merchant` |
-| `pan_token_id` | _string_ | The ID for the card token used in the 3DS transaction |
-| `card_brand` | _string_ | The brand for the card used in the 3DS transaction |
-| `expiration_date` | _string_ | Date for when the 3DS session will expire |
-| `created_date` | _string_ | Created date of the session in ISO 8601 format |
-| `created_by` | _uuid_ | The [Application](/docs/api/applications#application-object) ID which created the session |
-| `modified_date` | _string_ | (Optional) Last modified date of the session in ISO 8601 format    |
-| `modified_by` | _uuid_ | (Optional) The [Application](/docs/api/applications) ID which last modified the session |
-| `device` | _string_ | The type of device used to create the 3DS session - `browser` or `mobile` |
-| `device_info` | [Device Info](#device-info-object) | Information about the device (collected by the SDKs) used to create the 3DS session |
-| `version` | [Version](#version-object) | Information about the supported 3DS version |
-| `method` | [Method](#method-object) | Information about the 3DS method invocation (device fingerprinting) |
-| `authentication` | [Authentication](#authentication-object) | The 3DS session authentication outcome |
+| Attribute         | Type                                     | Description                                                                               |
+|-------------------|------------------------------------------|-------------------------------------------------------------------------------------------|
+| `id`              | _uuid_                                   | Unique identifier of the session                                                          |
+| `tenant_id`       | _uuid_                                   | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the session                   |
+| `type`            | _string_                                 | The type of 3DS session - `customer` or `merchant`                                        |
+| `pan_token_id`    | _string_                                 | <Deprecated/> The ID of the card token used in the 3DS transaction                        |
+| `token_id`        | _string_                                 | The ID of the card token used in the 3DS transaction                                      |
+| `token_intent_id` | _string_                                 | The ID of the card token intent used in the 3DS transaction                               |
+| `card_brand`      | _string_                                 | The brand for the card used in the 3DS transaction                                        |
+| `expiration_date` | _string_                                 | Date for when the 3DS session will expire                                                 |
+| `created_date`    | _string_                                 | Created date of the session in ISO 8601 format                                            |
+| `created_by`      | _uuid_                                   | The [Application](/docs/api/applications#application-object) ID which created the session |
+| `modified_date`   | _string_                                 | (Optional) Last modified date of the session in ISO 8601 format                           |
+| `modified_by`     | _uuid_                                   | (Optional) The [Application](/docs/api/applications) ID which last modified the session   |
+| `device`          | _string_                                 | The type of device used to create the 3DS session - `browser` or `mobile`                 |
+| `device_info`     | [Device Info](#device-info-object)       | Information about the device (collected by the SDKs) used to create the 3DS session       |
+| `version`         | [Version](#version-object)               | Information about the supported 3DS version                                               |
+| `method`          | [Method](#method-object)                 | Information about the 3DS method invocation (device fingerprinting)                       |
+| `authentication`  | [Authentication](#authentication-object) | The 3DS session authentication outcome                                                    |
 
 ### Device Info Object
 | Attribute | Type | Description |
@@ -1154,28 +1160,30 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 
 ### Authentication Object
 
-| Attribute | Type | Description |
-| --- | --- | --- |
-| `threeds_version` | _string_ | The 3DS version used in the transaction |
-| `acs_transaction_id` | _string_ | The transaction ID from the 3DS Access Control Server (ACS) |
-| `ds_transaction_id` | _string_ | The transaction ID from the 3DS Directory Server (DS) |
-| `acs_reference_number` | _string_ | A unique identifier assigned to the DS by EMVCoD |
-| `ds_reference_number` | _string_ | A unique identifier assigned to the ACS by EMVCo |
-| `pan_token_id` | _string_ | The ID for the card token used in the 3DS transaction |
-| `authentication_value` | _string_ | The token value used to authorize the transaction. Also know as CAVV, AAV, AEVV, etc. |
-| `authentication_status` | _string_ | The outcome of the 3DS authentication. See [Authentication Status](#authentication-status) |
-| `authentication_status_code` | _string_ | Character code for the authentication status |
-| `authentication_status_reason` | _string_  | Additional information about the authentication status if necessary. See [Authentication Status Reason](#authentication-status-reason) |
-| `eci` | _string_ | Electronic Commerce Indicator  |
-| `acs_challenge_mandated` | _string_ | Indicates whether regional mandates (e.g., PSD2) required a challenge to be performed. See [ACS Challenge Mandated](#acs-challenge-mandated) |
-| `authentication_challenge_type` | _string_ | The type of challenge authentication used (if challenge). See [Authentication Challenge Type](#authentication-challenge-type) |
-| `acs_challenge_url` | _string_ | The URL to be used for the challenge |
-| `challenge_attempts` | _string_ | The number of challenges attempted by the cardholder |
-| `challenge_cancel_reason` | _string_ | The reason why a challenge was cancelled. See [Challenge Cancel Reason](#challenge-cancel-reason) |
-| `cardholder_info` | _string_ | Information from the issuer to be displayed to the cardholder |
-| `whitelist_status` | _string_ | Indicates if the cardholder whitelisted the merchant. See [Whitelist Status](#whitelist-status) |
-| `whitelist_status_source` | _string_ | Identifies the system that set the whitelist value. See [Whitelist Status Source](#whitelist-status-source) |
-| `message_extensions` | _array_ | Array of [Message Extensions](#message-extension-object) - Data necessary to support requirements not defined in the standard 3DS format |
+| Attribute                       | Type     | Description                                                                                                                                  |
+|---------------------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| `threeds_version`               | _string_ | The 3DS version used in the transaction                                                                                                      |
+| `acs_transaction_id`            | _string_ | The transaction ID from the 3DS Access Control Server (ACS)                                                                                  |
+| `ds_transaction_id`             | _string_ | The transaction ID from the 3DS Directory Server (DS)                                                                                        |
+| `acs_reference_number`          | _string_ | A unique identifier assigned to the DS by EMVCoD                                                                                             |
+| `ds_reference_number`           | _string_ | A unique identifier assigned to the ACS by EMVCo                                                                                             |
+| `pan_token_id`                  | _string_ | <Deprecated/> The ID of the card token used in the 3DS transaction                                                                           |
+| `token_id`                      | _string_ | The ID of the card token used in the 3DS transaction                                                                                         |
+| `token_intent_id`               | _string_ | The ID of the card token intent used in the 3DS transaction                                                                                  |
+| `authentication_value`          | _string_ | The token value used to authorize the transaction. Also know as CAVV, AAV, AEVV, etc.                                                        |
+| `authentication_status`         | _string_ | The outcome of the 3DS authentication. See [Authentication Status](#authentication-status)                                                   |
+| `authentication_status_code`    | _string_ | Character code for the authentication status                                                                                                 |
+| `authentication_status_reason`  | _string_ | Additional information about the authentication status if necessary. See [Authentication Status Reason](#authentication-status-reason)       |
+| `eci`                           | _string_ | Electronic Commerce Indicator                                                                                                                |
+| `acs_challenge_mandated`        | _string_ | Indicates whether regional mandates (e.g., PSD2) required a challenge to be performed. See [ACS Challenge Mandated](#acs-challenge-mandated) |
+| `authentication_challenge_type` | _string_ | The type of challenge authentication used (if challenge). See [Authentication Challenge Type](#authentication-challenge-type)                |
+| `acs_challenge_url`             | _string_ | The URL to be used for the challenge                                                                                                         |
+| `challenge_attempts`            | _string_ | The number of challenges attempted by the cardholder                                                                                         |
+| `challenge_cancel_reason`       | _string_ | The reason why a challenge was cancelled. See [Challenge Cancel Reason](#challenge-cancel-reason)                                            |
+| `cardholder_info`               | _string_ | Information from the issuer to be displayed to the cardholder                                                                                |
+| `whitelist_status`              | _string_ | Indicates if the cardholder whitelisted the merchant. See [Whitelist Status](#whitelist-status)                                              |
+| `whitelist_status_source`       | _string_ | Identifies the system that set the whitelist value. See [Whitelist Status Source](#whitelist-status-source)                                  |
+| `message_extensions`            | _array_  | Array of [Message Extensions](#message-extension-object) - Data necessary to support requirements not defined in the standard 3DS format     |
 
 #### ACS Challenge Mandated
 
