@@ -1,3 +1,10 @@
+# [1.188.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.187.0...v1.188.0) (2024-10-30)
+
+
+### Features
+
+* Documents token intents ([#462](https://github.com/Basis-Theory/developers.basistheory.com/issues/462)) ([910ef18](https://github.com/Basis-Theory/developers.basistheory.com/commit/910ef18123e38665b781cad4edea94f492182ef9))
+
 # [1.187.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.186.0...v1.187.0) (2024-10-25)
 
 
