@@ -116,32 +116,41 @@ const checkout = async () => {
 
   <TabItem value="ios" label="iOS">
 ```swift showLineNumbers
-let customHeaders: [String: String] = [
-    "Authorization": "Bearer your_token_here",
-    "Trace-Id": "your_trace_id_here"
-]
+class ViewController: UIViewController {
+    private var threeDSService: ThreeDSService! // important to keep `threeDSService` outside of the Task, otherwise swift will handle it as a weak reference and you may experience undesired behavior
+    let customHeaders: [String: String] = [
+          "Authorization": "Bearer your_token_here",
+          "Trace-Id": "your_trace_id_here"
+      ]
 
-private var threeDSService: ThreeDSService!
-private var sessionId: String? = nil
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-threeDSService = try ThreeDSService.builder()
-  .withApiKey("<PUBLIC_API_KEY>")
-  .withAuthenticationEndpoint("Your 3DS authentication endpoint URL") // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
-  .withSandbox()   // make sure withSandbox is removed in production environments
-  .build()
+        Task {
+            do {
+                threeDSService = try ThreeDSService.builder()
+                    .withApiKey("<YOUR PUBLIC API KEY>")
+                    .withAuthenticationEndpoint("<YOUR AUTHENTICATION ENDPOINT>", customHeaders)
+                    .build()
 
-Task {
-  try await threeDSService.initialize { [weak self] warnings in
-      if let warnings = warnings, !warnings.isEmpty {
-          // inspect warnings
-      }
-  }
+                try await threeDSService.initialize { [weak self] warnings in
+                        if let warnings = warnings, !warnings.isEmpty {
+                            let messages = warnings.map { $0.message }.joined(separator: "\n")
 
-  //highlight-start
-  // creating the session
-  let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
-  //highlight-end
-      
+                            print(messages)
+                        } else {
+                            print("No warnings.")
+                        }
+                }
+                //highlight-start
+                // creating the session
+                let session = try await threeDSService.createSession(tokenId: "<CARD TOKEN ID>")
+                //highlight-end
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
 }
 ```
 </TabItem>
@@ -602,47 +611,57 @@ const checkout = async () => {
 
 <TabItem value="ios" label="iOS">
 ```swift showLineNumbers
-let customHeaders: [String: String] = [
-    "Authorization": "Bearer your_token_here",
-    "Trace-Id": "your_trace_id_here"
-]
+class ViewController: UIViewController {
+    private var threeDSService: ThreeDSService! // important to keep `threeDSService` outside of the Task, otherwise swift will handle it as a weak reference and you may experience undesired behavior
+    let customHeaders: [String: String] = [
+          "Authorization": "Bearer your_token_here",
+          "Trace-Id": "your_trace_id_here"
+      ]
 
-private var threeDSService: ThreeDSService!
-private var sessionId: String? = nil
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-threeDSService = try ThreeDSService.builder()
-  .withApiKey("<PUBLIC_API_KEY>")
-  .withAuthenticationEndpoint("Your 3DS authentication endpoint URL", customHeaders) // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
-  .withSandbox()   // make sure withSandbox is removed in production environments
-  .build()
+        Task {
+            do {
+                threeDSService = try ThreeDSService.builder()
+                    .withApiKey("<YOUR PUBLIC API KEY>")
+                    .withAuthenticationEndpoint("<YOUR AUTHENTICATION ENDPOINT>", customHeaders)
+                    .build()
 
+                try await threeDSService.initialize { [weak self] warnings in
+                        if let warnings = warnings, !warnings.isEmpty {
+                            let messages = warnings.map { $0.message }.joined(separator: "\n")
 
-Task {
-  try await threeDSService.initialize { [weak self] warnings in
-      if let warnings = warnings, !warnings.isEmpty {
-          // inspect warnings
-      }
-  }
+                            print(messages)
+                        } else {
+                            print("No warnings.")
+                        }
+                }
 
-  let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
-  
-  //highlight-start
-  // start challenge
-  try await self.threeDSService.startChallenge(
-      sessionId: session.id, viewController: self,
-      onCompleted: { result in
-          print("Challenge completed with status: \(result.status)")
-            
-          guard let details = result.details else {
-              return
-          }
-          
-          print(details)
-      },
-      onFailure: { result in
-          print("Challenge failed with status: \(result.status)")
-      })
-  //highlight-end
+                let session = try await threeDSService.createSession(tokenId: "<CARD TOKEN ID>")
+
+                //highlight-start
+                // start challenge
+                try await threeDSService.startChallenge(sessionId: session.id, viewController: self,
+                    onCompleted: { result in
+                        print("Challenge \(result.status)")
+
+                        guard let details = result.details else {
+                            return
+                        }
+
+                        print(details)
+                    },
+                    onFailure: { [self] result in
+                        print("Challenge \(result.status)")
+                    })
+
+                //highlight-end
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
 }
 ```
 </TabItem>
