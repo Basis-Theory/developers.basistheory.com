@@ -461,16 +461,53 @@ The individual data objects are defined below by type.
 ```json title="proxy.invoked"
 {
   "proxy": {
-    "id": null,
+    "id": "...",
     "name": "...",
+    "response": {
+      "error": { ... },
+      "status": 401
+    },
     "type": "..."
   },
-  "request": {
+  "destination": {
+    "request": {
+      "body": "...",
+      "headers": {
+        "...": [
+          "..."
+        ]
+      },
+      "method": "...",
+      "query": "",
+      "url": "..."
+    },
+    "response": {
+      "body": "...",
+      "elapsed_ms": 105,
+      "headers": {
+        "...": [
+          "..."
+        ]
+      },
+      "status": 200
+    }
+  },
+  "request_transform": {
+    "response": {
+      "error": { ... }
+    }
+  },
+  "response_transform": {
+    "response": {
+      "error": { ... }
+    }
+  },
+  "request": { // DEPRECATED; Use `destination.request` instead
     "headers": "...",
     "method": "...",
     "url": "..."
   },
-  "response": {
+  "response": { // DEPRECATED; Use `destination.response` instead
     "headers": "...",
     "status_code": "...",
     "elapsed_ms": ...
@@ -482,12 +519,53 @@ The individual data objects are defined below by type.
 | proxy.id             | String | The unique identifier of the [proxy](/docs/api/proxies/pre-configured-proxies#proxy-object) |
 | proxy.name           | String | The name of the proxy.                                                                      |
 | proxy.type           | String | The type of the proxy.                                                                      |
-| request.headers      | String | The headers included in the request.                                                        |
-| request.method       | String | The HTTP method used for the request (e.g., GET, POST).                                     |
-| request.url          | String | The URL to which the request is sent.                                                       |
-| response.headers     | String | The headers returned in the response.                                                       |
-| response.status_code | String | The HTTP status code returned in the response.                                              |
-| response.elapsed_ms  | Number | The time taken to process the request in milliseconds.                                      |
+| proxy.response.error | Error  | If the proxy fails with an error. See below  |
+| destination.request.body | String | Sanitized body of the request sent to the destination. This is the output of a successful request transform |
+| destination.request.headers | Key:List of Strings | An object containing the request headers sent to the destination |
+| destination.request.method | String | HTTP Method used to call the destination |
+| destination.request.query | String | The URL query parameters |
+| destination.request.url | String | The destination URL |
+| destination.response.body | String | Sanitized body of the response from the destination |
+| destination.response.elapsed_ms | Number | The length of time for the destination to respond |
+| destination.response.headers | Key:List of Strings | An object containing the request headers sent to the destination |
+| destination.response.status | Number | The HTTP status code sent by the destination |
+| request_transform.response.error | Error | If the request transform fails. See below |
+| response_transform.response.error | Error | If the response transform fails. See below |
+| request.headers      | String | (Deprecated) The headers included in the request.                                                        |
+| request.method       | String | (Deprecated) The HTTP method used for the request (e.g., GET, POST).                                     |
+| request.url          | String | (Deprecated) The URL to which the request is sent.                                                       |
+| response.headers     | String | (Deprecated) The headers returned in the response.                                                       |
+| response.status_code | String | (Deprecated) The HTTP status code returned in the response.                                              |
+| response.elapsed_ms  | Number | (Deprecated) The time taken to process the request in milliseconds.                                      |
+
+#### Proxy Invoked Errors
+
+The `.error` objects in the `proxy.response`, `request_transform.response`, and `response_transform.response` objects will be one of two types of proxy errors.
+[Reactor Errors](/docs/api/proxies/proxy-errors#reactor-errors) and [Custom Errors](/docs/api/proxies/proxy-errors#custom-errors)
+
+```json title="Standard proxy error"
+"error": {
+  "errors": {
+      "error": [
+          "MY-CUSTOM-API-KEY header is required"
+      ]
+  },
+  "title": "One or more validation errors occurred.",
+  "status": 401,
+  "detail": "Authentication Failed"
+}
+```
+```json title="Custom proxy error"
+"error": {
+  "body": {
+    "myCustomError": "My custom error message"
+  },
+  "headers": {
+    "Custom-Response-Header-1": "custom-value-1",
+    "Custom-Response-Header-2": "custom-value-2"
+  }
+}
+```
 
 ### Proxy Updated
 
