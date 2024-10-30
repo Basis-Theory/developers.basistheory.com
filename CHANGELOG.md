@@ -1,3 +1,10 @@
+# [1.189.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.188.0...v1.189.0) (2024-10-30)
+
+
+### Features
+
+* Add enhanced proxy.invoked documentation ([#463](https://github.com/Basis-Theory/developers.basistheory.com/issues/463)) ([fd45bfd](https://github.com/Basis-Theory/developers.basistheory.com/commit/fd45bfd62ac14d397c2981c61f5810730e6e9471))
+
 # [1.188.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.187.0...v1.188.0) (2024-10-30)
 
 
