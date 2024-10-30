@@ -118,7 +118,7 @@ BasisTheory.tokens
   });
 ```
 
-```javascript showLineNumbers title="Create card token"
+```javascript showLineNumbers title="Create card token from CardElement"
 BasisTheory.tokens
   .create({
     type: "card",
@@ -126,7 +126,24 @@ BasisTheory.tokens
   })
   .then((token) => {
     console.log(token.id); // token to store
-    console.log(JSON.stringify(token.data)); // redacted card data
+    console.log(JSON.stringify(token.data)); // masked card data
+  });
+```
+
+```javascript showLineNumbers title="Create card token from multiple Elements"
+BasisTheory.tokens
+  .create({
+    type: "card",
+    data: {
+      number: cardNumberElement,
+      expiration_month: cardExpirationDateElement.month(),
+      expiration_year: cardExpirationDateElement.year(),
+      cvc: cardVerificationCodeElement
+    }
+  })
+  .then((token) => {
+    console.log(token.id); // token to store
+    console.log(JSON.stringify(token.data)); // masked card data
   });
 ```
 
@@ -197,11 +214,27 @@ BasisTheory.tokens
 
 The examples below show how to use Elements instances in the payload of the [`tokenIntents.create`](/docs/api/tokens/token-intents#create-token-intent) service.
 
-```javascript showLineNumbers title="Create card token intent"
+```javascript showLineNumbers title="Create card token intent from a CardElement"
 BasisTheory.tokenIntents
   .create({
     type: "card",
     data: cardElement
+  })
+  .then((tokenIntent) => {
+    console.log(tokenIntent.id); // token intent id to validate and convert to a token
+  });
+```
+
+```javascript showLineNumbers title="Create card token intent from multiple Elements"
+BasisTheory.tokenIntents
+  .create({
+    type: "card",
+    data: {
+      number: cardNumberElement,
+      expiration_month: cardExpirationDateElement.month(),
+      expiration_year: cardExpirationDateElement.year(),
+      cvc: cardVerificationCodeElement
+    }
   })
   .then((tokenIntent) => {
     console.log(tokenIntent.id); // token intent id to validate and convert to a token
