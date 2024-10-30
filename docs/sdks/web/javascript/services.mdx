@@ -62,7 +62,7 @@ const requestBody = {
 
 #### setValueRef\*
 
-Sets the element's value to the value of the provided element.  
+Sets the element's value to the value of the provided element.
 
 ```ts title="Card Expiration Date setValueRef example"
 const cardExpirationDateElement = BasisTheory.createElement("cardExpirationDate", {
@@ -75,7 +75,7 @@ const cardExpirationDateElementReadOnly = BasisTheory.createElement("cardExpirat
   readOnly: true
 });
 
-cardExpirationDateElementReadOnly.setValueRef(cardExpirationDateElement) 
+cardExpirationDateElementReadOnly.setValueRef(cardExpirationDateElement)
 ```
 
 `cardExpirationDateElementReadOnly` will be updated every time the value of `cardExpirationDateElement` changes.
@@ -85,7 +85,7 @@ cardExpirationDateElementReadOnly.setValueRef(cardExpirationDateElement)
 
 ## Tokenization Services
 
-Elements' values can be securely tokenized by simply passing the Element instance (or one of its [data parsing methods](#methods)) in the tokenization payload.
+Element values can be securely tokenized by simply passing the Element instance (or one of its [data parsing methods](#methods)) in the tokenization payload.
 
 <Alert>The actual input data never leaves the element (iframe) other than to hit our secure API endpoints.</Alert>
 
@@ -93,7 +93,7 @@ Elements' values can be securely tokenized by simply passing the Element instanc
 
 ### Create Token
 
-The examples below show how to use Elements' instances in the payload of the [`tokens.create`](/docs/api/tokens#create-token) service.
+The examples below show how to use Elements instances in the payload of the [`tokens.create`](/docs/api/tokens#create-token) service.
 
 ```javascript showLineNumbers title="Create generic token"
 BasisTheory.tokens
@@ -118,7 +118,7 @@ BasisTheory.tokens
   });
 ```
 
-```javascript showLineNumbers title="Create card token"
+```javascript showLineNumbers title="Create card token from CardElement"
 BasisTheory.tokens
   .create({
     type: "card",
@@ -126,7 +126,24 @@ BasisTheory.tokens
   })
   .then((token) => {
     console.log(token.id); // token to store
-    console.log(JSON.stringify(token.data)); // redacted card data
+    console.log(JSON.stringify(token.data)); // masked card data
+  });
+```
+
+```javascript showLineNumbers title="Create card token from multiple Elements"
+BasisTheory.tokens
+  .create({
+    type: "card",
+    data: {
+      number: cardNumberElement,
+      expiration_month: cardExpirationDateElement.month(),
+      expiration_year: cardExpirationDateElement.year(),
+      cvc: cardVerificationCodeElement
+    }
+  })
+  .then((token) => {
+    console.log(token.id); // token to store
+    console.log(JSON.stringify(token.data)); // masked card data
   });
 ```
 
@@ -147,7 +164,7 @@ BasisTheory.tokens
 
 ### Tokenize
 
-The example below shows how to use Elements' instances in the payload of the [`tokenize`](/docs/api/tokens#tokenize) service.
+The example below shows how to use Elements instances in the payload of the [`tokenize`](/docs/api/tokens#tokenize) service.
 
 ```javascript showLineNumbers title="Tokenize data"
 BasisTheory.tokenize({
@@ -193,9 +210,40 @@ BasisTheory.tokens
   });
 ```
 
+### Create Token Intent
+
+The examples below show how to use Elements instances in the payload of the [`tokenIntents.create`](/docs/api/tokens/token-intents#create-token-intent) service.
+
+```javascript showLineNumbers title="Create card token intent from a CardElement"
+BasisTheory.tokenIntents
+  .create({
+    type: "card",
+    data: cardElement
+  })
+  .then((tokenIntent) => {
+    console.log(tokenIntent.id); // token intent id to validate and convert to a token
+  });
+```
+
+```javascript showLineNumbers title="Create card token intent from multiple Elements"
+BasisTheory.tokenIntents
+  .create({
+    type: "card",
+    data: {
+      number: cardNumberElement,
+      expiration_month: cardExpirationDateElement.month(),
+      expiration_year: cardExpirationDateElement.year(),
+      cvc: cardVerificationCodeElement
+    }
+  })
+  .then((tokenIntent) => {
+    console.log(tokenIntent.id); // token intent id to validate and convert to a token
+  });
+```
+
 ## Detokenization Services
 
-Elements' values can be securely detokenized and revealed using these detokenization services and the Elements' [`setValue`](#methods) method.
+Element values can be securely detokenized and revealed using these detokenization services and the Element's [`setValue`](#methods) method.
 
 ### Retrieve Token
 

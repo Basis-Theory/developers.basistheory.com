@@ -60,7 +60,7 @@ The individual data objects are defined below by type.
     "created_by": "...",
     "device": "...",
     "expires_at": "...",
-    "pan_token_id": "...",
+    "token_id": "...",
     "card_brand": "..."
   }
 }
@@ -73,7 +73,8 @@ The individual data objects are defined below by type.
 | session.created_by            | String | The [Application](/docs/api/applications#application-object) ID which created the session |
 | session.device                | String | The device used to create the session (`browser` or `mobile`).                            |
 | session.expires_at            | String | The expiration date of the session in ISO 8601 format.                                    |
-| session.pan_token_id          | String | The unique identifier for the payment account number (PAN) token.                         |
+| session.token_id              | String | The unique identifier for the card token referenced by this session.                      |
+| session.token_intent_id       | String | The unique identifier for the card token intent referenced by this session.               |
 | session.card_brand            | String | The brand of the card associated with the session.                                        |
 
 ### Challenge Result Retrieved
@@ -87,21 +88,22 @@ The individual data objects are defined below by type.
     "created_by": "...",
     "device": "...",
     "expires_at": "...",
-    "pan_token_id": "...",
+    "token_id": "...",
     "card_brand": "..."
   }
 }
 ```
-| Name                 | Type   | Description                                                                                         |
-|----------------------|--------|-----------------------------------------------------------------------------------------------------|
-| session.id           | String | The unique identifier of the session.                                                               |
-| session.tenant_id    | String | The unique identifier of the [Tenant](/docs/api/tenants#tenant-object) associated with the session. |
-| session.created_at   | String | The creation date of the session in ISO 8601 format.                                                |
-| session.created_by   | String | The [Application](/docs/api/applications#application-object) ID which created the session           |
-| session.device       | String | The device used to create the session (`browser` or `mobile`).                                      |
-| session.expires_at   | String | The expiration date of the session in ISO 8601 format.                                              |
-| session.pan_token_id | String | The unique identifier for the payment account number (PAN) token.                                   |
-| session.card_brand   | String | The brand of the card associated with the session.                                                  |
+| Name                    | Type   | Description                                                                                         |
+|-------------------------|--------|-----------------------------------------------------------------------------------------------------|
+| session.id              | String | The unique identifier of the session.                                                               |
+| session.tenant_id       | String | The unique identifier of the [Tenant](/docs/api/tenants#tenant-object) associated with the session. |
+| session.created_at      | String | The creation date of the session in ISO 8601 format.                                                |
+| session.created_by      | String | The [Application](/docs/api/applications#application-object) ID which created the session           |
+| session.device          | String | The device used to create the session (`browser` or `mobile`).                                      |
+| session.expires_at      | String | The expiration date of the session in ISO 8601 format.                                              |
+| session.token_id        | String | The unique identifier for the card token referenced by this session.                                |
+| session.token_intent_id | String | The unique identifier for the card token intent referenced by this session.                         |
+| session.card_brand      | String | The brand of the card associated with the session.                                                  |
 
 ### Session Created
 
@@ -114,21 +116,22 @@ The individual data objects are defined below by type.
     "created_by": "...",
     "device": "...",
     "expires_at": "...",
-    "pan_token_id": "...",
+    "token_id": "...",
     "card_brand": "..."
   }
 }
 ```
-| Name                 | Type   | Description                                                                               |
-|----------------------|--------|-------------------------------------------------------------------------------------------|
-| session.id           | String | The unique identifier of the session.                                                     |
-| session.tenant_id    | String | The unique identifier of the [Tenant](/docs/api/tenants) associated with the session.     |
-| session.created_at   | String | The creation date of the session in ISO 8601 format.                                      |
-| session.created_by   | String | The [Application](/docs/api/applications#application-object) ID which created the session |
-| session.device       | String | The device used to create the session (`browser` or `mobile`).                            |
-| session.expires_at   | String | The expiration date of the session in ISO 8601 format.                                    |
-| session.pan_token_id | String | The unique identifier for the payment account number (PAN) token.                         |
-| session.card_brand   | String | The brand of the card associated with the session.                                        |
+| Name                    | Type   | Description                                                                               |
+|-------------------------|--------|-------------------------------------------------------------------------------------------|
+| session.id              | String | The unique identifier of the session.                                                     |
+| session.tenant_id       | String | The unique identifier of the [Tenant](/docs/api/tenants) associated with the session.     |
+| session.created_at      | String | The creation date of the session in ISO 8601 format.                                      |
+| session.created_by      | String | The [Application](/docs/api/applications#application-object) ID which created the session |
+| session.device          | String | The device used to create the session (`browser` or `mobile`).                            |
+| session.expires_at      | String | The expiration date of the session in ISO 8601 format.                                    |
+| session.token_id        | String | The unique identifier for the card token referenced by this session.                      |
+| session.token_intent_id | String | The unique identifier for the card token intent referenced by this session.               |
+| session.card_brand      | String | The brand of the card associated with the session.                                        |
 
 ## Account Updater
 
@@ -1035,3 +1038,62 @@ The individual data objects are defined below by type.
 | token.created_by             | String               | The creator of the token.                                             |
 | token.created_at             | String               | The creation date of the token in ISO 8601 format.                    |
 | token.expires_at             | String               | The expiration date of the token in ISO 8601 format.                  |
+
+## Token Intents
+
+### Token Intent Created
+
+```json title="token-intent.created"
+{
+  "token_intent": {
+    "id": "...",
+    "type": "...",
+    "fingerprint": "...",
+    "created_by": "...",
+    "created_at": "...",
+    "expires_at": "..."
+  }
+}
+```
+| Name                     | Type   | Description                                                                                      |
+|--------------------------|--------|--------------------------------------------------------------------------------------------------|
+| token_intent.id          | String | The unique identifier of the [token intent](/docs/api/tokens/token-intents#token-intent-object). |
+| token_intent.type        | String | The type of the token intent.                                                                    |
+| token_intent.fingerprint | String | The fingerprint of the token intent.                                                             |
+| token_intent.created_by  | String | The creator of the token intent.                                                                 |
+| token_intent.created_at  | String | The creation date of the token intent in ISO 8601 format.                                        |
+| token_intent.expires_at  | String | The expiration date of the token intent in ISO 8601 format.                                      |
+
+### Token Intent Deleted
+
+```json title="token-intent.deleted"
+{
+  "token_intent": {
+    "id": "..."
+  }
+}
+```
+| Name                     | Type   | Description                                                                                      |
+|--------------------------|--------|--------------------------------------------------------------------------------------------------|
+| token_intent.id          | String | The unique identifier of the [token intent](/docs/api/tokens/token-intents#token-intent-object). |
+
+### Token Intent Converted
+
+```json title="token-intent.converted"
+{
+  "token_intent": {
+    "id": "...",
+    "type": "..."
+  },
+  "token": {
+    "id": "...",
+    "type": "..."
+  }
+}
+```
+| Name              | Type   | Description                                                                                      |
+|-------------------|--------|--------------------------------------------------------------------------------------------------|
+| token_intent.id   | String | The unique identifier of the [token intent](/docs/api/tokens/token-intents#token-intent-object). |
+| token_intent.type | String | The type of the token intent.                                                                    |
+| token.id          | String | The unique identifier of the [token](/docs/api/tokens#token-object).                             |
+| token.type        | String | The type of the token.                                                                           |

@@ -24,8 +24,17 @@ Card details include specific details on the card to enable better visibility in
 | last4    | string | Last four digits of the tokenized card number                                      |
 | bin      | string | BIN based on the details found in the `bin_details.bin_length` enrichment property |
 
+### Default Bin
 
-## BIN Details <Enterprise />
+If a BIN Detail record cannot be found for a given card number, a default `bin` value will be derived from the card number.
+In this scenario, the returned `bin` length may not exactly match the actual issuer's `bin` length.
+
+| Rule                     | Default Bin Length | Example Card Number | Example Default Bin |
+|--------------------------|--------------------|---------------------|---------------------|
+| Card number < 16 digits  | 6                  | `411111111111111`   | `411111`            |
+| Card number >= 16 digits | 8                  | `4242424242424242`  | `42424242`          |
+
+## BIN Details <Enterprise /> \{#bin-details}
 
 <Alert>Request access to this feature in your [Tenant's Quota Page](https://portal.basistheory.com/settings?tab=quotas).</Alert>
 
