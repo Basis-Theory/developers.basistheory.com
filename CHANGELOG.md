@@ -1,3 +1,10 @@
+## [1.189.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.189.0...v1.189.1) (2024-10-31)
+
+
+### Bug Fixes
+
+* remove note on default autocomplete values ([#464](https://github.com/Basis-Theory/developers.basistheory.com/issues/464)) ([00d3580](https://github.com/Basis-Theory/developers.basistheory.com/commit/00d3580bba5e1654656275cfe5ed22bc4aca3b2e))
+
 # [1.189.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.188.0...v1.189.0) (2024-10-30)
 
 
