@@ -1,0 +1,160 @@
+---
+sidebar_label: Methods
+---
+
+import {
+  CardElement,
+  CardExpirationDateElement,
+  CardNumberElement,
+  CardVerificationCodeElement,
+  TextElement,
+} from "@basis-theory/basis-theory-react";
+import { BasisTheoryComponentDisplay } from "@site/src/components/sdks/BasisTheoryComponentDisplay";
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+
+# 3DS Mobile  SDK Methods
+
+## Create Session
+
+This method collects information from the browser on the background and sends it to the Basis Theory API, which then returns a newly created 3DS section.
+
+### Usage
+
+
+<Tabs className="bt-tabs">
+  <TabItem value="ios" label="iOS">
+```swift showLineNumbers
+let threeDSService = // Initialize threeDSService
+
+let session = try await threeDSService.createSession(tokenId: textFieldContent)
+```
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+   ```javascript showLineNumbers
+let threeDSService = // Initialize threeDSService
+
+let session = await threeDSService.createSession(tokenId)
+```
+    </TabItem>
+</Tabs>
+
+### Parameters
+The `createSession` method takes an object as parameter w/ the following attributes:
+
+| Attribute | Required | Type     | Description                                             |
+| --------- | -------- | -------- | ------------------------------------------------------- |
+| `pan`     | true     | _string_ | The Basis Theory token id for the card token to be used |
+
+
+### Return
+
+The method returns a `CreateThreeDsSessionResponse` object with the following attributes:
+
+| Attribute   | Type     | Description                             |
+| ----------- | -------- | --------------------------------------- |
+| `id`        | _string_ | The created session `id`                |
+| `cardBrand` | _string_ | The brand for the used card (i.e. Visa) |
+
+
+## Start Challenge
+
+This method initiates the 3DS challenge process, if it was deemed necessary during the 3DS authentication.
+
+### Usage
+
+<Tabs className="bt-tabs">
+  <TabItem value="ios" label="iOS">
+```swift showLineNumbers
+let threeDSService = // Initialize threeDSService
+let session = // Create 3DS Session
+
+try await self.threeDSService.startChallenge(
+    sessionId: sessionId, viewController: self,
+        onCompleted: { result in
+          // process successful challenge result
+        },
+        onFailure: { result in
+          // process failed challenge result
+        })
+    ```
+    
+<div style={{margin: "12px"}}>
+#### Parameters
+
+The `startChallenge` method takes in the following attributes:
+
+| Attribute     | Type       | Description                                                                                                                                                                                                      |
+| ------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sessionId`   | _string_   | The 3DS session ID provided by `createSession`                                                                                                                                                                   |
+| `viewController`    | _Activity_ | [`ViewController`](https://developer.apple.com/documentation/uikit/view_controllers)  |
+| `onCompleted` | _Function_ | Callback to handle 3DS challenge completion.                                                                                                                                                                     |
+| `onFailure`   | _Function_ | Callback to handle 3DS challenge failure                                                                                                                                                                         |
+
+
+Both callback functions take a `ChallengeResponse` object with the following properties:
+```swift
+public struct ChallengeResponse {
+    public let id: String
+    public let status: String // "successful" | "attempted" | "failed" | "unavailable" | "rejected"
+    public let details: String? // additional details depending on the status
+}
+```
+</div>
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+```javascript showLineNumbers
+let threeDSService = // Initialize threeDSService
+let session = // Create 3DS Session
+
+threeDsService.startChallenge(
+        session.id,
+        activity, // current activity
+        ::onChallengeCompleted, // success handler
+        ::onChallengeFailed // failure handler
+)
+```
+<div style={{margin: "12px"}}>
+#### Parameters
+
+The `startChallenge` method takes in the following attributes:
+
+| Attribute     | Type       | Description                                                                                                                                                                                                      |
+| ------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sessionId`   | _string_   | The 3DS session ID provided by `createSession`                                                                                                                                                                   |
+| `activity`    | _Activity_ | [`Activity`](https://developer.android.com/reference/android/app/Activity.html) or [`FragmentActivity`](<https://developer.android.com/reference/kotlin/androidx/fragment/app/Fragment?hl=en#requireActivity()>) |
+| `onCompleted` | _Function_ | Callback to handle 3DS challenge completion.                                                                                                                                                                     |
+| `onFailure`   | _Function_ | Callback to handle 3DS challenge failure                                                                                                                                                                         |
+
+
+#### Callbacks
+
+Success callback
+```javascript
+fun onChallengeCompleted(result: ChallengeResponse) {
+  // process successful challenge result
+}
+```
+
+Failure callback
+```javascript
+fun onChallengeFailed(result: ChallengeResponse) {
+  // process failed challenge result
+}
+```
+
+Both callback functions take a `ChallengeResponse` object with the following properties:
+```javascript
+data class ChallengeResponse(
+    val id: String,
+    val status: String, // "successful" | "attempted" | "failed" | "unavailable" | "rejected"
+    val details: String? = null // additional details depending on the status
+)
+```
+</div>
+  </TabItem>
+</Tabs>

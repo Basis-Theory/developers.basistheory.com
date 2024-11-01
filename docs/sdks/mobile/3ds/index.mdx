@@ -1,0 +1,162 @@
+---
+title: 3DS Mobile SDK
+description: The Basis Theory 3DS Mobile SDK makes it easy to start a 3DS transaction in iOS and Android apps. Learn More.
+sidebar_label: 3DS Mobile SDK
+toc_max_heading_level: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+import { GithubCard } from "@site/src/components/sdks/GithubCard";
+import { SDK } from "@site/src/components/types";
+
+# 3DS Mobile SDK <Enterprise />
+
+<Alert type={Alerts.INFO}>3D Secure is an Enterprise feature. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
+
+The Basis Theory 3DS Mobile SDK makes it easy to start a 3DS transaction in iOS and Android apps.
+
+Get started with our [guide](/docs/guides/process/authenticate-with-3ds) or continue reading the [reference docs](/docs/sdks/mobile/3ds/methods).
+
+## Before You Begin
+
+This SDK requires the use of an API Key associated with a **Public Application**.
+
+To create one, login into our [Portal](https://portal.basistheory.com) and create a new "Public" Application with the `3ds:session:create` permission.
+
+## Installation
+
+<Tabs className="bt-tabs" queryString="platform">
+  <TabItem value="ios" label="iOS">
+<div style={{ margin: "12px" }}>
+
+#### SPM
+
+To add the Basis Theory iOS package using [Swift Package Manager](https://www.swift.org/package-manager/), open XCode and click on `File → Add Packages`, search for "https://github.com/Basis-Theory/3ds-ios", and click on `Copy Dependency`.
+
+Currently, we don't support [CocoaPods](https://cocoapods.org/), contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> if needed.
+
+    </div>
+  </TabItem>
+  <TabItem value="android" label="Android">
+  
+   Add the following to `dependencyResolutionManagement` in `settings.gradle`
+        <div style={{marginLeft: "4px"}}>
+    ```kotlin showLineNumbers
+    dependencyResolutionManagement {
+        repositories {
+            //...other repositories
+            maven {
+                setUrl("https://maven.pkg.github.com/basis-theory/3ds-android")
+                credentials {
+                    username = // GH username
+                    password = // Personal Access Token (Classic) https://docs.github.com/en/packages/learn-github-packages/introduction-to-github-packages#authenticating-to-github-packages
+                }
+            }
+            maven {
+                setUrl("https://maven.ravelin.com/public/repositories/threeds2service/")
+            }
+        }
+    }
+    ```
+    </div>
+    Add dependencies to your app's `build.gradle`
+     <div style={{marginLeft: "4px"}}>
+    ```kotlin showLineNumbers
+    dependencies {
+        //... other deps
+        implementation "com.basistheory:3ds-android:0.1.0"
+        implementation "com.ravelin.threeds2service:threeds2service-sdk:1.4.2"
+    }
+    ```
+    </div>
+  </TabItem>
+</Tabs>
+
+## Initialization
+
+<Tabs className="bt-tabs" queryString="platform">
+  <TabItem value="ios" label="iOS">
+```swift showLineNumbers
+let customHeaders: [String: String] = [
+    "Authorization": "Bearer your_token_here",
+    "Trace-Id": "your_trace_id_here"
+]
+
+private var threeDSService: ThreeDSService!
+
+override func viewDidLoad() {
+    ... 
+    threeDSService = try ThreeDSService.builder()
+        .withApiKey("<PUBLIC_API_KEY>")
+        .withAuthenticationEndpoint("Your 3DS authentication endpoint URL", customHeaders) // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
+        .withSandbox()   // make sure withSandbox is removed in production environments
+        .build()
+
+    try await threeDSService.initialize { [weak self] warnings in
+        DispatchQueue.main.async {
+            if let warnings = warnings, !warnings.isEmpty {
+                // inspect warnings
+            } else {
+                //  continue
+            }
+        }
+    }
+    ...
+}
+    ```
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+    ```kotlin showLineNumbers
+val customHeaders = Headers.Builder()
+        .add("Authorization", "Bearer your_token_here")
+        .add("Trace-Id", "your_trace_id_here")
+        .build();
+
+val threeDSService = ThreeDSService.Builder()
+        .withApiKey("<PUBLIC_API_KEY>")
+        .withApplicationContext(context)
+        // https://developers.basistheory.com/docs/guides/process/authenticate-with-3ds#authenticating-a-session
+        .withAuthenticationEndpoint("Your 3DS authentication endpoint URL", customHeaders)
+        .apply {
+            // make sure withSandbox is removed in production environments
+            if (BuildConfig.DEBUG) {
+                withSandbox()
+            }
+        }
+        .build()
+
+    val warnings = threeDSService.initialize()
+
+    if (!warnings.isNullOrEmpty()) {
+        // inspect warnings
+    }
+```
+</TabItem>
+</Tabs>
+
+#### Security Warnings
+During initialization, the SDK runs key security checks that may generate warnings for your application. 
+It's up to your app to decide how to handle these warnings. Even if ignored, the SDK will continue to function normally. 
+Here are the possible warnings and their severity levels:
+
+- App running on an emulator (High)
+- Debugger attached (Medium)
+- Device is jailbroken (High)
+- Handling these warnings properly is important for maintaining strong security.
+- SDK integrity compromised (High)
+- Unsupported OS or version (High)
+
+### Initialization Parameters
+
+| Parameter                      | Platform     | Type               | Description                                                                                                                                                                             |
+| ------------------------------ | ------------ | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `withApiKey`                   | iOS, Android | _string_           | The API Key used to identify the [Application](/docs/api/applications)                                                                                                                  |
+| `withApplicationContext`       | Android      | _Context_          | The application [context](<https://developer.android.com/reference/android/content/Context#getApplicationContext()>)                                                                    |
+| `withAuthenticationEndpoint`\* | iOS, Android | _string_, _object_ | Your 3DS [authentication endpoint](/docs/guides/process/authenticate-with-3ds#authenticating-a-session) and any additional headers you may need to send to your authentication endpoint |
+| `withLocale`                   | iOS, Android | _string_           | Provides information about the default locality in the following format `{language}-{country}`                                                                                          |
+| `withSandbox`                  | iOS, Android | _string_           | Runs 3DS process against a sandbox/testing environment, it must be enabled for your tenant                                                                                              |
