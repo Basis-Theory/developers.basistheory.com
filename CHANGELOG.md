@@ -1,3 +1,10 @@
+# [1.190.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.189.1...v1.190.0) (2024-11-01)
+
+
+### Features
+
+* adds 3DS mobile SDKs  ([#461](https://github.com/Basis-Theory/developers.basistheory.com/issues/461)) ([b7d5c37](https://github.com/Basis-Theory/developers.basistheory.com/commit/b7d5c3738f77e2d47ec5cbbf197572a2bfb254d6))
+
 ## [1.189.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.189.0...v1.189.1) (2024-10-31)
 
 
