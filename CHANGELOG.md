@@ -1,3 +1,10 @@
+# [1.191.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.190.0...v1.191.0) (2024-11-04)
+
+
+### Features
+
+* adds errors to metadata ([#465](https://github.com/Basis-Theory/developers.basistheory.com/issues/465)) ([8c3396b](https://github.com/Basis-Theory/developers.basistheory.com/commit/8c3396bb4c6dc20a2abe906519ad094fa722fe0e))
+
 # [1.190.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.189.1...v1.190.0) (2024-11-01)
 
 
