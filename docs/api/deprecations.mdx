@@ -264,8 +264,9 @@ To migrate your Async Reactors, you will need to:
 
 1. Create a new Webhook either with our [Management API](https://developers.basistheory.com/docs/api/webhooks/api)/[Terraform Provider](https://developers.basistheory.com/docs/sdks/server-side/terraform) or in the [Portal](https://portal.basistheory.com/settings/webhooks). 
     1. You may be able to use the existing URL for your rector processing
-2. Retrive the [Async Reactor Results](/docs/api/reactors#retrieve-result)
+2. [Invoke a Reactor Asynchronous](/docs/api/reactors/#invoke-a-reactor-async) with the new `/reactors/:id/react-async` endpoint.
+3. Retrive the [Async Reactor Results](/docs/api/reactors#retrieve-result)
     1. This ensures the system receiving the webhook has access to the results of the reactor.
-3. Process them in the same way you are currently doing with the `callback_url`
+4. Process them in the same way you are currently doing with the `callback_url`
 
 To coordinate a rollout of these changes, we suggest you stop sending requests with `callback_url` and change the request path from `/react` to `/react-async` when you roll out the new webhook handler code. This will avoid any overlap or duplication of processing.
