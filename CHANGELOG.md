@@ -1,3 +1,10 @@
+# [1.192.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.191.0...v1.192.0) (2024-11-05)
+
+
+### Features
+
+* async reactor callback_url deprecation ([#466](https://github.com/Basis-Theory/developers.basistheory.com/issues/466)) ([c213194](https://github.com/Basis-Theory/developers.basistheory.com/commit/c2131940482ff8868808614b68d93d0b6726bc6f))
+
 # [1.191.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.190.0...v1.191.0) (2024-11-04)
 
 
