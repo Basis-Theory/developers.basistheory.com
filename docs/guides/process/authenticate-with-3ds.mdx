@@ -7,6 +7,7 @@ import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
 import Android from "@site/static/img/sdk/logos/android.svg";
 import AppleDark from "@site/static/img/sdk/logos/apple-dark.svg";
 import Apple from "@site/static/img/sdk/logos/apple.svg";
+import React from "@site/static/img/sdk/logos/react.svg";
 import { Card } from "@site/src/components/shared/Card";
 import styles from "@site/src/pages/index.module.css";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
@@ -53,7 +54,7 @@ Next, you will need a [Private Application](/docs/api/applications) for your bac
 
 ## Configuring the Basis Theory 3DS SDK
 
-The 3DS SDK is available as an NPM package and also available for Android and iOS apps.
+The 3DS SDK is available as an NPM package for Web and React Native, and also available for Android and iOS apps.
 
 See instructions below on how to install and configure it.
 <div className={styles["sdk-column"]}>
@@ -63,15 +64,15 @@ See instructions below on how to install and configure it.
     className={styles.sdk}
   >Web 3DS SDK Reference</Card>
 
- <Card
+  <Card
     href="/docs/sdks/mobile/3ds"
     img={<Android />}
     className={styles.sdk}
   >Android 3DS SDK Reference</Card>
 
- <Card
+  <Card
     href="/docs/sdks/mobile/3ds"
-    img={<ThemedImage
+    img={<div className={styles["logo-container"]}><ThemedImage
            width="100%"
            height="100%"
            sources={{
@@ -79,8 +80,14 @@ See instructions below on how to install and configure it.
               dark: useBaseUrl("/img/sdk/logos/apple-dark.svg"),
             }}
         />
-      }
-    className={styles.sdk}>iOS 3DS SDK Reference</Card>
+      </div>}
+  className={styles.sdk}>iOS 3DS SDK Reference</Card>
+
+  <Card
+    href="/docs/sdks/mobile/3ds-react-native/"
+    img={<React />}
+    className={styles.sdk}
+  >React Native SDK Reference</Card>
   </div>
 
 ## Creating a Card Token
@@ -112,7 +119,7 @@ const checkout = async () => {
   //highlight-end
 }
 ```
-</TabItem>
+  </TabItem>
 
   <TabItem value="ios" label="iOS">
 ```swift showLineNumbers
@@ -129,7 +136,7 @@ class ViewController: UIViewController {
         Task {
             do {
                 threeDSService = try ThreeDSService.builder()
-                    .withApiKey("<YOUR PUBLIC API KEY>")
+                    .withApiKey("<PUBLIC_API_KEY>")
                     .withAuthenticationEndpoint("<YOUR AUTHENTICATION ENDPOINT>", customHeaders)
                     .build()
 
@@ -153,7 +160,8 @@ class ViewController: UIViewController {
     }
 }
 ```
-</TabItem>
+  </TabItem>
+
   <TabItem value="android" label="Android">
 ```kotlin showLineNumbers
 val customHeaders = Headers.Builder()
@@ -184,8 +192,30 @@ if (!warnings.isNullOrEmpty()) {
 val session = threeDSService.createSession("<CARD_TOKEN_ID>")
 //highlight-end
 ```
-</TabItem>
+  </TabItem>
 
+  <TabItem value="react" label="React Native">
+```jsx showLineNumbers
+import { BasisTheory3dsProvider, useBasisTheory3ds } from "@basis-theory/3ds-react-native";
+
+const App = () => {
+  return (
+    <BasisTheory3dsProvider apiKey={"<PUBLIC_API_KEY>"}>
+      <MyApp />
+    </BasisTheory3dsProvider>
+  );
+}
+
+const MyApp = () => {
+  const { createSession, startChallenge } = useBasisTheory3ds();
+
+  //highlight-start
+  //creating the session
+  const session = await createSession({ tokenId: "<CARD_TOKEN_ID>" });
+  //highlight-end
+}
+```
+  </TabItem>
 </Tabs>
 
 <Alert>Be sure to replace <code>&lt;PUBLIC_API_KEY></code> with the Public API Key you created in the <a href="#public-application">Public Application</a> step,
@@ -607,9 +637,9 @@ const checkout = async () => {
   //highlight-end
 };
 ```
-</TabItem>
+  </TabItem>
 
-<TabItem value="ios" label="iOS">
+  <TabItem value="ios" label="iOS">
 ```swift showLineNumbers
 class ViewController: UIViewController {
     private var threeDSService: ThreeDSService! // important to keep `threeDSService` outside of the Task, otherwise swift will handle it as a weak reference and you may experience undesired behavior
@@ -664,8 +694,9 @@ class ViewController: UIViewController {
     }
 }
 ```
-</TabItem>
-<TabItem value="android" label="Android">
+  </TabItem>
+
+  <TabItem value="android" label="Android">
 ```kotlin showLineNumbers
 val customHeaders = Headers.Builder()
         .add("Authorization", "Bearer your_token_here")
@@ -693,7 +724,7 @@ if (!warnings.isNullOrEmpty()) {
 
 val session = threeDSService.createSession("<CARD_TOKEN_ID>")
 
-//highlight-start  
+//highlight-start
 // start challenge
 threeDsService.startChallenge(
   sessionId,
@@ -701,7 +732,7 @@ threeDsService.startChallenge(
   ::onChallengeCompleted,
   ::onChallengeFailed
 )
-        
+
 fun onChallengeCompleted(result: ChallengeResponse) {
   Log.i("3ds_service", "Challenge completed with status: ${result.status}");
 
@@ -715,12 +746,61 @@ fun onChallengeFailed(result: ChallengeResponse) {
 }
 //highlight-end
 ```
-</TabItem>
+  </TabItem>
+
+  <TabItem value="react" label="React Native">
+```jsx showLineNumbers
+import { BasisTheory3dsProvider, useBasisTheory3ds } from "@basis-theory/3ds-react-native";
+
+const App = () => {
+  return (
+    <BasisTheory3dsProvider apiKey={"<PUBLIC_API_KEY>"}>
+      <MyApp />
+    </BasisTheory3dsProvider>
+  );
+}
+
+const MyApp = () => {
+  const { createSession, startChallenge } = useBasisTheory3ds();
+
+  //creating the session
+  const session = await createSession({ tokenId: "<CARD_TOKEN_ID>" });
+
+  // authenticating the session
+  const authResponse = await fetch(
+    `{your-backend-host}/${session.id}/authenticate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const authentication = await authResponse.json();
+
+  //highlight-start
+  if (authentication.status === "challenge") {
+    // some information about the authentication is necessary to start a challenge
+    const challengeInfo = {
+      acsChallengeUrl: authentication.acs_challenge_url,
+      acsTransactionId: authentication.acs_transaction_id,
+      sessionId: session.id,
+      threeDSVersion: authentication.threeds_version,
+    };
+
+    // starting a challenge
+    // the response is true if the challenge was completed, false if there was an error
+    const challengeCompleted = await startChallenge(challengeInfo);
+  }
+  //highlight-end
+}
+```
+  </TabItem>
 </Tabs>
 
 ### Styling the Challenge Window (Web)
 
-<Alert>Styling of the challenge window is not supported in the mobile SDK\'s. Contact <a href="mailto:support@basistheory.com?subject=Styling 3DS mobile">support@basistheory.com</a> for more information.</Alert>
+<Alert>Styling of the challenge window is not supported in the mobile SDK\'s yet. Contact <a href="mailto:support@basistheory.com?subject=Styling 3DS mobile">support@basistheory.com</a> for more information.</Alert>
 
 
 The internal challenge 'window' is created and handled by card issuer and unfortunately there is not much that can be done to style it to fit with the design of your website.
@@ -1248,16 +1328,16 @@ Task {
   }
 
   let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
-  
+
   try await self.threeDSService.startChallenge(
       sessionId: session.id, viewController: self,
       onCompleted: { result in
           print("Challenge completed with status: \(result.status)")
-            
+
           guard let details = result.details else {
               return
           }
-          
+
           print(details)
       },
       onFailure: { result in
@@ -1281,7 +1361,7 @@ Task {
   request.httpBody = requestBody
 
   let (data, _) = try await URLSession.shared.data(for: request)
-  
+
   let decodedResponse = try JSONDecoder().decode(ChallengeResult.self, from: data)
 
   print(decodedResponse.authenticationStatus)
@@ -1330,7 +1410,7 @@ threeDsService.startChallenge(
   ::onChallengeCompleted,
   ::onChallengeFailed
 )
-        
+
 fun onChallengeCompleted(result: ChallengeResponse) {
   Log.i("3ds_service", "Challenge completed with status: ${result.status}");
 
@@ -1342,7 +1422,7 @@ fun onChallengeCompleted(result: ChallengeResponse) {
 fun onChallengeFailed(result: ChallengeResponse) {
   Log.i("Challenge failed with status: ${result.status}")
 }
-//highlight-start    
+//highlight-start
 // getting challenge result
 val client = OkHttpClient()
 val payload = JSONObject().apply {
@@ -1358,7 +1438,7 @@ client.newCall(req)
     .execute().use {
         val responseBody = requireNotNull(it.body?.string())
         it.body?.close()
-        
+
         if (!it.isSuccessful) {
             throw Error("Unable to authenticate, downstream service responded ${it.code} for session $sessionId, ${it.message}")
         }
@@ -1367,6 +1447,68 @@ client.newCall(req)
 //highlight-end
   ```
   </TabItem>
+
+    <TabItem value="react" label="React Native">
+```jsx showLineNumbers
+import { BasisTheory3dsProvider, useBasisTheory3ds } from "@basis-theory/3ds-react-native";
+
+const App = () => {
+  return (
+    <BasisTheory3dsProvider apiKey={"<PUBLIC_API_KEY>"}>
+      <MyApp />
+    </BasisTheory3dsProvider>
+  );
+}
+
+const MyApp = () => {
+  const { createSession, startChallenge } = useBasisTheory3ds();
+
+  //creating the session
+  const session = await createSession({ tokenId: "<CARD_TOKEN_ID>" });
+
+  // authenticating the session
+  const authResponse = await fetch(
+    `{your-backend-host}/${session.id}/authenticate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const authentication = await authResponse.json();
+
+  if (authentication.status === "challenge") {
+    // some information about the authentication is necessary to start a challenge
+    const challengeInfo = {
+      acsChallengeUrl: authentication.acs_challenge_url,
+      acsTransactionId: authentication.acs_transaction_id,
+      sessionId: session.id,
+      threeDSVersion: authentication.threeds_version,
+    };
+
+    // starting a challenge
+    // the response is true if the challenge was completed, false if there was an error
+    const challengeCompleted = await startChallenge(challengeInfo);
+  }
+
+     //highlight-start
+    // getting challenge result
+    const resultResponse = await fetch(
+      `{your-backend-host}/${session.id}/challenge-result`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const result = await resultResponse.json();
+    //highlight-end
+}
+```
+  </TabItem>
 </Tabs>
 
 That's it 🎉!
@@ -1374,5 +1516,4 @@ The result from the `authentication` (in case of frictionless) or `challenge-res
 
 ## Learn More
 
-- [3DS Web SDK Reference](/docs/sdks/web/3ds/)
 - [3DS API Reference](/docs/api/3ds/sessions)

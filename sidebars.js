@@ -504,7 +504,7 @@ const sidebars = {
           customProps: {
             enterprise: true,
           },
-        }
+        },
       ],
     },
     "api/deprecations",
@@ -631,7 +631,7 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "3DS SDK",
+          label: "3DS Mobile SDK",
           link: {
             type: "doc",
             id: "sdks/mobile/3ds/index",
@@ -640,6 +640,18 @@ const sidebars = {
             enterprise: true,
           },
           items: ["sdks/mobile/3ds/methods"],
+        },
+        {
+          type: "category",
+          label: "3DS React Native SDK",
+          link: {
+            type: "doc",
+            id: "sdks/mobile/3ds-react-native/index",
+          },
+          customProps: {
+            enterprise: true,
+          },
+          items: ["sdks/mobile/3ds-react-native/methods"],
         },
       ],
     },
