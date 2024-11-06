@@ -1,3 +1,10 @@
+# [1.193.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.192.0...v1.193.0) (2024-11-06)
+
+
+### Features
+
+* add docs for 3ds react native ([#467](https://github.com/Basis-Theory/developers.basistheory.com/issues/467)) ([3964dc7](https://github.com/Basis-Theory/developers.basistheory.com/commit/3964dc71f041d60b72eee5b53e627f58d58e78da))
+
 # [1.192.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.191.0...v1.192.0) (2024-11-05)
 
 
