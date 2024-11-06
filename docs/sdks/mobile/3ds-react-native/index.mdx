@@ -1,0 +1,92 @@
+---
+title: 3DS React Native SDK
+description: The Basis Theory 3DS React Native SDK makes it easy to start a 3DS transaction from a React Native mobile app. Learn More.
+sidebar_label: 3DS React Native SDK
+toc_max_heading_level: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { GithubCard } from "@site/src/components/sdks/GithubCard";
+import { SDK } from "@site/src/components/types";
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+
+# 3DS React Native SDK <Enterprise />
+
+<Alert type={Alerts.INFO}>3D Secure is an Enterprise feature. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
+
+The Basis Theory 3DS React Native SDK makes it easy to start a 3DS transaction from a React Native mobile app.
+
+Get started with our [guide](/docs/guides/process/authenticate-with-3ds) or continue reading the [reference docs](/docs/sdks/mobile/3ds-react-native/methods).
+
+## Before You Begin
+
+This SDK requires the use of an API Key associated with a **Public Application**.
+
+To create one, login into our [Portal](https://portal.basistheory.com) and create a new "Public" Application with the `3ds:session:create` permission.
+
+## Installation
+
+<Tabs className="bt-tabs">
+  <TabItem value="npm" label="npm">
+    ```shell showLineNumbers
+    npm install --save @basis-theory/3ds-react-native
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+    ```shell showLineNumbers
+    yarn add @basis-theory/3ds-react-native
+    ```
+  </TabItem>
+</Tabs>
+
+## Initialization
+
+### BasisTheory3dsProvider
+
+This [Context Provider](https://reactjs.org/docs/context.html#contextprovider) is used to wrap your application and provide the SDK instance to all the components in the tree.
+Your app must have the `BasisTheory3dsProvider` at the root level to ensure the SDK [hook](#usebasistheory) methods are available to all components.
+
+```jsx showLineNumbers
+import { BasisTheoryProvider } from "@basis-theory/3ds-react-native";
+
+const App = () => {
+  return (
+    <BasisTheory3dsProvider apiKey={"<API_KEY>"}>
+      <MyApp />
+    </BasisTheory3dsProvider>
+  );
+}
+```
+
+### Initialization Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `apiKey`  | true | _string_ | The API Key used to identify the [Application](/docs/api/applications) |
+| `apiBaseUrl` | false | _string_ | The base URL for the Basis Theory API, if using a mock API|
+| `scriptSrc` | false | _string_ | The source URL for the Basis Theory 3DS SDK CDN script |
+
+### useBasisTheory
+
+The `useBasisTheory` hook provides access to the SDK [methods](/docs/sdks/mobile/3ds-react-native/methods). It must be used within a component that is a descendant of the `BasisTheory3dsProvider`.
+
+```jsx showLineNumbers
+import { BasisTheory3dsProvider } from "@basis-theory/3ds-react-native";
+
+const App = () => {
+  return (
+    <BasisTheory3dsProvider apiKey={"<API_KEY>"}>
+      <MyApp />
+    </BasisTheory3dsProvider>
+  );
+}
+
+const MyApp = () => {
+  const { createSession, startChallenge } = useBasisTheory3ds();
+
+  //... rest of your component
+}
+```
