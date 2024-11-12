@@ -1,3 +1,10 @@
+# [1.194.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.193.0...v1.194.0) (2024-11-12)
+
+
+### Features
+
+* adds placeholder to card element ([#469](https://github.com/Basis-Theory/developers.basistheory.com/issues/469)) ([534de80](https://github.com/Basis-Theory/developers.basistheory.com/commit/534de80481203d4724d79a0df10c11d11086c36a))
+
 # [1.193.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.192.0...v1.193.0) (2024-11-06)
 
 
