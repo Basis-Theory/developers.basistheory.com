@@ -1,3 +1,10 @@
+# [1.195.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.194.0...v1.195.0) (2024-11-12)
+
+
+### Features
+
+* text element validation ([#468](https://github.com/Basis-Theory/developers.basistheory.com/issues/468)) ([9b4b151](https://github.com/Basis-Theory/developers.basistheory.com/commit/9b4b151572006902ceb441358cab23806f7d653c))
+
 # [1.194.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.193.0...v1.194.0) (2024-11-12)
 
 
