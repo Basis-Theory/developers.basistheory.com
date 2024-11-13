@@ -5,6 +5,8 @@ sidebar_label: Java
 
 import { GithubCard } from "@site/src/components/sdks/GithubCard";
 import { SDK } from "@site/src/components/types";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Java SDK
 
@@ -12,100 +14,75 @@ import { SDK } from "@site/src/components/types";
   heading="Java SDK"
   icon={SDK.Java}
   organization="basis-theory"
-  repository="basistheory-java"
+  repository="java-sdk"
 />
-
-## Getting Started
-* Sign-in to [Basis Theory](https://portal.basistheory.com) and go to [Applications](https://portal.basistheory.com/applications)
-* Create an Application using the Full Access template
-* Use the API Key issued for this application when initializing an `ApiClient`
-
-## Requirements
-
-Building the API client library requires:
-1. Java 8+
-2. Maven (3.8.3+)/Gradle (7.2+)
 
 ## Installation
 
-### Gradle users
-
 Add this dependency to your project's build file:
 
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="gradle" label="Gradle">
 ```groovy
-  repositories {
-      maven { url 'https://jitpack.io' }
-  }
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/Basis-Theory/java-sdk")
+        credentials {
+            username = 'GITHUB USERNAME'
+            password = 'GITHUB PASSWORD or TOKEN'
+        }
+    }
+}
 
-  dependencies {
-     implementation 'com.github.Basis-Theory:basistheory-java:[version]'
-  }
+dependencies {
+    implementation 'com.basistheory:api-client:[version]'
+}
 ```
-
-The latest release version can be found in [GitHub](https://github.com/Basis-Theory/basistheory-java/tags).
-
-### Maven users
-
-Add the JitPack repository to your build file:
-
-```xml
-<repositories>
+  </TabItem>
+  <TabItem value="maven" label="Maven">
+```xml title="pom.xml"
+<project>
+  <repositories>
     <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
+      <id>basistheory</id>
+      <url>https://maven.pkg.github.com/Basis-Theory/java-sdk</url>
     </repository>
-</repositories>
+  </repositories>
+
+  <dependencies>
+      <dependency>
+        <groupId>com.basistheory</groupId>
+        <artifactId>api-client</artifactId>
+        <version>[version]</version>
+      </dependency>
+  </dependencies>
+</project>
 ```
-
-Then add the following dependency to your project's POM:
-
-```xml
-<dependency>
-    <groupId>com.github.Basis-Theory</groupId>
-    <artifactId>basistheory-java</artifactId>
-    <version>[version]</version>
-</dependency>
+```xml title="settings.xml"
+<settings>
+  <servers>
+    <server>
+      <id>basistheory</id>
+      <username>[GITHUB USERNAME]</username>
+      <password>[GITHUB PASSWORD or TOKEN]</password>
+    </server>
+  </servers>
+</settings>
 ```
+  </TabItem>
+</Tabs>
 
-The latest release version can be found in [GitHub](https://github.com/Basis-Theory/basistheory-java/tags).
+The latest release version can be found in [GitHub](https://github.com/Basis-Theory/java-sdk/tags).
 
 ## Initialization
 
-Please follow the [installation](#installation) instruction and execute the following Java code:
-
 ```java
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.tenants.TenantsClient;
 
-// Import classes:
-import com.basistheory.ApiClient;
-import com.basistheory.ApiException;
-import com.basistheory.Configuration;
-import com.basistheory.auth.*;
-import com.basistheory.models.*;
-import com.basistheory.ApplicationsApi;
-
-public class Example {
-  public static void main(String[] args) {
-    ApiClient defaultClient = Configuration.getDefaultApiClient();
-    defaultClient.setBasePath("https://api.basistheory.com");
-
-    // Configure API key authorization: ApiKey
-    ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-    ApiKey.setApiKey("YOUR API KEY");
-    // Uncomment the following line to set a prefix for the API key, e.g., "Token" (defaults to null)
-    //ApiKey.setApiKeyPrefix("Token");
-
-    ApplicationsApi apiInstance = new ApplicationsApi(defaultClient);
-    CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest(); // CreateApplicationRequest |
-    try {
-      Application result = apiInstance.create(createApplicationRequest);
-      System.out.println(result);
-    } catch (ApiException e) {
-      System.err.println("Exception when calling ApplicationsApi#create");
-      System.err.println("Status code: " + e.getCode());
-      System.err.println("Reason: " + e.getResponseBody());
-      System.err.println("Response headers: " + e.getResponseHeaders());
-      e.printStackTrace();
-    }
-  }
-}
+TenantsClient client = new TenantsClient(
+                ClientOptions.builder()
+                .addHeader("BT-API-KEY", "<API_KEY>")
+                .build());
 ```
