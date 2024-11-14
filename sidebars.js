@@ -71,6 +71,13 @@ const sidebars = {
             enterprise: true,
           },
         },
+        {
+          type: "doc",
+          id: "guides/process/authenticate-mit-with-3ds",
+          customProps: {
+            enterprise: true,
+          },
+        },
         "guides/process/backup-stripe-tokens",
       ],
     },
