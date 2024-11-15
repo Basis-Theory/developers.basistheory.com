@@ -1,0 +1,208 @@
+---
+title: Testing
+---
+
+import AccountUpdaterTestCards from "@site/docs/api/account-updater/_test-cards.mdx";
+import BankAccountTestCards from "@site/docs/api/enrichments/_test-bank-accounts.mdx";
+import BinDetailsTestCards from "@site/docs/api/tokens/_bin-details-test-cards.mdx";
+import ThreeDSTestCards from "@site/docs/api/3ds/_test-cards.mdx";
+
+# Testing
+
+## Recommended Tenant Setup
+
+When integration testing or running your systems within a deployed environment, we recommend that you use a
+dedicated Basis Theory [tenant](/docs/concepts/access-controls#what-are-tenants) for each
+test environment that is separate from your production tenant. For example, if you maintain a separate Development,
+QA, Staging, and Production environment for your systems, we recommend that you mirror this setup by creating 4 separate tenants in Basis Theory.
+This can help you to isolate test data from production data and allow you to more securely lock down access to production API keys.
+
+## Testing Reactors
+
+[Reactor code](/docs/api/reactors#reactor-code) is simply an ES module that exports a default function.
+This can be tested like any JavaScript code or ES module using the tooling of your choice.
+Internally at Basis Theory, we have automated tests for our reactor code using Jest to ensure the JavaScript code itself works as expected.
+
+### Unit Testing
+
+For unit testing, we use [Jest mocks](https://jestjs.io/docs/manual-mocks) to mock either SDK methods if we use a third party SDK in the reactor,
+or to mock usages of an http client (e.g., axios, node-fetch).
+
+```javascript
+const fetch = require('node-fetch');
+
+// this is a fake piece of data we expect the destination service to return
+const fakeTransactionId = chance.string();
+
+// here we mock the json response returned by node-fetch
+jest.mock('node-fetch', () =>
+  jest.fn().mockResolvedValue({
+    status: 200,
+    json: jest
+      .fn()
+       // this mock should return a "real" response based on what your mocked service normally returns
+      .mockImplementation(() => Promise.resolve({ transaction_id: fakeTransactionId }))
+  })
+);
+
+describe('Example reactor unit test', () => {
+  const reactorFunction = require('./reactor');
+
+  it('should call third party service', async () => {
+    // this is the request we will pass into the reactor function
+    const reactorRequest = {
+      configuration: {
+        THIRD_PARTY_API_KEY: chance.string()
+      },
+      args: {
+        card_number: chance.string()
+      }
+    };
+
+    // we expect the third party service to be called by our reactor with this payload
+    const expectedRequestToThirdParty = {
+      payment_method: {
+        credit_card: {
+          number: reactorRequest.args.card_number
+        }
+      }
+    };
+
+    const reactorResponse = await reactorFunction(reactorRequest);
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith(
+      'https://my.downstream.service.com/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // our third party service accepts the API key in an X-API-KEY header
+          'X-API-KEY': reactorRequest.configuration.THIRD_PARTY_API_KEY
+        },
+        body: JSON.stringify(expectedRequestToThirdParty)
+      }
+    );
+
+    // we expect our reactor to return the transactionId returned by the third party service
+    expect(reactorResponse).toEqual({
+      raw: {
+        transactionId: fakeTransactionId
+      }
+    });
+  });
+});
+```
+
+### Integration Testing
+
+For integration testing, we ensure the reactor code actually works against the destination services that the reactor integrates with.
+As an example, the following snippet shows a sample reactor integration test:
+
+```javascript
+const reactorFunction = require('./reactor'); // this file exports our reactor function as an ES module
+const { AuthenticationError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+describe('Example reactor integration test', () => {
+  it('should return expected response', async () => {
+    const actualResponse = await reactorFunction({
+      configuration: {
+        // this is a real api key for an external service called by our reactor
+        THIRD_PARTY_API_KEY: process.env.THIRD_PARTY_API_KEY
+      },
+      args: {
+        // requests to the reactor will contain a token, which will be detokenized
+        // into plaintext before it reaches our reactor code
+        // here we test with a fake plaintext card number
+        card_number: '4242424242424242'
+      }
+    });
+
+    // assert on whatever you expect the reactor to return, in our case we expect a transactionId to be returned
+    expect(actualResponse.raw.transactionId).not.toBeNull();
+  });
+
+  it('should throw an AuthenticationError when using an invalid API key', async () => {
+    await expect(
+      reactorFunction({
+        configuration: {
+          // pass in a fake api key that will be rejected by the third party service
+          THIRD_PARTY_API_KEY: chance.string()
+        },
+        args: {
+            card_number: '4242424242424242'
+        }
+      })
+    ).rejects.toThrow(new AuthenticationError().message);
+  });
+});
+```
+
+### End-to-End Testing
+
+End-to-end tests against reactors running in Basis Theory can provide further confidence that your reactors work in a deployed environment.
+These tests require a bit more setup and should sit at the top of your testing pyramid, so we encourage you to first focus on unit and integration tests
+before attempting to write automated end-to-end tests. If you do choose to write end-to-end tests, here are some tips to keep in mind:
+
+- The reactor under test must be provisioned either just-in-time during the test using a management application's API key,
+or manually provisioned ahead of time and referenced by id in the tests. Either solution requires some configuration to be passed into your tests.
+- Invoking your reactor under test will require a private application's API key with `token:use` permission.
+- If your reactor expects to be called with detokenization expressions in the request,
+the tokens referenced in your test requests must be pre-created by your test code.
+This will require access to either a public or private application's API key with `token:create` permission.
+
+## Testing Techniques
+
+### Mocking at the Network Level
+
+Mocking network calls is useful within a category of testing that we refer to as [Acceptance Testing](https://blog.basistheory.com/api-acceptance-integration-testing).
+While the terminology differs throughout the software industry, we use this term to refer to black box testing
+of a system component to ensure it meets business requirements (i.e. acceptance criteria). With this type of test,
+you typically strive to mock external dependencies, especially network calls to external systems.
+
+There are many tools available to facilitate mocking network calls, such as [Wiremock](https://wiremock.org/) (our preferred tool) or
+[Mock Service Worker](https://mswjs.io/). If you're interested in learning more, check out our
+[series of blog posts](https://blog.basistheory.com/testing-layers-and-principles)
+diving deep into our testing philosophy at Basis Theory.
+
+### Mocking at the Unit Level
+
+We recommend that you generally adhere to good design principles and strive to loosely couple your application code from external dependencies,
+including integration points with Basis Theory. This can be accomplished by using inversion of control and dependency injection
+within your codebase whenever possible.
+
+We also offer official [SDKs](/docs/sdks) in many languages, which provide standard interfaces for interacting with the Basis Theory API.
+This makes it easy to mock methods on these interfaces within your unit tests. While the specifics of how to structure your code and
+mock dependencies within unit tests differ across languages and frameworks, you have all the tools available to write loosely-coupled and
+well-tested code.
+
+## Test Data
+
+### Card Numbers
+
+The [card](/docs/api/tokens/token-types#card) and [card_number](/docs/api/tokens/token-types#card-number) token types accept
+any Luhn-valid card numbers and are not restricted to a particular set of card numbers, even for tenants only used for testing purposes.
+However, if you exchange card tokens with any external systems using reactors or the proxy, those systems may have
+their own test card requirements that you should follow to ensure the integration works as expected.
+
+### BIN Details Test Cards
+
+<BinDetailsTestCards />
+
+### 3DS Test Cards
+
+The following test card numbers can be used to test various [3D Secure](/docs/api/3ds/sessions) scenarios.
+
+<ThreeDSTestCards />
+
+### Account Updater Test Cards
+
+The following test card numbers can be used to test various [Account Updater](/docs/api/account-updater) scenarios.
+
+<AccountUpdaterTestCards />
+
+### Bank Verification Test Cards
+
+The following test bank account numbers can be used to test various [Bank Verification](/docs/api/enrichments/bank-accounts) scenarios.
+
+<BankAccountTestCards />

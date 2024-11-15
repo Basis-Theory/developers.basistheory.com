@@ -345,17 +345,17 @@ const sidebars = {
         type: "doc",
         id: "api/index",
       },
-      items: ["api/index", "api/authentication", "api/request-correlation", "api/pagination", "api/errors", "api/ip-addresses", "api/rate-limits", "api/idempotency", /*"api/testing"*/],
+      items: ["api/index", "api/authentication", "api/request-correlation", "api/pagination", "api/errors", "api/ip-addresses", "api/rate-limits", "api/idempotency", "api/testing"],
     },
-    // {
-    //   type: "category",
-    //   label: "Applications",
-    //   link: {
-    //     type: "doc",
-    //     id: "api/applications/applications",
-    //   },
-    //   items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
-    // },
+    {
+      type: "category",
+      label: "Applications",
+      link: {
+        type: "doc",
+        id: "api/applications/applications",
+      },
+      items: ["api/applications/applications", /*"api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"*/],
+    },
     // "api/logs",
     // {
     //   type: "category",
