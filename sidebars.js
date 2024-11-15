@@ -354,7 +354,7 @@ const sidebars = {
         type: "doc",
         id: "api/applications/applications",
       },
-      items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", /*"api/applications/sessions"*/],
+      items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
     },
     // "api/logs",
     // {
