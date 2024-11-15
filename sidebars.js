@@ -356,7 +356,7 @@ const sidebars = {
       },
       items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
     },
-    // "api/logs",
+    "api/logs",
     // {
     //   type: "category",
     //   label: "Proxies",
