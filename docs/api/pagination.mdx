@@ -1,0 +1,193 @@
+---
+title: Pagination
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Pagination
+
+Most `List` endpoints support [offset pagination](#offset-pagination) to allow bulk fetching multiple items. Each `List` endpoint shares a common response structure. Examples of these requests can be seen in [List Applications](/docs/api/applications#list-applications) and [List Tokens](/docs/api/tokens#list-tokens).
+
+The [List Logs](/docs/api/logs#list-logs) endpoint supports [cursor pagination](#cursor-pagination).
+
+Most SDKs offer autopagination for both offset and cursor based paginations.
+Simply make one call to get the start of the list and iterate through the list as normal.
+The SDK will make additional requests as necessary to pull more data.
+
+## Offset Pagination
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/applications?page=2&size=10" \
+    -H "BT-API-KEY: <API_KEY>"
+    ```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+    ```javascript showLineNumbers
+    const tokens = await client.tokens.list({
+        page: 1,
+        size: 10
+    });
+
+    for await (const token of tokens) {
+        ...
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+    ```csharp showLineNumbers
+
+    ```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+    ```python showLineNumbers
+
+    ```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+    ```go showLineNumbers
+
+    ```
+
+  </TabItem>
+</Tabs>
+
+#### Query Parameters
+
+| Parameter | Required | Type      | Default | Description                                                        |
+| --------- | -------- | --------- | ------- | ------------------------------------------------------------------ |
+| `page`    | false    | _integer_ | 1       | Page number of the results to return.                              |
+| `size`    | false    | _integer_ | 20      | Number of results per page to return. Maximum size of 100 results. |
+
+### Response
+
+```json showLineNumbers
+{
+  "pagination": {
+    "total_items": 924,
+    "page_number": 2,
+    "page_size": 10,
+    "total_pages": 93
+  },
+  "data": [
+    {...},
+    {...},
+    {...}
+  ]
+}
+```
+
+### Offset Pagination Object
+
+| Attribute    | Type                                                                              | Description                                                                             |
+| ------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `pagination` | _[offset pagination metadata](#offset-pagination-metadata-object)_                | Pagination metadata for the response                                                    |
+| `data`       | _array_                                                                           | Query results of the request. See list endpoint resource for response schema definition |
+
+#### Offset Pagination Metadata Object
+
+| Attribute     | Type      | Description                                                 |
+| ------------- | --------- | ----------------------------------------------------------- |
+| `total_items` | _integer_ | Total number of items in the Tenant                         |
+| `page_number` | _integer_ | Current page number. Should match `page` query parameter.   |
+| `page_size`   | _integer_ | The size of each page. Should match `size` query parameter. |
+| `total_pages` | _integer_ | The total number of pages.                                  |
+
+## Cursor Pagination
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/logs?start=AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD&size=10" \
+    -H "BT-API-KEY: <API_KEY>"
+    ```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+    ```javascript showLineNumbers
+    const tokens = await client.tokens.listV2({
+        size: pageSize,
+    });
+
+    for await (const token of tokens) {
+        ...
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+    ```csharp showLineNumbers
+
+    ```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+    ```python showLineNumbers
+
+    ```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+    ```go showLineNumbers
+
+    ```
+
+  </TabItem>
+</Tabs>
+
+#### Query Parameters
+
+| Parameter | Required | Type      | Default | Description                                                            |
+| --------- | -------- | --------- | ------- | -----------------------------------------------------------------------|
+| `start`   | false    | _string_  | `null`  | Cursor provided in the previous query to get the next set of results.  |
+| `size`    | false    | _integer_ | 20      | The maximum number of results to return. Maximum size of 100 results.  |
+
+### Response
+
+```json showLineNumbers
+{
+  "pagination": {
+    "next": "AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD",
+    "page_size": 10
+  },
+  "data": [
+    {...},
+    {...},
+    {...}
+  ]
+}
+```
+
+### Cursor Pagination Object
+
+| Attribute    | Type                                                               | Description                                                                             |
+|--------------|--------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| `pagination` | _[cursor pagination metadata](#cursor-pagination-metadata-object)_ | Pagination metadata for the response                                                    |
+| `data`       | _array_                                                            | Query results of the request. See list endpoint resource for response schema definition |
+
+#### Cursor Pagination Metadata Object
+
+| Attribute   | Type      | Description                                                                  |
+|-------------|-----------|------------------------------------------------------------------------------|
+| `next`      | _string_  | Cursor to get the next set of results.                                       |
+| `page_size` | _integer_ | The maximum number of results returned. Should match `size` query parameter. |
