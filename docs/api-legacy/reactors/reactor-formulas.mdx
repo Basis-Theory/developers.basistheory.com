@@ -1,0 +1,1371 @@
+---
+title: Reactor Formulas
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Reactor Formulas
+
+Reactor formulas give you the ability to pre-configure custom integrations to securely process, enrich, and associate your tokens.
+
+<Alert type={Alerts.ERROR}>Reactor Formulas have been <a href="/docs/api/deprecations#deprecated-features">deprecated</a> in favor of the <code>code</code> property for Reactors.</Alert>
+
+## Whitelisted npm modules
+
+You can find a list of all whitelisted npm modules [here](/docs/api/reactors/reactor-dependencies).
+
+## Create Reactor Formula
+
+Create a new Reactor Formula for the Tenant.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/reactor-formulas"
+/>
+
+#### Permissions
+
+<Permission content="reactor:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+javascript='module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
+
+  return {
+    raw: {
+      foo: "bar"
+    }
+  };
+};'
+
+curl "https://api.basistheory.com/reactor-formulas" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "name": "My Private Reactor",
+    "description": "Securely react a token for another token",
+    "type": "private",
+    "icon": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+    "code": '"$(echo $javascript | jq -Rsa .)"',
+    "configuration": [
+      {
+        "name": "SERVICE_API_KEY",
+        "description": "Configuration description",
+        "type": "string"
+      }
+    ],
+    "request_parameters": [
+      {
+        "name": "request_parameter_1",
+        "description": "Request parameter description",
+        "type": "string"
+      },
+      {
+        "name": "request_parameter_2",
+        "description": "Request parameter description",
+        "type": "boolean",
+        "optional": true
+      }
+    ]
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('<MANAGEMENT_API_KEY>');
+
+const reactorFormula = await bt.reactorFormulas.create({
+  name: 'My Private Reactor',
+  description: 'Securely exchange token for another token',
+  type: 'private',
+  icon: 'data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
+  code: `
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: "bar"
+        }
+      };
+    };
+  `,
+  configuration: [
+    {
+      name: 'SERVICE_API_KEY',
+      description: 'Configuration description',
+      type: 'string',
+    },
+  ],
+  requestParameters: [
+    {
+      name: 'request_parameter_1',
+      description: 'Request parameter description',
+      type: 'string',
+    },
+    {
+      name: 'request_parameter_2',
+      description: 'Request parameter description',
+      type: 'boolean',
+      optional: true
+    }
+  ],
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
+
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
+
+var apiInstance = new ReactorFormulasApi(config);
+var createReactorFormulaRequest = new CreateReactorFormulaRequest(name: "My Private Reactor", type: "private")
+{
+    Description = "Securely exchange token for another token",
+    Icon = "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+    Code = @"
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: 'bar'
+        }
+      };
+    };
+  ",
+    _Configuration =
+    [
+        new("SERVICE_API_KEY", type: "string")
+        {
+            Description = "Configuration description"
+        }
+    ],
+    RequestParameters =
+    [
+        new("request_parameter_1", type: "string")
+        {
+            Description = "Request parameter description"
+        },
+
+        new("request_parameter_2", type: "boolean")
+        {
+            Description = "Request parameter description",
+            Optional = true
+        }
+    ]
+};
+
+ReactorFormula result = apiInstance.Create(createReactorFormulaRequest);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
+
+        ReactorFormulasApi apiInstance = new ReactorFormulasApi(defaultClient);
+        CreateReactorFormulaRequest createReactorFormulaRequest = new CreateReactorFormulaRequest(); // CreateReactorFormulaRequest |
+        ReactorFormula result = apiInstance.create(createReactorFormulaRequest
+                .name("My Private Reactor")
+                .description("Securely exchange token for another token")
+                .type("private")
+                .icon("data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==")
+                .code("""
+                    module.exports = async function (req) {
+                      // Do something with `req.configuration.SERVICE_API_KEY`
+
+                      return {
+                        raw: {
+                          foo: 'bar'
+                        }
+                      };
+                    };
+                      """)
+                ._configuration(Arrays.asList(
+                        new ReactorFormulaConfiguration()
+                        .name("SERVICE_API_KEY")
+                        .description("Configuration description")
+                        .type("string")))
+                .requestParameters(Arrays.asList(
+                        new ReactorFormulaRequestParameter()
+                        .name("request_parameter_1")
+                        .description("Request parameter description")
+                        .type("string"),
+                        new ReactorFormulaRequestParameter()
+                                .name("request_parameter_1")
+                                .description("Request parameter description")
+                                .type("boolean")
+                                .optional(true))));
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import reactor_formulas_api
+from basistheory.model.create_reactor_formula_request import CreateReactorFormulaRequest
+from basistheory.model.reactor_formula_configuration import ReactorFormulaConfiguration
+from basistheory.model.reactor_formula_request_parameter import ReactorFormulaRequestParameter
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
+    reactor_formulas_client = reactor_formulas_api.ReactorFormulasApi(
+        api_client)
+
+    reactor_formula = reactor_formulas_client.create(create_reactor_formula_request=CreateReactorFormulaRequest(
+        name="My Private Reactor",
+        description="Securely exchange token for another token",
+        type="private",
+        icon="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+        code=" \
+            module.exports = async function (req) { \
+                // Do something with req.configuration.SERVICE_API_KEY \
+
+                return { \
+                    raw: { \
+                        foo: 'bar' \
+                    } \
+                }; \
+            };",
+        configuration=[
+            ReactorFormulaConfiguration(
+                name="SERVICE_API_KEY",
+                description="Configuration description",
+                type="string"
+            )
+        ],
+        request_parameters=[
+            ReactorFormulaRequestParameter(
+                name="request_parameter_1",
+                description="Request parameter description",
+                type="string"
+            ),
+            ReactorFormulaRequestParameter(
+                name="request_parameter_2",
+                description="Request parameter description",
+                type="boolean",
+                optional=True
+            )
+        ]
+    ))
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
+  })
+
+  createReactorFormulaRequest := *basistheory.NewCreateReactorFormulaRequest("private", "My Private Reactor")
+  createReactorFormulaRequest.SetDescription("Securely exchange token for another token")
+  createReactorFormulaRequest.SetIcon("data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==")
+  createReactorFormulaRequest.SetCode(`
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+      raw: {
+        foo: 'bar'
+      }
+      };
+    };
+  `)
+  var configurations []basistheory.ReactorFormulaConfigurationModel
+  reactorFormulaConfiguration := *basistheory.NewReactorFormulaConfiguration("SERVICE_API_KEY", "string")
+  reactorFormulaConfiguration.SetDescription("Configuration description")
+  configurations = append(configurations, reactorFormulaConfiguration)
+  createReactorFormulaRequest.SetConfiguration(configurations)
+  var requestParameters []basistheory.ReactorFormulaRequestParameterModel
+  reactorFormulaRequestParameter1 := *basistheory.NewReactorFormulaRequestParameter("request_parameter_1", "string")
+  reactorFormulaRequestParameter1.SetDescription("Request parameter description")
+  requestParameters = append(requestParameters, reactorFormulaRequestParameter1)
+  reactorFormulaRequestParameter2 := *basistheory.NewReactorFormulaRequestParameter("request_parameter_2", "boolean")
+  reactorFormulaRequestParameter2.SetDescription("Request parameter description")
+  reactorFormulaRequestParameter2.SetOptional(true)
+  requestParameters = append(requestParameters, reactorFormulaRequestParameter2)
+  createReactorFormulaRequest.SetRequestParameters(requestParameters)
+
+  reactorFormula, httpResponse, err := apiClient.ReactorFormulasApi.Create(contextWithAPIKey).CreateReactorFormulaRequest(createReactorFormulaRequest).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute            | Required | Type     | Default | Description                                                                                                                                                                       |
+|----------------------|----------|----------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `name`               | true     | _string_ | `null`  | The name of the Reactor Formula. Has a maximum length of `200`                                                                                                                    |
+| `description`        | false    | _string_ | `null`  | The description of the Reactor Formula                                                                                                                                            |
+| `type`               | true     | _string_ | `null`  | [Type](#reactor-formula-types) of the Reactor Formula                                                                                                                             |
+| `icon`               | false    | _string_ | `null`  | Base64 [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image. Supported image types are: `image/png`, `image/jpg`, and `image/jpeg` |
+| `code`               | true     | _string_ | `null`  | [Reactor code](#reactor-formula-code) which will be executed when the Reactor Formula is processed                                                                                |
+| `configuration`      | true     | _array_  | `[]`    | Array of [configuration](#reactor-formula-configuration) options for configuring a Reactor                                                                                        |
+| `request_parameters` | true     | _array_  | `[]`    | Array of [request parameters](#reactor-formula-request-parameters) which will be passed when executing the Reactor                                                                |
+
+### Response
+
+Returns a [Reactor Formula](#reactor-formula-object) if the Reactor Formula was created. Returns [an error](/docs/api/errors) if there were validation errors, or the Reactor Formula failed to create.
+
+```json showLineNumbers
+{
+  "id": "17069df1-80f4-439e-86a7-4121863e4678",
+  "name": "My Private Reactor",
+  "description": "Securely exchange token for another token",
+  "type": "private",
+  "icon": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+  "code": "
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: 'bar',
+        }
+      };
+    };
+  ",
+  "configuration": [
+    {
+      "name": "SERVICE_API_KEY",
+      "description": "Configuration description",
+      "type": "string"
+    }
+  ],
+  "request_parameters": [
+    {
+      "name": "request_parameter_1",
+      "description": "Request parameter description",
+      "type": "string"
+    },
+    {
+      "name": "request_parameter_2",
+      "description": "Request parameter description",
+      "type": "boolean",
+      "optional": true
+    }
+  ],
+  "created_by": "c57a0d0d-e8e6-495f-9c79-a317cc21996c",
+  "created_at": "2020-09-15T15:53:00+00:00"
+}
+```
+
+## List Reactor Formulas
+
+Get a list of official Reactor Formulas and private Tenant-specific Reactor Formulas.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/reactor-formulas"
+/>
+
+#### Permissions
+
+<Permission content="reactor:read" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactor-formulas" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const reactorFormulas = await bt.reactorFormulas.list();
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
+
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
+
+var apiInstance = new ReactorFormulasApi(config);
+var name = "";
+var page = 1;
+var start = "";
+var size = 1;
+
+ReactorFormulaPaginatedList result = apiInstance.Get(name, page, start, size);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
+
+        ReactorFormulasApi apiInstance = new ReactorFormulasApi(defaultClient);
+        String name = "";
+        Integer page = 1;
+        Integer size = 56;
+        ReactorFormulaPaginatedList result = apiInstance.get(name, page, size);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import reactor_formulas_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
+    reactor_formulas_client = reactor_formulas_api.ReactorFormulasApi(
+        api_client)
+
+    reactor_formulas = reactor_formulas_client.get()
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
+  })
+
+  reactorFormulas, httpResponse, err := apiClient.ReactorFormulasApi.Get(contextWithAPIKey).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### Query Parameters
+
+| Parameter | Required | Type     | Default | Description                                 |
+|-----------|----------|----------|---------|---------------------------------------------|
+| `name`    | false    | _string_ | `null`  | Wildcard search of Reactor Formulas by name |
+
+### Response
+
+Returns a [paginated object](/docs/api/pagination#offset-pagination-object) with the `data` property containing an array of [Reactor Formulas](#reactor-formula-object). Providing any query parameters will filter the results. Returns [an error](/docs/api/errors) if Reactor Formulas could not be retrieved.
+
+```json showLineNumbers
+{
+  "pagination": {...}
+  "data": [
+    {
+      "id": "17069df1-80f4-439e-86a7-4121863e4678",
+      "name": "My Private Reactor",
+      "description": "Securely exchange token for another token",
+      "type": "private",
+      "icon": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+      "code": "
+        module.exports = async function (req) {
+          // Do something with req.configuration.SERVICE_API_KEY
+
+          return {
+            raw: {
+              foo: 'bar'
+            }
+          };
+        };
+      ",
+      "configuration": [
+        {
+          "name": "SERVICE_API_KEY",
+          "description": "Configuration description",
+          "type": "string"
+        }
+      ],
+      "request_parameters": [
+        {
+          "name": "request_parameter_1",
+          "description": "Request parameter description",
+          "type": "string"
+        },
+        {
+          "name": "request_parameter_2",
+          "description": "Request parameter description",
+          "type": "boolean",
+          "optional": true
+        }
+      ],
+      "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+      "created_at": "2020-09-15T15:53:00+00:00",
+      "modified_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+      "modified_at": "2021-03-01T08:23:14+00:00"
+    },
+    {...},
+    {...}
+  ]
+}
+```
+
+## Get a Reactor Formula
+
+Get a Reactor Formula by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/reactor-formulas/{id}"
+/>
+
+#### Permissions
+
+<Permission content="reactor:read" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactor-formulas/17069df1-80f4-439e-86a7-4121863e4678" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const reactorFormula = await bt.reactorFormulas.retrieve(
+  "17069df1-80f4-439e-86a7-4121863e4678"
+);
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
+
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
+
+var apiInstance = new ReactorFormulasApi(config);
+var id = Guid.Parse("");
+
+ReactorFormula result = apiInstance.GetById(id);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
+
+        ReactorFormulasApi apiInstance = new ReactorFormulasApi(defaultClient);
+        ReactorFormula result = apiInstance.getById(UUID.fromString("17069df1-80f4-439e-86a7-4121863e4678"));
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import reactor_formulas_api
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
+    reactor_formulas_client = reactor_formulas_api.ReactorFormulasApi(
+        api_client)
+
+    reactor_formula = reactor_formulas_client.get_by_id("17069df1-80f4-439e-86a7-4121863e4678")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
+  })
+
+  reactorFormula, httpResponse, err := apiClient.ReactorFormulasApi.GetById(contextWithAPIKey, "17069df1-80f4-439e-86a7-4121863e4678").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description                   |
+|-----------|----------|--------|---------|-------------------------------|
+| `id`      | true     | _uuid_ | `null`  | The ID of the Reactor Formula |
+
+### Response
+
+Returns a [Reactor Formula](#reactor-formula-object) with the `id` provided. Returns [an error](/docs/api/errors) if the Reactor Formula could not be retrieved.
+
+```json showLineNumbers
+{
+  "id": "17069df1-80f4-439e-86a7-4121863e4678",
+  "name": "My Private Reactor",
+  "description": "Securely exchange token for another token",
+  "type": "private",
+  "icon": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+  "code": "
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: 'bar',
+        }
+      };
+    };
+  ",
+  "configuration": [
+    {
+      "name": "SERVICE_API_KEY",
+      "description": "Configuration description",
+      "type": "string"
+    }
+  ],
+  "request_parameters": [
+    {
+      "name": "request_parameter_1",
+      "description": "Request parameter description",
+      "type": "string"
+    },
+    {
+      "name": "request_parameter_2",
+      "description": "Request parameter description",
+      "type": "boolean",
+      "optional": true
+    }
+  ],
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "modified_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "modified_at": "2021-03-01T08:23:14+00:00"
+}
+```
+
+## Update Reactor Formula
+
+Update a Reactor Formula by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.PUT}
+  endpoint="https://api.basistheory.com/reactor-formulas/{id}"
+/>
+
+#### Permissions
+
+<Permission content="reactor:update" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+javascript='module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
+
+  return {
+    raw: {
+      foo: "bar"
+    }
+  };
+};'
+
+curl "https://api.basistheory.com/reator-formula/17069df1-80f4-439e-86a7-4121863e4678" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "PUT" \
+  -d '{
+    "name": "My Private Reactor",
+    "description": "Securely exchange token for another token",
+    "type": "private",
+    "icon": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+    "code": '"$(echo $javascript | jq -Rsa .)"',
+    "configuration": [
+      {
+        "name": "SERVICE_API_KEY",
+        "description": "Configuration description",
+        "type": "string"
+      }
+    ],
+    "request_parameters": [
+      {
+        "name": "request_parameter_1",
+        "description": "Request parameter description",
+        "type": "string"
+      },
+      {
+        "name": "request_parameter_2",
+        "description": "Request parameter description",
+        "type": "boolean",
+        "optional": true
+      }
+    ]
+  }'
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('<MANAGEMENT_API_KEY>');
+
+const reactorFormula = await bt.reactorFormulas.update('17069df1-80f4-439e-86a7-4121863e4678', {
+  name: 'My Private Reactor',
+  description: 'Securely exchange token for another token',
+  type: 'private',
+  icon: 'data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
+  code: `
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: "bar",
+        }
+      };
+    };
+  `,
+  configuration: [
+    {
+      name: 'SERVICE_API_KEY',
+      description: 'Configuration description',
+      type: 'string',
+    },
+  ],
+  requestParameters: [
+    {
+      name: 'request_parameter_1',
+      description: 'Request parameter description',
+      type: 'string',
+    },
+    {
+      name: 'request_parameter_2',
+      description: 'Request parameter description',
+      type: 'boolean',
+      optional: true
+    }
+  ],
+});
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
+
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
+
+var id = Guid.Parse("");
+
+var apiInstance = new ReactorFormulasApi(config);
+var updateReactorFormulaRequest = new UpdateReactorFormulaRequest(name: "My Private Reactor", type: "private")
+{
+    Description = "Securely exchange token for another token",
+    Icon = "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+    Code = @"
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: 'bar'
+        }
+      };
+    };
+  ",
+    _Configuration =
+    [
+        new("SERVICE_API_KEY", type: "string")
+        {
+            Description = "Configuration description"
+        }
+    ],
+    RequestParameters =
+    [
+        new("request_parameter_1", type: "string")
+        {
+            Description = "Request parameter description"
+        },
+
+        new("request_parameter_2", type: "boolean")
+        {
+            Description = "Request parameter description",
+            Optional = true
+        }
+    ]
+};
+
+ReactorFormula result = apiInstance.Update(id, updateReactorFormulaRequest);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.Arrays;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
+
+        ReactorFormulasApi apiInstance = new ReactorFormulasApi(defaultClient);
+        UpdateReactorFormulaRequest updateReactorFormulaRequest = new UpdateReactorFormulaRequest(); // CreateReactorFormulaRequest |
+        ReactorFormula result = apiInstance.update(UUID.fromString("17069df1-80f4-439e-86a7-4121863e4678"),updateReactorFormulaRequest
+                .name("My Private Reactor")
+                .description("Securely exchange token for another token")
+                .type("private")
+                .icon("data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==")
+                .code("""
+                    module.exports = async function (req) {
+                      // Do something with `req.configuration.SERVICE_API_KEY`
+
+                      return {
+                        raw: {
+                          foo: 'bar'
+                        }
+                      };
+                    };
+                      """)
+                ._configuration(Arrays.asList(
+                        new ReactorFormulaConfiguration()
+                                .name("SERVICE_API_KEY")
+                                .description("Configuration description")
+                                .type("string")))
+                .requestParameters(Arrays.asList(
+                        new ReactorFormulaRequestParameter()
+                                .name("request_parameter_1")
+                                .description("Request parameter description")
+                                .type("string"),
+                        new ReactorFormulaRequestParameter()
+                                .name("request_parameter_1")
+                                .description("Request parameter description")
+                                .type("boolean")
+                                .optional(true))));
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+import basistheory
+from basistheory.api import reactor_formulas_api
+from basistheory.model.update_reactor_formula_request import UpdateReactorFormulaRequest
+from basistheory.model.reactor_formula_configuration import ReactorFormulaConfiguration
+from basistheory.model.reactor_formula_request_parameter import ReactorFormulaRequestParameter
+
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
+    reactor_formulas_client = reactor_formulas_api.ReactorFormulasApi(
+        api_client)
+
+    reactor_formula = reactor_formulas_client.update("17069df1-80f4-439e-86a7-4121863e4678", update_reactor_formula_request=UpdateReactorFormulaRequest(
+        name="My Private Reactor",
+        description="Securely exchange token for another token",
+        type="private",
+        icon="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+        code=" \
+            module.exports = async function (req) { \
+                // Do something with req.configuration.SERVICE_API_KEY \
+
+                return { \
+                    raw: { \
+                        foo: 'bar' \
+                    } \
+                }; \
+            };",
+        configuration=[
+            ReactorFormulaConfiguration(
+                name="SERVICE_API_KEY",
+                description="Configuration description",
+                type="string"
+            )
+        ],
+        request_parameters=[
+            ReactorFormulaRequestParameter(
+                name="request_parameter_1",
+                description="Request parameter description",
+                type="string"
+            ),
+            ReactorFormulaRequestParameter(
+                name="request_parameter_2",
+                description="Request parameter description",
+                type="boolean",
+                optional=True
+            )
+        ]
+    ))
+
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
+  })
+
+  updateReactorFormulaRequest := *basistheory.NewUpdateReactorFormulaRequest("private", "My Private Reactor")
+  updateReactorFormulaRequest.SetDescription("Securely exchange token for another token")
+  updateReactorFormulaRequest.SetIcon("data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==")
+  updateReactorFormulaRequest.SetCode(`
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+      raw: {
+        foo: 'bar'
+      }
+      };
+    };
+  `)
+
+  var configurations []basistheory.ReactorFormulaConfigurationModel
+  reactorFormulaConfiguration := *basistheory.NewReactorFormulaConfiguration("SERVICE_API_KEY", "string")
+  reactorFormulaConfiguration.SetDescription("Configuration description")
+  configurations = append(configurations, reactorFormulaConfiguration)
+  updateReactorFormulaRequest.SetConfiguration(configurations)
+  var requestParameters []basistheory.ReactorFormulaRequestParameterModel
+  reactorFormulaRequestParameter1 := *basistheory.NewReactorFormulaRequestParameter("request_parameter_1", "string")
+  reactorFormulaRequestParameter1.SetDescription("Request parameter description")
+  requestParameters = append(requestParameters, reactorFormulaRequestParameter1)
+  reactorFormulaRequestParameter2 := *basistheory.NewReactorFormulaRequestParameter("request_parameter_2", "boolean")
+  reactorFormulaRequestParameter2.SetDescription("Request parameter description")
+  reactorFormulaRequestParameter2.SetOptional(true)
+  requestParameters = append(requestParameters, reactorFormulaRequestParameter2)
+  updateReactorFormulaRequest.SetRequestParameters(requestParameters)
+
+  reactorFormula, httpResponse, err := apiClient.ReactorFormulasApi.Update(contextWithAPIKey, "17069df1-80f4-439e-86a7-4121863e4678").UpdateReactorFormulaRequest(updateReactorFormulaRequest).Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description                   |
+|-----------|----------|--------|---------|-------------------------------|
+| `id`      | true     | _uuid_ | `null`  | The ID of the Reactor Formula |
+
+#### Request Parameters
+
+| Attribute            | Required | Type     | Default | Description                                                                                                                                                                       |
+|----------------------|----------|----------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `name`               | true     | _string_ | `null`  | The name of the Reactor Formula. Has a maximum length of `200`                                                                                                                    |
+| `description`        | false    | _string_ | `null`  | The description of the Reactor Formula                                                                                                                                            |
+| `type`               | true     | _string_ | `null`  | [Type](#reactor-formula-types) of the Reactor Formula                                                                                                                             |
+| `icon`               | false    | _string_ | `null`  | Base64 [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image. Supported image types are: `image/png`, `image/jpg`, and `image/jpeg` |
+| `code`               | true     | _string_ | `null`  | [Reactor code](#reactor-formula-code) which will be executed when the Reactor Formula is processed                                                                                |
+| `configuration`      | true     | _array_  | `[]`    | Array of [configuration](#reactor-formula-configuration) options for configuring a Reactor                                                                                        |
+| `request_parameters` | true     | _array_  | `[]`    | Array of [request parameters](#reactor-formula-request-parameters) which will be passed when executing the Reactor                                                                |
+
+### Response
+
+Returns a [Reactor Formula](#reactor-formula-object) if the Reactor Formula was updated. Returns [an error](/docs/api/errors) if there were validation errors, or the Reactor Formula failed to update.
+
+```json showLineNumbers
+{
+  "id": "17069df1-80f4-439e-86a7-4121863e4678",
+  "name": "My Private Reactor",
+  "description": "Securely exchange token for another token",
+  "type": "private",
+  "icon": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+  "code": "
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: 'bar',
+        }
+      };
+    };
+  ",
+  "configuration": [
+    {
+      "name": "SERVICE_API_KEY",
+      "description": "Configuration description",
+      "type": "string"
+    }
+  ],
+  "request_parameters": [
+    {
+      "name": "request_parameter_1",
+      "description": "Request parameter description",
+      "type": "string"
+    },
+    {
+      "name": "request_parameter_2",
+      "description": "Request parameter description",
+      "type": "boolean",
+      "optional": true
+    }
+  ],
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "modified_by": "34053374-d721-43d8-921c-5ee1d337ef21",
+  "modified_at": "2021-03-01T08:23:14+00:00"
+}
+```
+
+## Delete Reactor Formula
+
+Delete a Reactor Formula by ID in the Tenant.
+
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/reactor-formulas/{id}"
+/>
+
+#### Permissions
+
+<Permission content="reactor:delete" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactor-formulas/17069df1-80f4-439e-86a7-4121863e4678" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+  -X "DELETE"
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+await bt.reactorFormulas.delete("17069df1-80f4-439e-86a7-4121863e4678");
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
+
+Configuration config = new Configuration();
+config.BasePath = "https://api.basistheory.com";
+config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
+
+var apiInstance = new ReactorFormulasApi(config);
+var id = Guid.Parse("");
+
+apiInstance.Delete(id);
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+import com.basistheory.*;
+import com.basistheory.auth.*;
+import java.util.UUID;
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.basistheory.com");
+
+        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
+        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
+
+        ReactorFormulasApi apiInstance = new ReactorFormulasApi(defaultClient);
+        apiInstance.delete(UUID.fromString("17069df1-80f4-439e-86a7-4121863e4678"));
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
+    reactor_formulas_client = reactor_formulas_api.ReactorFormulasApi(
+        api_client)
+
+    reactor_formulas = reactor_formulas_client.delete("17069df1-80f4-439e-86a7-4121863e4678")
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "github.com/Basis-Theory/basistheory-go/v3"
+)
+
+func main() {
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
+  })
+
+  httpResponse, err := apiClient.ReactorFormulasApi.Delete(contextWithAPIKey, "17069df1-80f4-439e-86a7-4121863e4678").Execute()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description                   |
+|-----------|----------|--------|---------|-------------------------------|
+| `id`      | true     | _uuid_ | `null`  | The ID of the Reactor Formula |
+
+### Response
+
+Returns [an error](/docs/api/errors) if the Reactor Formula failed to delete.
+
+## Reactor Formula Object
+
+| Attribute            | Type     | Description                                                                                                                    |
+|----------------------|----------|--------------------------------------------------------------------------------------------------------------------------------|
+| `id`                 | _uuid_   | Unique identifier of the Reactor Formula which can be used to [get a Reactor Formula](#reactor-formulas-get-a-reactor-formula) |
+| `name`               | _string_ | The name of the Reactor Formula. Has a maximum length of `200`                                                                 |
+| `description`        | _string_ | The description of the Reactor Formula                                                                                         |
+| `type`               | _string_ | [Type](#reactor-formula-types) of the Reactor Formula                                                                          |
+| `status`             | _string_ | [Status](#reactor-formula-statuses) of the Reactor Formula                                                                     |
+| `icon`               | _string_ | Base64 [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image                     |
+| `code`               | _string_ | [Reactor Formula code](#reactor-formula-code) which will be executed when the Reactor Formula is processed                     |
+| `configuration`      | _array_  | Array of [configuration](#reactor-formula-configuration) options for configuring a reactor                                     |
+| `request_parameters` | _array_  | Array of [request parameters](#reactor-formula-request-parameters) which will be passed when executing the reactor             |
+| `created_at`         | _date_   | (Optional) Created date of the Reactor Formula in ISO 8601 format                                                              |
+| `created_by`         | _uuid_   | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Reactor Formula                        |
+| `modified_at`        | _date_   | (Optional) Last modified date of the Reactor Formula in ISO 8601 format                                                        |
+| `modified_by`        | _uuid_   | (Optional) The ID of the user or [Application](/docs/api/applications) that last modified the Reactor Formula                  |
+
+### Reactor Formula Configuration
+
+The `configuration` property of a Reactor Formula defines the contract that the `configuration` property must satisfy on all [Reactors](/docs/api/reactors#reactor-object) created from this formula.
+Elements of a Reactor Formula's `configuration` array have the following schema:
+
+| Attribute     | Required | Type     | Default | Description                                                                                |
+|---------------|----------|----------|---------|--------------------------------------------------------------------------------------------|
+| `name`        | true     | _string_ | `null`  | Name of the configuration setting                                                          |
+| `description` | false    | _string_ | `null`  | Description of the configuration setting                                                   |
+| `type`        | true     | _string_ | `null`  | Data type of the configuration setting. Valid values are `string`, `boolean`, and `number` |
+
+Reactor configuration is intended for properties that can be defined once per Reactor and do not change between Reactor invocations.
+Complex nested objects (dot-separated names) are not currently supported within a Reactor's `configuration`.
+
+### Reactor Formula Request Parameters
+
+The `request_parameters` array on a Reactor Formula defines an optional contract that the `args` property must satisfy on each request when [Invoking a Reactor](/docs/api/reactors#invoke-a-reactor).
+Elements of a Reactor Formula's `request_parameters` array have the following schema:
+
+| Attribute     | Required | Type      | Default | Description                                                                            |
+|---------------|----------|-----------|---------|----------------------------------------------------------------------------------------|
+| `name`        | true     | _string_  | `null`  | Name of the request parameter. Complex objects can be denoted as `[parent].[child]`    |
+| `description` | false    | _string_  | `null`  | Description of the request parameter                                                   |
+| `type`        | true     | _string_  | `null`  | Data type of the request parameter. Valid values are `string`, `boolean`, and `number` |
+| `optional`    | false    | _boolean_ | `false` | If the request parameter is optional when executing the reactor                        |
+
+Request parameters are intended to define any parameters that will be provided to a Reactor at request-time, and may change across Reactor invocations.
+Complex objects properties can be passed within the `args` property to a Reactor, and they can be defined by dot-separating levels of the object hierarchy.
+
+Any undeclared `args` not matching a request parameter are still forwarded to the reactor. This means that if no request parameters are pre-declared,
+then you can provide any payload when invoking the reactor, but the tradeoff is that your reactor formula code must be robust enough
+to handle all possible request schemas.
+
+### Reactor Formula Code
+
+All Reactor Formula code snippets must export a function which takes in a [request object](#reactor-formula-request-object) and returns a [response object](#reactor-formula-response-object).
+
+#### Reactor Formula Request Object
+
+| Attribute       | Type     | Description                                                                                          |
+|-----------------|----------|------------------------------------------------------------------------------------------------------|
+| `args`          | _object_ | The arguments that were provided when the [reactor was invoked](/docs/api/reactors#invoke-a-reactor) |
+| `configuration` | _object_ | The configuration defined for the [Reactor object](/docs/api/reactors#reactor-object)                |
+
+#### Reactor Formula Response Object
+
+| Attribute  | Type     | Description                                                               |
+|------------|----------|---------------------------------------------------------------------------|
+| `raw`      | _object_ | (Optional) Raw output returned from the Reactor                           |
+| `tokenize` | _object_ | (Optional) A payload that will be tokenized to produce one or more tokens |
+
+The payload returned in the `tokenize` property will be tokenized in the same way that requests are tokenized via the Tokenize endpoint.
+For more information, see [Tokenize](/docs/api/tokens/tokenize).
+
+Reactor Formula Code is written in Javascript (targeting Node.js v16) and generally follows the structure:
+
+```javascript showLineNumbers
+module.exports = async function (req) {
+  const { my_arg } = req.args; // access any args provided with the request
+  const { MY_CONFIG } = req.configuration; // access any static config defined on the Reactor
+
+  // do anything here!
+
+  return {
+    raw: {}, // non-sensitive data that should be returned in plaintext
+    tokenize: {}, // sensitive data that should be tokenized
+  };
+};
+```
+
+For more information about writing your own code for a Reactor Formula, check out [our guide](https://developers.basistheory.com/guides/run-your-own-code-in-a-reactor/).
+
+### Reactor Formula Types
+
+| Type       | Description                                                                                |
+|------------|--------------------------------------------------------------------------------------------|
+| `official` | Official formulas that are built and supported by Basis Theory and its authorized partners |
+| `private`  | Private formulas which are only available to your Tenant                                   |
+
+### Reactor Formula Statuses
+
+| Type          | Description                                                                                                                                                                                                                                                                                                                    |
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `verified`    | The formula template has been verified and is generally available                                                                                                                                                                                                                                                              |
+| `coming_soon` | The formula has limited availability. Request <a href="https://support.basistheory.com/hc/requests/new?tf_subject=Join%20Private%20Beta%20for%20Reactor%20Formula&amp;tf_description=Let%20us%20know%20which%20reactor%20formula%20you'd%20like%20to%20use&amp;tf_priority=normal" target="_blank">a new formula template</a>. |

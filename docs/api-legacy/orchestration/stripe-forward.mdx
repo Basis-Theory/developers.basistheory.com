@@ -1,0 +1,152 @@
+---
+title: Stripe Forward
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Stripe Forward
+
+## Tokenize
+
+Endpoint conforming to Stripe's API contract to use their Forwarding API and create a card token.
+
+This endpoint differs from the [Create Token](/docs/api/tokens/#create-token) endpoint by conforming to Stripe's Forwarding API
+contract: `card` contains Stripe's payment method details, and `metadata` contains any Basis Theory specific token attributes that
+were specified when calling the Forwarding API.
+
+The `card` object will then be transformed to the Basis Theory's [card token data](/docs/api/tokens#card-object), so any expression used in the original
+request to the Forwarding API referring to card data must reference the final transformed data object as shown in the example request below.
+Specifically, in line `16` when referencing the card's expiration month, it is `data.expiration_month` and not `card.exp_month`.
+```json showLineNumbers
+{
+  "data": {
+    "number": "...",
+    "expiration_month": "...",
+    "expiration_year": "...",
+    "name": "..."
+  }
+}
+```
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/stripe-forward/tokenize" />
+
+#### Permissions
+
+<Permission content="token:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/connections/stripe-forward/tokenize" \
+    -H "BT-API-KEY: <API_KEY>" \
+    -H "Content-Type: application/json" \
+    -X "POST" \
+    -d '{
+      "card": {
+        "number": "4242424242424242",
+        "exp_month": "07",
+        "exp_year": "2030",
+        "cvc": "123",
+        "name": "John Doe"
+      },
+      "metadata": {
+        "mask": {
+          "number": "{{ data.number | reveal_last: 4 }}",
+          "expiration_month": "{{ data.expiration_month }}",
+          "expiration_year": "{{ data.expiration_year }}",
+          "name": "{{ data.name }}"
+        },
+        "containers": [ "/pci/high/" ],
+        "metadata": {
+          "nonSensitiveField": "Non-Sensitive Value"
+        },
+        "search_indexes": [
+          "{{ data.number | last4 }}"
+        ],
+        "fingerprint_expression": "{{ data.number }}",
+        "deduplicate_token": true,
+        "expires_at": "8/26/2030 7:23:57 PM -07:00"
+      }
+    }'
+    ```
+
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute  | Required | Type                                  | Default | Description                                                        |
+|------------|----------|---------------------------------------|---------|--------------------------------------------------------------------|
+| `card`     | true     | _[Stripe Card](#stripe-card)_         | `null`  | The card details to tokenize.                                      |
+| `metadata` | false    | _[Stripe Metadata](#stripe-metadata)_ | `null`  | Basis Theory's token attributes used when creating the card token. |
+
+#### Stripe Card
+
+| Attribute          | Required | Type     | Default | Description                                                          |
+| ------------------ | -------- | ---------| ------- | -------------------------------------------------------------------- |
+| `number`           | true     | _string_ | `null`  | The card number without any separators                               |
+| `exp_month`        | false    | _string_ | `null`  | Two-digit string representing the card's expiration month            |
+| `exp_year`         | false    | _string_ | `null`  | Four-digit string representing the card's expiration year            |
+| `cvc`              | false    | _string_ | `null`  | Three or four-digit card verification code with automatic expiration |
+| `name`             | false    | _string_ | `null`  | The Cardholder Name                                                  |
+
+#### Stripe Metadata
+
+| Attribute                | Required | Type                   | Default                                                   | Description                                                                                                                                                                                  |
+| ------------------------ | -------- | ---------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                     | false    | _string_               | `null`                                                    | A value or [expression](/docs/expressions/aliasing) specifying the token's ID. If not specified, a UUID will be assigned.                                                                    |
+| `mask`                   | false    | _any_                  | Depends on the [token type](/docs/api/tokens/token-types) | Token data mask. Can be an object, array, or any primitive type such as an integer, boolean, or string. See [mask expressions](/docs/expressions/masks).                                     |
+| `containers`             | false    | _array_                | Depends on the [token type](/docs/api/tokens/token-types) | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details. |
+| `metadata`               | false    | _map\<string, string>_ | `null`                                                    | A key-value map of strings containing non-sensitive data.                                                                                                                                    |
+| `search_indexes`         | false    | _array_                | `null`                                                    | Array of [expressions](/docs/expressions/search-indexes) used to generate indexes to be able to search against.                                                                              |
+| `fingerprint_expression` | false    | _string_               | <code>\{\{ data &#124; stringify }}</code>                | [Expressions](/docs/expressions/fingerprints) used to fingerprint your token.                                                                                                                |
+| `deduplicate_token`      | false    | _bool_                 | `null`                                                    | Whether the token is deduplicated on creation.                                                                                                                                               |
+| `expires_at`             | false    | _string_               | `null`                                                    | ISO8601 compatible Token expiration DateTime. See [Token Expiration](/docs/api/tokens/#token-expiration) for more details.                                                                   |
+
+<Alert type={Alerts.WARNING}>Never reveal sensitive information in the <code>id</code> of your token. See the documentation on <a href="/docs/expressions/aliasing#best-practices">Aliasing</a> to learn more about best practices when specifying your own token ID.</Alert>
+
+<Alert type={Alerts.WARNING}>Never store sensitive plaintext information in the <code>metadata</code> of your token.</Alert>
+
+### Response
+
+Returns a [token](#token-object) if the token was created. Returns [an error](/docs/api/errors) if there were validation errors, or the token failed to create.
+
+```json showLineNumbers
+{
+  "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "type": "card",
+  "data": {
+    "number": "XXXXXXXXXXXX4242",
+    "expiration_month": "07",
+    "expiration_year": "2030",
+    "name": "John Doe"
+  },
+  "mask": {
+    "number": "{{ data.number | reveal_last: 4 }}",
+    "expiration_month": "{{ data.expiration_month }}",
+    "expiration_year": "{{ data.expiration_year }}",
+    "name": "{{ data.name }}"
+  },
+  "containers": ["/pci/high/"],
+  "metadata": {
+    "nonSensitiveField": "Non-Sensitive Value"
+  },
+  "search_indexes": ["{{ data.number | last4 }}"],
+  "fingerprint": "2W6iy15GJoqj5V696BnsadZVTst5fjJf24iW9Kg6hFDa",
+  "fingerprint_expression": "{{ data.number }}",
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "expires_at": "2030-08-26T19:23:57-07:00"
+}
+```
+
+<Alert type={Alerts.WARNING}>For security reasons, the `data` and `metadata` attributes are redacted from the response when a token is deduplicated, unless the API Key has `token:read` permission in the targeted container. [Click here](/docs/concepts/what-are-tokens#deduplication) to learn more about this behavior.</Alert>

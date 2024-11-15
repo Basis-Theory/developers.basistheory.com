@@ -1,0 +1,1177 @@
+---
+title: Event Data
+---
+
+# Webhook Event Data
+
+## Structure of Events
+
+All event data will contain similar metadata.
+The structure of a webhook event is as follows:
+
+```json title="Event Structure"
+{
+  "event": {
+    "id": "e99b3bb9-25e4-484f-8a6d-6bc28edbbf39",
+    "type": "<TYPE OF EVENT DEFINED BELOW>",
+    "timestamp": "2024-04-09T13:56:37.864Z",
+    "tenant_id": "869d5b1c-1ae8-4ce6-96c6-73a602b407ff",
+    "trace_id": "0f777425-9080-4d82-b557-799f43aefcba",
+    "data": {
+      "EVENT-SPECIFIC-OBJECT": {...},
+      "actor": {
+        "id": "...",
+        "type": "...",
+        "name": "..."
+      }
+    }
+  },
+  "delivered_at": "2024-04-09T13:56:42.673Z"
+}
+```
+
+| Name                             | Type   | Description                                                                                                |
+|----------------------------------|--------|------------------------------------------------------------------------------------------------------------|
+| event                            | object | The main event object containing event details                                                             |
+| event.id                         | string | Unique identifier for the event                                                                            |
+| event.type                       | string | Type of event (see details below for each event)                                                           |
+| event.timestamp                  | string | ISO 8601 formatted timestamp of when the event occurred                                                    |
+| event.tenant_id                  | string | Unique identifier for the tenant associated with the event                                                 |
+| event.trace_id                   | string | Unique identifier for tracing this event across systems                                                    |
+| event.data.EVENT-SPECIFIC-OBJECT | object | Object containing data specific to the event type. The property name will be different based on the event. |
+| event.data.actor                 | object | Information about the actor who triggered the event (if available)                                         |
+| event.data.actor.id              | string | Unique identifier for the actor                                                                            |
+| event.data.actor.type            | string | Type of the actor (application, user, admin, system)                                                       |
+| event.data.actor.name            | string | Name or identifier of the actor                                                                            |
+| delivered_at                     | string | ISO 8601 formatted timestamp of when the event was delivered                                               |
+
+The individual data objects are defined below by type.
+
+## 3DS Sessions
+
+### Session Authenticated
+
+```json title="3ds.session.authenticated"
+{
+  "session": {
+    "id": "...",
+    "authentication_status": "...",
+    "created_at": "...",
+    "created_by": "...",
+    "device": "...",
+    "expires_at": "...",
+    "token_id": "...",
+    "card_brand": "..."
+  }
+}
+```
+| Name                          | Type   | Description                                                                               |
+|-------------------------------|--------|-------------------------------------------------------------------------------------------|
+| session.id                    | String | The unique identifier of the session.                                                     |
+| session.authentication_status | String | The [status](/docs/api/3ds/sessions#authentication-status) of the authentication.         |
+| session.created_at            | String | The creation date of the session in ISO 8601 format.                                      |
+| session.created_by            | String | The [Application](/docs/api/applications#application-object) ID which created the session |
+| session.device                | String | The device used to create the session (`browser` or `mobile`).                            |
+| session.expires_at            | String | The expiration date of the session in ISO 8601 format.                                    |
+| session.token_id              | String | The unique identifier for the card token referenced by this session.                      |
+| session.token_intent_id       | String | The unique identifier for the card token intent referenced by this session.               |
+| session.card_brand            | String | The brand of the card associated with the session.                                        |
+
+### Challenge Result Retrieved
+
+```json title="3ds.session.challenge-result-retrieved"
+{
+  "session": {
+    "id": "...",
+    "tenant_id": "...",
+    "created_at": "...",
+    "created_by": "...",
+    "device": "...",
+    "expires_at": "...",
+    "token_id": "...",
+    "card_brand": "..."
+  }
+}
+```
+| Name                    | Type   | Description                                                                                         |
+|-------------------------|--------|-----------------------------------------------------------------------------------------------------|
+| session.id              | String | The unique identifier of the session.                                                               |
+| session.tenant_id       | String | The unique identifier of the [Tenant](/docs/api/tenants#tenant-object) associated with the session. |
+| session.created_at      | String | The creation date of the session in ISO 8601 format.                                                |
+| session.created_by      | String | The [Application](/docs/api/applications#application-object) ID which created the session           |
+| session.device          | String | The device used to create the session (`browser` or `mobile`).                                      |
+| session.expires_at      | String | The expiration date of the session in ISO 8601 format.                                              |
+| session.token_id        | String | The unique identifier for the card token referenced by this session.                                |
+| session.token_intent_id | String | The unique identifier for the card token intent referenced by this session.                         |
+| session.card_brand      | String | The brand of the card associated with the session.                                                  |
+
+### Session Created
+
+```json title="3ds.session.created"
+{
+  "session": {
+    "id": "...",
+    "tenant_id": "...",
+    "created_at": "...",
+    "created_by": "...",
+    "device": "...",
+    "expires_at": "...",
+    "token_id": "...",
+    "card_brand": "..."
+  }
+}
+```
+| Name                    | Type   | Description                                                                               |
+|-------------------------|--------|-------------------------------------------------------------------------------------------|
+| session.id              | String | The unique identifier of the session.                                                     |
+| session.tenant_id       | String | The unique identifier of the [Tenant](/docs/api/tenants) associated with the session.     |
+| session.created_at      | String | The creation date of the session in ISO 8601 format.                                      |
+| session.created_by      | String | The [Application](/docs/api/applications#application-object) ID which created the session |
+| session.device          | String | The device used to create the session (`browser` or `mobile`).                            |
+| session.expires_at      | String | The expiration date of the session in ISO 8601 format.                                    |
+| session.token_id        | String | The unique identifier for the card token referenced by this session.                      |
+| session.token_intent_id | String | The unique identifier for the card token intent referenced by this session.               |
+| session.card_brand      | String | The brand of the card associated with the session.                                        |
+
+## Account Updater
+
+### Job Completed
+
+```json title="account-updater.job.completed"
+{
+  "job": {
+    "id": "55256454-c9f9-4e79-bc9e-24bd38af5c21",
+    "status": "..."
+  }
+}
+```
+| Name       | Type   | Description                       |
+|------------|--------|-----------------------------------|
+| job.id     | String | The unique identifier of the job. |
+| job.status | String | The current status of the job.    |
+
+### Job Created
+
+```json title="account-updater.job.created"
+{
+  "job": {
+    "id": "55256454-c9f9-4e79-bc9e-24bd38af5c21",
+    "status": "..."
+  }
+}
+```
+
+| Name       | Type   | Description                       |
+|------------|--------|-----------------------------------|
+| job.id     | String | The unique identifier of the job. |
+| job.status | String | The current status of the job.    |
+
+### Job Failed
+
+```json title="account-updater.job.failed"
+{
+  "job": {
+    "id": "55256454-c9f9-4e79-bc9e-24bd38af5c21",
+    "status": "..."
+  }
+}
+```
+| Name       | Type   | Description                       |
+|------------|--------|-----------------------------------|
+| job.id     | String | The unique identifier of the job. |
+| job.status | String | The current status of the job.    |
+
+## Applications
+
+### Application Created
+
+```json title="application.created"
+{
+  "application": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "type": "...",
+    "name": "...",
+    "created_by": "...",
+    "created_at": "...",
+    "permissions": [
+      "..."
+    ],
+    "rules": [
+      {
+        "description": "...",
+        "priority": 1,
+        "container": "...",
+        "transform": "...",
+        "conditions": [
+          {
+            "attribute": "...",
+            "operator": "...",
+            "value": "..."
+          }
+        ],
+        "permissions": [
+          "..."
+        ]
+      }
+    ]
+  }
+}
+```
+| Name                                       | Type   | Description                                                                                                                                        |
+|--------------------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| application.id                             | String | The unique identifier of the [Application](/docs/api/applications#application-object).                                                             |
+| application.type                           | String | The [type](/docs/api/applications/#application-types) of the application.                                                                          |
+| application.name                           | String | The name of the application.                                                                                                                       |
+| application.created_by                     | String | The user or application that created the application.                                                                                              |
+| application.created_at                     | String | The creation date of the application in ISO 8601 format.                                                                                           |
+| application.permissions                    | Array  | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application                                          |
+| application.rules                          | Array  | An array of [Access Rules](/docs/api/applications/access-rules) granted to the application                                                         |
+| application.rules[].description            | String | A description of the rule.                                                                                                                         |
+| application.rules[].priority               | Number | The priority level of the rule.                                                                                                                    |
+| application.rules[].container              | String | The [container](/docs/concepts/what-are-containers) associated with the rule.                                                                      |
+| application.rules[].transform              | String | The [transform](/docs/api/applications/access-rules#access-rule-transforms) applied by the rule.                                                   |
+| application.rules[].conditions             | Array  | List of [conditions](/docs/api/applications/access-rules#access-rule-conditions) to be satisfied for the rule to be used. Only applies to sessions |
+| application.rules[].conditions[].attribute | String | The attribute evaluated in the condition.                                                                                                          |
+| application.rules[].conditions[].operator  | String | The operator used in the condition.                                                                                                                |
+| application.rules[].conditions[].value     | String | The value to compare against in the condition.                                                                                                     |
+| application.rules[].permissions            | Array  | An array of [permissions](/docs/api/applications/permissions#permission-types) granted by the rule.                                                |
+
+### Application Updated
+
+```json title="application.updated"
+{
+  "application": {
+    "id": "...",
+    "name": "...",
+    "type": "...",
+    "permissions": [
+      "..."
+    ],
+    "rules": [
+      {
+        "description": "...",
+        "priority": 0,
+        "container": "...",
+        "transform": "...",
+        "conditions": [
+          {
+            "attribute": "...",
+            "operator": "...",
+            "value": "..."
+          }
+        ],
+        "permissions": [
+          "..."
+        ]
+      }
+    ],
+    "created_at": "...",
+    "created_by": "...",
+    "modified_at": "...",
+    "modified_by": "..."
+  }
+}
+```
+| Name                                       | Type   | Description                                                                                                                                        |
+|--------------------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| application.id                             | String | The unique identifier of the [Application](/docs/api/applications#application-object).                                                             |
+| application.name                           | String | The name of the application.                                                                                                                       |
+| application.type                           | String | The [type](/docs/api/applications/#application-types) of the application.                                                                          |
+| application.permissions                    | Array  | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted to the application                                          |
+| application.rules                          | Array  | An array of [Access Rules](/docs/api/applications/access-rules) granted to the application                                                         |
+| application.rules[].description            | String | A description of the rule.                                                                                                                         |
+| application.rules[].priority               | Number | The priority level of the rule (0 indicates the highest priority).                                                                                 |
+| application.rules[].container              | String | The [container](/docs/concepts/what-are-containers) associated with the rule.                                                                      |
+| application.rules[].transform              | String | The [transform](/docs/api/applications/access-rules#access-rule-transforms) applied by the rule.                                                   |
+| application.rules[].conditions             | Array  | List of [conditions](/docs/api/applications/access-rules#access-rule-conditions) to be satisfied for the rule to be used. Only applies to sessions |
+| application.rules[].conditions[].attribute | String | The attribute evaluated in the condition.                                                                                                          |
+| application.rules[].conditions[].operator  | String | The operator used for the evaluation.                                                                                                              |
+| application.rules[].conditions[].value     | String | The value to compare against in the condition.                                                                                                     |
+| application.rules[].permissions            | Array  | List of [permissions](/docs/api/applications/permissions#permission-types) granted on this Access Rule                                             |
+| application.created_at                     | String | The creation date of the application in ISO 8601 format.                                                                                           |
+| application.created_by                     | String | The user or system that created the application.                                                                                                   |
+| application.modified_at                    | String | The last modified date of the application in ISO 8601 format.                                                                                      |
+| application.modified_by                    | String | The last user or system that modified the application.                                                                                             |
+
+### Application Deleted
+
+```json title="application.deleted"
+{
+  "application": {
+    "id": "..."
+  }
+}
+```
+| Name           | Type   | Description                               |
+|----------------|--------|-------------------------------------------|
+| application.id | String | The unique identifier of the application. |
+
+
+## Application Keys
+
+### Application Key Created
+
+```json title="application.key.created"
+{
+  "application_key": {
+    "id": "...",
+    "application_id": "...",
+    "version": "...",
+    "created_at": "...",
+    "created_by": "..."
+  }
+}
+```
+| Name                           | Type   | Description                                                                                                     |
+|--------------------------------|--------|-----------------------------------------------------------------------------------------------------------------|
+| application_key.id             | String | The unique identifier of the [application key](/docs/api/applications/application-keys#application-key-object). |
+| application_key.application_id | String | The unique identifier of the associated [Application](/docs/api/applications#application-object).               |
+| application_key.version        | String | The version of the application key.                                                                             |
+| application_key.created_at     | String | The creation date of the application key in ISO 8601 format.                                                    |
+| application_key.created_by     | String | The user or application that created the application key.                                                       |
+
+### Application Key Deleted
+
+```json title="application.key.deleted"
+{
+  "application_key": {
+    "id": "...",
+    "application_id": "..."
+  }
+}
+```
+| Name                           | Type   | Description                                                                                                     |
+|--------------------------------|--------|-----------------------------------------------------------------------------------------------------------------|
+| application_key.id             | String | The unique identifier of the [application key](/docs/api/applications/application-keys#application-key-object). |
+| application_key.application_id | String | The unique identifier of the associated [Application](/docs/api/applications#application-object).               |
+
+## Http
+
+### Request
+
+```json title="http.request"
+{
+  "request": {
+    "method": "POST",
+    "path": "/tokens",
+    "headers": {
+      "Host": [
+        "localhost:5090"
+      ],
+      "Content-Type": [
+        "application/json; charset=utf-8"
+      ],
+      "Content-Length": [
+        "279"
+      ],
+      "BT-TRACE-ID": [
+        "6f100e49-b64b-4747-9049-78d44f1ceb13"
+      ],
+      "BT-API-KEY": [
+        "ke***f2 (length 75)"
+      ]
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": [
+        "application/json; charset=utf-8"
+      ],
+      "Content-Length": [
+        "633"
+      ],
+      "BT-TRACE-ID": [
+        "6f100e49-b64b-4747-9049-78d44f1ceb13"
+      ],
+      "Date": [
+        "Fr***MT (length 29)"
+      ],
+      "Server": [
+        "*******"
+      ],
+      "Location": [
+        "ht***3d (length 65)"
+      ]
+    }
+  }
+}
+```
+| Name                            | Type   | Description                                                                   |
+|---------------------------------|--------|-------------------------------------------------------------------------------|
+| request.method                  | String | The HTTP method used for the request (e.g., POST).                            |
+| request.path                    | String | The path of the request (e.g., /tokens).                                      |
+| request.headers                 | Object | The headers included in the request.                                          |
+| request.headers.Host            | Array  | The host header of the request.                                               |
+| request.headers.Content-Type    | Array  | The content type of the request.                                              |
+| request.headers.Content-Length  | Array  | The length of the request body.                                               |
+| request.headers.BT-TRACE-ID     | Array  | The trace ID for tracking the request.                                        |
+| request.headers.BT-API-KEY      | Array  | The API key used for the request (partially masked).                          |
+| response.status                 | Number | The HTTP status code returned in the response (e.g., 201).                    |
+| response.headers                | Object | The headers returned in the response.                                         |
+| response.headers.Content-Type   | Array  | The content type of the response.                                             |
+| response.headers.Content-Length | Array  | The length of the response body.                                              |
+| response.headers.BT-TRACE-ID    | Array  | The trace ID for tracking the response.                                       |
+| response.headers.Date           | Array  | The date header of the response (partially masked).                           |
+| response.headers.Server         | Array  | The server information returned in the response (partially masked).           |
+| response.headers.Location       | Array  | The location header indicating where to find the resource (partially masked). |
+
+## Proxies
+
+### Proxy Created
+
+```json title="proxy.created"
+{
+  "proxy": {
+    "id": "...",
+    "name": "...",
+    "application_id": "...",
+    "destination_url": "...",
+    "require_authentication": ...,
+    "created_at": "...",
+    "created_by": "..."
+  }
+}
+```
+| Name                         | Type    | Description                                                                                       |
+|------------------------------|---------|---------------------------------------------------------------------------------------------------|
+| proxy.id                     | String  | The unique identifier of the [proxy](/docs/api/proxies/pre-configured-proxies#proxy-object).      |
+| proxy.name                   | String  | The name of the proxy.                                                                            |
+| proxy.application_id         | String  | The unique identifier of the associated [Application](/docs/api/applications#application-object). |
+| proxy.destination_url        | String  | The destination URL that the proxy forwards requests to.                                          |
+| proxy.require_authentication | Boolean | Indicates whether authentication is required for the proxy.                                       |
+| proxy.created_at             | String  | The creation date of the proxy in ISO 8601 format.                                                |
+| proxy.created_by             | String  | The user or application that created the proxy.                                                   |
+
+### Proxy Deleted
+
+```json title="proxy.deleted"
+{
+  "proxy": {
+    "id": "..."
+  }
+}
+```
+| Name     | Type   | Description                                                                                  |
+|----------|--------|----------------------------------------------------------------------------------------------|
+| proxy.id | String | The unique identifier of the [proxy](/docs/api/proxies/pre-configured-proxies#proxy-object). |
+
+### Proxy Invoked
+
+```json title="proxy.invoked"
+{
+  "proxy": {
+    "id": "...",
+    "name": "...",
+    "response": {
+      "error": { ... },
+      "status": 401
+    },
+    "type": "..."
+  },
+  "destination": {
+    "request": {
+      "body": "...",
+      "headers": {
+        "...": [
+          "..."
+        ]
+      },
+      "method": "...",
+      "query": "",
+      "url": "..."
+    },
+    "response": {
+      "body": "...",
+      "elapsed_ms": 105,
+      "headers": {
+        "...": [
+          "..."
+        ]
+      },
+      "status": 200
+    }
+  },
+  "request_transform": {
+    "response": {
+      "error": { ... }
+    }
+  },
+  "response_transform": {
+    "response": {
+      "error": { ... }
+    }
+  },
+  "request": { // DEPRECATED; Use `destination.request` instead
+    "headers": "...",
+    "method": "...",
+    "url": "..."
+  },
+  "response": { // DEPRECATED; Use `destination.response` instead
+    "headers": "...",
+    "status_code": "...",
+    "elapsed_ms": ...
+  }
+}
+```
+| Name                 | Type   | Description                                                                                 |
+|----------------------|--------|---------------------------------------------------------------------------------------------|
+| proxy.id             | String | The unique identifier of the [proxy](/docs/api/proxies/pre-configured-proxies#proxy-object) |
+| proxy.name           | String | The name of the proxy.                                                                      |
+| proxy.type           | String | The type of the proxy.                                                                      |
+| proxy.response.error | Error  | If the proxy fails with an error. See below  |
+| destination.request.body | String | Sanitized body of the request sent to the destination. This is the output of a successful request transform |
+| destination.request.headers | Key:List of Strings | An object containing the request headers sent to the destination |
+| destination.request.method | String | HTTP Method used to call the destination |
+| destination.request.query | String | The URL query parameters |
+| destination.request.url | String | The destination URL |
+| destination.response.body | String | Sanitized body of the response from the destination |
+| destination.response.elapsed_ms | Number | The length of time for the destination to respond |
+| destination.response.headers | Key:List of Strings | An object containing the request headers sent to the destination |
+| destination.response.status | Number | The HTTP status code sent by the destination |
+| request_transform.response.error | Error | If the request transform fails. See below |
+| response_transform.response.error | Error | If the response transform fails. See below |
+| request.headers      | String | (Deprecated) The headers included in the request.                                                        |
+| request.method       | String | (Deprecated) The HTTP method used for the request (e.g., GET, POST).                                     |
+| request.url          | String | (Deprecated) The URL to which the request is sent.                                                       |
+| response.headers     | String | (Deprecated) The headers returned in the response.                                                       |
+| response.status_code | String | (Deprecated) The HTTP status code returned in the response.                                              |
+| response.elapsed_ms  | Number | (Deprecated) The time taken to process the request in milliseconds.                                      |
+
+#### Proxy Invoked Errors
+
+The `.error` objects in the `proxy.response`, `request_transform.response`, and `response_transform.response` objects will be one of two types of proxy errors.
+[Reactor Errors](/docs/api/proxies/proxy-errors#reactor-errors) and [Custom Errors](/docs/api/proxies/proxy-errors#custom-errors)
+
+```json title="Standard proxy error"
+"error": {
+  "errors": {
+      "error": [
+          "MY-CUSTOM-API-KEY header is required"
+      ]
+  },
+  "title": "One or more validation errors occurred.",
+  "status": 401,
+  "detail": "Authentication Failed"
+}
+```
+```json title="Custom proxy error"
+"error": {
+  "body": {
+    "myCustomError": "My custom error message"
+  },
+  "headers": {
+    "Custom-Response-Header-1": "custom-value-1",
+    "Custom-Response-Header-2": "custom-value-2"
+  }
+}
+```
+
+### Proxy Updated
+
+```json title="proxy.updated"
+{
+  "proxy": {
+    "id": "...",
+    "name": "...",
+    "proxy_host": "...",
+    "destination_url": "...",
+    "require_authentication": ...,
+    "created_at": "...",
+    "created_by": "...",
+    "modified_at": "...",
+    "modified_by": "..."
+  }
+}
+```
+| Name                         | Type    | Description                                                                                  |
+|------------------------------|---------|----------------------------------------------------------------------------------------------|
+| proxy.id                     | String  | The unique identifier of the [proxy](/docs/api/proxies/pre-configured-proxies#proxy-object). |
+| proxy.name                   | String  | The name of the proxy.                                                                       |
+| proxy.proxy_host             | String  | The host address of the proxy server.                                                        |
+| proxy.destination_url        | String  | The destination URL that the proxy forwards requests to.                                     |
+| proxy.require_authentication | Boolean | Indicates whether authentication is required for the proxy.                                  |
+| proxy.created_at             | String  | The creation date of the proxy in ISO 8601 format.                                           |
+| proxy.created_by             | String  | The user or system that created the proxy.                                                   |
+| proxy.modified_at            | String  | The last modified date of the proxy in ISO 8601 format.                                      |
+| proxy.modified_by            | String  | The last user or system that modified the proxy.                                             |
+
+## Reactors
+
+### Reactor Completed
+
+```json title="reactor.completed"
+{
+  "reactor": {
+    "id": "...",
+    "name": "..."
+  },
+  "request": {
+    "id": "...",
+    "invocation_type": "..."
+  },
+  "elapsed_ms": ...
+}
+```
+| Name                    | Type   | Description                                                                                                                                                                       |
+|-------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| reactor.id              | String | The unique identifier of the [reactor](/docs/api/reactors/#reactor-object).                                                                                                       |
+| reactor.name            | String | The name of the reactor.                                                                                                                                                          |
+| request.id              | String | (Optional) The unique identifier of the request if the `invocation_type` is `async`. Can be used to [retrieve the results](/docs/api/reactors#retrieve-result) of the invocation. |
+| request.invocation_type | String | Either `sync` or `async`                                                                                                                                                          |
+| elapsed_ms              | Number | The time taken to process the request in milliseconds.                                                                                                                            |
+
+### Reactor Created
+
+```json title="reactor.created"
+{
+  "reactor": {
+    "id": "...",
+    "name": "...",
+    "created_at": "...",
+    "created_by": "..."
+  }
+}
+```
+| Name               | Type   | Description                                                                 |
+|--------------------|--------|-----------------------------------------------------------------------------|
+| reactor.id         | String | The unique identifier of the [reactor](/docs/api/reactors/#reactor-object). |
+| reactor.name       | String | The name of the reactor.                                                    |
+| reactor.created_at | String | The creation date of the reactor in ISO 8601 format.                        |
+| reactor.created_by | String | The user or application that created the reactor.                           |
+
+### Reactor Deleted
+
+```json title="reactor.deleted"
+{
+  "reactor": {
+    "id": "..."
+  }
+}
+```
+| Name       | Type   | Description                                                                 |
+|------------|--------|-----------------------------------------------------------------------------|
+| reactor.id | String | The unique identifier of the [reactor](/docs/api/reactors/#reactor-object). |
+
+### Reactor Failed
+
+```json title="reactor.failed"
+{
+  "reactor": {
+    "id": "...",
+    "name": "..."
+  },
+  "request": {
+    "id": "...",
+    "invocation_type": "..."
+  },
+  "error": "...",
+  "elapsed_ms": ...
+}
+```
+| Name                    | Type   | Description                                                                                                                                                                       |
+|-------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| reactor.id              | String | The unique identifier of the [reactor](/docs/api/reactors/#reactor-object).                                                                                                       |
+| reactor.name            | String | The name of the reactor.                                                                                                                                                          |
+| request.id              | String | (Optional) The unique identifier of the request if the `invocation_type` is `async`. Can be used to [retrieve the results](/docs/api/reactors#retrieve-result) of the invocation. |
+| request.invocation_type | String | Either `sync` or `async`                                                                                                                                                          |
+| error                   | String | A message describing any error that occurred.                                                                                                                                     |
+| elapsed_ms              | Number | The time taken to process the request in milliseconds.                                                                                                                            |
+
+### Reactor Invoked
+
+```json title="reactor.invoked"
+{
+  "reactor": {
+    "id": "...",
+    "name": "..."
+  },
+  "request": {
+    "id": "...",
+    "invocation_type": "..."
+  }
+}
+```
+| Name                    | Type   | Description                                                                                                                                                                       |
+|-------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| reactor.id              | String | The unique identifier of the [reactor](/docs/api/reactors/#reactor-object).                                                                                                       |
+| reactor.name            | String | The name of the reactor.                                                                                                                                                          |
+| request.id              | String | (Optional) The unique identifier of the request if the `invocation_type` is `async`. Can be used to [retrieve the results](/docs/api/reactors#retrieve-result) of the invocation. |
+| request.invocation_type | String | Either `sync` or `async`                                                                                                                                                          |
+
+### Reactor Updated
+
+```json title="reactor.updated"
+{
+  "reactor": {
+    "id": "...",
+    "name": "...",
+    "created_at": "...",
+    "created_by": "...",
+    "modified_by": "...",
+    "modified_at": "..."
+  }
+}
+```
+| Name                | Type   | Description                                                                 |
+|---------------------|--------|-----------------------------------------------------------------------------|
+| reactor.id          | String | The unique identifier of the [reactor](/docs/api/reactors/#reactor-object). |
+| reactor.name        | String | The name of the reactor.                                                    |
+| reactor.created_at  | String | The creation date of the reactor in ISO 8601 format.                        |
+| reactor.created_by  | String | The user or application that created the reactor.                           |
+| reactor.modified_by | String | The last user or application that modified the reactor.                     |
+| reactor.modified_at | String | The last modified date of the reactor in ISO 8601 format.                   |
+
+## Sessions
+
+### Session Authorized
+
+```json title="session.authorized"
+{
+  "session": {
+    "id": "...",
+    "created_at": "...",
+    "created_by": "...",
+    "expires_at": "...",
+    "permissions": [
+      "..."
+    ],
+    "rules": [
+      {
+        "description": "...",
+        "priority": 0,
+        "container": "...",
+        "transform": "...",
+        "conditions": [
+          {
+            "attribute": "...",
+            "operator": "...",
+            "value": "..."
+          }
+        ],
+        "permissions": [
+          "..."
+        ]
+      }
+    ],
+    "issued_to_application": {
+      "id": "...",
+      "name": "..."
+    }
+  }
+}
+```
+| Name                                   | Type   | Description                                                                                                           |
+|----------------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------|
+| session.id                             | String | The unique identifier of the session.                                                                                 |
+| session.created_at                     | String | The creation date of the session in ISO 8601 format.                                                                  |
+| session.created_by                     | String | The user or system that created the session.                                                                          |
+| session.expires_at                     | String | The expiration date of the session in ISO 8601 format.                                                                |
+| session.permissions                    | Array  | An array of [Permissions](/docs/api/applications/permissions#permission-types) associated with the session.           |
+| session.rules                          | Array  | An array of [Access Rules](/docs/api/applications/access-rules) defined for the session.                              |
+| session.rules[].description            | String | A description of the rule.                                                                                            |
+| session.rules[].priority               | Number | The priority level of the rule.                                                                                       |
+| session.rules[].container              | String | The [container](/docs/concepts/what-are-containers) associated with the rule.                                         |
+| session.rules[].transform              | String | The [transform](/docs/api/applications/access-rules#access-rule-transforms) applied by the rule.                      |
+| session.rules[].conditions             | Array  | An array of [conditions](/docs/api/applications/access-rules#access-rule-conditions) that must be met for the rule.   |
+| session.rules[].conditions[].attribute | String | The attribute evaluated in the condition.                                                                             |
+| session.rules[].conditions[].operator  | String | The operator used in the condition.                                                                                   |
+| session.rules[].conditions[].value     | String | The value to compare against in the condition.                                                                        |
+| session.rules[].permissions            | Array  | An array of [Permissions](/docs/api/applications/permissions#permission-types) granted by the rule.                   |
+| session.issued_to_application.id       | String | The unique identifier of the [Application](/docs/api/applications#application-object) to which the session is issued. |
+| session.issued_to_application.name     | String | The name of the application to which the session is issued.                                                           |
+
+### Session Created
+
+```json title="session.created"
+{
+  "session": {
+    "id": "...",
+    "created_at": "...",
+    "created_by": "...",
+    "expires_at": "...",
+    "issued_to_application": {
+      "id": "...",
+      "name": "..."
+    }
+  }
+}
+```
+| Name                               | Type   | Description                                                              |
+|------------------------------------|--------|--------------------------------------------------------------------------|
+| session.id                         | String | The unique identifier of the session.                                    |
+| session.created_at                 | String | The creation date of the session in ISO 8601 format.                     |
+| session.created_by                 | String | The user or application that created the session.                        |
+| session.expires_at                 | String | The expiration date of the session in ISO 8601 format.                   |
+| session.issued_to_application.id   | String | The unique identifier of the application to which the session is issued. |
+| session.issued_to_application.name | String | The name of the application to which the session is issued.              |
+
+## Tenants
+
+### Tenant Created
+
+```json title="tenant.created"
+{
+  "tenant": {
+    "id": "...",
+    "name": "...",
+    "created_at": "...",
+    "created_by": "..."
+  }
+}
+```
+| Name              | Type   | Description                                                             |
+|-------------------|--------|-------------------------------------------------------------------------|
+| tenant.id         | String | The unique identifier of the [Tenant](/docs/api/tenants#tenant-object). |
+| tenant.name       | String | The name of the tenant.                                                 |
+| tenant.created_at | String | The creation date of the tenant in ISO 8601 format.                     |
+| tenant.created_by | String | The user or application that created the tenant.                        |
+
+### Tenant Updated
+
+```json title="tenant.updated"
+{
+  "tenant": {
+    "id": "...",
+    "name": "...",
+    "created_at": "...",
+    "created_by": "...",
+    "modified_at": "...",
+    "modified_by": "..."
+  }
+}
+```
+| Name               | Type   | Description                                                             |
+|--------------------|--------|-------------------------------------------------------------------------|
+| tenant.id          | String | The unique identifier of the [Tenant](/docs/api/tenants#tenant-object). |
+| tenant.name        | String | The name of the tenant.                                                 |
+| tenant.created_at  | String | The creation date of the tenant in ISO 8601 format.                     |
+| tenant.created_by  | String | The creator of the tenant.                                              |
+| tenant.modified_at | String | The last modified date of the tenant in ISO 8601 format.                |
+| tenant.modified_by | String | The user or application that modified the tenant.                       |
+
+### Tenant Deleted
+
+```json title="tenant.deleted"
+{
+  "tenant": {
+    "id": "..."
+  }
+}
+```
+| Name      | Type   | Description                                                             |
+|-----------|--------|-------------------------------------------------------------------------|
+| tenant.id | String | The unique identifier of the [Tenant](/docs/api/tenants#tenant-object). |
+
+## Tenant Invitations
+
+### Invitation Accepted
+
+```json title="tenant.invitation.accepted"
+{
+  "invitation": {
+    "id": "...",
+    "email": "...",
+    "role": "...",
+    "expires_at": "...",
+    "created_at": "...",
+    "created_by": "..."
+  }
+}
+```
+| Name                  | Type   | Description                                                                                           |
+|-----------------------|--------|-------------------------------------------------------------------------------------------------------|
+| invitation.id         | String | The unique identifier of the [invitation](/docs/api/tenants/tenant-members#tenant-invitation-object). |
+| invitation.email      | String | The email address of the invitee.                                                                     |
+| invitation.role       | String | The role assigned to the invitee.                                                                     |
+| invitation.expires_at | String | The expiration date of the invitation in ISO 8601 format.                                             |
+| invitation.created_at | String | The creation date of the invitation in ISO 8601 format.                                               |
+| invitation.created_by | String | The user or application that created the invitation.                                                  |
+
+### Invitation Created
+
+```json title="tenant.invitation.created"
+{
+  "invitation": {
+    "id": "...",
+    "email": "...",
+    "role": "...",
+    "expires_at": "...",
+    "created_at": "...",
+    "created_by": "..."
+  }
+}
+```
+| Name                  | Type   | Description                                                                                           |
+|-----------------------|--------|-------------------------------------------------------------------------------------------------------|
+| invitation.id         | String | The unique identifier of the [invitation](/docs/api/tenants/tenant-members#tenant-invitation-object). |
+| invitation.email      | String | The email address associated with the invitation.                                                     |
+| invitation.role       | String | The role assigned to the invitation.                                                                  |
+| invitation.expires_at | String | The expiration date of the invitation in ISO 8601 format.                                             |
+| invitation.created_at | String | The creation date of the invitation in ISO 8601 format.                                               |
+| invitation.created_by | String | The user or application that created the invitation.                                                  |
+
+### Invitation Deleted
+
+```json title="tenant.invitation.deleted"
+{
+  "invitation": {
+    "id": "...",
+    "email": "...",
+    "role": "...",
+    "expires_at": "...",
+    "created_at": "...",
+    "created_by": "..."
+  }
+}
+```
+| Name                  | Type   | Description                                                                                           |
+|-----------------------|--------|-------------------------------------------------------------------------------------------------------|
+| invitation.id         | String | The unique identifier of the [invitation](/docs/api/tenants/tenant-members#tenant-invitation-object). |
+| invitation.email      | String | The email address associated with the invitation.                                                     |
+| invitation.role       | String | The role assigned to the invitation, formatted for readability.                                       |
+| invitation.expires_at | String | The expiration date of the invitation in ISO 8601 format.                                             |
+| invitation.created_at | String | The creation date of the invitation in ISO 8601 format.                                               |
+| invitation.created_by | String | The user or application that created the invitation.                                                  |
+
+### Invitation Resent
+
+```json title="tenant.invitation.resent"
+{
+  "invitation": {
+    "id": "...",
+    "email": "...",
+    "role": "...",
+    "expires_at": "...",
+    "created_at": "...",
+    "created_by": "..."
+  }
+}
+```
+| Name                  | Type   | Description                                                                                           |
+|-----------------------|--------|-------------------------------------------------------------------------------------------------------|
+| invitation.id         | String | The unique identifier of the [invitation](/docs/api/tenants/tenant-members#tenant-invitation-object). |
+| invitation.email      | String | The email address associated with the invitation.                                                     |
+| invitation.role       | String | The role assigned to the invitation, formatted for readability.                                       |
+| invitation.expires_at | String | The expiration date of the invitation in ISO 8601 format.                                             |
+| invitation.created_at | String | The creation date of the invitation in ISO 8601 format.                                               |
+| invitation.created_by | String | The user or application that created the invitation.                                                  |
+
+## Tenant Members
+
+### Member Created
+
+```json title="tenant.member.created"
+{
+  "member": {
+    "id": "...",
+    "user_id": "...",
+    "role": "...",
+    "created_at": "...",
+    "created_by": "..."
+  }
+}
+```
+| Name              | Type   | Description                                                                                          |
+|-------------------|--------|------------------------------------------------------------------------------------------------------|
+| member.id         | String | The unique identifier of the [tenant member](/docs/api/tenants/tenant-members#tenant-member-object). |
+| member.user_id    | String | The unique identifier of the user associated with the member.                                        |
+| member.role       | String | The role assigned to the member, formatted for readability.                                          |
+| member.created_at | String | The creation date of the member in ISO 8601 format.                                                  |
+| member.created_by | String | The user or application that created the member.                                                     |
+
+### Member Deleted
+
+```json title="tenant.member.deleted"
+{
+  "member": {
+    "id": "..."
+  }
+}
+```
+| Name      | Type   | Description                                                                                          |
+|-----------|--------|------------------------------------------------------------------------------------------------------|
+| member.id | String | The unique identifier of the [tenant member](/docs/api/tenants/tenant-members#tenant-member-object). |
+
+## Tokens
+
+### Token Created
+
+```json title="token.created"
+{
+  "token": {
+    "id": "...",
+    "type": "...",
+    "metadata": "...",
+    "containers": ["..."],
+    "fingerprint": "...",
+    "fingerprint_expression": "...",
+    "search_indexes": ["..."],
+    "created_by": "...",
+    "created_at": "...",
+    "expires_at": "..."
+  }
+}
+```
+| Name                         | Type                 | Description                                                           |
+|------------------------------|----------------------|-----------------------------------------------------------------------|
+| token.id                     | String               | The unique identifier of the [token](/docs/api/tokens/#token-object). |
+| token.type                   | String               | The type of the token.                                                |
+| token.metadata               | map\<string, string> | Additional metadata associated with the token.                        |
+| token.containers             | Array                | An array containing the container associated with the token.          |
+| token.fingerprint            | String               | The fingerprint of the token.                                         |
+| token.fingerprint_expression | String               | The expression used to generate the fingerprint.                      |
+| token.search_indexes         | Array                | An array of search index expressions associated with the token.       |
+| token.created_by             | String               | The creator of the token.                                             |
+| token.created_at             | String               | The creation date of the token in ISO 8601 format.                    |
+| token.expires_at             | String               | The expiration date of the token in ISO 8601 format.                  |
+
+### Token Deleted
+
+```json title="token.deleted"
+{
+  "token": {
+    "id": "..."
+  }
+}
+```
+| Name     | Type   | Description                                                           |
+|----------|--------|-----------------------------------------------------------------------|
+| token.id | String | The unique identifier of the [token](/docs/api/tokens/#token-object). |
+
+### Token Expired
+
+```json title="token.expired"
+{
+  "token": {
+    "id": "..."
+  }
+}
+```
+| Name     | Type   | Description                                                           |
+|----------|--------|-----------------------------------------------------------------------|
+| token.id | String | The unique identifier of the [token](/docs/api/tokens/#token-object). |
+
+### Token Property Expired
+
+```json title="token.property.expired"
+{
+  "token": {
+    "id": "...",
+    "property_name": "..."
+  }
+}
+```
+| Name                | Type   | Description                                                           |
+|---------------------|--------|-----------------------------------------------------------------------|
+| token.id            | String | The unique identifier of the [token](/docs/api/tokens/#token-object). |
+| token.property_name | String | The name of the property associated with the token.                   |
+
+### Token Read
+
+```json title="token.read"
+{
+  "token": {
+    "id": "...",
+    "type": "..."
+  }
+}
+```
+| Name       | Type   | Description                                                           |
+|------------|--------|-----------------------------------------------------------------------|
+| token.id   | String | The unique identifier of the [token](/docs/api/tokens/#token-object). |
+| token.type | String | The type of the token.                                                |
+
+### Token Updated
+
+```json title="token.updated"
+{
+  "token": {
+    "id": "...",
+    "type": "...",
+    "metadata": "...",
+    "containers": ["..."],
+    "fingerprint": "...",
+    "fingerprint_expression": "...",
+    "search_indexes": ["..."],
+    "modified_by": "...",
+    "modified_at": "...",
+    "created_by": "...",
+    "created_at": "...",
+    "expires_at": "..."
+  }
+}
+```
+| Name                         | Type                 | Description                                                           |
+|------------------------------|----------------------|-----------------------------------------------------------------------|
+| token.id                     | String               | The unique identifier of the [token](/docs/api/tokens/#token-object). |
+| token.type                   | String               | The type of the token.                                                |
+| token.metadata               | map\<string, string> | Additional metadata associated with the token.                        |
+| token.containers             | Array                | An array containing the container associated with the token.          |
+| token.fingerprint            | String               | The fingerprint of the token.                                         |
+| token.fingerprint_expression | String               | The expression used to generate the fingerprint.                      |
+| token.search_indexes         | Array                | An array of search index expressions associated with the token.       |
+| token.modified_by            | String               | The last user who modified the token.                                 |
+| token.modified_at            | String               | The last modified date of the token in ISO 8601 format.               |
+| token.created_by             | String               | The creator of the token.                                             |
+| token.created_at             | String               | The creation date of the token in ISO 8601 format.                    |
+| token.expires_at             | String               | The expiration date of the token in ISO 8601 format.                  |
+
+## Token Intents
+
+### Token Intent Created
+
+```json title="token-intent.created"
+{
+  "token_intent": {
+    "id": "...",
+    "type": "...",
+    "fingerprint": "...",
+    "created_by": "...",
+    "created_at": "...",
+    "expires_at": "..."
+  }
+}
+```
+| Name                     | Type   | Description                                                                                      |
+|--------------------------|--------|--------------------------------------------------------------------------------------------------|
+| token_intent.id          | String | The unique identifier of the [token intent](/docs/api/tokens/token-intents#token-intent-object). |
+| token_intent.type        | String | The type of the token intent.                                                                    |
+| token_intent.fingerprint | String | The fingerprint of the token intent.                                                             |
+| token_intent.created_by  | String | The creator of the token intent.                                                                 |
+| token_intent.created_at  | String | The creation date of the token intent in ISO 8601 format.                                        |
+| token_intent.expires_at  | String | The expiration date of the token intent in ISO 8601 format.                                      |
+
+### Token Intent Deleted
+
+```json title="token-intent.deleted"
+{
+  "token_intent": {
+    "id": "..."
+  }
+}
+```
+| Name                     | Type   | Description                                                                                      |
+|--------------------------|--------|--------------------------------------------------------------------------------------------------|
+| token_intent.id          | String | The unique identifier of the [token intent](/docs/api/tokens/token-intents#token-intent-object). |
+
+### Token Intent Converted
+
+```json title="token-intent.converted"
+{
+  "token_intent": {
+    "id": "...",
+    "type": "..."
+  },
+  "token": {
+    "id": "...",
+    "type": "..."
+  }
+}
+```
+| Name              | Type   | Description                                                                                      |
+|-------------------|--------|--------------------------------------------------------------------------------------------------|
+| token_intent.id   | String | The unique identifier of the [token intent](/docs/api/tokens/token-intents#token-intent-object). |
+| token_intent.type | String | The type of the token intent.                                                                    |
+| token.id          | String | The unique identifier of the [token](/docs/api/tokens#token-object).                             |
+| token.type        | String | The type of the token.                                                                           |
