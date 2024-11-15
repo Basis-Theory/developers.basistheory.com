@@ -357,15 +357,15 @@ const sidebars = {
       items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
     },
     "api/logs",
-    // {
-    //   type: "category",
-    //   label: "Proxies",
-    //   link: {
-    //     type: "doc",
-    //     id: "api/proxies/proxies",
-    //   },
-    //   items: ["api/proxies/proxies", "api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies", "api/proxies/proxy-errors"],
-    // },
+    {
+      type: "category",
+      label: "Proxies",
+      link: {
+        type: "doc",
+        id: "api/proxies/proxies",
+      },
+      items: ["api/proxies/proxies", "api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies", "api/proxies/proxy-errors"],
+    },
     // {
     //   type: "category",
     //   label: "Reactors",
