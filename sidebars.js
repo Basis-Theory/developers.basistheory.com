@@ -345,7 +345,7 @@ const sidebars = {
         type: "doc",
         id: "api/index",
       },
-      items: ["api/index", "api/authentication", "api/request-correlation", "api/pagination", "api/errors", "api/ip-addresses", "api/rate-limits", /*"api/idempotency", "api/testing"*/],
+      items: ["api/index", "api/authentication", "api/request-correlation", "api/pagination", "api/errors", "api/ip-addresses", "api/rate-limits", "api/idempotency", /*"api/testing"*/],
     },
     // {
     //   type: "category",
