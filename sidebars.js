@@ -345,206 +345,206 @@ const sidebars = {
         type: "doc",
         id: "api/index",
       },
-      items: ["api/index", "api/authentication", "api/request-correlation", "api/pagination", "api/errors", "api/ip-addresses", "api/rate-limits", "api/idempotency", "api/testing"],
+      items: [/*"api/index", "api/authentication", "api/request-correlation", "api/pagination", "api/errors", "api/ip-addresses", "api/rate-limits", "api/idempotency", "api/testing"*/],
     },
-    {
-      type: "category",
-      label: "Applications",
-      link: {
-        type: "doc",
-        id: "api/applications/applications",
-      },
-      items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
-    },
-    "api/logs",
-    {
-      type: "category",
-      label: "Proxies",
-      link: {
-        type: "doc",
-        id: "api/proxies/proxies",
-      },
-      items: ["api/proxies/proxies", "api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies", "api/proxies/proxy-errors"],
-    },
-    {
-      type: "category",
-      label: "Reactors",
-      link: {
-        type: "doc",
-        id: "api/reactors/reactors",
-      },
-      items: [
-        "api/reactors/reactors",
-        "api/reactors/reactor-dependencies",
-        {
-          type: "doc",
-          id: "api/reactors/reactor-formulas",
-          customProps: {
-            deprecated: true,
-          },
-        },
-        "api/reactors/reactor-errors",
-      ],
-    },
-    {
-      type: "category",
-      label: "Tenants",
-      link: {
-        type: "doc",
-        id: "api/tenants/tenants",
-      },
-      items: ["api/tenants/tenants", "api/tenants/tenant-members"],
-    },
-    {
-      type: "category",
-      label: "Tokens",
-      link: {
-        type: "doc",
-        id: "api/tokens/tokens",
-      },
-      items: [
-        "api/tokens/tokens",
-        "api/tokens/token-intents",
-        "api/tokens/tokenize",
-        "api/tokens/detokenize",
-        "api/tokens/token-types",
-        "api/tokens/token-enrichments",
-        {
-          type: "doc",
-          id: "api/tokens/search",
-          customProps: {
-            enterprise: true,
-          },
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "3D Secure",
-      link: {
-        type: "doc",
-        id: "api/3ds/sessions",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "api/3ds/sessions",
-          customProps: {
-            enterprise: true,
-          },
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Account Updater",
-      link: {
-        type: "doc",
-        id: "api/account-updater/account-updater",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "api/account-updater/account-updater",
-          customProps: {
-            enterprise: true,
-          },
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Webhooks",
-      link: {
-        type: "doc",
-        id: "api/webhooks/webhooks",
-      },
-      items: ["api/webhooks/api", "api/webhooks/eventdata"],
-    },
-    {
-      type: "category",
-      label: "Orchestration",
-      link: {
-        type: "doc",
-        id: "api/orchestration/connections",
-      },
-      items: [
-        "api/orchestration/connection_formulas",
-        {
-          type: "doc",
-          id: "api/orchestration/connections",
-          customProps: {
-            enterprise: true,
-          },
-        },
-        {
-          type: "doc",
-          id: "api/orchestration/transactions",
-          customProps: {
-            enterprise: true,
-          },
-        },
-        {
-          type: "doc",
-          id: "api/orchestration/stripe-forward",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Enrichments",
-      link: {
-        type: "doc",
-        id: "api/enrichments/bank-accounts",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "api/enrichments/bank-accounts",
-          customProps: {
-            enterprise: true,
-          },
-        },
-      ],
-    },
-    "api/deprecations",
-    {
-      type: "html",
-      value: "<hr />",
-    },
-    {
-      type: "link",
-      label: "Guides",
-      href: "/docs",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/document.svg",
-          dark: "/img/sidebar/dark/document.svg",
-        },
-      },
-    },
-    {
-      type: "link",
-      label: "SDKs",
-      href: "/docs/sdks",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/cube.svg",
-          dark: "/img/sidebar/dark/cube.svg",
-        },
-      },
-    },
-    {
-      type: "link",
-      label: "Basis Theory Labs",
-      href: "https://github.com/Basis-Theory-Labs",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/labs.svg",
-          dark: "/img/sidebar/dark/labs.svg",
-        },
-      },
-    },
+    // {
+    //   type: "category",
+    //   label: "Applications",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/applications/applications",
+    //   },
+    //   items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
+    // },
+    // "api/logs",
+    // {
+    //   type: "category",
+    //   label: "Proxies",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/proxies/proxies",
+    //   },
+    //   items: ["api/proxies/proxies", "api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies", "api/proxies/proxy-errors"],
+    // },
+    // {
+    //   type: "category",
+    //   label: "Reactors",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/reactors/reactors",
+    //   },
+    //   items: [
+    //     "api/reactors/reactors",
+    //     "api/reactors/reactor-dependencies",
+    //     {
+    //       type: "doc",
+    //       id: "api/reactors/reactor-formulas",
+    //       customProps: {
+    //         deprecated: true,
+    //       },
+    //     },
+    //     "api/reactors/reactor-errors",
+    //   ],
+    // },
+    // {
+    //   type: "category",
+    //   label: "Tenants",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/tenants/tenants",
+    //   },
+    //   items: ["api/tenants/tenants", "api/tenants/tenant-members"],
+    // },
+    // {
+    //   type: "category",
+    //   label: "Tokens",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/tokens/tokens",
+    //   },
+    //   items: [
+    //     "api/tokens/tokens",
+    //     "api/tokens/token-intents",
+    //     "api/tokens/tokenize",
+    //     "api/tokens/detokenize",
+    //     "api/tokens/token-types",
+    //     "api/tokens/token-enrichments",
+    //     {
+    //       type: "doc",
+    //       id: "api/tokens/search",
+    //       customProps: {
+    //         enterprise: true,
+    //       },
+    //     },
+    //   ],
+    // },
+    // {
+    //   type: "category",
+    //   label: "3D Secure",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/3ds/sessions",
+    //   },
+    //   items: [
+    //     {
+    //       type: "doc",
+    //       id: "api/3ds/sessions",
+    //       customProps: {
+    //         enterprise: true,
+    //       },
+    //     },
+    //   ],
+    // },
+    // {
+    //   type: "category",
+    //   label: "Account Updater",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/account-updater/account-updater",
+    //   },
+    //   items: [
+    //     {
+    //       type: "doc",
+    //       id: "api/account-updater/account-updater",
+    //       customProps: {
+    //         enterprise: true,
+    //       },
+    //     },
+    //   ],
+    // },
+    // {
+    //   type: "category",
+    //   label: "Webhooks",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/webhooks/webhooks",
+    //   },
+    //   items: ["api/webhooks/api", "api/webhooks/eventdata"],
+    // },
+    // {
+    //   type: "category",
+    //   label: "Orchestration",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/orchestration/connections",
+    //   },
+    //   items: [
+    //     "api/orchestration/connection_formulas",
+    //     {
+    //       type: "doc",
+    //       id: "api/orchestration/connections",
+    //       customProps: {
+    //         enterprise: true,
+    //       },
+    //     },
+    //     {
+    //       type: "doc",
+    //       id: "api/orchestration/transactions",
+    //       customProps: {
+    //         enterprise: true,
+    //       },
+    //     },
+    //     {
+    //       type: "doc",
+    //       id: "api/orchestration/stripe-forward",
+    //     },
+    //   ],
+    // },
+    // {
+    //   type: "category",
+    //   label: "Enrichments",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/enrichments/bank-accounts",
+    //   },
+    //   items: [
+    //     {
+    //       type: "doc",
+    //       id: "api/enrichments/bank-accounts",
+    //       customProps: {
+    //         enterprise: true,
+    //       },
+    //     },
+    //   ],
+    // },
+    // "api/deprecations",
+    // {
+    //   type: "html",
+    //   value: "<hr />",
+    // },
+    // {
+    //   type: "link",
+    //   label: "Guides",
+    //   href: "/docs",
+    //   customProps: {
+    //     icon: {
+    //       light: "/img/sidebar/light/document.svg",
+    //       dark: "/img/sidebar/dark/document.svg",
+    //     },
+    //   },
+    // },
+    // {
+    //   type: "link",
+    //   label: "SDKs",
+    //   href: "/docs/sdks",
+    //   customProps: {
+    //     icon: {
+    //       light: "/img/sidebar/light/cube.svg",
+    //       dark: "/img/sidebar/dark/cube.svg",
+    //     },
+    //   },
+    // },
+    // {
+    //   type: "link",
+    //   label: "Basis Theory Labs",
+    //   href: "https://github.com/Basis-Theory-Labs",
+    //   customProps: {
+    //     icon: {
+    //       light: "/img/sidebar/light/labs.svg",
+    //       dark: "/img/sidebar/dark/labs.svg",
+    //     },
+    //   },
+    // },
   ],
   sdk: [
     "sdks/index",
