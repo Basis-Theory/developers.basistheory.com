@@ -72,7 +72,14 @@ while (page.hasNextPage()) {
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
+response = client.logs.list()
 
+for item in response:
+    yield item
+
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
@@ -166,7 +173,7 @@ await client.logs.getEntityTypes();
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.logs.get_entity_types()
 ```
 
   </TabItem>
