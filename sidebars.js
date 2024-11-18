@@ -402,13 +402,13 @@ const sidebars = {
         "api/tokens/detokenize",
         "api/tokens/token-types",
         "api/tokens/token-enrichments",
-        // {
-        //   type: "doc",
-        //   id: "api/tokens/search",
-        //   customProps: {
-        //     enterprise: true,
-        //   },
-        // },
+        {
+          type: "doc",
+          id: "api/tokens/search",
+          customProps: {
+            enterprise: true,
+          },
+        },
       ],
     },
     // {
