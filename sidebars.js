@@ -428,23 +428,23 @@ const sidebars = {
         },
       ],
     },
-    // {
-    //   type: "category",
-    //   label: "Account Updater",
-    //   link: {
-    //     type: "doc",
-    //     id: "api/account-updater/account-updater",
-    //   },
-    //   items: [
-    //     {
-    //       type: "doc",
-    //       id: "api/account-updater/account-updater",
-    //       customProps: {
-    //         enterprise: true,
-    //       },
-    //     },
-    //   ],
-    // },
+    {
+      type: "category",
+      label: "Account Updater",
+      link: {
+        type: "doc",
+        id: "api/account-updater/account-updater",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/account-updater/account-updater",
+          customProps: {
+            enterprise: true,
+          },
+        },
+      ],
+    },
     // {
     //   type: "category",
     //   label: "Webhooks",
