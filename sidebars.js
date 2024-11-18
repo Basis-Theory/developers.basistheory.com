@@ -379,15 +379,15 @@ const sidebars = {
         "api/reactors/reactor-errors",
       ],
     },
-    // {
-    //   type: "category",
-    //   label: "Tenants",
-    //   link: {
-    //     type: "doc",
-    //     id: "api/tenants/tenants",
-    //   },
-    //   items: ["api/tenants/tenants", "api/tenants/tenant-members"],
-    // },
+    {
+      type: "category",
+      label: "Tenants",
+      link: {
+        type: "doc",
+        id: "api/tenants/tenants",
+      },
+      items: ["api/tenants/tenants", /*"api/tenants/tenant-members"*/],
+    },
     // {
     //   type: "category",
     //   label: "Tokens",
