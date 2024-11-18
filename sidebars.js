@@ -454,35 +454,35 @@ const sidebars = {
       },
       items: ["api/webhooks/api", "api/webhooks/eventdata"],
     },
-    // {
-    //   type: "category",
-    //   label: "Orchestration",
-    //   link: {
-    //     type: "doc",
-    //     id: "api/orchestration/connections",
-    //   },
-    //   items: [
-    //     "api/orchestration/connection_formulas",
-    //     {
-    //       type: "doc",
-    //       id: "api/orchestration/connections",
-    //       customProps: {
-    //         enterprise: true,
-    //       },
-    //     },
-    //     {
-    //       type: "doc",
-    //       id: "api/orchestration/transactions",
-    //       customProps: {
-    //         enterprise: true,
-    //       },
-    //     },
-    //     {
-    //       type: "doc",
-    //       id: "api/orchestration/stripe-forward",
-    //     },
-    //   ],
-    // },
+    {
+      type: "category",
+      label: "Orchestration",
+      link: {
+        type: "doc",
+        id: "api/orchestration/connections",
+      },
+      items: [
+        "api/orchestration/connection_formulas",
+        {
+          type: "doc",
+          id: "api/orchestration/connections",
+          customProps: {
+            enterprise: true,
+          },
+        },
+        {
+          type: "doc",
+          id: "api/orchestration/transactions",
+          customProps: {
+            enterprise: true,
+          },
+        },
+        {
+          type: "doc",
+          id: "api/orchestration/stripe-forward",
+        },
+      ],
+    },
     // {
     //   type: "category",
     //   label: "Enrichments",
