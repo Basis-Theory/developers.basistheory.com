@@ -366,26 +366,19 @@ const sidebars = {
       },
       items: ["api/proxies/proxies", "api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies", "api/proxies/proxy-errors"],
     },
-    // {
-    //   type: "category",
-    //   label: "Reactors",
-    //   link: {
-    //     type: "doc",
-    //     id: "api/reactors/reactors",
-    //   },
-    //   items: [
-    //     "api/reactors/reactors",
-    //     "api/reactors/reactor-dependencies",
-    //     {
-    //       type: "doc",
-    //       id: "api/reactors/reactor-formulas",
-    //       customProps: {
-    //         deprecated: true,
-    //       },
-    //     },
-    //     "api/reactors/reactor-errors",
-    //   ],
-    // },
+    {
+      type: "category",
+      label: "Reactors",
+      link: {
+        type: "doc",
+        id: "api/reactors/reactors",
+      },
+      items: [
+        "api/reactors/reactors",
+        "api/reactors/reactor-dependencies",
+        "api/reactors/reactor-errors",
+      ],
+    },
     // {
     //   type: "category",
     //   label: "Tenants",
