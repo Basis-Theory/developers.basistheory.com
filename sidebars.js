@@ -386,7 +386,7 @@ const sidebars = {
         type: "doc",
         id: "api/tenants/tenants",
       },
-      items: ["api/tenants/tenants", /*"api/tenants/tenant-members"*/],
+      items: ["api/tenants/tenants", "api/tenants/tenant-members"],
     },
     // {
     //   type: "category",
