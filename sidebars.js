@@ -398,7 +398,7 @@ const sidebars = {
       items: [
         "api/tokens/tokens",
         // "api/tokens/token-intents",
-        // "api/tokens/tokenize",
+        "api/tokens/tokenize",
         // "api/tokens/detokenize",
         // "api/tokens/token-types",
         // "api/tokens/token-enrichments",
