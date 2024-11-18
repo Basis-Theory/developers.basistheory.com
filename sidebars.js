@@ -483,23 +483,23 @@ const sidebars = {
         },
       ],
     },
-    // {
-    //   type: "category",
-    //   label: "Enrichments",
-    //   link: {
-    //     type: "doc",
-    //     id: "api/enrichments/bank-accounts",
-    //   },
-    //   items: [
-    //     {
-    //       type: "doc",
-    //       id: "api/enrichments/bank-accounts",
-    //       customProps: {
-    //         enterprise: true,
-    //       },
-    //     },
-    //   ],
-    // },
+    {
+      type: "category",
+      label: "Enrichments",
+      link: {
+        type: "doc",
+        id: "api/enrichments/bank-accounts",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/enrichments/bank-accounts",
+          customProps: {
+            enterprise: true,
+          },
+        },
+      ],
+    },
     // "api/deprecations",
     // {
     //   type: "html",
