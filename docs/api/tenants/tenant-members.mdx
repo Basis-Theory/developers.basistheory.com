@@ -44,7 +44,7 @@ curl "https://api.basistheory.com/tenants/self/members" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-await client.tenants.members.get();
+await client.tenants.members.list();
 ```
 
   </TabItem>
@@ -65,7 +65,7 @@ await client.tenants.members.get();
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tenants.members.list()
 ```
 
   </TabItem>
@@ -165,7 +165,9 @@ await client.tenants.members.delete("memberId");
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tenants.members.delete(
+    member_id="memberId",
+)
 ```
 
   </TabItem>
@@ -243,7 +245,9 @@ await client.tenants.invitations.create({
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tenants.invitations.create(
+    email="email",
+)
 ```
 
   </TabItem>
@@ -329,7 +333,9 @@ await client.tenants.invitations.resend("invitationId");
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tenants.invitations.resend(
+    invitation_id="invitationId",
+)
 ```
 
   </TabItem>
@@ -421,7 +427,14 @@ while (page.hasNextPage()) {
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
+response = client.tenants.invitations.list()
 
+for item in response:
+    yield item
+
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
@@ -598,7 +611,9 @@ await client.tenants.invitations.delete("invitationId");
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tenants.invitations.delete(
+    invitation_id="invitationId",
+)
 ```
 
   </TabItem>
