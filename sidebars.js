@@ -388,29 +388,29 @@ const sidebars = {
       },
       items: ["api/tenants/tenants", "api/tenants/tenant-members"],
     },
-    // {
-    //   type: "category",
-    //   label: "Tokens",
-    //   link: {
-    //     type: "doc",
-    //     id: "api/tokens/tokens",
-    //   },
-    //   items: [
-    //     "api/tokens/tokens",
-    //     "api/tokens/token-intents",
-    //     "api/tokens/tokenize",
-    //     "api/tokens/detokenize",
-    //     "api/tokens/token-types",
-    //     "api/tokens/token-enrichments",
-    //     {
-    //       type: "doc",
-    //       id: "api/tokens/search",
-    //       customProps: {
-    //         enterprise: true,
-    //       },
-    //     },
-    //   ],
-    // },
+    {
+      type: "category",
+      label: "Tokens",
+      link: {
+        type: "doc",
+        id: "api/tokens/tokens",
+      },
+      items: [
+        "api/tokens/tokens",
+        // "api/tokens/token-intents",
+        // "api/tokens/tokenize",
+        // "api/tokens/detokenize",
+        // "api/tokens/token-types",
+        // "api/tokens/token-enrichments",
+        // {
+        //   type: "doc",
+        //   id: "api/tokens/search",
+        //   customProps: {
+        //     enterprise: true,
+        //   },
+        // },
+      ],
+    },
     // {
     //   type: "category",
     //   label: "3D Secure",
