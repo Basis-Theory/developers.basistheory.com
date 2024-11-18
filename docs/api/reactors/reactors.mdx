@@ -86,7 +86,23 @@ TODO
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.reactors.create(
+    name='My Reactor',
+    code="""module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+        return {
+            raw: {
+                foo: "bar"
+            }
+        };
+    };""",
+    configuration={
+        "SERVICE_API_KEY": "key_abcd1234"
+    },
+    application={
+        "id": application_id
+    }
+)
 ```
 
   </TabItem>
@@ -194,7 +210,14 @@ while (page.hasNextPage()) {
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
+response = client.reactors.list()
 
+for item in response:
+    yield item
+
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
@@ -299,7 +322,9 @@ await client.reactors.get("id");
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.reactors.get(
+    id="id",
+)
 ```
 
   </TabItem>
@@ -416,7 +441,25 @@ TODO
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
+client.reactors.update(
+    id = reactor_id,
+    name='My Reactor',
+    code="""module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
 
+      return {
+        raw: {
+          foo: "bar"
+        }
+      };
+    };""",
+    configuration={
+        "SERVICE_API_KEY": "key_abcd1234"
+    },
+    application={
+        "id": application_id
+    }
+)
 ```
 
   </TabItem>
@@ -530,7 +573,13 @@ TODO
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.reactors.patch(
+    id = reactor_id,
+    name='My Reactor',
+    configuration={
+        "SERVICE_API_KEY": "key_abcd1234"
+    }
+)
 ```
 
   </TabItem>
@@ -611,7 +660,9 @@ await client.reactors.delete("id");
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.reactors.delete(
+    id="id",
+)
 ```
 
   </TabItem>
@@ -694,7 +745,13 @@ TODO
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.reactors.react(
+    id=reactor_id,
+    args={
+      "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      "customer_id": "myCustomerId1234"
+    }
+)
 ```
 
   </TabItem>
@@ -799,6 +856,17 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
 ```
 
   </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.reactors.react_async(
+    id=reactor_id,
+    args={
+        "foo": "bar"
+    }
+)
+```
+  </TabItem>
 </Tabs>
 
 #### URI Parameters
@@ -852,6 +920,15 @@ curl --location 'https://api.basistheory.com/reactors/7001A144-96D0-4401-9D96-13
   <TabItem value="javascript" label="JavaScript">
 ```javascript
 await client.reactors.results.get("id", "requestId");
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.reactors.results.get(
+    id="id",
+    request_id="requestId",
+)
 ```
   </TabItem>
 </Tabs>
