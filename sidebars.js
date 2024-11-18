@@ -500,44 +500,44 @@ const sidebars = {
         },
       ],
     },
-    // "api/deprecations",
-    // {
-    //   type: "html",
-    //   value: "<hr />",
-    // },
-    // {
-    //   type: "link",
-    //   label: "Guides",
-    //   href: "/docs",
-    //   customProps: {
-    //     icon: {
-    //       light: "/img/sidebar/light/document.svg",
-    //       dark: "/img/sidebar/dark/document.svg",
-    //     },
-    //   },
-    // },
-    // {
-    //   type: "link",
-    //   label: "SDKs",
-    //   href: "/docs/sdks",
-    //   customProps: {
-    //     icon: {
-    //       light: "/img/sidebar/light/cube.svg",
-    //       dark: "/img/sidebar/dark/cube.svg",
-    //     },
-    //   },
-    // },
-    // {
-    //   type: "link",
-    //   label: "Basis Theory Labs",
-    //   href: "https://github.com/Basis-Theory-Labs",
-    //   customProps: {
-    //     icon: {
-    //       light: "/img/sidebar/light/labs.svg",
-    //       dark: "/img/sidebar/dark/labs.svg",
-    //     },
-    //   },
-    // },
+    "api/deprecations",
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    {
+      type: "link",
+      label: "Guides",
+      href: "/docs",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/document.svg",
+          dark: "/img/sidebar/dark/document.svg",
+        },
+      },
+    },
+    {
+      type: "link",
+      label: "SDKs",
+      href: "/docs/sdks",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/cube.svg",
+          dark: "/img/sidebar/dark/cube.svg",
+        },
+      },
+    },
+    {
+      type: "link",
+      label: "Basis Theory Labs",
+      href: "https://github.com/Basis-Theory-Labs",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/labs.svg",
+          dark: "/img/sidebar/dark/labs.svg",
+        },
+      },
+    },
   ],
   sdk: [
     "sdks/index",
