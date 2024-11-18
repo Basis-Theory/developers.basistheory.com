@@ -445,15 +445,15 @@ const sidebars = {
         },
       ],
     },
-    // {
-    //   type: "category",
-    //   label: "Webhooks",
-    //   link: {
-    //     type: "doc",
-    //     id: "api/webhooks/webhooks",
-    //   },
-    //   items: ["api/webhooks/api", "api/webhooks/eventdata"],
-    // },
+    {
+      type: "category",
+      label: "Webhooks",
+      link: {
+        type: "doc",
+        id: "api/webhooks/webhooks",
+      },
+      items: ["api/webhooks/api", "api/webhooks/eventdata"],
+    },
     // {
     //   type: "category",
     //   label: "Orchestration",
