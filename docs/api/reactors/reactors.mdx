@@ -65,7 +65,26 @@ curl "https://api.basistheory.com/reactors" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-TODO
+await managementClient.reactors.create({
+    name: "My Reactor",
+    code: `
+        module.exports = async function (req) {
+          // Do something with req.configuration.SERVICE_API_KEY
+
+          return {
+            raw: {
+              foo: "bar"
+            }
+          };
+        };
+      `,
+    configuration: {
+        SERVICE_API_KEY: "key_abcd1234",
+    },
+    application: {
+        id: applicationId,
+    }
+})
 ```
 
   </TabItem>
@@ -422,7 +441,29 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13"
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-TODO
+await managementClient.reactors.update(
+    reactorId,
+    {
+        name: "My Reactor",
+        code: `
+        module.exports = async function (req) {
+          // Do something with req.configuration.SERVICE_API_KEY
+
+          return {
+            raw: {
+              foo: "bar"
+            }
+          };
+        };
+      `,
+        configuration: {
+            SERVICE_API_KEY: "key_abcd1234",
+        },
+        application: {
+            id: applicationId,
+        }
+    }
+);
 ```
 
   </TabItem>
@@ -554,7 +595,15 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13"
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-TODO
+await managementClient.reactors.patch(
+    reactorId!,
+    {
+        name: "My Reactor",
+        configuration: {
+            SERVICE_API_KEY: "key_abcd1234",
+        }
+    }
+)
 ```
 
   </TabItem>
@@ -724,7 +773,15 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-TODO
+await client.reactors.react(
+  reactorId,
+  {
+    args: {
+      card "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      customer_id: "myCustomerId1234"
+    }
+  }
+);
 ```
 
   </TabItem>
@@ -855,6 +912,20 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/
   }'
 ```
 
+  </TabItem>
+
+  <TabItem value="javascript" label="JavaScript">
+```javascript
+await client.reactors.reactAsync(
+  reactorId,
+  {
+    args: {
+      card "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      customer_id: "myCustomerId1234"
+    }
+  }
+);
+```
   </TabItem>
 
   <TabItem value="python" label="Python">
