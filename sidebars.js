@@ -400,8 +400,8 @@ const sidebars = {
         // "api/tokens/token-intents",
         "api/tokens/tokenize",
         "api/tokens/detokenize",
-        // "api/tokens/token-types",
-        // "api/tokens/token-enrichments",
+        "api/tokens/token-types",
+        "api/tokens/token-enrichments",
         // {
         //   type: "doc",
         //   id: "api/tokens/search",
