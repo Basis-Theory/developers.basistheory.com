@@ -222,7 +222,14 @@ while (page.hasNextPage()) {
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
+response = client.proxies.list()
 
+for item in response:
+    yield item
+
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
@@ -334,7 +341,9 @@ await client.proxies.get("id");
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.proxies.get(
+    id="id",
+)
 ```
 
   </TabItem>
@@ -698,7 +707,9 @@ await client.proxies.delete("id");
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.proxies.delete(
+    id="id",
+)
 ```
 
   </TabItem>
