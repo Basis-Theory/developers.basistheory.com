@@ -1,3 +1,10 @@
+## [1.195.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.195.0...v1.195.1) (2024-11-19)
+
+
+### Bug Fixes
+
+* fixing example to use authentication vs authorization ([#473](https://github.com/Basis-Theory/developers.basistheory.com/issues/473)) ([d8d67a6](https://github.com/Basis-Theory/developers.basistheory.com/commit/d8d67a68d927af4b30165dc2b1f6496c2f0daef3))
+
 # [1.195.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.194.0...v1.195.0) (2024-11-12)
 
 
