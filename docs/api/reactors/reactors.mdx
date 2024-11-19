@@ -65,7 +65,7 @@ curl "https://api.basistheory.com/reactors" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-await managementClient.reactors.create({
+await client.reactors.create({
     name: "My Reactor",
     code: `
         module.exports = async function (req) {
@@ -91,7 +91,28 @@ await managementClient.reactors.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
+await client.Reactors.CreateAsync(new CreateReactorRequest
+{
+    Name = "My Reactor",
+    Code = @"
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
 
+        return {
+          raw: {
+            foo: ""bar""
+          }
+        };
+      };",
+    Configuration = new Dictionary<string, string?>
+    {
+        { "SERVICE_API_KEY", "key_abcd1234" }
+    },
+    Application = new Application
+    {
+        Id = applicationId
+    }
+});
 ```
 
   </TabItem>
@@ -215,7 +236,7 @@ while (page.hasNextPage()) {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Reactors.ListAsync(new ReactorsListRequest());
 ```
 
   </TabItem>
@@ -327,7 +348,7 @@ await client.reactors.get("id");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Reactors.GetAsync("id");
 ```
 
   </TabItem>
@@ -441,7 +462,7 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13"
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-await managementClient.reactors.update(
+await client.reactors.update(
     reactorId,
     {
         name: "My Reactor",
@@ -470,7 +491,31 @@ await managementClient.reactors.update(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
+await client.Reactors.UpdateAsync(
+  reactorId,
+  new UpdateReactorRequest
+  {
+    Name = "My Reactor",
+    Code = @"
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
 
+        return {
+          raw: {
+            foo: ""bar""
+          }
+        };
+      };",
+    Configuration = new Dictionary<string, string?>
+    {
+      { "SERVICE_API_KEY", "key_abcd1234" }
+    },
+    Application = new Application
+    {
+      Id = applicationId
+    }
+  }
+);
 ```
   </TabItem>
   <TabItem value="java" label="Java">
@@ -595,7 +640,7 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13"
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-await managementClient.reactors.patch(
+await client.reactors.patch(
     reactorId!,
     {
         name: "My Reactor",
@@ -610,7 +655,17 @@ await managementClient.reactors.patch(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Reactors.PatchAsync(
+  reactorId,
+  new PatchReactorRequest
+  {
+    Name = "My Reactor",
+    Configuration = new Dictionary<string, string?>
+    {
+      { "SERVICE_API_KEY", "key_abcd1234" }
+    }
+  }
+);
 ```
   </TabItem>
   <TabItem value="java" label="Java">
@@ -695,7 +750,7 @@ await client.reactors.delete("id");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Reactors.DeleteAsync("id");
 ```
 
   </TabItem>
@@ -777,7 +832,7 @@ await client.reactors.react(
   reactorId,
   {
     args: {
-      card "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      card: "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
       customer_id: "myCustomerId1234"
     }
   }
@@ -788,7 +843,17 @@ await client.reactors.react(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Reactors.ReactAsync(
+  reactorId,
+  new ReactRequest
+  {
+    Args = new
+    {
+      card = "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      customer_id = "myCustomerId1234"
+    }
+  }
+);
 ```
 
   </TabItem>
@@ -928,12 +993,29 @@ await client.reactors.reactAsync(
 ```
   </TabItem>
 
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Reactors.ReactAsyncAsync(
+  reactorId,
+  new ReactRequestAsync
+  {
+    Args = new
+    {
+      card = "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      customer_id = "myCustomerId1234"
+    }
+  }
+);
+```
+  </TabItem>
+
   <TabItem value="python" label="Python">
 ```python showLineNumbers
 client.reactors.react_async(
     id=reactor_id,
     args={
-        "foo": "bar"
+      "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      "customer_id": "myCustomerId1234"
     }
 )
 ```
@@ -991,6 +1073,12 @@ curl --location 'https://api.basistheory.com/reactors/7001A144-96D0-4401-9D96-13
   <TabItem value="javascript" label="JavaScript">
 ```javascript
 await client.reactors.results.get("id", "requestId");
+```
+  </TabItem>
+
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Reactors.Results.GetAsync("id", "requestId");
 ```
   </TabItem>
 
