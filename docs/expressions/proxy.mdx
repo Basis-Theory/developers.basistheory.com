@@ -34,7 +34,7 @@ curl --location --request POST 'http://api.basistheory.com/proxy?bt-proxy-key=<p
 --header 'X-User-Id: 2342424' \
 --header 'X-Date: 2024-07-10T13:46:28.629Z' \
 --header 'Content-Type: application/json' \
---header 'Authorization: {{ proxy | json: '$.request.headers.X-User-Id' | append_exp: proxy.request.headers.X-Date | append_exp: proxy.request.body \
+--header 'Authorization: {{ proxy | json: '$.request.headers.X-User-Id' | append: proxy.request.headers.X-Date | append: proxy.request.body \
   | hmac: 'sha-256', proxy.config.secret_key | to_base16 }}' \
 --data '{ "card_number": "{{ token: 1d08babf-456a-4bef-993d-aece3c1a2f66 | '$.data.number' }}" }'
 ```
