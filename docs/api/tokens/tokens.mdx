@@ -88,7 +88,20 @@ await client.tokens.create({
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tokens.create(
+    type="token",
+    data="Sensitive Value",
+    mask="{{ data | reveal_last: 4 }}",
+    metadata={
+        "nonSensitiveField": "Non-Sensitive Value"
+    },
+    containers=["/general/high/"],
+    search_indexes=[
+        "{{ data }}",
+        "{{ data | last4 }}"
+    ],
+    fingerprint_expression="{{ data }}"
+)
 ```
 
   </TabItem>
@@ -206,7 +219,14 @@ while (page.hasNextPage()) {
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
+response = client.tokens.list_v2()
 
+for item in response:
+    yield item
+
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
@@ -305,7 +325,14 @@ while (page.hasNextPage()) {
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
+response = client.tokens.list()
 
+for item in response:
+    yield item
+
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
@@ -399,7 +426,9 @@ await client.tokens.get("id");
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tokens.get(
+    id="id",
+)
 ```
 
   </TabItem>
@@ -511,7 +540,21 @@ await client.tokens.update(token.id!, {
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tokens.update(
+    id="id",
+    type="token",
+    data="Sensitive Value",
+    mask="{{ data | reveal_last: 4 }}",
+    metadata={
+        "nonSensitiveField": "Non-Sensitive Value"
+    },
+    containers=["/general/high/"],
+    search_indexes=[
+        "{{ data }}",
+        "{{ data | last4 }}"
+    ],
+    fingerprint_expression="{{ data }}"
+)
 ```
 
   </TabItem>
@@ -610,7 +653,9 @@ await client.tokens.delete("id");
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tokens.delete(
+    id="id",
+)
 ```
 
   </TabItem>
