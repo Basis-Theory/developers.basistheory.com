@@ -83,7 +83,12 @@ await client.tokens.tokenize({
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tokens.tokenize(
+    request={
+        "first_name": "John",
+        "last_name": "Doe"
+    }
+)
 ```
 
   </TabItem>
@@ -163,7 +168,19 @@ await client.tokens.tokenize({
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tokens.tokenize(
+    request={
+        "type": "token",
+        "data": "Sensitive Value",
+        "metadata": {
+            "nonSensitive": "Non-Sensitive Value"
+        },
+        "search_indexes": [
+            "{{ data }}"
+        ],
+        "fingerprint_expression": "{{ data }}"
+    }
+)
 ```
 
   </TabItem>
@@ -256,7 +273,20 @@ await client.tokens.tokenize({
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tokens.tokenize(
+    request={
+        "type": "card",
+        "data": {
+            "number": "4242424242424242",
+            "expiration_month": 12,
+            "expiration_year": 2025,
+            "cvc": "123"
+        },
+        "metadata": {
+            "nonSensitive": "Non-Sensitive Value"
+        }
+    }
+)
 ```
 
   </TabItem>
@@ -366,7 +396,28 @@ await client.tokens.tokenize([
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tokens.tokenize(
+    request=[
+        "John",
+        "Doe",
+        {
+            "type": "card",
+            "data": {
+                "number": "4242424242424242",
+                "expiration_month": 12,
+                "expiration_year": 2025,
+                "cvc": "123"
+            },
+            "metadata": {
+                "nonSensitive": "Non-Sensitive Value"
+            }
+        },
+        {
+            "type": "token",
+            "data": "Sensitive Value"
+        }
+    ]
+)
 ```
 
   </TabItem>
@@ -480,7 +531,28 @@ await client.tokens.tokenize({
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tokens.tokenize(
+    request={
+        "first_name": "John",
+        "last_name": "Doe",
+        "primary_card": {
+            "type": "card",
+            "data": {
+                "number": "4242424242424242",
+                "expiration_month": 12,
+                "expiration_year": 2025,
+                "cvc": "123"
+            }
+        },
+        "sensitive_tags": [
+            "preferred",
+            {
+                "type": "token",
+                "data": "vip"
+            }
+        ]
+    }
+)
 ```
 
   </TabItem>
