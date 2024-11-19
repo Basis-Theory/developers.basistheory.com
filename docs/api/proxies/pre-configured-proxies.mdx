@@ -132,7 +132,41 @@ const proxy = await client.proxies.create({
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
+client.proxies.create(
+    name="My Proxy",
+    destination_url = "https://example.com/api",
+    request_transform = {
+        "code": """
+            module.exports = async function (req) {
+              // Do something with req.configuration.SERVICE_API_KEY
 
+              return {
+                headers: req.args.headers,s
+                body: req.args.body
+              };
+            };
+        """
+    },
+    response_transform = {
+        "code": """
+            module.exports = async function (req) {
+              // Do something with 'req.configuration.SERVICE_API_KEY'
+
+              return {
+                headers: req.args.headers,
+                body: req.args.body
+              };
+            };
+        """
+    },
+    configuration = {
+        "SERVICE_API_KEY": "key_abcd134"
+    },
+    application = {
+        "id": application_id
+    },
+    require_auth = True
+)
 ```
 
   </TabItem>
@@ -552,7 +586,42 @@ await client.proxies.update(
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
+client.proxies.update(
+    id=proxy_id,
+    name="My Proxy",
+    destination_url="https://example.com/api",
+    request_transform={
+        "code": """
+                module.exports = async function (req) {
+                  // Do something with req.configuration.SERVICE_API_KEY
 
+                  return {
+                    headers: req.args.headers,
+                    body: req.args.body
+                  };
+                };
+            """
+    },
+    response_transform={
+        "code": """
+                module.exports = async function (req) {
+                  // Do something with 'req.configuration.SERVICE_API_KEY'
+
+                  return {
+                    headers: req.args.headers,
+                    body: req.args.body
+                  };
+                };
+            """
+    },
+    configuration={
+        "SERVICE_API_KEY": "key_abcd134"
+    },
+    application={
+        "id": application_id
+    },
+    require_auth=True
+)
 ```
 
   </TabItem>
@@ -702,7 +771,14 @@ await client.proxies.update(proxyId, {
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.proxies.patch(
+    id=proxy_id,
+    name="(Deletable) python-SDK-" + str(uuid.uuid4()),
+    destination_url="https://example.com/api",
+    configuration={
+        "SERVICE_API_KEY": "key_abcd134"
+    }
+)
 ```
 
   </TabItem>
