@@ -676,3 +676,84 @@ Given a token with the data:
 | <code>\{\{ data.numeric_value &#124; to_string }}</code> | `"3.14159"` |
 | <code>\{\{ data.boolean_value &#124; to_string }}</code> | `"true"`    |
 | <code>\{\{ data.string_value &#124; to_string }}</code>  | `"foo"`     |
+
+## to_base64
+
+Encodes the provided byte array to base64 format.
+
+Returns an error if the byte array is null.
+
+#### Parameters
+
+None
+
+#### Examples
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "token",
+  "data": "secretText"
+}
+```
+
+| Expression                                                                           | Result       |
+| ------------------------------------------------------------------------------------ | ------------ |
+| <code>\{\{ data &#124; hmac: 'sha-256', 'secretKeyValue' &#124; to_base64 }}</code>  | `"Q31M2Y1rHnxT+hzO4XAlrfYrLRDX26/fmgadtcmpzhQ="` |
+
+## to_base16 (hex)
+
+Encodes the provided byte array to base16 (hex) format.
+
+Returns an error if the byte array is null.
+
+#### Parameters
+
+None
+
+#### Examples
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "token",
+  "data": "secretText"
+}
+```
+
+| Expression                                                                           | Result                                                               |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| <code>\{\{ data &#124; hmac: 'sha-256', 'secretKeyValue' &#124; to_base16 }}</code>  | `"437D4CD98D6B1E7C53FA1CCEE17025ADF62B2D10D7DBAFDF9A069DB5C9A9CE14"` |
+
+## hmac
+
+Generates a hmac signature using the specified algorithm.
+
+Returns the signature byte array which can be encoded using `to_base64` or `to_base16` filters.
+
+#### Parameters
+
+| Position | Name         | Type     | Required | Default Value | Description                                        |
+| -------- | ------------ | ---------| -------- | ------------- | -------------------------------------------------- |
+| 0        | algorithm    | _string_ | false    | `sha-256`     | Algorithm to use. One of `sha-1`, `sha-256` or `sha-512` |
+| 1        | key          | _string_ | true     | -             | Secret key used to hash the data                   |
+
+#### Examples
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "card_number",
+  "data": "4242424242424242"
+}
+```
+
+| Expression                                                                          | Result                                                              |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| <code>\{\{ data &#124; hmac: 'sha-256', 'secretKeyValue' &#124; to_base16 }}</code> | `"90A0050E90515101DCAD0F68955370CCA81F6DCB9D299E7E0585CC9746716D9B"`|
