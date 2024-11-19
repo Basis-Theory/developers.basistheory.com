@@ -1,3 +1,10 @@
+# [1.196.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.195.1...v1.196.0) (2024-11-19)
+
+
+### Features
+
+* documenting proxy expressions ([#472](https://github.com/Basis-Theory/developers.basistheory.com/issues/472)) ([172011f](https://github.com/Basis-Theory/developers.basistheory.com/commit/172011fab8876f6ba58bb7cf9210a3036dff64d6))
+
 ## [1.195.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.195.0...v1.195.1) (2024-11-19)
 
 
