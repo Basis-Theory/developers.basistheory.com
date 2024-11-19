@@ -59,7 +59,13 @@ let token = await client.tokens.create(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.CreateAsync(new CreateTokenRequest
+    {...},
+    new IdempotentRequestOptions
+    {
+        IdempotencyKey = Guid.NewGuid().ToString(),
+    }
+);
 ```
 
   </TabItem>
