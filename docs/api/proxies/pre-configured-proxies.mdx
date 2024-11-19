@@ -118,7 +118,46 @@ const proxy = await client.proxies.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
+await client.Proxies.CreateAsync(new CreateProxyRequest
+  {
+      Name = "My Proxy",
+      DestinationUrl = "https://example.com/api",
+      RequestTransform = new ProxyTransform
+      {
+          Code = @"
+            module.exports = async function (req) {
+              // Do something with req.configuration.SERVICE_API_KEY
 
+              return {
+                headers: req.args.headers,
+                body: req.args.body
+              };
+            };
+          "
+      },
+      ResponseTransform = new ProxyTransform
+      {
+          Code = @"
+            module.exports = async function (req) {
+              // Do something with req.configuration.SERVICE_API_KEY
+
+              return {
+                headers: req.args.headers,
+                body: req.args.body
+              };
+            };
+          "
+      },
+      Configuration = new Dictionary<string, string?>
+      {
+          { "SERVICE_API_KEY", "key_abcd1234" }
+      },
+      Application = new Application
+      {
+          Id = applicationId
+      },
+      RequireAuth = true
+  });
 ```
 
   </TabItem>
@@ -276,7 +315,7 @@ while (page.hasNextPage()) {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Proxies.ListAsync(new ProxiesListRequest());
 ```
 
   </TabItem>
@@ -402,7 +441,7 @@ await client.proxies.get("id");
   <TabItem value="java" label="Java">
 
 ```csharp showLineNumbers
-
+await client.Proxies.GetAsync("id");
 ```
 
   </TabItem>
@@ -572,7 +611,49 @@ await client.proxies.update(
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
+await client.Proxies.UpdateAsync(
+    proxyId,
+    new UpdateProxyRequest
+    {
+        Name = "My Proxy",
+        DestinationUrl = "https://example.com/api",
+        RequestTransform = new ProxyTransform
+        {
+            Code = @"
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
 
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        "
+        },
+        ResponseTransform = new ProxyTransform
+        {
+            Code = @"
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
+
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        "
+        },
+        Configuration = new Dictionary<string, string?>
+        {
+            { "SERVICE_API_KEY", "key_abcd1234" }
+        },
+        Application = new Application
+        {
+            Id = applicationId
+        },
+        RequireAuth = true
+    }
+);
 ```
 
   </TabItem>
@@ -757,7 +838,17 @@ await client.proxies.update(proxyId, {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Proxies.PatchAsync(
+    proxyId,
+    new PatchProxyRequest
+    {
+        Name = "My Proxy",
+        DestinationUrl = "https://example.com/api",
+        Configuration = new Dictionary<string, string?> {
+            { "SERVICE_API_KEY", "key_abcd1234" }
+        },
+    }
+);
 ```
 
   </TabItem>
@@ -845,7 +936,7 @@ await client.proxies.delete("id");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Proxies.DeleteAsync("id");
 ```
 
   </TabItem>
