@@ -1,0 +1,46 @@
+---
+title: Proxy
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Proxy
+
+ Proxy Expressions allow the ability to inject header values before forwarding the request to the destination. Using these expressions you
+ can reference the [detokenized](/docs/expressions/detokenization) request body, other headers and even the configuration of the
+ [Pre-Configured Proxy](/docs/api/proxies/pre-configured-proxies).
+ A useful example would be computing a signature required by the destination to verify data integrity and authenticity of the request.
+
+## Signing the request using HMAC-SHA256
+
+Given a Pre-Configured proxy with the following configuration:
+
+```json showLineNumbers
+{
+  ...
+  "configuration": {
+    "secret_key": "my-secret-key",
+    "another_secret": "my-secret"
+  },
+  ...
+}
+```
+
+Then a request containing the proxy expression:
+
+```json showLineNumbers
+curl --location --request POST 'http://api.basistheory.com/proxy?bt-proxy-key=<proxy_key>' \
+--header 'X-User-Id: 2342424' \
+--header 'X-Date: 2024-07-10T13:46:28.629Z' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: {{ proxy | json: '$.request.headers.X-User-Id' | append_exp: proxy.request.headers.X-Date | append_exp: proxy.request.body \
+  | hmac: 'sha-256', proxy.config.secret_key | to_base16 }}' \
+--data '{ "card_number": "{{ token: 1d08babf-456a-4bef-993d-aece3c1a2f66 | '$.data.number' }}" }'
+```
+
+will concatenate `X-User-Id` + `X-Date` + `<request_body_json_string>`, compute the signature using `HMAC` with `SHA-256` and then `base16` encode it:
+
+```json showLineNumbers
+Authorization: 1bd337f9d892a7f4581b998c21e353b1686a6bcac5940e7bb6aa596c96e0a6ed
+```
