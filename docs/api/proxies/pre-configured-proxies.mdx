@@ -77,7 +77,41 @@ curl "https://api.basistheory.com/proxies" \
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
+const proxy = await client.proxies.create({
+    name: 'My Proxy',
+    destinationUrl: 'https://example.com/api',
+    requestTransform: {
+        code: `
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
 
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        `
+    },
+    responseTransform: {
+        code: `
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
+
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        `
+    },
+    configuration: {
+        SERVICE_API_KEY: 'key_abcd1234',
+    },
+    application: {
+        id: applicationId
+    },
+    requireAuth: true
+});
 ```
 
   </TabItem>
@@ -461,7 +495,43 @@ curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" 
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
+await client.proxies.update(
+    proxyId,
+    {
+    name: 'My Proxy',
+    destinationUrl: 'https://example.com/api',
+    requestTransform: {
+        code: `
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
 
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        `
+    },
+    responseTransform: {
+        code: `
+          module.exports = async function (req) {
+            // Do something with req.configuration.SERVICE_API_KEY
+
+            return {
+              headers: req.args.headers,
+              body: req.args.body
+            };
+          };
+        `
+    },
+    configuration: {
+        SERVICE_API_KEY: 'key_abcd1234',
+    },
+    application: {
+        id: applicationId
+    },
+    requireAuth: true
+});
 ```
 
   </TabItem>
@@ -605,7 +675,13 @@ curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" 
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-
+await client.proxies.update(proxyId, {
+    name: 'My Proxy',
+    destinationUrl: "https://example.com/api",
+    configuration: {
+        SERVICE_API_KEY: "key_abcd1234",
+    }
+});
 ```
 
   </TabItem>
