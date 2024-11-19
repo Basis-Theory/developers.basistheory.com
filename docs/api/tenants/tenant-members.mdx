@@ -51,7 +51,7 @@ await client.tenants.members.list();
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tenants.Members.ListAsync(new MembersListRequest());
 ```
 
   </TabItem>
@@ -151,7 +151,7 @@ await client.tenants.members.delete("memberId");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tenants.Members.DeleteAsync("memberId");
 ```
 
   </TabItem>
@@ -231,7 +231,12 @@ await client.tenants.invitations.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tenants.Invitations.CreateAsync(
+  new CreateTenantInvitationRequest
+  {
+    Email = "email"
+  }
+);
 ```
 
   </TabItem>
@@ -319,7 +324,7 @@ await client.tenants.invitations.resend("invitationId");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tenants.Invitations.ResendAsync("invitationId");
 ```
 
   </TabItem>
@@ -356,7 +361,7 @@ client.tenants.invitations.resend(
 
 ### Response
 
-Returns a [Tenant Invitation](#tenant-inviation-object) if the Tenant Invitation was resent. Returns [an error](/docs/api/errors) if there were validation errors, or the Tenant Invitation failed to resend.
+Returns a [Tenant Invitation](#tenant-invitation-object) if the Tenant Invitation was resent. Returns [an error](/docs/api/errors) if there were validation errors, or the Tenant Invitation failed to resend.
 
 ```json showLineNumbers
 {
@@ -413,7 +418,7 @@ while (page.hasNextPage()) {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tenants.Invitations.ListAsync(new InvitationsListRequest());
 ```
 
   </TabItem>
@@ -506,14 +511,14 @@ curl "https://api.basistheory.com/tenants/self/invitations/fb32ea26-2185-4ad2-a7
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-
+await client.tenants.invitations.get("invitationId");
 ```
 
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tenants.Invitations.GetAsync("invitationId");
 ```
 
   </TabItem>
@@ -527,7 +532,9 @@ curl "https://api.basistheory.com/tenants/self/invitations/fb32ea26-2185-4ad2-a7
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-
+client.tenants.invitations.get(
+    invitation_id="invitationId",
+)
 ```
 
   </TabItem>
@@ -597,7 +604,7 @@ await client.tenants.invitations.delete("invitationId");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tenants.Invitations.DeleteAsync("invitationId");
 ```
 
   </TabItem>
