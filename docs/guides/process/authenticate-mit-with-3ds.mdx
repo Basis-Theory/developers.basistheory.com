@@ -1,0 +1,1237 @@
+---
+toc_max_heading_level: 2
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
+import Android from "@site/static/img/sdk/logos/android.svg";
+import AppleDark from "@site/static/img/sdk/logos/apple-dark.svg";
+import Apple from "@site/static/img/sdk/logos/apple.svg";
+import React from "@site/static/img/sdk/logos/react.svg";
+import { Card } from "@site/src/components/shared/Card";
+import styles from "@site/src/pages/index.module.css";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import ThemedImage from "@theme/ThemedImage";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+# Authenticate Merchant Initiated Transactions (MITs) with 3DS
+
+[3DS (3D Secure)](/docs/features/3d-secure) is an online payment authentication protocol that enhances anti-fraud efforts.
+In the context of Merchant Initiated Transactions (MIT), such as recurring payments and subscriptions, 3DS operates differently.
+Instead of requiring cardholders to undergo an additional layer of verification like a one-time password or biometric scan during each transaction, any necessary authentication challenges occur in a decoupled manner, typically during the initial setup of the payment agreement.
+This approach allows merchants to process subsequent payments seamlessly without direct cardholder interaction, while still complying with Secure Customer Authentication (SCA) requirements under regulations like PSD2.
+
+This guide will show you how to use the Basis Theory Platform to perform 3DS authentication for Merchant Initiated Transactions.
+
+<Alert type={Alerts.INFO}>3D Secure is an Enterprise feature. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
+
+## Getting Started
+
+<GettingStartedSection />
+
+## Provisioning Resources
+
+In this section, we will explore the bare minimum resources necessary to authenticate merchant transactions with 3DS.
+
+### Public Application
+
+You will need a [Public Application](/docs/api/applications) with permissions to create tokens and 3DS sessions. [Click here to create one](https://portal.basistheory.com/applications/create?permissions=token%3Acreate&permissions=3ds%3Asession%3Acreate&type=public).
+
+This will create an application with the following Permissions:
+* Permissions: `token:create`, `3ds:session:create`
+
+<Alert>Save the API Key from the created Public Application as it will be used later in this guide.</Alert>
+
+### Private Application
+
+Next, you will need a [Private Application](/docs/api/applications) for your backend with the permission to authenticate 3DS sessions.
+
+[Click here to create it](https://portal.basistheory.com/applications/create?type=private&permissions=3ds%3Asession%3Aauthenticate) with the following Permissions:
+
+- Permissions: `3ds:session:authenticate`
+
+<Alert>Save the API Key from the created Private Application as it will be used later in this guide.</Alert>
+
+## Creating a Card Token
+
+In order to run 3DS authentication on a customer card, it must be first tokenized with Basis Theory.
+Follow the [Collect Cards Guide](/docs/guides/collect/collect-cards) to learn how to create a card token using a variety of different technologies available through the Basis Theory SDKs.
+
+## Creating a 3DS Session
+
+First, let's create a 3DS `session`, pass the created card token `id` as the `token_id` property and `merchant` as the session `type`.
+
+<Tabs className="bt-tabs" queryString="backend">
+<TabItem value="node" label="Node">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript showLineNumbers
+//highlight-start
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+//highlight-end
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+//highlight-start
+let bt;
+(async () => {
+  bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
+})();
+//highlight-end
+
+//highlight-start
+app.post("/sessions/create", async (req, res) => {
+  const { token_id } = req.params;
+
+  try {
+    const session = await bt.threeds.createSession({
+      tokenId: token_id,
+      type: "merchant",
+    });
+    res.status(201).send(session);
+  } catch (error) {
+    console.error('Error while creating 3DS session:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+//highlight-end
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+```
+</TabItem>
+
+<TabItem value="dotnet" label=".NET">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
+
+```csharp showLineNumbers
+using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+
+//highlight-start
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
+//highlight-end
+
+namespace server.Controllers
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            WebHost.CreateDefaultBuilder(args)
+              .UseUrls("http://0.0.0.0:4242")
+              .UseWebRoot("public")
+              .UseStartup<Startup>()
+              .Build()
+              .Run();
+        }
+    }
+
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc().AddNewtonsoftJson();
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            app.UseRouting();
+            app.UseStaticFiles();
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
+        }
+    }
+
+    //highlight-start
+    [ApiController]
+    public class ThreeDsApiController : ControllerBase
+    {
+        private readonly ThreeDSApi _client;
+
+        public ThreeDsApiController()
+        {
+            Configuration config = new Configuration();
+            config.BasePath = "https://api.basistheory.com";
+            config.AddApiKey("BT-API-KEY", "<PUBLIC_API_KEY>");
+
+            _client = new ThreeDSApi(config);
+        }
+
+        [HttpPost("session/create")]
+        public async Task<ActionResult> CreateSession([FromBody] string tokenId)
+        {
+            var request = new CreateThreeDSSessionRequest()
+            {
+                TokenId = tokenId,
+                Type = "merchant"
+            };
+
+            CreateThreeDSSessionResponse session = await _client.ThreeDSCreateSessionAsync(request);
+
+            if (session == null)
+            {
+                return BadRequest("Failed to create session.");
+            }
+
+            return StatusCode(201, response);
+        }
+    }
+    //highlight-end
+}
+```
+</TabItem>
+
+<TabItem value="python" label="Python">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
+
+```python showLineNumbers
+import os
+from flask import Flask, request, jsonify
+
+#highlight-start
+import basistheory
+from basistheory.api import three_ds_api
+from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo, CreateThreeDSSessionRequest
+#highlight-end
+
+app = Flask(__name__)
+
+#highlight-start
+@app.route('/sessions/create', methods=['POST'])
+def create_session():
+  token_id = request.json.get('token_id')
+
+  config = basistheory.Configuration(
+    host="https://api.basistheory.com",
+    api_key="<PUBLIC_API_KEY>"
+  )
+
+  with basistheory.ApiClient(configuration=config) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+    session = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
+      token_id=token_id,
+      type="merchant"
+    ))
+    return jsonify(session.to_dict()), 201
+#highlight-end
+
+if __name__ == '__main__':
+  app.run(port=4242, debug=True)
+```
+</TabItem>
+
+<TabItem value="go" label="Go">
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go), [Go HTTP package](https://pkg.go.dev/net/http) and the [Gorilla Mux Router](https://github.com/gorilla/mux).
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "encoding/json"
+  "log"
+  "net/http"
+  //highlight-start
+  "github.com/Basis-Theory/basistheory-go/v7"
+  //highlight-end
+  "github.com/gorilla/mux"
+)
+
+func main() {
+  router := mux.NewRouter()
+  //highlight-start
+  router.HandleFunc("/sessions/create", createSession).Methods("POST")
+  //highlight-end
+  addr := "localhost:4242"
+  log.Printf("Listening on %s", addr)
+  log.Fatal(http.ListenAndServe(addr, router))
+}
+
+//highlight-start
+func createSession(rw http.ResponseWriter, r *http.Request) {
+  var request map[string]string
+  json.NewDecoder(r.Body).Decode(&request)
+  tokenId := request["token_id"]
+
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PUBLIC_API_KEY>"},
+  })
+
+  createThreeDSSessionRequest := *basistheory.NewCreateThreeDSSessionRequest()
+  createThreeDSSessionRequest.SetTokenId(tokenId)
+  createThreeDSSessionRequest.SetType("merchant")
+
+  session, _, createErr := apiClient.ThreeDSApi.ThreeDSCreateSession(contextWithAPIKey).CreateThreeDSSessionRequest(createThreeDSSessionRequest).Execute()
+  if createErr != nil {
+    rw.WriteHeader(http.StatusInternalServerError)
+    json.NewEncoder(rw).Encode(map[string]string{"error": createErr.Error()})
+    return
+  }
+
+  rw.WriteHeader(http.StatusCreated)
+  json.NewEncoder(rw).Encode(session)
+}
+//highlight-end
+```
+</TabItem>
+</Tabs>
+
+<Alert>Be sure to replace <code>&lt;PUBLIC_API_KEY></code> with the Public API Key you created in the <a href="#public-application">Public Application</a> step,
+and pass <code>tokenId</code> to the call as the token id created in the <a href="#creating-a-card-token">Creating a Card Token</a> step.</Alert>
+
+## Authenticating a 3DS Session
+
+Once the `session` is created, it must be [authenticated](/docs/api/3ds/sessions#authenticate-session).
+In this process, the merchant must send information about the transaction to the 3DS server.
+
+This is done by calling [Authenticate 3DS Session](/docs/api/3ds/sessions#authenticate-session) endpoint from your own backend, with the private API key created earlier.
+
+<Tabs className="bt-tabs" queryString="backend">
+<TabItem value="node" label="Node">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript showLineNumbers
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+let bt;
+(async () => {
+  bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
+})();
+
+app.post("/sessions/create", async (req, res) => {
+  const { token_id } = req.params;
+
+  try {
+    const session = await bt.threeds.createSession({
+      tokenId: token_id,
+      type: "merchant",
+    });
+    res.status(201).send(session);
+  } catch (error) {
+    console.error('Error while creating 3DS session:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+
+//highlight-start
+app.post("/:sessionId/authenticate", async (req, res) => {
+  const { sessionId } = req.params;
+
+  try {
+    const authentication = await bt.threeds.authenticateSession(sessionId, {
+      authenticationCategory: "payment",
+      authenticationType: "other-payment",
+      decoupledChallengeMaxTime: 10,
+      purchaseInfo: {
+        amount: "80000",
+        currency: "826",
+        exponent: "2",
+        date: "20240109141010"
+      },
+      requestorInfo: {
+        id: "example-3ds-merchant",
+        name: "Example 3DS Merchant",
+        url: "https://www.example.com/example-merchant"
+      },
+      merchantInfo: {
+        mid: "9876543210001",
+        acquirerBin: "000000999",
+        name: "Example 3DS Merchant",
+        categoryCode: "7922",
+        countryCode: "826"
+      },
+      cardholderInfo: {
+        name: "John Doe",
+        email: "john@me.com"
+      }
+    }, { apiKey: "<PRIVATE_API_KEY>" });
+    res.status(200).send(authentication);
+  } catch (error) {
+    console.error('Error during authentication:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+//highlight-end
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+```
+</TabItem>
+
+<TabItem value="dotnet" label=".NET">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
+
+```csharp showLineNumbers
+using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
+
+namespace server.Controllers
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            WebHost.CreateDefaultBuilder(args)
+              .UseUrls("http://0.0.0.0:4242")
+              .UseWebRoot("public")
+              .UseStartup<Startup>()
+              .Build()
+              .Run();
+        }
+    }
+
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc().AddNewtonsoftJson();
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            app.UseRouting();
+            app.UseStaticFiles();
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
+        }
+    }
+
+    [ApiController]
+    public class ThreeDsApiController : ControllerBase
+    {
+        private readonly ThreeDSApi _client;
+
+        public ThreeDsApiController()
+        {
+            Configuration config = new Configuration();
+            config.BasePath = "https://api.basistheory.com";
+            config.AddApiKey("BT-API-KEY", "<PUBLIC_API_KEY>");
+
+            _client = new ThreeDSApi(config);
+        }
+
+        [HttpPost("session/create")]
+        public async Task<ActionResult> CreateSession([FromBody] string tokenId)
+        {
+            var request = new CreateThreeDSSessionRequest()
+            {
+                TokenId = tokenId,
+                Type = "merchant"
+            };
+
+            CreateThreeDSSessionResponse session = await _client.ThreeDSCreateSessionAsync(request);
+
+            if (session == null)
+            {
+                return BadRequest("Failed to create session.");
+            }
+
+            return StatusCode(201, response);
+        }
+
+        //highlight-start
+        [HttpPost("{sessionId:guid}/authenticate")]
+        public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
+        {
+            // authentication request requires private api key
+            Configuration config = new Configuration();
+            config.BasePath = "https://api.basistheory.com";
+            config.AddApiKey("BT-API-KEY", "<PRIVATE_API_KEY>");
+
+            var client = new ThreeDSApi(config);
+
+            var request = new AuthenticateThreeDSSessionRequest()
+            {
+                AuthenticationCategory = "payment",
+                AuthenticationType = "other-payment",
+                DecoupledChallengeMaxTime = 10,
+                PurchaseInfo = new ThreeDSPurchaseInfo
+                {
+                    Amount = "80000",
+                    Currency = "826",
+                    Exponent = "2",
+                    Date = "20240109141010"
+                },
+                RequestorInfo = new ThreeDSRequestorInfo
+                {
+                    Id = "example-3ds-merchant",
+                    Name = "Example 3DS Merchant",
+                    Url = "https://www.example.com/example-merchant"
+                },
+                MerchantInfo = new ThreeDSMerchantInfo
+                {
+                    Mid = "9876543210001",
+                    AcquirerBin = "000000999",
+                    Name = "Example 3DS Merchant",
+                    CategoryCode = "7922",
+                    CountryCode = "826"
+                },
+                CardholderInfo = new ThreeDSCardholderInfo
+                {
+                    Name = "John Doe",
+                    Email = "john@me.com"
+                }
+            };
+
+            var authentication = await client.ThreeDSAuthenticateSession(sessionId.ToString(), request);
+
+            if (authentication == null)
+            {
+              return BadRequest("Failed to authenticate session.");
+            }
+
+            return Ok(authentication);
+        }
+        //highlight-end
+    }
+}
+```
+</TabItem>
+
+<TabItem value="python" label="Python">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
+
+```python showLineNumbers
+import os
+from flask import Flask, request, jsonify
+
+import basistheory
+from basistheory.api import three_ds_api
+from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo, CreateThreeDSSessionRequest
+
+app = Flask(__name__)
+
+@app.route('/sessions/create', methods=['POST'])
+def create_session():
+  token_id = request.json.get('token_id')
+
+  config = basistheory.Configuration(
+    host="https://api.basistheory.com",
+    api_key="<PUBLIC_API_KEY>"
+  )
+
+  with basistheory.ApiClient(configuration=config) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+    session = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
+      token_id=token_id,
+      type="merchant"
+    ))
+    return jsonify(session.to_dict()), 201
+
+#highlight-start
+@app.route('/<sessionId>/authenticate', methods=['POST'])
+def authenticate_session(sessionId):
+  config = basistheory.Configuration(
+    host="https://api.basistheory.com",
+    api_key="<PRIVATE_API_KEY>"
+  )
+
+  with basistheory.ApiClient(configuration=config) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+    authentication_request = AuthenticateThreeDSSessionRequest(
+      authentication_category="payment",
+      authentication_type="other-payment",
+      decoupled_challenge_max_time=10,
+      purchase_info=ThreeDSPurchaseInfo(
+        amount="80000",
+        currency="826",
+        exponent="2",
+        date="20240109141010"
+      ),
+      requestor_info=ThreeDSRequestorInfo(
+        id="example-3ds-merchant",
+        name="Example 3DS Merchant",
+        url="https://www.example.com/example-merchant"
+      ),
+      merchant_info=ThreeDSMerchantInfo(
+        mid="9876543210001",
+        acquirer_bin="000000999",
+        name="Example 3DS Merchant",
+        category_code="7922",
+        country_code="826"
+      ),
+      cardholder_info=ThreeDSCardholderInfo(
+        name="John Doe",
+        email="john@me.com"
+      )
+    )
+    authentication = three_ds_client.three_ds_authenticate_session(sessionId, authenticate_three_ds_session_request=authentication_request)
+    return jsonify(authentication.to_dict()), 200
+    #highlight-end
+
+if __name__ == '__main__':
+  app.run(port=4242, debug=True)
+```
+</TabItem>
+
+<TabItem value="go" label="Go">
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go), [Go HTTP package](https://pkg.go.dev/net/http) and the [Gorilla Mux Router](https://github.com/gorilla/mux).
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "encoding/json"
+  "log"
+  "net/http"
+  //highlight-start
+  "github.com/Basis-Theory/basistheory-go/v7"
+  //highlight-end
+  "github.com/gorilla/mux"
+)
+
+func main() {
+  router := mux.NewRouter()
+  router.HandleFunc("/sessions/create", createSession).Methods("POST")
+  // highlight-start
+  router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
+  // highlight-end
+  addr := "localhost:4242"
+  log.Printf("Listening on %s", addr)
+  log.Fatal(http.ListenAndServe(addr, router))
+}
+
+func createSession(rw http.ResponseWriter, r *http.Request) {
+  var request map[string]string
+  json.NewDecoder(r.Body).Decode(&request)
+  tokenId := request["token_id"]
+
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PUBLIC_API_KEY>"},
+  })
+
+  createThreeDSSessionRequest := *basistheory.NewCreateThreeDSSessionRequest()
+  createThreeDSSessionRequest.SetTokenId(tokenId)
+  createThreeDSSessionRequest.SetType("merchant")
+
+  session, _, createErr := apiClient.ThreeDSApi.ThreeDSCreateSession(contextWithAPIKey).CreateThreeDSSessionRequest(createThreeDSSessionRequest).Execute()
+  if createErr != nil {
+    rw.WriteHeader(http.StatusInternalServerError)
+    json.NewEncoder(rw).Encode(map[string]string{"error": createErr.Error()})
+    return
+  }
+
+  rw.WriteHeader(http.StatusCreated)
+  json.NewEncoder(rw).Encode(session)
+}
+
+//highlight-start
+func authenticateSession(rw http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  sessionId := vars["sessionId"]
+
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
+  })
+
+  authenticateThreeDSSessionRequest := *basistheory.NewAuthenticateThreeDSSessionRequest()
+  authenticateThreeDSSessionRequest.SetAuthenticationCategory("payment")
+  authenticateThreeDSSessionRequest.SetAuthenticationType("payment-transaction")
+
+  purchaseInfo := *basistheory.NewThreeDSPurchaseInfo()
+  purchaseInfo.SetAmount("80000")
+  purchaseInfo.SetCurrency("826")
+  purchaseInfo.SetExponent("2")
+  purchaseInfo.SetDate("20240109141010")
+
+  requestorInfo := *basistheory.NewThreeDSRequestorInfo()
+  requestorInfo.SetId("example-3ds-merchant")
+  requestorInfo.SetName("Example 3DS Merchant")
+  requestorInfo.SetUrl("https://www.example.com/example-merchant")
+
+  merchantInfo := *basistheory.NewThreeDSMerchantInfo()
+  merchantInfo.SetMid("9876543210001")
+  merchantInfo.SetAcquirerBin("000000999")
+  merchantInfo.SetName("Example 3DS Merchant")
+  merchantInfo.SetCategoryCode("7922")
+  merchantInfo.SetCountryCode("826")
+
+  cardholderInfo := *basistheory.NewThreeDSCardholderInfo()
+  cardholderInfo.SetName("John Doe")
+  cardholderInfo.SetEmail("john@me.com")
+
+  authenticateThreeDSSessionRequest.SetPurchaseInfo(purchaseInfo)
+  authenticateThreeDSSessionRequest.SetRequestorInfo(requestorInfo)
+  authenticateThreeDSSessionRequest.SetMerchantInfo(merchantInfo)
+  authenticateThreeDSSessionRequest.SetCardholderInfo(cardholderInfo)
+
+  authenticateResponse, _, authenticateErr := apiClient.ThreeDSApi.ThreeDSAuthenticateSession(contextWithAPIKey, sessionId).AuthenticateThreeDSSessionRequest(authenticateThreeDSSessionRequest).Execute()
+  if authenticateErr != nil {
+    rw.WriteHeader(http.StatusInternalServerError)
+    json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
+    return
+  }
+
+  rw.WriteHeader(http.StatusOK)
+  json.NewEncoder(rw).Encode(authenticateResponse)
+}
+//highlight-end
+```
+</TabItem>
+</Tabs>
+
+<Alert type={Alerts.WARNING}>On a production environment, your endpoint to authorize sessions should be behind your own authorization scheme.</Alert>
+
+<Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.</Alert>
+
+If the `status` for the authentication response is `successful`, that means a frictionless authentication happened and the authentication token is available as the `authentication_value` property.
+
+## Decoupled Challenge
+
+If after authenticating a 3DS session, the authentication response `status` is set as `decoupled-challenge`, that means that a decoupled challenge is necessary before getting the final 3DS authentication value.
+
+A 3DS decoupled challenge is an authentication method where the cardholder verifies their identity (solves a challenge) separately from the transaction flow—often on a different device or at a different time.
+
+You can specify a time limit for the decoupled challenge to be completed by setting the `decoupled_challenge_max_time` property in the authentication request.
+
+### Verifying Decoupled Challenge Completion
+
+Since the decoupled challenge is handled by the card issuer, you must create a [Webhook](/docs/api/webhooks/) to receive a notification when the challenge is completed.
+
+Check our [official documentation](/docs/api/webhooks/api) on all the different manners you can create a Webhook with Basis Theory.
+
+For the 3DS decoupled challenge, you should create a Webhook that looks for the `3ds.session.decoupled-challenge-notification` [event type](/docs/api/webhooks/eventdata#decoupled-challenge-notification).
+
+## Retrieving a Challenge Result
+
+Once a challenge is complete and a decoupled challenge notification is received, results are retrieved by calling the [Get Challenge Result](/docs/api/3ds/sessions#get-challenge-result) endpoint from your backend.
+
+This is done by calling the Basis Theory backend endpoint `/3ds/{sessionId}/sessions/challenge-result`  from your own backend, using the same private API key that was used to authenticate.
+
+<Tabs className="bt-tabs" queryString="backend">
+<TabItem value="node" label="Node">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript showLineNumbers
+const { BasisTheory } = require("@basis-theory/basis-theory-js");
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+let bt;
+(async () => {
+  bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
+})();
+
+app.post("/sessions/create", async (req, res) => {
+  const { token_id } = req.params;
+
+  try {
+    const session = await bt.threeds.createSession({
+      tokenId: token_id,
+      type: "merchant",
+    });
+    res.status(201).send(session);
+  } catch (error) {
+    console.error('Error while creating 3DS session:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+
+app.post("/:sessionId/authenticate", async (req, res) => {
+  const { sessionId } = req.params;
+
+  try {
+    const authentication = await bt.threeds.authenticateSession(sessionId, {
+      authenticationCategory: "payment",
+      authenticationType: "other-payment",
+      decoupledChallengeMaxTime: 10,
+      purchaseInfo: {
+        amount: "80000",
+        currency: "826",
+        exponent: "2",
+        date: "20240109141010"
+      },
+      requestorInfo: {
+        id: "example-3ds-merchant",
+        name: "Example 3DS Merchant",
+        url: "https://www.example.com/example-merchant"
+      },
+      merchantInfo: {
+        mid: "9876543210001",
+        acquirerBin: "000000999",
+        name: "Example 3DS Merchant",
+        categoryCode: "7922",
+        countryCode: "826"
+      },
+      cardholderInfo: {
+        name: "John Doe",
+        email: "john@me.com"
+      }
+    }, { apiKey: "<PRIVATE_API_KEY>" });
+    res.status(200).send(authentication);
+  } catch (error) {
+    console.error('Error during authentication:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+
+//highlight-start
+app.get("/:sessionId/challenge-result", async (req, res) => {
+  const { sessionId } = req.params;
+
+  try {
+    const result = await bt.threeds.getChallengeResult(sessionId, { apiKey: "<PRIVATE_API_KEY>" });
+    res.status(200).send(result);
+  } catch (error) {
+    console.error('Error getting challenge result:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+//highlight-end
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+```
+</TabItem>
+
+<TabItem value="dotnet" label=".NET">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
+
+```csharp showLineNumbers
+using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+
+using BasisTheory.net.Api;
+using BasisTheory.net.Client;
+using BasisTheory.net.Model;
+
+namespace server.Controllers
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            WebHost.CreateDefaultBuilder(args)
+              .UseUrls("http://0.0.0.0:4242")
+              .UseWebRoot("public")
+              .UseStartup<Startup>()
+              .Build()
+              .Run();
+        }
+    }
+
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc().AddNewtonsoftJson();
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            app.UseRouting();
+            app.UseStaticFiles();
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
+        }
+    }
+
+    [ApiController]
+    public class ThreeDsApiController : ControllerBase
+    {
+        private readonly ThreeDSApi _client;
+
+        public ThreeDsApiController()
+        {
+            Configuration config = new Configuration();
+            config.BasePath = "https://api.basistheory.com";
+            config.AddApiKey("BT-API-KEY", "<PUBLIC_API_KEY>");
+
+            _client = new ThreeDSApi(config);
+        }
+
+        [HttpPost("session/create")]
+        public async Task<ActionResult> CreateSession([FromBody] string tokenId)
+        {
+            var request = new CreateThreeDSSessionRequest()
+            {
+                TokenId = tokenId,
+                Type = "merchant"
+            };
+
+            CreateThreeDSSessionResponse session = await _client.ThreeDSCreateSessionAsync(request);
+
+            if (session == null)
+            {
+                return BadRequest("Failed to create session.");
+            }
+
+            return StatusCode(201, response);
+        }
+
+        [HttpPost("{sessionId:guid}/authenticate")]
+        public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
+        {
+            // authentication request requires private api key
+            Configuration config = new Configuration();
+            config.BasePath = "https://api.basistheory.com";
+            config.AddApiKey("BT-API-KEY", "<PRIVATE_API_KEY>");
+
+            var client = new ThreeDSApi(config);
+
+            var request = new AuthenticateThreeDSSessionRequest()
+            {
+                AuthenticationCategory = "payment",
+                AuthenticationType = "other-payment",
+                DecoupledChallengeMaxTime = 10,
+                PurchaseInfo = new ThreeDSPurchaseInfo
+                {
+                    Amount = "80000",
+                    Currency = "826",
+                    Exponent = "2",
+                    Date = "20240109141010"
+                },
+                RequestorInfo = new ThreeDSRequestorInfo
+                {
+                    Id = "example-3ds-merchant",
+                    Name = "Example 3DS Merchant",
+                    Url = "https://www.example.com/example-merchant"
+                },
+                MerchantInfo = new ThreeDSMerchantInfo
+                {
+                    Mid = "9876543210001",
+                    AcquirerBin = "000000999",
+                    Name = "Example 3DS Merchant",
+                    CategoryCode = "7922",
+                    CountryCode = "826"
+                },
+                CardholderInfo = new ThreeDSCardholderInfo
+                {
+                    Name = "John Doe",
+                    Email = "john@me.com"
+                }
+            };
+
+            var authentication = await client.ThreeDSAuthenticateSession(sessionId, request);
+
+            if (authentication == null)
+            {
+              return BadRequest("Failed to authenticate session.");
+            }
+
+            return Ok(authentication);
+        }
+
+        //highlight-start
+        [HttpGet("{sessionId:guid}/challenge-result")]
+        public async Task<ActionResult> GetChallengeResult([FromRoute] Guid sessionId)
+        {
+            // challenge result request requires private api key
+            Configuration config = new Configuration();
+            config.BasePath = "https://api.basistheory.com";
+            config.AddApiKey("BT-API-KEY", "<PRIVATE_API_KEY>");
+
+            var client = new ThreeDSApi(config);
+
+            var result = await client.ThreeDSGetChallengeResultAsync(sessionId);
+
+            if (result == null)
+            {
+              return BadRequest("Failed to get challenge result.");
+            }
+
+            return Ok(result);
+        }
+        //highlight-end
+    }
+}
+```
+</TabItem>
+
+<TabItem value="python" label="Python">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
+
+```python showLineNumbers
+import os
+from flask import Flask, request, jsonify
+
+import basistheory
+from basistheory.api import three_ds_api
+from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo, CreateThreeDSSessionRequest
+
+app = Flask(__name__)
+
+@app.route('/sessions/create', methods=['POST'])
+def create_session():
+  token_id = request.json.get('token_id')
+
+  config = basistheory.Configuration(
+    host="https://api.basistheory.com",
+    api_key="<PUBLIC_API_KEY>"
+  )
+
+  with basistheory.ApiClient(configuration=config) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+    session = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
+      token_id=token_id,
+      type="merchant"
+    ))
+    return jsonify(session.to_dict()), 201
+
+@app.route('/<sessionId>/authenticate', methods=['POST'])
+def authenticate_session(sessionId):
+  config = basistheory.Configuration(
+    host="https://api.basistheory.com",
+    api_key="<PRIVATE_API_KEY>"
+  )
+
+  with basistheory.ApiClient(configuration=config) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+    authentication_request = AuthenticateThreeDSSessionRequest(
+      authentication_category="payment",
+      authentication_type="other-payment",
+      decoupled_challenge_max_time=10,
+      purchase_info=ThreeDSPurchaseInfo(
+        amount="80000",
+        currency="826",
+        exponent="2",
+        date="20240109141010"
+      ),
+      requestor_info=ThreeDSRequestorInfo(
+        id="example-3ds-merchant",
+        name="Example 3DS Merchant",
+        url="https://www.example.com/example-merchant"
+      ),
+      merchant_info=ThreeDSMerchantInfo(
+        mid="9876543210001",
+        acquirer_bin="000000999",
+        name="Example 3DS Merchant",
+        category_code="7922",
+        country_code="826"
+      ),
+      cardholder_info=ThreeDSCardholderInfo(
+        name="John Doe",
+        email="john@me.com"
+      )
+    )
+    authentication = three_ds_client.three_ds_authenticate_session(sessionId, authenticate_three_ds_session_request=authentication_request)
+    return jsonify(authentication.to_dict()), 200
+
+#highlight-start
+@app.route('/<sessionId>/challenge-result', methods=['GET'])
+def get_challenge_result(sessionId):
+  config = basistheory.Configuration(
+    host="https://api.basistheory.com",
+    api_key="<PRIVATE_API_KEY>"
+  )
+
+  with basistheory.ApiClient(configuration=config) as api_client:
+    three_ds_client = three_ds_api.ThreeDSApi(api_client)
+
+    result = three_ds_client.three_ds_get_challenge_result(session_id=sessionId)
+    return jsonify(result.to_dict()), 200
+#highlight-end
+
+if __name__ == '__main__':
+  app.run(port=4242, debug=True)
+```
+</TabItem>
+
+<TabItem value="go" label="Go">
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go), [Go HTTP package](https://pkg.go.dev/net/http) and the [Gorilla Mux Router](https://github.com/gorilla/mux).
+
+```go showLineNumbers
+package main
+
+import (
+  "context"
+  "encoding/json"
+  "log"
+  "net/http"
+  //highlight-start
+  "github.com/Basis-Theory/basistheory-go/v7"
+  //highlight-end
+  "github.com/gorilla/mux"
+)
+
+func main() {
+  router := mux.NewRouter()
+  router.HandleFunc("/sessions/create", createSession).Methods("POST")
+  router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
+  //highlight-start
+  router.HandleFunc("/{sessionId}/challenge-result", getChallengeResult).Methods("GET")
+  //highlight-end
+  addr := "localhost:4242"
+  log.Printf("Listening on %s", addr)
+  log.Fatal(http.ListenAndServe(addr, router))
+}
+
+func createSession(rw http.ResponseWriter, r *http.Request) {
+  var request map[string]string
+  json.NewDecoder(r.Body).Decode(&request)
+  tokenId := request["token_id"]
+
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PUBLIC_API_KEY>"},
+  })
+
+  createThreeDSSessionRequest := *basistheory.NewCreateThreeDSSessionRequest()
+  createThreeDSSessionRequest.SetTokenId(tokenId)
+  createThreeDSSessionRequest.SetType("merchant")
+
+  session, _, createErr := apiClient.ThreeDSApi.ThreeDSCreateSession(contextWithAPIKey).CreateThreeDSSessionRequest(createThreeDSSessionRequest).Execute()
+  if createErr != nil {
+    rw.WriteHeader(http.StatusInternalServerError)
+    json.NewEncoder(rw).Encode(map[string]string{"error": createErr.Error()})
+    return
+  }
+
+  rw.WriteHeader(http.StatusCreated)
+  json.NewEncoder(rw).Encode(session)
+}
+
+func authenticateSession(rw http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  sessionId := vars["sessionId"]
+
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
+  })
+
+  authenticateThreeDSSessionRequest := *basistheory.NewAuthenticateThreeDSSessionRequest()
+  authenticateThreeDSSessionRequest.SetAuthenticationCategory("payment")
+  authenticateThreeDSSessionRequest.SetAuthenticationType("payment-transaction")
+
+  purchaseInfo := *basistheory.NewThreeDSPurchaseInfo()
+  purchaseInfo.SetAmount("80000")
+  purchaseInfo.SetCurrency("826")
+  purchaseInfo.SetExponent("2")
+  purchaseInfo.SetDate("20240109141010")
+
+  requestorInfo := *basistheory.NewThreeDSRequestorInfo()
+  requestorInfo.SetId("example-3ds-merchant")
+  requestorInfo.SetName("Example 3DS Merchant")
+  requestorInfo.SetUrl("https://www.example.com/example-merchant")
+
+  merchantInfo := *basistheory.NewThreeDSMerchantInfo()
+  merchantInfo.SetMid("9876543210001")
+  merchantInfo.SetAcquirerBin("000000999")
+  merchantInfo.SetName("Example 3DS Merchant")
+  merchantInfo.SetCategoryCode("7922")
+  merchantInfo.SetCountryCode("826")
+
+  cardholderInfo := *basistheory.NewThreeDSCardholderInfo()
+  cardholderInfo.SetName("John Doe")
+  cardholderInfo.SetEmail("john@me.com")
+
+  authenticateThreeDSSessionRequest.SetPurchaseInfo(purchaseInfo)
+  authenticateThreeDSSessionRequest.SetRequestorInfo(requestorInfo)
+  authenticateThreeDSSessionRequest.SetMerchantInfo(merchantInfo)
+  authenticateThreeDSSessionRequest.SetCardholderInfo(cardholderInfo)
+
+  authenticateResponse, _, authenticateErr := apiClient.ThreeDSApi.ThreeDSAuthenticateSession(contextWithAPIKey, sessionId).AuthenticateThreeDSSessionRequest(authenticateThreeDSSessionRequest).Execute()
+  if authenticateErr != nil {
+    rw.WriteHeader(http.StatusInternalServerError)
+    json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
+    return
+  }
+
+  rw.WriteHeader(http.StatusOK)
+  json.NewEncoder(rw).Encode(authenticateResponse)
+}
+
+//highlight-start
+func getChallengeResult(rw http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  sessionId := vars["sessionId"]
+
+  configuration := basistheory.NewConfiguration()
+  apiClient := basistheory.NewAPIClient(configuration)
+  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
+    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
+  })
+
+  challengeResult, _, err := apiClient.ThreeDSApi.ThreeDSGetChallengeResult(contextWithAPIKey, sessionId).Execute()
+  if err != nil {
+    rw.WriteHeader(http.StatusInternalServerError)
+    json.NewEncoder(rw).Encode(map[string]string{"error": err.Error()})
+    return
+  }
+
+  rw.WriteHeader(http.StatusOK)
+  json.NewEncoder(rw).Encode(challengeResult)
+}
+//highlight-end
+```
+</TabItem>
+</Tabs>
+
+That's it 🎉!
+The result from the `authentication` (in case of frictionless) or `challenge-result` calls contains the authentication token (`authentication_value` attribute) and any other information needed to fully process the 3DS transaction.
+
+## Learn More
+
+- [3DS API Reference](/docs/api/3ds/sessions)
