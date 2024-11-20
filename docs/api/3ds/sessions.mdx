@@ -68,7 +68,10 @@ await client.threeds.sessions.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Threeds.Sessions.CreateAsync(new CreateThreeDsSessionRequest {
+  TokenId = "bfe0060c-a465-41a0-a620-c804952d3468",
+  Type = "merchant"
+});
 ```
 
   </TabItem>
@@ -164,6 +167,13 @@ curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f7
 
 ```javascript showLineNumbers
 await client.threeds.sessions.get("id");
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+await client.Threeds.Sessions.GetAsync("id");
 ```
 
   </TabItem>
@@ -326,7 +336,15 @@ await client.threeds.sessions.authenticate("sessionId", {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Threeds.Sessions.AuthenticateAsync(
+    "sessionId",
+    new AuthenticateThreeDsSessionRequest
+    {
+        AuthenticationCategory = "authentication_category",
+        AuthenticationType = "authentication_type",
+        RequestorInfo = new ThreeDsRequestorInfo(),
+    }
+);
 ```
 
   </TabItem>
@@ -690,7 +708,7 @@ await client.threeds.sessions.getChallengeResult("sessionId");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Threeds.Sessions.GetChallengeResultAsync("sessionId");
 ```
 
   </TabItem>
