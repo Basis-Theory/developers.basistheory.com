@@ -69,7 +69,11 @@ await client.tokens.tokenize({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.TokenizeAsync(new
+  {
+    first_name = "John",
+    last_name = "Doe",
+  });
 ```
 
   </TabItem>
@@ -154,7 +158,19 @@ await client.tokens.tokenize({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.TokenizeAsync(new
+{
+  type = "token",
+  data = "Sensitive Value",
+  metadata = new {
+    nonSensitive = "Non-Sensitive Value"
+  },
+  search_indexes = new []
+  {
+    "{{ data }}"
+  },
+  fingerprint_expression = "{{ data }}"
+});
 ```
 
   </TabItem>
@@ -259,7 +275,21 @@ await client.tokens.tokenize({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.TokenizeAsync(new
+{
+  type = "card",
+  data = new
+  {
+    number = "4242424242424242",
+    expiration_month = 12,
+    expiration_year = 2025,
+    cvc = "123",
+  },
+  metadata = new
+  {
+    nonSensitiveField = "Non-Sensitive Value",
+  }
+});
 ```
 
   </TabItem>
@@ -382,7 +412,30 @@ await client.tokens.tokenize([
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.TokenizeAsync(new List<object>
+{
+  "John",
+  "Doe",
+  new {
+    type = "card",
+    data = new
+    {
+        number = "4242424242424242",
+        expiration_month = 12,
+        expiration_year = 2025,
+        cvc = "123",
+    },
+    metadata = new
+    {
+      nonSensitiveField = "Non-Sensitive Value",
+    }
+  },
+  new
+  {
+    type = "token",
+    data = "Sensitive Value"
+  }
+});
 ```
 
   </TabItem>
@@ -524,7 +577,30 @@ await client.tokens.tokenize({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.TokenizeAsync(new
+{
+  first_name = "John",
+  last_name = "Doe",
+  primary_card = new
+  {
+    type = "card",
+    data = new {
+      number = "4242424242424242",
+      expiration_month = 12,
+      expiration_year = 2025,
+      cvc = "123"
+    }
+  },
+  sensitive_tags = new object[]
+  {
+    "preferred",
+    new
+    {
+      type = "token",
+      data = "vip"
+    }
+  }
+});
 ```
 
   </TabItem>
