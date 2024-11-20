@@ -49,10 +49,9 @@ Create a new token intent.
 
   </TabItem>
   <TabItem value="javascript" label="JavaScript">
-
 ```javascript showLineNumbers
 await client.tokenIntents.create({
-  type: "string",
+  type: "card",
   data: {
     number: '4242424242424242',
     expiration_month: 12,
@@ -61,7 +60,37 @@ await client.tokenIntents.create({
   },
 });
 ```
+  </TabItem>
 
+
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.TokenIntents.CreateAsync(new CreateTokenIntentRequest
+{
+  Type = "card",
+  Data = new
+  {
+    number = "4242424242424242",
+    expiration_month = 12,
+    expiration_year = 2025,
+    cvc = "123",
+  }
+});
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.token_intents.create(
+  type="card",
+  data={
+    "number": '4242424242424242',
+    "expiration_month": 12,
+    "expiration_year": 2025,
+    "cvc": '123'
+  }
+)
+```
   </TabItem>
 </Tabs>
 
@@ -124,9 +153,23 @@ Deletes a Token Intent without waiting for expiration. Use this endpoint to remo
   <TabItem value="javascript" label="JavaScript">
 
 ```javascript showLineNumbers
-await client.tokenIntents.delete("id");
+await client.tokenIntents.delete("dda42a6b-964b-46d8-b315-eb6dfda37c32");
 ```
 
+  </TabItem>
+
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.TokenIntents.DeleteAsync("id");
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.token_intents.delete(
+  id="id",
+)
+```
   </TabItem>
 </Tabs>
 
