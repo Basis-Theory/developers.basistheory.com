@@ -1,3 +1,10 @@
+# [1.197.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.196.0...v1.197.0) (2024-11-20)
+
+
+### Features
+
+* add mit guide and props ([#471](https://github.com/Basis-Theory/developers.basistheory.com/issues/471)) ([bb226e3](https://github.com/Basis-Theory/developers.basistheory.com/commit/bb226e349aa5cea52d83af8b8148440658642ffc))
+
 # [1.196.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.195.1...v1.196.0) (2024-11-19)
 
 
