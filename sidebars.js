@@ -71,6 +71,13 @@ const sidebars = {
             enterprise: true,
           },
         },
+        {
+          type: "doc",
+          id: "guides/process/authenticate-mit-with-3ds",
+          customProps: {
+            enterprise: true,
+          },
+        },
         "guides/process/backup-stripe-tokens",
       ],
     },
@@ -224,7 +231,7 @@ const sidebars = {
         type: "doc",
         id: "expressions/index",
       },
-      items: ["expressions/filters", "expressions/detokenization", "expressions/configuration", "expressions/aliasing", "expressions/fingerprints", "expressions/masks", "expressions/search-indexes"],
+      items: ["expressions/filters", "expressions/detokenization", "expressions/configuration", "expressions/proxy", "expressions/aliasing", "expressions/fingerprints", "expressions/masks", "expressions/search-indexes"],
     },
     {
       type: "category",
