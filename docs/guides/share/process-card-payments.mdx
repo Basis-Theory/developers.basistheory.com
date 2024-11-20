@@ -521,6 +521,36 @@ curl 'https://api.basistheory.com/proxy' \
     [Finix Payment Instrument Docs](https://finix.com/docs/api/tag/Payment-Instruments/)
 
   </TabItem>
+  <TabItem value="flexfactor" label="FlexFactor">
+
+    ```shell showLineNumbers title="Create Payment Instrument"
+    curl 'https://api.basistheory.com/proxy' \
+    -X 'POST' \
+    // highlight-start
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'BT-PROXY-URL: https://api-sandbox.flex-charge.com/v1/tokenize?mid=1234567890&environment=abcdefgh0123456789' \
+    // highlight-end
+    -H 'Content-Type: application/json' \
+    -d '{
+      "payment_method": {
+        "email": "johnwick@email.com",
+        "credit_card": {
+          "first_name": "Joe",
+          "last_name": "Jones",
+          // highlight-start
+          "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+          "month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: \"MM\" }}",
+          "year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" |  card_exp: \"YYYY\"  }}",
+          "verification_value": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}"
+          // highlight-end
+        }
+      }
+    }'
+    ```
+
+    [FlexFactor Tokenize Guide](https://docs.flexfactor.io/docs/tokenize)
+
+  </TabItem>
 </Tabs>
 
 ## Key Considerations
