@@ -74,7 +74,21 @@ await client.tokens.create({
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.CreateAsync(new CreateTokenRequest
+{
+  Type = "token",
+  Data = "Sensitive Value",
+  Mask = "{{ data | reveal_last: 4 }}",
+  Containers = ["/general/high/"],
+  Metadata = new Dictionary<string, string?>
+  {
+    { "nonSensitiveField", "Non-Sensitive Value" }
+  },
+  SearchIndexes = ["{{ data }}", "{{ data | last4 }}"],
+  FingerprintExpression = "{{ data }}",
+  DeduplicateToken = true,
+  ExpiresAt = "8/26/2030 7:23:57 PM -07:00",
+});
 ```
 
   </TabItem>
@@ -205,7 +219,7 @@ while (page.hasNextPage()) {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.ListAsyncV2(new TokensListRequest());
 ```
 
   </TabItem>
@@ -311,7 +325,7 @@ while (page.hasNextPage()) {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.ListAsync(new TokensListRequest());
 ```
 
   </TabItem>
@@ -412,7 +426,7 @@ await client.tokens.get("id");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.GetAsync("id");
 ```
 
   </TabItem>
@@ -526,7 +540,22 @@ await client.tokens.update(token.id!, {
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.UpdateAsync(
+  token.Id,
+  new UpdateTokenRequest
+  {
+    Data = "Sensitive Value",
+    Mask = "{{ data | reveal_last: 4 }}",
+    Containers = ["/general/high/"],
+    Metadata = new Dictionary<string, string?>
+    {
+      { "nonSensitiveField", "Non-Sensitive Value" }
+    },
+    SearchIndexes = ["{{ data }}", "{{ data | last4 }}"],
+    FingerprintExpression = "{{ data }}",
+    DeduplicateToken = true,
+  }
+);
 ```
 
   </TabItem>
@@ -639,7 +668,7 @@ await client.tokens.delete("id");
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-
+await client.Tokens.DeleteAsync("id");
 ```
 
   </TabItem>
