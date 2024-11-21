@@ -66,6 +66,18 @@ await client.tokens.tokenize({
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const token = await bt.tokenize({
+  first_name: "John",
+  last_name: "Doe",
+});
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -154,6 +166,23 @@ await client.tokens.tokenize({
 });
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const token = await bt.tokenize({
+  type: "token",
+  data: "Sensitive Value",
+  metadata: {
+    nonSensitiveField: "Non-Sensitive Value",
+  },
+  search_indexes: ["{{ data }}"],
+  fingerprint_expression: "{{ data }}",
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -271,6 +300,26 @@ await client.tokens.tokenize({
 });
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const token = await bt.tokenize({
+  type: "card",
+  data: {
+    number: "4242424242424242",
+    expiration_month: 12,
+    expiration_year: 2025,
+    cvc: "123",
+  },
+  metadata: {
+    nonSensitiveField: "Non-Sensitive Value",
+  },
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -408,6 +457,34 @@ await client.tokens.tokenize([
 ]);
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const token = await bt.tokenize([
+  "John",
+  "Doe",
+  {
+    type: "card",
+    data: {
+      number: "4242424242424242",
+      expiration_month: 12,
+      expiration_year: 2025,
+      cvc: "123",
+    },
+    metadata: {
+      nonSensitiveField: "Non-Sensitive Value",
+    },
+  },
+  {
+    type: "token",
+    data: "Sensitive Value",
+  },
+]);
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -573,6 +650,34 @@ await client.tokens.tokenize({
 });
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const token = await bt.tokenize({
+  first_name: "John",
+  last_name: "Doe",
+  primary_card: {
+    type: "card",
+    data: {
+      number: "4242424242424242",
+      expiration_month: 12,
+      expiration_year: 2025,
+      cvc: "123",
+    },
+  },
+  sensitive_tags: [
+    "preferred",
+    {
+      type: "token",
+      data: "vip",
+    },
+  ],
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
