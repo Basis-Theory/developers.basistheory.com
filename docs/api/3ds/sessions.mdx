@@ -65,6 +65,18 @@ await client.threeds.sessions.create({
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const result = await bt.threeds.createSession({
+  tokenId: "bfe0060c-a465-41a0-a620-c804952d3468",
+  type: "merchant"
+});
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -169,6 +181,15 @@ curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f7
 await client.threeds.sessions.get("id");
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const session = await bt.threeds.getSessionById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -332,6 +353,40 @@ await client.threeds.sessions.authenticate("sessionId", {
 });
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const authentication = await bt.threeds.authenticateSession("c06d0789-0a38-40be-b7cc-c28a718f76f1", {
+  authenticationCategory: "payment",
+  authenticationType: "payment-transaction",
+  purchaseInfo: {
+    amount: "80000",
+    currency: "826",
+    exponent: "2",
+    date: "20240109141010"
+  },
+  requestorInfo: {
+    id: "example-3ds-merchant",
+    name: "Example 3DS Merchant",
+    url: "https://www.example.com/example-merchant"
+  },
+  merchantInfo: {
+    mid: "9876543210001",
+    acquirerBin: "000000999",
+    name: "Example 3DS Merchant",
+    categoryCode: "7922",
+    countryCode: "826"
+  },
+  cardholderInfo: {
+    name: "John Doe",
+    email: "john@me.com"
+  }
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -706,6 +761,15 @@ curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f7
 await client.threeds.sessions.getChallengeResult("sessionId");
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const result = await bt.threeds.getChallengeResult("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
