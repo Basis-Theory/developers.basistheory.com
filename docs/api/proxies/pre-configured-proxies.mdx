@@ -115,6 +115,49 @@ const proxy = await client.proxies.create({
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('<MANAGEMENT_API_KEY>');
+
+const proxy = await bt.proxies.create({
+  name: 'My Proxy',
+  destinationUrl: 'https://example.com/api',
+  requestTransform: {
+    code: `
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    `
+  },
+  responseTransform: {
+    code: `
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    `
+  },
+  configuration: {
+    SERVICE_API_KEY: 'key_abcd1234',
+  },
+  application: {
+    id: '45c124e7-6ab2-4899-b4d9-1388b0ba9d04'
+  },
+  requireAuth: true
+});
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -312,6 +355,15 @@ while (page.hasNextPage()) {
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const proxies = await bt.proxies.list();
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -430,6 +482,15 @@ curl "https://api.basistheory.com/proxies/5b493235-6917-4307-906a-2cd6f1a90b13" 
 await client.proxies.get("id");
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const proxy = await bt.proxies.retrieve("5b493235-6917-4307-906a-2cd6f1a90b13");
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -607,6 +668,49 @@ await client.proxies.update(
 });
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+const bt = await new BasisTheory().init('<MANAGEMENT_API_KEY>');
+
+const proxy = await bt.proxies.update('433013a6-a614-4e1e-b2aa-5fba67aa85e6', {
+  name: 'My Proxy',
+  destinationUrl: 'https://example.com/api',
+  requestTransform: {
+    code: `
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    `
+  },
+  responseTransform: {
+    code: `
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          headers: req.args.headers,
+          body: req.args.body
+        };
+      };
+    `
+  },
+  configuration: {
+    SERVICE_API_KEY: 'key_abcd1234',
+  },
+  application: {
+    id: '45c124e7-6ab2-4899-b4d9-1388b0ba9d04'
+  },
+  requireAuth: true
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -835,6 +939,21 @@ await client.proxies.update(proxyId, {
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const proxy = await bt.proxies.patch("433013a6-a614-4e1e-b2aa-5fba67aa85e6", {
+  name: "My Proxy",
+  destinationUrl: "https://example.com/api",
+  configuration: {
+    SERVICE_API_KEY: "key_abcd1234",
+  },
+});
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -932,6 +1051,15 @@ curl "https://api.basistheory.com/proxies/433013a6-a614-4e1e-b2aa-5fba67aa85e6" 
 await client.proxies.delete("id");
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+await bt.proxies.delete("433013a6-a614-4e1e-b2aa-5fba67aa85e6");
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
