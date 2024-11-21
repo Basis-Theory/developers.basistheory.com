@@ -71,6 +71,27 @@ await client.tokens.create({
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const token = await bt.tokens.create({
+  type: "token",
+  data: "Sensitive Value",
+  mask: "{{ data | reveal_last: 4 }}",
+  containers: ["/general/high/"],
+  metadata: {
+    nonSensitiveField: "Non-Sensitive Value",
+  },
+  searchIndexes: ["{{ data }}", "{{ data | last4 }}"],
+  fingerprintExpression: "{{ data }}",
+  deduplicateToken: true,
+  expiresAt: "8/26/2030 7:23:57 PM -07:00",
+});
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -216,6 +237,15 @@ while (page.hasNextPage()) {
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const tokens = await bt.tokensV2.list();
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -322,6 +352,15 @@ while (page.hasNextPage()) {
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const tokens = await bt.tokens.list();
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -422,6 +461,15 @@ curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
 await client.tokens.get("id");
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const token = await bt.tokens.retrieve("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -536,6 +584,24 @@ await client.tokens.update(token.id!, {
 });
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const token = await bt.tokens.update("c06d0789-0a38-40be-b7cc-c28a718f76f1", {
+  data: "Sensitive Value",
+  mask: "{{ data | reveal_last: 4 }}",
+  metadata: {
+    nonSensitiveField: "Non-Sensitive Value",
+  },
+  searchIndexes: ["{{ data }}", "{{ data | last4 }}"],
+  fingerprintExpression: "{{ data }}",
+  deduplicateToken: true,
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -664,6 +730,15 @@ curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
 await client.tokens.delete("id");
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+await bt.tokens.delete("c06d0789-0a38-40be-b7cc-c28a718f76f1");
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
