@@ -88,6 +88,34 @@ await client.reactors.create({
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const reactor = await bt.reactors.create({
+  name: "My Reactor",
+    code: `
+    module.exports = async function (req) {
+      // Do something with req.configuration.SERVICE_API_KEY
+
+      return {
+        raw: {
+          foo: "bar"
+        }
+      };
+    };
+  `,
+  configuration: {
+    SERVICE_API_KEY: "key_abcd1234",
+  },
+  application: {
+    id: "45c124e7-6ab2-4899-b4d9-1388b0ba9d04",
+  },
+});
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -233,6 +261,15 @@ while (page.hasNextPage()) {
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const reactors = await bt.reactors.list();
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -344,6 +381,17 @@ curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13"
 await client.reactors.get("id");
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const reactor = await bt.reactors.retrieve(
+  "5b493235-6917-4307-906a-2cd6f1a90b13"
+);
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -487,6 +535,37 @@ await client.reactors.update(
 );
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const reactor = await bt.reactors.update(
+  "5b493235-6917-4307-906a-2cd6f1a90b13",
+  {
+    name: "My Reactor",
+    code: '
+      module.exports = async function (req) {
+        // Do something with req.configuration.SERVICE_API_KEY
+
+        return {
+          raw: {
+            foo: "bar"
+          }
+        };
+      };
+    ',
+    configuration: {
+      SERVICE_API_KEY: "key_abcd1234",
+    },
+    application: {
+      id: "45c124e7-6ab2-4899-b4d9-1388b0ba9d04",
+    },
+  }
+);
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
@@ -652,6 +731,23 @@ await client.reactors.patch(
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const reactor = await bt.reactors.patch(
+  "5b493235-6917-4307-906a-2cd6f1a90b13",
+  {
+    name: "My Reactor",
+    configuration: {
+      SERVICE_API_KEY: "key_abcd1234",
+    }
+  }
+);
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -747,6 +843,15 @@ await client.reactors.delete("id");
 ```
 
   </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+await bt.reactors.delete("fb124bba-f90d-45f0-9a59-5edca27b3b4a");
+```
+  </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
@@ -839,6 +944,23 @@ await client.reactors.react(
 );
 ```
 
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const reactResponse = await bt.reactors.react(
+  "5b493235-6917-4307-906a-2cd6f1a90b13",
+  {
+    args: {
+      card: "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      customer_id: "myCustomerId1234",
+    },
+  }
+);
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
