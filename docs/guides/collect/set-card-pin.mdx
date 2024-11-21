@@ -583,7 +583,36 @@ We will add a new `/authorize` endpoint to our backend that receives the session
 
 In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
 
-```javascript showLineNumbers
+```javascript showLineNumbers title="@basis-theory/node-sdk"
+const express = require("express");
+const cors = require("cors");
+// highlight-next-line
+import { BasisTheoryClient, BasisTheory } from "@basis-theory/node-sdk";
+
+const app = express();
+const port = 4242;
+
+app.use(cors());
+app.use(express.json());
+
+// highlight-start
+app.post("/authorize", async (request, response) => {
+  const bt = await new BasisTheoryClient({ apiKey: "<PRIVATE_API_KEY>" });
+  const { nonce } = request.body;
+  // authorizing a session returns an empty 200 response
+  await bt.sessions.authorize({
+    nonce: nonce,
+    permissions: ['token:use']
+  });
+  response.status(204).send();
+});
+// highlight-end
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+```
+```javascript showLineNumbers title="(legacy) @basis-theory/basis-theory-js"
 const express = require("express");
 const cors = require("cors");
 // highlight-next-line
@@ -628,8 +657,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 // highlight-start
-using BasisTheory.net.Sessions;
-using BasisTheory.net.Applications.Entities;
+using BasisTheory.Client;
 // highlight-end
 
 namespace server.Controllers
@@ -667,12 +695,12 @@ namespace server.Controllers
   public class CheckoutApiController : Controller
   {
     // highlight-start
-    var client = new SessionClient("<PRIVATE_API_KEY>");
+    var client = new BasisTheory(apiKey: "<PRIVATE_API_KEY>");
 
     [HttpPost]
     public ActionResult AuthorizeSession([FromBody] string nonce)
     {
-      await client.AuthorizeAsync(new AuthorizeSessionRequest {
+      await client.Sessions.AuthorizeAsync(new AuthorizeSessionRequest {
         Nonce = nonce,
         Permissions = new List<String> { "token:use" }
       });
@@ -694,8 +722,7 @@ from flask import Flask, request
 
 import basistheory
 # highlight-start
-from basistheory.api import sessions_api
-from basistheory.model.authorize_session_request import AuthorizeSessionRequest
+from basis_theory import BasisTheory, AccessRule, Condition
 # highlight-end
 
 app = Flask(__name__)
@@ -704,13 +731,14 @@ app = Flask(__name__)
 @app.route('/authorize', methods=['POST'])
 def authorize_session():
   body = request.get_json()
-  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    session_client = sessions_api.SessionsApi(api_client)
+  client = BasisTheory(
+    api_key="<PRIVATE_API_KEY>",
+  )
 
-    session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
-      nonce = body.get("nonce"),
-      permissions = ["token:use"]
-    ))
+  client.sessions.authorize(
+    nonce = body.get("nonce"),
+    permissions = ["token:use"]
+  ))
 
   return '', 204
 # highlight-end
@@ -732,9 +760,13 @@ import (
     "net/http"
     "context"
     "encoding/json"
-    // highlight-next-line
-    "github.com/Basis-Theory/basistheory-go/v3"
 )
+// highlight-start
+import (
+  basistheoryclient "github.com/Basis-Theory/go-sdk/client"
+  "github.com/Basis-Theory/go-sdk/option"
+)
+// highlight-end
 
 func main() {
   // highlight-next-line
@@ -749,16 +781,16 @@ func authorizeSession(rw http.ResponseWriter, r *http.Request) {
   var payload map[string]interface{}
   json.NewDecoder(r.Body).Decode(&payload)
 
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
+  client := basistheoryclient.NewClient(
+    option.WithAPIKey("<PRIVATE_API_KEY>"),
+  )
 
-  authorizeSessionRequest := *basistheory.NewAuthorizeSessionRequest(payload["nonce"].(string))
-  authorizeSessionRequest.SetPermissions([]string{"token:use"})
+  authorizeSessionRequest := basistheory.AuthorizeSessionRequest{
+    Nonce: payload["nonce"].(string),
+    Permissions: []string{"token:use"},
+  }
 
-  authorizedSession, httpResponse, err := apiClient.SessionsApi.Authorize(contextWithAPIKey).AuthorizeSessionRequest(authorizeSessionRequest).Execute()
+  authorizedSession := client.Sessions.Authorize(context.Background(), &authorizeSessionRequest)
 
   w.WriteHeader(http.StatusNoContent)
 }
