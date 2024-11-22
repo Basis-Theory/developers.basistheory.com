@@ -533,9 +533,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
+using BasisTheory.Client;
+using BasisTheory.Client.Threeds;
 
 namespace server.Controllers
 {
@@ -575,23 +574,19 @@ namespace server.Controllers
 
         public ThreeDsApiController()
         {
-            Configuration config = new Configuration();
-            config.BasePath = "https://api.basistheory.com";
-            config.AddApiKey("BT-API-KEY", "<PUBLIC_API_KEY>");
-
-            _client = new ThreeDSApi(config);
+            _client = new BasisTheory.Client.BasisTheory(apiKey: "<PUBLIC_API_KEY>");
         }
 
         [HttpPost("session/create")]
         public async Task<ActionResult> CreateSession([FromBody] string tokenId)
         {
-            var request = new CreateThreeDSSessionRequest()
+            var request = new CreateThreeDsSessionRequest()
             {
                 TokenId = tokenId,
                 Type = "merchant"
             };
 
-            CreateThreeDSSessionResponse session = await _client.ThreeDSCreateSessionAsync(request);
+            CreateThreeDsSessionResponse session = await _client.Threeds.Sessions.CreateAsync(request);
 
             if (session == null)
             {
@@ -601,36 +596,32 @@ namespace server.Controllers
             return StatusCode(201, response);
         }
 
-        //highlight-start
+        // highlight-start
         [HttpPost("{sessionId:guid}/authenticate")]
         public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
         {
             // authentication request requires private api key
-            Configuration config = new Configuration();
-            config.BasePath = "https://api.basistheory.com";
-            config.AddApiKey("BT-API-KEY", "<PRIVATE_API_KEY>");
+            var client = new BasisTheory.Client.BasisTheory(apiKey: "<PRIVATE_API_KEY>");
 
-            var client = new ThreeDSApi(config);
-
-            var request = new AuthenticateThreeDSSessionRequest()
+            var request = new AuthenticateThreeDsSessionRequest()
             {
                 AuthenticationCategory = "payment",
                 AuthenticationType = "other-payment",
                 DecoupledChallengeMaxTime = 10,
-                PurchaseInfo = new ThreeDSPurchaseInfo
+                PurchaseInfo = new ThreeDsPurchaseInfo
                 {
                     Amount = "80000",
                     Currency = "826",
                     Exponent = "2",
                     Date = "20240109141010"
                 },
-                RequestorInfo = new ThreeDSRequestorInfo
+                RequestorInfo = new ThreeDsRequestorInfo
                 {
                     Id = "example-3ds-merchant",
                     Name = "Example 3DS Merchant",
                     Url = "https://www.example.com/example-merchant"
                 },
-                MerchantInfo = new ThreeDSMerchantInfo
+                MerchantInfo = new ThreeDsMerchantInfo
                 {
                     Mid = "9876543210001",
                     AcquirerBin = "000000999",
@@ -638,23 +629,23 @@ namespace server.Controllers
                     CategoryCode = "7922",
                     CountryCode = "826"
                 },
-                CardholderInfo = new ThreeDSCardholderInfo
+                CardholderInfo = new ThreeDsCardholderInfo
                 {
                     Name = "John Doe",
                     Email = "john@me.com"
                 }
             };
 
-            var authentication = await client.ThreeDSAuthenticateSession(sessionId.ToString(), request);
+            var authentication = await client.Threeds.Sessions.AuthenticateAsync(sessionId.ToString(), request);
 
             if (authentication == null)
             {
-              return BadRequest("Failed to authenticate session.");
+                return BadRequest("Failed to authenticate session.");
             }
 
             return Ok(authentication);
         }
-        //highlight-end
+        // highlight-end
     }
 }
 ```
@@ -1077,9 +1068,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
+using BasisTheory.Client;
+using BasisTheory.Client.Threeds;
 
 namespace server.Controllers
 {
@@ -1119,23 +1109,19 @@ namespace server.Controllers
 
         public ThreeDsApiController()
         {
-            Configuration config = new Configuration();
-            config.BasePath = "https://api.basistheory.com";
-            config.AddApiKey("BT-API-KEY", "<PUBLIC_API_KEY>");
-
-            _client = new ThreeDSApi(config);
+            _client = new BasisTheory.Client.BasisTheory(apiKey: "<PUBLIC_API_KEY>");
         }
 
         [HttpPost("session/create")]
         public async Task<ActionResult> CreateSession([FromBody] string tokenId)
         {
-            var request = new CreateThreeDSSessionRequest()
+            var request = new CreateThreeDsSessionRequest()
             {
                 TokenId = tokenId,
                 Type = "merchant"
             };
 
-            CreateThreeDSSessionResponse session = await _client.ThreeDSCreateSessionAsync(request);
+            CreateThreeDsSessionResponse session = await _client.Threeds.Sessions.CreateAsync(request);
 
             if (session == null)
             {
@@ -1149,31 +1135,27 @@ namespace server.Controllers
         public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
         {
             // authentication request requires private api key
-            Configuration config = new Configuration();
-            config.BasePath = "https://api.basistheory.com";
-            config.AddApiKey("BT-API-KEY", "<PRIVATE_API_KEY>");
+            var client = new BasisTheory.Client.BasisTheory(apiKey: "<PRIVATE_API_KEY>");
 
-            var client = new ThreeDSApi(config);
-
-            var request = new AuthenticateThreeDSSessionRequest()
+            var request = new AuthenticateThreeDsSessionRequest()
             {
                 AuthenticationCategory = "payment",
                 AuthenticationType = "other-payment",
                 DecoupledChallengeMaxTime = 10,
-                PurchaseInfo = new ThreeDSPurchaseInfo
+                PurchaseInfo = new ThreeDsPurchaseInfo
                 {
                     Amount = "80000",
                     Currency = "826",
                     Exponent = "2",
                     Date = "20240109141010"
                 },
-                RequestorInfo = new ThreeDSRequestorInfo
+                RequestorInfo = new ThreeDsRequestorInfo
                 {
                     Id = "example-3ds-merchant",
                     Name = "Example 3DS Merchant",
                     Url = "https://www.example.com/example-merchant"
                 },
-                MerchantInfo = new ThreeDSMerchantInfo
+                MerchantInfo = new ThreeDsMerchantInfo
                 {
                     Mid = "9876543210001",
                     AcquirerBin = "000000999",
@@ -1181,44 +1163,40 @@ namespace server.Controllers
                     CategoryCode = "7922",
                     CountryCode = "826"
                 },
-                CardholderInfo = new ThreeDSCardholderInfo
+                CardholderInfo = new ThreeDsCardholderInfo
                 {
                     Name = "John Doe",
                     Email = "john@me.com"
                 }
             };
 
-            var authentication = await client.ThreeDSAuthenticateSession(sessionId, request);
+            var authentication = await client.Threeds.Sessions.AuthenticateAsync(sessionId.ToString(), request);
 
             if (authentication == null)
             {
-              return BadRequest("Failed to authenticate session.");
+                return BadRequest("Failed to authenticate session.");
             }
 
             return Ok(authentication);
         }
 
-        //highlight-start
+        // highlight-start
         [HttpGet("{sessionId:guid}/challenge-result")]
         public async Task<ActionResult> GetChallengeResult([FromRoute] Guid sessionId)
         {
             // challenge result request requires private api key
-            Configuration config = new Configuration();
-            config.BasePath = "https://api.basistheory.com";
-            config.AddApiKey("BT-API-KEY", "<PRIVATE_API_KEY>");
+            var client = new BasisTheory.Client.BasisTheory(apiKey: "<PRIVATE_API_KEY>");
 
-            var client = new ThreeDSApi(config);
-
-            var result = await client.ThreeDSGetChallengeResultAsync(sessionId);
+            var result = await client.Threeds.Sessions.GetChallengeResultAsync(sessionId);
 
             if (result == null)
             {
-              return BadRequest("Failed to get challenge result.");
+                return BadRequest("Failed to get challenge result.");
             }
 
             return Ok(result);
         }
-        //highlight-end
+        // highlight-end
     }
 }
 ```
