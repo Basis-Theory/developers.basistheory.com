@@ -538,75 +538,87 @@ In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go), [Go
 package main
 
 import (
-  "context"
-  "encoding/json"
-  "log"
-  "net/http"
-  //highlight-start
-  "github.com/Basis-Theory/basistheory-go/v5"
-  //highlight-end
-  "github.com/gorilla/mux"
+	"context"
+	"encoding/json"
+	// highlight-start
+	basistheory "github.com/Basis-Theory/go-sdk"
+	basistheoryclient "github.com/Basis-Theory/go-sdk/client"
+	"github.com/Basis-Theory/go-sdk/option"
+	"github.com/Basis-Theory/go-sdk/threeds"
+	// highlight-end
+	"github.com/gorilla/mux"
+	"log"
+	"net/http"
 )
 
+
 func main() {
-  router := mux.NewRouter()
-  router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
-  addr := "localhost:4242"
-  log.Printf("Listening on %s", addr)
-  log.Fatal(http.ListenAndServe(addr, router))
+	router := mux.NewRouter()
+	router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
+	addr := "localhost:4242"
+	log.Printf("Listening on %s", addr)
+	log.Fatal(http.ListenAndServe(addr, router))
 }
 
-//highlight-start
+func pointerToString(s string) *string {
+	return &s
+}
+
+// highlight-start
 func authenticateSession(rw http.ResponseWriter, r *http.Request) {
-  vars := mux.Vars(r)
-  sessionId := vars["sessionId"]
+	vars := mux.Vars(r)
+	sessionId := vars["sessionId"]
 
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
+	client := basistheoryclient.NewClient(
+		option.WithAPIKey("<API_KEY>"),
+	)
 
-  authenticateThreeDSSessionRequest := *basistheory.NewAuthenticateThreeDSSessionRequest()
-  authenticateThreeDSSessionRequest.SetAuthenticationCategory("payment")
-  authenticateThreeDSSessionRequest.SetAuthenticationType("payment-transaction")
+	authRequest := &threeds.AuthenticateThreeDsSessionRequest{
+		AuthenticationCategory: "payment",
+		AuthenticationType:     "payment-transaction",
+	}
 
-  purchaseInfo := *basistheory.NewThreeDSPurchaseInfo()
-  purchaseInfo.SetAmount("80000")
-  purchaseInfo.SetCurrency("826")
-  purchaseInfo.SetExponent("2")
-  purchaseInfo.SetDate("20240109141010")
+	purchaseInfo := &basistheory.ThreeDsPurchaseInfo{
+		Amount:   pointerToString("80000"),
+		Currency: pointerToString("826"),
+		Exponent: pointerToString("2"),
+		Date:     pointerToString("20240109141010"),
+	}
 
-  requestorInfo := *basistheory.NewThreeDSRequestorInfo()
-  requestorInfo.SetId("example-3ds-merchant")
-  requestorInfo.SetName("Example 3DS Merchant")
-  requestorInfo.SetUrl("https://www.example.com/example-merchant")
+	requestorInfo := &basistheory.ThreeDsRequestorInfo{
+		ID:   pointerToString("example-3ds-merchant"),
+		Name: pointerToString("Example 3DS Merchant"),
+		URL:  pointerToString("https://www.example.com/example-merchant"),
+	}
 
-  merchantInfo := *basistheory.NewThreeDSMerchantInfo()
-  merchantInfo.SetMid("9876543210001")
-  merchantInfo.SetAcquirerBin("000000999")
-  merchantInfo.SetName("Example 3DS Merchant")
-  merchantInfo.SetCategoryCode("7922")
-  merchantInfo.SetCountryCode("826")
+	merchantInfo := &basistheory.ThreeDsMerchantInfo{
+		Mid:         pointerToString("9876543210001"),
+		AcquirerBin: pointerToString("000000999"),
+		Name:        pointerToString("Example 3DS Merchant"),
+		CategoryCode: pointerToString("7922"),
+		CountryCode: pointerToString("826"),
+	}
 
-  cardholderInfo := *basistheory.NewThreeDSCardholderInfo()
-  cardholderInfo.SetName("John Doe")
-  cardholderInfo.SetEmail("john@me.com")
+	cardholderInfo := &basistheory.ThreeDsCardholderInfo{
+		Name:  pointerToString("John Doe"),
+		Email: pointerToString("john@me.com"),
+	}
 
-  authenticateThreeDSSessionRequest.SetPurchaseInfo(purchaseInfo)
-  authenticateThreeDSSessionRequest.SetRequestorInfo(requestorInfo)
-  authenticateThreeDSSessionRequest.SetMerchantInfo(merchantInfo)
-  authenticateThreeDSSessionRequest.SetCardholderInfo(cardholderInfo)
+	authRequest.PurchaseInfo = purchaseInfo
+	authRequest.RequestorInfo = requestorInfo
+	authRequest.MerchantInfo = merchantInfo
+	authRequest.CardholderInfo = cardholderInfo
 
-  authenticateResponse, _, authenticateErr := apiClient.ThreeDSApi.ThreeDSAuthenticateSession(contextWithAPIKey, sessionId).AuthenticateThreeDSSessionRequest(authenticateThreeDSSessionRequest).Execute()
-  if authenticateErr != nil {
-    rw.WriteHeader(http.StatusInternalServerError)
-    json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
-    return
-  }
+	authenticateResponse, authenticateErr := client.Threeds.Sessions.Authenticate(context.Background(), sessionId, authRequest)
 
-  rw.WriteHeader(http.StatusOK)
-  json.NewEncoder(rw).Encode(authenticateResponse)
+	if authenticateErr != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+	json.NewEncoder(rw).Encode(authenticateResponse)
 }
 //highlight-end
 ```
