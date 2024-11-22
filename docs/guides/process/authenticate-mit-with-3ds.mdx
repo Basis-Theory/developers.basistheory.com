@@ -357,6 +357,91 @@ This is done by calling [Authenticate 3DS Session](/docs/api/3ds/sessions#authen
 In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
 
 ```javascript showLineNumbers
+const { BasisTheoryClient, BasisTheory } = require("@basis-theory/node-sdk");
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+let bt;
+// highlight-start
+let btPrivate;
+// highlight-end
+(async () => {
+  bt = await new BasisTheoryClient({ apiKey: "<PUBLIC_API_KEY>" });
+  // highlight-start
+  btPrivate = await new BasisTheoryClient({ apiKey: "<PRIVATE_API_KEY>" });
+  // highlight-end
+})();
+
+app.post("/sessions/create", async (req, res) => {
+  const { token_id } = req.params;
+
+  try {
+    const session = await bt.threeds.sessions.create({
+      tokenId: token_id,
+      type: "merchant",
+    });
+    res.status(201).send(session);
+  } catch (error) {
+    console.error('Error while creating 3DS session:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+
+//highlight-start
+app.post("/:sessionId/authenticate", async (req, res) => {
+  const { sessionId } = req.params;
+
+  try {
+    const authentication = await btPrivate.threeds.sessions.authenticate(sessionId, {
+        authenticationCategory: "payment",
+        authenticationType: "other-payment",
+        decoupledChallengeMaxTime: 10,
+        purchaseInfo: {
+          amount: "80000",
+          currency: "826",
+          exponent: "2",
+          date: "20240109141010"
+        },
+        requestorInfo: {
+          id: "example-3ds-merchant",
+          name: "Example 3DS Merchant",
+          url: "https://www.example.com/example-merchant"
+        },
+        merchantInfo: {
+          mid: "9876543210001",
+          acquirerBin: "000000999",
+          name: "Example 3DS Merchant",
+          categoryCode: "7922",
+          countryCode: "826"
+        },
+        cardholderInfo: {
+          name: "John Doe",
+          email: "john@me.com"
+        }
+    });
+    res.status(200).send(authentication);
+  } catch (error) {
+    console.error('Error during authentication:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+//highlight-end
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+</TabItem>
+<TabItem value="node-legacy" label="JavaScript (legacy)">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side-legacy/node) and [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript showLineNumbers
 const { BasisTheory } = require("@basis-theory/basis-theory-js");
 const express = require("express");
 
