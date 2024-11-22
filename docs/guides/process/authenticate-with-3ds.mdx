@@ -231,8 +231,74 @@ This is done by calling [Authenticate 3DS Session](/docs/api/3ds/sessions#authen
 
 <Tabs className="bt-tabs" queryString="backend">
 <TabItem value="node" label="Node">
-
 In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
+```javascript showLineNumbers
+//highlight-start
+const { BasisTheoryClient, BasisTheory } = require("@basis-theory/node-sdk"
+//highlight-end
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+//highlight-start
+let bt;
+(async () => {
+  bt = await new BasisTheoryClient({ apiKey: "<API_KEY>" });
+})();
+//highlight-end
+
+//highlight-start
+app.post("/:sessionId/authenticate", async (req, res) => {
+  const { sessionId } = req.params;
+
+  try {
+    const authentication = await bt.threeds.sessions.authenticate(sessionId, {
+       authenticationCategory: "payment",
+       authenticationType: "payment-transaction",
+       purchaseInfo: {
+           amount: "80000",
+           currency: "826",
+           exponent: "2",
+           date: "20240109141010"
+       },
+       requestorInfo: {
+           id: "example-3ds-merchant",
+           name: "Example 3DS Merchant",
+           url: "https://www.example.com/example-merchant"
+       },
+       merchantInfo: {
+           mid: "9876543210001",
+           acquirerBin: "000000999",
+           name: "Example 3DS Merchant",
+           categoryCode: "7922",
+           countryCode: "826"
+       },
+       cardholderInfo: {
+           name: "John Doe",
+           email: "john@me.com"
+       }
+    });
+    res.status(200).send(authentication);
+  } catch (error) {
+    console.error('Error during authentication:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+//highlight-end
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+```
+</TabItem>
+<TabItem value="node-legacy" label="JavaScript (legacy)">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side-legacy/node) and [Express framework](https://expressjs.com/) for Node.js.
 
 ```javascript showLineNumbers
 //highlight-start
