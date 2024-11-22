@@ -1,3 +1,10 @@
+# [1.198.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.197.0...v1.198.0) (2024-11-22)
+
+
+### Features
+
+* add skip luhn validation option for react native ([#476](https://github.com/Basis-Theory/developers.basistheory.com/issues/476)) ([f2e64e5](https://github.com/Basis-Theory/developers.basistheory.com/commit/f2e64e56466e233714118dda806da40336896c1f))
+
 # [1.197.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.196.0...v1.197.0) (2024-11-20)
 
 
