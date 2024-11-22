@@ -252,9 +252,7 @@ import os
 from flask import Flask, request, jsonify
 
 #highlight-start
-import basistheory
-from basistheory.api import three_ds_api
-from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo, CreateThreeDSSessionRequest
+from basis_theory import BasisTheory
 #highlight-end
 
 app = Flask(__name__)
@@ -264,18 +262,15 @@ app = Flask(__name__)
 def create_session():
   token_id = request.json.get('token_id')
 
-  config = basistheory.Configuration(
-    host="https://api.basistheory.com",
-    api_key="<PUBLIC_API_KEY>"
+  client = BasisTheory(
+      api_key="<PUBLIC_API_KEY>",
   )
 
-  with basistheory.ApiClient(configuration=config) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-    session = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
+  session = client.threeds.sessions.create(
       token_id=token_id,
       type="merchant"
-    ))
-    return jsonify(session.to_dict()), 201
+  )
+  return jsonify(session.to_dict()), 201
 #highlight-end
 
 if __name__ == '__main__':
