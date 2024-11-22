@@ -381,8 +381,7 @@ using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
 //highlight-start
-using BasisTheory.net.ThreeDS;
-using BasisTheory.net.ThreeDS.Requests;
+using BasisTheory.Client;
 //highlight-end
 
 namespace server.Controllers
@@ -424,30 +423,30 @@ namespace server.Controllers
 
     public ThreeDsApiController()
     {
-      _client = new ThreeDSClient("<PRIVATE_API_KEY>");
+      _client = new BasisTheory(apiKey: "<PRIVATE_API_KEY>");
     }
 
     [HttpPost("{sessionId:guid}/authenticate")]
     public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
     {
-      var authentication = await _client.AuthenticateThreeDSSessionAsync(sessionId.ToString(), new AuthenticateThreeDSSessionRequest
+      var authentication = await _client.Threeds.Sessions.AuthenticateAsync(sessionId.ToString(), new AuthenticateThreeDsSessionRequest
       {
         AuthenticationCategory = "payment",
         AuthenticationType = "payment-transaction",
-        PurchaseInfo = new ThreeDSPurchaseInfo
+        PurchaseInfo = new ThreeDsPurchaseInfo
         {
           Amount = "80000",
           Currency = "826",
           Exponent = "2",
           Date = "20240109141010"
         },
-        RequestorInfo = new ThreeDSRequestorInfo
+        RequestorInfo = new ThreeDsRequestorInfo
         {
           Id = "example-3ds-merchant",
           Name = "Example 3DS Merchant",
           Url = "https://www.example.com/example-merchant"
         },
-        MerchantInfo = new ThreeDSMerchantInfo
+        MerchantInfo = new ThreeDsMerchantInfo
         {
           Mid = "9876543210001",
           AcquirerBin = "000000999",
@@ -455,7 +454,7 @@ namespace server.Controllers
           CategoryCode = "7922",
           CountryCode = "826"
         },
-        CardholderInfo = new ThreeDSCardholderInfo
+        CardholderInfo = new ThreeDsCardholderInfo
         {
           Name = "John Doe",
           Email = "john@me.com"
@@ -484,9 +483,8 @@ import os
 from flask import Flask, request, jsonify
 
 #highlight-start
-import basistheory
-from basistheory.api import three_ds_api
-from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo
+from basis_theory import BasisTheory, ThreeDsPurchaseInfo, \
+    ThreeDsRequestorInfo, ThreeDsMerchantInfo, ThreeDsCardholderInfo
 #highlight-end
 
 app = Flask(__name__)
@@ -494,42 +492,39 @@ app = Flask(__name__)
 #highlight-start
 @app.route('/<sessionId>/authenticate', methods=['POST'])
 def authenticate_session(sessionId):
-  config = basistheory.Configuration(
-    host="https://api.basistheory.com",
-    api_key="<PRIVATE_API_KEY>"
+  client = BasisTheory(
+    api_key="<PRIVATE_API_KEY>",
   )
 
-  with basistheory.ApiClient(configuration=config) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-    authentication_request = AuthenticateThreeDSSessionRequest(
+  authentication = client.threeds.sessions.authorize(
+      session_id="",
       authentication_category="payment",
       authentication_type="payment-transaction",
-      purchase_info=ThreeDSPurchaseInfo(
-        amount="80000",
-        currency="826",
-        exponent="2",
-        date="20240109141010"
+      purchase_info=ThreeDsPurchaseInfo(
+          amount="80000",
+          currency="826",
+          exponent="2",
+          date="20240109141010"
       ),
-      requestor_info=ThreeDSRequestorInfo(
-        id="example-3ds-merchant",
-        name="Example 3DS Merchant",
-        url="https://www.example.com/example-merchant"
+      requestor_info=ThreeDsRequestorInfo(
+          id="example-3ds-merchant",
+          name="Example 3DS Merchant",
+          url="https://www.example.com/example-merchant"
       ),
-      merchant_info=ThreeDSMerchantInfo(
-        mid="9876543210001",
-        acquirer_bin="000000999",
-        name="Example 3DS Merchant",
-        category_code="7922",
-        country_code="826"
+      merchant_info=ThreeDsMerchantInfo(
+          mid="9876543210001",
+          acquirer_bin="000000999",
+          name="Example 3DS Merchant",
+          category_code="7922",
+          country_code="826"
       ),
-      cardholder_info=ThreeDSCardholderInfo(
-        name="John Doe",
-        email="john@me.com"
+      cardholder_info=ThreeDsCardholderInfo(
+          name="John Doe",
+          email="john@me.com"
       )
-    )
-    authentication = three_ds_client.three_ds_authenticate_session(sessionId, authenticate_three_ds_session_request=authentication_request)
-    return jsonify(authentication.to_dict()), 200
-    #highlight-end
+  )
+  return jsonify(authentication.to_dict()), 200
+  #highlight-end
 
 if __name__ == '__main__':
   app.run(port=4242, debug=True)
