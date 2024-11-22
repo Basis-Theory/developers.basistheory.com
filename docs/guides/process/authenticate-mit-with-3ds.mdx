@@ -659,9 +659,8 @@ In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) 
 import os
 from flask import Flask, request, jsonify
 
-import basistheory
-from basistheory.api import three_ds_api
-from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo, CreateThreeDSSessionRequest
+from basis_theory import BasisTheory, ThreeDsCardholderInfo, ThreeDsMerchantInfo, ThreeDsRequestorInfo, \
+    ThreeDsPurchaseInfo
 
 app = Flask(__name__)
 
@@ -669,59 +668,53 @@ app = Flask(__name__)
 def create_session():
   token_id = request.json.get('token_id')
 
-  config = basistheory.Configuration(
-    host="https://api.basistheory.com",
-    api_key="<PUBLIC_API_KEY>"
+  client = BasisTheory(
+      api_key="<PUBLIC_API_KEY>",
   )
 
-  with basistheory.ApiClient(configuration=config) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-    session = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
+  session = client.threeds.sessions.create(
       token_id=token_id,
       type="merchant"
-    ))
-    return jsonify(session.to_dict()), 201
+  )
+  return jsonify(session.to_dict()), 201
 
-#highlight-start
+# highlight-start
 @app.route('/<sessionId>/authenticate', methods=['POST'])
 def authenticate_session(sessionId):
-  config = basistheory.Configuration(
-    host="https://api.basistheory.com",
-    api_key="<PRIVATE_API_KEY>"
-  )
-
-  with basistheory.ApiClient(configuration=config) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-    authentication_request = AuthenticateThreeDSSessionRequest(
-      authentication_category="payment",
-      authentication_type="other-payment",
-      decoupled_challenge_max_time=10,
-      purchase_info=ThreeDSPurchaseInfo(
-        amount="80000",
-        currency="826",
-        exponent="2",
-        date="20240109141010"
-      ),
-      requestor_info=ThreeDSRequestorInfo(
-        id="example-3ds-merchant",
-        name="Example 3DS Merchant",
-        url="https://www.example.com/example-merchant"
-      ),
-      merchant_info=ThreeDSMerchantInfo(
-        mid="9876543210001",
-        acquirer_bin="000000999",
-        name="Example 3DS Merchant",
-        category_code="7922",
-        country_code="826"
-      ),
-      cardholder_info=ThreeDSCardholderInfo(
-        name="John Doe",
-        email="john@me.com"
-      )
+    client = BasisTheory(
+        api_key="<PRIVATE_API_KEY>",
     )
-    authentication = three_ds_client.three_ds_authenticate_session(sessionId, authenticate_three_ds_session_request=authentication_request)
+
+    authentication = client.threeds.sessions.authenticate(
+        sessionId=sessionId,
+        authentication_category="payment",
+        authentication_type="other-payment",
+        decoupled_challenge_max_time=10,
+        purchase_info=ThreeDsPurchaseInfo(
+            amount="80000",
+            currency="826",
+            exponent="2",
+            date="20240109141010"
+        ),
+        requestor_info=ThreeDsRequestorInfo(
+            id="example-3ds-merchant",
+            name="Example 3DS Merchant",
+            url="https://www.example.com/example-merchant"
+        ),
+        merchant_info=ThreeDsMerchantInfo(
+            mid="9876543210001",
+            acquirer_bin="000000999",
+            name="Example 3DS Merchant",
+            category_code="7922",
+            country_code="826"
+        ),
+        cardholder_info=ThreeDsCardholderInfo(
+            name="John Doe",
+            email="john@me.com"
+        )
+    )
     return jsonify(authentication.to_dict()), 200
-    #highlight-end
+# highlight-end
 
 if __name__ == '__main__':
   app.run(port=4242, debug=True)
@@ -1210,9 +1203,8 @@ In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) 
 import os
 from flask import Flask, request, jsonify
 
-import basistheory
-from basistheory.api import three_ds_api
-from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo, CreateThreeDSSessionRequest
+from basis_theory import BasisTheory, ThreeDsCardholderInfo, ThreeDsMerchantInfo, ThreeDsRequestorInfo, \
+    ThreeDsPurchaseInfo
 
 app = Flask(__name__)
 
@@ -1220,72 +1212,62 @@ app = Flask(__name__)
 def create_session():
   token_id = request.json.get('token_id')
 
-  config = basistheory.Configuration(
-    host="https://api.basistheory.com",
-    api_key="<PUBLIC_API_KEY>"
+  client = BasisTheory(
+      api_key="<PUBLIC_API_KEY>",
   )
 
-  with basistheory.ApiClient(configuration=config) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-    session = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
+  session = client.threeds.sessions.create(
       token_id=token_id,
       type="merchant"
-    ))
-    return jsonify(session.to_dict()), 201
+  )
+  return jsonify(session.to_dict()), 201
+
 
 @app.route('/<sessionId>/authenticate', methods=['POST'])
 def authenticate_session(sessionId):
-  config = basistheory.Configuration(
-    host="https://api.basistheory.com",
-    api_key="<PRIVATE_API_KEY>"
-  )
-
-  with basistheory.ApiClient(configuration=config) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-    authentication_request = AuthenticateThreeDSSessionRequest(
-      authentication_category="payment",
-      authentication_type="other-payment",
-      decoupled_challenge_max_time=10,
-      purchase_info=ThreeDSPurchaseInfo(
-        amount="80000",
-        currency="826",
-        exponent="2",
-        date="20240109141010"
-      ),
-      requestor_info=ThreeDSRequestorInfo(
-        id="example-3ds-merchant",
-        name="Example 3DS Merchant",
-        url="https://www.example.com/example-merchant"
-      ),
-      merchant_info=ThreeDSMerchantInfo(
-        mid="9876543210001",
-        acquirer_bin="000000999",
-        name="Example 3DS Merchant",
-        category_code="7922",
-        country_code="826"
-      ),
-      cardholder_info=ThreeDSCardholderInfo(
-        name="John Doe",
-        email="john@me.com"
-      )
+    client = BasisTheory(
+        api_key="<PRIVATE_API_KEY>",
     )
-    authentication = three_ds_client.three_ds_authenticate_session(sessionId, authenticate_three_ds_session_request=authentication_request)
+
+    authentication = client.threeds.sessions.authenticate(
+        sessionId=sessionId,
+        authentication_category="payment",
+        authentication_type="other-payment",
+        decoupled_challenge_max_time=10,
+        purchase_info=ThreeDsPurchaseInfo(
+            amount="80000",
+            currency="826",
+            exponent="2",
+            date="20240109141010"
+        ),
+        requestor_info=ThreeDsRequestorInfo(
+            id="example-3ds-merchant",
+            name="Example 3DS Merchant",
+            url="https://www.example.com/example-merchant"
+        ),
+        merchant_info=ThreeDsMerchantInfo(
+            mid="9876543210001",
+            acquirer_bin="000000999",
+            name="Example 3DS Merchant",
+            category_code="7922",
+            country_code="826"
+        ),
+        cardholder_info=ThreeDsCardholderInfo(
+            name="John Doe",
+            email="john@me.com"
+        )
+    )
     return jsonify(authentication.to_dict()), 200
 
-#highlight-start
+# highlight-start
 @app.route('/<sessionId>/challenge-result', methods=['GET'])
 def get_challenge_result(sessionId):
-  config = basistheory.Configuration(
-    host="https://api.basistheory.com",
-    api_key="<PRIVATE_API_KEY>"
-  )
+    client = BasisTheory(
+        api_key="<PRIVATE_API_KEY>",
+    )
 
-  with basistheory.ApiClient(configuration=config) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-
-    result = three_ds_client.three_ds_get_challenge_result(session_id=sessionId)
-    return jsonify(result.to_dict()), 200
-#highlight-end
+    result = client.threeds.sessions.challenge_result(sessionId=sessionId)
+# highlight-end
 
 if __name__ == '__main__':
   app.run(port=4242, debug=True)
