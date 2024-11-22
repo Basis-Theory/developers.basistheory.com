@@ -147,7 +147,7 @@ Search for tokens using a Lucene-based [query syntax](#query-syntax).
 
 | Attribute | Required | Type      | Default | Description                                                           |
 |-----------|----------|-----------|---------|-----------------------------------------------------------------------|
-| `query`   | false    | _string_  | `null`  | A query string using [Lucene query syntax](#query-syntax).            |
+| `query`   | false    | _string_  | `null`  | A query string using [Lucene query syntax](#query-syntax). **Only a single search term is supported.**            |
 | `start`   | false    | _string_  | `null`  | Cursor provided in the previous query to get the next set of results. |
 | `size`    | false    | _integer_ | `20`    | Number of results per page to return. Maximum size of 100 results.    |
 
@@ -331,7 +331,7 @@ func main() {
 
 | Attribute | Required | Type      | Default | Description                                                        |
 |-----------|----------|-----------|---------|--------------------------------------------------------------------|
-| `query`   | false    | _string_  | `null`  | A query string using [Lucene query syntax](#query-syntax).         |
+| `query`   | false    | _string_  | `null`  | A query string using [Lucene query syntax](#query-syntax). **Only a single search term is supported.**                     |
 | `page`    | false    | _integer_ | `1`     | Page number of the results to return.                              |
 | `size`    | false    | _integer_ | `20`    | Number of results per page to return. Maximum size of 100 results. |
 
@@ -373,6 +373,8 @@ Returns [an error](/docs/api/errors) if tokens could not be retrieved or when an
 
 ## Query Syntax
 
+<Alert type={Alerts.ERROR}>Multiple Terms in a single `query` is deprecated and support will be removed no later than March 1st, 2025.</Alert>
+
 Token search supports a [Lucene](http://www.lucenetutorial.com/lucene-query-syntax.html)-based query syntax.
 A query string is comprised of one or more Terms that can be combined with `AND` Operators.
 
@@ -403,15 +405,9 @@ For example, to search for tokens having the metadata `{ customer_id: "cus_12345
   metadata.customer_id:cus_12345
 ```
 
-Multiple `metadata` terms may be combined using the `AND` operator. For example:
-
-```
-  metadata.customer_id:my_customer AND metadata.user_id:1234
-```
-
 <Alert>
   Only a subset of the full Lucene query syntax is currently supported, and it is limited to the operators and terms documented above.
-  Combining terms for multiple <a href="#searchable-token-fields">token fields</a> in the same query is not currently supported.
+  Combining terms for multiple <a href="#searchable-token-fields">token fields</a> in the same query is not supported.
   If you would like to have support for any additional Lucene features or to query on additional token fields, please <a href="mailto:support@basistheory.com?subject=Token%20Search%20Feature%20Request"> let us know</a>.
 </Alert>
 

@@ -19,6 +19,76 @@ The following table lists deprecated features and their respective shutdown date
 | Application Key Regenerate                                          | April 17, 2024    | October 17, 2024  | Regenerating API Keys for an Application has been replaced with [Application Keys](/docs/api/applications/application-keys), to Migrate you will Create a new Application Key and remove the old key.                                                                                                                                                                                                           |
 | Old Rate Limits                                                     | June 10, 2024     | July 16, 2024     | Rate limits have been deprecated in favor of [Rate Limits](/docs/api/rate-limits).                                                                                                                                                                                                                                                                                                                              |
 | Async Reactor `callback_url`                                        | November 1, 2024  | January 15, 2025  | Async Reactors will no longer support the `callback_url` attribute. For more information, see the section below on [Async Reactor callback_url Deprecation](#async-reactor-callback_url-deprecation).                                                                                                                                                                                                                                                                                                                                             |
+| Multiple Terms in a single `query`                                  | November 11, 2024 | March 1, 2025     | Multiple Terms in a single `query` is deprecated.                                                                                                                                                                                                                                                                                                                                             |
+
+## Migrating From Mulitple Search Terms
+
+### Query on single field, filter the response
+
+Remove one of the terms from the `query` and filter the results from Token Search by the other property once returned to your system:
+
+**Original Search Query:** `metadata.type:phone AND metadata.customer_id:1234`
+
+**New Query:** `metadata.customer_id:1234`
+
+**Filter in your system:** `metadata.type = "phone"`
+
+### Aliases
+
+Use Aliases to create a single identifier from the multiple terms currently required in a `query`.
+
+Example:
+
+A query with the following multiple terms:
+
+```
+metadata.type:phone AND metadata.customer_id:1234
+```
+
+Can be converted to the following Alias when creating a token:
+
+```json
+{
+  "id": "1234_phone",
+  ...
+}
+```
+
+Now systems are capable of requesting this token by the `id` attribute:
+
+```
+GET /tokens/1234_phone
+```
+
+**Moving from metadata searching to using an alias will require migrating tokens to the new alias.**
+
+### Combine metadata
+
+Combine the multiple terms into a single `metadata` field and continue to use the `query` with a single term:
+
+Original `metadata` field:
+
+```json
+{
+  "type": "phone",
+  "customer_id": "1234"
+}
+```
+
+New `metadata` field:
+
+```json
+{
+  "type": "phone",
+  "customer_id": "1234",
+  "type_customer_id": "phone_1234"
+}
+```
+
+Original Search Query: `metadata.type:phone AND metadata.customer_id:1234`
+New Query: `metadata.type:phone AND metadata.customer_id:1234`
+
+**Moving from metadata searching to a single metadata term will require migrating tokens include the new combined metadata field.**
 
 ## Migrating to New Rate Limits
 
