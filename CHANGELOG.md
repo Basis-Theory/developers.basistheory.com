@@ -1,3 +1,10 @@
+## [1.198.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.198.0...v1.198.1) (2024-11-22)
+
+
+### Bug Fixes
+
+* documenting the deprecationon of  multiple search terms ([#477](https://github.com/Basis-Theory/developers.basistheory.com/issues/477)) ([0276e0d](https://github.com/Basis-Theory/developers.basistheory.com/commit/0276e0db804eedd5f5fbeafb2109b5c2cdb73596))
+
 # [1.198.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.197.0...v1.198.0) (2024-11-22)
 
 
