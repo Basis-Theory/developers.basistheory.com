@@ -287,41 +287,46 @@ package main
 import (
   "context"
   "encoding/json"
+  "github.com/Basis-Theory/go-sdk/option"
+  "github.com/Basis-Theory/go-sdk/threeds"
   "log"
   "net/http"
-  //highlight-start
-  "github.com/Basis-Theory/basistheory-go/v7"
-  //highlight-end
+  // highlight-start
+  basistheoryclient "github.com/Basis-Theory/go-sdk/client"
+  // highlight-end
   "github.com/gorilla/mux"
 )
 
 func main() {
   router := mux.NewRouter()
-  //highlight-start
+  // highlight-start
   router.HandleFunc("/sessions/create", createSession).Methods("POST")
-  //highlight-end
+  // highlight-end
   addr := "localhost:4242"
   log.Printf("Listening on %s", addr)
   log.Fatal(http.ListenAndServe(addr, router))
 }
 
-//highlight-start
+func pointerToString(s string) *string {
+  return &s
+}
+
+// highlight-start
 func createSession(rw http.ResponseWriter, r *http.Request) {
   var request map[string]string
   json.NewDecoder(r.Body).Decode(&request)
   tokenId := request["token_id"]
 
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PUBLIC_API_KEY>"},
-  })
+  client := basistheoryclient.NewClient(
+    option.WithAPIKey("<PUBLIC_API_KEY>"),
+  )
 
-  createThreeDSSessionRequest := *basistheory.NewCreateThreeDSSessionRequest()
-  createThreeDSSessionRequest.SetTokenId(tokenId)
-  createThreeDSSessionRequest.SetType("merchant")
+  createThreeDSSessionRequest := &threeds.CreateThreeDsSessionRequest{
+    TokenID: &tokenId, // Assigning the tokenId directly
+    Type:    pointerToString("merchant"),
+  }
 
-  session, _, createErr := apiClient.ThreeDSApi.ThreeDSCreateSession(contextWithAPIKey).CreateThreeDSSessionRequest(createThreeDSSessionRequest).Execute()
+  session, createErr := client.Threeds.Sessions.Create(context.Background(), createThreeDSSessionRequest)
   if createErr != nil {
     rw.WriteHeader(http.StatusInternalServerError)
     json.NewEncoder(rw).Encode(map[string]string{"error": createErr.Error()})
