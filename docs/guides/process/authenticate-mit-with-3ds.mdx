@@ -173,9 +173,8 @@ using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
 //highlight-start
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
+using BasisTheory.Client;
+using BasisTheory.Client.Threeds;
 //highlight-end
 
 namespace server.Controllers
@@ -217,23 +216,19 @@ namespace server.Controllers
 
         public ThreeDsApiController()
         {
-            Configuration config = new Configuration();
-            config.BasePath = "https://api.basistheory.com";
-            config.AddApiKey("BT-API-KEY", "<PUBLIC_API_KEY>");
-
-            _client = new ThreeDSApi(config);
+            _client = new BasisTheory.Client.BasisTheory(apiKey: "<PUBLIC_API_KEY>");
         }
 
         [HttpPost("session/create")]
         public async Task<ActionResult> CreateSession([FromBody] string tokenId)
         {
-            var request = new CreateThreeDSSessionRequest()
+            var request = new CreateThreeDsSessionRequest()
             {
                 TokenId = tokenId,
                 Type = "merchant"
             };
 
-            CreateThreeDSSessionResponse session = await _client.ThreeDSCreateSessionAsync(request);
+            CreateThreeDsSessionResponse session = await _client.Threeds.Sessions.CreateAsync(request);
 
             if (session == null)
             {
