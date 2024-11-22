@@ -70,6 +70,52 @@ In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) an
 
 ```javascript showLineNumbers
 //highlight-start
+const { BasisTheoryClient, BasisTheory } = require("@basis-theory/node-sdk");
+//highlight-end
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+//highlight-start
+let bt;
+(async () => {
+  bt = await new BasisTheoryClient({ apiKey: "<PUBLIC_API_KEY>" });
+})();
+//highlight-end
+
+//highlight-start
+app.post("/sessions/create", async (req, res) => {
+  const { token_id } = req.params;
+
+  try {
+    const session = await bt.threeds.sessions.create({
+      tokenId: token_id,
+      type: "merchant",
+    });
+    res.status(201).send(session);
+  } catch (error) {
+    console.error('Error while creating 3DS session:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+//highlight-end
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+```
+</TabItem>
+<TabItem value="node-legacy" label="JavaScript (legacy)">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side-legacy/node) and [Express framework](https://expressjs.com/) for Node.js.
+
+```javascript showLineNumbers
+//highlight-start
 const { BasisTheory } = require("@basis-theory/basis-theory-js");
 //highlight-end
 const express = require("express");
