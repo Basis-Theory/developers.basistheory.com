@@ -1,3 +1,31 @@
+# [1.199.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.198.2...v1.199.0) (2024-11-25)
+
+
+### Features
+
+* add flexfactor example ([#474](https://github.com/Basis-Theory/developers.basistheory.com/issues/474)) ([fffe9ca](https://github.com/Basis-Theory/developers.basistheory.com/commit/fffe9ca3a7c1579a4854a0e2104b2abc9211a9e1))
+
+## [1.198.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.198.1...v1.198.2) (2024-11-25)
+
+
+### Bug Fixes
+
+* document trailing slash behavior ([#478](https://github.com/Basis-Theory/developers.basistheory.com/issues/478)) ([7a5de1e](https://github.com/Basis-Theory/developers.basistheory.com/commit/7a5de1e9944a3f5e56f971b89878b74fe66964d6))
+
+## [1.198.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.198.0...v1.198.1) (2024-11-22)
+
+
+### Bug Fixes
+
+* documenting the deprecationon of  multiple search terms ([#477](https://github.com/Basis-Theory/developers.basistheory.com/issues/477)) ([0276e0d](https://github.com/Basis-Theory/developers.basistheory.com/commit/0276e0db804eedd5f5fbeafb2109b5c2cdb73596))
+
+# [1.198.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.197.0...v1.198.0) (2024-11-22)
+
+
+### Features
+
+* add skip luhn validation option for react native ([#476](https://github.com/Basis-Theory/developers.basistheory.com/issues/476)) ([f2e64e5](https://github.com/Basis-Theory/developers.basistheory.com/commit/f2e64e56466e233714118dda806da40336896c1f))
+
 # [1.197.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.196.0...v1.197.0) (2024-11-20)
 
 
