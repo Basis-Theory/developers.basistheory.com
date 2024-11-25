@@ -1,3 +1,10 @@
+## [1.198.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.198.1...v1.198.2) (2024-11-25)
+
+
+### Bug Fixes
+
+* document trailing slash behavior ([#478](https://github.com/Basis-Theory/developers.basistheory.com/issues/478)) ([7a5de1e](https://github.com/Basis-Theory/developers.basistheory.com/commit/7a5de1e9944a3f5e56f971b89878b74fe66964d6))
+
 ## [1.198.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.198.0...v1.198.1) (2024-11-22)
 
 
