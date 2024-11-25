@@ -81,12 +81,6 @@ const config = {
           },
           {
             type: "doc",
-            docId: "api-legacy/index",
-            position: "left",
-            label: "API (legacy)",
-          },
-          {
-            type: "doc",
             docId: "sdks/index",
             position: "left",
             label: "SDKs",
