@@ -91,6 +91,19 @@ client.tokens.create(
     idempotency_key=idempotency_key
 )
 ```
-
   </TabItem>
+    <TabItem value="go" label="Go">
+```go showLineNumbers
+idempotencyKey := uuid.NewString()
+
+tokenCreatedResponse, err := client.Tokens.Create(
+  context.TODO(),
+  &basistheory.CreateTokenRequest{
+    ...
+  },
+  // highlight-next-line
+  option.WithIdempotencyKey(&idempotencyKey),
+)
+```
+    </TabItem>
 </Tabs>
