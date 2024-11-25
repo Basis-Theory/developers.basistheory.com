@@ -1,3 +1,10 @@
+# [1.199.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.198.2...v1.199.0) (2024-11-25)
+
+
+### Features
+
+* add flexfactor example ([#474](https://github.com/Basis-Theory/developers.basistheory.com/issues/474)) ([fffe9ca](https://github.com/Basis-Theory/developers.basistheory.com/commit/fffe9ca3a7c1579a4854a0e2104b2abc9211a9e1))
+
 ## [1.198.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.198.1...v1.198.2) (2024-11-25)
 
 
