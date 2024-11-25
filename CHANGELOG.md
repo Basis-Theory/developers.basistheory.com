@@ -1,3 +1,10 @@
+# [1.200.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.199.0...v1.200.0) (2024-11-25)
+
+
+### Features
+
+* Document _extras ([#479](https://github.com/Basis-Theory/developers.basistheory.com/issues/479)) ([106039c](https://github.com/Basis-Theory/developers.basistheory.com/commit/106039c93f7fc0c0f8ff23d35d36ea6ee2035ef3))
+
 # [1.199.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.198.2...v1.199.0) (2024-11-25)
 
 
