@@ -521,6 +521,42 @@ curl 'https://api.basistheory.com/proxy' \
     [Finix Payment Instrument Docs](https://finix.com/docs/api/tag/Payment-Instruments/)
 
   </TabItem>
+  <TabItem value="dlocal" label="dLocal">
+
+    ```shell showLineNumbers title="Store Card"
+    curl 'https://api.basistheory.com/proxy' \
+    -X 'POST' \
+    // highlight-start
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'BT-PROXY-URL: https://sandbox.dlocal.com/secure_cards' \
+    -H 'X-Date: 2024-11-15T10:00:47.172Z' \
+    -H 'X-Login: <DLOCAL_X_LOGIN>' \
+    -H 'X-Trans-Key: <DLOCAL_TRANS_KEY>' \
+    -H 'V2-HMAC-SHA256, Signature: {{ proxy | json: "$.request.headers.X-Login" | append: proxy.request.headers.X-Date | append: proxy.request.body | hmac: "sha-256", "<DLOCAL_SECRET>" | to_base16 }}' \
+    // highlight-end
+    -H 'Content-Type: application/json' \
+    -d '{
+      "card": {
+        "holder_name": "John Doe",
+// highlight-start
+        "number": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+        "expiration_month": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4| json: \"$.data.expiration_month\" }}",
+        "expiration_year": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.expiration_year\" }}",
+        "cvv": "{{ token: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}"
+// highlight-end
+      },
+      "country": "US",
+      "payer": {
+        "document": "1234567890",
+        "email": "john.doe@email.com",
+        "name": "John Doe"
+      }
+    }'
+    ```
+
+    [dLocal Create a card Docs](https://docs.dlocal.com/reference/create-a-card)
+
+  </TabItem>
   <TabItem value="flexfactor" label="FlexFactor">
 
     ```shell showLineNumbers title="Tokenize"
