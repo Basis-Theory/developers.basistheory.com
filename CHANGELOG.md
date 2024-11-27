@@ -1,3 +1,10 @@
+# [1.201.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.200.0...v1.201.0) (2024-11-27)
+
+
+### Features
+
+* add dLocal example ([#480](https://github.com/Basis-Theory/developers.basistheory.com/issues/480)) ([6db3d5d](https://github.com/Basis-Theory/developers.basistheory.com/commit/6db3d5dca018e421bb08d968fc82b984e397ba31))
+
 # [1.200.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.199.0...v1.200.0) (2024-11-25)
 
 
