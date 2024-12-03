@@ -1,3 +1,10 @@
+# [1.202.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.201.0...v1.202.0) (2024-12-03)
+
+
+### Features
+
+* add identity feature page ([#481](https://github.com/Basis-Theory/developers.basistheory.com/issues/481)) ([0403f62](https://github.com/Basis-Theory/developers.basistheory.com/commit/0403f62c0881d22ac16595a7dd7116c8dffce353))
+
 # [1.201.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.200.0...v1.201.0) (2024-11-27)
 
 
