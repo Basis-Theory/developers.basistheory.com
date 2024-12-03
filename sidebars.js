@@ -161,6 +161,7 @@ const sidebars = {
         "features/network-tokens",
         "features/3d-secure",
         "features/anti-fraud",
+        "features/identity",
         {
           type: "category",
           label: "Single Sign-On (SSO)",
