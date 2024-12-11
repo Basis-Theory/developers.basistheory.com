@@ -1,3 +1,10 @@
+# [1.203.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.202.0...v1.203.0) (2024-12-11)
+
+
+### Features
+
+* Add timeout setting to proxy.updated event data ([#483](https://github.com/Basis-Theory/developers.basistheory.com/issues/483)) ([322bf05](https://github.com/Basis-Theory/developers.basistheory.com/commit/322bf057dae51c4a2c9422d360ca0bb6ccb55224))
+
 # [1.202.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.201.0...v1.202.0) (2024-12-03)
 
 
