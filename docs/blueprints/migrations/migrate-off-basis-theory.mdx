@@ -77,10 +77,10 @@ Depending on your situation, you may want to export your data directly into your
 The following example shows how you can use the [Retrieve a Token](/docs/api/tokens#get-a-token) endpoint to pull back tokens you have stored within your database. _The array of tokens is an example of data you've stored in your database - replace this by querying your database._
 
 ```javascript showLineNumbers
-import { BasisTheory } from "@basis-theory/basis-theory-js";
+import { BasisTheory } from "@basis-theory/node-sdk";
 
 async function migration() {
-  const bt = await new BasisTheory().init("key_here");
+  const bt = await new BasisTheoryClient({ apiKey: "<PRIVATE_API_KEY>" });
 
   const rowsFromDatabase = [
     { name: "test", ssn: "fc88408b-d031-49c6-abd9-9e53589a6091" },
@@ -89,7 +89,7 @@ async function migration() {
   ];
 
   rowsFromDatabase.forEach(async (row, i) => {
-    const token = await bt.tokens.retrieve(row.ssn);
+    const token = await bt.tokens.get(row.ssn);
     rowsFromDatabase[i].ssn = token.data;
   });
 

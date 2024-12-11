@@ -35,8 +35,14 @@ curl "https://api.basistheory.com/sessions" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.sessions.create();
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -44,57 +50,25 @@ const bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
 
 const session = await bt.sessions.create();
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new SessionsApi(config);
-
-CreateSessionResponse result = apiInstance.Create();
+await client.Sessions.CreateAsync();
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import sessions_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PUBLIC_API_KEY>")) as api_client:
-    session_client = sessions_api.SessionsApi(api_client)
-
-    session = session_client.create()
+client.sessions.create()
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PUBLIC_API_KEY>"},
-  })
-
-  session, httpResponse, err := apiClient.SessionsApi.Create(contextWithAPIKey).Execute()
-}
 ```
 
   </TabItem>
@@ -140,8 +114,17 @@ curl "https://api.basistheory.com/sessions/authorize" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.sessions.authorize({
+    nonce: "nonce",
+    ...
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -152,71 +135,32 @@ const authorizedSession = await bt.sessions.authorize({
   permissions: ["token:create", "token:read"],
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new SessionsApi(config);
-var authorizeSessionRequest = new AuthorizeSessionRequest()
-{
-    Nonce = ...
-    ExpiresAt = ...
-    Permissions = ...
-    Rules = ...
-};
-
-apiInstance.Authorize(authorizeSessionRequest);
+await client.Sessions.AuthorizeAsync(
+  new AuthorizeSessionRequest
+  {
+    Nonce = "nonce"
+  }
+);
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import sessions_api
-from basistheory.model.authorize_session_request import AuthorizeSessionRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    session_client = sessions_api.SessionsApi(api_client)
-
-    authorizedSession = session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
-        nonce="4J7SiRvfADwJ9ZqwviJJs8",
-        permissions=[ "token:create", "token:read" ]
-    ))
+client.sessions.authorize(
+    nonce="nonce",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  authorizeSessionRequest := *basistheory.NewAuthorizeSessionRequest("4J7SiRvfADwJ9ZqwviJJs8")
-  authorizeSessionRequest.SetPermissions([]string{ "token:create", "token:read" })
-
-  authorizedSession, httpResponse, err := apiClient.SessionsApi.Authorize(contextWithAPIKey).AuthorizeSessionRequest(authorizeSessionRequest).Execute()
-}
 ```
 
   </TabItem>

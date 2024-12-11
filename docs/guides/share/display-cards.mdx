@@ -599,6 +599,52 @@ In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) an
 const express = require("express");
 const cors = require("cors");
 // highlight-next-line
+const { BasisTheoryClient, BasisTheory } = require("@basis-theory/node-sdk");
+
+const app = express();
+const port = 4242;
+
+app.use(cors());
+app.use(express.json());
+
+// highlight-start
+app.post("/authorize", async (request, response) => {
+  const bt = await new BasisTheoryClient({ apiKey: "<PRIVATE_API_KEY>" });
+  const { nonce } = request.body;
+  // authorizing a session returns an empty 200 response
+  await bt.sessions.authorize({
+    nonce: nonce,
+    rules: [
+      {
+        description: "Display Token",
+        priority: 1,
+        conditions: [
+          {
+            attribute: "id",
+            operator: "equals",
+            value: "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+          },
+        ],
+        permissions: ["token:read"],
+        transform: "reveal",
+      },
+    ],
+  });
+  response.status(204).send();
+});
+// highlight-end
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+```
+  </TabItem>
+  <TabItem value="node-legacy" label="JavaScript (legacy)">
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/javascript-legacy) and [Express framework](https://expressjs.com/) for Node.js.
+```javascript showLineNumbers
+const express = require("express");
+const cors = require("cors");
+// highlight-next-line
 const { BasisTheory } = require("@basis-theory/basis-theory-js");
 
 const app = express();
@@ -638,7 +684,6 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 ```
-
   </TabItem>
   <TabItem value=".net" label=".NET">
 
@@ -654,8 +699,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 // highlight-start
-using BasisTheory.net.Sessions;
-using BasisTheory.net.Applications.Entities;
+using BasisTheory.Client;
 // highlight-end
 
 namespace server.Controllers
@@ -693,29 +737,31 @@ namespace server.Controllers
   public class CheckoutApiController : Controller
   {
     // highlight-start
-    var client = new SessionClient("<PRIVATE_API_KEY>");
+    var client = new BasisTheory(apiKey: "<PRIVATE_API_KEY>");
 
     [HttpPost]
     public ActionResult AuthorizeSession([FromBody] string nonce)
     {
-      await client.AuthorizeAsync(new AuthorizeSessionRequest {
-        Nonce = nonce,
-        Rules = new List<AccessRule> {
-          new AccessRule {
-            Description = "Display Token",
-            Priority = 1,
-            Conditions = new List<Condition> {
-              new Condition {
-                Attribute = "id",
-                Operator = "equals",
-                Value = "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4"
-              }
-            },
-            Permissions = new List<string> { "token:read" },
-            Transform = "reveal"
-          },
-        }
-      });
+      await client.Sessions.AuthorizeAsync(new AuthorizeSessionRequest {
+      Nonce = nonce,
+      Rules = new List<AccessRule> {
+        new()
+        {
+        Description = "Display Token",
+        Priority = 1,
+        Conditions = new List<Condition> {
+          new()
+          {
+            Attribute = "id",
+            Operator = "equals",
+            Value = "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4"
+          }
+        },
+        Permissions = new List<string> { "token:read" },
+        Transform = "reveal"
+        },
+      }
+  });
       return new StatusCodeResult(204);
     }
     // highlight-end
@@ -734,10 +780,7 @@ from flask import Flask, request
 
 import basistheory
 # highlight-start
-from basistheory.api import sessions_api
-from basistheory.model.access_rule import AccessRule
-from basistheory.model.condition import Condition
-from basistheory.model.authorize_session_request import AuthorizeSessionRequest
+from basis_theory import BasisTheory, AccessRule, Condition
 # highlight-end
 
 app = Flask(__name__)
@@ -746,23 +789,26 @@ app = Flask(__name__)
 @app.route('/authorize', methods=['POST'])
 def authorize_session():
   body = request.get_json()
-  with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    session_client = sessions_api.SessionsApi(api_client)
+  client = BasisTheory(
+    api_key="<PRIVATE_API_KEY>",
+  )
 
-    session_client.authorize(authorize_session_request=AuthorizeSessionRequest(
-      nonce = body.get("nonce"),
-      rules = [AccessRule(
+  client.sessions.authorize(
+    nonce=body.get("nonce"),
+    rules=[
+      AccessRule(
         description = "Display Tokens",
         priority = 1,
         conditions = [Condition(
-          attribute = "id",
-          operator = "equals",
-          value = "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
-        )],
+                attribute = "id",
+                operator = "equals",
+                value = "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+            )],
         permissions = [ "token:read" ],
         transform = "reveal"
-      )]
-    ))
+      )
+    ]
+  )
 
   return '', 204
 # highlight-end
@@ -784,9 +830,13 @@ import (
     "net/http"
     "context"
     "encoding/json"
-    // highlight-next-line
-    "github.com/Basis-Theory/basistheory-go/v3"
 )
+// highlight-start
+import (
+  basistheoryclient "github.com/Basis-Theory/go-sdk/client"
+  "github.com/Basis-Theory/go-sdk/option"
+)
+// highlight-end
 
 func main() {
   // highlight-next-line
@@ -801,28 +851,37 @@ func authorizeSession(rw http.ResponseWriter, r *http.Request) {
   var payload map[string]interface{}
   json.NewDecoder(r.Body).Decode(&payload)
 
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
+  client := basistheoryclient.NewClient(
+    option.WithAPIKey("<PRIVATE_API_KEY>"),
+  )
 
-  authorizeSessionRequest := *basistheory.NewAuthorizeSessionRequest(payload["nonce"].(string))
-  accessRule := *basistheory.NewAccessRule()
-  accessRule.SetDescription("Display Token")
-  accessRule.SetPriority(1)
-  accessRule.SetPermissions([]string{"token:read"})
-  accessRule.SetTransform("reveal")
+  authorizeSessionRequest := basistheory.AuthorizeSessionRequest{
+    Nonce: payload["nonce"].(string),
+  }
 
-  condition := *basistheory.NewCondition()
-  condition.SetAttribute("id")
-  condition.SetOperator("equals")
-  condition.SetValue("d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4")
+  attribute := "id"
+  operator := "equals"
+  value := "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4"
+  condition := basistheory.Condition{
+    Attribute: &attribute,
+    Operator:  &operator,
+    Value:     &value,
+  }
 
-  accessRule.SetConditions([]basistheory.Condition{condition})
-  authorizeSessionRequest.SetRules([]basistheory.AccessRule{accessRule})
+  description := "Display Token"
+  priority := 1
+  transform := "reveal"
+  permissions := []string{"token:read"}
+  accessRule := basistheory.AccessRule{
+    Description: &description,
+    Priority:    &priority,
+    Permissions: permissions,
+    Transform:   &transform,
+    Conditions:  []*basistheory.Condition{&condition},
+  }
+  authorizeSessionRequest.Rules = []*basistheory.AccessRule{&accessRule}
 
-  authorizedSession, httpResponse, err := apiClient.SessionsApi.Authorize(contextWithAPIKey).AuthorizeSessionRequest(authorizeSessionRequest).Execute()
+  authorizedSession := client.Sessions.Authorize(context.Background(), &authorizeSessionRequest)
 
   w.WriteHeader(http.StatusNoContent)
 }

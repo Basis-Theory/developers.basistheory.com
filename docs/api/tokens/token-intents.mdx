@@ -48,24 +48,66 @@ Create a new token intent.
     ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
+```javascript showLineNumbers
+await client.tokenIntents.create({
+  type: "card",
+  data: {
+    number: '4242424242424242',
+    expiration_month: 12,
+    expiration_year: 2025,
+    cvc: '123'
+  },
+});
+```
+  </TabItem>
 
-    ```javascript showLineNumbers
-    import {BasisTheory} from "@basis-theory/basis-theory-js";
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import {BasisTheory} from "@basis-theory/basis-theory-js";
 
-    const bt = await new BasisTheory().init("<API_KEY>");
+const bt = await new BasisTheory().init("<API_KEY>");
 
-    const tokenIntent = await bt.tokenIntents.create({
-      type: "card",
-      data: {
-      number: '4242424242424242',
-      expiration_month: 12,
-      expiration_year: 2025,
-      cvc: '123'
-    },
-    });
-    ```
+const tokenIntent = await bt.tokenIntents.create({
+  type: "card",
+  data: {
+    number: '4242424242424242',
+    expiration_month: 12,
+    expiration_year: 2025,
+    cvc: '123'
+  },
+});
+```
+  </TabItem>
 
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.TokenIntents.CreateAsync(new CreateTokenIntentRequest
+{
+  Type = "card",
+  Data = new
+  {
+    number = "4242424242424242",
+    expiration_month = 12,
+    expiration_year = 2025,
+    cvc = "123",
+  }
+});
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.token_intents.create(
+  type="card",
+  data={
+    "number": '4242424242424242',
+    "expiration_month": 12,
+    "expiration_year": 2025,
+    "cvc": '123'
+  }
+)
+```
   </TabItem>
 </Tabs>
 
@@ -125,16 +167,36 @@ Deletes a Token Intent without waiting for expiration. Use this endpoint to remo
     ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
-    ```javascript showLineNumbers
-    import {BasisTheory} from "@basis-theory/basis-theory-js";
+```javascript showLineNumbers
+await client.tokenIntents.delete("dda42a6b-964b-46d8-b315-eb6dfda37c32");
+```
 
-    const bt = await new BasisTheory().init("<API_KEY>");
+  </TabItem>
 
-    await bt.tokenIntents.delete("dda42a6b-964b-46d8-b315-eb6dfda37c32");
-    ```
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import {BasisTheory} from "@basis-theory/basis-theory-js";
 
+const bt = await new BasisTheory().init("<API_KEY>");
+
+await bt.tokenIntents.delete("dda42a6b-964b-46d8-b315-eb6dfda37c32");
+```
+  </TabItem>
+
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.TokenIntents.DeleteAsync("id");
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.token_intents.delete(
+  id="id",
+)
+```
   </TabItem>
 </Tabs>
 

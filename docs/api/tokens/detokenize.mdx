@@ -37,103 +37,70 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
-    ```shell showLineNumbers
-    curl "https://api.basistheory.com/detokenize" \
-    -H "BT-API-KEY: <API_KEY>" \
-    -H "Content-Type: application/json" \
-    -X "POST" \
-    -d '{
-      "card_number": "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}"
-    }'
-    ```
+```shell showLineNumbers
+curl "https://api.basistheory.com/detokenize" \
+-H "BT-API-KEY: <API_KEY>" \
+-H "Content-Type: application/json" \
+-X "POST" \
+-d '{
+  "card_number": "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}"
+}'
+```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
-    ```javascript showLineNumbers
-    import { BasisTheory } from "@basis-theory/basis-theory-js";
+```javascript showLineNumbers
+await client.tokens.detokenize({
+    "card_number": "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}"
+});
+```
 
-    const bt = await new BasisTheory().init("<API_KEY>");
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-    const token = await bt.detokenize({
-      card_number: "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}",
-    });
-    ```
+const bt = await new BasisTheory().init("<API_KEY>");
 
+const token = await bt.detokenize({
+  card_number: "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}",
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
-    ```csharp showLineNumbers
-    using BasisTheory.net.Detokenize;
-
-    var client = new DetokenizeClient("<API_KEY>");
-
-    var token = await client.DetokenizeAsync(new {
-      card_number = "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}"
-    });
-    ```
+```csharp showLineNumbers
+await client.Tokens.DetokenizeAsync(new
+  {
+    card_number = "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}"
+  });
+```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
-    ```java showLineNumbers
-    import com.basistheory.*;
-    import com.basistheory.auth.*;
-    import java.util.Map;
+```java showLineNumbers
 
-    public class Example {
-      public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        DetokenizeApi apiInstance = new DetokenizeApi(defaultClient);
-        Object result = apiInstance.detokenize(Map.of(
-          "card_number", "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}"));
-      }
-  }
-    ```
+```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
-    ```python showLineNumbers
-    import basistheory
-    from basistheory.api import tokenize_api
-
-    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    tokenize_client = tokenize_api.TokenizeApi(api_client)
-
-    token = tokenize_client.tokenize(body={
-      "card_number": "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}"
-    })
-    ```
+```python showLineNumbers
+client.tokens.detokenize(
+    request={
+        "card_number": "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}"
+    }
+)
+```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
-    ```go showLineNumbers
-    package main
+```go showLineNumbers
 
-    import (
-    "context"
-    "github.com/Basis-Theory/basistheory-go/v3"
-    )
-
-    func main() {
-      configuration := basistheory.NewConfiguration()
-      apiClient := basistheory.NewAPIClient(configuration)
-      contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-      "ApiKey": {Key: "<API_KEY>"},
-    })
-
-      tokens, httpResponse, err := apiClient.TokenizeApi.Tokenize(contextWithAPIKey).Body(map[string]interface{}{
-      "card_number": "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}"
-    }).Execute()
-  }
-    ```
+```
 
   </TabItem>
 </Tabs>
@@ -167,101 +134,72 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
     ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
-    ```javascript showLineNumbers
-    import { BasisTheory } from "@basis-theory/basis-theory-js";
+```javascript showLineNumbers
+await client.tokens.detokenize({
+ "tokens":[
+   '{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}',
+   '{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}',
+ ]
+});
+```
 
-    const bt = await new BasisTheory().init("<API_KEY>");
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-    const token = await bt.detokenize({
-      tokens: [
-      "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
-      "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"
-      ],
-    });
-    ```
+const bt = await new BasisTheory().init("<API_KEY>");
 
+const token = await bt.detokenize({
+  tokens: [
+  "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
+  "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"
+  ],
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
-    ```csharp showLineNumbers
-    using BasisTheory.net.Detokenize;
-
-    var client = new DetokenizeClient("<API_KEY>");
-
-    var token = await client.DetokenizeAsync(new {
-        tokens = new object [] {
+```csharp showLineNumbers
+await client.Tokens.DetokenizeAsync(new
+{
+    tokens = new []
+    {
         "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
         "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"
-      },
-    });
-    ```
+    }
+});
+```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
-    ```java showLineNumbers
-    import com.basistheory.*;
-    import com.basistheory.auth.*;
-    import java.util.Map;
+```java showLineNumbers
 
-    public class Example {
-      public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        DetokenizeApi apiInstance = new DetokenizeApi(defaultClient);
-        Object result = apiInstance.detokenize(Map.of(
-          "tokens", new String[]{"{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}", "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"}));
-      }
-    }
-    ```
+```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
-    ```python showLineNumbers
-    import basistheory
-    from basistheory.api import tokenize_api
-
-    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    tokenize_client = tokenize_api.TokenizeApi(api_client)
-
-    token = tokenize_client.tokenize(body={
-      "tokens": [
-      "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
-      "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"
-      ],
-    })
-    ```
+```python showLineNumbers
+client.tokens.detokenize(
+    request={
+        "tokens": [
+            "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb  }}",
+            "{{ a1883f97-2e4c-439a-bf73-dffb681de929  }}",
+        ]
+    }
+)
+```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
-    ```go showLineNumbers
-    package main
+```go showLineNumbers
 
-    import (
-    "context"
-    "github.com/Basis-Theory/basistheory-go/v3"
-    )
-
-    func main() {
-      configuration := basistheory.NewConfiguration()
-      apiClient := basistheory.NewAPIClient(configuration)
-      contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-      "ApiKey": {Key: "<API_KEY>"},
-      })
-
-      tokens, httpResponse, err := apiClient.TokenizeApi.Tokenize(contextWithAPIKey).Body(map[string]interface{}{
-        "tokens": [2]string{"{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}", "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"}
-      }).Execute()
-    }
-    ```
+```
 
   </TabItem>
 </Tabs>
