@@ -41,7 +41,7 @@ export const SdkList = ({ type, sdks }: { type?: keyof typeof SDK_TYPES; sdks: (
       </Card>
     ),
     javascript: (
-      <Card href="/docs/sdks/web/javascript/" img={<JavaScript />} className={styles.sdk}>
+      <Card href="/docs/sdks/web/web-elements/" img={<JavaScript />} className={styles.sdk}>
         Javascript
       </Card>
     ),
