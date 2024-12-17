@@ -31,10 +31,7 @@ export default function Home(): JSX.Element {
       <div className={clsx(["col", styles.container])}>
         <header>
           <h1>Basis Theory Docs</h1>
-          <p>
-            Basis Theory will guide you on how to safely collect, share, process
-            and govern your data in your applications.
-          </p>
+          <p>Basis Theory will guide you on how to safely collect, share, process and govern your data in your applications.</p>
         </header>
         <main>
           <div className={styles["explore-cards-container"]}>
@@ -42,14 +39,16 @@ export default function Home(): JSX.Element {
             <div className={styles["explore-cards"]}>
               <Card
                 href="/docs/"
-                img={<ThemedImage
-                  alt="Getting Started icon"
-                  sources={{
-                    light: "/img/homepage/light/getting-started.png",
-                    dark: "/img/homepage/dark/getting-started.png",
-                  }}
-                  className={styles["explore-cards-image"]}
-                />}
+                img={
+                  <ThemedImage
+                    alt="Getting Started icon"
+                    sources={{
+                      light: "/img/homepage/light/getting-started.png",
+                      dark: "/img/homepage/dark/getting-started.png",
+                    }}
+                    className={styles["explore-cards-image"]}
+                  />
+                }
                 heading={<Card.PrimaryHeader>Getting Started</Card.PrimaryHeader>}
                 column
                 raised
@@ -58,14 +57,16 @@ export default function Home(): JSX.Element {
               </Card>
               <Card
                 href="/docs/guides/cards"
-                img={<ThemedImage
-                  alt="Card icon"
-                  sources={{
-                    light: "/img/homepage/light/cards.png",
-                    dark: "/img/homepage/dark/cards.png",
-                  }}
-                  className={styles["explore-cards-image"]}
-                />}
+                img={
+                  <ThemedImage
+                    alt="Card icon"
+                    sources={{
+                      light: "/img/homepage/light/cards.png",
+                      dark: "/img/homepage/dark/cards.png",
+                    }}
+                    className={styles["explore-cards-image"]}
+                  />
+                }
                 heading={<Card.PrimaryHeader>Cards</Card.PrimaryHeader>}
                 column
                 raised
@@ -74,14 +75,16 @@ export default function Home(): JSX.Element {
               </Card>
               <Card
                 href="/docs/guides/any"
-                img={<ThemedImage
-                  alt="Any Data icon"
-                  sources={{
-                    light: "/img/homepage/light/any-data.png",
-                    dark: "/img/homepage/dark/any-data.png",
-                  }}
-                  className={styles["explore-cards-image"]}
-                />}
+                img={
+                  <ThemedImage
+                    alt="Any Data icon"
+                    sources={{
+                      light: "/img/homepage/light/any-data.png",
+                      dark: "/img/homepage/dark/any-data.png",
+                    }}
+                    className={styles["explore-cards-image"]}
+                  />
+                }
                 heading={<Card.PrimaryHeader>Any Data</Card.PrimaryHeader>}
                 column
                 raised
@@ -97,46 +100,22 @@ export default function Home(): JSX.Element {
               <div>
                 Server-side SDKs
                 <div className={styles["sdk-column"]}>
-                  <Card
-                    href="/docs/sdks/server-side/dotnet"
-                    img={<DotNet />}
-                    className={styles.sdk}
-                  >
+                  <Card href="/docs/sdks/server-side/dotnet" img={<DotNet />} className={styles.sdk}>
                     .NET
                   </Card>
-                  <Card
-                    href="/docs/sdks/server-side/java"
-                    img={<Java />}
-                    className={styles.sdk}
-                  >
+                  <Card href="/docs/sdks/server-side/java" img={<Java />} className={styles.sdk}>
                     Java
                   </Card>
-                  <Card
-                    href="/docs/sdks/server-side/go"
-                    img={<Go />}
-                    className={styles.sdk}
-                  >
+                  <Card href="/docs/sdks/server-side/go" img={<Go />} className={styles.sdk}>
                     Go
                   </Card>
-                  <Card
-                    href="/docs/sdks/server-side/node"
-                    img={<Node />}
-                    className={styles.sdk}
-                  >
+                  <Card href="/docs/sdks/server-side/node" img={<Node />} className={styles.sdk}>
                     NodeJS
                   </Card>
-                  <Card
-                    href="/docs/sdks/server-side/python"
-                    img={<Python />}
-                    className={styles.sdk}
-                  >
+                  <Card href="/docs/sdks/server-side/python" img={<Python />} className={styles.sdk}>
                     Python
                   </Card>
-                  <Card
-                    href="/docs/sdks/server-side/terraform"
-                    img={<Terraform />}
-                    className={styles.sdk}
-                  >
+                  <Card href="/docs/sdks/server-side/terraform" img={<Terraform />} className={styles.sdk}>
                     Terraform
                   </Card>
                 </div>
@@ -144,18 +123,10 @@ export default function Home(): JSX.Element {
               <div>
                 Web SDKs
                 <div className={styles["sdk-column"]}>
-                  <Card
-                    href="/docs/sdks/web/react/"
-                    img={<ReactSvg />}
-                    className={styles.sdk}
-                  >
+                  <Card href="/docs/sdks/web/react/" img={<ReactSvg />} className={styles.sdk}>
                     React
                   </Card>
-                  <Card
-                    href="/docs/sdks/web/javascript/"
-                    img={<JavaScript />}
-                    className={styles.sdk}
-                  >
+                  <Card href="/docs/sdks/web/web-elements/" img={<JavaScript />} className={styles.sdk}>
                     Javascript
                   </Card>
                 </div>
@@ -195,48 +166,20 @@ export default function Home(): JSX.Element {
           <div className={styles["explore-cards-container"]}>
             <h2>Explore Basis Theory</h2>
             <div className={styles["explore-cards"]}>
-              <Card
-                href="/docs/api/"
-                img={<ApiReference />}
-                heading="API Reference"
-                column
-              >
-                API endpoints to manage the full lifecycle of your data and
-                Basis Theory resources.
+              <Card href="/docs/api/" img={<ApiReference />} heading="API Reference" column>
+                API endpoints to manage the full lifecycle of your data and Basis Theory resources.
               </Card>
-              <Card
-                href="/docs/concepts/"
-                img={<Info />}
-                heading="Concepts"
-                column
-              >
+              <Card href="/docs/concepts/" img={<Info />} heading="Concepts" column>
                 Learn about key concepts of Basis Theory's platform.
               </Card>
-              <Card
-                href="/docs/"
-                img={<Blueprint />}
-                heading="Guides"
-                column
-              >
-                Explore end-to-end guides for your regulatory and compliance use
-                cases.
+              <Card href="/docs/" img={<Blueprint />} heading="Guides" column>
+                Explore end-to-end guides for your regulatory and compliance use cases.
               </Card>
-              <Card
-                href="https://github.com/Basis-Theory-Labs"
-                img={<Blueprint />}
-                heading="Basis Theory Labs"
-                column
-              >
+              <Card href="https://github.com/Basis-Theory-Labs" img={<Blueprint />} heading="Basis Theory Labs" column>
                 Code examples and tools to help you get started faster.
               </Card>
-              <Card
-                href="https://support.basistheory.com/"
-                img={<Question />}
-                heading="Support"
-                column
-              >
-                Have a question or problem with your integration? Reach out to
-                get support
+              <Card href="https://support.basistheory.com/" img={<Question />} heading="Support" column>
+                Have a question or problem with your integration? Reach out to get support
               </Card>
             </div>
           </div>
