@@ -41,8 +41,7 @@ const config = {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            "https://github.com/basis-theory/developers.basistheory.com/tree/master/",
+          editUrl: "https://github.com/basis-theory/developers.basistheory.com/tree/master/",
           showLastUpdateTime: true,
         },
         theme: {
@@ -102,15 +101,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: [
-          "csharp",
-          "hcl",
-          "kotlin",
-          "swift",
-          "java",
-          "bash",
-          "json",
-        ],
+        additionalLanguages: ["csharp", "hcl", "kotlin", "swift", "java", "bash", "json"],
       },
       mermaid: {
         theme: {
@@ -139,13 +130,11 @@ const config = {
       metadata: [
         {
           name: "description",
-          content:
-            "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
+          content: "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
         },
         {
           property: "og:description",
-          content:
-            "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
+          content: "API Reference documentation for the Basis Theory API. Includes code examples for all official Basis Theory SDKs and user guides for various use cases.",
         },
         {
           property: "og:image",
@@ -267,11 +256,15 @@ const config = {
             from: "/blueprints/pci",
             to: "/docs/blueprints/cards/collect-and-process-cards",
           },
-
           {
             from: "/docs/guides/collect/collect-inbound-data-to-api",
             to: "/docs/guides/collect/collect-inbound-sensitive-data",
           },
+          { from: "/docs/sdks/web/javascript/events", to: "/docs/sdks/web/web-elements/events" },
+          { from: "/docs/sdks/web/javascript/lifecycle", to: "/docs/sdks/web/web-elements/lifecycle" },
+          { from: "/docs/sdks/web/javascript/options", to: "/docs/sdks/web/web-elements/options" },
+          { from: "/docs/sdks/web/javascript/services", to: "/docs/sdks/web/web-elements/services" },
+          { from: "/docs/sdks/web/javascript/types", to: "/docs/sdks/web/web-elements/types" },
         ],
       },
     ],
@@ -296,9 +289,7 @@ const config = {
           if (svgRuleIndex === -1 || svgrConfigIndex === -1) return;
 
           // @ts-ignore
-          config.module.rules[svgRuleIndex].oneOf[
-            svgrConfigIndex
-          ].use[0].options.svgoConfig.plugins[0].params.overrides.cleanupIDs = false;
+          config.module.rules[svgRuleIndex].oneOf[svgrConfigIndex].use[0].options.svgoConfig.plugins[0].params.overrides.cleanupIDs = false;
         },
       };
     },
@@ -329,8 +320,7 @@ const config = {
       "data-website-id": "3755b5a8-e659-404c-9119-8cce3b1e87a7",
       "data-project-name": "Basis Theory",
       "data-project-color": "#45D1DB",
-      "data-project-logo":
-        "https://avatars.githubusercontent.com/u/75859349?s=280&v=4",
+      "data-project-logo": "https://avatars.githubusercontent.com/u/75859349?s=280&v=4",
       async: true,
       "data-search-mode-enabled": "true", // ADD THIS LINE TO ENABLE SEARCH
       // "data-modal-override-open-class": "navbar__search" // OPTIONAL: If you want to override the default search
