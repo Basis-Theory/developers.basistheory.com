@@ -11,8 +11,7 @@ interface Intro {
   img?: React.ReactNode | Sources;
 }
 
-const hasSources = (val: unknown): val is Sources =>
-  !!(val as Sources).light && !!(val as Sources).dark;
+const hasSources = (val: unknown): val is Sources => !!(val as Sources)?.light && !!(val as Sources)?.dark;
 
 export const Intro = ({ title, caption, img }: Intro) => {
   return (

@@ -38,6 +38,21 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Online Payments",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/card.svg",
+          dark: "/img/sidebar/dark/card.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/cards/index",
+      },
+      items: ["payments/cards-checkout", "payments/add-card-on-file", "payments/charge-stored-cards"],
+    },
+    {
+      type: "category",
       label: "Card Data",
       customProps: {
         icon: {
