@@ -49,7 +49,7 @@ const sidebars = {
         type: "doc",
         id: "guides/cards/index",
       },
-      items: ["payments/cards-checkout", "payments/add-card-on-file", "payments/charge-stored-cards"],
+      items: ["online-payments/cards-checkout", "online-payments/add-card-on-file", "online-payments/charge-stored-cards"],
     },
     {
       type: "category",
