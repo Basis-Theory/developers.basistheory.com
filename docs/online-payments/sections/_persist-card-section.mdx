@@ -1,0 +1,35 @@
+import { Alert } from "@site/src/components/shared/Alert";
+
+### Persist a Card
+
+Securely storing customer card details for future use enables repeat transactions for subscription services, recurring payments, consumption-based charges, and simplified checkouts. It is your responsibility to obtain explicit customer consent before persisting card details, ensuring compliance with data protection regulations and fostering trust.
+
+TODO: add example image of consent checkbox
+
+#### In your vault
+
+It is highly recommended to keep a persistent tokenized version of the customer's card in your Basis Theory Tenant. These are often referred to as "Merchant Tokens", for they are agnostic tokens meant to work with any payments processor or acquirer.
+
+To do that, we can convert the Token Intent into a Token, by calling the [Create Token API](/docs/api/tokens#create-token) and passing the `token_intent_id`.
+
+```shell
+curl "https://api.basistheory.com/tokens" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "token_intent_id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4"
+  }'
+```
+
+This operation returns a new or existing persistent Token depending on your fingerprinting and deduplication options. Make sure to store the resulting Token `id`.
+
+<Alert>[Click here](/docs/api/tokens/token-intents#convert-token-intent-to-token) to learn more about the token conversion behavior.</Alert>
+
+<Alert type="warning">To seamlessly charge these cards with new processors or acquirers in the future while achieving the best approval rates, store the initial transaction identifier provided by the card network. Refer to your current processor’s documentation or support for guidance on accessing this value.</Alert>
+
+#### With the PSP
+
+You can also instruct PSPs to save card data after verification or an initial transaction, generating a reference known as a "PSP Token" that you can store. This token allows merchants to perform subsequent transactions by making direct requests to the processor, bypassing the use of the proxy entirely.
+
+PSPs typically document this process clearly in their guides, as it aligns with their own best interests. In some cases, it is as simple as including a special flag in the initial transaction, while others may require an additional request to explicitly instruct them to create a new reference. If you have trouble finding out how to do this, don't hesitate to [reach out to our support team](https://basistheory.com/contact?how_can_we_help_=I+need+help+figuring+out+how+to+create+a+PSP+token+for+&lt;PSP+name&gt;).
