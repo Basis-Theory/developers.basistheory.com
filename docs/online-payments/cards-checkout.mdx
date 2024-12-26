@@ -5,12 +5,7 @@ description: This guide walks you through the process of implementing a checkout
 toc_max_heading_level: 3
 ---
 
-import {
-  CardElement,
-} from "@basis-theory/basis-theory-react";
-
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
-import { BasisTheoryComponentDisplay } from "@site/src/components/sdks/BasisTheoryComponentDisplay";
 import { Intro } from "@site/src/components/shared/Intro";
 import CollectCardsSection from "./sections/_collect-cards-section.mdx";
 import PrivateApplicationSection from "./sections/_private-application-section.mdx"
@@ -23,13 +18,9 @@ import PersistCardSection from "./sections/_persist-card-section.mdx";
   caption="Implement a checkout experience using secure Elements to collect and process card payments."
 />
 
-When building an e-commerce application, subscription service, or enabling one-time purchases, securely collecting and managing cardholder data is essential. Beyond security, merchants often face the challenge of optimizing payments orchestration—relying on multiple processors to ensure global coverage, disaster recovery, and authentication failover. Basis Theory platform has been uniquely designed to simplify both payment orchestration and secure data handling.
+When building an e-commerce application, subscription service, or enabling one-time purchases, securely collecting and managing cardholder data is essential. Beyond security, merchants often face the challenge of optimizing payments orchestration, relying on multiple processors to ensure global coverage, disaster recovery, and authentication failover. Basis Theory platform has been uniquely designed to simplify both payment orchestration and secure data handling.
 
 TODO: add example checkout image with disclaimer
-
-<BasisTheoryComponentDisplay title="Live Card Element">
-  <CardElement id="card-element" />
-</BasisTheoryComponentDisplay>
 
 In this guide, you'll learn how to use Basis Theory platform to capture cardholder data from a customer, tokenize it securely, and leverage it for seamless processor integrations. By following this step-by-step guide, you'll streamline your payment workflows while minimizing your exposure to PCI DSS compliance requirements.
 
@@ -53,8 +44,10 @@ In this section, we'll explore key backend operations involved in working with c
     bapi ->>+ psp: Operation using card data
     psp -->>- bapi: Response
     bapi -->>- mapi: Response
-    mapi ->>+ bapi: (Optional) Persist Token
-    bapi -->>- mapi: Token
+    opt Card is Valid
+      mapi ->>+ bapi: (Optional) Persist Card
+      bapi -->>- mapi: Token
+    end
     deactivate mapi
 ```
 
