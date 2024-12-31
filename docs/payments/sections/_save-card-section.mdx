@@ -1,8 +1,8 @@
 import { Alert } from "@site/src/components/shared/Alert";
 
-### Persist a Card
+### Save a Card
 
-Once a card has been verified or charged, merchants can store details in the long-term for future use and enable express checkouts, repeat transactions for subscription services, recurring payments and consumption-based charges. Merchants are responsible for obtaining explicit customer consent before persisting card details, ensuring compliance with data protection regulations and fostering trust.
+Once a card has been verified or charged, merchants can store details in the long-term for future use and enable express checkouts, repeat transactions for subscription services, recurring payments and consumption-based charges. Merchants are responsible for obtaining explicit customer consent before saving card details, ensuring compliance with data protection regulations and fostering trust.
 
 #### In your vault
 
@@ -10,7 +10,7 @@ It is highly recommended to keep a persistent tokenized version of the customer'
 
 To do that, we can convert the Token Intent into a Token, by calling the [Create Token API](/docs/api/tokens#create-token) and passing the `token_intent_id`.
 
-```shell
+```shell showLineNumbers title="Create Token"
 curl "https://api.basistheory.com/tokens" \
   -H "BT-API-KEY: <PRIVATE_API_KEY>" \
   -H "Content-Type: application/json" \
@@ -22,7 +22,7 @@ curl "https://api.basistheory.com/tokens" \
 
 This operation returns a new or existing persistent Token depending on your fingerprinting and deduplication options:
 
-```json
+```json showLineNumbers title="Token sample"
 {
   // highlight-next-line
   "id": "1cd9c8bf-99fd-4784-ba69-68b15b301019",
@@ -60,11 +60,22 @@ This operation returns a new or existing persistent Token depending on your fing
 What you should store in your database:
 
 - The **token identifier**, associating it with the rightful customer(s).
-- The card **brand**, **expiration date** and **last four digits**, available in the [Token Intent](/docs/api/tokens/token-intents#token-intent-object) or [Token](/docs/api/tokens/#token-object) object; if you want to skip [retrieving the token](http://localhost:3000/docs/api/tokens/#get-a-token) when rendering that information to your customer.
 - The **Network Transaction identifier**, returned by the processor during the initial transaction; allowing you to seamlessly charge the card with new processors or acquirers in the future and achieve the best approval rates. Refer to your current processor’s documentation or support for guidance on accessing this value.
+- (Optional) The card **brand**, **expiration date** and **last four digits**, available in the [Token Intent](/docs/api/tokens/token-intents#token-intent-object) or [Token](/docs/api/tokens/#token-object) object.
+  - You can skip storing this information by [retrieving the token](http://localhost:3000/docs/api/tokens/#get-a-token) before rendering saved cards to your customer.
+
+For example:
+
+| CUSTOMER_ID | BT_CARD_TOKEN                          | NT_TX_ID                           | CARD_BRAND | CARD_EXP | CARD_LAST4 |
+|-------------|----------------------------------------|------------------------------------|------------|----------|------------|
+| `a7c9f2b4`  | `1cd9c8bf-99fd-4784-ba69-68b15b301019` | `8723dfab9c4e56a1b8cd0291ef67ac43` | _VISA_     | 01/30    | 4242       |
 
 #### With the Payments Service Provider
 
 You can also instruct the Payments Service Provider (PSP) to save card data after verification or an initial transaction, generating a reference known as a "PSP Token" that you can store. This token allows merchants to perform subsequent transactions by making direct requests to the processor, bypassing the use of the proxy entirely.
+
+| CUSTOMER_ID | BT_CARD_TOKEN                          | PSP_TOKEN                     | NT_TX_ID                           | CARD_BRAND | CARD_EXP | CARD_LAST4 |
+|-------------|----------------------------------------|-------------------------------|------------------------------------|------------|----------|------------|
+| `a7c9f2b4`  | `1cd9c8bf-99fd-4784-ba69-68b15b301019` | `pm_1Hh1xD2eZvKYlo2CgdS6Kh4u` | `8723dfab9c4e56a1b8cd0291ef67ac43` | _VISA_     | 01/30    | 4242       |
 
 PSPs typically document this process clearly in their guides, as it aligns with their own best interests. In some cases, it is as simple as including a special flag in the initial transaction, while others may require an additional request to explicitly instruct them to create a new reference. If you have trouble finding out how to do this, don't hesitate to [reach out to our support team](https://basistheory.com/contact?how_can_we_help_=I+need+help+figuring+out+how+to+create+a+PSP+token+for+&lt;PSP+name&gt;).

@@ -8,13 +8,13 @@ toc_max_heading_level: 3
 import { Intro } from "@site/src/components/shared/Intro";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 import CollectCardsSection from "./sections/_collect-cards-section.mdx";
-import PrivateApplicationSection from "./sections/_private-application-section.mdx"
+import { ApplicationSection } from "./sections/ApplicationSection";
 import VerifyCardSection from "./sections/_verify-card-section.mdx";
-import PersistCardSection from "./sections/_persist-card-section.mdx";
+import SaveCardSection from "./sections/_save-card-section.mdx";
 
 <Intro
   title="Add Card on File"
-  caption="Implement an Add Card on File experience using secure Elements to collect and verify cards."
+  caption="Implement an Add Card on File experience using secure Elements to collect, verify and save cards."
 />
 
 When building an e-commerce platform, subscription service, or any system that processes payments, securely collecting and managing cardholder data is a critical step. This includes not only capturing card information but also verifying its validity and storing it securely for future use. With the added complexities of payments orchestration—such as managing multiple processors for global coverage, disaster recovery, or authentication failover—merchants need a solution that simplifies these challenges.
@@ -44,7 +44,7 @@ In this section, we'll explore how to verify a card and securely long-term persi
     psp -->>- bapi: Response
     bapi -->>- mapi: Response
     opt Card is Valid
-      mapi ->>+ bapi: Persist Card
+      mapi ->>+ bapi: Save Card
       bapi -->>- mapi: Token
     end
     deactivate mapi
@@ -59,8 +59,10 @@ We will use Basis Theory [Ephemeral Proxy API](/docs/api/proxies/ephemeral-proxy
 
 Continue reading to find request examples in the subsections below.
 
-<PrivateApplicationSection />
+### Private Application
+
+<ApplicationSection type="private" permissions={["token:create", "token:create", "token:use"]} />
 
 <VerifyCardSection />
 
-<PersistCardSection />
+<SaveCardSection />

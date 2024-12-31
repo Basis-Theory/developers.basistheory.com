@@ -16,7 +16,6 @@ In Stripe, you can verify a card without charging it [by saving the card to a cu
 2. [Create a Setup Intent](https://docs.stripe.com/api/setup_intents) using the Proxy (see example below)
   - This will create a new Payment Method, whose ID will be included in the response at `payment_method.id`
   - If the card is invalid, this request may fail immediately.
-3. [Retrieve the Payment Method](https://docs.stripe.com/api/payment_methods/retrieve) to get granular `checks` information.
 
 ```shell showLineNumbers title="Create a Setup Intent"
 curl 'https://api.basistheory.com/proxy' \
@@ -36,6 +35,39 @@ curl 'https://api.basistheory.com/proxy' \
 --data-urlencode 'payment_method_data[card][exp_year]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" | card_exp: "YYYY" }}' \
 --data-urlencode 'payment_method_data[card][cvc]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
 // highlight-end
+```
+
+```json showLineNumbers title="Setup Intent Response"
+{
+  "id": "seti_1QaI1YG9VRQ2700SF1DSos0x",
+  // highlight-next-line
+  "status": "succeeded",
+  "object": "setup_intent",
+  ...
+  // highlight-next-line
+  "payment_method": "pm_1QaI1YG9VRQ2700SfSFmzQNm",
+}
+```
+
+3. [Retrieve the Payment Method](https://docs.stripe.com/api/payment_methods/retrieve) to get granular `checks` information.
+
+```json showLineNumbers title="Payment Method Response"
+{
+  "id": "pm_1QaKJmG9VRQ2700S5JcsJv4Q",
+  "type": "card",
+  "object": "payment_method",
+  ...
+  "card": {
+    ...
+    // highlight-start
+    "checks": {
+      "address_line1_check": "pass",
+      "address_postal_code_check": "pass",
+      "cvc_check": "pass"
+    }
+    // highlight-end
+  }
+}
 ```
   </TabItem>
 </Tabs>

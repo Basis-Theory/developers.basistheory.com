@@ -1,8 +1,8 @@
 import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
-import PublicApplicationSection from "./_public-application-section.mdx";
-import AddElementsSection from "./_add-elements-section.mdx";
+import AddElementsSection from "./_add-card-elements-section.mdx";
 import TokenizationSection from "./_tokenization-section.mdx";
 import AuthenticateCardSection from "./_authenticate-card-section.mdx";
+import { ApplicationSection } from "./ApplicationSection";
 
 ## Collect Cards
 
@@ -25,14 +25,15 @@ In this section, we will set up Basis Theory SDKs to capture cards in a frontend
     bte ->>+ bapi: Create Token Intent
     bapi -->>- bte:  Card information
     bte -->>- storefront: Card information
-    storefront ->>+ mapi: Card information
+    storefront ->>+ mapi: Submit checkout
     mapi ->> mapi: Process card
     mapi -->>- storefront: OK
     storefront -->>- customer: Success
     deactivate customer
 ```
+### Public Application
 
-<PublicApplicationSection />
+<ApplicationSection type="public" permissions={["token-intent:create"]} />
 
 ### Configure Elements SDK
 
