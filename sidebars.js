@@ -38,7 +38,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Online Payments",
+      label: "Online Checkout",
       customProps: {
         icon: {
           light: "/img/sidebar/light/card.svg",
@@ -47,9 +47,24 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "guides/cards/index",
+        id: "payments/online-checkout",
       },
-      items: ["online-payments/accept-card-payments", "online-payments/add-card-on-file", "online-payments/express-checkout", "online-payments/charge-saved-cards"],
+      items: ["payments/accept-card-payments", "payments/pay-with-saved-cards"],
+    },
+    {
+      type: "category",
+      label: "Subscriptions",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/card.svg",
+          dark: "/img/sidebar/dark/card.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "payments/subscriptions",
+      },
+      items: ["payments/add-card-on-file", "payments/charge-saved-cards"],
     },
     {
       type: "category",

@@ -8,14 +8,14 @@ toc_max_heading_level: 3
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 import { Intro } from "@site/src/components/shared/Intro";
 import CollectCardsSection from "./sections/_collect-cards-section.mdx";
-import PrivateApplicationSection from "./sections/_private-application-section.mdx"
+import { ApplicationSection } from "./sections/ApplicationSection";
 import VerifyCardSection from "./sections/_verify-card-section.mdx";
 import ChargeCardSection from "./sections/_charge-card-section.mdx";
-import PersistCardSection from "./sections/_persist-card-section.mdx";
+import SaveCardSection from "./sections/_save-card-section.mdx";
 
 <Intro
   title="Accept Card Payments"
-  caption="Implement a checkout experience using secure Elements to collect and process card payments."
+  caption="Implement a checkout experience using secure Elements to collect, process and save card payments."
 />
 
 When building an e-commerce application, subscription service, or enabling one-time purchases, securely collecting and managing cardholder data is essential. Beyond security, merchants often face the challenge of optimizing payments orchestration, relying on multiple processors to ensure global coverage, disaster recovery, and authentication failover. Basis Theory platform has been uniquely designed to simplify both payment orchestration and secure data handling.
@@ -45,7 +45,7 @@ In this section, we'll explore key backend operations involved in working with c
     psp -->>- bapi: Response
     bapi -->>- mapi: Response
     opt Card is Valid
-      mapi ->>+ bapi: (Optional) Persist Card
+      mapi ->>+ bapi: (Optional) Save Card
       bapi -->>- mapi: Token
     end
     deactivate mapi
@@ -60,10 +60,12 @@ We will use Basis Theory [Ephemeral Proxy API](/docs/api/proxies/ephemeral-proxy
 
 Continue reading to find request examples in the subsections below.
 
-<PrivateApplicationSection />
+### Private Application
+
+<ApplicationSection type="private" permissions={["token:create", "token:create", "token:use"]} />
 
 <VerifyCardSection />
 
 <ChargeCardSection />
 
-<PersistCardSection />
+<SaveCardSection />

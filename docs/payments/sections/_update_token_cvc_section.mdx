@@ -2,11 +2,11 @@ import { Alert } from "@site/src/components/shared/Alert";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-### Tokenization
+### Update the Token
 
 Now that you are securely capturing the cardholder data in your user-facing application(s), it is time to post it to your Basis Theory Tenant.
 
-To do this, we will invoke the [Create Token Intent](https://developers.basistheory.com/docs/api/token-intents#create-token-intent) endpoint from the SDK, passing the Card Elements as data points in the payload. This will securely create a `card` token intent by transferring the card information from the frontend Elements to the Basis Theory API, where the data will be strongly encrypted and stored in a compliant environment.
+To do this, we will invoke the [Update Token](https://developers.basistheory.com/docs/api/tokens#update-token) endpoint from the SDK, passing the `CardVerificationCode` Element in the payload. This will securely update the `card` token by transferring the value from the frontend Element to the Basis Theory API, where the data will be strongly encrypted and temporarily stored in a compliant environment.
 
 Add a submit function along with a button to trigger it:
 
@@ -39,16 +39,12 @@ async function init () {
 // highlight-start
 async function submit () {
   try {
-    const intent = await bt.tokenIntents.create({
-      type: 'card',
+    await bt.tokens.update('1cd9c8bf-99fd-4784-ba69-68b15b301019', {
       data: {
-        number: cardNumberElement,
-        expiration_month: cardExpirationDateElement.month(),
-        expiration_year: cardExpirationDateElement.year(),
         cvc: cardVerificationCodeElement,
       }
     });
-    // TODO post the intent object to your backend
+    // TODO process the card payment
   } catch (error) {
     console.error(error);
   }
@@ -64,34 +60,24 @@ init();
 import React, { useRef, useState } from 'react';
 import {
   BasisTheoryProvider,
-  CardNumberElement,
-  CardExpirationDateElement,
   CardVerificationCodeElement,
   useBasisTheory,
 } from '@basis-theory/basis-theory-react';
 
 export default function App() {
   const { bt } = useBasisTheory('<API_KEY>', { elements: true });
-  // Refs to get access to the Elements instance
-  const cardNumberRef = useRef(null);
-  const cardExpirationRef = useRef(null);
+  // Ref to get access to the Element instance
   const cardVerificationRef = useRef(null);
-  // stores the current card brand in state, to pass to CardVerificationCodeElement
-  const [cardBrand, setCardBrand] = useState();
 
   // highlight-start
   const submit = async () => {
     try {
-      const intent = await bt?.tokenIntents.create({
-        type: 'card',
+      await bt.tokens.update('1cd9c8bf-99fd-4784-ba69-68b15b301019', {
         data: {
-          number: cardNumberRef.current,
-          expiration_month: cardExpirationRef.current.month(),
-          expiration_year: cardExpirationRef.current.year(),
           cvc: cardVerificationRef.current,
         }
       });
-      // TODO post the intent object to your backend
+      // TODO process the card payment
     } catch (error) {
       console.error(error);
     }
@@ -124,29 +110,23 @@ Coming soon.
 import React, { useRef } from "react";
 import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import type { BTRef } from "@basis-theory/basis-theory-react-native";
-import { CardNumberElement, CardExpirationDateElement, CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react-native";
+import { CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react-native";
 
 const App = (): JSX.Element => {
   // highlight-next-line
   const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
 
-  const cardNumberRef = useRef<BTRef>(null);
-  const cardExpirationDateRef = useRef<BTRef>(null);
   const cardVerificationCodeRef = useRef<BTRef>(null);
 
   // highlight-start
   const submit = async () => {
       try {
-        const intent = await bt?.tokenIntents.create({
-          type: 'card',
+        await bt.tokens.update('1cd9c8bf-99fd-4784-ba69-68b15b301019', {
           data: {
-            number: cardNumberRef.current,
-            expiration_month: cardExpirationRef.current.month(),
-            expiration_year: cardExpirationRef.current.year(),
             cvc: cardVerificationRef.current,
           }
         });
-        // TODO post the intent object to your backend
+        // TODO process the card payment
       } catch (error) {
         console.error(error);
       }
@@ -193,44 +173,4 @@ export default App;
   </TabItem>
 </Tabs>
 
-The created Token Intent is a short-lived tokenized `card` object which carries only non-sensitive information following the [Token Intent Object specification](/docs/api/tokens/token-intents#token-intent-object):
-
-```json showLineNumbers title=intent.json
-{
-  // highlight-next-line
-  "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
-  "tenant_id": "8935ed5e-c082-4837-9063-6f0a2b4265dc",
-  "type": "card",
-  "card": {
-    "bin": "42424242",
-    "last4": "4242",
-    "expiration_month": 12,
-    "expiration_year": 2025,
-    "brand": "visa",
-    "funding": "credit",
-    "authentication": "sca_required",
-    "country": "US",
-  },
-  "fingerprint": "H46vMHviE7DmGM5yCrvo9NkootV6SXX5GrXnaYsjRoXP",
-  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
-  "created_at": "2020-09-15T15:53:00+00:00",
-  "expires_at": "2024-10-30T19:23:57+00:00"
-}
-```
-
-<Alert>Post this object to your backend, where processing will take place.</Alert>
-
-[//]: # (You can use that information to perform operational tasks or optimization decisions on how and where to process the card payment. For example:)
-
-[//]: # ()
-[//]: # (- Conditionally perform Strong Customer Authentication &#40;SCA&#41; using 3DS)
-
-[//]: # (- Store the last four digits and expiration date to later display to the customer)
-
-[//]: # (- Use cheaper debit rails to process debit cards)
-
-[//]: # (- Leverage localized payment processors for cards of a specific region)
-
-[//]: # (- Prevent accepting cards from high-risk issuers with higher chargeback or fraud rates)
-
-
+The updated Token stores the `cvc` for 24 hours, allowing you to process the transaction.
