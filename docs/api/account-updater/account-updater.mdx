@@ -19,7 +19,7 @@ import TestCards from "@site/docs/api/account-updater/_test-cards.mdx";
 
 Basis Theory supports merchants who leverage [card-on-file transactions](https://blog.basistheory.com/card-on-file-transactions) or [subscription](https://blog.basistheory.com/subscription-payment-processing) billing models by allowing payment card data to be collected and securely vaulted for future transactions. However, vaulted card details can become outdated when cards are re-issued due to card expiration, account closures, lost or stolen cards, or fraud prevention. This can result in failed transactions and billing disruptions, leading to involuntary customer churn or lost revenue. Account Updater enables you to keep vaulted card tokens up to date with the latest information from the card networks, improving transaction success rates.
 
-Each request to update a batch of cards is referred to as an Account Updater Job. Job requests and results are transmitted using CSV-formatted flat files containing Basis Theory tokens. Jobs are submitted in a 2-step process - first, [create an account updater job](#create-account-updater-job) and receive an upload URL in the response, then [upload your request CSV file](#upload-request-file) directly through the upload URL. Once all updates have been received from the card networks and the job has been completed, you will receive a webhook reporting the overall job status. If successful, the job's result details can be [downloaded](#download-result-file) in CSV format, which you can use to update token id references in your system.
+Each request to update a batch of cards is referred to as an Account Updater Job. Job requests and results are transmitted using CSV-formatted flat files containing Basis Theory tokens. Jobs are submitted in a 2-step process - first, [create an account updater job](#create-account-updater-job) and receive an upload URL in the response, then [upload your request CSV file](#upload-request-file) directly through the upload URL. Once all updates have been received from the card networks and the job has been completed, you can create a [webhook](/docs/api/webhooks) to receive events when the job's status changes. If successful, the job's result details can be [downloaded](#download-result-file) in CSV format, which you can use to update token id references in your system.
 
 Basis Theory currently supports updating `card` tokens against the Visa, Mastercard, American Express, and Discover networks.
 
@@ -200,13 +200,17 @@ This endpoint returns newest jobs first.
 }
 ```
 
-## Account Updater Job Webhook
+## Account Updater Webhooks
 
-<Alert type={Alerts.INFO}>Webhooks are coming soon. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request notification when they are publicly available.</Alert>
+Configure a [webhook](/docs/api/webhooks) to receive notifications for job status changes. You are able to subscribe to the following event types:
 
-Configure a webhook to receive notifications for job status changes. You are able to subscribe to webhooks for events of type `account-updater.job.created`, `account-updater.job.completed`, or `account-updater.job.failed`.
+### Event Types
 
-### Webhook Payload
+- [account-updater.job.created](/docs/api/webhooks/eventdata#job-created)
+- [account-updater.job.completed](/docs/api/webhooks/eventdata#job-completed)
+- [account-updater.job.failed](/docs/api/webhooks/eventdata#job-failed)
+
+### Example Webhook Payload
 
 ```json
 {
@@ -226,12 +230,6 @@ Configure a webhook to receive notifications for job status changes. You are abl
   "delivered_at": "2024-04-09T13:56:42.673Z"
 }
 ```
-
-### Webhook Types
-
-- `account-updater.job.created`
-- `account-updater.job.completed`
-- `account-updater.job.failed`
 
 ## Download Result File
 
