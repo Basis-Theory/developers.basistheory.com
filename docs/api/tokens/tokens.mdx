@@ -259,7 +259,7 @@ Returns a [token](#token-object) if the token was created. Returns [an error](/d
 
 <Alert type={Alerts.INFO}>Most tokens are listable within seconds after creation, although it may take up to a few minutes.</Alert>
 
-Get a list of tokens for the Tenant sorted by `created_at`. If you need to perform a search on token `data`, see [Search Tokens](/docs/api/tokens/search).
+Get a list of tokens for the Tenant sorted by `container` and `created_at`, descending. If you need to perform a search on token `data`, see [Search Tokens](/docs/api/tokens/search).
 
 <HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/v2/tokens" />
 
@@ -366,6 +366,23 @@ Get a list of tokens for the Tenant sorted by `created_at`. If you need to perfo
 
   </TabItem>
 </Tabs>
+
+#### Query Parameters
+
+| Parameter        | Required | Type     | Description                                                                                                          |
+|------------------|----------|----------|----------------------------------------------------------------------------------------------------------------------|
+| `container`      | false    | _string_ | Filters the results to only include tokens within the given container, or its child containers.                      |
+| `type`           | false    | _string_ | Filters the results to only include tokens of the given type.                                                        |
+| `fingerprint`    | false    | _string_ | Filters the results to only include tokens with the given fingerprint.                                               |
+| `metadata.[key]` | false    | _string_ | Filters the results to only include tokens with the given metadata key and value, expressed as `?metadata.key=value` |
+
+- Each query parameter can appear at most once within a single request.
+- The `container` query parameter can be combined with other supported parameters.
+  - This can be used to limit the scope of the search to a single container and its child containers.
+  - If `container` is specified, the application must have `token:read` permission to the given container.
+  - If `container` is not specified, the response will include tokens from all containers the application has `token:read` permission to.
+- Except for `container`, multiple query parameters cannot be combined within the same request.
+- Metadata will be searched for a case-sensitive, exact match on both key and value.
 
 ### Response
 

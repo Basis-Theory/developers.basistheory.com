@@ -14,6 +14,7 @@ import { Permission } from "@site/src/components/shared/Permission";
 # Detokenize
 
 The `detokenize` endpoint enables you to [detokenize](/docs/expressions/detokenization) tokens in order to retrieve their original values.
+This endpoint accepts an arbitrary JSON payload containing one or more [Detokenization Expressions](/docs/expressions/detokenization).
 
 The maximum number of tokens that can be detokenized within a single request is defined by your Tenant's "Detokenize Limit" [Quota](/docs/api/rate-limits#default-quotas).
 
@@ -31,6 +32,8 @@ The maximum number of tokens that can be detokenized within a single request is 
 The `token:read` permission must be granted on the [container](/docs/concepts/what-are-containers) of each token included in the request.
 
 ## Detokenize a single token
+
+This example uses a [data-only expression](/docs/expressions/detokenization#using-data-only-expressions) to access the data of token `7993dbd8-19d5-44bf-b6dc-078e8b44c6cb`, then applies the json path expression `$.number` to retrieve the `number` field from the token's data.
 
 ### Request
 
@@ -148,6 +151,8 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
 
 ## Detokenize a list of tokens
 
+This example uses two full-token expressions (`{{ token: * }}`) to retrieve all the attributes on the tokens `7993dbd8-19d5-44bf-b6dc-078e8b44c6cb` and `a1883f97-2e4c-439a-bf73-dffb681de929`.
+
 ### Request
 
 <Tabs className="bt-tabs" groupId="languages">
@@ -160,8 +165,8 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
     -X "POST" \
     -d '{
       "tokens": [
-          "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
-          "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"
+          "{{ token: 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
+          "{{ token: a1883f97-2e4c-439a-bf73-dffb681de929 }}"
       ],
     }'
     ```
@@ -176,8 +181,8 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
 
     const token = await bt.detokenize({
       tokens: [
-      "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
-      "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"
+      "{{ token: 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
+      "{{ token: a1883f97-2e4c-439a-bf73-dffb681de929 }}"
       ],
     });
     ```
@@ -192,8 +197,8 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
 
     var token = await client.DetokenizeAsync(new {
         tokens = new object [] {
-        "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
-        "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"
+        "{{ token: 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
+        "{{ token: a1883f97-2e4c-439a-bf73-dffb681de929 }}"
       },
     });
     ```
@@ -216,7 +221,7 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
 
         DetokenizeApi apiInstance = new DetokenizeApi(defaultClient);
         Object result = apiInstance.detokenize(Map.of(
-          "tokens", new String[]{"{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}", "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"}));
+          "tokens", new String[]{"{{ token: 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}", "{{ token: a1883f97-2e4c-439a-bf73-dffb681de929 }}"}));
       }
     }
     ```
@@ -233,8 +238,8 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
 
     token = tokenize_client.tokenize(body={
       "tokens": [
-      "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
-      "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"
+      "{{ token: 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
+      "{{ token: a1883f97-2e4c-439a-bf73-dffb681de929 }}"
       ],
     })
     ```
@@ -258,7 +263,7 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
       })
 
       tokens, httpResponse, err := apiClient.TokenizeApi.Tokenize(contextWithAPIKey).Body(map[string]interface{}{
-        "tokens": [2]string{"{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}", "{{ a1883f97-2e4c-439a-bf73-dffb681de929 }}"}
+        "tokens": [2]string{"{{ token: 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}", "{{ token: a1883f97-2e4c-439a-bf73-dffb681de929 }}"}
       }).Execute()
     }
     ```
@@ -284,16 +289,16 @@ The `token:read` permission must be granted on the [container](/docs/concepts/wh
       "created_at": "2021-03-01T08:23:14+00:00"
     },
     {
-    "id": "a1883f97-2e4c-439a-bf73-dffb681de929",
-    "type": "token",
-    "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
-    "data": "secret data 2",
-    "containers": ["/general/high/"],
-    "metadata": {
-      "nonSensitiveField": "Non-Sensitive Value 2"
-    },
-    "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
-    "created_at": "2021-03-01T08:23:14+00:00"
+      "id": "a1883f97-2e4c-439a-bf73-dffb681de929",
+      "type": "token",
+      "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+      "data": "secret data 2",
+      "containers": ["/general/high/"],
+      "metadata": {
+        "nonSensitiveField": "Non-Sensitive Value 2"
+      },
+      "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+      "created_at": "2021-03-01T08:23:14+00:00"
     }
   ]
 }
