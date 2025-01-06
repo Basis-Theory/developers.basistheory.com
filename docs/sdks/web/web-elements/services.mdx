@@ -9,17 +9,17 @@ import PlaintextHttpClientResponse from "@site/docs/sdks/_plaintext-http-client-
 
 # Services
 
-Basis Theory Elements offers several methods and to interact with the underlying data and services to collect or share data safely.
+Basis Theory Web Elements offers several methods and to interact with the underlying data and services to collect or share data safely.
 
 ## Methods
 
-Once you have [created](/docs/sdks/web/javascript/lifecycle#create-element) and [mounted](/docs/sdks/web/javascript/lifecycle#mount-element) an element instance, you can invoke the methods below:
+Once you have [created](/docs/sdks/web/web-elements/lifecycle#create-element) and [mounted](/docs/sdks/web/web-elements/lifecycle#mount-element) an element instance, you can invoke the methods below:
 
 ```html showLineNumbers
 <div id="my-card"></div>
 
 <script>
-  var cardElement = BasisTheory.createElement("card");
+  var cardElement = bt.createElement("card");
   await cardElement.mount("#my-card");
 
   cardElement.focus();
@@ -31,18 +31,18 @@ Once you have [created](/docs/sdks/web/javascript/lifecycle#create-element) and 
 | `clear`         | _void_         | All                                                                                                                                                                                                                                                                                                                                                                                    | Clears the element input(s) value.                                                                               |
 | `focus`         | _void_         | All                                                                                                                                                                                                                                                                                                                                                                                    | Focuses on the element input.                                                                                    |
 | `blur`          | _void_         | All                                                                                                                                                                                                                                                                                                                                                                                    | Blurs the element input.                                                                                         |
-| `month`         | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element)                                                                                                                                                                                                                                                                                                     | Data-parsing method that resolves to the month value of the input date, where "January" = 1.                     |
-| `year`          | _number_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element)                                                                                                                                                                                                                                                                                                     | Data-parsing method that resolves to the four-digit year value of the input date.                                |
-| `format`\*      | _string_       | [cardExpirationDate](/docs/sdks/web/javascript/types#card-expiration-date-element)                                                                                                                                                                                                                                                                                                     | Data-parsing method that takes a date format as an argument and returns the expiration date in the given format. |
+| `month`         | _number_       | [cardExpirationDate](/docs/sdks/web/web-elements/types#card-expiration-date-element)                                                                                                                                                                                                                                                                                                     | Data-parsing method that resolves to the month value of the input date, where "January" = 1.                     |
+| `year`          | _number_       | [cardExpirationDate](/docs/sdks/web/web-elements/types#card-expiration-date-element)                                                                                                                                                                                                                                                                                                     | Data-parsing method that resolves to the four-digit year value of the input date.                                |
+| `format`\*      | _string_       | [cardExpirationDate](/docs/sdks/web/web-elements/types#card-expiration-date-element)                                                                                                                                                                                                                                                                                                     | Data-parsing method that takes a date format as an argument and returns the expiration date in the given format. |
 | `setValue`      | _void_         | All                                                                                                                                                                                                                                                                                                                                                                                    | Accepts a synthetic reference from a retrieved token and safely sets it as the input value.                      |
-| `setValueRef`\* | _void_         | [`text`](/docs/sdks/web/javascript/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/javascript/types#card-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/javascript/types#card-expiration-date-element)<br/>[`cardElement`](/docs/sdks/web/javascript/types#card-element) <br/>[`cardVerificationCode`](/docs/sdks/web/javascript/types#card-verification-code-element) | Sets the element's value to the value of the provided element.                                                   |
+| `setValueRef`\* | _void_         | [`text`](/docs/sdks/web/web-elements/types#text-element)<br/>[`cardNumber`](/docs/sdks/web/web-elements/types#card-number-element)<br/>[`cardExpirationDate`](/docs/sdks/web/web-elements/types#card-expiration-date-element)<br/>[`cardElement`](/docs/sdks/web/web-elements/types#card-element) <br/>[`cardVerificationCode`](/docs/sdks/web/web-elements/types#card-verification-code-element) | Sets the element's value to the value of the provided element.                                                   |
 
 #### Format\*
 
 Our card expiration date format implements Luxon's [toFormat](https://moment.github.io/luxon/api-docs/index.html#datetimetoformat), so all of Luxon's date formatting [tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) are available.
 
 ```ts title="Card Expiration Date format example"
-const cardExpirationDateElement = BasisTheory.createElement("cardExpirationDate", {
+const cardExpirationDateElement = bt.createElement("cardExpirationDate", {
   targetId: "expirationDate",
   value: "04/25",
 });
@@ -65,12 +65,12 @@ const requestBody = {
 Sets the element's value to the value of the provided element.
 
 ```ts title="Card Expiration Date setValueRef example"
-const cardExpirationDateElement = BasisTheory.createElement("cardExpirationDate", {
+const cardExpirationDateElement = bt.createElement("cardExpirationDate", {
   targetId: "expirationDate",
   value: "04/25",
 });
 
-const cardExpirationDateElementReadOnly = BasisTheory.createElement("cardExpirationDate", {
+const cardExpirationDateElementReadOnly = bt.createElement("cardExpirationDate", {
   targetId: "expirationDateReadOnly",
   readOnly: true
 });
@@ -96,7 +96,7 @@ Element values can be securely tokenized by simply passing the Element instance 
 The examples below show how to use Elements instances in the payload of the [`tokens.create`](/docs/api/tokens#create-token) service.
 
 ```javascript showLineNumbers title="Create generic token"
-BasisTheory.tokens
+bt.tokens
   .create({
     type: "token",
     data: {
@@ -119,7 +119,7 @@ BasisTheory.tokens
 ```
 
 ```javascript showLineNumbers title="Create card token from CardElement"
-BasisTheory.tokens
+bt.tokens
   .create({
     type: "card",
     data: cardElement,
@@ -131,7 +131,7 @@ BasisTheory.tokens
 ```
 
 ```javascript showLineNumbers title="Create card token from multiple Elements"
-BasisTheory.tokens
+bt.tokens
   .create({
     type: "card",
     data: {
@@ -148,7 +148,7 @@ BasisTheory.tokens
 ```
 
 ```javascript showLineNumbers title="Create bank token"
-BasisTheory.tokens
+bt.tokens
   .create({
     type: "bank",
     data: {
@@ -167,7 +167,7 @@ BasisTheory.tokens
 The example below shows how to use Elements instances in the payload of the [`tokenize`](/docs/api/tokens#tokenize) service.
 
 ```javascript showLineNumbers title="Tokenize data"
-BasisTheory.tokenize({
+bt.tokenize({
   card1: {
     type: "card",
     data: cardElement,
@@ -200,7 +200,7 @@ Aside from creating tokens, an Element value can be used to update a token using
 To do that, simply pass the Element instance (or one of its [data parsing methods](#methods)) in the payload.
 
 ```javascript showLineNumbers
-BasisTheory.tokens
+bt.tokens
   .update("ca9f3fd7-3906-4087-83aa-9a6129221297", {
     // replace w/ desired token id
     data: cardElement,
@@ -215,7 +215,7 @@ BasisTheory.tokens
 The examples below show how to use Elements instances in the payload of the [`tokenIntents.create`](/docs/api/tokens/token-intents#create-token-intent) service.
 
 ```javascript showLineNumbers title="Create card token intent from a CardElement"
-BasisTheory.tokenIntents
+bt.tokenIntents
   .create({
     type: "card",
     data: cardElement
@@ -226,7 +226,7 @@ BasisTheory.tokenIntents
 ```
 
 ```javascript showLineNumbers title="Create card token intent from multiple Elements"
-BasisTheory.tokenIntents
+bt.tokenIntents
   .create({
     type: "card",
     data: {
@@ -251,11 +251,11 @@ When `retrieve` is called from a Basis Theory instance configured with `elements
 The examples below show how to use `retrieve` and `setValue`, but for more information on revealing and session keys, visit the [Reveal Tokenized Data](/docs/guides/share/reveal-tokenized-data) guide.
 
 ```javascript showLineNumbers title="Retrieve 'string' token data and set value into TextElement"
-const textElement = BasisTheory.createElement("text", {
+const textElement = bt.createElement("text", {
   targetId: "text-element",
 });
 
-BasisTheory.tokens
+bt.tokens
   .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
     apiKey: "<SESSION_API_KEY>", // api key is required and should belong to a session
   })
@@ -265,9 +265,9 @@ BasisTheory.tokens
 ```
 
 ```javascript showLineNumbers title="Retrieve card token and set value into CardElement"
-const cardElement = BasisTheory.createElement("card");
+const cardElement = bt.createElement("card");
 
-BasisTheory.tokens
+bt.tokens
   .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
     apiKey: "<SESSION_API_KEY>", // api key is required and should belong to a session
   })
@@ -277,7 +277,7 @@ BasisTheory.tokens
 
 // or
 
-BasisTheory.tokens
+bt.tokens
   .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
     apiKey: "<SESSION_API_KEY>", // api key is required and should belong to a session
   })
@@ -291,12 +291,12 @@ BasisTheory.tokens
 ```
 
 ```javascript showLineNumbers title="Retrieve card token and set value into split card elements"
-const cardNumberElement = BasisTheory.createElement("cardNumber", {
+const cardNumberElement = bt.createElement("cardNumber", {
   targetId: "card-number",
 });
-const cardExpirationDateElement = BasisTheory.createElement("cardExpirationDate", { targetId: "card-expiration-date" });
+const cardExpirationDateElement = bt.createElement("cardExpirationDate", { targetId: "card-expiration-date" });
 
-BasisTheory.tokens
+bt.tokens
   .retrieve("ca9f3fd7-3906-4087-83aa-9a6129221297", {
     apiKey: "<SESSION_API_KEY>", // api key is required and should belong to a session
   })
@@ -324,14 +324,14 @@ The examples below show how to invoke the proxy and use `setValue`, but for more
 Elements can be used to proxy data securely by including them in the proxy `body` as shown in the example.
 
 ```javascript showLineNumbers title="Invoking Pre-Configured Proxy w/ POST"
-const submitElement = BasisTheory.createElement("text", {
+const submitElement = bt.createElement("text", {
   targetId: "submitElement",
 });
-const revealElement = BasisTheory.createElement("text", {
+const revealElement = bt.createElement("text", {
   targetId: "revealElement",
 });
 
-BasisTheory.proxy
+bt.proxy
   .post({
     headers: {
       "BT-PROXY-KEY": "e29a50980ca5", // replace with your pre-configured proxy key (if pre-configured)
@@ -352,7 +352,7 @@ BasisTheory.proxy
 ### Proxy Invocation Methods
 
 The Elements proxy service supports all of the same HTTP methods that the [ephemeral](/docs/api/proxies/ephemeral-proxy#invoke-the-proxy) or [pre-configured](/docs/api/proxies/pre-configured-proxies#invoke-a-proxy) proxy APIs support.
-All proxy calls take the same [options](/docs/sdks/web/javascript/services#proxyrequestoptions) object as a parameter.
+All proxy calls take the same [options](/docs/sdks/web/web-elements/services#proxyrequestoptions) object as a parameter.
 
 | Signature                                   | Description                      |
 | ------------------------------------------- | -------------------------------- |
@@ -387,7 +387,7 @@ Element values can be used in a request to a third-party API using our HTTP clie
 The example below shows how to use the HTTP client service to make a POST request to a third-party API with an element in the payload.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ POST"
-const bt = await new BasisTheory().init("<API_KEY>", { elements: true });
+const bt = await basistheory("<API_KEY>");
 
 bt.client.post(
   "https://www.api.thirdpartydomain.com/resources",
@@ -417,7 +417,7 @@ bt.client.post(
 The example below shows how to use the HTTP client service to make a PUT request to a third-party API with an element in the payload.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ PUT"
-const bt = await new BasisTheory().init("<API_KEY>", { elements: true });
+const bt = await basistheory("<API_KEY>");
 
 bt.client.put(
   "https://www.api.thirdpartydomain.com/resources/id",
@@ -448,7 +448,7 @@ bt.client.put(
 The example below shows how to use the HTTP client service to make a PATCH request to a third-party API with an element in the payload.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ PATCH"
-const bt = await new BasisTheory().init("<API_KEY>", { elements: true });
+const bt = await basistheory("<API_KEY>");
 
 bt.client.patch(
   "https://www.api.thirdpartydomain.com/resources/id",
@@ -479,7 +479,7 @@ bt.client.patch(
 The example below shows how to use the HTTP client service to make a GET request to a third-party API.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ GET"
-const bt = await new BasisTheory().init("<API_KEY>", { elements: true });
+const bt = await basistheory("<API_KEY>");
 
 bt.client.get("https://www.api.thirdpartydomain.com/resources/id", {
   headers: {
@@ -497,7 +497,7 @@ bt.client.get("https://www.api.thirdpartydomain.com/resources/id", {
 The example below shows how to use the HTTP client service to make a DELETE request to a third-party API.
 
 ```javascript showLineNumbers title="Invoking HTTP Client Service w/ DELETE"
-const bt = await new BasisTheory().init("<API_KEY>", { elements: true });
+const bt = await basistheory("<API_KEY>");
 
 bt.client.delete("https://www.api.thirdpartydomain.com/resources/id", {
   headers: {
@@ -517,9 +517,9 @@ bt.client.delete("https://www.api.thirdpartydomain.com/resources/id", {
 Basis Theory element services could throw an error based on client-side validations or if the server rejects the request.
 
 ```javascript showLineNumbers title="Handling services errors"
-import { BasisTheoryApiError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
+import { BasisTheoryApiError, BasisTheoryValidationError } from "@basis-theory/web-elements/common";
 
-BasisTheory.tokenize({
+bt.tokenize({
   card1: {
     type: "card",
     data: cardElement1,
@@ -544,9 +544,9 @@ BasisTheory.tokenize({
 HTTP client services could throw an error based on client-side validations or if the server rejects the request.
 
 ```javascript showLineNumbers title="Handling services errors"
-import { HttpClientError, BasisTheoryValidationError } from "@basis-theory/basis-theory-js/common";
+import { HttpClientError, BasisTheoryValidationError } from "@basis-theory/web-elements/common";
 
-const bt = await new BasisTheory().init("<API_KEY>", { elements: true });
+const bt = await basistheory("<API_KEY>");
 
 bt.client.post({
   sensitiveData: textElement,
