@@ -23,7 +23,7 @@ import TestCards from "@site/docs/api/3ds/_test-cards.mdx";
 
 Create a 3DS Session for a customer initiated transaction (CIT).
 
-<Alert type={Alerts.WARNING}>Customer 3DS session creation is only supported through our web <a href="/docs/sdks/web/3ds/">SDK</a>.</Alert>
+<Alert type={Alerts.WARNING}>Customer 3DS session creation is only supported through our <a href="/docs/sdks/web/3ds/">web</a>, <a href="/docs/sdks/mobile/3ds-react-native">react-native</a> and <a href="/docs/sdks/mobile/3ds/">mobile</a> SDKs.</Alert>
 
 ## Create a Merchant Session
 
@@ -693,16 +693,18 @@ The authentication type can differt depending on the 3DS session type. See table
 | `account-verification` | `customer`, `merchant` |
 
 #### Challenge Preferences
-- `no-preference`
-- `no-challenge`
-- `challenge-requested`
-- `challenge-mandated`
-- `no-challenge-risk-analysis-performed`
-- `no-challenge-data-sharing-only`
-- `no-challenge-strong-consumer-auth`
-- `no-challenge-whitelist-exemption`
-- `challenge-requested-whitelist-prompt`
-- `cartes-bancaires`
+| Value | EMV Code | Description |
+| --- | --- | --- |
+| `no-preference` | `01` | No preference |
+| `no-challenge` | `02` | No challenge requested |
+| `challenge-requested` | `03` | Challenge requested |
+| `challenge-mandated` | `04` | Challenge mandated by the issuer |
+| `no-challenge-risk-analysis-performed` | `05` | No challenge, risk analysis already performed |
+| `no-challenge-data-sharing-only` | `06` | No challenge, data sharing only |
+| `no-challenge-strong-consumer-auth` | `07` | No challenge, strong consumer authentication already performed |
+| `no-challenge-whitelist-exemption` | `08` | No challenge, whitelist exemption |
+| `challenge-requested-whitelist-prompt` | `09` | Challenge requested, whitelist prompt if required |
+| `cartes-bancaires` | `90` | Enable Cartes Bancaires Scoring Service |
 
 #### Purchase Info Object
 This object contains information about the purchase itself (if the authentication category is a `payment` transaction).
@@ -1174,14 +1176,17 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 | `token_intent_id`               | _string_ | The ID of the card token intent used in the 3DS transaction                                                                                  |
 | `authentication_value`          | _string_ | The token value used to authorize the transaction. Also know as CAVV, AAV, AEVV, etc.                                                        |
 | `authentication_status`         | _string_ | The outcome of the 3DS authentication. See [Authentication Status](#authentication-status)                                                   |
-| `authentication_status_code`    | _string_ | Character code for the authentication status                                                                                                 |
+| `authentication_status_code`    | _string_ | EMV character code for the authentication status                                                                                             |
 | `authentication_status_reason`  | _string_ | Additional information about the authentication status if necessary. See [Authentication Status Reason](#authentication-status-reason)       |
 | `eci`                           | _string_ | Electronic Commerce Indicator                                                                                                                |
 | `acs_challenge_mandated`        | _string_ | Indicates whether regional mandates (e.g., PSD2) required a challenge to be performed. See [ACS Challenge Mandated](#acs-challenge-mandated) |
 | `authentication_challenge_type` | _string_ | The type of challenge authentication used (if challenge). See [Authentication Challenge Type](#authentication-challenge-type)                |
 | `acs_challenge_url`             | _string_ | The URL to be used for the challenge                                                                                                         |
+| `challenge_preference`          | _string_ | The selected [Challenge Preference](#challenge-preferences) during authentication                                                            |
+| `challenge_preference_code`     | _string_ | EMV numeric code for the selected challenge preference                                                                                     |
 | `challenge_attempts`            | _string_ | The number of challenges attempted by the cardholder                                                                                         |
 | `challenge_cancel_reason`       | _string_ | The reason why a challenge was cancelled. See [Challenge Cancel Reason](#challenge-cancel-reason)                                            |
+| `challenge_cancel_reason_code`  | _string_ | EMV numeric code for the challenge cancel reason.                                                                                          |
 | `cardholder_info`               | _string_ | Information from the issuer to be displayed to the cardholder                                                                                |
 | `whitelist_status`              | _string_ | Indicates if the cardholder whitelisted the merchant. See [Whitelist Status](#whitelist-status)                                              |
 | `whitelist_status_source`       | _string_ | Identifies the system that set the whitelist value. See [Whitelist Status Source](#whitelist-status-source)                                  |
@@ -1196,16 +1201,16 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 
 #### Authentication Status
 
-| Value | Description |
-| --- | --- |
-| `successful` | 3DS authentication was successful |
-| `attempted` | 3DS authentication was attempted but not possible. Successful authentication granted by card brand on issuer's behalf |
-| `failed` | Authentication failed, stop the transaction |
-| `unavailable` | Authentication could not be performed. Try to proceed without the authentication value |
-| `challenge` | A challenge is required, use the SDK to perform the [Challenge](/docs/sdks/web/3ds/methods#start-challenge) |
-| `decoupled_challenge` | A challenge will be performed by the issuer. Get the [Challenge Result](#get-challenge-result) to learn the outcome |
-| `rejected` | The issuer rejected the authentication attempt |
-| `informational` | Authentication not requested, data sent to the ACS for informational purposes |
+| Value | EMV Code | Description |
+| --- | --- | --- |
+| `successful` | `Y` | 3DS authentication was successful |
+| `attempted` | `A` |3DS authentication was attempted but not possible. Successful authentication granted by card brand on issuer's behalf |
+| `failed` | `N` |Authentication failed, stop the transaction |
+| `unavailable` | `U` | Authentication could not be performed. Try to proceed without the authentication value |
+| `challenge` | `C` |A challenge is required, use the SDK to perform the [Challenge](/docs/sdks/web/3ds/methods#start-challenge) |
+| `decoupled_challenge` | `D` |A challenge will be performed by the issuer. Get the [Challenge Result](#get-challenge-result) to learn the outcome |
+| `rejected` | `R` | The issuer rejected the authentication attempt |
+| `informational` | `I` | Authentication not requested, data sent to the ACS for informational purposes |
 
 #### Authentication Status Reason
 
@@ -1249,15 +1254,15 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 
 #### Challenge Cancel Reason
 
-| Value | Description |
-| --- | --- |
-| `cardholder-canceled` | Cardholder selected 'Cancel' on the challenge |
-| `requestor-canceled` | 3DS requestor cancelled authentication  |
-| `transaction-abandoned` | Transaction was abandoned  |
-| `acs-timeout` | Transaction timed out at ACS  |
-| `acs-timeout-request-not-received` | Transaction timed out at ACS - Challenge request not received  |
-| `error` | Transaction error |
-| `unknown` | Unknown reason |
+| Value | EMV Code | Description |
+| --- | --- | --- |
+| `cardholder-canceled` | `01` | Cardholder selected 'Cancel' on the challenge |
+| `requestor-canceled` | `02` | 3DS requestor cancelled authentication  |
+| `transaction-abandoned` | `03` | Transaction was abandoned  |
+| `acs-timeout` | `04` | Transaction timed out at ACS  |
+| `acs-timeout-request-not-received` | `05` | Transaction timed out at ACS - Challenge request not received  |
+| `error` | `06` | Transaction error |
+| `unknown` | `07` | Unknown reason |
 
 #### Whitelist Status
 

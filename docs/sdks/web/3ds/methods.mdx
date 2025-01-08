@@ -11,6 +11,7 @@ import {
 } from "@basis-theory/basis-theory-react";
 import { BasisTheoryComponentDisplay } from "@site/src/components/sdks/BasisTheoryComponentDisplay";
 import { Deprecated } from "@site/src/components/shared/Deprecated";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # 3DS Web SDK Methods
 
@@ -29,15 +30,44 @@ const session = await bt3ds.createSession({ tokenId: "<TOKEN_ID>" });
 ```
 
 ### Parameters
-The `createSession` method takes an object as parameter w/ the following attributes:
+The `createSession` method accepts an object with the following attributes:
 
-| Attribute         | Required | Type     | Description                                                           |
-|-------------------|----------|----------|-----------------------------------------------------------------------|
-| `tokenId`        | false    | _string_ | The Basis Theory token id for the card token to be used               |
-| `tokenIntentId` | false    | _string_ | The Basis Theory token id for the card token intent to be used        |
-| `pan`             | false    | _string_ | <Deprecated/> The Basis Theory token id for the card token to be used |
+| Attribute           | Required | Type     | Description                                                                                                     |
+|---------------------|----------|----------|-----------------------------------------------------------------------------------------------------------------|
+| `tokenId`           | false    | _string_ | The Basis Theory token id for the card token to be used                                                         |
+| `tokenIntentId`     | false    | _string_ | The Basis Theory token id for the card token intent to be used                                                  |
+| `skipMethodRequest` | false    | _bool_   | Wether to skip performing a [method request](#method-request) or not. Defaults to `false`                       |
+| `methodRequestMode` | false    | _string_ | The [mode](#modes) to use for the method request. Accepts `iframe` or `redirect`. Defaults to `iframe`          |
+| `challengeMode`     | false    | _string_ | The [mode](#modes) to use for performing a challenge. Accepts `iframe` or `redirect`. Defaults to `iframe`  |
+| `pan`               | false    | _string_ | <Deprecated/> The Basis Theory token id for the card token to be used                                           |
 
-Either `tokenId` or `tokenIntentId` is required.
+**Note**: Either `tokenId` or `tokenIntentId` is required.
+
+### Additional Details
+
+#### Method Request
+
+The Method Request allows the Access Control Server (ACS) to collect information directly about the customer's browser.
+By default, the Basis Theory 3DS SDK performs a method request during session creation.
+
+If you want to skip this step, you can set the `skipMethodRequest` attribute to `true`.
+
+<Alert type={Alerts.WARNING}>Skipping the Method Request is not recommended, as it can potentially lower 3DS approval chances.</Alert>
+
+#### Modes
+
+The method request and challenge are key stages in 3D Secure (3DS) where the browser directly interacts with the cardholder's bank's Access Control Server (ACS) to complete required tasks.
+By default, this interaction occurs within `iframes`, where the ACS URLs for the method request and challenge are loaded. During a challenge, users interact directly with the `iframe`.
+
+However, because ACS URLs vary depending on the cardholder's issuing bank, websites with restrictive `frame-src` Content Security Policies (CSPs) may encounter issues performing these tasks.
+For such cases, we provide an alternative `redirect` mode.
+
+In `redirect` mode:
+* Instead of loading the ACS URLs in an `iframe`, a new window is opened.
+* For method requests, the window automatically closes after data collection is complete.
+* For challenges, the window closes upon successful challenge completion.
+
+This approach ensures compatibility with restrictive CSPs while maintaining seamless operation for the end customer.
 
 ### Return
 
@@ -79,6 +109,7 @@ The `startChallenge` method takes in an object with the following attributes:
 | `threeDSVersion`   | true     | _string_ | The 3DS message version. Available from the [Authenticate](/docs/api/3ds/sessions#authenticate-session) endpoint response          |
 | `windowSize`       | false    | _string_ | The code for the pre-configured window size. See [Challenge Window Sizes](#challenge-window-sizes)                                 |
 | `timeout`          | false    | _number_ | The time in miliseconds to wait for challenge completion before considering it timed out. Defaults to 60000ms (1 minute)           |
+| `mode`             | false    | _string_ | The [mode](#modes) to use for performing a challenge. Accepts `iframe` or `redirect`. Defaults to `iframe`                     |
 
 ### Return
 The method returns a `Promise`, with the following attributes, that is only resolved once the customer completed or cancelled the challenge:
