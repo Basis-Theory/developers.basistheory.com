@@ -75,14 +75,14 @@ Now, install runtime dependencies:
   <TabItem value="npm" label="npm">
 
 ```shell showLineNumbers
-npm install --save @basis-theory/basis-theory-js @prisma/client ts-node @faker-js/faker
+npm install --save @basis-theory/node-sdk @prisma/client ts-node @faker-js/faker
 ```
 
   </TabItem>
   <TabItem value="yarn" label="yarn">
 
 ```shell showLineNumbers
-yarn add @basis-theory/basis-theory-js @prisma/client ts-node @faker-js/faker
+yarn add @basis-theory/node-sdk @prisma/client ts-node @faker-js/faker
 ```
 
   </TabItem>
@@ -365,7 +365,7 @@ And finally, let's iterate through the data chunks and create a token per each s
 ```typescript title=migrate.ts
 import { PrismaClient, Person } from "@prisma/client";
 // highlight-next-line
-import { BasisTheory } from "@basis-theory/basis-theory-js";
+import { BasisTheoryClient } from "@basis-theory/node-sdk";
 
 const prisma = new PrismaClient();
 
@@ -379,64 +379,64 @@ function createEmailTokenPayload(data: string) {...}
 
 function createPhoneNumberTokenPayload(data: string) {...}
 
-async function migrate() {
 // highlight-start
-  process.stdout.write("Starting migration...\n");
-  const bt = await new BasisTheory().init(process.env.BASIS_THEORY_API_KEY);
+async function migrate() {
+    process.stdout.write("Starting migration...\n");
+    const bt = await new BasisTheoryClient({ apiKey: process.env.BASIS_THEORY_API_KEY });
 
-  let cursor = undefined;
+    let cursor = undefined;
 
-  do {
-    const chunk: Person[] = await iteratePersonTable(cursor);
-    cursor = chunk[chunkSize - 1]?.id;
-    if (chunk.length > 0) {
-      process.stdout.write(
-        `Tokenizing ${chunk.length} records from ${chunk[0].id} to ${
-          chunk[chunk.length - 1].id
-        }... `
-      );
+    do {
+        const chunk: Person[] = await iteratePersonTable(cursor);
+        cursor = chunk[chunkSize - 1]?.id;
+        if (chunk.length > 0) {
+            process.stdout.write(
+                `Tokenizing ${chunk.length} records from ${chunk[0].id} to ${
+                    chunk[chunk.length - 1].id
+                }... `
+            );
 
-      const tokens = await bt.tokenize(
-        chunk.map((p) => ({
-          ssn: createSsnTokenPayload(p.ssn),
-          email: createEmailTokenPayload(p.email),
-          phoneNumber: createPhoneNumberTokenPayload(p.phoneNumber),
-        }))
-      );
+            const tokens = await bt.tokens.tokenize(
+                chunk.map((p) => ({
+                    ssn: createSsnTokenPayload(p.ssn),
+                    email: createEmailTokenPayload(p.email),
+                    phoneNumber: createPhoneNumberTokenPayload(p.phoneNumber),
+                }))
+            );
 
-      process.stdout.write(`Done.\nUpdating DB... `);
+            process.stdout.write(`Done.\nUpdating DB... `);
 
-      const updates = chunk.map((person, i) => {
-        const token = (tokens as any[])[i];
+            const updates = chunk.map((person, i) => {
+                const token = (tokens as any[])[i];
 
-        return prisma.person.update({
-          where: {
-            id: person.id,
-          },
-          data: {
-            ssn: token.ssn.id,
-            email: token.email.id,
-            phoneNumber: token.phoneNumber.id,
-          },
-        });
-      });
+                return prisma.person.update({
+                    where: {
+                        id: person.id,
+                    },
+                    data: {
+                        ssn: token.ssn.id,
+                        email: token.email.id,
+                        phoneNumber: token.phoneNumber.id,
+                    },
+                });
+            });
 
-      await Promise.all(updates);
-      process.stdout.write(`Done.\n`);
-    }
-  } while (cursor !== undefined);
-// highlight-end
+            await Promise.all(updates);
+            process.stdout.write(`Done.\n`);
+        }
+    } while (cursor !== undefined);
 }
+// highlight-end
 
 migrate()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e: any) => {
-    console.error(e?.data?.errors || e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+    .then(async () => {
+        await prisma.$disconnect();
+    })
+    .catch(async (e: any) => {
+        console.error(e?.data?.errors || e);
+        await prisma.$disconnect();
+        process.exit(1);
+    });
 
 ```
 

@@ -1,0 +1,106 @@
+---
+title: Platform Limits
+---
+
+import { Alert } from "@site/src/components/shared/Alert";
+
+<Alert>These new rate limits will go into effect on July 16, 2024. Read more about it in our blog [Introducing New Rate Limits](https://blog.basistheory.com/introducing-new-rate-limits). Reach out to your account manager or [contact us](https://basistheory.com/contact) with any questions or concerns.</Alert>
+
+## Default Rate Limits
+
+The Basis Theory API has rate limits applied to ensure the speed and consistency of our systems. Rate Limits will always apply to the lowest Rate available for a given request. For example, if a request is made to `POST /tokens` with on a `Test Tenant` the rate limit for that request is `50 Requests / 10 Seconds`.
+
+### Tenant Type Rate Limits
+
+#### Test Tenant
+| Method | Resource | Counter        | Rate          | Action   |
+|--------|----------|----------------|---------------|----------|
+| ANY    | ANY      | IP and API Key | 50 req / 10 s | Throttle |
+
+### API Resource Rate Limits
+| Resource                  | Counter        | Rate           | Action   |
+|---------------------------|----------------|----------------|----------|
+| POST /tokens/search       | API Key AND IP | 50 req / 10 s  | Throttle |
+| GET /tokens               | API Key AND IP | 100 req / 10 s | Throttle |
+| POST /tokens OR /tokenize | API Key AND IP | 200 req / 10 s | Throttle |
+| PATCH /tokens/{'{id}'}    | API Key AND IP | 200 req / 10 s | Throttle |
+| DELETE /tokens/{'{id}'}   | API Key AND IP | 200 req / 10 s | Throttle |
+| ANY /account-updater/*    | API Key AND IP | 10 req / 10 s  | Throttle |
+
+### Application Type Rate Limits
+
+#### Private Application
+| Resource | Counter       | Rate            | Action   |
+|----------|---------------|-----------------|----------|
+| ANY      | API Key OR IP | 2000 req / 10 s | Throttle |
+
+#### Public Application
+| Resource | Counter        | Rate           | Action    |
+|----------|----------------|----------------|-----------|
+| ANY      | IP and API Key | 50 req / 1 min | 10s Block |
+
+#### Management Application
+| Resource | Counter | Rate            | Action    |
+|----------|---------|-----------------|-----------|
+| ANY      | API Key | 200 req / 1 min | 60s Block |
+
+### Proxies
+
+#### Unauthenticated / Whitelabel Proxies
+
+| Resource | Counter                | Rate          | Action   |
+|----------|------------------------|---------------|----------|
+| ANY      | Proxy Key AND IP       | 50 req / 10 s | Throttle |
+| ANY      | Custom Hostname AND IP | 50 req / 10 s | Throttle |
+
+### IPs
+
+#### IP-Based Global Rate Limit
+
+| Resource | Counter | Rate            | Action    |
+|----------|---------|-----------------|-----------|
+| ANY      | IP      | 2000 req / 10 s | 30s Block |
+
+
+## Legacy Rate Limits
+
+### Legacy API Keys
+
+This only applies to keys without `_prod_` or `_test_` in the key or are denoted by a `Legacy` badge on your API Key in an [Application](https://portal.basistheory.com/applications) on the Portal.
+
+| Method | Resource | Counter        | Rate          | Action   |
+|--------|----------|----------------|---------------|----------|
+| ANY    | ANY      | IP and API Key | 100 req / 1 m | Throttle |
+
+## Error Codes
+
+| Status Code | Meaning                       |
+|-------------|-------------------------------|
+| `429`       | Request has been rate limited |
+
+## Other Limits
+
+### Default Quotas
+Quotas are Tenant specific limits that can be adjusted by Basis Theory. Below are some of the default Quota's applied to all tenants as they are created - to find the full list of Quota' or to request a change, please visit your tenant's [Quota page](https://portal.basistheory.com/settings?tab=quotas).
+
+| Quota Name             | Limit    |
+|------------------------|----------|
+| Rate Limit             | Default  |
+| Log Retention          | 24 hours |
+| Tokenize Limit         | 5 tokens |
+| Detokenize Limit       | 5 tokens |
+| CVC Retention          | 1 hour   |
+| Token Intent Retention | 24 hours |
+
+
+### Reactors
+
+Applicable to [invoking Reactors](/docs/api/reactors/#invoke-a-reactor) or [invoking Pre-Configured Proxies](/docs/api/proxies/pre-configured-proxies#invoke-a-proxy) with a Request or Response Transform.
+
+| Limit               | Note                                                                                                                                                                                                                                                       |
+|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Code length         | The maximum code length accepted by a Reactor is 50K chars.                                                                                                                                                                                                |
+| Payload Size        | The maximum payload size to invoke a Reactor is 1 MB. <a href="https://basistheory.com/contact">Please reach out</a> if your use case requires more than that.                                                                                             |
+| Concurrency         | The default hot concurrency is set to 1 by default, this will fan out and cold start additional Reactors if multiple requests happen concurrently. If you need additional hot concurrency, <a href="https://basistheory.com/contact">please reach out</a>. |
+| Synchronous Timeout | Synchronous Reactor Invoke calls will timeout after 30s.                                                                                                                                                                                                   |
+

@@ -384,13 +384,6 @@ const sidebars = {
       items: [
         "api/reactors/reactors",
         "api/reactors/reactor-dependencies",
-        {
-          type: "doc",
-          id: "api/reactors/reactor-formulas",
-          customProps: {
-            deprecated: true,
-          },
-        },
         "api/reactors/reactor-errors",
       ],
     },

@@ -1,0 +1,423 @@
+---
+title: Transactions
+---
+
+import { Beta } from "@site/src/components/shared/Beta";
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Transactions <Enterprise />
+
+
+## Create Transaction
+
+Attempts to create an authorization for a payment method. In some cases it is not possible to create the authorization without redirecting the user for their authorization. In these cases the status is set to indicate buyer approval is pending and an approval URL is returned.
+
+You can find more information on how to use this endpoint for [certain use-cases below](#common-transaction-use-cases).
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/transactions"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/orchestration/transactions" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>"
+  -d '{
+    "connection_id": "f4c57207-ebd9-4909-af79-350d3d45392a",
+    "amount": 1299,
+    "currency": "USD",
+    "token": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4"
+  }'
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter                      | Required | Type    | Default     | Description                                                                                                                                                                                                     |
+|--------------------------------|----------|---------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| amount                         | `true`   | integer |             | Transaction amount in cents                                                                                                                                                                                     |
+| connection_id                  | `true`   | string  |             | Connection to create this transaction with                                                                                                                                                                      |
+| currency                       | `true`   | string  |             | ISO-4217 currency code                                                                                                                                                                                          |
+| country                        | `false`  | string  | `null`      | 2-letter ISO country code.                                                                                                                                                                                      |
+| external_identifier            | `false`  | string  | `null`      | External identification returned in the completed transaction to match your records.                                                                                                                            |
+| intent                         | `false`  | string  | `null`      | Either `authorize` or `capture` to define the intent of this API call.                                                                                                                                          |
+| is_subsequent_payment          | `false`  | boolean | `false`     | Set to `true` when transaction is from an on-going subscription.                                                                                                                                                |
+| merchant_initiated             | `false`  | boolean | `false`     | Indicates whether the transaction was initiated by the merchant                                                                                                                                                 |
+| metadata                       | `false`  | object  | `null`      | Metadata key-values to store with the transaction.                                                                                                                                                              |
+| payment_source                 | `false`  | string  | `ecommerce` | The [payment source](#payment-sources) for the transaction.                                                                                                                                                     |
+| previous_scheme_transaction_id | `false`  | string  | `null`      | A scheme's transaction identifier to use in connecting a merchant initiated transaction to a previous customer initiated transaction. This is returned as `scheme_transaction_id` on each transaction response. |
+| three_d_session_id             | `false`  | object  | `null`      | Identifier for Basis Theory 3DS Session.                                                                                                                                                                        |
+| token                          | `true`   | uuid    |             | Basis Theory Card Token used as the payment method                                                                                                                                                              |
+
+
+### Response
+
+Returns a [transaction object](#transaction-object) if the transaction was created with the connection. Returns an error if there were validation errors before a transaction could be created.
+
+```json showLineNumbers
+{
+  "type": "transaction",
+  "id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "amount": 1299,
+  "authorized_amount": 1299,
+  "authorized_at": "2013-07-16T19:23:00.000+00:00",
+  ...
+}
+```
+
+## Capture Transaction
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/transactions/{transaction_id}/capture"
+/>
+
+#### Permissions
+
+<Permission content="orchestration:transaction:capture" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+```shell showLineNumbers
+curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-b7cc-c28a718f76f1/capture" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "amount": 1490,
+  }'
+```
+  </TabItem>
+</Tabs>
+
+#### URL Parameters
+
+| Parameter | Required | Type | Description |
+|-|-|-|-|
+| transaction_id | true | uuid | Existing transaction id |
+
+#### Request Parameters
+
+| Parameter | Required | Type | Default | Description |
+|-|-|-|-|-|
+| amount | true | integer | | The monetary amount to capture an authorization for, in the smallest currency unit for the given currency, for example 1299 cents to create an authorization for $12.99. When omitted blank, this will capture the entire amount. |
+
+#### Response
+
+Returns a [transaction object](#transaction-object) if the transaction was captured. Returns an error if there were validation errors before a transaction could be created.
+
+```json showLineNumbers
+{
+  "type": "transaction",
+  "id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "amount": 1299,
+  "authorized_amount": 1299,
+  "authorized_at": "2013-07-6T19:23:00.000+00:00",
+  ...
+}
+```
+
+## Void Transaction
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/transactions/{transaction_id}/void"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-b7cc-c28a718f76f1/void" \
+    -H "BT-API-KEY: <API_KEY>" \
+    -H "Content-Type: application/json" \
+    -X "POST" \
+    ```
+  </TabItem>
+</Tabs>
+
+#### URL Parameters
+
+| Parameter      | Required | Type | Description             |
+|----------------|----------|------|-------------------------|
+| transaction_id | true     | uuid | Existing transaction id |
+
+#### Response
+
+Returns a [transaction object](#transaction-object) if the transaction was voided. Returns an error if there were validation errors before a transaction could be created.
+
+```json showLineNumbers
+{
+  "type": "transaction",
+  "id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "amount": 1299,
+  "authorized_amount": 1299,
+  "authorized_at": "2013-07-16T19:23:00.000+00:00",
+  ...
+}
+```
+
+## Refund Transaction
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/orchestration/transactions/{transaction_id}/refunds"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/orchestration/transactions/c06d0789-0a38-40be-b7cc-c28a718f76f1/refunds" \
+    -H "BT-API-KEY: <API_KEY>" \
+    -H "Content-Type: application/json" \
+    -X "POST" \
+    -d '{
+      "amount": 1490
+    }'
+    ```
+  </TabItem>
+</Tabs>
+
+#### URL Parameters
+
+| Parameter      | Required | Type | Description             |
+|----------------|----------|------|-------------------------|
+| transaction_id | true     | uuid | Existing transaction id |
+
+#### Request Parameters
+
+| Parameter | Required | Type    | Default | Description                                                                                                                                                                                                                                                           |
+|-----------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| amount    | false    | integer |         | The amount requested to refund. If omitted, a full refund will be requested for the main payment method. When set, the amount must be lower than or equal to the remaining balance in the associated transaction. Negative and zero-amount refunds are not supported. |
+| reason    | false    | string  |         | An optional reason to attach extra context to the refund request.                                                                                                                                                                                                     |
+
+### Response
+
+Returns a [refund object](#refund-object) if the transaction was refunded. Returns an error if there were validation errors before the refund could be created.
+
+```json
+{
+  "type": "refund",
+  "id": "8724fd24-5489-4a5d-90fd-0604df7d3b83",
+  "transaction_id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "connection_refund_id": "refund_xYqd43gySMtori",
+  "status": "processing",
+  "currency": "USD",
+  "amount": 1490,
+  ...
+}
+```
+
+## Get Refund
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/orchestration/refunds/{refund_id}"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+
+#### URL Parameters
+
+| Parameter | Required | Type | Description                  |
+|-----------|----------|------|------------------------------|
+| refund_id | true     | uuid | The unique ID of the refund. |
+
+### Response
+
+```json
+{
+  "type": "refund",
+  "id": "8724fd24-5489-4a5d-90fd-0604df7d3b83",
+  "transaction_id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+  "connection_refund_id": "refund_xYqd43gySMtori",
+  "status": "processing",
+  "currency": "USD",
+  "amount": 1299,
+  "reason": "Refund due to user request",
+  "created_at": "2013-07-16T19:23:00.000+00:00",
+  "updated_at": "2013-07-16T19:23:00.000+00:00",
+}
+```
+
+
+## List Refunds
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/orchestration/transactions/{transaction_id}/refunds"
+/>
+
+#### Permissions
+
+<Permission content="token:use" />
+
+### Response
+
+```json
+{
+  "pagination": {
+        "limit": 20,
+        "next_cursor": null,
+        "previous_cursor": null
+    },
+    "data":
+      [
+        {
+          "type": "refund",
+          "id": "8724fd24-5489-4a5d-90fd-0604df7d3b83",
+          "transaction_id": "fe26475d-ec3e-4884-9553-f7356683f7f9",
+          "connection_refund_id": "refund_xYqd43gySMtori",
+          "status": "processing",
+          "currency": "USD",
+          "amount": 1299,
+          "reason": "Refund due to user request",
+          "created_at": "2013-07-16T19:23:00.000+00:00",
+          "updated_at": "2013-07-16T19:23:00.000+00:00",
+        },
+        ...
+      ]
+    }
+}
+```
+
+## Resources
+
+### Common Transaction Use-cases
+| Type                                   | CVV               | `merchant_initiated` | `payment_source` | `is_subsequent_payment` | `previous_scheme_transaction_id`            |
+|----------------------------------------|-------------------|----------------------|------------------|-------------------------|---------------------------------------------|
+| First transaction for a card           | Commonly required | `false`              | `ecommerce`      | `false`                 | `null`                                      |
+| Express checkout / Card on File        | Optional          | `false`              | `card_on_file`   | `false`                 | `null`                                      |
+| Subscription (after first transaction) | Never             | `true`               | `recurring`      | `true`                  | First transaction's `scheme_transaction_id` |
+| Consumption-based                      | Never             | `true`               | `card_on_file`   | `false`                 | First purchase `scheme_transaction_id`      |
+
+### Payment Sources
+| Source       | Description                                             |
+|--------------|---------------------------------------------------------|
+| card_on_file | Used when utilizing a token without a CVC               |
+| ecommerce    | Used on the first transaction when the CVC is present   |
+| recurring    | Used when the transaction from an on-going subscription |
+
+### Statuses
+
+| Status                     |
+|----------------------------|
+| processing                 |
+| buyer_approval_pending     |
+| authorization_succeeded    |
+| authorization_failed       |
+| authorization_declined     |
+| capture_pending            |
+| capture_succeeded          |
+| authorization_void_pending |
+| authorization_voided       |
+
+### 3DS Object
+
+| Parameter  | Type   | Default | Description                                                                                                         |
+|------------|--------|---------|---------------------------------------------------------------------------------------------------------------------|
+| version    | string |         | Ther version                                                                                                        |
+| status     | object |         | The status of the 3DS challenge for this transaction. [`setup_error`, `error`, `declined`, `cancelled`, `complete`] |
+| method     | string |         | The method used for the 3DS challenge. [`challenge`, `frictionless`]                                                |
+| error_data | object |         | The error data for the 3DS challenge.                                                                               |
+
+#### 3DS Error Data Object
+
+| Parameter   | Type   | Default | Description                                                          |
+|-------------|--------|---------|----------------------------------------------------------------------|
+| description | string |         | Description of the error returned by the ACS                         |
+| detail      | object |         | Details of the error returned from the ACS                           |
+| code        | string |         | The method used for the 3DS challenge. [`challenge`, `frictionless`] |
+| component   | object |         | The component within the 3DS flow that identified the error.         |
+
+
+### CVV Response Codes
+
+| Code         | Description                                |
+|--------------|--------------------------------------------|
+| no_match     | the CVV does not match the expected value  |
+| match        | the CVV matches the expected value         |
+| unavailable  | CVV check unavailable for card our country |
+| not_provided | CVV not provided                           |
+
+### Transaction Object
+
+| Parameter                 | Type    | Default | Description                                                                                                                                                                                                                                                      |
+|---------------------------|---------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| id                        | string  |         | Transaction Identifier                                                                                                                                                                                                                                           |
+| scheme_transaction_id     | string  |         | The scheme identifier to be used on additional transactions                                                                                                                                                                                                      |
+| payment_method            | object  |         | Payment method object.                                                                                                                                                                                                                                           |
+| connection                | object  |         | Connection used for the transaction.                                                                                                                                                                                                                             |
+| amount                    | integer |         | The amount in cents for the transaction                                                                                                                                                                                                                          |
+| currency                  | string  |         | ISO-4217 currency code                                                                                                                                                                                                                                           |
+| authorized_amount         | integer |         | The amount authorized in cents for the transaction                                                                                                                                                                                                               |
+| captured_amount           | integer |         | The amount captured in cents for the transaction                                                                                                                                                                                                                 |
+| refunded_amount           | integer |         | The amount refunded in cents for the transaction                                                                                                                                                                                                                 |
+| country                   | string  |         | 2-letter ISO country.                                                                                                                                                                                                                                            |
+| external_identifier       | string  |         | External trans ID.                                                                                                                                                                                                                                               |
+| authorized_at             | string  |         | The date and time the transaction was authorized.                                                                                                                                                                                                                |
+| captured_at               | string  |         | The date and time the transaction was captured.                                                                                                                                                                                                                  |
+| voided_at                 | string  |         | The date and time the transaction was voided.                                                                                                                                                                                                                    |
+| created_at                | string  |         | The date and time the transaction was created.                                                                                                                                                                                                                   |
+| updated_at                | string  |         | The date and time the transaction was updated.                                                                                                                                                                                                                   |
+| approval_expires_at       | string  |         | The date and time the transaction approval expires.                                                                                                                                                                                                              |
+| metadata                  | object  |         | Metadata key-values stored with the transaction.                                                                                                                                                                                                                 |
+| reconciliation_id         | string  |         | The base62 encoded transaction ID. This represents a shorter version of this transaction's id which is sent to payment services, anti-fraud services, and other connectors. You can use this ID to reconcile a payment service's transaction against our system. |
+| error_code                | string  |         | Error code for the transaction.                                                                                                                                                                                                                                  |
+| intent                    | string  |         | The intent of the transaction.                                                                                                                                                                                                                                   |
+| intent_outcome            | string  |         | The outcome of the intent.                                                                                                                                                                                                                                       |
+| status                    | string  |         | The status of the transaction.                                                                                                                                                                                                                                   |
+| connection_transaction_id | string  |         | The transaction id from the underlying connection.                                                                                                                                                                                                               |
+| three_d_secure            | object  |         | 3D Secure object.                                                                                                                                                                                                                                                |
+| auth_response_code        | string  |         | Authorization response code returned from the connection.                                                                                                                                                                                                        |
+| cvv_response_code         | string  |         | CVV response code returned from the connection.                                                                                                                                                                                                                  |
+
+### Refund Object
+
+| Parameter              | Type    | Default | Description                                                                                                                                                   |
+|------------------------|---------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `type`                 | enum    | refund  | The type of this resource. Is always refund. Available options: refund                                                                                        |
+| `id`                   | string  |         | The unique ID of the refund.                                                                                                                                  |
+| `transaction_id`       | string  |         | The ID of the transaction associated with this refund.                                                                                                        |
+| `connection_refund_id` | string  |         | The connection's unique ID for the refund.                                                                                                                    |
+| `status`               | enum    |         | The status of the refund. It may change over time as asynchronous processing events occur. Available options: processing, succeeded, declined, failed, voided |
+| `currency`             | string  |         | The currency code for this refund. Will always match that of the associated transaction.                                                                      |
+| `amount`               | integer |         | The amount requested for this refund.                                                                                                                         |
+| `reason`               | string  |         | The reason for this refund. Could be a multiline string.                                                                                                      |
+| `created_at`           | string  |         | The date and time when this refund was created.                                                                                                               |
+| `updated_at`           | string  |         | The date and time when this refund was last updated.                                                                                                          |

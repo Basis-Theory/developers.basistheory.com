@@ -41,8 +41,14 @@ curl "https://api.basistheory.com/tenants/self/members" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.members.list();
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -50,88 +56,32 @@ const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const tenantMembers = await bt.tenants.listMembers();
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-var userId = new List<Guid>();
-var page = 1;
-var start = "";
-var size = 1;
-
-TenantMemberResponsePaginatedList result = apiInstance.GetMembers(userId, page, start, size);
+await client.Tenants.Members.ListAsync(new MembersListRequest());
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        List<UUID> userId = Arrays.asList();
-        Integer page = 1;
-        Integer size = 50;
-        TenantMemberResponsePaginatedList result = apiInstance.getMembers(userId, page, size);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenant_client = tenants_api.TenantsApi(api_client)
-
-    tenant_members = tenant_client.get_members()
+client.tenants.members.list()
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  tenantMembers, httpResponse, err := apiClient.TenantsApi.GetMembers(contextWithAPIKey).Execute()
-}
 ```
 
   </TabItem>
@@ -200,8 +150,14 @@ curl "https://api.basistheory.com/tenants/self/members/5540a02f-99e7-46de-8f41-1
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.members.delete("memberId");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -209,80 +165,34 @@ const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 await bt.tenants.deleteMember("5540a02f-99e7-46de-8f41-1b3cf7b2a3d2");
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-var memberId = Guid.Parse("");
-
-apiInstance.DeleteMember(memberId);
+await client.Tenants.Members.DeleteAsync("memberId");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.UUID;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        apiInstance.deleteMember(UUID.fromString("5540a02f-99e7-46de-8f41-1b3cf7b2a3d2"));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenant_client = tenants_api.TenantsApi(api_client)
-
-    tenant_client.delete_member(member_id="5540a02f-99e7-46de-8f41-1b3cf7b2a3d2")
+client.tenants.members.delete(
+    member_id="memberId",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  httpResponse, err := apiClient.TenantsApi.DeleteMember(contextWithAPIKey, "5540a02f-99e7-46de-8f41-1b3cf7b2a3d2").Execute()
-}
 ```
 
   </TabItem>
@@ -327,8 +237,16 @@ curl "https://api.basistheory.com/tenants/self/invitations" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.invitations.create({
+    email: "email",
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -338,89 +256,39 @@ const createdInvitation = await bt.tenants.createInvitations({
   email: "jane@doe.com",
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-var createTenantInvitationRequest = new CreateTenantInvitationRequest()
-{
-    Email = ...
-    Role = ...
-};
-
-TenantInvitationResponse result = apiInstance.CreateInvitation(createTenantInvitationRequest);
+await client.Tenants.Invitations.CreateAsync(
+  new CreateTenantInvitationRequest
+  {
+    Email = "email"
+  }
+);
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        CreateTenantInvitationRequest createTenantInvitationRequest = new CreateTenantInvitationRequest(); // CreateTenantInvitationRequest |
-        TenantInvitationResponse result = apiInstance.createInvitation(createTenantInvitationRequest.email("jane@doe.com"));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-from basistheory.model.create_tenant_invitation_request import CreateTenantInvitationRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenant_client = tenants_api.TenantsApi(api_client)
-
-    created_invitation = tenant_client.create_invitation(create_tenant_invitation_request=CreateTenantInvitationRequest(
-        email="jane@doe.com"
-    ))
+client.tenants.invitations.create(
+    email="email",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  createTenantInvitationRequest := *basistheory.NewCreateTenantInvitationRequest("jane@doe.com")
-
-  createdInvitation, httpResponse, err := apiClient.TenantsApi.CreateInvitation(contextWithAPIKey).CreateTenantInvitationRequest(createTenantInvitationRequest).Execute()
-}
 ```
 
   </TabItem>
@@ -475,8 +343,14 @@ curl "https://api.basistheory.com/tenants/self/invitations/fb32ea26-2185-4ad2-a7
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.invitations.resend("invitationId");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -486,80 +360,34 @@ const resentInvitation = await bt.tenants.resendInvitation(
   "fb32ea26-2185-4ad2-a7bf-2fe69c00ae13"
 );
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-var invitationId = Guid.Parse("");
-
-TenantInvitationResponse result = apiInstance.ResendInvitation(invitationId);
+await client.Tenants.Invitations.ResendAsync("invitationId");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.UUID;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        TenantInvitationResponse result = apiInstance.resendInvitation(UUID.fromString("fb32ea26-2185-4ad2-a7bf-2fe69c00ae13"));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenant_client = tenants_api.TenantsApi(api_client)
-
-    resent_invitation = tenant_client.resend_invitation(invitation_id="dfd0319e-e978-4d2a-9109-f8a9048088bd")
+client.tenants.invitations.resend(
+    invitation_id="invitationId",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  resentInvitation, httpResponse, err := apiClient.TenantsApi.ResendInvitation(contextWithAPIKey, "dfd0319e-e978-4d2a-9109-f8a9048088bd").Execute()
-}
 ```
 
   </TabItem>
@@ -573,7 +401,7 @@ func main() {
 
 ### Response
 
-Returns a [Tenant Invitation](#tenant-inviation-object) if the Tenant Invitation was resent. Returns [an error](/docs/api/errors) if there were validation errors, or the Tenant Invitation failed to resend.
+Returns a [Tenant Invitation](#tenant-invitation-object) if the Tenant Invitation was resent. Returns [an error](/docs/api/errors) if there were validation errors, or the Tenant Invitation failed to resend.
 
 ```json showLineNumbers
 {
@@ -611,8 +439,23 @@ curl "https://api.basistheory.com/tenants/self/invitations" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+const response = await client.tenants.invitations.list();
+for await (const item of response) {
+    console.log(item);
+}
+
+// Or you can manually iterate page-by-page
+const page = await client.tenants.invitations.list();
+while (page.hasNextPage()) {
+    page = page.getNextPage();
+}
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -620,85 +463,39 @@ const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const invitations = await bt.tenants.listInvitations();
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-var status = TenantInvitationStatus.PENDING;
-var page = 1;
-var start = "";
-var size = 1;
-
-TenantInvitationResponsePaginatedList result = apiInstance.GetInvitations(status, page, start, size);
+await client.Tenants.Invitations.ListAsync(new InvitationsListRequest());
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        TenantInvitationStatus status = TenantInvitationStatus.fromValue("PENDING");
-        Integer page = 1;
-        Integer size = 56;
-        TenantInvitationResponsePaginatedList result = apiInstance.getInvitations(status, page, size);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
+response = client.tenants.invitations.list()
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenant_client = tenants_api.TenantsApi(api_client)
+for item in response:
+    yield item
 
-    invitations = tenant_client.get_invitations()
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  invitations, httpResponse, err := apiClient.TenantsApi.GetInvitations(contextWithAPIKey).Execute()
-}
 ```
 
   </TabItem>
@@ -760,8 +557,14 @@ curl "https://api.basistheory.com/tenants/self/invitations/fb32ea26-2185-4ad2-a7
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.invitations.get("invitationId");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -771,54 +574,34 @@ const invitation = await bt.tenants.retrieveInvitation(
   "fb32ea26-2185-4ad2-a7bf-2fe69c00ae13"
 );
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-    Not Available.
+await client.Tenants.Invitations.GetAsync("invitationId");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-    Not Available.
+
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenant_client = tenants_api.TenantsApi(api_client)
-
-    invitation = tenant_client.get_invitation_by_id(invitation_id="fb32ea26-2185-4ad2-a7bf-2fe69c00ae13")
+client.tenants.invitations.get(
+    invitation_id="invitationId",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  invitation, httpResponse, err := apiClient.TenantsApi.GetInvitationById(contextWithAPIKey, "fb32ea26-2185-4ad2-a7bf-2fe69c00ae13").Execute()
-}
 ```
 
   </TabItem>
@@ -871,8 +654,14 @@ curl "https://api.basistheory.com/tenants/self/invitations/fb32ea26-2185-4ad2-a7
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.invitations.delete("invitationId");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -880,80 +669,34 @@ const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 await bt.tenants.deleteInvitation("fb32ea26-2185-4ad2-a7bf-2fe69c00ae13");
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-var invitationId = Guid.Parse("");
-
-apiInstance.DeleteInvitation(invitationId);
+await client.Tenants.Invitations.DeleteAsync("invitationId");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.UUID;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        apiInstance.deleteInvitation(UUID.fromString("fb32ea26-2185-4ad2-a7bf-2fe69c00ae13"));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenant_client = tenants_api.TenantsApi(api_client)
-
-    tenant_client.delete_invitation(invitation_id="fb32ea26-2185-4ad2-a7bf-2fe69c00ae13")
+client.tenants.invitations.delete(
+    invitation_id="invitationId",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  httpResponse, err := apiClient.TenantsApi.DeleteInvitation(contextWithAPIKey, "fb32ea26-2185-4ad2-a7bf-2fe69c00ae13").Execute()
-}
 ```
 
   </TabItem>

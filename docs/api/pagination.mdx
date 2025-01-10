@@ -11,6 +11,10 @@ Most `List` endpoints support [offset pagination](#offset-pagination) to allow b
 
 The [List Logs](/docs/api/logs#list-logs) endpoint supports [cursor pagination](#cursor-pagination).
 
+Most SDKs offer autopagination for both offset and cursor based paginations.
+Simply make one call to get the start of the list and iterate through the list as normal.
+The SDK will make additional requests as necessary to pull more data.
+
 ## Offset Pagination
 
 ### Request
@@ -18,73 +22,83 @@ The [List Logs](/docs/api/logs#list-logs) endpoint supports [cursor pagination](
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
-    ```shell showLineNumbers
-    curl "https://api.basistheory.com/applications?page=2&size=10" \
-    -H "BT-API-KEY: <API_KEY>"
-    ```
+```shell showLineNumbers
+curl "https://api.basistheory.com/applications?page=2&size=10" \
+-H "BT-API-KEY: <API_KEY>"
+```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
-    ```javascript showLineNumbers
-    import {BasisTheory} from "@basis-theory/basis-theory-js";
+```javascript showLineNumbers
+const tokens = await client.tokens.list({
+    page: 1,
+    size: 10
+});
 
-    const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+for await (const token of tokens) {
+    ...
+}
+```
 
-    const applications = await bt.applications.list({
-      page: 2,
-      size: 10,
-    });
-    ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import {BasisTheory} from "@basis-theory/basis-theory-js";
 
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const applications = await bt.applications.list({
+  page: 2,
+  size: 10,
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
-    ```csharp showLineNumbers
-    var apiInstance = new ApplicationsApi(config);
-    var id = new List<Guid>();
-    var type = new List<string>();
-    var page = 1;
-    var start = "";
-    var size = 1;
+```csharp showLineNumbers
+var tokens = client.Tokens.ListAsync(new TokensListRequest
+  {
+    Page = 1,
+    Size = pageSize
+  }, null
+);
 
-    ApplicationPaginatedList result = apiInstance.Get(id, type, page, start, size);
-    ```
+await foreach (var token in tokens)
+{
+  ...
+}
+```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
-    ```python showLineNumbers
-    import basistheory
-    from basistheory.api import applications_api
+```python showLineNumbers
+tokens = client.tokens.list(size=10, page=1)
 
-    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    applications_client = applications_api.ApplicationsApi(api_client)
-
-    applications = applications_client.get(page=2, size=10)
-    ```
+for count, token in enumerate(tokens, start=1):
+  ...
+```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
-    ```go showLineNumbers
-    package main
+```go showLineNumbers
+pageNum := 1
+pageSize := 3
+page, err := client.Tokens.List(
+    context.TODO(),
+    &basistheory.TokensListRequest{
+        Page: &pageNum,
+        Size: &pageSize,
+    },
+)
 
-    import (
-    "context"
-    "github.com/Basis-Theory/basistheory-go/v3"
-    )
-
-    func main() {
-    configuration := basistheory.NewConfiguration()
-    apiClient := basistheory.NewAPIClient(configuration)
-    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-    applications, httpResponse, err := apiClient.ApplicationsApi.Get(contextWithAPIKey).Page(2).Size(10).Execute()
-  }
-    ```
+iter := page.Iterator()
+for iter.Next(context.TODO()) {
+  ...
+}
+```
 
   </TabItem>
 </Tabs>
@@ -137,73 +151,80 @@ The [List Logs](/docs/api/logs#list-logs) endpoint supports [cursor pagination](
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
-    ```shell showLineNumbers
-    curl "https://api.basistheory.com/logs?start=AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD&size=10" \
-    -H "BT-API-KEY: <API_KEY>"
-    ```
+```shell showLineNumbers
+curl "https://api.basistheory.com/logs?start=AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD&size=10" \
+-H "BT-API-KEY: <API_KEY>"
+```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
-    ```javascript showLineNumbers
-    import {BasisTheory} from "@basis-theory/basis-theory-js";
+```javascript showLineNumbers
+const tokens = await client.tokens.listV2({
+    size: pageSize,
+});
 
-    const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+for await (const token of tokens) {
+    ...
+}
+```
 
-    const logs = await bt.logs.list({
-      start: 'AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD',
-      size: 10,
-    });
-    ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import {BasisTheory} from "@basis-theory/basis-theory-js";
 
+const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
+
+const logs = await bt.logs.list({
+  start: 'AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD',
+  size: 10,
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
-    ```csharp showLineNumbers
-    using BasisTheory.net.Logs;
+```csharp showLineNumbers
+var tokens = client.Tokens.ListV2Async(new TokensListV2Request
+  {
+    Size = pageSize
+  }, null
+);
 
-    var client = new LogClient("<MANAGEMENT_API_KEY>");
-
-    var logs = await client.GetAsync(new GetLogsRequest {
-      Start = "AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD",
-      PageSize = 10
-    });
-    ```
+await foreach (var token in tokens)
+{
+  ...
+}
+```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
-    ```python showLineNumbers
-    import basistheory
-    from basistheory.api import logs_api
+```python showLineNumbers
+tokens = client.tokens.list_v2(size=10)
 
-    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    logs_client = logs_api.LogsApi(api_client)
-
-    logs = logs_client.get(start="AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD", size=10)
-    ```
+for count, token in enumerate(tokens, start=1):
+  ...
+```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
-    ```go showLineNumbers
-    package main
+```go showLineNumbers
+pageSize := 3
+page, err := client.Tokens.ListV2(
+  context.TODO(),
+  &basistheory.TokensListV2Request{
+    Start: nil,
+    Size:  &pageSize,
+  },
+)
 
-    import (
-    "context"
-    "github.com/Basis-Theory/basistheory-go/v3"
-    )
-
-    func main() {
-    configuration := basistheory.NewConfiguration()
-    apiClient := basistheory.NewAPIClient(configuration)
-    contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-    logs, httpResponse, err := apiClient.LogsApi.Get(contextWithAPIKey).Start("AAAAAAAAAAAAAAAABBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDD").Size(10).Execute()
-  }
-    ```
+iter := page.Iterator()
+for iter.Next(context.TODO()) {
+  ...
+}
+```
 
   </TabItem>
 </Tabs>

@@ -12,30 +12,25 @@ import { SDK } from "@site/src/components/types";
   heading="Go SDK"
   icon={SDK.GO}
   organization="basis-theory"
-  repository="basistheory-go"
+  repository="go-sdk"
 />
 
 ### Installation
 
 ```go showLineNumbers
-go get github.com/Basis-Theory/basistheory-go/v5
+go get github.com/basis-theory/go-sdk
 ```
 
 ### Initialization
 
 ```go showLineNumbers
-package main
-
 import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v5"
+  "github.com/basis-theory/go-sdk"
+  basistheoryclient "github.com/basis-theory/go-sdk/client"
+  "github.com/basis-theory/go-sdk/option"
 )
 
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-}
+client := basistheoryclient.NewClient(
+  option.WithAPIKey("<API_KEY>"),
+)
 ```
