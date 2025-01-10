@@ -1,3 +1,10 @@
+# [1.204.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.203.0...v1.204.0) (2025-01-10)
+
+
+### Features
+
+* 3ds docs improvements ([#488](https://github.com/Basis-Theory/developers.basistheory.com/issues/488)) ([46760b6](https://github.com/Basis-Theory/developers.basistheory.com/commit/46760b6d957ef174dee051e0230cb95556a21667))
+
 # [1.203.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.202.0...v1.203.0) (2024-12-11)
 
 
