@@ -732,11 +732,11 @@ This object contain information about the merchant (who is collecting the money 
 
 | Attribute | Required | Type | Description
 | --- | --- | --- | --- |
-| `mid` | conditional | _string_ | The merchant identifier. Required if `authentication_category` is `payment` |
-| `acquirer_bin` | conditional | _string_ | The merchant/acquirer BIN. Required if `authentication_category` is `payment` |
-| `name` | conditional | _string_ | The merchant's name. Required if `authentication_category` is `payment` |
+| `mid` | conditional | _string_ | The merchant identifier, typically found in billing statements or in the issuer dashboard. Required if `authentication_category` is `payment`.  |
+| `acquirer_bin` | conditional | _string_ | The merchant/acquirer BIN, provided by the card scheme. Required if `authentication_category` is `payment` |
+| `name` | conditional | _string_ | The merchant's name as defined in the payment system. Required if `authentication_category` is `payment` |
 | `country_code` | conditional | _string_ | ISO 3166-1 numeric three-digit country code of the merchant. Required if `authentication_category` is `payment` |
-| `category_code` | conditional | _string_ | The merchant's category code (mcc). Required if `authentication_category` is `payment` |
+| `category_code` | conditional | _string_ | The merchant's category code (mcc), as defined by the card scheme. Required if `authentication_category` is `payment` |
 | `risk_info` | false | [Merchant Risk Info](#merchant-info-object) | Optional information to de-risk the transaction |
 
 #### Merchant Risk Info Object
@@ -814,7 +814,7 @@ Take note that most issuers tend to request at least the `name` and `email` prop
 
 | Attribute | Required | Type | Description
 | --- | --- | --- | --- |
-| `account_id` | false | _string_ | The cardholder account identifier |
+| `account_id` | false | _string_ | The cardholder account identifier - used to reference the cardholder in the merchant's system. |
 | `account_type` | false | _string_ | The type of cardholder account. See [Cardholder Account Types](#cardholder-account-types) for allowed values |
 | `account_info` | false | [Cardholder Account Info](#cardholder-account-info-object) | Information about the cardholder's account |
 | `authentication_info` | false | [Cardholder Authentication Info](#cardholder-authentication-info-object) | Information on how the cardholder was authenticated in the merchant platform |

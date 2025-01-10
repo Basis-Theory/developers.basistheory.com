@@ -1514,6 +1514,84 @@ const MyApp = () => {
 
 That's it 🎉!
 The result from the `authentication` (in case of frictionless) or `challenge-result` calls contains the authentication token (`authentication_value` attribute) and any other information needed to fully process the 3DS transaction.
+See below how to integrate this information with popular payment providers.
+
+# Integrating 3DS Results with your Payment Provider
+
+Once you have completed all necessary 3DS operations using our solution, the next step is to integrate the results with your payment provider.
+This section provides guidance on mapping and utilizing the 3DS results for successful transaction processing with popular payment providers.
+Proper mapping ensures seamless communication and compliance with your provider's requirements.
+
+<Alert type={Alerts.INFO}>If your provider is not listed here or you need further assistance with integration, please contact our team at <a href="mailto:support@basistheory.com">support@basistheory.com</a>.</Alert>
+
+## Integrating with Adyen
+
+The table below outlines the mapping of Basis Theory 3DS results to Adyen fields, based on their [official documentation](https://docs.adyen.com/online-payments/3d-secure/authorize-mpidata/?tab=3ds2-request_1).
+
+| Adyen Field | Basis Theory 3DS Value | Notes |
+| --- | --- | --- |
+| `paymentMethod.type` | - | This value is specific to Adyen's payment flow, refer to official documentation. |
+| `mpiData.authenticationResponse` | `authentication.authentication_status_code` | If challenge was required, take this value after retrieving the [challenge result](#retrieving-a-challenge-result). Otherwise (if frictionless), after [authentication](#authenticating-a-session) .|
+| `mpiData.directoryResponse` | `authentication.authentication_status_code` | Take this value after [authenticating](#authenticating-a-session) the session, regardless of challenge or not. |
+| `mpiData.cavv` | `authentication.authentication_value` | - |
+| `dsTransID` | `authentication.ds_transaction_id` | - |
+| `mpiData.eci` | `authentication.eci` | - |
+| `mpiData.threeDSVersion` | `authentication.threeds_version` | - |
+| `threeDS2RequestData.threeDSRequestorChallengeInd` | `authentication.challenge_preference_code` | Only if a challenge preference was selected during authentication. |
+| `mpiData.cavvAlgorithm` | `authentication.message_extensions[x].data`  | Applies to Cartes Bancaires only. Provided as part of an unspecified message extensions. Contact Adyen for more details. |
+| `mpiData.challengeCancel` | `authentication.challenge_cancel_reason_code` | - |
+| `mpiData.riskScore` | `authentication.message_extensions[x].data` | Applies to Cartes Bancaires only. Provided as part of an unspecified message extensions. Contact Adyen for more details. |
+| `additionalData.acquirerCode` | - | Applies only to Cartes Bancaires. Adyen asks the value to be set as `AdyenCartesBancaires` |
+| `additionalData.scaExemption` | - | Applies only to Cartes Bancaires. Specific to Adyen's flow, refer to Adyen's [documentation](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#request-additionalData-AdditionalData3DSecure-scaExemption). |
+| `shopperInteraction` | - | Specific to Adyen's flow, refer to Adyen's [documentation](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#request-shopperInteraction). |
+| `recurringProcessingModel` | - | Specific to Adyen's flow, refer to Adyen's [documentation](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#request-recurringProcessingModel). |
+
+## Integrating with Stripe
+
+The table below outlines the mapping of Basis Theory 3DS results to Stripe fields, based on their [official documentation](https://docs.stripe.com/payments/payment-intents/three-d-secure-import).
+
+| Stripe Field | Basis Theory 3DS Value | Notes |
+| --- | --- | --- |
+| `three_d_secure.cryptogram` | `authentication.authentication_value` | - |
+| `three_d_secure.transaction_id` | `authentication.ds_transaction_id` | - |
+| `three_d_secure.version` | `authentication.threeds_version` | - |
+| `three_d_secure.ares_trans_status` | `authentication.authentication_status_code` | - |
+| `three_d_secure.electronic_commerce_indicator` | `authentication.eci` | - |
+| `three_d_secure.exemption_indicator` | - | Specific to Stripe's flow, refer to Stripe's [documentation](https://docs.stripe.com/api/payment_intents/create#create_payment_intent-payment_method_options-card-three_d_secure-exemption_indicator). |
+| `three_d_secure.network_options` | See [Stripe Network Options](#stripe-network-options) below. | - |
+| `three_d_secure.requestor_challenge_indicator` | `authentication.challenge_preference_code` | Only if a challenge preference was selected during authentication. |
+
+### Stripe Network Options
+| Stripe Network Options Field | Basis Theory 3DS Value | Notes |
+| --- | --- | --- |
+| `cartes_bancaires.cb_avalgo` | `authentication.message_extensions[x].data` | Check `authentication.message_extensions` array for `message_extensions[x].name == CB-AVALGO` for the value of x (index). |
+| `cartes_bancaires.cb_exemption` | `authentication.message_extensions[x].data` | Check `authentication.message_extensions` array for `message_extensions[x].name == CB-EXEMPTION` for the value of x (index). |
+| `cartes_bancaires.cb_score` | `authentication.message_extensions[x].data` | Check `authentication.message_extensions` array for `message_extensions[x].name == CB-SCORE` for the value of x (index). |
+
+## Integrating with Checkout
+
+The table below outlines the mapping of Basis Theory 3DS results to Checkout.com fields, based on their [official documentation](https://www.checkout.com/docs/payments/authenticate-payments#Authenticate_payments_using_a_third-party_provider).
+
+| Stripe Field | Basis Theory 3DS Value | Notes |
+| --- | --- | --- |
+| `3ds.challenge_indicator` | See [Checkout Challenge Indicator](#checkout-challenge-indicator) below. | - |
+| `3ds.cryptogram` | `authentication.authentication_value` | - |
+| `3ds.eci` | `authentication.eci` | - |
+| `3ds.enabled` | - | Checkout asks the value to be set as `true` for using 3ds. |
+| `3ds.version` | `authentication.threeds_version` | - |
+| `3ds.xid` | `authentication.ds_transaction_id` | - |
+| `success_url` | - | From Checkout: 'The URL that the cardholder is redirected to when 3DS authentication is successful.' |
+| `failure_url` | - | From Checkout: 'The URL that the cardholder is redirected to when 3DS authentication fails.' |
+
+### Checkout Challenge Indicator
+| Basis Theory `challenge_preference` | Basis Theory `challenge_preference_code` | Checkout `challenge_indicator` |
+| --- | --- | --- |
+| `no-preference` | `01` | `no_preference` |
+| `no-challenge` | `02` | `no_challenge_requested` |
+| `challenge-requested` | `03` | `challenge_requested` |
+| `challenge-mandated` | `04` | `challenge_requested_mandate` |
+
+**Note**: Basis Theory provides additional challenge preference values, but Checkout.com only supports the above values.
 
 ## Learn More
 
