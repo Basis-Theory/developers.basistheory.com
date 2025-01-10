@@ -90,7 +90,7 @@ of tokens that is required.
 
 ### Synchronous Reactors
 
-Reactors are invoked synchronously by default, unless a `callback_url` is specified in your [request](/docs/api/reactors#invoke-a-reactor).
+Reactors are invoked synchronously by default.
 Synchronous reactors are limited to 30 seconds of execution time before they are terminated. If you anticipate your reactor workload
 will take longer than this limit, please consider using [Asynchronous Reactors](#asynchronous-reactors) instead.
 
@@ -119,38 +119,6 @@ Once the reactor is completed, the `reactor.completed`  [webhook event](/docs/ap
 To retrieve the result of the asynchronous invocation, make a [request](/docs/api/reactors#retrieve-result) to the Retrieve Result endpoint using the reactor and request ID provided in the webhook. This allows the system receiving the webhook to access the results of the reactor without including the full response within the webhook event payload.
 
 Any errors that occur while executing the reactor will be returned from the same result endpoint. See [Reactor Errors](/docs/api/reactors/reactor-errors) for details.
-
-### Asynchronous Reactors with Callback URL <Enterprise /> <Deprecated />
-
-<Alert>This functionality is deprecated and will be removed at some time in the future.</Alert>
-
-Reactors are invoked asynchronously by providing a `callback_url` parameter within the [request](/docs/api/reactors#invoke-a-reactor).
-The reactor will perform some synchronous validation to ensure the request is valid,
-then immediately respond with an empty HTTP response with `202 Accepted` status code.
-
-Your reactor code will then be asynchronously executed in our serverless compute environment for up to 5 minutes. If the timeout period is exceeded, the reactor will be terminated and you will receive
-a callback containing a [Reactor Runtime Error](/docs/api/reactors/reactor-errors#error-types) indicating that a timeout occurred.
-
-Once the reactor is completed, the response from the reactor code
-will be delivered in the body of an HTTP `POST` request to your `callback_url`.
-
-Your callback endpoint must be hosted using HTTPS, and should respond with a `2xx` status code after receiving the message. If your servers fail to
-respond with a `2xx` status code, delivery will retried up to 10 times with exponential backoff over the next ~2.5 hours.
-
-Any errors that occur while executing the reactor will be delivered to the `callback_url`. See [Reactor Errors](/docs/api/reactors/reactor-errors) for details.
-
-```bash showLineNumbers
-curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react" \
-  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
-  -X "POST" \
-  -d '{
-    "args": {
-      "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
-      "customer_id": "myCustomerId1234"
-    },
-    "callback_url": "https://my-service.com/webhooks/transactions/b1d16efc-f613-45af-a1d5-57b07ddd741b"
-  }'
-```
 
 ---
 
