@@ -1,3 +1,10 @@
+# [1.205.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.204.0...v1.205.0) (2025-01-21)
+
+
+### Features
+
+* New SDK documentation ([#484](https://github.com/Basis-Theory/developers.basistheory.com/issues/484)) ([443692a](https://github.com/Basis-Theory/developers.basistheory.com/commit/443692abc0b49ece211f1cf3a4c62eadbda9e3fe))
+
 # [1.204.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.203.0...v1.204.0) (2025-01-10)
 
 
