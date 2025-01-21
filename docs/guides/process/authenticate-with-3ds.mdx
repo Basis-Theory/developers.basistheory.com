@@ -231,8 +231,74 @@ This is done by calling [Authenticate 3DS Session](/docs/api/3ds/sessions#authen
 
 <Tabs className="bt-tabs" queryString="backend">
 <TabItem value="node" label="Node">
-
 In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
+```javascript showLineNumbers
+//highlight-start
+const { BasisTheoryClient, BasisTheory } = require("@basis-theory/node-sdk")
+//highlight-end
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+//highlight-start
+let bt;
+(async () => {
+  bt = await new BasisTheoryClient({ apiKey: "<API_KEY>" });
+})();
+//highlight-end
+
+//highlight-start
+app.post("/:sessionId/authenticate", async (req, res) => {
+  const { sessionId } = req.params;
+
+  try {
+    const authentication = await bt.threeds.sessions.authenticate(sessionId, {
+       authenticationCategory: "payment",
+       authenticationType: "payment-transaction",
+       purchaseInfo: {
+           amount: "80000",
+           currency: "826",
+           exponent: "2",
+           date: "20240109141010"
+       },
+       requestorInfo: {
+           id: "example-3ds-merchant",
+           name: "Example 3DS Merchant",
+           url: "https://www.example.com/example-merchant"
+       },
+       merchantInfo: {
+           mid: "9876543210001",
+           acquirerBin: "000000999",
+           name: "Example 3DS Merchant",
+           categoryCode: "7922",
+           countryCode: "826"
+       },
+       cardholderInfo: {
+           name: "John Doe",
+           email: "john@me.com"
+       }
+    });
+    res.status(200).send(authentication);
+  } catch (error) {
+    console.error('Error during authentication:', error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+//highlight-end
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+```
+</TabItem>
+<TabItem value="node-legacy" label="JavaScript (legacy)">
+
+In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/javascript-legacy) and [Express framework](https://expressjs.com/) for Node.js.
 
 ```javascript showLineNumbers
 //highlight-start
@@ -315,8 +381,8 @@ using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
 //highlight-start
-using BasisTheory.net.ThreeDS;
-using BasisTheory.net.ThreeDS.Requests;
+using BasisTheory.Client;
+using BasisTheory.Client.Threeds;
 //highlight-end
 
 namespace server.Controllers
@@ -358,30 +424,30 @@ namespace server.Controllers
 
     public ThreeDsApiController()
     {
-      _client = new ThreeDSClient("<PRIVATE_API_KEY>");
+      _client = new BasisTheory(apiKey: "<PRIVATE_API_KEY>");
     }
 
     [HttpPost("{sessionId:guid}/authenticate")]
     public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
     {
-      var authentication = await _client.AuthenticateThreeDSSessionAsync(sessionId.ToString(), new AuthenticateThreeDSSessionRequest
+      var authentication = await _client.Threeds.Sessions.AuthenticateAsync(sessionId.ToString(), new AuthenticateThreeDsSessionRequest
       {
         AuthenticationCategory = "payment",
         AuthenticationType = "payment-transaction",
-        PurchaseInfo = new ThreeDSPurchaseInfo
+        PurchaseInfo = new ThreeDsPurchaseInfo
         {
           Amount = "80000",
           Currency = "826",
           Exponent = "2",
           Date = "20240109141010"
         },
-        RequestorInfo = new ThreeDSRequestorInfo
+        RequestorInfo = new ThreeDsRequestorInfo
         {
           Id = "example-3ds-merchant",
           Name = "Example 3DS Merchant",
           Url = "https://www.example.com/example-merchant"
         },
-        MerchantInfo = new ThreeDSMerchantInfo
+        MerchantInfo = new ThreeDsMerchantInfo
         {
           Mid = "9876543210001",
           AcquirerBin = "000000999",
@@ -389,7 +455,7 @@ namespace server.Controllers
           CategoryCode = "7922",
           CountryCode = "826"
         },
-        CardholderInfo = new ThreeDSCardholderInfo
+        CardholderInfo = new ThreeDsCardholderInfo
         {
           Name = "John Doe",
           Email = "john@me.com"
@@ -418,9 +484,8 @@ import os
 from flask import Flask, request, jsonify
 
 #highlight-start
-import basistheory
-from basistheory.api import three_ds_api
-from basistheory.model import AuthenticateThreeDSSessionRequest, ThreeDSPurchaseInfo, ThreeDSRequestorInfo, ThreeDSMerchantInfo, ThreeDSCardholderInfo
+from basis_theory import BasisTheory, ThreeDsPurchaseInfo, \
+    ThreeDsRequestorInfo, ThreeDsMerchantInfo, ThreeDsCardholderInfo
 #highlight-end
 
 app = Flask(__name__)
@@ -428,42 +493,39 @@ app = Flask(__name__)
 #highlight-start
 @app.route('/<sessionId>/authenticate', methods=['POST'])
 def authenticate_session(sessionId):
-  config = basistheory.Configuration(
-    host="https://api.basistheory.com",
-    api_key="<PRIVATE_API_KEY>"
+  client = BasisTheory(
+    api_key="<PRIVATE_API_KEY>",
   )
 
-  with basistheory.ApiClient(configuration=config) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-    authentication_request = AuthenticateThreeDSSessionRequest(
+  authentication = client.threeds.sessions.authorize(
+      session_id="",
       authentication_category="payment",
       authentication_type="payment-transaction",
-      purchase_info=ThreeDSPurchaseInfo(
-        amount="80000",
-        currency="826",
-        exponent="2",
-        date="20240109141010"
+      purchase_info=ThreeDsPurchaseInfo(
+          amount="80000",
+          currency="826",
+          exponent="2",
+          date="20240109141010"
       ),
-      requestor_info=ThreeDSRequestorInfo(
-        id="example-3ds-merchant",
-        name="Example 3DS Merchant",
-        url="https://www.example.com/example-merchant"
+      requestor_info=ThreeDsRequestorInfo(
+          id="example-3ds-merchant",
+          name="Example 3DS Merchant",
+          url="https://www.example.com/example-merchant"
       ),
-      merchant_info=ThreeDSMerchantInfo(
-        mid="9876543210001",
-        acquirer_bin="000000999",
-        name="Example 3DS Merchant",
-        category_code="7922",
-        country_code="826"
+      merchant_info=ThreeDsMerchantInfo(
+          mid="9876543210001",
+          acquirer_bin="000000999",
+          name="Example 3DS Merchant",
+          category_code="7922",
+          country_code="826"
       ),
-      cardholder_info=ThreeDSCardholderInfo(
-        name="John Doe",
-        email="john@me.com"
+      cardholder_info=ThreeDsCardholderInfo(
+          name="John Doe",
+          email="john@me.com"
       )
-    )
-    authentication = three_ds_client.three_ds_authenticate_session(sessionId, authenticate_three_ds_session_request=authentication_request)
-    return jsonify(authentication.to_dict()), 200
-    #highlight-end
+  )
+  return jsonify(authentication.to_dict()), 200
+  #highlight-end
 
 if __name__ == '__main__':
   app.run(port=4242, debug=True)
@@ -477,75 +539,87 @@ In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go), [Go
 package main
 
 import (
-  "context"
-  "encoding/json"
-  "log"
-  "net/http"
-  //highlight-start
-  "github.com/Basis-Theory/basistheory-go/v5"
-  //highlight-end
-  "github.com/gorilla/mux"
+	"context"
+	"encoding/json"
+	// highlight-start
+	basistheory "github.com/Basis-Theory/go-sdk"
+	basistheoryclient "github.com/Basis-Theory/go-sdk/client"
+	"github.com/Basis-Theory/go-sdk/option"
+	"github.com/Basis-Theory/go-sdk/threeds"
+	// highlight-end
+	"github.com/gorilla/mux"
+	"log"
+	"net/http"
 )
 
+
 func main() {
-  router := mux.NewRouter()
-  router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
-  addr := "localhost:4242"
-  log.Printf("Listening on %s", addr)
-  log.Fatal(http.ListenAndServe(addr, router))
+	router := mux.NewRouter()
+	router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
+	addr := "localhost:4242"
+	log.Printf("Listening on %s", addr)
+	log.Fatal(http.ListenAndServe(addr, router))
 }
 
-//highlight-start
+func pointerToString(s string) *string {
+	return &s
+}
+
+// highlight-start
 func authenticateSession(rw http.ResponseWriter, r *http.Request) {
-  vars := mux.Vars(r)
-  sessionId := vars["sessionId"]
+	vars := mux.Vars(r)
+	sessionId := vars["sessionId"]
 
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
+	client := basistheoryclient.NewClient(
+		option.WithAPIKey("<API_KEY>"),
+	)
 
-  authenticateThreeDSSessionRequest := *basistheory.NewAuthenticateThreeDSSessionRequest()
-  authenticateThreeDSSessionRequest.SetAuthenticationCategory("payment")
-  authenticateThreeDSSessionRequest.SetAuthenticationType("payment-transaction")
+	authRequest := &threeds.AuthenticateThreeDsSessionRequest{
+		AuthenticationCategory: "payment",
+		AuthenticationType:     "payment-transaction",
+	}
 
-  purchaseInfo := *basistheory.NewThreeDSPurchaseInfo()
-  purchaseInfo.SetAmount("80000")
-  purchaseInfo.SetCurrency("826")
-  purchaseInfo.SetExponent("2")
-  purchaseInfo.SetDate("20240109141010")
+	purchaseInfo := &basistheory.ThreeDsPurchaseInfo{
+		Amount:   pointerToString("80000"),
+		Currency: pointerToString("826"),
+		Exponent: pointerToString("2"),
+		Date:     pointerToString("20240109141010"),
+	}
 
-  requestorInfo := *basistheory.NewThreeDSRequestorInfo()
-  requestorInfo.SetId("example-3ds-merchant")
-  requestorInfo.SetName("Example 3DS Merchant")
-  requestorInfo.SetUrl("https://www.example.com/example-merchant")
+	requestorInfo := &basistheory.ThreeDsRequestorInfo{
+		ID:   pointerToString("example-3ds-merchant"),
+		Name: pointerToString("Example 3DS Merchant"),
+		URL:  pointerToString("https://www.example.com/example-merchant"),
+	}
 
-  merchantInfo := *basistheory.NewThreeDSMerchantInfo()
-  merchantInfo.SetMid("9876543210001")
-  merchantInfo.SetAcquirerBin("000000999")
-  merchantInfo.SetName("Example 3DS Merchant")
-  merchantInfo.SetCategoryCode("7922")
-  merchantInfo.SetCountryCode("826")
+	merchantInfo := &basistheory.ThreeDsMerchantInfo{
+		Mid:         pointerToString("9876543210001"),
+		AcquirerBin: pointerToString("000000999"),
+		Name:        pointerToString("Example 3DS Merchant"),
+		CategoryCode: pointerToString("7922"),
+		CountryCode: pointerToString("826"),
+	}
 
-  cardholderInfo := *basistheory.NewThreeDSCardholderInfo()
-  cardholderInfo.SetName("John Doe")
-  cardholderInfo.SetEmail("john@me.com")
+	cardholderInfo := &basistheory.ThreeDsCardholderInfo{
+		Name:  pointerToString("John Doe"),
+		Email: pointerToString("john@me.com"),
+	}
 
-  authenticateThreeDSSessionRequest.SetPurchaseInfo(purchaseInfo)
-  authenticateThreeDSSessionRequest.SetRequestorInfo(requestorInfo)
-  authenticateThreeDSSessionRequest.SetMerchantInfo(merchantInfo)
-  authenticateThreeDSSessionRequest.SetCardholderInfo(cardholderInfo)
+	authRequest.PurchaseInfo = purchaseInfo
+	authRequest.RequestorInfo = requestorInfo
+	authRequest.MerchantInfo = merchantInfo
+	authRequest.CardholderInfo = cardholderInfo
 
-  authenticateResponse, _, authenticateErr := apiClient.ThreeDSApi.ThreeDSAuthenticateSession(contextWithAPIKey, sessionId).AuthenticateThreeDSSessionRequest(authenticateThreeDSSessionRequest).Execute()
-  if authenticateErr != nil {
-    rw.WriteHeader(http.StatusInternalServerError)
-    json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
-    return
-  }
+	authenticateResponse, authenticateErr := client.Threeds.Sessions.Authenticate(context.Background(), sessionId, authRequest)
 
-  rw.WriteHeader(http.StatusOK)
-  json.NewEncoder(rw).Encode(authenticateResponse)
+	if authenticateErr != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+	json.NewEncoder(rw).Encode(authenticateResponse)
 }
 //highlight-end
 ```
@@ -1514,6 +1588,84 @@ const MyApp = () => {
 
 That's it 🎉!
 The result from the `authentication` (in case of frictionless) or `challenge-result` calls contains the authentication token (`authentication_value` attribute) and any other information needed to fully process the 3DS transaction.
+See below how to integrate this information with popular payment providers.
+
+# Integrating 3DS Results with your Payment Provider
+
+Once you have completed all necessary 3DS operations using our solution, the next step is to integrate the results with your payment provider.
+This section provides guidance on mapping and utilizing the 3DS results for successful transaction processing with popular payment providers.
+Proper mapping ensures seamless communication and compliance with your provider's requirements.
+
+<Alert type={Alerts.INFO}>If your provider is not listed here or you need further assistance with integration, please contact our team at <a href="mailto:support@basistheory.com">support@basistheory.com</a>.</Alert>
+
+## Integrating with Adyen
+
+The table below outlines the mapping of Basis Theory 3DS results to Adyen fields, based on their [official documentation](https://docs.adyen.com/online-payments/3d-secure/authorize-mpidata/?tab=3ds2-request_1).
+
+| Adyen Field | Basis Theory 3DS Value | Notes |
+| --- | --- | --- |
+| `paymentMethod.type` | - | This value is specific to Adyen's payment flow, refer to official documentation. |
+| `mpiData.authenticationResponse` | `authentication.authentication_status_code` | If challenge was required, take this value after retrieving the [challenge result](#retrieving-a-challenge-result). Otherwise (if frictionless), after [authentication](#authenticating-a-session) .|
+| `mpiData.directoryResponse` | `authentication.authentication_status_code` | Take this value after [authenticating](#authenticating-a-session) the session, regardless of challenge or not. |
+| `mpiData.cavv` | `authentication.authentication_value` | - |
+| `dsTransID` | `authentication.ds_transaction_id` | - |
+| `mpiData.eci` | `authentication.eci` | - |
+| `mpiData.threeDSVersion` | `authentication.threeds_version` | - |
+| `threeDS2RequestData.threeDSRequestorChallengeInd` | `authentication.challenge_preference_code` | Only if a challenge preference was selected during authentication. |
+| `mpiData.cavvAlgorithm` | `authentication.message_extensions[x].data`  | Applies to Cartes Bancaires only. Provided as part of an unspecified message extensions. Contact Adyen for more details. |
+| `mpiData.challengeCancel` | `authentication.challenge_cancel_reason_code` | - |
+| `mpiData.riskScore` | `authentication.message_extensions[x].data` | Applies to Cartes Bancaires only. Provided as part of an unspecified message extensions. Contact Adyen for more details. |
+| `additionalData.acquirerCode` | - | Applies only to Cartes Bancaires. Adyen asks the value to be set as `AdyenCartesBancaires` |
+| `additionalData.scaExemption` | - | Applies only to Cartes Bancaires. Specific to Adyen's flow, refer to Adyen's [documentation](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#request-additionalData-AdditionalData3DSecure-scaExemption). |
+| `shopperInteraction` | - | Specific to Adyen's flow, refer to Adyen's [documentation](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#request-shopperInteraction). |
+| `recurringProcessingModel` | - | Specific to Adyen's flow, refer to Adyen's [documentation](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#request-recurringProcessingModel). |
+
+## Integrating with Stripe
+
+The table below outlines the mapping of Basis Theory 3DS results to Stripe fields, based on their [official documentation](https://docs.stripe.com/payments/payment-intents/three-d-secure-import).
+
+| Stripe Field | Basis Theory 3DS Value | Notes |
+| --- | --- | --- |
+| `three_d_secure.cryptogram` | `authentication.authentication_value` | - |
+| `three_d_secure.transaction_id` | `authentication.ds_transaction_id` | - |
+| `three_d_secure.version` | `authentication.threeds_version` | - |
+| `three_d_secure.ares_trans_status` | `authentication.authentication_status_code` | - |
+| `three_d_secure.electronic_commerce_indicator` | `authentication.eci` | - |
+| `three_d_secure.exemption_indicator` | - | Specific to Stripe's flow, refer to Stripe's [documentation](https://docs.stripe.com/api/payment_intents/create#create_payment_intent-payment_method_options-card-three_d_secure-exemption_indicator). |
+| `three_d_secure.network_options` | See [Stripe Network Options](#stripe-network-options) below. | - |
+| `three_d_secure.requestor_challenge_indicator` | `authentication.challenge_preference_code` | Only if a challenge preference was selected during authentication. |
+
+### Stripe Network Options
+| Stripe Network Options Field | Basis Theory 3DS Value | Notes |
+| --- | --- | --- |
+| `cartes_bancaires.cb_avalgo` | `authentication.message_extensions[x].data` | Check `authentication.message_extensions` array for `message_extensions[x].name == CB-AVALGO` for the value of x (index). |
+| `cartes_bancaires.cb_exemption` | `authentication.message_extensions[x].data` | Check `authentication.message_extensions` array for `message_extensions[x].name == CB-EXEMPTION` for the value of x (index). |
+| `cartes_bancaires.cb_score` | `authentication.message_extensions[x].data` | Check `authentication.message_extensions` array for `message_extensions[x].name == CB-SCORE` for the value of x (index). |
+
+## Integrating with Checkout
+
+The table below outlines the mapping of Basis Theory 3DS results to Checkout.com fields, based on their [official documentation](https://www.checkout.com/docs/payments/authenticate-payments#Authenticate_payments_using_a_third-party_provider).
+
+| Stripe Field | Basis Theory 3DS Value | Notes |
+| --- | --- | --- |
+| `3ds.challenge_indicator` | See [Checkout Challenge Indicator](#checkout-challenge-indicator) below. | - |
+| `3ds.cryptogram` | `authentication.authentication_value` | - |
+| `3ds.eci` | `authentication.eci` | - |
+| `3ds.enabled` | - | Checkout asks the value to be set as `true` for using 3ds. |
+| `3ds.version` | `authentication.threeds_version` | - |
+| `3ds.xid` | `authentication.ds_transaction_id` | - |
+| `success_url` | - | From Checkout: 'The URL that the cardholder is redirected to when 3DS authentication is successful.' |
+| `failure_url` | - | From Checkout: 'The URL that the cardholder is redirected to when 3DS authentication fails.' |
+
+### Checkout Challenge Indicator
+| Basis Theory `challenge_preference` | Basis Theory `challenge_preference_code` | Checkout `challenge_indicator` |
+| --- | --- | --- |
+| `no-preference` | `01` | `no_preference` |
+| `no-challenge` | `02` | `no_challenge_requested` |
+| `challenge-requested` | `03` | `challenge_requested` |
+| `challenge-mandated` | `04` | `challenge_requested_mandate` |
+
+**Note**: Basis Theory provides additional challenge preference values, but Checkout.com only supports the above values.
 
 ## Learn More
 

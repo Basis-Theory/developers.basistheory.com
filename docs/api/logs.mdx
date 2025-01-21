@@ -39,8 +39,23 @@ curl "https://api.basistheory.com/logs" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+const response = await client.logs.list();
+for await (const item of response) {
+    console.log(item);
+}
+
+// Or you can manually iterate page-by-page
+const page = await client.logs.list();
+while (page.hasNextPage()) {
+    page = page.getNextPage();
+}
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -48,88 +63,39 @@ const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const logs = await bt.logs.list();
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new LogsApi(config);
-var entityType = "";
-var entityId = "";
-var startDate = DateTime.Parse("2013-10-20T19:20:30+01:00");
-var endDate = DateTime.Parse("2013-10-20T19:20:30+01:00");
-var page = 1;
-var start = "";
-var size = 1;
-
-LogPaginatedList result = apiInstance.Get(entityType, entityId, startDate, endDate, page, start, size);
+await client.Logs.ListAsync(new LogsListRequest());
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.time.OffsetDateTime;
-import java.util.UUID;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        LogsApi apiInstance = new LogsApi(defaultClient);
-        LogPaginatedList result = apiInstance.get(null, null, null, null, null, null);
-        System.out.println(result);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import logs_api
+response = client.logs.list()
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    logs_client = logs_api.LogsApi(api_client)
+for item in response:
+    yield item
 
-    logs = logs_client.get()
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  logs, httpResponse, err := apiClient.LogsApi.Get(contextWithAPIKey).Execute()
-}
 ```
 
   </TabItem>
@@ -183,10 +149,51 @@ Get a list of entity types that may be referenced from the logs.
 
 ### Request
 
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
 ```shell showLineNumbers
 curl "https://api.basistheory.com/logs/entity-types" \
   -H "BT-API-KEY: <MANAGEMENT_API_KEY>"
 ```
+
+  </TabItem>
+  <TabItem value="node" label="Node">
+
+```javascript showLineNumbers
+await client.logs.getEntityTypes();
+```
+
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+await client.Logs.GetEntityTypesAsync();
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+client.logs.get_entity_types()
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+
+```
+
+  </TabItem>
+</Tabs>
 
 ### Response
 

@@ -137,42 +137,42 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 
-const { BasisTheory } = require("@basis-theory/basis-theory-js");
+const { BasisTheoryClient, BasisTheory } = require("@basis-theory/node-sdk");
 let bt;
 
 app.use(bodyParser.json());
 
 app.post("/authorize-session", async (request, response) => {
-  if (!bt) {
-    bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
-  }
+    if (!bt) {
+        bt = await new BasisTheoryClient({ apiKey: "<PRIVATE_API_KEY>" });
+    }
 
-  const { nonce } = request.body;
+    const { nonce } = request.body;
 
-  // authorizing a session returns an empty 200 response
-  await bt.sessions.authorize({
-    nonce: nonce,
-    rules: [
-      {
-        description: "Allow reading only our token",
-        priority: 1,
-        conditions: [
-          {
-            attribute: "id",
-            operator: "equals",
-            value: "token_id_1234567890",
-          },
+    // authorizing a session returns an empty 200 response
+    await bt.sessions.authorize({
+        nonce: nonce,
+        rules: [
+            {
+                description: "Allow reading only our token",
+                priority: 1,
+                conditions: [
+                    {
+                        attribute: "id",
+                        operator: "equals",
+                        value: "token_id_1234567890",
+                    },
+                ],
+                permissions: ["token:read"],
+                transform: "reveal",
+            },
         ],
-        permissions: ["token:read"],
-        transform: "reveal",
-      },
-    ],
-  });
+    });
 
-  // this response is arbitrary and not required
-  response.json({
-    result: "success",
-  });
+    // this response is arbitrary and not required
+    response.json({
+        result: "success",
+    });
 });
 ```
 

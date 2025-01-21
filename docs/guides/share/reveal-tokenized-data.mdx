@@ -323,47 +323,47 @@ First, lets create the [Private Application](/docs/api/applications#application-
 
 Using the Private Application API Key, the `nonce` from our session, and a [Condition](/docs/concepts/access-controls#conditions) we ensure we are only granting authorization for the desired token.
 
-<Alert type={Alerts.WARNING}>The <b>only way</b> to ensure your private API keys are not publically accessible is for this step to execute in your backend service.</Alert>
+<Alert type={Alerts.WARNING}>The <b>only way</b> to ensure your private API keys are not publicly accessible is for this step to execute in your backend service.</Alert>
 
 In this guide, we'll use [Express.js](https://expressjs.com/) as our backend but [docs](/docs/api/applications/sessions#authorize-session) are available for different technologies.
 We'll create a `backend.js` file and add the following code to start the Express.js backend and authorize an incoming session.
 
 ```javascript showLineNumbers title="backend.js"
 const express = require("express");
-const { BasisTheory } = require("@basis-theory/basis-theory-js");
+const { BasisTheoryClient } = require("@basis-theory/node-sdk");
 
 const app = express();
 const port = 4242;
 
 app.post("/authorize", async (request, response) => {
-  const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
-  const { nonce } = request.body;
-  // authorizing a session returns an empty 200 response
-  await bt.sessions.authorize({
-    nonce: nonce,
-    rules: [
-      {
-        description: "Reveal Token",
-        priority: 1,
-        conditions: [
-          {
-            attribute: "id",
-            operator: "equals",
-            value: "token_id_1234567890",
-          },
+    const bt = await new BasisTheoryClient({ apiKey: "<PRIVATE_API_KEY>" });
+    const { nonce } = request.body;
+    // authorizing a session returns an empty 200 response
+    await bt.sessions.authorize({
+        nonce: nonce,
+        rules: [
+            {
+                description: "Reveal Token",
+                priority: 1,
+                conditions: [
+                    {
+                        attribute: "id",
+                        operator: "equals",
+                        value: "token_id_1234567890",
+                    },
+                ],
+                permissions: ["token:read", "token:use"],
+                transform: "reveal",
+            },
         ],
-        permissions: ["token:read", "token:use"],
-        transform: "reveal",
-      },
-    ],
-  });
-  // this response is arbitrary and not required
-  response.json({
-    result: "success",
-  });
+    });
+    // this response is arbitrary and not required
+    response.json({
+        result: "success",
+    });
 });
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+    console.log(`Example app listening on port ${port}`);
 });
 ```
 

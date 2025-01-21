@@ -23,7 +23,7 @@ import TestCards from "@site/docs/api/3ds/_test-cards.mdx";
 
 Create a 3DS Session for a customer initiated transaction (CIT).
 
-<Alert type={Alerts.WARNING}>Customer 3DS session creation is only supported through our web <a href="/docs/sdks/web/3ds/">SDK</a>.</Alert>
+<Alert type={Alerts.WARNING}>Customer 3DS session creation is only supported through our <a href="/docs/sdks/web/3ds/">web</a>, <a href="/docs/sdks/mobile/3ds-react-native">react-native</a> and <a href="/docs/sdks/mobile/3ds/">mobile</a> SDKs.</Alert>
 
 ## Create a Merchant Session
 
@@ -55,8 +55,17 @@ curl "https://api.basistheory.com/3ds/sessions" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.threeds.sessions.create({
+  tokenId: "bfe0060c-a465-41a0-a620-c804952d3468",
+  type: "merchant"
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -67,98 +76,38 @@ const result = await bt.threeds.createSession({
   type: "merchant"
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new ThreeDSApi(config);
-var createThreeDSSessionRequest = new CreateThreeDSSessionRequest()
-{
-    TokenId = "bfe0060c-a465-41a0-a620-c804952d3468",
-    Type = "merchant"
-};
-
-CreateThreeDSSessionResponse result = apiInstance.ThreeDSCreateSession(createThreeDSSessionRequest);
+await client.Threeds.Sessions.CreateAsync(new CreateThreeDsSessionRequest {
+  TokenId = "bfe0060c-a465-41a0-a620-c804952d3468",
+  Type = "merchant"
+});
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.ApiClient;
-import com.basistheory.ApiException;
-import com.basistheory.Configuration;
-import com.basistheory.auth.*;
-import com.basistheory.models.*;
-import com.basistheory.ThreeDsApi;
 
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PUBLIC_API_KEY>");
-
-        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
-        CreateThreeDSSessionRequest createThreeDSSessionRequest = new CreateThreeDSSessionRequest();
-        CreateThreeDSSessionResponse result = apiInstance.threeDSCreateSession(createThreeDSSessionRequest
-          .tokenId("bfe0060c-a465-41a0-a620-c804952d3468")
-          .type("merchant"));
-        System.out.println(result);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import three_ds_api
-from basistheory.model.create_three_ds_session_request import CreateThreeDSSessionRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-
-    result = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
+client.threeds.sessions.create(
         token_id="bfe0060c-a465-41a0-a620-c804952d3468",
-        type="merchant"))
+        type="merchant"
+    )
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v5"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  createThreeDSSessionRequest := *basistheory.NewCreateThreeDSSessionRequest()
-  createThreeDSSessionRequest.SetTokenId("bfe0060c-a465-41a0-a620-c804952d3468")
-  createThreeDSSessionRequest.SetType("merchant")
-
-  createResponse, createHttpResponse, createErr := apiClient.ThreeDSApi.ThreeDSCreateSession(contextWithAPIKey).CreateThreeDSSessionRequest(createThreeDSSessionRequest).Execute()
-}
 ```
   </TabItem>
 </Tabs>
@@ -226,8 +175,14 @@ curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f7
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.threeds.sessions.get("id");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -235,79 +190,34 @@ const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
 
 const session = await bt.threeds.getSessionById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new ThreeDSApi(config);
-var id = Guid.Parse("");
-
-ThreeDSSession result = apiInstance.ThreeDSGetSessionById(id);
+await client.Threeds.Sessions.GetAsync("id");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
-        ThreeDSSession result = apiInstance.threeDSGetSessionById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import three_ds_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-
-    result = three_ds_client.three_ds_get_session_by_id(id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+client.threeds.sessions.get(
+    id="id",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v5"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  result, httpResponse, err := apiClient.ThreeDSApi.ThreeDSGetSessionById(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
-}
 ```
 
   </TabItem>
@@ -433,8 +343,18 @@ curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f7
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.threeds.sessions.authenticate("sessionId", {
+    authenticationCategory: "authentication_category",
+    authenticationType: "authentication_type",
+    ...
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -467,187 +387,45 @@ const authentication = await bt.threeds.authenticateSession("c06d0789-0a38-40be-
   }
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new ThreeDSApi(config);
-var sessionId = Guid.Parse("");
-var authenticateThreeDSSessionRequest = new AuthenticateThreeDSSessionRequest()
-{
-    AuthenticationCategory = "payment",
-    AuthenticationType = "payment-transaction",
-    PurchaseInfo = new ThreeDSPurchaseInfo {
-        Amount = "80000",
-        Currency = "826",
-        Exponent = "2",
-        Date = "20240109141010"
-    },
-    RequestorInfo = new ThreeDSRequestorInfo {
-        Id = "example-3ds-merchant",
-        Name = "Example 3DS Merchant",
-        Url = "https://www.example.com/example-merchant"
-    },
-    MerchantInfo = new ThreeDSMerchantInfo {
-        Mid = "9876543210001",
-        AcquirerBin = "000000999",
-        Name = "Example 3DS Merchant",
-        CategoryCode = "7922",
-        CountryCode = "826"
-    },
-    CardholderInfo = new ThreeDSCardholderInfo {
-        Name = "John Doe",
-        Email = "john@me.com"
+await client.Threeds.Sessions.AuthenticateAsync(
+    "sessionId",
+    new AuthenticateThreeDsSessionRequest
+    {
+        AuthenticationCategory = "authentication_category",
+        AuthenticationType = "authentication_type",
+        RequestorInfo = new ThreeDsRequestorInfo(),
     }
-};
-
-ThreeDSAuthentication result = apiInstance.ThreeDSAuthenticateSession(sessionId, authenticateThreeDSSessionRequest);
+);
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Arrays;
-import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
-        AuthenticateThreeDSSessionRequest authenticateThreeDSSessionRequest = new AuthenticateThreeDSSessionRequest();
-        ThreeDSAuthentication result = apiInstance.threeDSAuthenticateSession("c06d0789-0a38-40be-b7cc-c28a718f76f1", authenticateThreeDSSessionRequest
-          .authenticationCategory("payment")
-          .authenticationType("payment-transaction")
-          .purchaseInfo(new ThreeDSPurchaseInfo()
-            .amount("80000")
-            .currency("826")
-            .exponent("2")
-            .date("20240109141010"))
-          .requestorInfo(new ThreeDSRequestorInfo()
-            .id("example-3ds-merchant")
-            .name("Example 3DS Merchant")
-            .url("https://www.example.com/example-merchant"))
-          .merchantInfo(new ThreeDSMerchantInfo()
-            .mid("9876543210001")
-            .acquirerBin("000000999")
-            .name("Example 3DS Merchant")
-            .categoryCode("7922")
-            .countryCode("826"))
-          .cardholderInfo(new ThreeDSCardholderInfo()
-            .name("John Doe")
-            .email("john@me.com")));
-        System.out.println(result);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import three_ds_api
-from basistheory.model.authenticate_three_ds_session_request import AuthenticateThreeDSSessionRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-
-    authentication = three_ds_client.three_ds_authenticate_session("c06d0789-0a38-40be-b7cc-c28a718f76f1", authenticate_three_ds_session_request=AuthenticateThreeDSSessionRequest(
-        authentication_category="payment",
-        authentication_type="payment-transaction",
-        purchase_info=basistheory.ThreeDSPurchaseInfo(
-            amount="80000",
-            currency="826",
-            exponent="2",
-            date="20240109141010"
-        ),
-        requestor_info=basistheory.ThreeDSRequestorInfo(
-            id="example-3ds-merchant",
-            name="Example 3DS Merchant",
-            url="https://www.example.com/example-merchant"
-        ),
-        merchant_info=basistheory.ThreeDSMerchantInfo(
-            mid="9876543210001",
-            acquirer_bin="000000999",
-            name="Example 3DS Merchant",
-            category_code="7922",
-            country_code="826"
-        ),
-        cardholder_info=basistheory.ThreeDSCardholderInfo(
-            name="John Doe",
-            email="john@me.com"
-    )))
+client.threeds.sessions.authenticate(
+    session_id="sessionId",
+    authentication_category="authentication_category",
+    authentication_type="authentication_type",
+    requestor_info=ThreeDsRequestorInfo(),
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v5"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  sessionId := "c06d0789-0a38-40be-b7cc-c28a718f76f1"
-  authenticateThreeDSSessionRequest := *basistheory.NewAuthenticateThreeDSSessionRequest()
-  authenticateThreeDSSessionRequest.SetAuthenticationCategory("payment")
-  authenticateThreeDSSessionRequest.SetAuthenticationType("payment-transaction")
-
-  purchaseInfo := *basistheory.NewThreeDSPurchaseInfo()
-  purchaseInfo.SetAmount("80000")
-  purchaseInfo.SetCurrency("826")
-  purchaseInfo.SetExponent("2")
-  purchaseInfo.SetDate("20240109141010")
-
-  requestorInfo := *basistheory.NewThreeDSRequestorInfo()
-  requestorInfo.SetId("example-3ds-merchant")
-  requestorInfo.SetName("Example 3DS Merchant")
-  requestorInfo.SetUrl("https://www.example.com/example-merchant")
-
-  merchantInfo := *basistheory.NewThreeDSMerchantInfo()
-  merchantInfo.SetMid("9876543210001")
-  merchantInfo.SetAcquirerBin("000000999")
-  merchantInfo.SetName("Example 3DS Merchant")
-  merchantInfo.SetCategoryCode("7922")
-  merchantInfo.SetCountryCode("826")
-
-  cardholderInfo := *basistheory.NewThreeDSCardholderInfo()
-  cardholderInfo.SetName("John Doe")
-  cardholderInfo.SetEmail("john@me.com")
-
-  authenticateThreeDSSessionRequest.SetPurchaseInfo(purchaseInfo)
-  authenticateThreeDSSessionRequest.SetRequestorInfo(requestorInfo)
-  authenticateThreeDSSessionRequest.SetMerchantInfo(merchantInfo)
-  authenticateThreeDSSessionRequest.SetCardholderInfo(cardholderInfo)
-
-  authenticateResponse, authenticateHttpResponse, authenticateErr := apiClient.ThreeDSApi.ThreeDSAuthenticateSession(contextWithAPIKey, sessionId).AuthenticateThreeDSSessionRequest(authenticateThreeDSSessionRequest).Execute()
-}
 ```
   </TabItem>
 </Tabs>
@@ -693,16 +471,18 @@ The authentication type can differt depending on the 3DS session type. See table
 | `account-verification` | `customer`, `merchant` |
 
 #### Challenge Preferences
-- `no-preference`
-- `no-challenge`
-- `challenge-requested`
-- `challenge-mandated`
-- `no-challenge-risk-analysis-performed`
-- `no-challenge-data-sharing-only`
-- `no-challenge-strong-consumer-auth`
-- `no-challenge-whitelist-exemption`
-- `challenge-requested-whitelist-prompt`
-- `cartes-bancaires`
+| Value | EMV Code | Description |
+| --- | --- | --- |
+| `no-preference` | `01` | No preference |
+| `no-challenge` | `02` | No challenge requested |
+| `challenge-requested` | `03` | Challenge requested |
+| `challenge-mandated` | `04` | Challenge mandated by the issuer |
+| `no-challenge-risk-analysis-performed` | `05` | No challenge, risk analysis already performed |
+| `no-challenge-data-sharing-only` | `06` | No challenge, data sharing only |
+| `no-challenge-strong-consumer-auth` | `07` | No challenge, strong consumer authentication already performed |
+| `no-challenge-whitelist-exemption` | `08` | No challenge, whitelist exemption |
+| `challenge-requested-whitelist-prompt` | `09` | Challenge requested, whitelist prompt if required |
+| `cartes-bancaires` | `90` | Enable Cartes Bancaires Scoring Service |
 
 #### Purchase Info Object
 This object contains information about the purchase itself (if the authentication category is a `payment` transaction).
@@ -730,11 +510,11 @@ This object contain information about the merchant (who is collecting the money 
 
 | Attribute | Required | Type | Description
 | --- | --- | --- | --- |
-| `mid` | conditional | _string_ | The merchant identifier. Required if `authentication_category` is `payment` |
-| `acquirer_bin` | conditional | _string_ | The merchant/acquirer BIN. Required if `authentication_category` is `payment` |
-| `name` | conditional | _string_ | The merchant's name. Required if `authentication_category` is `payment` |
+| `mid` | conditional | _string_ | The merchant identifier, typically found in billing statements or in the issuer dashboard. Required if `authentication_category` is `payment`.  |
+| `acquirer_bin` | conditional | _string_ | The merchant/acquirer BIN, provided by the card scheme. Required if `authentication_category` is `payment` |
+| `name` | conditional | _string_ | The merchant's name as defined in the payment system. Required if `authentication_category` is `payment` |
 | `country_code` | conditional | _string_ | ISO 3166-1 numeric three-digit country code of the merchant. Required if `authentication_category` is `payment` |
-| `category_code` | conditional | _string_ | The merchant's category code (mcc). Required if `authentication_category` is `payment` |
+| `category_code` | conditional | _string_ | The merchant's category code (mcc), as defined by the card scheme. Required if `authentication_category` is `payment` |
 | `risk_info` | false | [Merchant Risk Info](#merchant-info-object) | Optional information to de-risk the transaction |
 
 #### Merchant Risk Info Object
@@ -812,7 +592,7 @@ Take note that most issuers tend to request at least the `name` and `email` prop
 
 | Attribute | Required | Type | Description
 | --- | --- | --- | --- |
-| `account_id` | false | _string_ | The cardholder account identifier |
+| `account_id` | false | _string_ | The cardholder account identifier - used to reference the cardholder in the merchant's system. |
 | `account_type` | false | _string_ | The type of cardholder account. See [Cardholder Account Types](#cardholder-account-types) for allowed values |
 | `account_info` | false | [Cardholder Account Info](#cardholder-account-info-object) | Information about the cardholder's account |
 | `authentication_info` | false | [Cardholder Authentication Info](#cardholder-authentication-info-object) | Information on how the cardholder was authenticated in the merchant platform |
@@ -977,8 +757,14 @@ curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f7
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.threeds.sessions.getChallengeResult("sessionId");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -986,79 +772,34 @@ const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
 
 const result = await bt.threeds.getChallengeResult("c06d0789-0a38-40be-b7cc-c28a718f76f1");
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new ThreeDSApi(config);
-var sessionId = Guid.Parse("");
-
-ThreeDSAuthentication result = apiInstance.ThreeDSGetChallengeResult(sessionId);
+await client.Threeds.Sessions.GetChallengeResultAsync("sessionId");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
-        ThreeDSAuthentication result = apiInstance.threeDSGetChallengeResult(sessionId);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import three_ds_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-
-    result = three_ds_client.three_ds_get_challenge_result(session_id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+client.threeds.sessions.get_challenge_result(
+    session_id="sessionId",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v5"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  result, httpResponse, err := apiClient.ThreeDSApi.ThreeDSGetChallengeResult(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
-}
 ```
 
   </TabItem>
@@ -1174,14 +915,17 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 | `token_intent_id`               | _string_ | The ID of the card token intent used in the 3DS transaction                                                                                  |
 | `authentication_value`          | _string_ | The token value used to authorize the transaction. Also know as CAVV, AAV, AEVV, etc.                                                        |
 | `authentication_status`         | _string_ | The outcome of the 3DS authentication. See [Authentication Status](#authentication-status)                                                   |
-| `authentication_status_code`    | _string_ | Character code for the authentication status                                                                                                 |
+| `authentication_status_code`    | _string_ | EMV character code for the authentication status                                                                                             |
 | `authentication_status_reason`  | _string_ | Additional information about the authentication status if necessary. See [Authentication Status Reason](#authentication-status-reason)       |
 | `eci`                           | _string_ | Electronic Commerce Indicator                                                                                                                |
 | `acs_challenge_mandated`        | _string_ | Indicates whether regional mandates (e.g., PSD2) required a challenge to be performed. See [ACS Challenge Mandated](#acs-challenge-mandated) |
 | `authentication_challenge_type` | _string_ | The type of challenge authentication used (if challenge). See [Authentication Challenge Type](#authentication-challenge-type)                |
 | `acs_challenge_url`             | _string_ | The URL to be used for the challenge                                                                                                         |
+| `challenge_preference`          | _string_ | The selected [Challenge Preference](#challenge-preferences) during authentication                                                            |
+| `challenge_preference_code`     | _string_ | EMV numeric code for the selected challenge preference                                                                                     |
 | `challenge_attempts`            | _string_ | The number of challenges attempted by the cardholder                                                                                         |
 | `challenge_cancel_reason`       | _string_ | The reason why a challenge was cancelled. See [Challenge Cancel Reason](#challenge-cancel-reason)                                            |
+| `challenge_cancel_reason_code`  | _string_ | EMV numeric code for the challenge cancel reason.                                                                                          |
 | `cardholder_info`               | _string_ | Information from the issuer to be displayed to the cardholder                                                                                |
 | `whitelist_status`              | _string_ | Indicates if the cardholder whitelisted the merchant. See [Whitelist Status](#whitelist-status)                                              |
 | `whitelist_status_source`       | _string_ | Identifies the system that set the whitelist value. See [Whitelist Status Source](#whitelist-status-source)                                  |
@@ -1196,16 +940,16 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 
 #### Authentication Status
 
-| Value | Description |
-| --- | --- |
-| `successful` | 3DS authentication was successful |
-| `attempted` | 3DS authentication was attempted but not possible. Successful authentication granted by card brand on issuer's behalf |
-| `failed` | Authentication failed, stop the transaction |
-| `unavailable` | Authentication could not be performed. Try to proceed without the authentication value |
-| `challenge` | A challenge is required, use the SDK to perform the [Challenge](/docs/sdks/web/3ds/methods#start-challenge) |
-| `decoupled_challenge` | A challenge will be performed by the issuer. Get the [Challenge Result](#get-challenge-result) to learn the outcome |
-| `rejected` | The issuer rejected the authentication attempt |
-| `informational` | Authentication not requested, data sent to the ACS for informational purposes |
+| Value | EMV Code | Description |
+| --- | --- | --- |
+| `successful` | `Y` | 3DS authentication was successful |
+| `attempted` | `A` |3DS authentication was attempted but not possible. Successful authentication granted by card brand on issuer's behalf |
+| `failed` | `N` |Authentication failed, stop the transaction |
+| `unavailable` | `U` | Authentication could not be performed. Try to proceed without the authentication value |
+| `challenge` | `C` |A challenge is required, use the SDK to perform the [Challenge](/docs/sdks/web/3ds/methods#start-challenge) |
+| `decoupled_challenge` | `D` |A challenge will be performed by the issuer. Get the [Challenge Result](#get-challenge-result) to learn the outcome |
+| `rejected` | `R` | The issuer rejected the authentication attempt |
+| `informational` | `I` | Authentication not requested, data sent to the ACS for informational purposes |
 
 #### Authentication Status Reason
 
@@ -1249,15 +993,15 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 
 #### Challenge Cancel Reason
 
-| Value | Description |
-| --- | --- |
-| `cardholder-canceled` | Cardholder selected 'Cancel' on the challenge |
-| `requestor-canceled` | 3DS requestor cancelled authentication  |
-| `transaction-abandoned` | Transaction was abandoned  |
-| `acs-timeout` | Transaction timed out at ACS  |
-| `acs-timeout-request-not-received` | Transaction timed out at ACS - Challenge request not received  |
-| `error` | Transaction error |
-| `unknown` | Unknown reason |
+| Value | EMV Code | Description |
+| --- | --- | --- |
+| `cardholder-canceled` | `01` | Cardholder selected 'Cancel' on the challenge |
+| `requestor-canceled` | `02` | 3DS requestor cancelled authentication  |
+| `transaction-abandoned` | `03` | Transaction was abandoned  |
+| `acs-timeout` | `04` | Transaction timed out at ACS  |
+| `acs-timeout-request-not-received` | `05` | Transaction timed out at ACS - Challenge request not received  |
+| `error` | `06` | Transaction error |
+| `unknown` | `07` | Unknown reason |
 
 #### Whitelist Status
 
