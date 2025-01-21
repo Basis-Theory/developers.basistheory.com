@@ -46,8 +46,17 @@ curl "https://api.basistheory.com" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+let token = await client.tokens.create(
+    {...},
+    {idempotencyKey: '<YOUR IDEMPOTENCY KEY>'}
+);
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import {BasisTheory} from "@basis-theory/basis-theory-js";
 
@@ -60,35 +69,41 @@ const applications = await bt.tokens.create(
 }
 );
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-var apiInstance = new TokensApi(config);
-var response = await apiInstance.CreateAsync(new CreateTokenRequest {...}, 
-    requestOptions: new RequestOptions
+await client.Tokens.CreateAsync(new CreateTokenRequest
+    {...},
+    new IdempotentRequestOptions
     {
-        IdempotencyKey = "aa5d3379-6385-4ef4-9fdb-ca1341572153"
-    });
+        IdempotencyKey = Guid.NewGuid().ToString(),
+    }
+);
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
-
-api_client = basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>"))
-client = tokens_api.TokensApi(api_client)
-
-client.create(request_options=basistheory.RequestOptions(idempotency_key="aa5d3379-6385-4ef4-9fdb-ca1341572153"))
+client.tokens.create(
+    ...
+    idempotency_key=idempotency_key
+)
 ```
-
   </TabItem>
+    <TabItem value="go" label="Go">
+```go showLineNumbers
+idempotencyKey := uuid.NewString()
+
+tokenCreatedResponse, err := client.Tokens.Create(
+  context.TODO(),
+  &basistheory.CreateTokenRequest{
+    ...
+  },
+  // highlight-next-line
+  option.WithIdempotencyKey(&idempotencyKey),
+)
+```
+    </TabItem>
 </Tabs>

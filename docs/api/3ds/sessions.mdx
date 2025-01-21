@@ -55,8 +55,17 @@ curl "https://api.basistheory.com/3ds/sessions" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.threeds.sessions.create({
+  tokenId: "bfe0060c-a465-41a0-a620-c804952d3468",
+  type: "merchant"
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -67,98 +76,38 @@ const result = await bt.threeds.createSession({
   type: "merchant"
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new ThreeDSApi(config);
-var createThreeDSSessionRequest = new CreateThreeDSSessionRequest()
-{
-    TokenId = "bfe0060c-a465-41a0-a620-c804952d3468",
-    Type = "merchant"
-};
-
-CreateThreeDSSessionResponse result = apiInstance.ThreeDSCreateSession(createThreeDSSessionRequest);
+await client.Threeds.Sessions.CreateAsync(new CreateThreeDsSessionRequest {
+  TokenId = "bfe0060c-a465-41a0-a620-c804952d3468",
+  Type = "merchant"
+});
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.ApiClient;
-import com.basistheory.ApiException;
-import com.basistheory.Configuration;
-import com.basistheory.auth.*;
-import com.basistheory.models.*;
-import com.basistheory.ThreeDsApi;
 
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PUBLIC_API_KEY>");
-
-        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
-        CreateThreeDSSessionRequest createThreeDSSessionRequest = new CreateThreeDSSessionRequest();
-        CreateThreeDSSessionResponse result = apiInstance.threeDSCreateSession(createThreeDSSessionRequest
-          .tokenId("bfe0060c-a465-41a0-a620-c804952d3468")
-          .type("merchant"));
-        System.out.println(result);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import three_ds_api
-from basistheory.model.create_three_ds_session_request import CreateThreeDSSessionRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-
-    result = three_ds_client.three_ds_create_session(create_three_ds_session_request=CreateThreeDSSessionRequest(
+client.threeds.sessions.create(
         token_id="bfe0060c-a465-41a0-a620-c804952d3468",
-        type="merchant"))
+        type="merchant"
+    )
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v5"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  createThreeDSSessionRequest := *basistheory.NewCreateThreeDSSessionRequest()
-  createThreeDSSessionRequest.SetTokenId("bfe0060c-a465-41a0-a620-c804952d3468")
-  createThreeDSSessionRequest.SetType("merchant")
-
-  createResponse, createHttpResponse, createErr := apiClient.ThreeDSApi.ThreeDSCreateSession(contextWithAPIKey).CreateThreeDSSessionRequest(createThreeDSSessionRequest).Execute()
-}
 ```
   </TabItem>
 </Tabs>
@@ -226,8 +175,14 @@ curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f7
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.threeds.sessions.get("id");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -235,79 +190,34 @@ const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
 
 const session = await bt.threeds.getSessionById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new ThreeDSApi(config);
-var id = Guid.Parse("");
-
-ThreeDSSession result = apiInstance.ThreeDSGetSessionById(id);
+await client.Threeds.Sessions.GetAsync("id");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
-        ThreeDSSession result = apiInstance.threeDSGetSessionById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import three_ds_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-
-    result = three_ds_client.three_ds_get_session_by_id(id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+client.threeds.sessions.get(
+    id="id",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v5"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  result, httpResponse, err := apiClient.ThreeDSApi.ThreeDSGetSessionById(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
-}
 ```
 
   </TabItem>
@@ -433,8 +343,18 @@ curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f7
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.threeds.sessions.authenticate("sessionId", {
+    authenticationCategory: "authentication_category",
+    authenticationType: "authentication_type",
+    ...
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -467,187 +387,45 @@ const authentication = await bt.threeds.authenticateSession("c06d0789-0a38-40be-
   }
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new ThreeDSApi(config);
-var sessionId = Guid.Parse("");
-var authenticateThreeDSSessionRequest = new AuthenticateThreeDSSessionRequest()
-{
-    AuthenticationCategory = "payment",
-    AuthenticationType = "payment-transaction",
-    PurchaseInfo = new ThreeDSPurchaseInfo {
-        Amount = "80000",
-        Currency = "826",
-        Exponent = "2",
-        Date = "20240109141010"
-    },
-    RequestorInfo = new ThreeDSRequestorInfo {
-        Id = "example-3ds-merchant",
-        Name = "Example 3DS Merchant",
-        Url = "https://www.example.com/example-merchant"
-    },
-    MerchantInfo = new ThreeDSMerchantInfo {
-        Mid = "9876543210001",
-        AcquirerBin = "000000999",
-        Name = "Example 3DS Merchant",
-        CategoryCode = "7922",
-        CountryCode = "826"
-    },
-    CardholderInfo = new ThreeDSCardholderInfo {
-        Name = "John Doe",
-        Email = "john@me.com"
+await client.Threeds.Sessions.AuthenticateAsync(
+    "sessionId",
+    new AuthenticateThreeDsSessionRequest
+    {
+        AuthenticationCategory = "authentication_category",
+        AuthenticationType = "authentication_type",
+        RequestorInfo = new ThreeDsRequestorInfo(),
     }
-};
-
-ThreeDSAuthentication result = apiInstance.ThreeDSAuthenticateSession(sessionId, authenticateThreeDSSessionRequest);
+);
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Arrays;
-import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
-        AuthenticateThreeDSSessionRequest authenticateThreeDSSessionRequest = new AuthenticateThreeDSSessionRequest();
-        ThreeDSAuthentication result = apiInstance.threeDSAuthenticateSession("c06d0789-0a38-40be-b7cc-c28a718f76f1", authenticateThreeDSSessionRequest
-          .authenticationCategory("payment")
-          .authenticationType("payment-transaction")
-          .purchaseInfo(new ThreeDSPurchaseInfo()
-            .amount("80000")
-            .currency("826")
-            .exponent("2")
-            .date("20240109141010"))
-          .requestorInfo(new ThreeDSRequestorInfo()
-            .id("example-3ds-merchant")
-            .name("Example 3DS Merchant")
-            .url("https://www.example.com/example-merchant"))
-          .merchantInfo(new ThreeDSMerchantInfo()
-            .mid("9876543210001")
-            .acquirerBin("000000999")
-            .name("Example 3DS Merchant")
-            .categoryCode("7922")
-            .countryCode("826"))
-          .cardholderInfo(new ThreeDSCardholderInfo()
-            .name("John Doe")
-            .email("john@me.com")));
-        System.out.println(result);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import three_ds_api
-from basistheory.model.authenticate_three_ds_session_request import AuthenticateThreeDSSessionRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-
-    authentication = three_ds_client.three_ds_authenticate_session("c06d0789-0a38-40be-b7cc-c28a718f76f1", authenticate_three_ds_session_request=AuthenticateThreeDSSessionRequest(
-        authentication_category="payment",
-        authentication_type="payment-transaction",
-        purchase_info=basistheory.ThreeDSPurchaseInfo(
-            amount="80000",
-            currency="826",
-            exponent="2",
-            date="20240109141010"
-        ),
-        requestor_info=basistheory.ThreeDSRequestorInfo(
-            id="example-3ds-merchant",
-            name="Example 3DS Merchant",
-            url="https://www.example.com/example-merchant"
-        ),
-        merchant_info=basistheory.ThreeDSMerchantInfo(
-            mid="9876543210001",
-            acquirer_bin="000000999",
-            name="Example 3DS Merchant",
-            category_code="7922",
-            country_code="826"
-        ),
-        cardholder_info=basistheory.ThreeDSCardholderInfo(
-            name="John Doe",
-            email="john@me.com"
-    )))
+client.threeds.sessions.authenticate(
+    session_id="sessionId",
+    authentication_category="authentication_category",
+    authentication_type="authentication_type",
+    requestor_info=ThreeDsRequestorInfo(),
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v5"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  sessionId := "c06d0789-0a38-40be-b7cc-c28a718f76f1"
-  authenticateThreeDSSessionRequest := *basistheory.NewAuthenticateThreeDSSessionRequest()
-  authenticateThreeDSSessionRequest.SetAuthenticationCategory("payment")
-  authenticateThreeDSSessionRequest.SetAuthenticationType("payment-transaction")
-
-  purchaseInfo := *basistheory.NewThreeDSPurchaseInfo()
-  purchaseInfo.SetAmount("80000")
-  purchaseInfo.SetCurrency("826")
-  purchaseInfo.SetExponent("2")
-  purchaseInfo.SetDate("20240109141010")
-
-  requestorInfo := *basistheory.NewThreeDSRequestorInfo()
-  requestorInfo.SetId("example-3ds-merchant")
-  requestorInfo.SetName("Example 3DS Merchant")
-  requestorInfo.SetUrl("https://www.example.com/example-merchant")
-
-  merchantInfo := *basistheory.NewThreeDSMerchantInfo()
-  merchantInfo.SetMid("9876543210001")
-  merchantInfo.SetAcquirerBin("000000999")
-  merchantInfo.SetName("Example 3DS Merchant")
-  merchantInfo.SetCategoryCode("7922")
-  merchantInfo.SetCountryCode("826")
-
-  cardholderInfo := *basistheory.NewThreeDSCardholderInfo()
-  cardholderInfo.SetName("John Doe")
-  cardholderInfo.SetEmail("john@me.com")
-
-  authenticateThreeDSSessionRequest.SetPurchaseInfo(purchaseInfo)
-  authenticateThreeDSSessionRequest.SetRequestorInfo(requestorInfo)
-  authenticateThreeDSSessionRequest.SetMerchantInfo(merchantInfo)
-  authenticateThreeDSSessionRequest.SetCardholderInfo(cardholderInfo)
-
-  authenticateResponse, authenticateHttpResponse, authenticateErr := apiClient.ThreeDSApi.ThreeDSAuthenticateSession(contextWithAPIKey, sessionId).AuthenticateThreeDSSessionRequest(authenticateThreeDSSessionRequest).Execute()
-}
 ```
   </TabItem>
 </Tabs>
@@ -979,8 +757,14 @@ curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f7
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.threeds.sessions.getChallengeResult("sessionId");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -988,79 +772,34 @@ const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
 
 const result = await bt.threeds.getChallengeResult("c06d0789-0a38-40be-b7cc-c28a718f76f1");
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new ThreeDSApi(config);
-var sessionId = Guid.Parse("");
-
-ThreeDSAuthentication result = apiInstance.ThreeDSGetChallengeResult(sessionId);
+await client.Threeds.Sessions.GetChallengeResultAsync("sessionId");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        ThreeDsApi apiInstance = new ThreeDsApi(defaultClient);
-        ThreeDSAuthentication result = apiInstance.threeDSGetChallengeResult(sessionId);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import three_ds_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    three_ds_client = three_ds_api.ThreeDSApi(api_client)
-
-    result = three_ds_client.three_ds_get_challenge_result(session_id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+client.threeds.sessions.get_challenge_result(
+    session_id="sessionId",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v5"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  result, httpResponse, err := apiClient.ThreeDSApi.ThreeDSGetChallengeResult(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
-}
 ```
 
   </TabItem>

@@ -56,8 +56,17 @@ curl "https://api.basistheory.com/tokenize" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tokens.tokenize({
+  "first_name": "John",
+  "last_name": "Doe"
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -68,91 +77,41 @@ const token = await bt.tokenize({
   last_name: "Doe",
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokenizeApi(config);
-var body = new {
+await client.Tokens.TokenizeAsync(new
+  {
     first_name = "John",
-    last_name = "Doe"
-};
-
-Object result = apiInstance.Tokenize(body);
+    last_name = "Doe",
+  });
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        TokenizeApi apiInstance = new TokenizeApi(defaultClient);
-        Object result = apiInstance.tokenize(Map.of(
-                "first_name", "John",
-                "last_name", "Doe"));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokenize_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    tokenize_client = tokenize_api.TokenizeApi(api_client)
-
-    token = tokenize_client.tokenize(body={
-      "first_name": "John",
-      "last_name": "Doe"
-    })
+client.tokens.tokenize(
+    request={
+        "first_name": "John",
+        "last_name": "Doe"
+    }
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  tokens, httpResponse, err := apiClient.TokenizeApi.Tokenize(contextWithAPIKey).Body(map[string]interface{}{
-    "first_name": "John",
-    "last_name": "Doe",
-  }).Execute()
-}
 ```
 
   </TabItem>
@@ -191,8 +150,24 @@ curl "https://api.basistheory.com/tokenize" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tokens.tokenize({
+  type: "token",
+  data: "Sensitive Value",
+  metadata: {
+    "nonSensitive": "Non-Sensitive Value"
+  },
+  search_indexes: [
+    "{{ data }}"
+  ],
+  fingerprint_expression: "{{ data }}"
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -208,118 +183,56 @@ const token = await bt.tokenize({
   fingerprint_expression: "{{ data }}",
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokenizeApi(config);
-var body = new Token
+await client.Tokens.TokenizeAsync(new
 {
-    Type = "token",
-    Data = "Sensitive Value",
-    Metadata = new Dictionary<string, string>
-    {
-        { "nonSensitiveField", "Non-Sensitive Value" }
-    },
-    SearchIndexes = new List<string>
-    {
-        "{{ data }}"
-    },
-    FingerprintExpression = "{{ data }}"
-};
-
-Object result = apiInstance.Tokenize(body);
+  type = "token",
+  data = "Sensitive Value",
+  metadata = new {
+    nonSensitive = "Non-Sensitive Value"
+  },
+  search_indexes = new []
+  {
+    "{{ data }}"
+  },
+  fingerprint_expression = "{{ data }}"
+});
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Arrays;
-import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        TokenizeApi apiInstance = new TokenizeApi(defaultClient);
-        Object result = apiInstance.tokenize(new Token()
-                .type("token")
-                .data("Sensitive Value")
-                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value"))
-                .searchIndexes(Arrays.asList("{{ data }}"))
-                .fingerprintExpression("{{ data }}"));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokenize_api
-from basistheory.model.token import Token
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    tokenize_client = tokenize_api.TokenizeApi(api_client)
-
-    token = tokenize_client.tokenize(body=Token(
-      type="token",
-      data="Sensitive Value",
-      metadata={
-        "nonSensitive": "Non-Sensitive Value"
-      },
-      search_indexes=[
-        "{{ data }}"
-      ],
-      fingerprint_expression="{{ data }}"
-    ))
+client.tokens.tokenize(
+    request={
+        "type": "token",
+        "data": "Sensitive Value",
+        "metadata": {
+            "nonSensitive": "Non-Sensitive Value"
+        },
+        "search_indexes": [
+            "{{ data }}"
+        ],
+        "fingerprint_expression": "{{ data }}"
+    }
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  tokens, httpResponse, err := apiClient.TokenizeApi.Tokenize(contextWithAPIKey).Body(map[string]interface{}{
-    "type": "token",
-    "data": "Sensitive Value",
-    "metadata": map[string]interface{}{
-      "nonSensitiveField": "Non-Sensitive Value",
-      },
-    "search_indexes": []string{"{{ data }}"},
-    "fingerprint_expression": "{{ data }}",
-  }).Execute()
-}
 ```
 
   </TabItem>
@@ -373,8 +286,25 @@ curl "https://api.basistheory.com/tokenize" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tokens.tokenize({
+  type: "card",
+  data: {
+    number: "4242424242424242",
+    expiration_month: 12,
+    expiration_year: 2025,
+    cvc: "123",
+  },
+  metadata: {
+    nonSensitiveField: "Non-Sensitive Value",
+  },
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -393,120 +323,59 @@ const token = await bt.tokenize({
   },
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokenizeApi(config);
-var body = new Token {
-    Type = "card",
-    Data = new {
-        number = "4242424242424242",
-        expiration_month = 12,
-        expiration_year = 2025,
-        cvc = "123"
-    },
-    Metadata = new Dictionary<string, string> {
-        { "nonSensitiveField",  "Non-Sensitive Value" }
-    }
-};
-
-Object result = apiInstance.Tokenize(body);
+await client.Tokens.TokenizeAsync(new
+{
+  type = "card",
+  data = new
+  {
+    number = "4242424242424242",
+    expiration_month = 12,
+    expiration_year = 2025,
+    cvc = "123",
+  },
+  metadata = new
+  {
+    nonSensitiveField = "Non-Sensitive Value",
+  }
+});
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        TokenizeApi apiInstance = new TokenizeApi(defaultClient);
-        Object result = apiInstance.tokenize(new Token()
-                .type("card")
-                .data(Map.of("number", "4242424242424242",
-                "expiration_month", 12,
-                "expiration_year", 2025,
-                "cvc", "123"))
-                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value")));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokenize_api
-from basistheory.model.token import Token
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    tokenize_client = tokenize_api.TokenizeApi(api_client)
-
-    token = tokenize_client.tokenize(body=Token(
-      type="card",
-      data={
-          "number": "4242424242424242",
-          "expiration_month": 12,
-          "expiration_year": 2025,
-          "cvc": "123"
-      },
-      metadata={
-        "nonSensitive": "Non-Sensitive Value"
-      }
-    ))
+client.tokens.tokenize(
+    request={
+        "type": "card",
+        "data": {
+            "number": "4242424242424242",
+            "expiration_month": 12,
+            "expiration_year": 2025,
+            "cvc": "123"
+        },
+        "metadata": {
+            "nonSensitive": "Non-Sensitive Value"
+        }
+    }
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  tokens, httpResponse, err := apiClient.TokenizeApi.Tokenize(contextWithAPIKey).Body(map[string]interface{}{
-    "type": "card",
-    "data": map[string]interface{}{
-      "number":           "4242424242424242",
-      "expiration_month": 12,
-      "expiration_year":  2025,
-      "cvc":              "123",
-    },
-    "metadata": map[string]interface{}{
-      "nonSensitiveField": "Non-Sensitive Value",
-    },
-  }).Execute()
-}
 ```
 
   </TabItem>
@@ -569,8 +438,33 @@ curl "https://api.basistheory.com/tokenize" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tokens.tokenize([
+  "John",
+  "Doe",
+  {
+    type: "card",
+    data: {
+      number: "4242424242424242",
+      expiration_month: 12,
+      expiration_year: 2025,
+      cvc: "123",
+    },
+    metadata: {
+      nonSensitiveField: "Non-Sensitive Value",
+    },
+  },
+  {
+    type: "token",
+    data: "Sensitive Value",
+  },
+]);
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -597,146 +491,76 @@ const token = await bt.tokenize([
   },
 ]);
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokenizeApi(config);
-var body = new object[] {
-    "John",
-    "Doe",
-    new Token {
-        Type = "card",
-        Data = new {
-            number = "4242424242424242",
-            expiration_month = 12,
-            expiration_year = 2025,
-            cvc = "123"
-        }
+await client.Tokens.TokenizeAsync(new List<object>
+{
+  "John",
+  "Doe",
+  new {
+    type = "card",
+    data = new
+    {
+        number = "4242424242424242",
+        expiration_month = 12,
+        expiration_year = 2025,
+        cvc = "123",
     },
-    new Token {
-        Type = "token",
-        Data = "Sensitive Value"
+    metadata = new
+    {
+      nonSensitiveField = "Non-Sensitive Value",
     }
-};
-
-Object result = apiInstance.Tokenize(body);
+  },
+  new
+  {
+    type = "token",
+    data = "Sensitive Value"
+  }
+});
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Arrays;
-import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        TokenizeApi apiInstance = new TokenizeApi(defaultClient);
-        Object result = apiInstance.tokenize(Arrays.asList(
-                Arrays.asList("John", "Doe"),
-                new Token()
-                .type("card")
-                .data(Map.of("number", "4242424242424242",
-                "expiration_month", 12,
-                "expiration_year", 2025,
-                "cvc", "123"))
-                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value")),
-                new Token()
-                .type("token")
-                .data("Sensitive Value")));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokenize_api
-from basistheory.model.token import Token
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    tokenize_client = tokenize_api.TokenizeApi(api_client)
-
-    token = tokenize_client.tokenize(body=[
+client.tokens.tokenize(
+    request=[
         "John",
         "Doe",
-        Token(
-            type="card",
-            data={
+        {
+            "type": "card",
+            "data": {
                 "number": "4242424242424242",
                 "expiration_month": 12,
                 "expiration_year": 2025,
                 "cvc": "123"
             },
-            metadata={
+            "metadata": {
                 "nonSensitive": "Non-Sensitive Value"
             }
-        ),
-        Token(
-            type="token",
-            data="Sensitive Value"
-        )])
+        },
+        {
+            "type": "token",
+            "data": "Sensitive Value"
+        }
+    ]
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  tokens, httpResponse, err := apiClient.TokenizeApi.Tokenize(contextWithAPIKey).Body(map[string]interface{}{
-    "first_name": "John",
-    "last_name":  "Doe",
-    "card_token": map[string]interface{}{
-      "type": "card",
-      "data": map[string]interface{}{
-        "number":           "4242424242424242",
-        "expiration_month": 12,
-        "expiration_year":  2025,
-        "cvc":              "123",
-      },
-      "metadata": map[string]interface{}{
-        "nonSensitiveField": "Non-Sensitive Value",
-      },
-    },
-    "generic_token": map[string]interface{}{
-      "type": "token",
-      "data": "Sensitive Value",
-    },
-  }).Execute()
-}
 ```
 
   </TabItem>
@@ -813,8 +637,33 @@ curl "https://api.basistheory.com/tokenize" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tokens.tokenize({
+  first_name: "John",
+  last_name: "Doe",
+  primary_card: {
+    type: "card",
+    data: {
+      number: "4242424242424242",
+      expiration_month: 12,
+      expiration_year: 2025,
+      cvc: "123",
+    },
+  },
+  sensitive_tags: [
+    "preferred",
+    {
+      type: "token",
+      data: "vip",
+    },
+  ],
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -841,66 +690,53 @@ const token = await bt.tokenize({
   ],
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokenizeApi(config);
-var body = new {
-    first_name = "John",
-    last_name = "Doe",
-    primary_card = new Token {
-        Type = "card",
-        Data = new {
-            number = "4242424242424242",
-            expiration_month = 12,
-            expiration_year = 2025,
-            cvc = "123"
-        }
-    },
-    sensitive_tags = new object[] {
-        "preferred",
-        new Token {
-            Type = "token",
-            Data = "vip"
-        }
+await client.Tokens.TokenizeAsync(new
+{
+  first_name = "John",
+  last_name = "Doe",
+  primary_card = new
+  {
+    type = "card",
+    data = new {
+      number = "4242424242424242",
+      expiration_month = 12,
+      expiration_year = 2025,
+      cvc = "123"
     }
-};
-
-Object result = apiInstance.Tokenize(body);
+  },
+  sensitive_tags = new object[]
+  {
+    "preferred",
+    new
+    {
+      type = "token",
+      data = "vip"
+    }
+  }
+});
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokenize_api
-from basistheory.model.token import Token
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    tokenize_client = tokenize_api.TokenizeApi(api_client)
-
-    token = tokenize_client.tokenize(body={
+client.tokens.tokenize(
+    request={
         "first_name": "John",
         "last_name": "Doe",
-        "primary_card": Token(
-            type="card",
-            data={
+        "primary_card": {
+            "type": "card",
+            "data": {
                 "number": "4242424242424242",
                 "expiration_month": 12,
                 "expiration_year": 2025,
                 "cvc": "123"
-            }),
+            }
+        },
         "sensitive_tags": [
             "preferred",
             {
@@ -908,48 +744,15 @@ with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API
                 "data": "vip"
             }
         ]
-    })
+    }
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  tokens, httpResponse, err := apiClient.TokenizeApi.Tokenize(contextWithAPIKey).Body(map[string]interface{}{
-    "first_name": "John",
-    "last_name":  "Doe",
-    "primary_card": map[string]interface{}{
-      "type": "card",
-      "data": map[string]interface{}{
-        "number":           "4242424242424242",
-        "expiration_month": 12,
-        "expiration_year":  2025,
-        "cvc":              "123",
-      },
-    },
-    "sensitive_tags": map[string]interface{}{
-      "preferred",
-      map[string]interface{}{
-          "type": "token",
-          "data": "vip"
-      },
-    },
-  }).Execute()
-}
 ```
 
   </TabItem>

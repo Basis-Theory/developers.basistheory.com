@@ -27,8 +27,16 @@ curl "https://api.basistheory.com" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+import { BasisTheoryClient, BasisTheory } from "@basis-theory/node-sdk";
+
+const client = new BasisTheoryClient({ apiKey: "<API_KEY>" });
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -45,40 +53,39 @@ const applications = await bt.applications.list(
   }
 );
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-// At service
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
+using BasisTheory.Client;
 
-// Per call
-var apiInstance = new TokensApi(config);
+var client = new BasisTheory(apiKey: "<API_KEY>");
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
+from basis_theory import BasisTheory
 
-# At instance
-api_client = basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>"))
-client = tokens_api.TokensApi(api_client)
-
-# Per call
-client.list(request_options=basistheory.RequestOptions(api_key="<PRIVATE_API_KEY>"))
+client = BasisTheory(
+    api_key="<API_KEY>",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
+import (
+  "github.com/basis-theory/go-sdk"
+  basistheoryclient "github.com/basis-theory/go-sdk/client"
+  "github.com/basis-theory/go-sdk/option"
+)
 
+client := basistheoryclient.NewClient(
+  option.WithAPIKey("<API_KEY>"),
+)
 ```
 
   </TabItem>

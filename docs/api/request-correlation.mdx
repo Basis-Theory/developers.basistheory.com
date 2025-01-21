@@ -25,8 +25,16 @@ curl "https://api.basistheory.com" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.self.get({
+    correlationId: randomUUID()
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -39,42 +47,43 @@ const applications = await bt.applications.list(
   }
 );
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-var correlationId = Guid.NewGuid().ToString();
-var apiInstance = new TokensApi(configuration);
-var response = await apiInstance.GetByIdWithHttpInfoAsync("...", 
-  requestOptions: new RequestOptions
-  {
-      CorrelationId = correlationId
-  });
+using BasisTheory.Client;
 
-response.Headers.TryGetValue("BT-TRACE-ID", out IList<string> correlationIds);
+// Currently, a new client will be required for each
+// request to set unique correlation_ids
+var client = new BasisTheory(
+  apiKey: "<API_KEY>",
+  correlationId: Guid.NewGuid().ToString()
+ );
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
+from basis_theory import BasisTheory
 
-# At instance
-api_client = basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>"))
-client = tokens_api.TokensApi(api_client)
-
-# Per call
-client.list(request_options=basistheory.RequestOptions(correlation_id="aa5d3379-6385-4ef4-9fdb-ca1341572153"))
+# Currently, a new client will be required for each
+# request to set unique correlation_ids
+client = BasisTheory(
+    correlation_id="<CORRELATION_ID>",
+    api_key="<API_KEY>",
+)
+client.tenants.self_.get()
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+response, _ := client.Tenants.Self.Get(
+  context.TODO(),
+  option.WithCorrelationID(StringPtr(uuid.NewString())),
+)
 ```
 
   </TabItem>

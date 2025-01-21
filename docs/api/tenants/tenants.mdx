@@ -40,8 +40,14 @@ curl "https://api.basistheory.com/tenants/self" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.self.get();
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -49,78 +55,32 @@ const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const tenant = await bt.tenants.retrieve();
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-
-Tenant result = apiInstance.Get();
+await client.Tenants.Self.GetAsync();
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class App {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>);
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        Tenant result = apiInstance.get();
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenants_client = tenants_api.TenantsApi(api_client)
-
-    tenant = tenants_client.get()
+client.tenants.self_.get()
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  tenant, httpResponse, err := apiClient.TenantsApi.Get(contextWithAPIKey).Execute()
-}
 ```
 
   </TabItem>
@@ -182,8 +142,16 @@ curl "https://api.basistheory.com/tenants/self" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.self.update({
+    name: "name",
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -198,94 +166,34 @@ const tenant = await bt.tenants.update({
   },
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-var updateTenantRequest = new UpdateTenantRequest()
-{
-    Name = ...
-    Settings = ...
-};
-
-Tenant result = apiInstance.Update(updateTenantRequest);
+await client.Tenants.Self.UpdateAsync(new UpdateTenantRequest { Name = "name" });
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class App {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        UpdateTenantRequest updateTenantRequest = new UpdateTenantRequest(); // UpdateTenantRequest |
-        Tenant result = apiInstance.update(updateTenantRequest.name("My Example Tenant"));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-from basistheory.model.update_tenant_request import UpdateTenantRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenants_client = tenants_api.TenantsApi(api_client)
-
-    tenant = tenants_client.update(update_tenant_request=UpdateTenantRequest(
-        name="My Example Tenant"
-    ))
+client.tenants.self_.update(
+    name="name",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  updateTenantRequest := *basistheory.NewUpdateTenantRequest("My Example Tenant")
-  updateTenantRequest.SetSettings(map[string]string{
-    "fingerprint_tokens": "true",
-    "disable_ephemeral_proxy": "true",
-    "deduplicate_tokens": "true",
-  })
-
-  tenant, httpResponse, err := apiClient.TenantsApi.Update(contextWithAPIKey).UpdateTenantRequest(updateTenantRequest).Execute()
-}
 ```
 
   </TabItem>
@@ -345,8 +253,14 @@ curl "https://api.basistheory.com/tenants/self" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.self.delete();
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -354,78 +268,32 @@ const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 await bt.tenants.delete();
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-
-apiInstance.Delete();
+await client.Tenants.Self.DeleteAsync();
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class App {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        apiInstance.delete();
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenants_client = tenants_api.TenantsApi(api_client)
-
-    tenants_client.delete()
+client.tenants.self_.delete()
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  httpResponse, err := apiClient.TenantsApi.Delete(contextWithAPIKey).Execute()
-}
 ```
 
   </TabItem>
@@ -459,8 +327,14 @@ curl "https://api.basistheory.com/tenants/self/reports/usage" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tenants.self.getUsageReports();
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -468,78 +342,32 @@ const bt = await new BasisTheory().init("<MANAGEMENT_API_KEY>");
 
 const tenantUsageReport = await bt.tenants.retrieveUsageReport();
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TenantsApi(config);
-
-TenantUsageReport result = apiInstance.GetTenantUsageReport();
+await client.Tenants.Self.GetUsageReportsAsync();
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class App {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<MANAGEMENT_API_KEY>");
-
-        TenantsApi apiInstance = new TenantsApi(defaultClient);
-        TenantUsageReport result = apiInstance.getTenantUsageReport();
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tenants_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<MANAGEMENT_API_KEY>")) as api_client:
-    tenants_client = tenants_api.TenantsApi(api_client)
-
-    tenant_usage_report = tenants_client.get_tenant_usage_report()
+client.tenants.self_.get_usage_reports()
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<MANAGEMENT_API_KEY>"},
-  })
-
-  tenantUsageReport, httpResponse, err := apiClient.TenantsApi.GetTenantUsageReport(contextWithAPIKey).Execute()
-}
 ```
 
   </TabItem>

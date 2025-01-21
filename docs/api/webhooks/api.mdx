@@ -44,6 +44,37 @@ curl --location 'https://api.basistheory.com/webhooks' \
 }'
 ```
   </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+await client.webhooks.create({
+    name: "webhook-create",
+    url: "http://www.example.com",
+    events: ["token:created"],
+});
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Webhooks.CreateAsync(
+    new CreateWebhookRequest
+    {
+        Name = "webhook-create",
+        Url = "http://www.example.com",
+        Events = new List<string>() { "token:created" },
+    }
+);
+```
+  </TabItem>
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.webhooks.create(
+    name="webhook-create",
+    url="http://www.example.com",
+    events=["token:created"],
+)
+```
+  </TabItem>
 </Tabs>
 
 #### Request Parameters
@@ -97,6 +128,24 @@ curl --location 'https://api.basistheory.com/webhooks/' \
 --header 'BT-API-KEY: <MANAGEMENT_API_KEY>'
 ```
   </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+await client.webhooks.list();
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Webhooks.ListAsync();
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.webhooks.list()
+```
+  </TabItem>
+
 </Tabs>
 
 Returns a [paginated object](/docs/api/pagination#cursor-pagination) with the `data` property containing an array of webhooks.
@@ -144,6 +193,25 @@ Returns [an error](/docs/api/errors) if applications could not be retrieved.
 ```shell showLineNumbers
 curl --location 'https://api.basistheory.com/webhooks/e08b1fa8-172d-4d5c-b4bc-692134162565' \
 --header 'BT-API-KEY: <MANAGEMENT_API_KEY>'
+```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+await client.webhooks.get("id");
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Webhooks.GetAsync("id");
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.webhooks.get(
+    id="id",
+)
 ```
   </TabItem>
 </Tabs>
@@ -208,6 +276,38 @@ curl --location --request PUT 'http://api.basistheory.com/webhooks/e08b1fa8-172d
 }'
 ```
   </TabItem>
+  <TabItem value="node" label="Node">
+```javascript
+await client.webhooks.update("id", {
+    name: "webhook-update",
+    url: "http://www.example.com",
+    events: ["token:created"],
+});
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Webhooks.UpdateAsync(
+    "id",
+    new UpdateWebhookRequest
+    {
+        Name = "webhook-update",
+        Url = "http://www.example.com",
+        Events = new List<string>() { "token:created" },
+    }
+);
+```
+  </TabItem>
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.webhooks.update(
+    id="id",
+    name="webhook-update",
+    url="http://www.example.com",
+    events=["token:created"],
+)
+```
+  </TabItem>
 </Tabs>
 
 #### Request Parameters
@@ -265,6 +365,24 @@ curl --location --request DELETE 'http://api.basistheory.com/webhooks/7d52263c-2
 --header 'BT-API-KEY: <MANAGEMENT_API_KEY>'
 ```
   </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+await client.webhooks.delete("id");
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Webhooks.DeleteAsync("id");
+```
+  </TabItem>
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.webhooks.delete(
+    id="id",
+)
+```
+  </TabItem>
 </Tabs>
 
 ### Response
@@ -292,6 +410,17 @@ Gets a list of valid event types.
 ```shell showLineNumbers
 curl --location 'http://api.basistheory.com/webhooks/event-types' \
 --header 'BT-API-KEY: <MANAGEMENT_API_KEY>'
+```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+await client.webhooks.events.list();
+```
+  </TabItem>
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.webhooks.events.list()
 ```
   </TabItem>
 </Tabs>

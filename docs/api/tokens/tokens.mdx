@@ -51,8 +51,27 @@ curl "https://api.basistheory.com/tokens" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tokens.create({
+   type: "token",
+   data: "Sensitive Value",
+   mask: "{{ data | reveal_last: 4 }}",
+   containers: ["/general/high/"],
+   metadata: {
+     nonSensitiveField: "Non-Sensitive Value",
+   },
+   searchIndexes: ["{{ data }}", "{{ data | last4 }}"],
+   fingerprintExpression: "{{ data }}",
+   deduplicateToken: true,
+   expiresAt: "8/26/2030 7:23:57 PM -07:00",
+ }
+);
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -72,132 +91,59 @@ const token = await bt.tokens.create({
   expiresAt: "8/26/2030 7:23:57 PM -07:00",
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokensApi(config);
-var createTokenRequest = new CreateTokenRequest()
+await client.Tokens.CreateAsync(new CreateTokenRequest
 {
-    Id = ...
-    Type = ...
-    Data = ...
-    Privacy = ...
-    Metadata = ...
-    SearchIndexes = ...
-    FingerprintExpression = ...
-    Mask = ...
-    DeduplicateToken = ...
-    ExpiresAt = ...
-    Containers = ...
-};
-
-Token result = apiInstance.Create(createTokenRequest);
+  Type = "token",
+  Data = "Sensitive Value",
+  Mask = "{{ data | reveal_last: 4 }}",
+  Containers = ["/general/high/"],
+  Metadata = new Dictionary<string, string?>
+  {
+    { "nonSensitiveField", "Non-Sensitive Value" }
+  },
+  SearchIndexes = ["{{ data }}", "{{ data | last4 }}"],
+  FingerprintExpression = "{{ data }}",
+  DeduplicateToken = true,
+  ExpiresAt = "8/26/2030 7:23:57 PM -07:00",
+});
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Arrays;
-import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        TokensApi apiInstance = new TokensApi(defaultClient);
-        CreateTokenRequest createTokenRequest = new CreateTokenRequest();
-        CreateTokenResponse result = apiInstance.create(createTokenRequest
-                .type("token")
-                .data("Sensitive Value")
-                .mask("{{ data | reveal_last: 4 }}")
-                .containers(Arrays.asList("/general/high/"))
-                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value"))
-                .searchIndexes(Arrays.asList("{{ data }}", "{{ data | last4 }}"))
-                .fingerprintExpression("{{ data }}")
-                .deduplicateToken(true)
-                .expiresAt("8/26/2030 7:23:57 PM -07:00"));
-        System.out.println(result);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
-from basistheory.model.create_token_request import CreateTokenRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    token_client = tokens_api.TokensApi(api_client)
-
-    token = token_client.create(create_token_request=CreateTokenRequest(
-        type="token",
-        data="Sensitive Value",
-        mask="{{ data | reveal_last: 4 }}",
-        metadata={
-            "nonSensitiveField": "Non-Sensitive Value"
-        },
-        containers=["/general/high/"],
-        search_indexes=[
-          "{{ data }}",
-          "{{ data | last4 }}"
-        ],
-        fingerprint_expression="{{ data }}",
-        expires_at="8/26/2030 7:23:57 PM -07:00"
-    ))
+client.tokens.create(
+    type="token",
+    data="Sensitive Value",
+    mask="{{ data | reveal_last: 4 }}",
+    metadata={
+        "nonSensitiveField": "Non-Sensitive Value"
+    },
+    containers=["/general/high/"],
+    search_indexes=[
+        "{{ data }}",
+        "{{ data | last4 }}"
+    ],
+    fingerprint_expression="{{ data }}"
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  createTokenRequest := *basistheory.NewCreateTokenRequest("Sensitive Value")
-  createTokenRequest.SetMask("{{ data | reveal_last: 4 }}")
-  createTokenRequest.SetType("token")
-  createTokenRequest.SetMetadata(map[string]string{
-    "myMetadata": "myMetadataValue",
-  })
-  createTokenRequest.SetSearchIndexes([]string{"{{ data }}", "{{ data | last4 }}"})
-  createTokenRequest.SetFingerprintExpression("{{ data }}")
-  createTokenRequest.SetDeduplicateToken(true)
-  createTokenRequest.SetContainers([]string{"/general/high/"})
-  createTokenRequest.SetExpiresAt("8/26/2030 7:23:57 PM -07:00")
-
-  createTokenResponse, createTokenHttpResponse, createErr := apiClient.TokensApi.Create(contextWithAPIKey).CreateTokenRequest(createTokenRequest).Execute()
-}
 ```
 
   </TabItem>
@@ -272,97 +218,70 @@ Get a list of tokens for the Tenant sorted by `created_at`. If you need to perfo
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
 
-    ```shell showLineNumbers
-    curl "https://api.basistheory.com/v2/tokens" \
-    -H "BT-API-KEY: <PRIVATE_API_KEY>"
-    ```
+```shell showLineNumbers
+curl "https://api.basistheory.com/v2/tokens" \
+-H "BT-API-KEY: <PRIVATE_API_KEY>"
+```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
-    ```javascript showLineNumbers
-    import { BasisTheory } from "@basis-theory/basis-theory-js";
+```javascript showLineNumbers
+const response = await client.tokens.listV2();
+for await (const item of response) {
+    console.log(item);
+}
 
-    const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+// Or you can manually iterate page-by-page
+const page = await client.tokens.listV2();
+while (page.hasNextPage()) {
+    page = page.getNextPage();
+}
+```
 
-    const tokens = await bt.tokensV2.list();
-    ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
 
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const tokens = await bt.tokensV2.list();
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
-    ```csharp showLineNumbers
-    using BasisTheory.net.Tokens;
-
-    var client = new TokenV2Client("<PRIVATE_API_KEY>");
-
-    var tokens = await client.GetAsync();
-    ```
+```csharp showLineNumbers
+await client.Tokens.ListAsyncV2(new TokensListRequest());
+```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
-    ```java showLineNumbers
-    import com.basistheory.*;
-    import com.basistheory.auth.*;
-    import java.util.Arrays;
-    import java.util.HashMap;
-    import java.util.List;
-    import java.util.Map;
+```java showLineNumbers
 
-    public class Example {
-      public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        TokensV2Api apiInstance = new TokensV2Api(defaultClient);
-        List<String> id = Arrays.asList();
-        Map<string, string> metadata = new HashMap();
-        Integer page = 1;
-        Integer size = 56;
-        TokenPaginatedList result = apiInstance.get(id, metadata, page, size);
-        System.out.println(result);
-      }
-    }
-    ```
+```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
-    ```python showLineNumbers
-    import basistheory
-    from basistheory.api import tokensV2_api
+```python showLineNumbers
+response = client.tokens.list_v2()
 
-    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    token_client = tokensV2_api.TokensV2Api(api_client)
+for item in response:
+    yield item
 
-    tokens = token_client.get()
-    ```
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
+```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
-    ```go showLineNumbers
-    package main
+```go showLineNumbers
 
-    import (
-    "context"
-    "github.com/Basis-Theory/basistheory-go/v3"
-    )
-
-    func main() {
-      configuration := basistheory.NewConfiguration()
-      apiClient := basistheory.NewAPIClient(configuration)
-      contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-      "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-    })
-
-    tokens, httpResponse, err := apiClient.TokensV2Api.Get(contextWithAPIKey).Execute()
-  }
-    ```
+```
 
   </TabItem>
 </Tabs>
@@ -420,8 +339,23 @@ curl "https://api.basistheory.com/tokens" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+const response = await client.tokens.list();
+for await (const item of response) {
+    console.log(item);
+}
+
+// Or you can manually iterate page-by-page
+const page = await client.tokens.list();
+while (page.hasNextPage()) {
+    page = page.getNextPage();
+}
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -429,92 +363,39 @@ const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
 
 const tokens = await bt.tokens.list();
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokensApi(config);
-var id = new List<string>();
-var metadata = new Dictionary<string, string>()
-var page = 1;
-var start = "";
-var size = 1;
-
-TokenPaginatedList result = apiInstance.Get(id, metadata, page, start, size);
+await client.Tokens.ListAsync(new TokensListRequest());
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        TokensApi apiInstance = new TokensApi(defaultClient);
-        List<String> id = Arrays.asList();
-        Map<string, string> metadata = new HashMap();
-        Integer page = 1;
-        Integer size = 56;
-        TokenPaginatedList result = apiInstance.get(id, metadata, page, size);
-        System.out.println(result);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
+response = client.tokens.list()
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    token_client = tokens_api.TokensApi(api_client)
+for item in response:
+    yield item
 
-    tokens = token_client.get()
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  tokens, httpResponse, err := apiClient.TokensApi.Get(contextWithAPIKey).Execute()
-}
 ```
 
   </TabItem>
@@ -577,8 +458,14 @@ curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tokens.get("id");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -586,79 +473,34 @@ const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
 
 const token = await bt.tokens.retrieve("c06d0789-0a38-40be-b7cc-c28a718f76f1");
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokensApi(config);
-var id = "";
-
-Token result = apiInstance.GetById(id);
+await client.Tokens.GetAsync("id");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        TokensApi apiInstance = new TokensApi(defaultClient);
-        Token result = apiInstance.getById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    token_client = tokens_api.TokensApi(api_client)
-
-    token = token_client.get_by_id(id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+client.tokens.get(
+    id="id",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  token, httpResponse, err := apiClient.TokensApi.GetById(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
-}
 ```
 
   </TabItem>
@@ -730,8 +572,23 @@ curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tokens.update(token.id!, {
+  data: "Sensitive Value",
+  mask: "{{ data | reveal_last: 4 }}",
+  metadata: {
+     nonSensitiveField: "Non-Sensitive Value",
+  },
+  searchIndexes: ["{{ data }}", "{{ data | last4 }}"],
+  fingerprintExpression: "{{ data }}",
+  deduplicateToken: true,
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -748,122 +605,61 @@ const token = await bt.tokens.update("c06d0789-0a38-40be-b7cc-c28a718f76f1", {
   deduplicateToken: true,
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokensApi(config);
-var id = "";
-var updateTokenRequest = new UpdateTokenRequest()
-{
-    Data = ...
-    Privacy = ...
-    Metadata = ...
-    SearchIndexes = ...
-    FingerprintExpression = ...
-    Mask = ...
-    ExpiresAt = ...
-    DeduplicateToken = ...
-    Containers = ...
-};
-
-Token result = apiInstance.Update(id, updateTokenRequest);
+await client.Tokens.UpdateAsync(
+  token.Id,
+  new UpdateTokenRequest
+  {
+    Data = "Sensitive Value",
+    Mask = "{{ data | reveal_last: 4 }}",
+    Containers = ["/general/high/"],
+    Metadata = new Dictionary<string, string?>
+    {
+      { "nonSensitiveField", "Non-Sensitive Value" }
+    },
+    SearchIndexes = ["{{ data }}", "{{ data | last4 }}"],
+    FingerprintExpression = "{{ data }}",
+    DeduplicateToken = true,
+  }
+);
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
-import java.util.Arrays;
-import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<API_KEY>");
-
-        TokensApi apiInstance = new TokensApi(defaultClient);
-        UpdateTokenRequest updateTokenRequest = new UpdateTokenRequest();
-        Token result = apiInstance.update("c06d0789-0a38-40be-b7cc-c28a718f76f1", updateTokenRequest
-                .data("Sensitive Value")
-                .mask("{{ data | reveal_last: 4 }}")
-                .metadata(Map.of("nonSensitiveField",  "Non-Sensitive Value"))
-                .searchIndexes(Arrays.asList("{{ data }}", "{{ data | last4 }}"))
-                .fingerprintExpression("{{ data }}")
-                .deduplicateToken(true)
-                .expiresAt("8/26/2030 7:23:57 PM -07:00"));
-        System.out.println(result);
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
-from basistheory.model.update_token_request import UpdateTokenRequest
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<API_KEY>")) as api_client:
-    token_client = tokens_api.TokensApi(api_client)
-
-    token = token_client.update(id="c06d0789-0a38-40be-b7cc-c28a718f76f1", update_token_request=UpdateTokenRequest(
-        data="Sensitive Value",
-        mask="{{ data | reveal_last: 4 }}",
-        metadata={
-            "nonSensitiveField": "Non-Sensitive Value"
-        },
-        search_indexes=[
-          "{{ data }}",
-          "{{ data | last4 }}"
-        ],
-        fingerprint_expression="{{ data }}"
-    ))
+client.tokens.update(
+    id="id",
+    type="token",
+    data="Sensitive Value",
+    mask="{{ data | reveal_last: 4 }}",
+    metadata={
+        "nonSensitiveField": "Non-Sensitive Value"
+    },
+    containers=["/general/high/"],
+    search_indexes=[
+        "{{ data }}",
+        "{{ data | last4 }}"
+    ],
+    fingerprint_expression="{{ data }}"
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<API_KEY>"},
-  })
-
-  updateTokenRequest := *basistheory.NewUpdateTokenRequest("Sensitive Value")
-  updateTokenRequest.SetMask("{{ data | reveal_last: 4 }}")
-  updateTokenRequest.SetMetadata(map[string]string{
-    "myMetadata": "myMetadataValue",
-  })
-  updateTokenRequest.SetSearchIndexes([]string{"{{ data }}", "{{ data | last4 }}"})
-  updateTokenRequest.SetFingerprintExpression("{{ data }}")
-
-  updateTokenResponse, updateTokenHttpResponse, createErr := apiClient.TokensApi.Update(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").UpdateTokenRequest(updateTokenRequest).Execute()
-}
 ```
 
   </TabItem>
@@ -931,8 +727,14 @@ curl "https://api.basistheory.com/tokens/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+await client.tokens.delete("id");
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -940,80 +742,34 @@ const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
 
 await bt.tokens.delete("c06d0789-0a38-40be-b7cc-c28a718f76f1");
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokensApi(config);
-var id = "";
-
-apiInstance.Delete(id);
+await client.Tokens.DeleteAsync("id");
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-package org.example;
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class App {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        TokensApi apiInstance = new TokensApi(defaultClient);
-        apiInstance.delete("c06d0789-0a38-40be-b7cc-c28a718f76f1");
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
-
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    token_client = tokens_api.TokensApi(api_client)
-
-    token_client.delete(id="c06d0789-0a38-40be-b7cc-c28a718f76f1")
+client.tokens.delete(
+    id="id",
+)
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  httpResponse, err := apiClient.TokensApi.Delete(contextWithAPIKey, "c06d0789-0a38-40be-b7cc-c28a718f76f1").Execute()
-}
 ```
 
   </TabItem>

@@ -232,44 +232,40 @@ We'll create a `backend.js` file and add the following code to start the Express
 
 ```javascript showLineNumbers title="backend.js"
 const express = require("express");
-const { BasisTheory } = require("@basis-theory/basis-theory-js");
+const { BasisTheoryClient } = require("@basis-theory/node-sdk");
 
 const app = express();
 const port = 4242;
 
 app.post("/authorize", async (request, response) => {
-  const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
-
-  const { nonce } = request.body;
-
-  // authorizing a session returns an empty 200 response
-  await bt.sessions.authorize({
-    nonce: nonce,
-    rules: [
-      {
-        description: "Reveal only our Card Token",
-        priority: 1,
-        conditions: [
-          {
-            attribute: "id",
-            operator: "equals",
-            value: "token_id_1234567890",
-          },
+    const bt = await new BasisTheoryClient({ apiKey: "<PRIVATE_API_KEY>" });
+    const { nonce } = request.body;
+    // authorizing a session returns an empty 200 response
+    await bt.sessions.authorize({
+        nonce: nonce,
+        rules: [
+            {
+                description: "Reveal only our Card Token",
+                priority: 1,
+                conditions: [
+                    {
+                        attribute: "id",
+                        operator: "equals",
+                        value: "token_id_1234567890",
+                    },
+                ],
+                permissions: ["token:read", "token:use"],
+                transform: "reveal",
+            },
         ],
-        permissions: ["token:read", "token:use"],
-        transform: "reveal",
-      },
-    ],
-  });
-
-  // this response is arbitrary and not required
-  response.json({
-    result: "success",
-  });
+    });
+    // this response is arbitrary and not required
+    response.json({
+        result: "success",
+    });
 });
-
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+    console.log(`Example app listening on port ${port}`);
 });
 ```
 
@@ -478,73 +474,70 @@ Notice that we are using a [request transform](/docs/api/proxies/ephemeral-proxy
 
 ```javascript showLineNumbers title="backend.js"
 const express = require("express");
-const { BasisTheory } = require("@basis-theory/basis-theory-js");
+const { BasisTheoryClient } = require("@basis-theory/node-sdk");
 
 const app = express();
 const port = 4242;
 
 app.post("/authorize", async (request, response) => {
-  const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
-
-  const { nonce } = request.body;
-
-  //highlight-start
-  // TODO - CONFIGURATION
-  app.post("/create-proxy", async (request, response) => {
-    const proxy = await bt.proxies.create(
-      {
-        name: "Reveal Cards Proxy",
-        destinationUrl: "https://sandbox.lithic.com/v1/cards",
-        requestTransform: {
-          code: `module.exports = async function (req) {
-            let { args: { body, headers }, bt } = req;
-
-            return {
-                body,
-                headers: {
-                  ...headers,
-                  "Authorization": "lithic_key_123456789"
-                },
-            }
-          };`,
-        },
-        requireAuth: true,
-      },
-      { apiKey: "<MANAGEMENT_API_KEY>" } // management application
-    );
-
-    response.send(proxy);
-  });
-  //highlight-end
-
-  // authorizing a session returns an empty 200 response
-  await bt.sessions.authorize({
-    nonce: nonce,
-    rules: [
-      {
-        description: "Reveal only our Card Token",
-        priority: 1,
-        conditions: [
-          {
-            attribute: "id",
-            operator: "equals",
-            value: "token_id_1234567890",
-          },
+    const bt = await new BasisTheoryClient({ apiKey: "<PRIVATE_API_KEY>" });
+    const { nonce } = request.body;
+    // authorizing a session returns an empty 200 response
+    await bt.sessions.authorize({
+        nonce: nonce,
+        rules: [
+            {
+                description: "Reveal only our Card Token",
+                priority: 1,
+                conditions: [
+                    {
+                        attribute: "id",
+                        operator: "equals",
+                        value: "token_id_1234567890",
+                    },
+                ],
+                permissions: ["token:read", "token:use"],
+                transform: "reveal",
+            },
         ],
-        permissions: ["token:read", "token:use"],
-        transform: "reveal",
-      },
-    ],
-  });
-
-  // this response is arbitrary and not required
-  response.json({
-    result: "success",
-  });
+    });
+    // this response is arbitrary and not required
+    response.json({
+        result: "success",
+    });
 });
 
+// highlight-start
+// TODO - CONFIGURATION
+app.post("/create-proxy", async (request, response) => {
+  const bt = await new BasisTheoryClient({ apiKey: "<MANAGEMENT_API_KEY>" });
+  const proxy = await bt.proxies.create(
+    {
+      name: "Reveal Cards Proxy",
+      destinationUrl: "https://sandbox.lithic.com/v1/cards",
+      requestTransform: {
+        code: `module.exports = async function (req) {
+          let { args: { body, headers }, bt } = req;
+
+          return {
+              body,
+              headers: {
+                ...headers,
+                "Authorization": "lithic_key_123456789"
+              },
+          }
+        };`,
+      },
+      requireAuth: true,
+    }
+  );
+
+  response.send(proxy);
+});
+// highlight-end
+
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+    console.log(`Example app listening on port ${port}`);
 });
 ```
 

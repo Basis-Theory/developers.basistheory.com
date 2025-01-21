@@ -46,99 +46,67 @@ Search for tokens using a Lucene-based [query syntax](#query-syntax).
     ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
-    ```javascript showLineNumbers
-    import {BasisTheory} from "@basis-theory/basis-theory-js";
+```javascript showLineNumbers
+const response = await client.tokens.searchV2();
+for await (const item of response) {
+    console.log(item);
+}
 
-    const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+// Or you can manually iterate page-by-page
+const page = await client.tokens.searchV2();
+while (page.hasNextPage()) {
+    page = page.getNextPage();
+}
+```
 
-    const tokens = await bt.tokensV2.search({
-      query: "data:6789",
-      size: 20,
-    });
-    ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import {BasisTheory} from "@basis-theory/basis-theory-js";
 
+const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
+
+const tokens = await bt.tokensV2.search({
+  query: "data:6789",
+  size: 20,
+});
+```
   </TabItem>
   <TabItem value="csharp" label="C#">
 
-    ```csharp showLineNumbers
-    using BasisTheory.net.Tokens;
-
-    var client = new TokenV2Client("<PRIVATE_API_KEY>");
-
-    var tokens = await client.SearchAsync(new TokenSearchRequestV2 {
-      Query = "data:6789",
-      PageSize = 20
-    });
-    ```
+```csharp showLineNumbers
+await client.Tokens.SearchV2Async(new SearchTokensRequestV2());
+```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
-    ```java showLineNumbers
-    import com.basistheory.*;
-    import com.basistheory.auth.*;
+```java showLineNumbers
 
-    public class Example {
-      public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        TokensV2Api apiInstance = new TokensV2Api(defaultClient);
-        SearchTokensRequestV2 searchTokensRequest = new SearchTokensRequestV2();
-        TokenCursorPaginatedList result = apiInstance.search(searchTokensRequest
-          .query("data:6789")
-          .size(20));
-      }
-    }
-    ```
+```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
-    ```python showLineNumbers
-    import basistheory
-    from basistheory.api import tokensV2_api
-    from basistheory.model.search_tokens_requestV2 import SearchTokensRequestV2
+```python showLineNumbers
+response = client.tokens.search_v2()
 
-    with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    token_client = tokensV2_api.TokensV2Api(api_client)
+for item in response:
+    yield item
 
-    tokens = token_client.search(search_tokens_request=SearchTokensRequestV2(
-      query="data:6789",
-      size=20
-    ))
-    ```
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
+```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
-    ```go showLineNumbers showLineNumbers
-    package main
+```go showLineNumbers showLineNumbers
 
-    import (
-    "context"
-    "github.com/Basis-Theory/basistheory-go/v3"
-    )
-
-    func main() {
-      configuration := basistheory.NewConfiguration()
-      apiClient := basistheory.NewAPIClient(configuration)
-      contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-        "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-    })
-
-    searchTokenRequest := *basistheory.NewSearchTokensRequestV2()
-    searchTokenRequest.SetQuery("data:6789")
-    searchTokenRequest.SetSize(20)
-
-    tokens, httpResponse, err := apiClient.TokensV2Api.Search(contextWithAPIKey).SearchTokensRequestV2(searchTokenRequest).Execute()
-  }
-    ```
+```
 
   </TabItem>
 </Tabs>
@@ -216,8 +184,23 @@ curl "https://api.basistheory.com/tokens/search" \
 ```
 
   </TabItem>
-  <TabItem value="javascript" label="JavaScript">
+  <TabItem value="node" label="Node">
 
+```javascript showLineNumbers
+const response = await client.tokens.search();
+for await (const item of response) {
+    console.log(item);
+}
+
+// Or you can manually iterate page-by-page
+const page = await client.tokens.search();
+while (page.hasNextPage()) {
+    page = page.getNextPage();
+}
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
 ```javascript showLineNumbers
 import { BasisTheory } from "@basis-theory/basis-theory-js";
 
@@ -229,99 +212,39 @@ const tokens = await bt.tokens.search({
   size: 20,
 });
 ```
-
   </TabItem>
   <TabItem value="csharp" label="C#">
 
 ```csharp showLineNumbers
-using BasisTheory.net.Api;
-using BasisTheory.net.Client;
-using BasisTheory.net.Model;
-
-Configuration config = new Configuration();
-config.BasePath = "https://api.basistheory.com";
-config.AddApiKey("BT-API-KEY", "YOUR_API_KEY");
-
-var apiInstance = new TokensApi(config);
-var searchTokensRequest = new SearchTokensRequest()
-{
-    Query = ...
-    Page = ...
-    Start = ...
-    Size = ...
-};
-
-TokenPaginatedList result = apiInstance.Search(searchTokensRequest);
+await client.Tokens.SearchAsync(new SearchTokensRequest());
 ```
 
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basistheory.*;
-import com.basistheory.auth.*;
 
-public class Example {
-    public static void main(String[] args) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.basistheory.com");
-
-        ApiKeyAuth ApiKey = (ApiKeyAuth) defaultClient.getAuthentication("ApiKey");
-        ApiKey.setApiKey("<PRIVATE_API_KEY>");
-
-        TokensApi apiInstance = new TokensApi(defaultClient);
-        SearchTokensRequest searchTokensRequest = new SearchTokensRequest(); // SearchTokensRequest |
-        TokenPaginatedList result = apiInstance.search(searchTokensRequest
-                .query("data:6789")
-                .page(1)
-                .size(20));
-    }
-}
 ```
 
   </TabItem>
   <TabItem value="python" label="Python">
 
 ```python showLineNumbers
-import basistheory
-from basistheory.api import tokens_api
-from basistheory.model.search_tokens_request import SearchTokensRequest
+response = client.tokens.search()
 
-with basistheory.ApiClient(configuration=basistheory.Configuration(api_key="<PRIVATE_API_KEY>")) as api_client:
-    token_client = tokens_api.TokensApi(api_client)
+for item in response:
+    yield item
 
-    tokens = token_client.search(search_tokens_request=SearchTokensRequest(
-        query="data:6789",
-        page=1,
-        size=20
-    ))
+# alternatively, you can paginate page-by-page
+for page in response.iter_pages():
+    yield page
 ```
 
   </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers showLineNumbers
-package main
 
-import (
-  "context"
-  "github.com/Basis-Theory/basistheory-go/v3"
-)
-
-func main() {
-  configuration := basistheory.NewConfiguration()
-  apiClient := basistheory.NewAPIClient(configuration)
-  contextWithAPIKey := context.WithValue(context.Background(), basistheory.ContextAPIKeys, map[string]basistheory.APIKey{
-    "ApiKey": {Key: "<PRIVATE_API_KEY>"},
-  })
-
-  searchTokenRequest := *basistheory.NewSearchTokensRequest()
-  searchTokenRequest.SetQuery("data:6789")
-  searchTokenRequest.SetPage(1)
-  searchTokenRequest.SetSize(20)
-
-  tokens, httpResponse, err := apiClient.TokensApi.Search(contextWithAPIKey).SearchTokensRequest(searchTokenRequest).Execute()
-}
 ```
 
   </TabItem>
