@@ -1,3 +1,10 @@
+# [1.206.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.205.0...v1.206.0) (2025-01-22)
+
+
+### Features
+
+* Documents POST /v2/tokens/search and GET /v2/tokens ([#487](https://github.com/Basis-Theory/developers.basistheory.com/issues/487)) ([848d828](https://github.com/Basis-Theory/developers.basistheory.com/commit/848d828c885affbf90e888534c1ef7d7483e32b8))
+
 # [1.205.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.204.0...v1.205.0) (2025-01-21)
 
 
