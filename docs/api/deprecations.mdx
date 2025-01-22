@@ -13,19 +13,49 @@ The following table lists deprecated features and their respective shutdown date
 
 | Feature                                                             | Deprecated Date   | Shutdown Date     | Details                                                                                                                                                                                                                                                                                                                                                                                                         |
 |---------------------------------------------------------------------|-------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| List Tokens v1                                                      | January 3, 2025   | March 1, 2025     | [List Tokens v1](/docs/api/tokens#list-tokens-v1) has been replaced by [List Tokens v2](/docs/api/tokens#list-tokens-v2). See the section below on [Migrating to List Tokens v2](#migrating-to-list-tokens-v2).                                                                                                                                                                                                 |
+| Search Tokens v1                                                    | January 3, 2025   | March 1, 2025     | [Search Tokens v1](/docs/api/tokens/search#search-v1) has been replaced by [Search Tokens v2](/docs/api/tokens/search#search-v2). See the section below on [Migrating to Search Tokens v2](#migrating-to-search-tokens-v2).                                                                                                                                                                                     |
+| Async Reactor `callback_url`                                        | November 1, 2024  | January 15, 2025  | Async Reactors will no longer support the `callback_url` attribute. For more information, see the section below on [Async Reactor callback_url Deprecation](#async-reactor-callback_url-deprecation).                                                                                                                                                                                                           |
+| Legacy Rate Limits                                                  | June 10, 2024     | July 16, 2024     | [Legacy Rate Limits](/docs/api/rate-limits#legacy-rate-limits) have been updated as [documented here](/docs/api/rate-limits).                                                                                                                                                                                                                                                                                   |
+| Application Key Regenerate                                          | April 17, 2024    | October 17, 2024  | Regenerating API Keys for an Application has been replaced with the ability to have multiple [Application Keys](/docs/api/applications/application-keys) per Application. Equivalent behavior can be achieved by creating a new Application Key and removing the old key.                                                                                                                                       |
+| Complex Token Search Queries                                        | January 23, 2024  | January 23, 2024  | [Search Tokens](/docs/api/tokens/search#search-v1) no longer supports complex Lucene queries. See the section below on [Complex Token Search Deprecation](#complex-token-search-deprecation).                                                                                                                                                                                                                   |
+| Reactor Formulas                                                    | October 16, 2023  | February 14, 2024 | Reactor Formulas have been deprecated in favor of Reactors with `code`. For more information, see the section below on [Migrating from Reactor Formulas](#migrating-from-reactor-formulas).                                                                                                                                                                                                                     |
 | `request_reactor_id` and `response_reactor_id` removed from Proxies | November 30, 2022 | March 31, 2023    | In order to simplify management of Proxies, use of `request_transform` and `response_tramsform` has been recommended over Reactors.                                                                                                                                                                                                                                                                             |
 | Token Privacy Settings                                              | October 13, 2022  | February 1, 2023  | Privacy settings (i.e. classification, impact level, and restriction policy) have been deprecated and replaced by a more flexible authorization model based upon [Containers](/docs/concepts/what-are-containers) and [Access Rules](/docs/concepts/access-controls#what-are-access-rules). For more information, see the section below on [Migrating from Privacy Settings](#migrating-from-privacy-settings). |
-| Reactor Formulas                                                    | October 16, 2022  | February 14, 2024 | Reactor Formulas have been deprecated in favor of Reactors with `code`. For more information, see the section below on [Migrating from Reactor Formulas](#migrating-from-reactor-formulas).                                                                                                                                                                                                                     |
-| Application Key Regenerate                                          | April 17, 2024    | October 17, 2024  | Regenerating API Keys for an Application has been replaced with [Application Keys](/docs/api/applications/application-keys), to Migrate you will Create a new Application Key and remove the old key.                                                                                                                                                                                                           |
-| Old Rate Limits                                                     | June 10, 2024     | July 16, 2024     | Rate limits have been deprecated in favor of [Rate Limits](/docs/api/rate-limits).                                                                                                                                                                                                                                                                                                                              |
-| Async Reactor `callback_url`                                        | November 1, 2024  | January 15, 2025  | Async Reactors will no longer support the `callback_url` attribute. For more information, see the section below on [Async Reactor callback_url Deprecation](#async-reactor-callback_url-deprecation).                                                                                                                                                                                                                                                                                                                                             |
-| Multiple Terms in a single `query`                                  | November 11, 2024 | March 1, 2025     | Multiple Terms in a single `query` is deprecated.                                                                                                                                                                                                                                                                                                                                             |
 
-## Migrating From Mulitple Search Terms
+## Migrating to List Tokens v2
 
-### Query on single field, filter the response
+The [List Tokens v1](/docs/api/tokens#list-tokens-v1) endpoint has been deprecated and replaced by [List Tokens v2](/docs/api/tokens#list-tokens-v2).
+The following changes are required to migrate to the v2 endpoint:
 
-Remove one of the terms from the `query` and filter the results from Token Search by the other property once returned to your system:
+- Change from [offset pagination](/docs/api/pagination#offset-pagination) to [cursor pagination](/docs/api/pagination#cursor-pagination).
+- Requests containing the `id` query parameter are no longer supported.
+  - Use the [Get Token endpoint](/docs/api/tokens/#get-a-token) to retrieve a single token by id.
+  - Use the [Detokenize endpoint](/docs/api/tokens/detokenize) to retrieve multiple tokens by their ids.
+- Requests containing multiple metadata query parameters are no longer supported, e.g. `GET /tokens?metadata.type=phone&metadata.customer_id=1234`
+  - Migration Strategy 1: [Client side filtering](#client-side-filtering)
+  - Migration Strategy 2: [Alias tokens](#alias-tokens)
+  - Migration Strategy 3: [Combine metadata](#combine-metadata)
+- Metadata queries are no longer case-insensitive. Update your queries to perform a case-sensitive exact match on key and value.
+
+## Migrating to Search Tokens v2
+
+The [Search Tokens v1](/docs/api/tokens/search#search-v1) endpoint has been deprecated and replaced by [Search Tokens v2](/docs/api/tokens/search#search-v2).
+The following changes are required to migrate to the v2 endpoint:
+
+- Change from [offset pagination](/docs/api/pagination#offset-pagination) to [cursor pagination](/docs/api/pagination#cursor-pagination).
+- Queries containing the `id` field are no longer supported.
+  - Use the [Get Token endpoint](/docs/api/tokens/#get-a-token) to retrieve a single token by id.
+  - Use the [Detokenize endpoint](/docs/api/tokens/detokenize) to retrieve multiple tokens by their ids.
+- Queries combining multiple metadata terms are no longer supported, e.g. `metadata.type:phone AND metadata.customer_id:1234`
+  - Migration Strategy 1: [Client side filtering](#client-side-filtering)
+  - Migration Strategy 2: [Alias tokens](#alias-tokens)
+  - Migration Strategy 3: [Combine metadata](#combine-metadata)
+- Metadata queries are no longer case-insensitive. Update your queries to perform a case-sensitive exact match on key and value.
+
+### Client side filtering
+
+Remove one of the metadata terms from the `query` and filter the search results by the other property once returned to your system:
 
 **Original Search Query:** `metadata.type:phone AND metadata.customer_id:1234`
 
@@ -33,7 +63,7 @@ Remove one of the terms from the `query` and filter the results from Token Searc
 
 **Filter in your system:** `metadata.type = "phone"`
 
-### Aliases
+### Alias tokens
 
 Use Aliases to create a single identifier from the multiple terms currently required in a `query`.
 
@@ -60,7 +90,7 @@ Now systems are capable of requesting this token by the `id` attribute:
 GET /tokens/1234_phone
 ```
 
-**Moving from metadata searching to using an alias will require migrating tokens to the new alias.**
+**This approach will require migrating existing tokens to the new alias.**
 
 ### Combine metadata
 
@@ -85,10 +115,26 @@ New `metadata` field:
 }
 ```
 
-Original Search Query: `metadata.type:phone AND metadata.customer_id:1234`
-New Query: `metadata.type:phone AND metadata.customer_id:1234`
+**Original Search Query:** `metadata.type:phone AND metadata.customer_id:1234`
 
-**Moving from metadata searching to a single metadata term will require migrating tokens include the new combined metadata field.**
+**New Query:** `metadata.type_customer_id:phone_1234`
+
+**This approach will require migrating existing tokens to add the new combined metadata field.**
+
+## Async Reactor `callback_url` Deprecation
+
+[Async Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) will no longer support the `callback_url` attribute and will be replaced by the [Reactor Webhooks Events](/docs/api/webhooks/eventdata#reactors).
+
+To migrate your Async Reactors, you will need to:
+
+1. Create a new Webhook either with our [Management API](https://developers.basistheory.com/docs/api/webhooks/api)/[Terraform Provider](https://developers.basistheory.com/docs/sdks/server-side/terraform) or in the [Portal](https://portal.basistheory.com/settings/webhooks).
+ 1. You may be able to use the existing URL for your rector processing
+2. [Invoke a Reactor Asynchronously](/docs/api/reactors/#invoke-a-reactor-async) with the new `/reactors/:id/react-async` endpoint.
+3. Once your webhook is invoked, retrieve the [Async Reactor Results](/docs/api/reactors#retrieve-result)
+ 1. This ensures the system receiving the webhook has access to the results of the reactor.
+4. Process the results in the same way you are currently doing with the `callback_url`
+
+To coordinate a rollout of these changes, we suggest you stop sending requests with `callback_url` and change the request path from `/react` to `/react-async` when you roll out the new webhook handler code. This will avoid any overlap or duplication of processing.
 
 ## Migrating to New Rate Limits
 
@@ -128,15 +174,6 @@ If you created your keys via the [Portal](https://portal.basistheory.com) - foll
   2. Update your systems with the new key
   3. Once all systems have been updated, delete the [old key](/docs/api/applications/application-keys#delete-application-key)
 
-## Application Key Regenerate Deprecation
-
-Regenerating an application's API key used to involve calling the `Regenerate` endpoint on the Application. With the introduction of Application keys, this functionality has been replaced with the ability to create new Application Keys and remove the old key.
-
-To recreate the Regeneration action you'll need to:
-
-1. [Create a new Application Key](/docs/api/applications/application-keys#create-application-key)
-2. [Remove the old Application Key](/docs/api/applications/application-keys#delete-application-key)
-
 ## Old Rate Limit Deprecation
 
 The existing rate limits will be deprecated in favor of new rate limits capable of being customized.
@@ -162,6 +199,31 @@ The existing rate limits will be deprecated in favor of new rate limits capable 
     - Counter: IP
     - Rate 200 Requests / 10 Seconds
     - Block Duration: 10 Seconds
+
+## Application Key Regenerate Deprecation
+
+Regenerating an application's API key used to involve calling the `Regenerate` endpoint on the Application. With the introduction of Application keys, this functionality has been replaced with the ability to create new Application Keys and remove the old key.
+
+To recreate the Regeneration action you'll need to:
+
+1. [Create a new Application Key](/docs/api/applications/application-keys#create-application-key)
+2. [Remove the old Application Key](/docs/api/applications/application-keys#delete-application-key)
+
+## Complex Token Search Deprecation
+
+The token search endpoint [POST /tokens/search](/docs/api/tokens/search#search-v1) no longer supports complex Lucene queries in the `query` parameter.
+
+### Deprecated Query Patterns
+
+- The following token fields are no longer supported within search queries: `type`, `fingerprint`, `container`, `created_by`, `created_at`, `modified_by`, `modified_at`.
+- Mixed search terms containing mixed attributes, e.g. `metadata.customer_id:1234 AND type:card`.
+- Combining terms with the `OR` operator. The `AND` operator is only supported for multi-metadata search.
+- Term negation is not supported.
+
+### Supported Query Patterns
+
+- Filtering by a single `id`, `metadata.<key>`, or `data` term
+- Filtering by multiple `metadata.<key>` terms combined with an `AND` operator, e.g. `metadata.type:phone AND metadata.customer_id:1234`
 
 ## Migrating From Privacy Settings
 

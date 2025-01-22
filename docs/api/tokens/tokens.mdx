@@ -9,6 +9,7 @@ import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod"
 import { Permission } from "@site/src/components/shared/Permission";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import CvcTtlInfoAlert from "@site/docs/api/tokens/_cvc-ttl-info-alert.mdx";
+import { Deprecated } from "@site/src/components/shared/Deprecated";
 
 # Tokens
 
@@ -205,7 +206,7 @@ Returns a [token](#token-object) if the token was created. Returns [an error](/d
 
 <Alert type={Alerts.INFO}>Most tokens are listable within seconds after creation, although it may take up to a few minutes.</Alert>
 
-Get a list of tokens for the Tenant sorted by `created_at`. If you need to perform a search on token `data`, see [Search Tokens](/docs/api/tokens/search).
+Get a list of tokens for the Tenant sorted by `container` and `created_at`, descending. If you need to perform a search on token `data`, see [Search Tokens](/docs/api/tokens/search).
 
 <HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/v2/tokens" />
 
@@ -286,9 +287,26 @@ for page in response.iter_pages():
   </TabItem>
 </Tabs>
 
+#### Query Parameters
+
+| Parameter        | Required | Type     | Description                                                                                                          |
+|------------------|----------|----------|----------------------------------------------------------------------------------------------------------------------|
+| `container`      | false    | _string_ | Filters the results to only include tokens within the given container, or its child containers.                      |
+| `type`           | false    | _string_ | Filters the results to only include tokens of the given type.                                                        |
+| `fingerprint`    | false    | _string_ | Filters the results to only include tokens with the given fingerprint.                                               |
+| `metadata.[key]` | false    | _string_ | Filters the results to only include tokens with the given metadata key and value, expressed as `?metadata.key=value` |
+
+- Each query parameter can appear at most once within a single request.
+- The `container` query parameter can be combined with other supported parameters.
+  - This can be used to limit the scope of the search to a single container and its child containers.
+  - If `container` is specified, the application must have `token:read` permission to the given container.
+  - If `container` is not specified, the response will include tokens from all containers the application has `token:read` permission to.
+- Except for `container`, multiple query parameters cannot be combined within the same request.
+- Metadata will be searched for a case-sensitive, exact match on both key and value.
+
 ### Response
 
-Returns a [cursor paginated object](/docs/api/pagination#cursor-pagination-object) with the `data` property containing an array of [tokens](#token-object).
+Returns a [cursor paginated object](/docs/api/pagination#cursor-pagination-object) with the `data` property containing an array of [tokens](#token-object) sorted by `container` and `created_at`, descending.
 Token data will be returned according to the [transform](/docs/concepts/access-controls#transform)
 applied within the requesting Application's [Access Controls](/docs/concepts/access-controls).
 Returns [an error](/docs/api/errors) if tokens could not be retrieved.
@@ -316,7 +334,7 @@ Returns [an error](/docs/api/errors) if tokens could not be retrieved.
 ```
 
 
-## List Tokens v1
+## List Tokens v1 <Deprecated/>
 
 <Alert type={Alerts.INFO}>Most tokens are listable within seconds after creation, although it may take up to a few minutes.</Alert>
 
@@ -410,7 +428,7 @@ for page in response.iter_pages():
 
 ### Response
 
-Returns a [paginated object](/docs/api/pagination#offset-pagination-object) with the `data` property containing an array of [tokens](#token-object).
+Returns a [paginated object](/docs/api/pagination#offset-pagination-object) with the `data` property containing an array of [tokens](#token-object) sorted by `created_at`, descending.
 Token data will be returned according to the [transform](/docs/concepts/access-controls#transform)
 applied within the requesting Application's [Access Controls](/docs/concepts/access-controls).
 Providing any query parameters will filter the results. Returns [an error](/docs/api/errors) if tokens could not be retrieved.
