@@ -11,6 +11,7 @@ import {
 } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Deprecated } from "@site/src/components/shared/Deprecated";
 import { Enterprise } from "@site/src/components/shared/Enterprise";
 
 # Search Tokens <Enterprise />
@@ -121,14 +122,17 @@ for page in response.iter_pages():
 
 ### Response
 
-Returns a [cursor paginated object](/docs/api/pagination#cursor-pagination-object) with the `data` property containing an array of [tokens](/docs/api/tokens#token-object).
+Returns a [cursor paginated object](/docs/api/pagination#cursor-pagination-object) with the `data` property containing an array of [tokens](/docs/api/tokens#token-object) sorted by `container` and `created_at`, descending.
 Token data will be returned according to the [transform](/docs/concepts/access-controls#transform)
 applied to the requesting Application's [Access Controls](/docs/concepts/access-controls).
 Returns [an error](/docs/api/errors) if tokens could not be retrieved or when an invalid [query](#query-syntax) is submitted.
 
 ```json showLineNumbers
 {
-  "pagination": {...},
+  "pagination": {
+    "page_size": 20,
+    "next": "AgAAAA=="
+  },
   "data": [
     {
       "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
@@ -155,7 +159,29 @@ Returns [an error](/docs/api/errors) if tokens could not be retrieved or when an
 }
 ```
 
-## Search v1
+### Supported Queries (v2)
+
+#### Supported Fields
+
+| Fields           | Type     | Description                                                                                                                                     | Example                              |
+|------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
+| `container`      | _string_ | Filters the results to only include tokens within the given container, or its child containers.                                                 | `container:/pci/`                    |
+| `type`           | _string_ | Filters the results to only include tokens of the given type.                                                                                   | `type:card`                          |
+| `fingerprint`    | _string_ | Filters the results to only include tokens with the given fingerprint.                                                                          | `fingerprint:BzQfn8W5PTjHMZgmJfbTjN` |
+| `metadata.[key]` | _string_ | Filters the results to only include tokens with the given metadata key and value.                                                               | `metadata.user_id:34445`             |
+| `data`           | _string_ | Filters the results to only include tokens that have been indexed with the given data value. See [Searching Data](#searching-data) for details. | `data:6789`                          |
+
+#### Behavior
+
+- Each supported field can appear at most once within a query.
+- The `container` field can be combined with other supported fields with an `AND` operator.
+  - This can be used to limit the scope of the search to a single container and its child containers.
+  - If `container` is specified, the application must have `token:search` permission to the given container.
+  - If `container` is not specified, the response will include tokens from all containers the application has `token:search` permission to.
+- Except for `container`, the `AND` operator cannot be used to combine terms for multiple fields in the same query.
+- Metadata will be searched for a case-sensitive, exact match on both key and value.
+
+## Search v1 <Deprecated />
 
 <HttpMethod
   method={HttpMethods.POST}
@@ -260,7 +286,7 @@ for page in response.iter_pages():
 
 ### Response
 
-Returns a [paginated object](/docs/api/pagination#offset-pagination-object) with the `data` property containing an array of [tokens](/docs/api/tokens#token-object).
+Returns a [paginated object](/docs/api/pagination#offset-pagination-object) with the `data` property containing an array of [tokens](/docs/api/tokens#token-object) sorted by `created_at`, descending.
 Token data will be returned according to the [transform](/docs/concepts/access-controls#transform)
 applied to the requesting Application's [Access Controls](/docs/concepts/access-controls).
 Returns [an error](/docs/api/errors) if tokens could not be retrieved or when an invalid [query](#query-syntax) is submitted.
@@ -294,15 +320,28 @@ Returns [an error](/docs/api/errors) if tokens could not be retrieved or when an
 }
 ```
 
-## Query Syntax
+### Supported Queries (v1)
 
-<Alert type={Alerts.ERROR}>Multiple Terms in a single `query` is deprecated and support will be removed no later than March 1st, 2025.</Alert>
+#### Supported Fields
+
+| Fields           | Type     | Description                                                             | Example                                   |
+|------------------|----------|-------------------------------------------------------------------------|-------------------------------------------|
+| `id`             | _string_ | Token ID.                                                               | `id:fe24d4cc-de50-4d8c-8da7-8c7483ba21bf` |
+| `data`           | _string_ | Token data. See [Searching Data](#searching-data) for supported values. | `data:6789`                               |
+| `metadata.[key]` | _string_ | Search against token metadata having the given `[key]`.                 | `metadata.user_id:34445`                  |
+
+#### Behavior
+
+- Combining terms for multiple token fields in the same query is not supported.
+- Multiple metadata fields may be combined within the same query with an `AND` operator.
+- Metadata will be searched for a case-insensitive, exact match on both key and value.
+
+## Query Syntax
 
 Token search supports a [Lucene](http://www.lucenetutorial.com/lucene-query-syntax.html)-based query syntax.
 A query string is comprised of one or more Terms that can be combined with `AND` Operators.
 
 Search terms are formed by combining a field name and a value to search with a `:` - `field:value`.
-See the [Searchable Token Fields](#searchable-token-fields) table below for a complete list of supported fields.
 
 Token data may be searched on search indexed tokens by performing a case-sensitive exact match to one of several indexed data patterns.
 For example, the following query will search for indexed tokens containing the data `123-45-6789`:
@@ -320,27 +359,14 @@ Phrases or values containing spaces may be searched by wrapping the searched val
 For more detailed information about supported data searches, see [Searching Data](#searching-data).
 
 
-Metadata search terms require both a key and value to be specified in the form of `metadata.key:value`.
-Metadata will be searched for a case-insensitive, exact match.
+Metadata search terms require both a key and value to be specified in the form of `metadata.[key]:value`.
 For example, to search for tokens having the metadata `{ customer_id: "cus_12345" }`, query for:
 
 ```
   metadata.customer_id:cus_12345
 ```
 
-<Alert>
-  Only a subset of the full Lucene query syntax is currently supported, and it is limited to the operators and terms documented above.
-  Combining terms for multiple <a href="#searchable-token-fields">token fields</a> in the same query is not supported.
-  If you would like to have support for any additional Lucene features or to query on additional token fields, please <a href="mailto:support@basistheory.com?subject=Token%20Search%20Feature%20Request"> let us know</a>.
-</Alert>
-
-### Searchable Token Fields
-
-| Fields           | Type     | Description                                                             | Example                                   |
-|------------------|----------|-------------------------------------------------------------------------|-------------------------------------------|
-| `id`             | _string_ | Token ID.                                                               | `id:fe24d4cc-de50-4d8c-8da7-8c7483ba21bf` |
-| `data`           | _string_ | Token data. See [Searching Data](#searching-data) for supported values. | `data:6789`                               |
-| `metadata.[key]` | _string_ | Search against token metadata having the given `[key]`.                 | `metadata.user_id:34445`                  |
+<Alert type={Alerts.INFO}>See the [Supported Queries (v2)](#supported-queries-v2) and [Supported Queries (v1)](#supported-queries-v1) sections above for further details and a complete list of supported fields.</Alert>
 
 ### Searching Data
 
