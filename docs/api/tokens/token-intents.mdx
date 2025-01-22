@@ -236,57 +236,8 @@ This update operation follows the same [merge-patch behaviors](/docs/api/tokens/
 | `id`          | _string_ | Unique identifier of the Token Intent, which can be used in [detokenization expressions](/docs/expressions/detokenization) or to [convert to a token](#convert-token-intent-to-token) |
 | `tenant_id`   | _uuid_   | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the Token Intent                                                                                                          |
 | `type`        | _string_ | The [type](/docs/api/tokens/token-types) of token intended to be created                                                                                                              |
-| `card`        | _object_ | The [Additional Card Details](#card-details) when `type` is `card`, otherwise `null`.                                                                                                 |
+| `card`        | _object_ | The [Card Details](/docs/api/tokens#card-details) when `type` is `card` or `card_number`, otherwise `null`.                                                                           |
 | `fingerprint` | _string_ | Uniquely identifies the contents of this Token Intent using the default fingerprint expression for the [Token Types](/docs/api/tokens/token-types)                                    |
 | `expires_at`  | _string_ | The expiration date for this Token Intent                                                                                                                                             |
 | `created_by`  | _uuid_   | The [Application](/docs/api/applications#application-object) ID which created the Token Intent                                                                                        |
 | `created_at`  | _date_   | Created date of the Token Intent in ISO 8601 format                                                                                                                                   |
-
-### Card Details
-
-| Attribute          | Type     | Description                                                             |
-|--------------------|----------|-------------------------------------------------------------------------|
-| `bin`              | _string_ | Six to eight digit BIN of the credit card                               |
-| `last4`            | _string_ | Last four digits of the credit card                                     |
-| `expiration_month` | _number_ | The 2-digit expiration month of the card                                |
-| `expiration_year`  | _number_ | The 4-digit expiration year of the card                                 |
-| `brand`            | _string_ | The primary [card brand](#card-brands)                                  |
-| `funding`          | _string_ | The primary [funding type](#card-funding-types) of the card             |
-| `authentication`   | _string_ | The [authentication type](#authentication-types) required for this card |
-
-<Alert>If a card number does not correspond to any known [BIN Details](/docs/api/tokens/token-enrichments#bin-details), then `brand`, `funding`, and `authentication` will default to `null` and the [default BIN](/docs/api/tokens/token-enrichments#default-bin) will be returned.</Alert>
-
-### Card Brands
-
-| Brand              | Description           |
-|--------------------|-----------------------|
-| `american-express` | American Express      |
-| `diners-club`      | Diners Club           |
-| `discover`         | Discover              |
-| `ebt`              | EBT                   |
-| `elo`              | ELO                   |
-| `hiper`            | Hiper                 |
-| `hipercard`        | Hipercard             |
-| `jcb`              | JCB                   |
-| `maestro`          | Maestro               |
-| `mastercard`       | Mastercard            |
-| `mir`              | MIR                   |
-| `private-label`    | Private Label         |
-| `proprietary`      | Proprietary           |
-| `unionpay`         | UnionPay              |
-| `visa`             | Visa                  |
-
-
-### Card Funding Types
-
-| Funding Type | Description  |
-|--------------|--------------|
-| `credit`     | Credit Card  |
-| `debit`      | Debit Card   |
-| `prepaid`    | Prepaid Card |
-
-### Authentication Types
-
-| Authentication Type | Description                                                                                 |
-|---------------------|---------------------------------------------------------------------------------------------|
-| `sca_required`      | Indicates that Strong Customer Authentication (SCA) is required (e.g. [3DS](/docs/api/3ds/sessions)) |

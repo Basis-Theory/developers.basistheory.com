@@ -788,13 +788,14 @@ Returns [an error](/docs/api/errors) if the token failed to delete.
 ## Token Object
 
 | Attribute                | Type                   | Description                                                                                                                                                                                                              |
-| ------------------------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|--------------------------|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `id`                     | _string_               | Unique identifier of the token which can be used to [get a token](#get-a-token)                                                                                                                                          |
 | `tenant_id`              | _uuid_                 | The [Tenant](/docs/api/tenants#tenant-object) ID which owns the token                                                                                                                                                    |
 | `type`                   | _string_               | [Token type](#token-types)                                                                                                                                                                                               |
 | `data`                   | _any_                  | Token data                                                                                                                                                                                                               |
 | `mask`                   | _any_                  | An [expression](/docs/expressions/masks) defining the mask to apply when retrieving token data with restricted permissions.                                                                                              |
 | `enrichments`            | _object_               | _Only available when detokenizing and with expressions._<br /><br /> An object containing the enrichments applied to this token. See [Token Enrichments](/docs/api/tokens/token-enrichments) for available enrichements. |
+| `card`                   | _object_               | _Only available when token type is `card` or `card_number`_<br /><br /> An object containing the card data. See [Card Details](#card-details) for more information.                                                      |
 | `fingerprint`            | _string_               | Uniquely identifies the contents of this token. See [Token Types](/docs/api/tokens/token-types) for the default expression for each token type.                                                                          |
 | `containers`             | _array_                | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details.                             |
 | `metadata`               | _map\<string, string>_ | A key-value map of strings containing non-sensitive data.                                                                                                                                                                |
@@ -805,13 +806,80 @@ Returns [an error](/docs/api/errors) if the token failed to delete.
 | `created_at`             | _date_                 | Created date of the token in ISO 8601 format                                                                                                                                                                             |
 | `modified_by`            | _uuid_                 | (Optional) The [Application](/docs/api/applications) ID which last modified the token                                                                                                                                    |
 | `modified_at`            | _date_                 | (Optional) Last modified date of the token in ISO 8601 format                                                                                                                                                            |
-| `_extras`                | _object_               | (Response-Only) An [object](#extras-object) containing information regarding the tokenization process                                                                                                                                      |
+| `_extras`                | _object_               | (Response-Only) An [object](#extras-object) containing information regarding the tokenization process                                                                                                                    |
 
 ### Extras Object
 
 | Attribute | Type | Description |
 | --------- | ---- | ------------|
 | `deduplicated` | boolean | Indicates if the token was [deduplicated](/docs/concepts/what-are-tokens#deduplication) during tokenization
+
+### Card Details
+
+| Attribute          | Type     | Description                                                                                                         |
+|--------------------|----------|---------------------------------------------------------------------------------------------------------------------|
+| `bin`              | _string_ | Six to eight digit BIN of the card                                                                                  |
+| `last4`            | _string_ | Last four digits of the card                                                                                        |
+| `expiration_month` | _number_ | The 2-digit expiration month of the card                                                                            |
+| `expiration_year`  | _number_ | The 4-digit expiration year of the card                                                                             |
+| `brand`            | _string_ | The primary [card brand](#card-brands)                                                                              |
+| `funding`          | _string_ | The primary [funding type](#card-funding-types) of the card                                                         |
+| `authentication`   | _string_ | The [authentication type](#authentication-types) required for this card                                             |
+| `additional`       | _array_  | Contains additional details associated to the same BIN number. See [Card Additional](#card-additional) for details. |
+
+<Alert>If a card number does not correspond to any known [BIN Details](/docs/api/tokens/token-enrichments#bin-details), then `brand`, `funding`, and `authentication` will default to `null` and the [default BIN](/docs/api/tokens/token-enrichments#default-bin) will be returned.</Alert>
+
+### Card Additional
+| Attribute        | Type     | Description                                                                       |
+|------------------|----------|-----------------------------------------------------------------------------------|
+| `brand`          | _string_ | An additional [card brand](#card-brands)                                          |
+| `funding`        | _string_ | An additional [funding type](#card-funding-types) of the card                     |
+| `authentication` | _string_ | An additional [authentication type](#authentication-types) required for this card |
+
+### Card Brands
+
+| Brand              | Description      |
+|--------------------|------------------|
+| `accel`            | Accel            |
+| `american-express` | American Express |
+| `bancontact`       | Bancontact       |
+| `cartes-bancaires` | Cartes Bancaires |
+| `culiance`         | Culiance         |
+| `dankort`          | Dankort          |
+| `diners-club`      | Diners Club      |
+| `discover`         | Discover         |
+| `ebt`              | EBT              |
+| `eftpos-australia` | eftpos Australia |
+| `elo`              | Elo              |
+| `hipercard`        | Hipercard        |
+| `jcb`              | JCB              |
+| `korean-local`     | Korean Local     |
+| `mastercard`       | Mastercard       |
+| `mir`              | MIR              |
+| `nyce`             | NYCE             |
+| `private-label`    | Private Label    |
+| `proprietary`      | Proprietary      |
+| `pulse`            | PULSE            |
+| `rupay`            | RuPay            |
+| `star`             | STAR             |
+| `uatp`             | UATP             |
+| `unionpay`         | UnionPay         |
+| `visa`             | Visa             |
+
+### Card Funding Types
+
+| Funding Type | Description  |
+|--------------|--------------|
+| `credit`     | Credit Card  |
+| `debit`      | Debit Card   |
+| `prepaid`    | Prepaid Card |
+
+### Authentication Types
+
+| Authentication Type | Description                                                                                          |
+|---------------------|------------------------------------------------------------------------------------------------------|
+| `sca_required`      | Indicates that Strong Customer Authentication (SCA) is required (e.g. [3DS](/docs/api/3ds/sessions)) |
+
 
 ### Token Data Validations
 
