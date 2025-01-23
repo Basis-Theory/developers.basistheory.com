@@ -1,3 +1,10 @@
+## [1.206.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.206.0...v1.206.1) (2025-01-23)
+
+
+### Bug Fixes
+
+* fix search v2 container syntax ([#491](https://github.com/Basis-Theory/developers.basistheory.com/issues/491)) ([9639f5b](https://github.com/Basis-Theory/developers.basistheory.com/commit/9639f5beb1e8a35b7e1e551ce8054dc0a82e1d05))
+
 # [1.206.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.205.0...v1.206.0) (2025-01-22)
 
 
