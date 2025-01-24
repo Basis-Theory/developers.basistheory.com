@@ -1,0 +1,139 @@
+---
+title: Google Pay
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Google Pay
+
+An endpoint to decrypt and tokenize a [Google Payment token](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#payment-method-token-structure).
+This endpoint only supports the ECv2 token versions.
+It supports both auth methods, `PAN_ONLY` and `CRYPTOGRAM_3DS`.
+
+When [requesting](https://developers.google.com/pay/api/web/guides/tutorial#tokenization) a payment token, use `basistheory` as the `gateway`.
+```javascript
+const tokenizationSpecification = {
+  type: 'PAYMENT_GATEWAY',
+  parameters: {
+    'gateway': 'basistheory',
+    'gatewayMerchantId': 'exampleGatewayMerchantId'
+  }
+};
+```
+
+## Tokenize
+
+This process utilizes Basis Theory's [Token Intents](/docs/api/tokens/token-intents).
+This endpoint will decrypt a provided Google Payment token and tokenize to a Basis Theory token intent.
+
+The table below shows the resulting token intent type based on the Google Payment Token's `authMethod` attribute.
+
+| Auth Method   | Token Type   |
+|---------------|--------------|
+| [PAN_ONLY](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) | [`card`](http://localhost:3000/docs/api/tokens/token-types#card) |
+| [CRYPTOGRAM_3DS](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds)  | [`network_token`](/docs/api/tokens/token-types#network-token)  |
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/google-pay/tokenize" />
+
+#### Permissions
+
+<Permission content="token-intent:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url https://api.basistheory.com/connections/google-pay/tokenize \
+      --header 'BT-API-KEY: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+      "google_payment_method_token": {
+        "protocolVersion": "ECv2",
+        "signature": "...",
+        "intermediateSigningKey": {
+          "signedKey": "...",
+          "signatures": [
+            "..."
+          ]
+        },
+        "signedMessage": "..."
+        }
+      }'
+    ```
+
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute  | Required | Type                                  | Description                                                        |
+|------------|----------|---------------------------------------|--------------------------------------------------------------------|
+| `google_payment_method_token` | true | [Google Payment Token](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#payment-method-token-structure) | The Google Payment method token. |
+
+### Response
+
+Returns a [token intent](/docs/api/tokens/token-intents#token-intent-object) if successful.
+Returns [an error](/docs/api/errors) if there were validation errors, if the Google payment token failed to decrypt create, or the token intent failed to create.
+
+```json showLineNumbers
+{
+  "token_intent": {
+    "id": "d4cf4b73-d6c7-4270-a3dc-5854d889708b",
+    "type": "card",
+    "tenant_id": "064bbc70-204b-4ef1-a757-ec0878be5945",
+    "fingerprint": "3SUw6NP2JgpQAJW4tvVczznnzxnTKrBM9TVXGpPPB7Vf",
+    "created_by": "f0f504e5-79c2-40a6-aad3-dbee7a692828",
+    "created_at": "2025-01-24T15:37:52.8143798+00:00",
+    "expires_at": "2025-01-25T15:37:52.8143802+00:00",
+    "card": {
+      "bin": "411111",
+      "last4": "1111",
+      "expiration_month": 12,
+      "expiration_year": 2027,
+      "brand": "visa",
+      "funding": "debit",
+      "authentication": "sca_required"
+    },
+    "_extras": {
+      "tsp_details": {
+        "tsp": "Google",
+        "auth_method": "PAN_ONLY",
+        "message_id": "AH2EjtdkuuxxO3nA7RuWAo0fU4u5BPoySvd9ajlSSrTWy3yTCu2IRbRwp8K3sFjSUS-ELa7UzetwY6UFsNLISYiKY6arNIOfYxutYYH3LJdIH0UcmoRDzmM",
+        "eci_indicator": "",
+        "assurance_details": {
+          "account_verified": true,
+          "card_holder_authenticated": false
+        }
+      }
+    }
+  }
+}
+```
+
+Token Intents and the resulting tokens created from a Google payment token will contain a `tsp_details` object in the `_extras` attribute.
+
+<Alert type={Alerts.Information}>
+The attributes in the `_extras` object are NOT addressable in proxies or reactors.
+</Alert>
+
+| Attribute                         | Type      | Description                                   |
+|-----------------------------------|-----------|-----------------------------------------------|
+| `_extras`                         | Object    | Parent object containing additional details.  |
+| `tsp_details`                     | Object    | Details related to the transaction service provider (TSP). |
+| `tsp`                             | String    | The name of the transaction service provider. |
+| `auth_method`                     | String    | The authentication method used.              |
+| `message_id`                      | String    | Unique identifier for the message.           |
+| `eci_indicator`                   | String    | Electronic Commerce Indicator (may be empty).|
+| `assurance_details`               | Object    | Information about the assurance of the transaction. |
+| `account_verified`                | Boolean   | Indicates if the account was verified.       |
+| `card_holder_authenticated`       | Boolean   | Indicates if the cardholder was authenticated.|
+
+

@@ -489,6 +489,10 @@ const sidebars = {
           type: "doc",
           id: "api/orchestration/stripe-forward",
         },
+        {
+          type: "doc",
+          id: "api/orchestration/google-pay",
+        },
       ],
     },
     {
