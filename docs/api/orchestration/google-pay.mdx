@@ -1,5 +1,5 @@
 ---
-title: Google Pay
+title: Google Pay™
 ---
 
 import Tabs from "@theme/Tabs";
@@ -9,13 +9,14 @@ import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod"
 import { Permission } from "@site/src/components/shared/Permission";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
-# Google Pay
+# Google Pay™
 
 An endpoint to decrypt and tokenize a [Google Payment token](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#payment-method-token-structure).
 This endpoint only supports the ECv2 token versions.
 It supports both auth methods, `PAN_ONLY` and `CRYPTOGRAM_3DS`.
 
 When [requesting](https://developers.google.com/pay/api/web/guides/tutorial#tokenization) a payment token, use `basistheory` as the `gateway`.
+There are no requirements for the value of `gatewayMerchantId`.
 ```javascript
 const tokenizationSpecification = {
   type: 'PAYMENT_GATEWAY',
@@ -136,4 +137,45 @@ The attributes in the `_extras` object are NOT addressable in proxies or reactor
 | `account_verified`                | Boolean   | Indicates if the account was verified.       |
 | `card_holder_authenticated`       | Boolean   | Indicates if the cardholder was authenticated.|
 
+## Testing
+
+Basis Theory provides an mechanism to create fake token intents using this endpoint.
+Changing the `protocolVersion` to `BasisTheory` will instead process a fake Google payment token in a different manner.
+
+To create a `card` token intent, set the `signature` to `card`.
+The `signedMessage` should contain `nubmer`, `expiration_month`, and `expiration_year`.
+```json title="Fake card token"
+{
+  "google_payment_method_token": {
+    "protocolVersion": "BasisTheory",
+    "signature": "card",
+    "intermediateSigningKey": {
+      "signedKey": "fake",
+      "signatures": [
+        "fake"
+      ]
+    },
+    "signedMessage": "{\"number\": 4242424242424242, expiration_month: 4, expiration_year: 2025 }"
+  }
+}
+```
+
+To create a `network_token`, set the `signature` to `network_token`.
+In addition to the attributes defined for the fake `card` token, include `cryptogram` and `eci_indicator`.
+The value of these attributes will be persisted in the `authentication` object of the token intent.
+```json title="Fake network_token"
+{
+  "google_payment_method_token": {
+    "protocolVersion": "BasisTheory",
+		"signature": "network_token",
+    "intermediateSigningKey": {
+      "signedKey": "fake",
+      "signatures": [
+        "fake"
+      ]
+    },
+    "signedMessage": "{\"number\": 4242424242424242, \"expiration_month\": 12, \"expiration_year\": 2025, \"cryptogram\": \"AAAAA....\", \"eci_indicator\": \"01\"}"
+  }
+}
+```
 
