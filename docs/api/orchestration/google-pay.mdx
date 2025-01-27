@@ -15,14 +15,14 @@ An endpoint to decrypt and tokenize a [Google Payment token](https://developers.
 This endpoint only supports the ECv2 token versions.
 It supports both auth methods, `PAN_ONLY` and `CRYPTOGRAM_3DS`.
 
-When [requesting](https://developers.google.com/pay/api/web/guides/tutorial#tokenization) a payment token, use `basistheory` as the `gateway`.
-There are no requirements for the value of `gatewayMerchantId`.
+When [requesting](https://developers.google.com/pay/api/web/guides/tutorial#tokenization) a payment token, use `basistheory` as the `gateway` and your tenant ID for `gatewayMerchantId`.
+
 ```javascript
 const tokenizationSpecification = {
   type: 'PAYMENT_GATEWAY',
   parameters: {
     'gateway': 'basistheory',
-    'gatewayMerchantId': 'exampleGatewayMerchantId'
+    'gatewayMerchantId': '<TENANT ID>'
   }
 };
 ```
@@ -131,6 +131,10 @@ Returns [an error](/docs/api/errors) if there were validation errors, if the Goo
       "funding": "debit",
       "authentication": "sca_required"
     },
+    "authentication": {
+      "threeds_cryptogram": "AAAAAAA....",
+      "eci_indicator": "02"
+    },
     "_extras": {
       "tsp_details": {
         "tsp": "Google",
@@ -195,7 +199,7 @@ The value of these attributes will be persisted in the `authentication` object o
 {
   "google_payment_method_token": {
     "protocolVersion": "BasisTheory",
-		"signature": "network_token",
+    "signature": "network_token",
     "intermediateSigningKey": {
       "signedKey": "fake",
       "signatures": [
