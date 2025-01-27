@@ -30,10 +30,10 @@ const tokenizationSpecification = {
 ## Tokenize
 
 This process utilizes Basis Theory's [Token Intents](/docs/api/tokens/token-intents).
-This endpoint will decrypt a provided Google Payment token and tokenize to a Basis Theory token intent.
+This endpoint will decrypt a provided Google Payment token and tokenize to a Basis Theory Token Intent.
 Basis Theory supports the `PAN_ONLY` and `CRYPTOGRAM_3DS` authorization methods.
 
-The table below shows the resulting token intent type based on the Google Payment Token's `authMethod` attribute.
+The table below shows the resulting Token Intent type based on the Google Payment Token's `authMethod` attribute.
 
 | Auth Method   | Token Type   |
 |---------------|--------------|
@@ -109,8 +109,8 @@ The table below shows the resulting token intent type based on the Google Paymen
 
 ### Response
 
-Returns a [token intent](/docs/api/tokens/token-intents#token-intent-object) if successful.
-Returns [an error](/docs/api/errors) if there were validation errors, if the Google payment token failed to decrypt create, or the token intent failed to create.
+Returns a [Token Intent](/docs/api/tokens/token-intents#token-intent-object) if successful.
+Returns [an error](/docs/api/errors) if there were validation errors, if the Google payment token failed to decrypt create, or the Token Intent failed to create.
 
 ```json showLineNumbers
 {
@@ -171,10 +171,10 @@ The attributes in the `_extras` object are NOT addressable in proxies or reactor
 
 ## Testing
 
-Basis Theory provides a mechanism to create fake token intents using this endpoint.
+Basis Theory provides a mechanism to create fake Token Intents using this endpoint.
 Changing the `protocolVersion` to `BasisTheory` will instead process a fake Google payment token in a different manner.
 
-To create a `card` token intent, set the `signature` to `card`.
+To create a `card` Token Intent, set the `signature` to `card`.
 The `signedMessage` should contain `number`, `expiration_month`, and `expiration_year`.
 ```json title="Fake card token"
 {
@@ -194,7 +194,7 @@ The `signedMessage` should contain `number`, `expiration_month`, and `expiration
 
 To create a `network_token`, set the `signature` to `network_token`.
 In addition to the attributes defined for the fake `card` token, include `cryptogram` and `eci_indicator`.
-The value of these attributes will be persisted in the `authentication` object of the token intent.
+The value of these attributes will be persisted in the `authentication` object of the Token Intent.
 ```json title="Fake network_token"
 {
   "google_payment_method_token": {
