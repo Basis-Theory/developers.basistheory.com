@@ -569,12 +569,12 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "JavaScript Elements",
+          label: "Web Elements",
           link: {
             type: "doc",
-            id: "sdks/web/javascript/index",
+            id: "sdks/web/web-elements/index",
           },
-          items: ["sdks/web/javascript/types", "sdks/web/javascript/options", "sdks/web/javascript/lifecycle", "sdks/web/javascript/events", "sdks/web/javascript/services"],
+          items: ["sdks/web/web-elements/events", "sdks/web/web-elements/lifecycle", "sdks/web/web-elements/options", "sdks/web/web-elements/services", "sdks/web/web-elements/types"],
         },
         {
           type: "category",
@@ -653,6 +653,21 @@ const sidebars = {
             enterprise: true,
           },
           items: ["sdks/mobile/3ds-react-native/methods"],
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Deprecated SDKs",
+      items: [
+        {
+          type: "category",
+          label: "JavaScript Elements",
+          link: {
+            type: "doc",
+            id: "sdks/web/javascript/index",
+          },
+          items: [],
         },
       ],
     },
