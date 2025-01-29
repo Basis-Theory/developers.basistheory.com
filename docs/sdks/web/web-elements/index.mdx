@@ -1,0 +1,118 @@
+---
+title: Web Elements
+description: Web Elements make it easy to build secure web applications that collect or reveal sensitive data. Learn more.
+sidebar_label: Web Elements
+toc_max_heading_level: 2
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { GithubCard } from "@site/src/components/sdks/GithubCard";
+import { SDK } from "@site/src/components/types";
+
+# Web Elements
+
+<GithubCard heading="Web Elements" icon={SDK.JAVASCRIPT} organization="basis-theory" repository="web-elements" />
+
+The Basis Theory Web elements makes it easy to build secure web applications that
+[collect](/docs/concepts/elements#collect-sensitive-data) or [reveal](/docs/concepts/elements#reveal-sensitive-data)
+sensitive data using [Elements](/docs/concepts/elements).
+
+Get started with our [guide](/docs/guides/collect/collect-data-from-web), explore our
+[examples](https://github.com/Basis-Theory/basis-theory-js-examples),
+or continue reading the [reference docs](/docs/sdks/web/web-elements/types).
+
+## Before You Begin
+
+This SDK requires the use of an API Key associated with a **Public Application**, which only allows `token:create` or `token:update`
+permissions to mitigate the risk that these API keys may be publicly exposed within your frontend applications.
+
+To create one, login into our [Portal](https://portal.basistheory.com) and create a new "Public" Application with the permissions you require.
+
+## Considerations
+
+Basis Theory Web Elements SDK uses conventional camel case for most methods and converts these properties to snake case when sending requests to the API. One notable exception to this is the [Tokenize](/docs/api/tokens/tokenize) method which uses snake case for the request body.
+
+
+## Installation
+
+To install **web elements** you can choose either our ES module or CDN hosted bundle through a `script` tag.
+
+<Tabs className="bt-tabs">
+  <TabItem value="npm" label="npm">
+
+```shell showLineNumbers
+npm install --save @basis-theory/web-elements
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn add @basis-theory/web-elements
+```
+
+  </TabItem>
+  <TabItem value="cdn" label="CDN">
+
+```html showLineNumbers
+<!-- Including this tag will export a global/window "basistheory" variable -->
+<!-- 
+  You can either pin the version to a specific release for stability 
+  or use the latest tag to always pull the most recent version. 
+  However, relying on latest can be risky, as it may introduce unexpected changes or breaking updates. 
+  For detailed information about each version, refer to our changelog.
+-->
+
+<script src="https://js.basistheory.com/web-elements/latest"></script>
+<!-- or -->
+<script src="https://js.basistheory.com/web-elements/1.0.0"></script>
+```
+
+  </TabItem>
+</Tabs>
+
+## Initialization
+
+<Tabs className="bt-tabs">
+  <TabItem value="module" label="ES Module">
+
+```javascript showLineNumbers
+import { basistheory } from "@basis-theory/web-elements";
+
+const bt = await basistheory("<PUBLIC_API_KEY>")
+// use Elements
+```
+
+  </TabItem>
+  <TabItem value="cdn" label="CDN">
+
+```html showLineNumbers
+<script>
+  // you can initialize it wherever it suits your workflow best
+  // here we are waiting for the window to load, to make sure BasisTheory instance
+  // has been injected in the window variable
+  let bt;
+
+  window.addEventListener("load", async () => {
+    try {
+      // global/window variable basistheory is an instance, but requires initialization
+      bt = await basistheory("<PUBLIC_API_KEY>");
+      // use Elements
+    } catch (e) {
+      // handle errors that could happen while loading elements script
+    }
+  });
+</script>
+```
+
+  </TabItem>
+</Tabs>
+
+| Parameter | Required | Type                     | Description                                                                        |
+| --------- | -------- | ------------------------ | ---------------------------------------------------------------------------------- |
+| `apiKey`  | true     | _string_                 | The API Key used to identify an [Application](/docs/api/applications).             |
+
+<Alert type={Alerts.WARNING}>Elements are meant to be used in browser environments only. If you installed <code>web-elements</code> as a module, make sure the instance that loads elements runs on the browser-side code.</Alert>
