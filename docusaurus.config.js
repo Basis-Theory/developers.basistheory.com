@@ -119,7 +119,7 @@ const config = {
             clusterBkg: "var(--bt-mermaid-cluster-bkg)",
             clusterBorder: "var(--bt-mermaid-cluster-border)",
             titleColor: "var(--bt-mermaid-title-color)",
-            edgeLabelBackground: "var(--bt-mermaid-edge-label-background)",
+            // edgeLabelBackground: "var(--bt-mermaid-edge-label-background)",
             nodeTextColor: "var(--bt-mermaid-node-text-color)",
           },
         },

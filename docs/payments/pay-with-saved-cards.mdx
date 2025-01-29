@@ -8,6 +8,7 @@ toc_max_heading_level: 3
 import { Intro } from "@site/src/components/shared/Intro";
 import { ApplicationSection } from "./sections/ApplicationSection";
 import RecollectSecurityCodeSection from "./sections/_recollect-security-code_section.mdx";
+import ChargeSavedCardSection from "./sections/_charge-saved-card-section.mdx";
 
 <Intro
   title="Pay with Saved Cards"
@@ -35,33 +36,41 @@ Suppose your application identified a returning customer that has tokens in your
 | `a7c9f2b4`  | `1cd9c8bf-99fd-4784-ba69-68b15b301019` | `8723dfab9c4e56a1b8cd0291ef67ac43` | _VISA_       | 01/30    | 4242       |
 | `f4b1d8e7`  | `4fa8e7c6-33bf-4420-bb1d-2c4e5d872301` | `9a3f7edbc1246a8b5e0d3c12fa678943` | _MASTERCARD_ | 12/29    | 5555       |
 
-[//]: # (We will use Basis Theory [Ephemeral Proxy API]&#40;/docs/api/proxies/ephemeral-proxy&#41;, a tool that transparently performs detokenization, to share the sensitive cardholder data to the Payments Processor or Acquirer API. To do this, we will formulate our HTTPS request as if we were directly connecting to the target endpoint, with the following variations:)
-
-[//]: # ()
-[//]: # (1. Use a [Private Application Key]&#40;#private-application&#41; as the value of the `BT-API-KEY` header;)
-
-[//]: # (2. Specify the target API endpoint as the value for the `BT-PROXY-URL` header;)
-
-[//]: # (3. Pass any additional headers you need the target API to receive, for example `Authorization`, `X-API-KEY`, etc.;)
-
-[//]: # (4. Replace the plaintext sensitive cardholder data in the expected payload contents with [detokenization expressions]&#40;/docs/expressions/detokenization&#41; that contains token identifiers.)
-
-[//]: # ()
-[//]: # (Continue reading to find request examples in the subsections below.)
-
-
 <RecollectSecurityCodeSection />
 
+## Process Cards
 
-## Charge a saved Card
+In this section, we'll learn how to process a payment using a saved card token.
 
-Once the customer selected the saved card, invoke the PSP or Acquirer API to process the transaction, passing:
-- The Basis Theory card token identifier, where the card details are expected;
+```mermaid
+  sequenceDiagram
+    participant mapi as Merchant<br>API
+    participant bapi as Basis Theory<br>API
+    participant psp as Payments Processor<br>API
 
+    activate mapi
+    mapi ->>+ bapi: Charge using Token
+    bapi ->> bapi: Detokenize card data
+    bapi ->>+ psp: Charge using card data
+    psp -->>- bapi: Response
+    bapi -->>- mapi: Response
+    deactivate mapi
+```
+
+We will use Basis Theory [Ephemeral Proxy API](/docs/api/proxies/ephemeral-proxy), a tool that transparently performs detokenization, to share the sensitive cardholder data to the Payments Processor or Acquirer API. To do this, we will formulate our HTTPS request as if we were directly connecting to the target endpoint, with the following variations:
+
+1. Use a [Private Application Key](#private-application) as the value of the `BT-API-KEY` header;
+2. Specify the target API endpoint as the value for the `BT-PROXY-URL` header;
+3. Pass any additional headers you need the target API to receive, for example `Authorization`, `X-API-KEY`, etc.;
+4. Replace the plaintext sensitive cardholder data in the expected payload contents with [detokenization expressions](/docs/expressions/detokenization) that contains token identifiers.
+
+Continue reading to find request examples in the subsections below.
 
 ### Private Application
 
 <ApplicationSection type="private" permissions={['token:use']}/>
 
-## With a PSP Token
+<ChargeSavedCardSection />
+
+## PSP Tokens
 

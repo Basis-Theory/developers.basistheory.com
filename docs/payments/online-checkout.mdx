@@ -6,12 +6,110 @@ hide_table_of_contents: true
 
 import { Intro } from "@site/src/components/shared/Intro";
 
-
 <Intro
   title="Online Checkout"
-  caption="Basis Theory provides all the key features to safely start managing cardholder data in a compliant environment."
+  caption="Learn how to securely perform Customer Initiated Transactions (CITs) in a multi-payments processor scenario"
   img={{
     light: "/img/guides/cards/logo.svg",
     dark: "/img/guides/cards/logo-dark.svg",
   }}
 />
+
+Adopting Basis Theory
+
+
+### Step 1 - Unified Frontend
+
+- PCI compliance
+- No more toggling or switching between many PSP frontends / replace Processor iframed components
+- Agnostic 3DS
+- 100% uptime iframe guarantee
+  - Fallback writing
+- Tokenize only valid cards
+  - Pick a PSP for verification ($0 auth)
+
+```mermaid
+flowchart TD
+  id1[Step 1]
+  id2{Who owns the card inputs?}
+  id3{Need PCI relief?}
+  id4[Pre-tokenize using<br>Basis Theory Elements]
+  id5[Pre-tokenize using<br>Basis Theory API]
+  id6{3DS needed?}
+  id7[Authenticate a Card]
+
+  id1-->id2
+  id2--Merchant-->id3
+  id2--"PSP(s)"-->id4
+  id3--Noo-->id5
+  id3--Yes-->id4
+  id4-->id6
+  id5-->id6
+  id6--Yes-->id7
+```
+
+### Step 2 - Route to your existing processor
+
+New customers:
+1. Charge intent and save token(s)
+2. Verify intent, save token(s), charge token
+
+Returning customers:
+1. Render card, recollect cvc, charge token
+
+Subscriptions:
+1. Charge token
+
+### Step 3 - Migrate cards to Basis Theory
+- Bring all cards under the same roof
+
+### Step 4 - Optimize
+- Add new PSP
+- Add routing logic
+  - Region
+  - funding type
+  - Retries
+
+
+---
+
+Pick a checkout flow:
+
+### Direct Card Payments
+1. Accept Cards
+   - (Optional) Authenticate with 3DS
+2. Charge a new Card
+   - Produces PSP token, NT TX ID (store them)
+3. (Optional) Save a Card
+
+### Verify and Charge cards
+1. Accept Cards
+   - (Optional) Authenticate with 3DS
+2. Verify a Card
+   - Produces PSP token, NT TX ID (store them)
+3. Save a Card
+   - Produces BT Token ID (store it)
+4. Charge a Card
+   - Using PSP Token
+   - Using BT Token + NT TX ID (fallback)
+
+### Pay with Saved Cards
+1. Using a PSP Token (if you have one)
+2. Using a BT Token
+   - Recollect CVC (if needed)
+   - Charge token
+
+---
+
+Match your stack:
+
+### Frontend guides
+1. Accept Cards
+2. Authenticate with 3DS
+3. Recollect CVC
+
+### Backend guides
+1. Verify a Card
+2. Charge a new Card
+3. Save a Card
+4. Charge a saved Card
