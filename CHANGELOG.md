@@ -1,3 +1,10 @@
+## [1.207.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.207.0...v1.207.1) (2025-01-29)
+
+
+### Bug Fixes
+
+* web elements cdn paths ([#495](https://github.com/Basis-Theory/developers.basistheory.com/issues/495)) ([99ff10f](https://github.com/Basis-Theory/developers.basistheory.com/commit/99ff10f6db7479470eb9998ccbbee3fb9c6ad4dd))
+
 # [1.207.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.206.1...v1.207.0) (2025-01-29)
 
 
