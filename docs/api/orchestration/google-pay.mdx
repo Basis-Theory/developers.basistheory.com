@@ -16,6 +16,7 @@ This endpoint only supports the ECv2 token versions.
 It supports both auth methods, `PAN_ONLY` and `CRYPTOGRAM_3DS`.
 
 When [requesting](https://developers.google.com/pay/api/web/guides/tutorial#tokenization) a payment token, use `basistheory` as the `gateway` and your tenant ID for `gatewayMerchantId`.
+There is no requirement to include addresses. Basis Theory does not perform address verification.
 
 ```javascript
 const tokenizationSpecification = {
@@ -31,8 +32,10 @@ const tokenizationSpecification = {
 
 This process utilizes Basis Theory's [Token Intents](/docs/api/tokens/token-intents).
 This endpoint will decrypt a provided Google Payment token and tokenize to a Basis Theory Token Intent.
-Basis Theory supports the `PAN_ONLY` and `CRYPTOGRAM_3DS` authorization methods.
 
+To use the API, pass the encrypted Google Payment token received from the Google API in the `google_payment_method_token` object in the Basis Theory request object.
+
+Basis Theory supports the `PAN_ONLY` and `CRYPTOGRAM_3DS` authorization methods.
 The table below shows the resulting Token Intent type based on the Google Payment Token's `authMethod` attribute.
 
 | Auth Method   | Token Type   |
