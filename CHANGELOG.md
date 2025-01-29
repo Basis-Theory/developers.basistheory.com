@@ -1,3 +1,10 @@
+## [1.207.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.207.1...v1.207.2) (2025-01-29)
+
+
+### Bug Fixes
+
+* remove sdk list ([#496](https://github.com/Basis-Theory/developers.basistheory.com/issues/496)) ([06b765d](https://github.com/Basis-Theory/developers.basistheory.com/commit/06b765deae95cd65da253bcd80341cb5554d2c7a))
+
 ## [1.207.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.207.0...v1.207.1) (2025-01-29)
 
 
