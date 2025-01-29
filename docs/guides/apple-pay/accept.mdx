@@ -114,11 +114,12 @@ Create a `reactor.js` file and paste the code below. We will use open source [Ba
 ```javascript title="reactor.js" showLineNumbers
 const { Buffer } = require("buffer");
 const { ApplePaymentTokenContext } = require("@basis-theory/apple-pay-js");
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 const { CustomHttpResponseError } = require("@basis-theory/basis-theory-reactor-formulas-sdk-js");
 
 module.exports = async function (req) {
   const {
-    bt,
+    basisTheoryConfig,
     args: {
       applePayToken: { paymentData, ...restApplePayToken },
     },
@@ -149,7 +150,8 @@ module.exports = async function (req) {
     console.log(restPaymentData);
 
     // vaults DPAN and cryptogram
-    const { dpanToken, cryptogramToken } = await bt.tokenize({
+    const client = new BasisTheoryClient(basisTheoryConfig);
+    const { dpanToken, cryptogramToken } = await client.tokenize({
       dpanToken: {
         type: "card",
         data: {

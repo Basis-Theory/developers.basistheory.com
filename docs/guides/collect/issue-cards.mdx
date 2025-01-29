@@ -66,12 +66,14 @@ Now we will create a Proxy that intercepts the HTTP response from the Issuer API
   <TabItem value="lithic" label="Lithic">
 
 ```javascript showLineNumbers title="responseTransform.js"
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args;
   const { token: lithicToken, pan, exp_month, exp_year, cvv, ...rest } = body;
 
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     id: lithicToken, // (optional) use the Lithic card token as Basis Theory card token
     type: 'card',
     data: {
@@ -99,12 +101,15 @@ module.exports = async function (req) {
   <TabItem value="marqeta" label="Marqeta">
 
 ```javascript showLineNumbers title="responseTransform.js"
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
+
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args;
   const { token: marqetaToken, pan, expiration, cvv_number, ...rest } = body;
 
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     id: marqetaToken, // (optional) uses the Marqeta card token as Basis Theory card token
     type: 'card',
     data: {
@@ -132,12 +137,15 @@ module.exports = async function (req) {
   <TabItem value="stripe" label="Stripe">
 
 ```javascript showLineNumbers title="responseTransform.js"
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
+
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args;
   const { id, number, exp_month, exp_year, cvc, ...rest } = body;
 
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     id, // (optional) uses the Stripe card id as Basis Theory card token id
     type: 'card',
     data: {
@@ -165,8 +173,10 @@ module.exports = async function (req) {
   <TabItem value="galileo" label="Galileo">
 
 ```javascript showLineNumbers title="responseTransform.js"
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
+
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args;
   const {
     response_data: [{
@@ -181,7 +191,8 @@ module.exports = async function (req) {
 
   const expiration = new Date(expiry_date);
 
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     id: card_id, // (optional) uses the Galileo card id as Basis Theory card token id
     type: 'card',
     data: {
@@ -214,11 +225,12 @@ module.exports = async function (req) {
 
 ```javascript showLineNumbers title="responseTransform.js"
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args;
   const { id, pan, expiration, cvv, ...rest } = body;
 
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     id, // (optional) use the TP card id as Basis Theory card token
     type: 'card',
     data: {
@@ -252,7 +264,7 @@ const WHITE_PIXEL =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=';
 
 module.exports = async function (req) {
-  const { bt, args } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args;
 
   const doc = create(body);
@@ -272,7 +284,8 @@ module.exports = async function (req) {
     const expirationMonth = expiry.slice(-2);
     const expirationYear = `20${expiry.slice(0, 2)}`;
 
-    const token = await bt.tokens.create({
+    const client = new BasisTheoryClient(basisTheoryConfig);
+    const token = await client.tokens.create({
       type: 'card',
       data: {
         number,
@@ -311,12 +324,15 @@ module.exports = async function (req) {
   <TabItem value="adyen" label="Adyen">
 
 ```javascript showLineNumbers title="responseTransform.js"
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
+
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args;
   const { pan, expiration: { month, year }, cvc } = body;
 
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     type: 'card',
     data: {
       number: pan,

@@ -85,13 +85,16 @@ In this example, we are handling `application/json` content type in the request 
 ```
 
 ```javascript showLineNumbers title="requestTransform.js"
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
+
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args;
 
   const { payment_method, ...rest } = body;
 
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
   })
@@ -127,11 +130,11 @@ In this example, we are handling `application/xml` content type in the request p
 ```
 ```javascript showLineNumbers title="requestTransform.js"
 const { create } = require("xmlbuilder2");
-
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
   const {
-    bt,
     args: { body, headers },
+    basisTheoryConfig,
   } = req;
 
   // parse the xml
@@ -146,7 +149,8 @@ module.exports = async function (req) {
     cvc: object.Checkout.PaymentMethod.Cvc,
   }
 
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     type: "card",
     data: payment_method,
   });
@@ -176,9 +180,9 @@ reference=REF1234&currency=USD&paymentMethod[number]=4242424242424242&paymentMet
 
 ```javascript showLineNumbers title=requestTransform.js
 const querystring = require('querystring')
-
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args;
 
   const {
@@ -196,7 +200,8 @@ module.exports = async function (req) {
     cvc
   }
 
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
   });
@@ -334,9 +339,14 @@ When making the tokenization request to store the card, pass a fingerprint expre
 
 
 ```javascript showLineNumbers title="requestTransform.js"
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
+
 module.exports = async function (req) {
+  const { args, basisTheoryConfig } = req;
+  const { payment_method } = args;
   ...
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
     // highlight-next-line
@@ -379,9 +389,14 @@ The new tokens should now have a fingerprint:
 If you want to prevent creation of a duplicate token based on the distinguishable fingerprint, add the flag below:
 
 ```javascript showLineNumbers title="requestTransform.js"
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
+
 module.exports = async function (req) {
+  const { args, basisTheoryConfig } = req;
+  const { payment_method } = args;
   ...
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
     fingerprintExpression: '{{ data.number }}',
@@ -401,9 +416,12 @@ By default, card tokens are created with a mask revealing only the last 4 digits
 In other scenarios, being able to preserve the Bank Identification Number (BIN) from the card number can enable fraud detection mechanisms, advanced payment processing routing, account type differentiation and other core functionality. [PCI DSS allows](https://www.pcisecuritystandards.org/faq/articles/Frequently_Asked_Question/What-are-acceptable-formats-for-truncation-of-primary-account-numbers/) applications to reveal up to the first 8 and last 4 digits of a card number, depending on its length and Payment Brand. Luckily, when creating a token, you can express which segments of the PAN are useful to you with a single expressions filter: `card_mask`. [Click here to learn more about this filter](/docs/expressions/filters#card_mask).
 
 ```javascript showLineNumbers title="requestTransform.js"
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
+
 module.exports = async function (req) {
   ...
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
     fingerprintExpression: '{{ data.number }}',
@@ -470,9 +488,13 @@ function generateTokenId() {
 }
 // highlight-end
 
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
+  const { args, basisTheoryConfig } = req;
+  const { payment_method } = args;
   ...
-  const token = await bt.tokens.create({
+  const client = new BasisTheoryClient(basisTheoryConfig);
+  const token = await client.tokens.create({
     // highlight-next-line
     id: generateTokenId(),
     type: 'card',
@@ -535,7 +557,7 @@ const fetch = require('node-fetch');
 const { AuthenticationError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
 
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args } = req;
   const { body, headers } = args;
 
   // forwards Authorization header to auth server
@@ -571,7 +593,7 @@ const verifySignature = async (token, publicKeyPem) => {
 };
 
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration } = req;
   const { body, headers } = args;
 
   try {

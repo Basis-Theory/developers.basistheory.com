@@ -100,11 +100,11 @@ Now, let's run `text` through a Regex to parse all the numeric values and invoke
 
 ```javascript showLineNumbers title="code.js"
 const { createWorker } = require("tesseract.js");
-
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
   const {
-    bt,
     args: { url },
+    basisTheoryConfig,
   } = req;
   let worker;
 
@@ -121,7 +121,8 @@ module.exports = async function (req) {
     const [cvc, expiration_year, expiration_month, ...numberArr] = cardData;
     const number = numberArr.join("");
 
-    const token = await bt.tokens.create({
+    const client = new BasisTheoryClient(basisTheoryConfig);
+    const token = await client.tokens.create({
       type: "card",
       data: {
         number,

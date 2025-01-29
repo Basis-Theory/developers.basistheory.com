@@ -1545,7 +1545,7 @@ Request transforms are Node.js v16 code blocks which export a function of the fo
 
 ```javascript showLineNumbers
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers, method, path, query } = args; // access properties of the http request
   const { MY_CONFIG } = configuration; // access any static config defined on the Proxy
 
@@ -1605,7 +1605,7 @@ Code response transforms are Node.js v16 code blocks which export a function of 
 
 ```javascript showLineNumbers
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args; // access properties of the http response
   const { MY_CONFIG } = configuration; // access any static config defined on the Proxy
 
@@ -1740,9 +1740,12 @@ set the `application.id` property when [creating your Proxy](/docs/api/proxies#c
 This will inject a [Basis Theory JS](/docs/sdks/server-side/node) instance into the transform request
 that is pre-configured for this application. For example:
 
-```javascript showLineNumbers
+```javascript showLineNumbers 
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
+
 module.exports = async function (req) {
-  const token = await req.bt.tokenize({
+  const client = new BasisTheoryClient(req.basisTheoryConfig);
+  const token = await client.tokenize({
     type: "token",
     data: req.args.body.sensitive_value,
   });

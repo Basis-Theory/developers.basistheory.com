@@ -268,15 +268,17 @@ module.exports = async function (req) {
 When you need to process files of sensitive data without it touching your systems, use a Reactor to desensitize a file before forwarding it on to your systems for your own logic:
 
 ```javascript showLineNumbers
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
-  const { bt, args } = req;
+  const { args, basisTheoryConfig } = req;
+  const client = new BasisTheoryClient(basisTheoryConfig);
   const { fileString } = args; // "name,ssn\nTheory,555445555"
 
   const rows = fileString.split("\n").map((r) => r.split(","));
 
   await Promise.all(
     rows.slice(1).map((row) => {
-      return bt.tokens
+      return client.tokens
         .create({
           type: "social_security_number",
           data: row[1],

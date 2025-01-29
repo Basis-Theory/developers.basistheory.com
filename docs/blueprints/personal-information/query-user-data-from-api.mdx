@@ -193,15 +193,17 @@ output "inbound_proxy_key" {
 javascript='const {
   BadRequestError,
 } = require("@basis-theory/basis-theory-reactor-formulas-sdk-js");
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 
 module.exports = async function (req) {
-  const { bt, args } = req;
+  const { args, basisTheoryConfig } = req;
   const { body, headers } = args;
 
   try {
     const { json } = body; // format returned by echo Server
     const { ssn } = json; // look for the token to detokenize
-    const token = await bt.tokens.retrieve(ssn); // detokenization step
+    const client = new BasisTheoryClient(basisTheoryConfig);
+    const token = await client.tokens.retrieve(ssn); // detokenization step
 
     return {
       body: { // transformed body

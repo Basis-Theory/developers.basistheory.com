@@ -1253,7 +1253,7 @@ Request transforms are Node.js v16 code blocks which export a function of the fo
 
 ```javascript showLineNumbers
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers, method, path, query } = args; // access properties of the http request
   const { MY_CONFIG } = configuration; // access any static config defined on the Proxy
 
@@ -1277,6 +1277,8 @@ The request transform function receives the following object:
 | `args`          | _object_ | Properties of the proxy request (see below)                                                                               |
 | `configuration` | _object_ | The configuration defined for the [Proxy object](#proxies-proxy-object)                                                   |
 | `bt`            | _object_ | A pre-configured Basis Theory JS instance if an `application` was configured on the [Proxy object](#proxies-proxy-object) |
+| `basisTheoryConfig`| _object_ | An object capable of being used when initializing the [Basis Theory JS SDK](/docs/sdks/server-side/node). Example: `const client = new BasisTheoryClient(basisTheoryConfig);` |
+
 
 where `args` contains:
 
@@ -1313,7 +1315,7 @@ Code response transforms are Node.js v16 code blocks which export a function of 
 
 ```javascript showLineNumbers
 module.exports = async function (req) {
-  const { bt, args, configuration } = req;
+  const { args, configuration, basisTheoryConfig } = req;
   const { body, headers } = args; // access properties of the http response
   const { MY_CONFIG } = configuration; // access any static config defined on the Proxy
 
@@ -1337,6 +1339,8 @@ The response transform function receives the following object:
 | `args`          | _object_ | Properties of the proxy response (see below)                                                                              |
 | `configuration` | _object_ | The configuration defined for the [Proxy object](#proxies-proxy-object)                                                   |
 | `bt`            | _object_ | A pre-configured Basis Theory JS instance if an `application` was configured on the [Proxy object](#proxies-proxy-object) |
+| `basisTheoryConfig`| An object capable of being used when initializing the [Basis Theory JS SDK](/docs/sdks/server-side/node). Example: `const client = new BasisTheoryClient(basisTheoryConfig);` |
+
 
 where `args` contains:
 
@@ -1449,8 +1453,10 @@ This will inject a [Basis Theory JS](/docs/sdks/server-side/node) instance into 
 that is pre-configured for this application. For example:
 
 ```javascript showLineNumbers
+const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
-  const token = await req.bt.tokenize({
+  const client = new BasisTheoryClient(req.basisTheoryConfig);
+  const token = await client.tokenize({
     type: "token",
     data: req.args.body.sensitive_value,
   });
