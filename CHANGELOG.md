@@ -1,3 +1,10 @@
+## [1.207.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.207.2...v1.207.3) (2025-01-29)
+
+
+### Bug Fixes
+
+* sort 3ds test cards by luhn and scenario ([#497](https://github.com/Basis-Theory/developers.basistheory.com/issues/497)) ([46730db](https://github.com/Basis-Theory/developers.basistheory.com/commit/46730db320cb6d19fbc52f0515ac70c51486b792))
+
 ## [1.207.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.207.1...v1.207.2) (2025-01-29)
 
 
