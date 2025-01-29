@@ -1,3 +1,10 @@
+# [1.207.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.206.1...v1.207.0) (2025-01-29)
+
+
+### Features
+
+* adds web-elements and deprecates btjs ([#485](https://github.com/Basis-Theory/developers.basistheory.com/issues/485)) ([9cd7d7f](https://github.com/Basis-Theory/developers.basistheory.com/commit/9cd7d7fe8acb5dd9164c6fcc4fc862343a3d422f))
+
 ## [1.206.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.206.0...v1.206.1) (2025-01-23)
 
 
