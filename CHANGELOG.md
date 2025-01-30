@@ -1,3 +1,10 @@
+# [1.208.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.207.3...v1.208.0) (2025-01-30)
+
+
+### Features
+
+* Document Google Pay Tokenization ([#493](https://github.com/Basis-Theory/developers.basistheory.com/issues/493)) ([087114e](https://github.com/Basis-Theory/developers.basistheory.com/commit/087114ef09e785acbbc4b2808889f01461a6fd9a))
+
 ## [1.207.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.207.2...v1.207.3) (2025-01-29)
 
 
