@@ -22,14 +22,14 @@ The following table lists deprecated features and their respective shutdown date
 | Reactor Formulas                                                    | October 16, 2023  | February 14, 2024 | Reactor Formulas have been deprecated in favor of Reactors with `code`. For more information, see the section below on [Migrating from Reactor Formulas](#migrating-from-reactor-formulas).                                                                                                                                                                                                                     |
 | `request_reactor_id` and `response_reactor_id` removed from Proxies | November 30, 2022 | March 31, 2023    | In order to simplify management of Proxies, use of `request_transform` and `response_tramsform` has been recommended over Reactors.                                                                                                                                                                                                                                                                             |
 | Token Privacy Settings                                              | October 13, 2022  | February 1, 2023  | Privacy settings (i.e. classification, impact level, and restriction policy) have been deprecated and replaced by a more flexible authorization model based upon [Containers](/docs/concepts/what-are-containers) and [Access Rules](/docs/concepts/access-controls#what-are-access-rules). For more information, see the section below on [Migrating from Privacy Settings](#migrating-from-privacy-settings). |
-| `bt` parameter in Reactors and Proxy Transforms                    | October 13, 2022  | TBD  | The `bt` parameter in Reactors and Proxy Transforms has been deprecated and replaced by the `basisTheoryConfig` parameter + [Basis Theory SDK](/docs/sdks/server-side/node). For more information, see the section below on [Migrating from Reactors and Proxy Transforms](#migrating-from-reactors-and-proxy-transforms). |
+| `bt` parameter in Reactors and Proxy Transforms                    | October 13, 2022  | TBD  | The `bt` parameter in Reactors and Proxy Transforms has been deprecated and replaced by the `applicationOptions` parameter + [Basis Theory SDK](/docs/sdks/server-side/node). For more information, see the section below on [Migrating from Reactors and Proxy Transforms](#migrating-from-reactors-and-proxy-transforms). |
 
 ## Migrating from `bt` parameter in Reactors and Proxy Transforms
 
-We have replaced the helper `bt` parmater being passed in with a more traditional method by providing our SDK as a dependency. To migrate your existing code, you will need to update your code to use the SDK and the new `basisTheoryConfig` parameter which contains configuration options for your selected Application:
+We have replaced the helper `bt` parmater being passed in with a more traditional method by providing our SDK as a dependency. To migrate your existing code, you will need to update your code to use the SDK and the new `applicationOptions` parameter which contains configuration options for your selected Application:
 
 1. Require the SDK in your code 
-2. Create a new BasisTheoryClient with the `basisTheoryConfig` parameter.
+2. Create a new BasisTheoryClient with the `applicationOptions` parameter.
 3. Use the client in place of the `bt` parameter
 
 Your existing code will look similar to below:
@@ -50,8 +50,8 @@ The below is the new code that will replace the old code:
 const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 
 export default async function (req) {
-  const { args, configuration, basisTheoryConfig } = req;
-  const client = new BasisTheoryClient(basisTheoryConfig);
+  const { args, configuration, applicationOptions } = req;
+  const client = new BasisTheoryClient(applicationOptions);
 
   client.tokens.create({
    ...

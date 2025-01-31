@@ -88,12 +88,12 @@ In this example, we are handling `application/json` content type in the request 
 const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 
 module.exports = async function (req) {
-  const { args, configuration, basisTheoryConfig } = req;
+  const { args, configuration, applicationOptions } = req;
   const { body, headers } = args;
 
   const { payment_method, ...rest } = body;
 
-  const client = new BasisTheoryClient(basisTheoryConfig);
+  const client = new BasisTheoryClient(applicationOptions);
   const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
@@ -134,7 +134,7 @@ const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
   const {
     args: { body, headers },
-    basisTheoryConfig,
+    applicationOptions,
   } = req;
 
   // parse the xml
@@ -149,7 +149,7 @@ module.exports = async function (req) {
     cvc: object.Checkout.PaymentMethod.Cvc,
   }
 
-  const client = new BasisTheoryClient(basisTheoryConfig);
+  const client = new BasisTheoryClient(applicationOptions);
   const token = await client.tokens.create({
     type: "card",
     data: payment_method,
@@ -182,7 +182,7 @@ reference=REF1234&currency=USD&paymentMethod[number]=4242424242424242&paymentMet
 const querystring = require('querystring')
 const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
-  const { args, configuration, basisTheoryConfig } = req;
+  const { args, configuration, applicationOptions } = req;
   const { body, headers } = args;
 
   const {
@@ -200,7 +200,7 @@ module.exports = async function (req) {
     cvc
   }
 
-  const client = new BasisTheoryClient(basisTheoryConfig);
+  const client = new BasisTheoryClient(applicationOptions);
   const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
@@ -342,10 +342,10 @@ When making the tokenization request to store the card, pass a fingerprint expre
 const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 
 module.exports = async function (req) {
-  const { args, basisTheoryConfig } = req;
+  const { args, applicationOptions } = req;
   const { payment_method } = args;
   ...
-  const client = new BasisTheoryClient(basisTheoryConfig);
+  const client = new BasisTheoryClient(applicationOptions);
   const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
@@ -392,10 +392,10 @@ If you want to prevent creation of a duplicate token based on the distinguishabl
 const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 
 module.exports = async function (req) {
-  const { args, basisTheoryConfig } = req;
+  const { args, applicationOptions } = req;
   const { payment_method } = args;
   ...
-  const client = new BasisTheoryClient(basisTheoryConfig);
+  const client = new BasisTheoryClient(applicationOptions);
   const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
@@ -420,7 +420,7 @@ const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 
 module.exports = async function (req) {
   ...
-  const client = new BasisTheoryClient(basisTheoryConfig);
+  const client = new BasisTheoryClient(applicationOptions);
   const token = await client.tokens.create({
     type: 'card',
     data: payment_method,
@@ -490,10 +490,10 @@ function generateTokenId() {
 
 const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
-  const { args, basisTheoryConfig } = req;
+  const { args, applicationOptions } = req;
   const { payment_method } = args;
   ...
-  const client = new BasisTheoryClient(basisTheoryConfig);
+  const client = new BasisTheoryClient(applicationOptions);
   const token = await client.tokens.create({
     // highlight-next-line
     id: generateTokenId(),

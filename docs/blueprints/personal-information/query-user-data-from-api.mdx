@@ -196,13 +196,13 @@ javascript='const {
 const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 
 module.exports = async function (req) {
-  const { args, basisTheoryConfig } = req;
+  const { args, applicationOptions } = req;
   const { body, headers } = args;
 
   try {
     const { json } = body; // format returned by echo Server
     const { ssn } = json; // look for the token to detokenize
-    const client = new BasisTheoryClient(basisTheoryConfig);
+    const client = new BasisTheoryClient(applicationOptions);
     const token = await client.tokens.retrieve(ssn); // detokenization step
 
     return {

@@ -5,6 +5,7 @@ title: Pre-Configured Proxies
 import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
 import { Alert } from "@site/src/components/shared/Alert";
+import { Deprecated } from "@site/src/components/shared/Deprecated";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import ReservedHeaders from "./_reserved_headers.mdx";
@@ -1253,7 +1254,7 @@ Request transforms are Node.js v16 code blocks which export a function of the fo
 
 ```javascript showLineNumbers
 module.exports = async function (req) {
-  const { args, configuration, basisTheoryConfig } = req;
+  const { args, configuration, applicationOptions } = req;
   const { body, headers, method, path, query } = args; // access properties of the http request
   const { MY_CONFIG } = configuration; // access any static config defined on the Proxy
 
@@ -1277,7 +1278,7 @@ The request transform function receives the following object:
 | `args`             | _object_ | Properties of the proxy request (see below)                                                                               |
 | `configuration`    | _object_ | The configuration defined for the [Proxy object](#proxies-proxy-object)                                                   |
 | `bt`               | _object_ | A pre-configured Basis Theory JS instance if an `application` was configured on the [Proxy object](#proxies-proxy-object). This has been deprecated, see  [Migrating from `bt` parameter in Reactors and Proxy Transforms](/docs/api/deprecations#migrating-from-bt-parameter-in-reactors-and-proxy-transforms) for more info. <Deprecated /> |
-| `basisTheoryConfig`| _object_ | An object capable of being used when initializing the [Basis Theory JS SDK](/docs/sdks/server-side/node). Example: `const client = new BasisTheoryClient(basisTheoryConfig);` |
+| `applicationOptions`| _object_ | An object capable of being used when initializing the [Basis Theory JS SDK](/docs/sdks/server-side/node). Example: `const client = new BasisTheoryClient(applicationOptions);` |
 
 where `args` contains:
 
@@ -1314,7 +1315,7 @@ Code response transforms are Node.js v16 code blocks which export a function of 
 
 ```javascript showLineNumbers
 module.exports = async function (req) {
-  const { args, configuration, basisTheoryConfig } = req;
+  const { args, configuration, applicationOptions } = req;
   const { body, headers } = args; // access properties of the http response
   const { MY_CONFIG } = configuration; // access any static config defined on the Proxy
 
@@ -1338,7 +1339,7 @@ The response transform function receives the following object:
 | `args`             | _object_ | Properties of the proxy response (see below)                                                                              |
 | `configuration`    | _object_ | The configuration defined for the [Proxy object](#proxies-proxy-object)                                                   |
 | `bt`              | _object_ | A pre-configured Basis Theory JS instance if an `application` was configured on the [Proxy object](#proxies-proxy-object). This has been deprecated, see  [Migrating from `bt` parameter in Reactors and Proxy Transforms](/docs/api/deprecations#migrating-from-bt-parameter-in-reactors-and-proxy-transforms) for more info. <Deprecated /> |
-| `basisTheoryConfig`| _object_ | An object capable of being used when initializing the [Basis Theory JS SDK](/docs/sdks/server-side/node). Example: `const client = new BasisTheoryClient(basisTheoryConfig);` |
+| `applicationOptions`| _object_ | An object capable of being used when initializing the [Basis Theory JS SDK](/docs/sdks/server-side/node). Example: `const client = new BasisTheoryClient(applicationOptions);` |
 
 
 where `args` contains:
@@ -1454,7 +1455,7 @@ that is pre-configured for this application. For example:
 ```javascript showLineNumbers
 const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
-  const client = new BasisTheoryClient(req.basisTheoryConfig);
+  const client = new BasisTheoryClient(req.applicationOptions);
   const token = await client.tokenize({
     type: "token",
     data: req.args.body.sensitive_value,

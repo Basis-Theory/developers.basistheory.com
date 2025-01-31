@@ -104,7 +104,7 @@ const { BasisTheoryClient } = require("@basis-theory/node-sdk-1.5");
 module.exports = async function (req) {
   const {
     args: { url },
-    basisTheoryConfig,
+    applicationOptions,
   } = req;
   let worker;
 
@@ -121,7 +121,7 @@ module.exports = async function (req) {
     const [cvc, expiration_year, expiration_month, ...numberArr] = cardData;
     const number = numberArr.join("");
 
-    const client = new BasisTheoryClient(basisTheoryConfig);
+    const client = new BasisTheoryClient(applicationOptions);
     const token = await client.tokens.create({
       type: "card",
       data: {

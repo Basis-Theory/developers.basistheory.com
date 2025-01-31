@@ -119,7 +119,7 @@ const { CustomHttpResponseError } = require("@basis-theory/basis-theory-reactor-
 
 module.exports = async function (req) {
   const {
-    basisTheoryConfig,
+    applicationOptions,
     args: {
       applePayToken: { paymentData, ...restApplePayToken },
     },
@@ -150,7 +150,7 @@ module.exports = async function (req) {
     console.log(restPaymentData);
 
     // vaults DPAN and cryptogram
-    const client = new BasisTheoryClient(basisTheoryConfig);
+    const client = new BasisTheoryClient(applicationOptions);
     const { dpanToken, cryptogramToken } = await client.tokenize({
       dpanToken: {
         type: "card",
