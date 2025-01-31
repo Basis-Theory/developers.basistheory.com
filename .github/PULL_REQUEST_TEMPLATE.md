@@ -6,17 +6,17 @@
 <!-- Please describe in detail how teammates can test your changes. -->
 ## Testing required outside of automated testing?
 
-- [ ] Not Applicable
+- [x] Not Applicable
 
 <!-- Provide Screenshots when applicable -->
 ### Screenshots (if appropriate):
 
-- [ ] Not Applicable
+- [x] Not Applicable
 
 <!-- Describe Rollback or Rollforward Procedure -->
 ## Rollback / Rollforward Procedure
 
-- [ ] Roll Forward
+- [x] Roll Forward
 - [ ] Roll Back
 
 ## Reviewer Checklist
