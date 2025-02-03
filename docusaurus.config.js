@@ -265,6 +265,8 @@ const config = {
           { from: "/docs/sdks/web/javascript/options", to: "/docs/sdks/web/web-elements/options" },
           { from: "/docs/sdks/web/javascript/services", to: "/docs/sdks/web/web-elements/services" },
           { from: "/docs/sdks/web/javascript/types", to: "/docs/sdks/web/web-elements/types" },
+          { from: "/docs/sdks/mobile/3ds-react-native", to: "/docs/sdks/mobile/react-native-threeds" },
+          { from: "/docs/sdks/mobile/3ds-react-native/methods", to: "/docs/sdks/mobile/react-native-threeds/methods" },
         ],
       },
     ],
