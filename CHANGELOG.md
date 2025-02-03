@@ -1,3 +1,10 @@
+# [1.209.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.208.0...v1.209.0) (2025-02-03)
+
+
+### Features
+
+* Add network_token card details attribute to Token object ([#501](https://github.com/Basis-Theory/developers.basistheory.com/issues/501)) ([dafcaa4](https://github.com/Basis-Theory/developers.basistheory.com/commit/dafcaa4c80dd45795963afcd32523b7363fe839b))
+
 # [1.208.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.207.3...v1.208.0) (2025-01-30)
 
 
