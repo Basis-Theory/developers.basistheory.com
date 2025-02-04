@@ -1,3 +1,10 @@
+# [1.210.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.209.0...v1.210.0) (2025-02-04)
+
+
+### Features
+
+* rename 3ds packages  ([#503](https://github.com/Basis-Theory/developers.basistheory.com/issues/503)) ([41f1971](https://github.com/Basis-Theory/developers.basistheory.com/commit/41f1971a46d60e3d7b9484c56d3a19738427c3da))
+
 # [1.209.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.208.0...v1.209.0) (2025-02-03)
 
 
