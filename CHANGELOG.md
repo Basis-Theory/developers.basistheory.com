@@ -1,3 +1,10 @@
+## [1.210.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.210.0...v1.210.1) (2025-02-04)
+
+
+### Bug Fixes
+
+* add 3ds auth condition ([#504](https://github.com/Basis-Theory/developers.basistheory.com/issues/504)) ([39491e9](https://github.com/Basis-Theory/developers.basistheory.com/commit/39491e97626679504a30d2d7c694207521726653))
+
 # [1.210.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.209.0...v1.210.0) (2025-02-04)
 
 
