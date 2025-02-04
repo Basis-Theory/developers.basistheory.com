@@ -96,6 +96,17 @@ See instructions below on how to install and configure it.
 In order to run 3DS authentication on a customer card, it must be first tokenized with Basis Theory.
 Follow the [Collect Cards Guide](/docs/guides/collect/collect-cards) to learn how to create a card token using a variety of different technologies available through the Basis Theory SDKs.
 
+Every Card Token contains a [`card` details object](/docs/api/tokens/#card-details) that we can leverage to conditionally trigger the 3DS flow. For example:
+
+```javascript
+
+if (token.card.authentication === 'sca_required') {
+  // start 3DS flow
+} else {
+  // may skip 3DS because it is not mandatory for the card's BIN range
+}
+```
+
 ## Creating a Session and Device Fingerprinting
 
 The 3D Secure process starts with identifying certain information about the customer's device to aid in verifying if the transaction is valid.
