@@ -1,3 +1,10 @@
+# [1.211.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.210.1...v1.211.0) (2025-02-04)
+
+
+### Features
+
+* updating the cursor pagination and v2 page size docs ([#500](https://github.com/Basis-Theory/developers.basistheory.com/issues/500)) ([d804fc3](https://github.com/Basis-Theory/developers.basistheory.com/commit/d804fc3757ca7ff1abdc895e7bf9b925af82892c))
+
 ## [1.210.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.210.0...v1.210.1) (2025-02-04)
 
 
