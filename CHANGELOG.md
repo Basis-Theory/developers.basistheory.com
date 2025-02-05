@@ -1,3 +1,10 @@
+# [1.212.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.211.0...v1.212.0) (2025-02-05)
+
+
+### Features
+
+* adding documenation on new _extras field for deduplication_behavior ([#506](https://github.com/Basis-Theory/developers.basistheory.com/issues/506)) ([681157a](https://github.com/Basis-Theory/developers.basistheory.com/commit/681157a1c541a89905da9d1974010d0c7bb5c270))
+
 # [1.211.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.210.1...v1.211.0) (2025-02-04)
 
 
