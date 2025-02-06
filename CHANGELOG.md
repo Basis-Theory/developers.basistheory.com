@@ -1,3 +1,10 @@
+# [1.213.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.212.0...v1.213.0) (2025-02-06)
+
+
+### Features
+
+* rename ios elements ([#507](https://github.com/Basis-Theory/developers.basistheory.com/issues/507)) ([63258d0](https://github.com/Basis-Theory/developers.basistheory.com/commit/63258d065fd96f4e74fd4f6f338c9f1d0127246d))
+
 # [1.212.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.211.0...v1.212.0) (2025-02-05)
 
 
