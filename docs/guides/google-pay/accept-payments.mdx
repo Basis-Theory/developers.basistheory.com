@@ -38,24 +38,104 @@ To start, we want to ensure that you're able to connect to Google's APIs. Make s
 
 The integration between your client application and Google can be done directly, without any involvement from Basis Theory.
 
-{/*
-massage section
-*/}
+Now we'll follow Google's official guides for [Web](https://developers.google.com/pay/api/web/guides/tutorial) all the way until step 9.
 
-👉 Please follow Google's official guides for [Web](https://developers.google.com/pay/api/web/guides/tutorial) all the way until step 9. When on step 2, set `gateway` to `basistheory` and `gatewayMerchantId` to your tenantId created from the [Basis Theory Setup](#basis-theory-setup).
+```html showLineNumbers title="Create a web page with the Google Pay button"
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Pay Integration</title>
+    <script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
+    <script>
+        let paymentsClient;
+        let baseRequest = {
+            apiVersion: 2,
+            apiVersionMinor: 0,
+        };
+        let tokenizationSpecification = {
+            type: 'PAYMENT_GATEWAY',
+            parameters: {
+// highlight-start
+                gateway: 'basistheory',
+                gatewayMerchantId: 'f338bcd6-157e-4ebf-872a-404dcfcce31e'
+// highlight-end
+            }
+        }
+        const allowedCardNetworks = ["AMEX", "DISCOVER", "INTERAC", "JCB", "MASTERCARD", "VISA"];
+        const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
+        const baseCardPaymentMethod = {
+            type: 'CARD',
+            parameters: {
+                allowedAuthMethods: allowedCardAuthMethods,
+                allowedCardNetworks: allowedCardNetworks
+            }
+        };
 
-{/*
-add note about merchant id and what it should be
-*/}
+        // Initialize Google Pay API when the library is loaded
+        async function onGooglePayLoaded() {
+            paymentsClient = new google.payments.api.PaymentsClient({environment: 'TEST'});
+            const isReadyToPayRequest = Object.assign({}, baseRequest, {
+                allowedPaymentMethods: [baseCardPaymentMethod]
+            });
+
+            try {
+                // Check if the user is ready to pay
+                const response = await paymentsClient.isReadyToPay(isReadyToPayRequest);
+                if (response.result) {
+                    createAndAddButton();
+                } else {
+                    console.error('Google Pay is not available.');
+                }
+            } catch (error) {
+                console.error('Error checking readiness:', error);
+            }
+        }
+
+        // Create and add the Google Pay button
+        function createAndAddButton() {
+            const button = paymentsClient.createButton({
+                onClick: onGooglePaymentButtonClicked
+            });
+            document.getElementById('container').appendChild(button);
+        }
+
+        // Handle button click and load payment data
+        async function onGooglePaymentButtonClicked() {
+            const paymentDataRequest = Object.assign({}, baseRequest, {
+                allowedPaymentMethods: [
+                    Object.assign({}, baseCardPaymentMethod, {
+                        tokenizationSpecification: tokenizationSpecification
+                    })
+                ],
+                transactionInfo: {
+                    totalPriceStatus: 'FINAL',
+                    totalPrice: '10.00',
+                    currencyCode: 'USD'
+                },
+                merchantInfo: {
+                    merchantName: 'Example Merchant'
+                }
+            });
+
+            try {
+                const paymentData = await paymentsClient.loadPaymentData(paymentDataRequest);
+                console.log('Payment data:', paymentData);
+            } catch (error) {
+                console.error('Error loading payment data:', error);
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Google Pay Integration</h1>
+<div id="container"></div>
+</body>
+</html>
+```
+
+Note that for the `tokenizationSpecification`, we're setting `gateway` to `basistheory` and `gatewayMerchantId` to your tenantId created from the [Basis Theory Setup](#basis-theory-setup).
 
 ## Storing the Google Pay Payment Data with Basis Theory
-
-{/*
-1. Create a public key
- 1. Needs `token-intent:create`
-2. POST /connections/google-pay/tokenize
-3. Show the token-intent and what you get back
-*/}
 
 ### Create a Public Key
 
@@ -63,59 +143,13 @@ add note about merchant id and what it should be
 
 ### Tokenize the Payment Data
 
-Once you have the encrypted payment data, you'll use your newly created public key from your frontend application to send the payment data using the [Google Pay](/docs/api/orchestration/google-pay) endpoint.
+Now that we have access to the encrypted payment data, we can use our newly created public key to send the payment data using the [Google Pay](/docs/api/orchestration/google-pay) endpoint.
 
-<Tabs className="bt-tabs" groupId="languages">
-  <TabItem value="shell" label="cURL">
-
-    ```shell showLineNumbers
-    curl --request POST \
-    --url https://api.basistheory.com/connections/google-pay/tokenize \
-    --header 'BT-API-KEY: <PUBLIC_API_KEY>' \
-    --header 'Content-Type: application/json' \
-    --data '{
-    "google_payment_method_token": {
-    "protocolVersion": "ECv2",
-    "signature": "...",
-    "intermediateSigningKey": {
-    "signedKey": "...",
-    "signatures": [
-    "..."
-    ]
-  },
-    "signedMessage": "..."
-  }'
-    ```
-  </TabItem>
-
-          <TabItem value="node" label="Node">
 ```javascript
-    await client.googlepay.tokenize({
-    googlePaymentMethodToken: {...}
-  });
-    ```
-    </TabItem>
-    <TabItem value="csharp" label="C#">
-  ```csharp showLineNumbers
-    await client.Googlepay.TokenizeAsync(new GooglePayTokenizeRequest
-  {
-    GooglePaymentMethodToken = new GooglePaymentMethodToken
-  {
-    ...
-  }
-  });
-    ```
-    </TabItem>
-    <TabItem value="python" label="Python">
-  ```python showLineNumbers
-    client.googlepay.tokenize(
-    google_payment_method_token={
-    ...
-  }
-    )
-    ```
-    </TabItem>
-</Tabs>
+await client.googlepay.tokenize({
+  googlePaymentMethodToken: {...}
+});
+```
 
   The result of this call will be a [token intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type of token intent will either be `card` or `network_token` depending on the `AuthMethod` of the card that was available for the GPay token.
 
