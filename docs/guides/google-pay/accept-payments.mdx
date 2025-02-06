@@ -2,11 +2,12 @@
 toc_max_heading_level: 2
 ---
 
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import {Alert, Alerts} from "@site/src/components/shared/Alert";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import { SdkList } from "@site/src/components/docs/SdkList";
+import {SdkList} from "@site/src/components/docs/SdkList";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import {ApplicationSection} from "@site/src/components/docs/ApplicationSection";
 
 
 # Accept Google Pay
@@ -27,7 +28,7 @@ When the user clicks the Google "Pay" button, a sequence of interactions is init
 
 ### Basis Theory Setup
 
-<GettingStartedSection />
+<GettingStartedSection/>
 
 ### Google Pay Setup
 
@@ -37,773 +38,152 @@ To start, we want to ensure that you're able to connect to Google's APIs. Make s
 
 The integration between your client application and Google can be done directly, without any involvement from Basis Theory.
 
+{/*
+massage section
+*/}
+
 👉 Please follow Google's official guides for [Web](https://developers.google.com/pay/api/web/guides/tutorial) all the way until step 9. When on step 2, set `gateway` to `basistheory` and `gatewayMerchantId` to your tenantId created from the [Basis Theory Setup](#basis-theory-setup).
+
+{/*
+add note about merchant id and what it should be
+*/}
 
 ## Storing the Google Pay Payment Data with Basis Theory
 
-{/* 
+{/*
 1. Create a public key
-    1. Needs `token-intent:create`
+ 1. Needs `token-intent:create`
 2. POST /connections/google-pay/tokenize
-3. Show the token-intent and what you get back */}
-
-Once you have the encrypted payment data, you can store it in Basis Theory using the [Google Pay](/docs/api/orchestration/google-pay) endpoint.
-
-
-
-# OLD DOCS
-
-### Management Application
-
-To create all subsequent resources, you will need a [Management Application](/docs/api/applications#application-types).
-
-[Click here](https://portal.basistheory.com/applications/create?name=Resource+Creator&permissions=reactor%3Acreate&permissions=application%3Acreate&type=management) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
-
-- Name - Resource Creator
-- Application Type - Management
-- Permissions: `application:create`, `reactor:create`
-
-<Alert>Save the API Key from the created Management Application as it will be used later in this guide.</Alert>
-
-### Public Application
-
-To represent your pubic facing application, we'll need a [Public Application](/docs/api/applications#application-types) responsible for creating short-lived [Sessions](/docs/concepts/access-controls#what-are-sessions) that are used to authenticate requests made against Reactors.
-
-Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Public Application:
-
-```shell showLineNumbers
-curl "https://api.basistheory.com/applications" \
-  -X "POST" \
-  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Client",
-    "type": "public",
-    "permissions": []
-  }'
-```
-
-<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.</Alert>
-
-<Alert>Save the <code>key</code> from the created Public Application as it will be used later in this guide.</Alert>
-
-### Private Application
-
-Next you will need a [Private Application](/docs/api/applications#application-types) to create tokens within the Reactor, and authorize client sessions to invoke it. This application represents your Server.
-
-Using the Management Application key to authorize the request, call Basis Theory API to [create a new](/docs/api/applications/#create-application) Private Application:
-
-```shell showLineNumbers
-curl "https://api.basistheory.com/applications" \
-  -X "POST" \
-  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Server",
-    "type": "private",
-    "permissions": [ "token:create", "token:use" ]
-  }'
-```
-
-<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created previously.</Alert>
-
-<Alert>Save the <code>key</code> and <code>id</code> from the created Private Application as it will be used later in this guide.</Alert>
-
-### Reactor
-
-Now let's create a [Reactor](/docs/concepts/what-are-reactors) that can decrypt Apple's `PKPaymentToken` and store the DPAN and cryptogram.
-
-Create a `reactor.js` file and paste the code below. We will use open source [Basis Theory Apple Pay utility](https://www.npmjs.com/package/@basis-theory/apple-pay-js) to easily create a context and perform decryption.
-
-```javascript title="reactor.js" showLineNumbers
-const { Buffer } = require("buffer");
-const { ApplePaymentTokenContext } = require("@basis-theory/apple-pay-js");
-const { CustomHttpResponseError } = require("@basis-theory/basis-theory-reactor-formulas-sdk-js");
-
-module.exports = async function (req) {
-  const {
-    bt,
-    args: {
-      applePayToken: { paymentData, ...restApplePayToken },
-    },
-    configuration: { MERCHANT_IDENTITY_CERTIFICATE_PEM, PAYMENT_PROCESSING_PRIVATE_KEY_PEM },
-  } = req;
-
-  // creates token context from certificates / keys configured in Reactor
-  const context = new ApplePaymentTokenContext({
-    merchants: [
-      {
-        certificatePem: Buffer.from(MERCHANT_IDENTITY_CERTIFICATE_PEM),
-        privateKeyPem: Buffer.from(PAYMENT_PROCESSING_PRIVATE_KEY_PEM),
-      },
-      // add more certificates to perform automatic key rotation
-    ],
-  });
-
-  try {
-    // decrypts Apple's PKPaymentToken paymentData
-    const {
-      applicationPrimaryAccountNumber,
-      applicationExpirationDate,
-      paymentData: { onlinePaymentCryptogram, ...restPaymentDataPaymentData },
-      ...restPaymentData
-      // paymentData: { onlinePaymentCryptogram,  },
-    } = context.decrypt(paymentData);
-
-    console.log(restPaymentData);
-
-    // vaults DPAN and cryptogram
-    const { dpanToken, cryptogramToken } = await bt.tokenize({
-      dpanToken: {
-        type: "card",
-        data: {
-          number: applicationPrimaryAccountNumber,
-          expiration_month: applicationExpirationDate.slice(2, 4),
-          expiration_year: `20${applicationExpirationDate.slice(-2)}`,
-        },
-      },
-      cryptogramToken: {
-        type: "token",
-        containers: ["/pci/high/"],
-        data: onlinePaymentCryptogram,
-      },
-    });
-
-    // returns transaction details and vaulted tokens, without any sensitive PCI data
-    return {
-      raw: {
-        dpanToken,
-        cryptogramToken,
-        applePayToken: {
-          paymentData: {
-            ...restPaymentData,
-            paymentData: {
-              ...restPaymentDataPaymentData,
-            },
-          },
-          ...restApplePayToken,
-        },
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    throw new CustomHttpResponseError({
-      status: 500,
-      body: {
-        message: error.message,
-      },
-    });
-  }
-};
-```
-
-Let's store the contents of the `reactor.js` file into a variable:
-
-```shell showLineNumbers
-reactor_code=$(cat reactor.js)
-```
-
-And call Basis Theory API to create the Reactor:
-
-```shell showLineNumbers
-curl "https://api.basistheory.com/reactors" \
-  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "name": "Apple Pay Reactor",
-    "code": '"$(echo $reactor_code | jq -Rsa .)"',
-    "configuration": {
-      "MERCHANT_IDENTITY_CERTIFICATE_PEM": "-----BEGIN CERTIFICATE-----\nMIIEdTCCBBugAwIBAgIIc5onAJBqqpk...",
-      "PAYMENT_PROCESSING_PRIVATE_KEY_PEM": "-----BEGIN EC PARAMETERS-----\nBggqhkjOPQMBBw==..."
-    },
-    "application": {
-      "id": "<PRIVATE_APPLICATION_ID>"
-    }
-  }'
-```
-
-Important things to notice in the request above:
-
-1. `<MANAGEMENT_API_KEY>` is the Management Application Key, used to authenticate the request
-2. `code` is passed in plain text form
-3. `<PRIVATE_APPLICATION_ID>` is the Private Application Id, used to inject `req.bt` in the Reactor code
-4. Merchant Identifier Certificate and Payment Processing Private Key are passed in plain text form as configuration entries
-
-<Alert>Save the <code>id</code> from the created Reactor as it will be used later to invoke it.</Alert>
-
-Done! These are all the resources necessary. Let's see how to use them.
-
-## Decrypting PKPaymentToken
-
-In this section, we will explore the integration for both the client and server applications.
-
-### Creating a Session
-
-To invoke a Reactor, first we need to create a [Session](/docs/api/applications/sessions) to grant temporary access to our Public Application. It is good practice to create the session when the user enters the checkout page, so it is ready by the time they click on the "Pay" button.
-
-<Tabs className="bt-tabs" queryString="frontend">
-  <TabItem value="web" label="Web">
-
-```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
-
-let bt;
-let sessionKey;
-
-// initializes Basis Theory
-bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
-
-// highlight-next-line
-const session = await bt.sessions.create();
-sessionKey = session.sessionKey;
-```
-
-  </TabItem>
-  <TabItem value="ios" label="iOS">
-
-```swift showLineNumbers title=ViewController.swift
-import BasisTheory
-
-private var sessionKey: String = ""
-
-// highlight-next-line
-SessionsAPI.create(apiKey: "<PUBLIC_API_KEY>") { data, error in
-    self.sessionKey = data!.sessionKey!
-    let nonce = data!.nonce!
-}
-```
-
-  </TabItem>
-</Tabs>
-
-<Alert>Be sure to replace <code>&lt;PUBLIC_API_KEY></code> with the Public API Key you created previously.</Alert>
-
-
-### Authorizing a Session
-
-Sessions must be [authorized](/docs/api/applications/sessions#authorize-session) by a Private Application to perform any protected actions. In our case, we need to allow invoking the Apple Pay Reactor to decrypt and tokenize the card information.
-
-Chose your preferred language for your client application, and click below for detailed instructions on how to install and configure the SDK.
-
-<SdkList type="server" />
-
-We will add a new `/authorize` endpoint to our backend that receives the session `nonce` and authorizes it with the `token:use` permission.
-
-<Tabs className="bt-tabs" queryString="backend">
-  <TabItem value=".net" label=".NET">
-
-In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/dotnet) and [ASP.NET Core Framework](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-7.0).
-
-```csharp showLineNumbers
-using System.Collections.Generic;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
-// highlight-start
-using BasisTheory.Client;
-// highlight-end
-
-namespace server.Controllers
-{
-  public class Program
-  {
-    public static void Main(string[] args)
-    {
-      WebHost.CreateDefaultBuilder(args)
-        .UseUrls("http://0.0.0.0:4242")
-        .UseWebRoot("public")
-        .UseStartup<Startup>()
-        .Build()
-        .Run();
-    }
-  }
-
-  public class Startup
-  {
-    public void ConfigureServices(IServiceCollection services)
-    {
-      services.AddMvc().AddNewtonsoftJson();
-    }
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-      if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
-      app.UseRouting();
-      app.UseStaticFiles();
-      app.UseEndpoints(endpoints => endpoints.MapControllers());
-    }
-  }
-
-  [Route("authorize")]
-  [ApiController]
-  public class CheckoutApiController : Controller
-  {
-    // highlight-start
-    var client = new BasisTheory(apiKey: "<PRIVATE_API_KEY>");
-
-    [HttpPost]
-    public ActionResult AuthorizeSession([FromBody] string nonce)
-    {
-      await client.Sessions.AuthorizeAsync(new AuthorizeSessionRequest {
-        Nonce = nonce,
-        Permissions = new List<String> { "token:use" }
-      });
-      return new StatusCodeResult(204);
-    }
-    // highlight-end
-  }
-}
-```
-
-  </TabItem>
-  <TabItem value="go" label="Go">
-
-In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/go) and [Go HTTP package](https://pkg.go.dev/net/http).
-
-```go showLineNumbers
-package main
-
-import (
-    "log"
-    "net/http"
-    "context"
-    "encoding/json"
-)
-// highlight-start
-import (
-  basistheoryclient "github.com/Basis-Theory/go-sdk/client"
-  "github.com/Basis-Theory/go-sdk/option"
-)
-// highlight-end
-
-func main() {
-  // highlight-next-line
-  http.HandleFunc("/authorize", authorizeSession)
-  addr := "localhost:4242"
-  log.Printf("Listening on %s", addr)
-  log.Fatal(http.ListenAndServe(addr, nil))
-}
-
-// highlight-start
-func authorizeSession(rw http.ResponseWriter, r *http.Request) {
-  var payload map[string]interface{}
-  json.NewDecoder(r.Body).Decode(&payload)
-
-  client := basistheoryclient.NewClient(
-    option.WithAPIKey("<PRIVATE_API_KEY>"),
-  )
-
-  authorizeSessionRequest := basistheory.AuthorizeSessionRequest{
-    Nonce: payload["nonce"].(string),
-    Permissions: []string{"token:use"},
-  }
-
-  authorizedSession := client.Sessions.Authorize(context.Background(), &authorizeSessionRequest)
-
-  w.WriteHeader(http.StatusNoContent)
-}
-// highlight-end
-```
-
-  </TabItem>
-  <TabItem value="node" label="Node">
-
-In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
-
-```javascript showLineNumbers
-const express = require("express");
-const cors = require("cors");
-// highlight-next-line
-const { BasisTheoryClient, BasisTheory } = require("@basis-theory/node-sdk");
-
-const app = express();
-const port = 4242;
-
-app.use(cors());
-app.use(express.json());
-
-// highlight-start
-app.post("/authorize", async (request, response) => {
-  const bt = await new BasisTheoryClient({ apiKey: "<PRIVATE_API_KEY>" });
-  const { nonce } = request.body;
-  // authorizing a session returns an empty 200 response
-  await bt.sessions.authorize({
-    nonce: nonce,
-    permissions: ['token:use']
-  });
-  response.status(204).send();
-});
-// highlight-end
-
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
-```
-
-  </TabItem>
-  <TabItem value="node-legacy" label="JavaScript (legacy)">
-
-In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/node) and [Express framework](https://expressjs.com/) for Node.js.
-
-```javascript showLineNumbers
-const express = require("express");
-const cors = require("cors");
-// highlight-next-line
-const { BasisTheory } = require("@basis-theory/basis-theory-js");
-
-const app = express();
-const port = 4242;
-
-app.use(cors());
-app.use(express.json());
-
-// highlight-start
-app.post("/authorize", async (request, response) => {
-  const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
-  const { nonce } = request.body;
-  // authorizing a session returns an empty 200 response
-  await bt.sessions.authorize({
-    nonce: nonce,
-    permissions: ["token:use"]
-  });
-  response.status(204).send();
-});
-// highlight-end
-
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
-```
-
-  </TabItem>
-  <TabItem value="python" label="Python">
-
-In this example, we are using [Basis Theory SDK](/docs/sdks/server-side/python) and [Flask Framework](https://flask.palletsprojects.com/).
-
-```python showLineNumbers
-import os
-from flask import Flask, request
-
-import basistheory
-# highlight-start
-from basis_theory import BasisTheory
-# highlight-end
-
-app = Flask(__name__)
-
-# highlight-start
-@app.route('/authorize', methods=['POST'])
-def authorize_session():
-  body = request.get_json()
-  client = BasisTheory(
-    api_key="<PRIVATE_API_KEY>",
-  )
-
-  client.sessions.authorize(
-    nonce = body.get("nonce"),
-    permissions = ["token:use"]
-  ))
-
-  return '', 204
-# highlight-end
-
-if __name__ == '__main__':
-    app.run(port=4242)
-```
-
-  </TabItem>
-
-</Tabs>
-
-<Alert type={Alerts.WARNING}>In production environments, your endpoint to authorize sessions should be behind your authorization scheme.</Alert>
-
-<Alert>Be sure to replace <code>&lt;PRIVATE_API_KEY></code> with the Private API Key you created previously.</Alert>
-
-Now let's have our frontend call this new endpoint passing the session `nonce`.
-
-<Tabs className="bt-tabs" queryString="frontend">
-  <TabItem value="web" label="Web">
-
-```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
-
-let bt;
-let sessionKey;
-
-// initializes Basis Theory
-bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
-
-const session = await bt.sessions.create();
-sessionKey = session.sessionKey;
-
-// highlight-start
-await fetch('http://localhost:4242/authorize', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
+3. Show the token-intent and what you get back
+*/}
+
+### Create a Public Key
+
+<ApplicationSection type="public" permissions={["token-intent:create"]}/>
+
+### Tokenize the Payment Data
+
+Once you have the encrypted payment data, you'll use your newly created public key from your frontend application to send the payment data using the [Google Pay](/docs/api/orchestration/google-pay) endpoint.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+    --url https://api.basistheory.com/connections/google-pay/tokenize \
+    --header 'BT-API-KEY: <PUBLIC_API_KEY>' \
+    --header 'Content-Type: application/json' \
+    --data '{
+    "google_payment_method_token": {
+    "protocolVersion": "ECv2",
+    "signature": "...",
+    "intermediateSigningKey": {
+    "signedKey": "...",
+    "signatures": [
+    "..."
+    ]
   },
-  body: JSON.stringify({ nonce: session.nonce }),
-});
-// highlight-end
-```
-
+    "signedMessage": "..."
+  }'
+    ```
   </TabItem>
-  <TabItem value="ios" label="iOS">
 
-```swift showLineNumbers title=ViewController.swift
-import BasisTheory
-
-private var sessionKey: String = ""
-
-// highlight-start
-func authorizeSession(nonce: String, completion: @escaping ([String: Any]?, Error?) -> Void) {
-    let parameters = ["nonce": nonce]
-
-    let url = URL(string: "http://localhost:4242/authorize")!
-    let session = URLSession.shared
-
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-
-    do {
-        request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
-    } catch let error {
-        completion(nil, error)
-    }
-
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.addValue("application/json", forHTTPHeaderField: "Accept")
-
-    let task = session.dataTask(with: request, completionHandler: { data, response, error in
-        guard error == nil else {
-            completion(nil, error)
-            return
-        }
-
-        do {
-            let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any]
-            completion(json, nil)
-        } catch let error {
-            completion(nil, error)
-        }
-    })
-
-    task.resume()
-}
-// highlight-end
-
-SessionsAPI.create(apiKey: "<PUBLIC_API_KEY>") { data, error in
-    self.sessionKey = data!.sessionKey!
-    let nonce = data!.nonce!
-    // highlight-start
-    self.authorizeSession(nonce: nonce) { result, error in
-
-    }
-    // highlight-end
-}
-```
-
-  </TabItem>
+          <TabItem value="node" label="Node">
+```javascript
+    await client.googlepay.tokenize({
+    googlePaymentMethodToken: {...}
+  });
+    ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+    await client.Googlepay.TokenizeAsync(new GooglePayTokenizeRequest
+  {
+    GooglePaymentMethodToken = new GooglePaymentMethodToken
+  {
+    ...
+  }
+  });
+    ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+    client.googlepay.tokenize(
+    google_payment_method_token={
+    ...
+  }
+    )
+    ```
+    </TabItem>
 </Tabs>
 
-<Alert type={Alerts.WARNING}>Sessions have a default timeout of 3 minutes before expiration. You can customize the `expires_at` value when [authorizing the session](/docs/api/applications/sessions#authorize-session), to ensure users have time to customize options in the Apple Pay Sheet and approve the payment.</Alert>
+  The result of this call will be a [token intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type of token intent will either be `card` or `network_token` depending on the `AuthMethod` of the card that was available for the GPay token.
 
-### Invoking the Reactor
+  {/*
+  TODO: point out the differences between a card and network token and FPANs vs DPANs
+  */}
 
-Once the user has authorized the payment with Touch ID, Face ID, or passcode, the Apple Pay Session will invoke the payment authorization event handler, passing the `PKPaymentToken`, which we will post to the Reactor.
+  ## Processing the GPay token
 
-<Tabs className="bt-tabs" queryString="frontend">
-  <TabItem value="web" label="Web">
+  ### Create a Private Key
 
-```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+  <ApplicationSection type="private" permissions={["token-intent:use"]}/>
 
-let bt;
-let sessionKey;
+  ### Charge a Card
 
-// initializes Basis Theory
-bt = await new BasisTheory().init("<PUBLIC_API_KEY>");
+  Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
 
-const session = await bt.sessions.create();
-sessionKey = session.sessionKey;
+    <Tabs className="bt-tabs" queryString="processor">
+      <TabItem value="adyen" label="Adyen">
 
-await fetch('http://localhost:4242/authorize', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
+    In Adyen, you can charge a card by creating a [payment](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
+
+  {/*
+  TODO: find out what key to use for this Adyen call
+  */}
+```shell showLineNumbers title="Create a transaction"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://checkout-test.adyen.com/v71/payments' \
+-H 'Authorization: Bearer <REPLACE_ME>' \
+// highlight-end
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": {
+    "currency": "USD",
+    "value": 1000
   },
-  body: JSON.stringify({ nonce: session.nonce }),
-});
-
-session.onpaymentauthorized = async (event: any) => {
-  try {
-    // highlight-start
-    const {
-      raw: {
-        dpanToken,
-        cryptogramToken,
-        applePayToken
-      }
-    } = await bt.reactors.react('<REACTOR_ID>', {
-      args: {
-        applePayToken: event.payment.token,
-      }
-    }, {
-      apiKey: sessionKey
-    });
-    // highlight-end
-  } catch (error) {
-    console.error(error);
-    session.completePayment({
-      status: 1,
-    });
-  }
-};
-
-```
-
-  </TabItem>
-  <TabItem value="ios" label="iOS">
-
-```swift showLineNumbers title=ViewController.swift
-import BasisTheory
-
-private var sessionKey: String = ""
-
-...
-
-func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
 // highlight-start
-    let paymentData = try? JSONSerialization.jsonObject(with: payment.token.paymentData)
-
-    let reactRequest = ReactRequest(args: [
-        "applePayToken": [
-            "paymentMethod": [
-                "displayName": payment.token.paymentMethod.displayName,
-                "network": payment.token.paymentMethod.network?.rawValue,
-                "type": payment.token.paymentMethod.type.rawValue
-            ],
-            "transactionIdentifier": payment.token.transactionIdentifier,
-            "paymentData": paymentData
-        ]
-    ])
-
-    ReactorsAPI.reactWithRequestBuilder(id: UUID(uuidString: "<REACTOR_ID>")!, reactRequest: reactRequest).addHeader(name: "BT-API-KEY", value: "<SESSION_KEY>").execute { result in
-        do {
-
-        } catch {
-            print(error)
-        }
-    }
+  "paymentMethod": {
+    "type": "scheme",
+    "number": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiryMonth": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiryYear": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
+    "brand": "googlepay"
+  },
 // highlight-end
-}
+  "mpiData": {
+    "directoryResponse": "Y",
+    "authenticationResponse": "Y",
+// highlight-start
+    "cavv": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.authentication.threeds_cryptogram\" }}",
+    "eci": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.authentication.eciIndicator\" }}"
+// highlight-end
+  },
+  "additionalData": {
+    "paymentdatasource.type": "googlepay",
+    "paymentdatasource.tokenized": "true"
+  },
+  "shopperInteraction": "Ecommerce"
+}'
 ```
-
   </TabItem>
 </Tabs>
 
-<Alert>Be sure to replace <code>&lt;REACTOR_ID></code> with the Reactor Id you created previously.</Alert>
+<Alert>You are not restricted to only using Adyen. You can use any payment processor that accepts Google Pay tokens.</Alert>
 
+  ## Preparing for Production
 
-## Processing Payment
-
-Now that the Apple Payment Token has been decrypted and the payment information (DPAN and 3DS cryptogram) have been tokenized, send the tokens to your backend and store them in your database. You will use their identifiers to route the detokenized data to the Payment Processor of your choice.
-
-Each Payment Processor has their specification for receiving DPANs and 3DS cryptograms for CITs, or just DPANs for MITs. Here are a few things to know when looking into their API specification:
-
-- Payment Processor usually have their own Apple Pay solution, which will implement both frontend and backend portions. While it may feel like an easier technical integration, it locks in the merchant and their tokens in their ecosystem.
-- It is not surprising that this sort of payment method acceptance is either buried in the Processor's technical documentation or private.
-- DPAN acts as a Network Token downstream in the transaction processing workflow, accompanied by the transaction cryptogram and Electronic Commerce Indicator (ECI).
-
-Look at the [Process Card Payments](/docs/guides/share/process-card-payments#send-the-data) guide to learn how to forward tokens to Payment Processors using the Basis Theory Proxy. If you have difficulty figuring out when and which Processor's API endpoints to call, feel free to [contact us](https://basistheory.com/contact). We are happy to support you through your payment journey.
-
-[Apple Pay requires merchants to complete the payment in 30 seconds](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized#discussion); however, in many cases, that is not possible in practice. So once you have tokenized the payment information, you can call the completion handler to give the user the green check but keep processing in the background.
-
-
-<Tabs className="bt-tabs" queryString="frontend">
-  <TabItem value="web" label="Web">
-
-```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
-
-...
-
-session.onpaymentauthorized = async (event: any) => {
-  try {
-    const {
-      raw: {
-        dpanToken,
-        cryptogramToken,
-        applePayToken
-      }
-    } = await bt.reactors.react('<REACTOR_ID', {
-      args: {
-        applePayToken: event.payment.token,
-      }
-    }, {
-      apiKey: sessionKey
-    });
-    // highlight-start
-    session.completePayment({
-      status: 0,
-    });
-    // TODO send tokens to backend for transaction processing
-    // highlight-end
-  } catch (error) {
-    console.error(error);
-    session.completePayment({
-      status: 1,
-    });
-  }
-};
-
-```
-
-  </TabItem>
-  <TabItem value="ios" label="iOS">
-
-```swift showLineNumbers title=ViewController.swift
-import BasisTheory
-
-private var sessionKey: String = ""
-
-...
-
-func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
-    let paymentData = try? JSONSerialization.jsonObject(with: payment.token.paymentData)
-
-    let reactRequest = ReactRequest(args: [
-        "applePayToken": [
-            "paymentMethod": [
-                "displayName": payment.token.paymentMethod.displayName,
-                "network": payment.token.paymentMethod.network?.rawValue,
-                "type": payment.token.paymentMethod.type.rawValue
-            ],
-            "transactionIdentifier": payment.token.transactionIdentifier,
-            "paymentData": paymentData
-        ]
-    ])
-
-    ReactorsAPI.reactWithRequestBuilder(id: UUID(uuidString: "<REACTOR_ID>")!, reactRequest: reactRequest).addHeader(name: "BT-API-KEY", value: "<SESSION_KEY>").execute { result in
-        do {
-          // highlight-start
-          completion(PKPaymentAuthorizationResult(status: PKPaymentAuthorizationStatus.success, errors: errors))
-          // TODO send tokens to backend for transaction processing
-          // highlight-end
-        } catch {
-            print(error)
-        }
-    }
-}
-```
-
-  </TabItem>
-</Tabs>
-
-## Preparing for Production
-
-Once you're ready for production, you'll want to publish your integration with Google Pay by following the [official guide](https://developers.google.com/pay/api/web/guides/test-and-deploy/publish-your-integration). Once you have your official `merchantId`, you can update your `merchantId` in the payment data request to Google Pay, and change the `environment` to `PRODUCTION`.
+  Once you're ready for production, you'll want to publish your integration with Google Pay by following the [official guide](https://developers.google.com/pay/api/web/guides/test-and-deploy/publish-your-integration). Once you have your official `merchantId`, you can update your `merchantId` in the payment data request to Google Pay, and change the `environment` to `PRODUCTION`.
