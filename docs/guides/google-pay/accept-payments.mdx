@@ -143,12 +143,54 @@ Note that for the `tokenizationSpecification`, we're setting `gateway` to `basis
 
 ### Tokenize the Payment Data
 
-Now that we have access to the encrypted payment data, we can use our newly created public key to send the payment data using the [Google Pay](/docs/api/orchestration/google-pay) endpoint.
+Now that we have access to the encrypted payment data, we can use our newly created public key to send the payment data using the [Google Pay](/docs/api/orchestration/google-pay) endpoint in the `onGooglePaymentButtonClicked` function.
 
-```javascript
-await client.googlepay.tokenize({
-  googlePaymentMethodToken: {...}
-});
+```javascript showLineNumbers title="Send Google Pay token to be tokenized with Basis Theory"
+async function onGooglePaymentButtonClicked() {
+    const paymentDataRequest = Object.assign({}, baseRequest, {
+        allowedPaymentMethods: [
+            Object.assign({}, baseCardPaymentMethod, {
+                tokenizationSpecification: tokenizationSpecification
+            })
+        ],
+        transactionInfo: {
+            totalPriceStatus: 'FINAL',
+            totalPrice: '10.00',
+            currencyCode: 'USD'
+        },
+        merchantInfo: {
+            merchantName: 'Example Merchant'
+        }
+    });
+
+    try {
+        const paymentData = await paymentsClient.loadPaymentData(paymentDataRequest);
+        console.log('Payment data:', paymentData);
+
+// highlight-start
+        let encryptedPaymentToken = paymentData.paymentMethodData.tokenizationData.token;
+        await tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken)
+    } catch (error) {
+        console.error('Error loading payment data:', error);
+    }
+}
+
+// Tokenize Google Pay data using Basis Theory
+async function tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken) {
+    const response = await fetch('https://api.basistheory.com/connections/google-pay/tokenize', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'BT-API-KEY': '<PUBLIC_API_KEY>'
+        },
+        body: JSON.stringify({
+            google_payment_method_token: encryptedPaymentToken
+        })
+    });
+
+    return await response.json();
+}
+// highlight-end
 ```
 
   The result of this call will be a [token intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type of token intent will either be `card` or `network_token` depending on the `AuthMethod` of the card that was available for the GPay token.
@@ -166,9 +208,6 @@ await client.googlepay.tokenize({
   ### Charge a Card
 
   Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
-
-    <Tabs className="bt-tabs" queryString="processor">
-      <TabItem value="adyen" label="Adyen">
 
     In Adyen, you can charge a card by creating a [payment](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
 
@@ -213,8 +252,6 @@ curl 'https://api.basistheory.com/proxy' \
   "shopperInteraction": "Ecommerce"
 }'
 ```
-  </TabItem>
-</Tabs>
 
 <Alert>You are not restricted to only using Adyen. You can use any payment processor that accepts Google Pay tokens.</Alert>
 
