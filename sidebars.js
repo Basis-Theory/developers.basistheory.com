@@ -38,7 +38,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Online Checkout",
+      label: "Card Payments",
       customProps: {
         icon: {
           light: "/img/sidebar/light/card.svg",
@@ -49,44 +49,8 @@ const sidebars = {
         type: "doc",
         id: "payments/online-checkout",
       },
-      items: ["payments/accept-card-payments", "payments/pay-with-saved-cards"],
-    },
-    {
-      type: "category",
-      label: "Subscriptions",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/card.svg",
-          dark: "/img/sidebar/dark/card.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "payments/subscriptions",
-      },
-      items: ["payments/add-card-on-file", "payments/charge-saved-cards"],
-    },
-    {
-      type: "category",
-      label: "Card Data",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/card.svg",
-          dark: "/img/sidebar/dark/card.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "guides/cards/index",
-      },
       items: [
-        "guides/collect/collect-cards",
-        "guides/share/process-card-payments",
-        "guides/collect/receive-cards",
-        "guides/process/extract-cards",
-        "guides/collect/issue-cards",
-        "guides/share/display-cards",
-        "guides/collect/set-card-pin",
+        "payments/accept-card-payments",
         {
           type: "doc",
           id: "guides/process/authenticate-with-3ds",
@@ -94,6 +58,8 @@ const sidebars = {
             enterprise: true,
           },
         },
+        "guides/collect/receive-cards",
+        "guides/process/extract-cards",
         {
           type: "doc",
           id: "guides/process/authenticate-mit-with-3ds",
@@ -106,7 +72,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Bank Data",
+      label: "Bank Payments",
       customProps: {
         icon: {
           light: "/img/sidebar/light/bank.svg",
@@ -148,7 +114,22 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Any Data",
+      label: "Card Issuing",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/card.svg",
+          dark: "/img/sidebar/dark/card.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/cards/index",
+      },
+      items: ["guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin", "guides/process/backup-stripe-tokens"],
+    },
+    {
+      type: "category",
+      label: "Other Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/any-data.svg",
@@ -483,15 +464,34 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Connections",
+      label: "Orchestration",
+      link: {
+        type: "doc",
+        id: "api/orchestration/connections",
+      },
       items: [
+        "api/orchestration/connection_formulas",
         {
           type: "doc",
-          id: "api/connections/stripe-forward",
+          id: "api/orchestration/connections",
+          customProps: {
+            enterprise: true,
+          },
         },
         {
           type: "doc",
-          id: "api/connections/google-pay",
+          id: "api/orchestration/transactions",
+          customProps: {
+            enterprise: true,
+          },
+        },
+        {
+          type: "doc",
+          id: "api/orchestration/stripe-forward",
+        },
+        {
+          type: "doc",
+          id: "api/orchestration/google-pay",
         },
       ],
     },
