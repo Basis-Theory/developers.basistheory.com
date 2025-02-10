@@ -169,7 +169,9 @@ async function onGooglePaymentButtonClicked() {
 
 // highlight-start
         let encryptedPaymentToken = paymentData.paymentMethodData.tokenizationData.token;
-        await tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken)
+        var tokenIntent = await tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken);
+
+        console.log(JSON.stringify(tokenIntent));
     } catch (error) {
         console.error('Error loading payment data:', error);
     }
@@ -193,11 +195,7 @@ async function tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken) {
 // highlight-end
 ```
 
-  The result of this call will be a [token intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type of token intent will either be `card` or `network_token` depending on the `AuthMethod` of the card that was available for the GPay token.
-
-  {/*
-  TODO: point out the differences between a card and network token and FPANs vs DPANs
-  */}
+  The result of this call will be a [token intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type of token intent will either be `card` or `network_token` depending on the `authMethod` of the card that was available for the Google Pay token. The [`authMethod`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) is how the card was authenticated for the transaction. If the `authMethod` is of type [PAN_ONLY](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only), Google will send an encrypted FPAN (Funding Primary Account Number) and you will get a `card` type token intent. If it's of type [CRYPTOGRAM_3DS](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds) Google will wend an encrypted DPAN (Device Primary Account Number) and you will get a `network_token` token intent. This is significant because if you store an encrypted DPAN from Google, you will get a payment method which is tied to the device for which it was added. This needs to be top of mind when charging with these payment methods in the future because we don't have insight into if these payment methods get revoked or are updated. If you store FPANs from Google with us, we have the capability to update the tokens tied to those payments with our [Account Updater](/docs/features/account-updater).
 
   ## Processing the GPay token
 
