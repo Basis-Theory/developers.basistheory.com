@@ -7,7 +7,7 @@ import GettingStartedSection from "@site/src/components/docs/_getting-started-se
 import {ApplicationSection} from "@site/src/components/docs/ApplicationSection";
 
 
-# Accept Google Pay
+# Accept Google Pay Payments
 
 This guide will walk you through the process of accepting Google Pay in your website, while leveraging the Basis Theory platform to perform all necessary operations in PCI-sensitive data. First let's take a look at how the Google Pay payment flow works.
 
@@ -204,18 +204,15 @@ async function tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken) {
 
   Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
 
-    In Adyen, you can charge a card by creating a [payment](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
+  For this integration guide we'll be using Adyen to test charging a card. In Adyen, you can charge a card by creating a [payment](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
 
-  {/*
-  TODO: find out what key to use for this Adyen call
-  */}
-```shell showLineNumbers title="Create a transaction"
+```shell showLineNumbers title="Create a payment transaction"
 curl 'https://api.basistheory.com/proxy' \
 -X 'POST' \
 // highlight-start
 -H 'BT-API-KEY: <PRIVATE_API_KEY>' \
 -H 'BT-PROXY-URL: https://checkout-test.adyen.com/v71/payments' \
--H 'Authorization: Bearer <REPLACE_ME>' \
+-H 'x-API-key: <ADYEN_TEST_KEY>' \
 // highlight-end
 -H 'Content-Type: application/json' \
 -d '{
@@ -223,6 +220,7 @@ curl 'https://api.basistheory.com/proxy' \
     "currency": "USD",
     "value": 1000
   },
+  "reference": "Test-Payment",
 // highlight-start
   "paymentMethod": {
     "type": "scheme",
@@ -232,6 +230,20 @@ curl 'https://api.basistheory.com/proxy' \
     "brand": "googlepay"
   },
 // highlight-end
+  "additionalData": {
+    "paymentdatasource.type": "googlepay",
+    "paymentdatasource.tokenized": "false"
+  },
+  "shopperInteraction": "Ecommerce",
+  "merchantAccount": "<ADYEN_MERCHANT_ACCOUNT>"
+}'
+```
+
+  You may notice that in this example we are not passing in any 3DS cryptogram or eci indicator. This is not necessary for charging FPANs. If you need to charge a DPAN, you will need to pass in the 3DS cryptogram and eci indicator available on the `authentication` property of the token intent.
+
+```json showLineNumbers title="Create a payment transaction for a DPAN"
+{
+  ...
   "mpiData": {
     "directoryResponse": "Y",
     "authenticationResponse": "Y",
@@ -242,10 +254,12 @@ curl 'https://api.basistheory.com/proxy' \
   },
   "additionalData": {
     "paymentdatasource.type": "googlepay",
+// highlight-start
     "paymentdatasource.tokenized": "true"
+// highlight-end
   },
-  "shopperInteraction": "Ecommerce"
-}'
+  ...
+}
 ```
 
 <Alert>You are not restricted to only using Adyen. You can use any payment processor that accepts Google Pay tokens.</Alert>
