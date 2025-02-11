@@ -1,3 +1,10 @@
+# [1.214.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.213.0...v1.214.0) (2025-02-11)
+
+
+### Features
+
+* add sessions to web-elements ([#508](https://github.com/Basis-Theory/developers.basistheory.com/issues/508)) ([624e5e0](https://github.com/Basis-Theory/developers.basistheory.com/commit/624e5e0952bc6c05d46624542dc0a46394a06eb3))
+
 # [1.213.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.212.0...v1.213.0) (2025-02-06)
 
 
