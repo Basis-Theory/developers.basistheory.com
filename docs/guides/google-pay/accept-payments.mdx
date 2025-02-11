@@ -9,17 +9,15 @@ import {ApplicationSection} from "@site/src/components/docs/ApplicationSection";
 
 # Accept Google Pay Payments
 
-This guide will walk you through the process of accepting Google Pay in your website, while leveraging the Basis Theory platform to perform all necessary operations in PCI-sensitive data. First let's take a look at how the Google Pay payment flow works.
+This guide will walk you through the process of accepting Google Pay payments on your website, while leveraging the Basis Theory platform to perform all necessary operations on PCI-sensitive data. First, let's take a look at how the Google Pay payment flow works.
 
-Firstly, you will render the Google Pay button on your page using Google's SDK's. When the user clicks the button, Google Pay will present the payment sheet to the user, which will contain the payment information (e.g., shipping details, transaction amount, card number, expiration date, etc.).
+Firstly, you will render the Google Pay button on your page using Google's SDKs. When the user clicks the button, Google Pay will present the payment sheet to the user, which will contain the payment information (e.g., shipping details, transaction amount, card number, expiration date, etc.).
 
-When the user clicks the Google "Pay" button, a sequence of interactions is initiated in three high-level steps:
+When the user clicks the Google "Pay" button, a sequence of three high-level steps is initiated:
 
-1. Create Google Pay payment data - The client application (Android or Web) creates a payment data request object that contains the payment information and sends that request to the Google Pay API. The Google Pay API returns a payment data response object, which contains the encrypted payment information.
-2. Decrypt Google Pay payment data - The encrypted payment data is sent to Basis Theory for decryption and storage of the sensitive cardholder data. Basis Theory will then return a token that can be used to process the payment.
-3. Process Payment - The Basis Theory tokens are forwarded to the payment processor via Basis Theory Proxy, which translate them back to raw data before sending the request. When the successful payment response returns, the client application can complete the payment and inform the user that the payment was successful.
-
-{/* TODO: Add a diagram here? */}
+1. Creation of Google Pay payment data - The client application (Android or Web) creates a payment data request object that contains the payment information and sends that request to the Google Pay API. The Google Pay API returns a payment data response object, which contains the encrypted payment information.
+2. Decryption of the payment data - The encrypted payment data is then sent to Basis Theory for decryption and storage of the sensitive cardholder information. Then Basis Theory returns a token intent that can be used to process the payment.
+3. Processing of the payment data - The Basis Theory token intents are forwarded to the payment processor via Basis Theory Proxy, which translates token intents back to raw data before sending the request. When the successful payment response returns, the client application can complete the payment and inform the user that the payment was successful.
 
 ## Getting Started
 
@@ -35,7 +33,7 @@ To start, we want to ensure that you're able to connect to Google's APIs. Make s
 
 The integration between your client application and Google can be done directly, without any involvement from Basis Theory.
 
-We'll be building our integration using plain HTML and JS, but there are quickstarts and API documentation provided for [React](https://github.com/google-pay/google-pay-button/tree/main/src/button-react) and [others](https://github.com/google-pay/google-pay-button/tree/main/src/button-element#example-usage-vue-website) from Google. We'll be following Google's official guides for [Web](https://developers.google.com/pay/api/web/guides/tutorial) all the way until step 9.
+We'll be building our integration using plain HTML and JS, but there are quickstarts and API documentation provided for [React](https://github.com/google-pay/google-pay-button/tree/main/src/button-react) and [other frameworks](https://github.com/google-pay/google-pay-button/tree/main/src/button-element#example-usage-vue-website) from Google. We'll be following Google's official guides for [Web](https://developers.google.com/pay/api/web/guides/tutorial) all the way until step 9.
 
 ```html showLineNumbers title="Create a web page with the Google Pay button"
 <!DOCTYPE html>
@@ -54,7 +52,7 @@ We'll be building our integration using plain HTML and JS, but there are quickst
             parameters: {
 // highlight-start
                 gateway: 'basistheory',
-                gatewayMerchantId: 'f338bcd6-157e-4ebf-872a-404dcfcce31e'
+                gatewayMerchantId: '<TENANT_ID>'
 // highlight-end
             }
         }
@@ -130,7 +128,9 @@ We'll be building our integration using plain HTML and JS, but there are quickst
 </html>
 ```
 
-Note that for the `tokenizationSpecification`, we're setting `gateway` to `basistheory` and `gatewayMerchantId` to your tenantId created from the [Basis Theory Setup](#basis-theory-setup).
+Note that for the `tokenizationSpecification`, we're setting `gateway` to `basistheory` and `gatewayMerchantId` to your `tenantId` created from the [Basis Theory Setup](#basis-theory-setup).
+
+Now when we run this code, we should see a Google Pay button on our page. Clicking the "GPay" button will present a payment sheet. Click on the "Continue" button and take a look at the console to see the encrypted payment data.
 
 ## Storing the Google Pay Payment Data with Basis Theory
 
@@ -140,7 +140,7 @@ Note that for the `tokenizationSpecification`, we're setting `gateway` to `basis
 
 ### Tokenize the Payment Data
 
-Now that we have access to the encrypted payment data, we can use our newly created public key to send the payment data using the [Google Pay connections endpoint](/docs/api/orchestration/google-pay) in the `onGooglePaymentButtonClicked` function.
+Now that we have access to the encrypted payment data, we can use our newly created public key to send the payment data to Basis Theory using the [Google Pay connections endpoint](/docs/api/orchestration/google-pay) in the `onGooglePaymentButtonClicked` function.
 
 ```javascript showLineNumbers title="Send Google Pay token to be tokenized with Basis Theory"
 async function onGooglePaymentButtonClicked() {
@@ -192,19 +192,21 @@ async function tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken) {
 // highlight-end
 ```
 
-  The result of this call will be a [token intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type of token intent will either be `card` or `network_token` depending on the `authMethod` of the Google Pay token that was available for the chosen card. The [`authMethod`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) is how the card was authenticated for the transaction. If the `authMethod` is of type [PAN_ONLY](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only), Google will send an encrypted FPAN (Funding Primary Account Number) and you will get a `card` type token intent. If the `authMethod` of type [CRYPTOGRAM_3DS](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds) Google will wend an encrypted DPAN (Device Primary Account Number) and you will get a `network_token` token intent. This is significant because if you store an encrypted DPAN from Google, you will get a payment method which is tied to the device for which it was added. This needs to be top of mind when charging with these payment methods in the future because we don't have insight into if these payment methods get revoked or are updated. If you store FPANs from Google with us, we have the capability to update the tokens tied to those payments with our [Account Updater](/docs/features/account-updater).
+The result of this call will be a [token intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type of token intent will either be `card` or `network_token` depending on the `authMethod` of the Google Pay token that was available for the chosen card. The [`authMethod`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) is how the card was authenticated for the transaction. If the `authMethod` is of type [PAN_ONLY](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only), Google will send an encrypted FPAN (Funding Primary Account Number) and you will get a `card` type token intent from Basis Theory. If the `authMethod` of type [CRYPTOGRAM_3DS](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds), Google will send an encrypted DPAN (Device Primary Account Number) and you will get a `network_token` token intent from Basis Theory. This is significant because if you store an encrypted DPAN from Google, you will get a payment method which is tied to the device for which it was added. This needs to be top of mind when charging with these payment methods in the future because we don't have insight into if these payment methods get revoked or are updated. If you store FPANs from Google with us, we have the capability to update the tokens tied to those payments with our [Account Updater](/docs/features/account-updater).
 
-  ## Processing the GPay token
+Let's try clicking the "GPay" button again and then the "Continue" button once again. You should see a token intent printed to your console now.
 
-  ### Create a Private Key
+## Processing the GPay token
 
-  <ApplicationSection type="private" permissions={["token-intent:use"]}/>
+### Create a Private Key
 
-  ### Charge a Card
+<ApplicationSection type="private" permissions={["token-intent:use"]}/>
 
-  Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
+### Charge a Card
 
-  For this integration guide we'll be using Adyen to test charging a card. In Adyen, you can charge a card by creating a [payment](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
+Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
+
+For this integration guide, we'll be using [Adyen](https://www.adyen.com/) to test charging a card. In Adyen, you can charge a card by creating a [payment](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments). We'll use a Basis Theory [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) to send the sensitive payment data to Adyen.
 
 ```shell showLineNumbers title="Create a payment transaction"
 curl 'https://api.basistheory.com/proxy' \
@@ -239,7 +241,7 @@ curl 'https://api.basistheory.com/proxy' \
 }'
 ```
 
-  You may notice that in this example we are not passing in any 3DS cryptogram or eci indicator. This is not necessary for charging FPANs. If you need to charge a DPAN, you will need to pass in the 3DS cryptogram and eci indicator available on the `authentication` property of the token intent.
+You may notice that in this example we are not passing in any 3DS cryptogram or eci indicator. This is not necessary for charging FPANs. If you need to charge a DPAN, you will need to pass in the 3DS cryptogram and eci indicator available on the `authentication` property of the token intent.
 
 ```json showLineNumbers title="Create a payment transaction for a DPAN"
 {
@@ -264,9 +266,14 @@ curl 'https://api.basistheory.com/proxy' \
 
 <Alert>You are not restricted to only using Adyen. You can use any payment processor that accepts Google Pay tokens.</Alert>
 
-  ## Preparing for Production
+{/*
+create a session
+use the proxy in sample site
+*/}
 
-  Once you're ready for production, you'll want to publish your integration with Google Pay by following the [official guide](https://developers.google.com/pay/api/web/guides/test-and-deploy/publish-your-integration). Once you have your official `merchantId`, you can update your `merchantId` in the payment data request to Google Pay, and change the `environment` to `PRODUCTION`.
+## Preparing for Production
+
+Once you're ready for production, you'll want to publish your integration with Google Pay by following the [official guide](https://developers.google.com/pay/api/web/guides/test-and-deploy/publish-your-integration). When you have your official `merchantId`, you can update your `merchantId` in the payment data request to Google Pay, and change the `environment` to `PRODUCTION`. Keep in mind that you'll need to use a Basis Theory `PROD` Tenant to decrypt `PRODUCTION` Google Pay payment data.
 
 ```javascript showLineNumbers title="Send Google Pay token to be tokenized with Basis Theory"
 ...
@@ -302,4 +309,4 @@ async function onGooglePaymentButtonClicked() {
 });
 ```
 
-  Now that we've updated the `merchantId` and `environment` in the payment data request, your integration with Google Pay is ready for production. We hope you found this guide helpful. If you have any questions or need further assistance, please don't hesitate to reach out to our [support team](https://basistheory.com/contact?how_can_we_help_=I+need+help+with+integrating+Google+Pay).
+Now that we've updated the `merchantId` and `environment` in the payment data request, your integration with Google Pay is ready for production. We hope you found this guide helpful. If you have any questions or need further assistance, please don't hesitate to reach out to our [support team](https://basistheory.com/contact?how_can_we_help_=I+need+help+with+integrating+Google+Pay).
