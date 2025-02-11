@@ -2,10 +2,7 @@
 toc_max_heading_level: 2
 ---
 
-import {Alert, Alerts} from "@site/src/components/shared/Alert";
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
-import {SdkList} from "@site/src/components/docs/SdkList";
+import {Alert} from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 import {ApplicationSection} from "@site/src/components/docs/ApplicationSection";
 
@@ -38,7 +35,7 @@ To start, we want to ensure that you're able to connect to Google's APIs. Make s
 
 The integration between your client application and Google can be done directly, without any involvement from Basis Theory.
 
-Now we'll follow Google's official guides for [Web](https://developers.google.com/pay/api/web/guides/tutorial) all the way until step 9.
+We'll be building our integration using plain HTML and JS, but there are quickstarts and API documentation provided for [React](https://github.com/google-pay/google-pay-button/tree/main/src/button-react) and [others](https://github.com/google-pay/google-pay-button/tree/main/src/button-element#example-usage-vue-website) from Google. We'll be following Google's official guides for [Web](https://developers.google.com/pay/api/web/guides/tutorial) all the way until step 9.
 
 ```html showLineNumbers title="Create a web page with the Google Pay button"
 <!DOCTYPE html>
@@ -195,7 +192,7 @@ async function tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken) {
 // highlight-end
 ```
 
-  The result of this call will be a [token intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type of token intent will either be `card` or `network_token` depending on the `authMethod` of the card that was available for the Google Pay token. The [`authMethod`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) is how the card was authenticated for the transaction. If the `authMethod` is of type [PAN_ONLY](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only), Google will send an encrypted FPAN (Funding Primary Account Number) and you will get a `card` type token intent. If it's of type [CRYPTOGRAM_3DS](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds) Google will wend an encrypted DPAN (Device Primary Account Number) and you will get a `network_token` token intent. This is significant because if you store an encrypted DPAN from Google, you will get a payment method which is tied to the device for which it was added. This needs to be top of mind when charging with these payment methods in the future because we don't have insight into if these payment methods get revoked or are updated. If you store FPANs from Google with us, we have the capability to update the tokens tied to those payments with our [Account Updater](/docs/features/account-updater).
+  The result of this call will be a [token intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type of token intent will either be `card` or `network_token` depending on the `authMethod` of the Google Pay token that was available for the chosen card. The [`authMethod`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) is how the card was authenticated for the transaction. If the `authMethod` is of type [PAN_ONLY](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only), Google will send an encrypted FPAN (Funding Primary Account Number) and you will get a `card` type token intent. If the `authMethod` of type [CRYPTOGRAM_3DS](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds) Google will wend an encrypted DPAN (Device Primary Account Number) and you will get a `network_token` token intent. This is significant because if you store an encrypted DPAN from Google, you will get a payment method which is tied to the device for which it was added. This needs to be top of mind when charging with these payment methods in the future because we don't have insight into if these payment methods get revoked or are updated. If you store FPANs from Google with us, we have the capability to update the tokens tied to those payments with our [Account Updater](/docs/features/account-updater).
 
   ## Processing the GPay token
 
@@ -256,3 +253,39 @@ curl 'https://api.basistheory.com/proxy' \
   ## Preparing for Production
 
   Once you're ready for production, you'll want to publish your integration with Google Pay by following the [official guide](https://developers.google.com/pay/api/web/guides/test-and-deploy/publish-your-integration). Once you have your official `merchantId`, you can update your `merchantId` in the payment data request to Google Pay, and change the `environment` to `PRODUCTION`.
+
+```javascript showLineNumbers title="Send Google Pay token to be tokenized with Basis Theory"
+...
+// Initialize Google Pay API when the library is loaded
+async function onGooglePayLoaded() {
+// highlight-start
+    paymentsClient = new google.payments.api.PaymentsClient({environment: 'PRODUCTION'});
+// highlight-end
+    const isReadyToPayRequest = Object.assign({}, baseRequest, {
+        allowedPaymentMethods: [baseCardPaymentMethod]
+});
+...
+// Handle button click and load payment data
+async function onGooglePaymentButtonClicked() {
+    const paymentDataRequest = Object.assign({}, baseRequest, {
+        allowedPaymentMethods: [
+            Object.assign({}, baseCardPaymentMethod, {
+                tokenizationSpecification: tokenizationSpecification
+            })
+        ],
+        transactionInfo: {
+            totalPriceStatus: 'FINAL',
+            totalPrice: '10.00',
+            currencyCode: 'USD'
+        },
+// highlight-start
+        merchantInfo: {
+            merchantName: 'Example Merchant',
+            merchantId: 'ABC123'
+        }
+// highlight-end
+        ...
+});
+```
+
+  Now that we've updated the `merchantId` and `environment` in the payment data request, your integration with Google Pay is ready for production. We hope you found this guide helpful. If you have any questions or need further assistance, please don't hesitate to reach out to our [support team](https://basistheory.com/contact?how_can_we_help_=I+need+help+with+integrating+Google+Pay).
