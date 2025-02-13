@@ -52,13 +52,6 @@ const sidebars = {
       items: [
         "guides/collect/collect-cards",
         "guides/share/process-card-payments",
-        {
-          type: "doc",
-          id: "guides/share/process-card-payments-connections",
-          customProps: {
-            enterprise: true,
-          },
-        },
         "guides/collect/receive-cards",
         "guides/process/extract-cards",
         "guides/collect/issue-cards",
@@ -460,34 +453,15 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Orchestration",
-      link: {
-        type: "doc",
-        id: "api/orchestration/connections",
-      },
+      label: "Connections",
       items: [
-        "api/orchestration/connection_formulas",
         {
           type: "doc",
-          id: "api/orchestration/connections",
-          customProps: {
-            enterprise: true,
-          },
+          id: "api/connections/stripe-forward",
         },
         {
           type: "doc",
-          id: "api/orchestration/transactions",
-          customProps: {
-            enterprise: true,
-          },
-        },
-        {
-          type: "doc",
-          id: "api/orchestration/stripe-forward",
-        },
-        {
-          type: "doc",
-          id: "api/orchestration/google-pay",
+          id: "api/connections/google-pay",
         },
       ],
     },
