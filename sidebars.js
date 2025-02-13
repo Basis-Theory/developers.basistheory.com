@@ -454,10 +454,6 @@ const sidebars = {
     {
       type: "category",
       label: "Connections",
-      link: {
-        type: "doc",
-        id: "api/connections/google-pay",
-      },
       items: [
         {
           type: "doc",
