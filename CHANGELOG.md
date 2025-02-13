@@ -1,3 +1,10 @@
+# [1.215.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.214.0...v1.215.0) (2025-02-13)
+
+
+### Features
+
+* add new 3ds events, sdk changes ([#511](https://github.com/Basis-Theory/developers.basistheory.com/issues/511)) ([4f61f43](https://github.com/Basis-Theory/developers.basistheory.com/commit/4f61f43b69dc03093159b88ede64274b91e506c4))
+
 # [1.214.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.213.0...v1.214.0) (2025-02-11)
 
 
