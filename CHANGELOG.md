@@ -1,3 +1,10 @@
+## [1.215.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.215.0...v1.215.1) (2025-02-13)
+
+
+### Bug Fixes
+
+* making enterprise connections docs private ([#510](https://github.com/Basis-Theory/developers.basistheory.com/issues/510)) ([55cd6b5](https://github.com/Basis-Theory/developers.basistheory.com/commit/55cd6b578b5deebe604df59b78454564ceca1407))
+
 # [1.215.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.214.0...v1.215.0) (2025-02-13)
 
 
