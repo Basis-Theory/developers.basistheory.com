@@ -2,6 +2,8 @@
 title: Event Data
 ---
 
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
 # Webhook Event Data
 
 ## Structure of Events
@@ -139,7 +141,44 @@ The individual data objects are defined below by type.
 | session.token_intent_id | String | The unique identifier for the card token intent referenced by this session.               |
 | session.card_brand      | String | The brand of the card associated with the session.                                        |
 
-### Decoupled Challenge notification
+### Method Request Completed
+
+```json title="3ds.session.method-completed"
+{
+  "session": {
+    "id": "...",
+    "type": "...",
+    "tenant_id": "...",
+  }
+}
+```
+| Name                    | Type   | Description                                                                               |
+|-------------------------|--------|-------------------------------------------------------------------------------------------|
+| session.id              | String | The unique identifier of the session.                                                     |
+| session.type            | String | The session type (`customer` or `merchant`)                                               |
+| session.tenant_id       | String | The unique identifier of the [Tenant](/docs/api/tenants) associated with the session.     |
+
+### Challenge Completed
+
+<Alert>This event just indicates that the challenge was completed, not that it succeeded or failed. To see the result of the challenge, perform a <a href="/docs/api/3ds/sessions#get-challenge-result">Get Challenge Result</a> API call.</Alert>
+
+```json title="3ds.session.challenge-completed"
+{
+  "session": {
+    "id": "...",
+    "type": "...",
+    "tenant_id": "...",
+  }
+}
+```
+| Name                    | Type   | Description                                                                               |
+|-------------------------|--------|-------------------------------------------------------------------------------------------|
+| session.id              | String | The unique identifier of the session.                                                     |
+| session.type            | String | The session type (`customer` or `merchant`)                                               |
+| session.tenant_id       | String | The unique identifier of the [Tenant](/docs/api/tenants) associated with the session.     |
+
+
+### Decoupled Challenge Notification
 
 ```json title="3ds.session.decoupled-challenge-notification"
 {
