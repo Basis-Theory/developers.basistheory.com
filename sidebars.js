@@ -83,13 +83,31 @@ const sidebars = {
           id: "card-payments/placeholder",
           label: "Charge a Card",
         },
-        "guides/collect/receive-cards",
         {
           type: "doc",
           id: "guides/process/authenticate-mit-with-3ds",
           customProps: {
             enterprise: true,
           },
+        },
+        {
+          type: "html",
+          value: "<hr />",
+        },
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Keep cards up-to-date",
+        },
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Payments routing",
+        },
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Using Network Tokens",
         },
         {
           type: "html",
