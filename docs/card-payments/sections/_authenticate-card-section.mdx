@@ -1,16 +1,16 @@
 import { Alert } from "@site/src/components/shared/Alert";
 
-## Authenticate Card
+## Authentication
 
-Once the Token Intent has been created, merchants can perform various actions to authenticate the user and card, ensuring they are authorized to use the card for a purchase. The specific actions may vary depending on the merchant's risk tolerance or the card's region of origin.
+Once the Token Intent has been created, merchants may need to authenticate the cardholder to comply with PSD2’s Strong Customer Authentication (SCA) requirements and reduce fraud. The specific authentication steps depend on the card’s region, issuer requirements, and the merchant’s risk strategy.
 
 #### 3D Secure
 
-3D Secure (3DS) is a payment authentication protocol that adds an extra layer of verification, such as a one-time password or biometric scan, to enhance security and reduce fraud during online transactions. It is commonly used to meet Secure Customer Authentication (SCA) requirements under regulations like PSD2.
+3D Secure (3DS) is the standard protocol for meeting PSD2 SCA requirements in Europe and enhancing fraud prevention globally. It introduces an additional verification step, such as a one-time password (OTP) or biometric authentication. SCA exemptions may apply for certain transactions, such as low-risk or merchant-initiated payments. Implementing 3DS2 ensures compliance while keeping checkout friction minimal.
 
 ```javascript
 if (intent.card.authentication === 'sca_required') {
-  // triger authentication flow
+  // trigger the 3DS authentication flow
 }
 ```
 
