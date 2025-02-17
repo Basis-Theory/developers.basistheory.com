@@ -47,10 +47,10 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "payments/online-checkout",
+        id: "card-payments/index",
       },
       items: [
-        "payments/accept-card-payments",
+        "card-payments/replace-processor-iframes",
         {
           type: "doc",
           id: "guides/process/authenticate-with-3ds",
@@ -58,8 +58,32 @@ const sidebars = {
             enterprise: true,
           },
         },
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Use your own forms",
+        },
         "guides/collect/receive-cards",
-        "guides/process/extract-cards",
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Recollect CVC",
+        },
+        {
+          type: "html",
+          value: "<hr />",
+        },
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Verify a Card",
+        },
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Charge a Card",
+        },
+        "guides/collect/receive-cards",
         {
           type: "doc",
           id: "guides/process/authenticate-mit-with-3ds",
@@ -67,6 +91,11 @@ const sidebars = {
             enterprise: true,
           },
         },
+        {
+          type: "html",
+          value: "<hr />",
+        },
+        "guides/process/extract-cards",
         "guides/process/backup-stripe-tokens",
       ],
     },
@@ -125,7 +154,7 @@ const sidebars = {
         type: "doc",
         id: "guides/cards/index",
       },
-      items: ["guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin", "guides/process/backup-stripe-tokens"],
+      items: ["guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
     },
     {
       type: "category",
