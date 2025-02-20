@@ -271,55 +271,29 @@ We'll setup and invoke the [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="javascript" label="Checkout">
 
-  ```javascript showlineNumbers title="Charge Payment method through a Proxy"
-const express = require("express");
-const bodyParser = require("body-parser");
-const app = express();
-
-app.use(bodyParser.json());
-
-app.post("/charge-payment", async (request, response) => {
-    const { tokenIntentId } = request.body;
-
-    // charge the payment with a proxy
-    const chargeResponse = await fetch("https://api.basistheory.com/proxy", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "BT-API-KEY": "<PRIVATE_API_KEY>",
-            "BT-PROXY-URL": "https://api.sandbox.checkout.com/payments",
-            "Authorization": "Bearer <CHECKOUT_AUTH_TOKEN>"
-        },
-        body: JSON.stringify(
-            {
-                "source": {
-                    "type": "network_token",
-                    "token_type": "googlepay",
+  ```shell showlineNumbers title="Charge Payment method through a Proxy"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+-H 'Content-Type: application/json' \
 // highlight-start
-                    "token": `{{ token_intent: ${tokenIntentId} | json: \"$.data.number\" }}`,
-                    "expiry_month": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"MM\" }}`,
-                    "expiry_year": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"YYYY\" }}`,
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://api.sandbox.checkout.com/payments' \
+-H 'Authorization: Bearer <CHECKOUT_AUTH_TOKEN>' \
 // highlight-end
-                },
-                "amount": 1000,
-                "currency": "USD",
-                "processing_channel_id": "<CHECKOUT_PROCESSING_CHANNEL_ID>"
-            }
-        ),
-    });
-
-    const chargeResponseJson = await chargeResponse.json();
-
-    console.log(JSON.stringify(chargeResponseJson, null, 2));
-
-    response.json({
-        status: chargeResponse.status,
-    });
-});
-
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
-});
+-d '{
+  "source": {
+    "type": "network_token",
+    "token_type": "googlepay",
+// highlight-start
+    "token": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }}",
+    "expiry_month": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiry_year": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}"
+// highlight-end
+  },
+  "amount": 1000,
+  "currency": "USD",
+  "processing_channel_id": "<CHECKOUT_PROCESSING_CHANNEL_ID>"
+}'
 ```
   [Checkout Payment Method Docs](https://www.checkout.com/docs/payments/add-payment-methods/google-pay#Pay_with_a_pre-decrypted_Google_Pay_token).
 
@@ -330,12 +304,12 @@ You may notice that in this example we are not passing in any 3DS cryptogram or 
     "source": {
         "type": "network_token",
         "token_type": "googlepay",
-        "token": `{{ token_intent: ${tokenIntentId} | json: \"$.data.number\" }}`,
-        "expiry_month": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"MM\" }}`,
-        "expiry_year": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"YYYY\" }}`,
+        "token": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }}",
+        "expiry_month": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }}",
+        "expiry_year": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}",
 // highlight-start
-        "eci": `{{ token_intent: ${tokenIntentId} | json: \"$.data.authentication.eciIndicator\" }}`,
-        "cryptogram": `{{ token_intent: ${tokenIntentId} | json: \"$.data.authentication.threeds_cryptogram\" }}`
+        "eci": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.authentication.eciIndicator\" }}",
+        "cryptogram": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.authentication.threeds_cryptogram\" }}"
 // highlight-end
     },
   ...
