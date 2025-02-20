@@ -118,6 +118,27 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Google Pay",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/google.svg",
+          dark: "/img/sidebar/dark/google.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/google-pay/accept-payments",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "guides/google-pay/accept-payments",
+          label: "Accept Payments",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Any Data",
       customProps: {
         icon: {
