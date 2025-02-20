@@ -142,7 +142,7 @@ Now that we have access to the encrypted payment data, we'll create a Public App
 
 <ApplicationSection type="public" permissions={["token-intent:create"]}/>
 
-### Tokenize the Googe Pay Payment Data
+### Tokenize the Google Pay Payment Data
 
 Let's modify the `onGooglePaymentButtonClicked` function and add a new `tokenizeGooglePayTokenWithBasisTheory` to send the payment data to Basis Theory.
 
@@ -204,6 +204,8 @@ The result of this call will be a [Token Intent](/docs/api/tokens/token-intents#
 |-------------------------------------------------------------------------------------------------------------------------|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [`CRYPTOGRAM_3DS`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds) | `network_token`   | The payment method stored is a DPAN (Device Primary Account Number). This payment method is tied to the device for which it was added. This needs to be top of mind when charging with these payment methods in the future because we don't have insight into if these payment methods get revoked or updated. |
 | [`PAN_ONLY`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only)             | `card`            | The payment method stored is an FPAN (Funding Primary Account Number). This payment method is the underlying card itself and we have the capability to update the tokens tied to those payments with our [Account Updater](/docs/features/account-updater)                                                     |
+
+Remember that Token Intents are short-lived and expire after 24 hours by default. If you're wanting to use the payment data stored in a Token Intent for recurring transactions, for example, you can convert the Token Intent to a [Token](/docs/api/tokens/tokens#token-object) by calling the [create Token endpoint](/docs/api/tokens/token-intents#convert-token-intent-to-token).
 
 Let's try clicking the "GPay" button again and then the "Continue" button once again. You should see a Token Intent printed to your console now.
 
