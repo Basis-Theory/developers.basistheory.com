@@ -211,7 +211,7 @@ Let's try clicking the "GPay" button again and then the "Continue" button once a
 
 ## Processing the Google Pay Payment Data
 
-We'll send the Basis Theory Token Intent to [Adyen](https://www.adyen.com/) to test charging a card. We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/ephemeral-proxy) and a Private Application. Although, we are also able to create and authenticate a Basis Theory [Session](/docs/api/applications/sessions) and make this request from the frontend as well.
+We'll send the Basis Theory Token Intent to [Checkout](https://www.checkout.com/) to test charging a card. We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/ephemeral-proxy) and a Private Application. Although, we are also able to create and authenticate a Basis Theory [Session](/docs/api/applications/sessions) and make this request from the frontend as well.
 
 ### Create a Private Application
 
@@ -236,9 +236,9 @@ async function onGooglePaymentButtonClicked() {
 
         console.log(JSON.stringify(tokenIntent));
 // highlight-start
-        let response = await chargePayment(tokenIntent.id);
+        let { status } = await chargePayment(tokenIntent.id);
 
-        if (response.status === 200) {
+        if (status === 201) {
             console.log('Payment successful!');
         } else {
             console.error('Payment failed.');
@@ -265,7 +265,7 @@ async function chargePayment(tokenIntentId) {
 // highlight-end
 ```
 
-In Adyen, you can charge a card by creating a [payment](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments). We'll setup and invoke the [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) on our backend.
+With Checkout, you can charge a card by creating a [payment](https://www.checkout.com/docs/payments/add-payment-methods/google-pay#Pay_with_a_pre-decrypted_Google_Pay_token). We'll setup and invoke the [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) on our backend.
 
 ```javascript showlineNumbers title="Charge Payment method through a Proxy"
 const express = require("express");
@@ -283,31 +283,25 @@ app.post("/charge-payment", async (request, response) => {
         headers: {
             "Content-Type": "application/json",
             "BT-API-KEY": "<PRIVATE_API_KEY>",
-            "BT-PROXY-URL": "https://checkout-test.adyen.com/v71/payments",
-            "x-API-key": "<<ADYEN_TEST_KEY>"
+            "BT-PROXY-URL": "https://api.sandbox.checkout.com/payments",
+            "Authorization": "Bearer <CHECKOUT_AUTH_TOKEN>"
         },
-        body: JSON.stringify({
-            "amount": {
-                "currency": "USD",
-                "value": 1000
-            },
-            "reference": "Test-Payment",
+        body: JSON.stringify(
+            {
+                "source": {
+                    "type": "network_token",
+                    "token_type": "googlepay",
 // highlight-start
-            "paymentMethod": {
-                "type": "scheme",
-                "number": `{{ token_intent: ${tokenIntentId} | json: \"$.data.number\" }}`,
-                "expiryMonth": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"MM\" }}`,
-                "expiryYear": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"YYYY\" }}`,
-                "brand": "googlepay"
-            },
+                    "token": `{{ token_intent: ${tokenIntentId} | json: \"$.data.number\" }}`,
+                    "expiry_month": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"MM\" }}`,
+                    "expiry_year": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"YYYY\" }}`,
 // highlight-end
-            "additionalData": {
-                "paymentdatasource.type": "googlepay",
-                "paymentdatasource.tokenized": "false"
-            },
-            "shopperInteraction": "Ecommerce",
-            "merchantAccount": "<ADYEN_MERCHANT_ACCOUNT>"
-        }),
+                },
+                "amount": 1000,
+                "currency": "USD",
+                "processing_channel_id": "<CHECKOUT_PROCESSING_CHANNEL_ID>"
+            }
+        ),
     });
 
     const chargeResponseJson = await chargeResponse.json();
@@ -315,7 +309,7 @@ app.post("/charge-payment", async (request, response) => {
     console.log(JSON.stringify(chargeResponseJson, null, 2));
 
     response.json({
-        result: chargeResponse.status,
+        status: chargeResponse.status,
     });
 });
 
@@ -328,26 +322,22 @@ You may notice that in this example we are not passing in any 3DS cryptogram or 
 
 ```json showLineNumbers title="Create a payment transaction for a DPAN"
 {
-  ...
-  "mpiData": {
-    "directoryResponse": "Y",
-    "authenticationResponse": "Y",
+    "source": {
+        "type": "network_token",
+        "token_type": "googlepay",
+        "token": `{{ token_intent: ${tokenIntentId} | json: \"$.data.number\" }}`,
+        "expiry_month": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"MM\" }}`,
+        "expiry_year": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"YYYY\" }}`,
 // highlight-start
-    "cavv": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.authentication.threeds_cryptogram\" }}",
-    "eci": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.authentication.eciIndicator\" }}"
+        "eci": `{{ token_intent: ${tokenIntentId} | json: \"$.data.authentication.eciIndicator\" }}`,
+        "cryptogram": `{{ token_intent: ${tokenIntentId} | json: \"$.data.authentication.threeds_cryptogram\" }}`
 // highlight-end
-  },
-  "additionalData": {
-    "paymentdatasource.type": "googlepay",
-// highlight-start
-    "paymentdatasource.tokenized": "true"
-// highlight-end
-  },
+    },
   ...
 }
 ```
 
-<Alert>You are not restricted to only using Adyen. You can use any payment processor that accepts Google Pay tokens.</Alert>
+<Alert>You are not restricted to only using Checkout. You can use any payment processor that accepts Google Pay tokens.</Alert>
 
 ## Preparing for Production
 
