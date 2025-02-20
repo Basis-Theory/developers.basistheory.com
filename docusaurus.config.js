@@ -265,6 +265,11 @@ const config = {
           { from: "/docs/sdks/web/javascript/options", to: "/docs/sdks/web/web-elements/options" },
           { from: "/docs/sdks/web/javascript/services", to: "/docs/sdks/web/web-elements/services" },
           { from: "/docs/sdks/web/javascript/types", to: "/docs/sdks/web/web-elements/types" },
+          { from: "/docs/sdks/mobile/3ds-react-native", to: "/docs/sdks/mobile/react-native-threeds" },
+          { from: "/docs/sdks/mobile/3ds-react-native/methods", to: "/docs/sdks/mobile/react-native-threeds/methods" },
+          { from: "/docs/api/orchestration/stripe-forward", to: "/docs/api/connections/stripe-forward" },
+          { from: "/docs/api/orchestration/google-pay", to: "/docs/api/connections/google-pay" }, // do not ever remove this, Google has this link embedded in their docs - https://developers.google.com/pay/api/#participating-processors
+          { from: "/docs/guides/share/process-card-payments-connections", to: "/docs/guides/share/process-card-payments" },
         ],
       },
     ],

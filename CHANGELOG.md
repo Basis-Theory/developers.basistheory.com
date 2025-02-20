@@ -1,3 +1,59 @@
+## [1.215.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.215.0...v1.215.1) (2025-02-13)
+
+
+### Bug Fixes
+
+* making enterprise connections docs private ([#510](https://github.com/Basis-Theory/developers.basistheory.com/issues/510)) ([55cd6b5](https://github.com/Basis-Theory/developers.basistheory.com/commit/55cd6b578b5deebe604df59b78454564ceca1407))
+
+# [1.215.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.214.0...v1.215.0) (2025-02-13)
+
+
+### Features
+
+* add new 3ds events, sdk changes ([#511](https://github.com/Basis-Theory/developers.basistheory.com/issues/511)) ([4f61f43](https://github.com/Basis-Theory/developers.basistheory.com/commit/4f61f43b69dc03093159b88ede64274b91e506c4))
+
+# [1.214.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.213.0...v1.214.0) (2025-02-11)
+
+
+### Features
+
+* add sessions to web-elements ([#508](https://github.com/Basis-Theory/developers.basistheory.com/issues/508)) ([624e5e0](https://github.com/Basis-Theory/developers.basistheory.com/commit/624e5e0952bc6c05d46624542dc0a46394a06eb3))
+
+# [1.213.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.212.0...v1.213.0) (2025-02-06)
+
+
+### Features
+
+* rename ios elements ([#507](https://github.com/Basis-Theory/developers.basistheory.com/issues/507)) ([63258d0](https://github.com/Basis-Theory/developers.basistheory.com/commit/63258d065fd96f4e74fd4f6f338c9f1d0127246d))
+
+# [1.212.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.211.0...v1.212.0) (2025-02-05)
+
+
+### Features
+
+* adding documenation on new _extras field for deduplication_behavior ([#506](https://github.com/Basis-Theory/developers.basistheory.com/issues/506)) ([681157a](https://github.com/Basis-Theory/developers.basistheory.com/commit/681157a1c541a89905da9d1974010d0c7bb5c270))
+
+# [1.211.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.210.1...v1.211.0) (2025-02-04)
+
+
+### Features
+
+* updating the cursor pagination and v2 page size docs ([#500](https://github.com/Basis-Theory/developers.basistheory.com/issues/500)) ([d804fc3](https://github.com/Basis-Theory/developers.basistheory.com/commit/d804fc3757ca7ff1abdc895e7bf9b925af82892c))
+
+## [1.210.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.210.0...v1.210.1) (2025-02-04)
+
+
+### Bug Fixes
+
+* add 3ds auth condition ([#504](https://github.com/Basis-Theory/developers.basistheory.com/issues/504)) ([39491e9](https://github.com/Basis-Theory/developers.basistheory.com/commit/39491e97626679504a30d2d7c694207521726653))
+
+# [1.210.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.209.0...v1.210.0) (2025-02-04)
+
+
+### Features
+
+* rename 3ds packages  ([#503](https://github.com/Basis-Theory/developers.basistheory.com/issues/503)) ([41f1971](https://github.com/Basis-Theory/developers.basistheory.com/commit/41f1971a46d60e3d7b9484c56d3a19738427c3da))
+
 # [1.209.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.208.0...v1.209.0) (2025-02-03)
 
 

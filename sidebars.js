@@ -52,13 +52,6 @@ const sidebars = {
       items: [
         "guides/collect/collect-cards",
         "guides/share/process-card-payments",
-        {
-          type: "doc",
-          id: "guides/share/process-card-payments-connections",
-          customProps: {
-            enterprise: true,
-          },
-        },
         "guides/collect/receive-cards",
         "guides/process/extract-cards",
         "guides/collect/issue-cards",
@@ -402,11 +395,7 @@ const sidebars = {
         type: "doc",
         id: "api/reactors/reactors",
       },
-      items: [
-        "api/reactors/reactors",
-        "api/reactors/reactor-dependencies",
-        "api/reactors/reactor-errors",
-      ],
+      items: ["api/reactors/reactors", "api/reactors/reactor-dependencies", "api/reactors/reactor-errors"],
     },
     {
       type: "category",
@@ -485,34 +474,15 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Orchestration",
-      link: {
-        type: "doc",
-        id: "api/orchestration/connections",
-      },
+      label: "Connections",
       items: [
-        "api/orchestration/connection_formulas",
         {
           type: "doc",
-          id: "api/orchestration/connections",
-          customProps: {
-            enterprise: true,
-          },
+          id: "api/connections/stripe-forward",
         },
         {
           type: "doc",
-          id: "api/orchestration/transactions",
-          customProps: {
-            enterprise: true,
-          },
-        },
-        {
-          type: "doc",
-          id: "api/orchestration/stripe-forward",
-        },
-        {
-          type: "doc",
-          id: "api/orchestration/google-pay",
+          id: "api/connections/google-pay",
         },
       ],
     },
@@ -612,7 +582,7 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "3DS SDK",
+          label: "Web 3DS",
           link: {
             type: "doc",
             id: "sdks/web/3ds/index",
@@ -657,7 +627,7 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "3DS Mobile SDK",
+          label: "Mobile 3DS",
           link: {
             type: "doc",
             id: "sdks/mobile/3ds/index",
@@ -669,15 +639,15 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "3DS React Native SDK",
+          label: "React Native 3DS",
           link: {
             type: "doc",
-            id: "sdks/mobile/3ds-react-native/index",
+            id: "sdks/mobile/react-native-threeds/index",
           },
           customProps: {
             enterprise: true,
           },
-          items: ["sdks/mobile/3ds-react-native/methods"],
+          items: ["sdks/mobile/react-native-threeds/methods"],
         },
       ],
     },
