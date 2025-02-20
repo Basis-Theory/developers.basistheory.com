@@ -142,11 +142,11 @@ Now that we have access to the encrypted payment data, we'll create a public key
 
 <ApplicationSection type="public" permissions={["token-intent:create"]}/>
 
-### Tokenize the Payment Data
+### Tokenize the Googe Pay Payment Data
 
 Let's modify the `onGooglePaymentButtonClicked` function and add a new `tokenizeGooglePayTokenWithBasisTheory` to send the payment data to Basis Theory.
 
-```javascript showLineNumbers title="Send Google Pay token to be tokenized with Basis Theory"
+```javascript showLineNumbers title="Send Google Pay payment data to be tokenized with Basis Theory"
 async function onGooglePaymentButtonClicked() {
     const paymentDataRequest = Object.assign({}, baseRequest, {
         allowedPaymentMethods: [
@@ -170,7 +170,7 @@ async function onGooglePaymentButtonClicked() {
 
 // highlight-start
         let encryptedPaymentToken = paymentData.paymentMethodData.tokenizationData.token;
-        var tokenIntent = await tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken);
+        let tokenIntent = await tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken);
 
         console.log(JSON.stringify(tokenIntent));
     } catch (error) {
@@ -191,7 +191,9 @@ async function tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken) {
         })
     });
 
-    return await response.json();
+    let jsonResponse = await response.json();
+
+    return jsonResponse.token_intent;
 }
 // highlight-end
 ```
@@ -200,9 +202,9 @@ The result of this call will be a [Token Intent](/docs/api/tokens/token-intents#
 
 Let's try clicking the "GPay" button again and then the "Continue" button once again. You should see a Token Intent printed to your console now.
 
-## Processing the GPay token
+## Processing the Google Pay Payment Data
 
-We'll send the Basis Theory Token Intent to [Adyen](https://www.adyen.com/) to test charging a card. We'll be doing this from our backend by using a [proxy](/docs/api/proxies/ephemeral-proxy) and a private API key. Although, we are also able to create and authenticate a Basis Theory [Session](/docs/api/applications/sessions) and make this request from the frontend as well.
+We'll send the Basis Theory Token Intent to [Adyen](https://www.adyen.com/) to test charging a card. We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/ephemeral-proxy) and a private API key. Although, we are also able to create and authenticate a Basis Theory [Session](/docs/api/applications/sessions) and make this request from the frontend as well.
 
 ### Create a Private Key
 
@@ -212,39 +214,107 @@ We'll send the Basis Theory Token Intent to [Adyen](https://www.adyen.com/) to t
 
 Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
 
-In Adyen, you can charge a card by creating a [payment](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments). We'll setup and invoke the [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) like the following.
+We'll change our frontend application one last time to pass in the Token Intent Ids to the backend to process the payment.
 
-```shell showLineNumbers title="Create a payment transaction"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
+```javascript showLineNumbers title="Send Token Intent Ids to backend to be charged"
+async function onGooglePaymentButtonClicked() {
+    ...
+
+    try {
+        const paymentData = await paymentsClient.loadPaymentData(paymentDataRequest);
+        console.log('Payment data:', paymentData);
+
+        let encryptedPaymentToken = paymentData.paymentMethodData.tokenizationData.token;
+        let tokenIntent = await tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken);
+
+        console.log(JSON.stringify(tokenIntent));
 // highlight-start
--H 'BT-API-KEY: <PRIVATE_API_KEY>' \
--H 'BT-PROXY-URL: https://checkout-test.adyen.com/v71/payments' \
--H 'x-API-key: <ADYEN_TEST_KEY>' \
+        let response = await chargePayment(tokenIntent.id);
+
+        if (response.status === 200) {
+            console.log('Payment successful!');
+        } else {
+            console.error('Payment failed.');
+        }
+    } catch (error) {
+        console.error('Error loading payment data:', error);
+    }
+}
+
+// Charge Payment in backend
+async function chargePayment(tokenIntentId) {
+    const response = await fetch('http://localhost:3000/charge-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            tokenIntentId: tokenIntentId
+        })
+    });
+
+    return await response.json();
+}
 // highlight-end
--H 'Content-Type: application/json' \
--d '{
-  "amount": {
-    "currency": "USD",
-    "value": 1000
-  },
-  "reference": "Test-Payment",
+```
+
+In Adyen, you can charge a card by creating a [payment](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments). We'll setup and invoke the [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) on our backend.
+
+```javascript showlineNumbers title="Charge Payment method through a Proxy"
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+
+app.use(bodyParser.json());
+
+app.post("/charge-payment", async (request, response) => {
+    const { tokenIntentId } = request.body;
+
+    // charge the payment with a proxy
+    const chargeResponse = await fetch("https://api.basistheory.com/proxy", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "BT-API-KEY": "<PRIVATE_API_KEY>",
+            "BT-PROXY-URL": "https://checkout-test.adyen.com/v71/payments",
+            "x-API-key": "<<ADYEN_TEST_KEY>"
+        },
+        body: JSON.stringify({
+            "amount": {
+                "currency": "USD",
+                "value": 1000
+            },
+            "reference": "Test-Payment",
 // highlight-start
-  "paymentMethod": {
-    "type": "scheme",
-    "number": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
-    "expiryMonth": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
-    "expiryYear": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
-    "brand": "googlepay"
-  },
+            "paymentMethod": {
+                "type": "scheme",
+                "number": `{{ token_intent: ${tokenIntentId} | json: \"$.data.number\" }}`,
+                "expiryMonth": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"MM\" }}`,
+                "expiryYear": `{{ token_intent: ${tokenIntentId} | json: \"$.data\" | card_exp: \"YYYY\" }}`,
+                "brand": "googlepay"
+            },
 // highlight-end
-  "additionalData": {
-    "paymentdatasource.type": "googlepay",
-    "paymentdatasource.tokenized": "false"
-  },
-  "shopperInteraction": "Ecommerce",
-  "merchantAccount": "<ADYEN_MERCHANT_ACCOUNT>"
-}'
+            "additionalData": {
+                "paymentdatasource.type": "googlepay",
+                "paymentdatasource.tokenized": "false"
+            },
+            "shopperInteraction": "Ecommerce",
+            "merchantAccount": "<ADYEN_MERCHANT_ACCOUNT>"
+        }),
+    });
+
+    const chargeResponseJson = await chargeResponse.json();
+
+    console.log(JSON.stringify(chargeResponseJson, null, 2));
+
+    response.json({
+        result: chargeResponse.status,
+    });
+});
+
+app.listen(3000, () => {
+    console.log("Server is running on port 3000");
+});
 ```
 
 You may notice that in this example we are not passing in any 3DS cryptogram or eci indicator. This is not necessary for charging FPANs. If you need to charge a DPAN, you will need to pass in the 3DS cryptogram and eci indicator available on the `authentication` property of the Token Intent.
