@@ -1,3 +1,10 @@
+# [1.216.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.215.1...v1.216.0) (2025-02-20)
+
+
+### Features
+
+* adds google pay guide ([#512](https://github.com/Basis-Theory/developers.basistheory.com/issues/512)) ([a77bbde](https://github.com/Basis-Theory/developers.basistheory.com/commit/a77bbde8cc6b7081656f7aec14b092fbffc92e33))
+
 ## [1.215.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.215.0...v1.215.1) (2025-02-13)
 
 

@@ -40,7 +40,7 @@ The table below shows the resulting Token Intent type based on the Google Paymen
 
 | Auth Method   | Token Type   |
 |---------------|--------------|
-| [PAN_ONLY](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) | [`card`](http://localhost:3000/docs/api/tokens/token-types#card) |
+| [PAN_ONLY](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) | [`card`](/docs/api/tokens/token-types#card) |
 | [CRYPTOGRAM_3DS](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds)  | [`network_token`](/docs/api/tokens/token-types#network-token)  |
 
 <HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/google-pay/tokenize" />
@@ -172,6 +172,12 @@ The attributes in the `_extras` object are NOT addressable in proxies or reactor
 | `card_holder_authenticated`       | Boolean   | Indicates if the cardholder was authenticated.|
 
 ## Testing
+
+### Testing with a Google Pay token
+
+This endpoint can be used with both `TEST` and `PRODUCTION` Google Pay payment data. To use Google Pay `TEST` payment data, set the [`TEST` environment](https://developers.google.com/pay/api/web/guides/tutorial#js-load) when generating the Google Pay payment data and use a Basis Theory Application under a [`TEST` Tenant](/docs/concepts/access-controls#what-are-tenants) for making your `/connections/google-pay/tokenize` request. `PROD` Tenants will only work with `PRODUCTION` Google Pay payment data.
+
+### Testing without a Google Pay token
 
 Basis Theory provides a mechanism to create fake Token Intents using this endpoint.
 Changing the `protocolVersion` to `BasisTheory` will instead process a fake Google payment token in a different manner.
