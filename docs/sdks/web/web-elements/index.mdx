@@ -10,7 +10,9 @@ import TabItem from "@theme/TabItem";
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { GithubCard } from "@site/src/components/sdks/GithubCard";
+import { WebElementsCdnExample } from "@site/src/components/sdks/WebElementsCdnExample"
 import { SDK } from "@site/src/components/types";
+
 
 # Web Elements
 
@@ -40,7 +42,7 @@ Basis Theory Web Elements SDK uses conventional camel case for most methods and 
 
 To install **web elements** you can choose either our ES module or CDN hosted bundle through a `script` tag.
 
-<Tabs className="bt-tabs">
+<Tabs className="bt-tabs" queryString="platform">
   <TabItem value="npm" label="npm">
 
 ```shell showLineNumbers
@@ -57,27 +59,25 @@ yarn add @basis-theory/web-elements
   </TabItem>
   <TabItem value="cdn" label="CDN">
 
-```html showLineNumbers
-<!-- Including this tag will export a global/window "basistheory" variable -->
-<!-- 
-  You can either pin the version to a specific release for stability 
-  or use the latest tag to always pull the most recent version. 
-  However, relying on latest can be risky, as it may introduce unexpected changes or breaking updates. 
-  For detailed information about each version, refer to our changelog.
--->
-
-<script src="https://js.basistheory.com/web-elements/latest/index.js"></script>
-<!-- or -->
-<script src="https://js.basistheory.com/web-elements/1.0.0/index.js"></script>
-```
-
+    <LatestReleaseScript />
   </TabItem>
 </Tabs>
 
 ## Initialization
 
-<Tabs className="bt-tabs">
-  <TabItem value="module" label="ES Module">
+<Tabs className="bt-tabs" queryString="platform">
+  <TabItem value="npm" label="npm">
+
+```javascript showLineNumbers
+import { basistheory } from "@basis-theory/web-elements";
+
+const bt = await basistheory("<PUBLIC_API_KEY>")
+// use Elements
+```
+
+  </TabItem>
+
+    <TabItem value="yarn" label="yarn">
 
 ```javascript showLineNumbers
 import { basistheory } from "@basis-theory/web-elements";

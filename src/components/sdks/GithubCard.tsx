@@ -20,12 +20,13 @@ interface GithubCard {
   icon: SDK | `${SDK}`;
   organization: string;
   repository: string;
+  version?: string;
 }
 
 const placeholder = "Loading";
 const placeholderUrl = "https://www.basistheory.com/";
 
-export const GithubCard = ({ heading, organization, repository, icon }: GithubCard) => {
+export const GithubCard = ({ heading, organization, repository, icon, version }: GithubCard) => {
   if (!icon) throw Error("Missing SDK icon");
   if (!isValidSdk(icon)) throw Error("Invalid SDK.");
 
@@ -59,10 +60,14 @@ export const GithubCard = ({ heading, organization, repository, icon }: GithubCa
   useEffect(() => {
     if (organization && repository) {
       loadMetadata();
-      loadRelease();
+
+      if (!version) {
+        loadRelease();
+      }
+
       loadContributors();
     }
-  }, [organization, repository]);
+  }, [organization, repository, version]);
 
   const Icon = getSdkIcon(icon);
 
@@ -88,7 +93,7 @@ export const GithubCard = ({ heading, organization, repository, icon }: GithubCa
         </div>
 
         <div className={styles.metadata}>
-          {releaseName && <Version>{releaseName ?? placeholder}</Version>}
+          {(version || releaseName) && <Version>{version ?? releaseName ?? placeholder}</Version>}
           <p>
             <Star /> {stargazersCount ?? placeholder} Stars
           </p>
