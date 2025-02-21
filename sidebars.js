@@ -58,12 +58,8 @@ const sidebars = {
             enterprise: true,
           },
         },
-        {
-          type: "doc",
-          id: "card-payments/placeholder",
-          label: "Use your own forms",
-        },
-        "guides/collect/receive-cards",
+        "card-payments/use-your-own-inputs",
+        "card-payments/receive-cards-api",
         {
           type: "doc",
           id: "card-payments/placeholder",
@@ -75,7 +71,7 @@ const sidebars = {
         },
         {
           type: "doc",
-          id: "card-payments/placeholder",
+          id: "card-payments/verify-card",
           label: "Verify a Card",
         },
         {

@@ -1,0 +1,156 @@
+---
+title: Verify a Card
+hide_title: true
+description: This guide walks you through the process of verifying a card against a Payments Service Provider using the Proxy
+toc_max_heading_level: 3
+---
+
+import {Intro} from "@site/src/components/shared/Intro";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import {ApplicationSection} from "./sections/ApplicationSection";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import SaveCardSection from "./sections/_save-card-section.mdx";
+
+<Intro
+  title="Verify a Card"
+  caption="Streamline card verification with a secure, proxy-powered solution."
+/>
+
+
+Verifying a card is the process of confirming that the card details provided are valid and can be used for transactions. This operation, also known as card authentication, pre-authorization, or $0 authorization, typically involves sending a request to the card networks and issuers to validate the card's number, expiration date, and status. It ensures the card has not been reported lost or stolen and, in some cases, checks the availability of funds or credit.
+
+
+```mermaid
+  sequenceDiagram
+    participant backend as Merchant<br>Backend
+    participant btp as Basis Theory<br>Proxy
+    participant psp as Processor<br>API
+
+    activate backend
+    backend ->>+ btp: Verification payload<br>with {{ card token }}
+    btp ->> btp: Detokenize card data
+    btp ->>+ psp: Verification payload<br>with card data
+    psp ->> psp: Verify card against networks
+    psp -->> btp: Verification response
+    btp -->> backend: Verification response
+    deactivate backend
+```
+
+This guide will show you how to use the Proxy to verify a card with your chosen Payment Service Provider (PSP) while offloading PCI compliance scope with ease. We’ll explore a variety of processor-specific standards and their unique verification quirks, offering practical examples you can adapt to your selected PSP.
+
+If you are not yet collecting your customers' cards with Basis Theory, here are a few guides you can explore:
+
+- [Replace Processor iFrames](/docs/card-payments/replace-processor-iframes) - capture cards in the frontend;
+- [Receive Cards via API / Webhooks](/docs/card-payments/receive-cards-api) - receive cards in API requests;
+
+<GettingStartedSection />
+
+### Private Application
+
+<ApplicationSection type="private" permissions={["token:use", "token:create"]} />
+
+## Send the Data
+
+Different payment service providers (PSPs) may use varying workflows or terminology for this operation. Regardless of the approach, card verification can enhance security, reduces fraud risks, and improves the reliability of payment processing.
+
+Given you have previously created a Token Intent:
+
+```json showLineNumbers title="Token Intent sample"
+{
+  // highlight-next-line
+  "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+  "tenant_id": "8935ed5e-c082-4837-9063-6f0a2b4265dc",
+  "type": "card",
+  "card": {
+    "bin": "42424242",
+    "last4": "4242",
+    "expiration_month": 12,
+    "expiration_year": 2025,
+    "brand": "visa",
+    "funding": "credit",
+    "authentication": "sca_required"
+  },
+  "fingerprint": "H46vMHviE7DmGM5yCrvo9NkootV6SXX5GrXnaYsjRoXP",
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "expires_at": "2024-10-30T19:23:57+00:00"
+}
+```
+
+Here is how you can leverage the [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy), a tool that transparently performs detokenization, to share the sensitive cardholder data to the Payments Processor or Acquirer API.
+
+<Tabs className="bt-tabs" queryString="processor">
+  <TabItem value="stripe" label="Stripe">
+
+In Stripe, you can verify a card without charging it [by saving the card to a customer](https://support.stripe.com/questions/check-if-a-card-is-valid-without-a-charge).
+
+1. [Create a Customer](https://docs.stripe.com/api/customers/create)
+2. [Create a Setup Intent](https://docs.stripe.com/api/setup_intents) using the [Proxy](/docs/api/proxies/ephemeral-proxy)
+  - This will create a new Payment Method (Processor Token), whose ID will be included in the response at `payment_method`
+  - If the card is invalid, this request may fail immediately.
+
+```shell showLineNumbers title="Create a Setup Intent"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://api.stripe.com/v1/setup_intents' \
+-H 'Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4' \
+// highlight-end
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'customer=cus_RTEOvM5dSx9RCS' \
+--data-urlencode 'confirm=true' \
+--data-urlencode 'payment_method_data[type]=card' \
+// highlight-start
+--data-urlencode 'payment_method_data[card][number]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}' \
+--data-urlencode 'payment_method_data[card][exp_month]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" |  card_exp: "MM" }}' \
+--data-urlencode 'payment_method_data[card][exp_year]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" | card_exp: "YYYY" }}' \
+--data-urlencode 'payment_method_data[card][cvc]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
+// highlight-end
+```
+
+```json showLineNumbers title="Setup Intent Response"
+{
+  "id": "seti_1QaI1YG9VRQ2700SF1DSos0x",
+  // highlight-next-line
+  "status": "succeeded",
+  "object": "setup_intent",
+  // highlight-next-line
+  "payment_method": "pm_1QaKJmG9VRQ2700S5JcsJv4Q",
+  "latest_attempt": {
+    "payment_method_details": {
+      // highlight-next-line
+      "network_transaction_id": "8723dfab9c4e56a1b8cd0291ef67ac43"
+      ...
+    }
+    ...
+  }
+  ...
+}
+```
+
+3. [Retrieve the Payment Method](https://docs.stripe.com/api/payment_methods/retrieve) to get granular `checks` information.
+
+```json showLineNumbers title="Payment Method Response"
+{
+  "id": "pm_1QaKJmG9VRQ2700S5JcsJv4Q",
+  "type": "card",
+  "object": "payment_method",
+  "card": {
+    // highlight-start
+    "checks": {
+      "address_line1_check": "pass",
+      "address_postal_code_check": "pass",
+      "cvc_check": "pass"
+    }
+    // highlight-end
+    ...
+  }
+  ...
+}
+```
+  </TabItem>
+</Tabs>
+
+<SaveCardSection />

@@ -1,0 +1,328 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { ApplicationSection } from "./sections/ApplicationSection";
+
+
+# Use Your Own Card Inputs
+
+Despite Basis Theory Elements being highly customizable and providing the most secure and efficient solution for collecting cards in user-facing applications, we understand that some companies are experienced with PCI DSS and feel comfortable having their frontend, or parts of it, handle cardholder data and be in scope for compliance.
+
+In this guide, we will set up Basis Theory SDKs to receive cards from your frontend application and securely store the cardholder data as tokens with the Basis Theory Platform. This practice is well-positioned to substantially de-scope your servers, networking resources and database from PCI DSS compliance, while retaining full control of the sensitive data. If you want to learn more how Basis Theory can help you achieve that, [reach out to our team](https://basistheory.com/contact)!
+
+[![Collect Cards with your Forms Flowchart](/img/guides/collect/collect-cards-with-your-inputs-flowchart.png)](https://mermaid.live/edit#pako:eNpdUV1LwzAU_SvhPm3QzLXrx5oHYU4FwYGoKNj6kDV3Npg2JU3VOfbfTbupaF6Sc-4591xyd1BogcCAUprXVlqFjCy1UlhYsuRGtORS6fei5Mbm9SDafGNyfZvXxJ22W78Y3pRECvRJdsZb2ZL7ErXZPh8Ub7xTNhs99Nf4yPFGZoubq19E6emgOxBYi3_dN0iyR1yTE7LSa6mQLJrm6EaFFda2HfUjk4sjGv8tUtpXS60EGiK45S7Qxf7EgQcVmopL4f5j19M52NJ5c2DuKbh5zSGv907HO6vvtnUBzJoOPega1w_PJXeTVsA2XLWObXgNbAcfwJJJGsZBGvvBPJ4liQdbYHQ28YMgisM0DKIw8qNw78Gn1s7vT6ZJlKaBP52ncZzMpr4HKKTVZnXY1rC0IeBpMAyB-y8IVZD_)
+
+<GettingStartedSection />
+
+### Public Application
+
+<ApplicationSection type="public" permissions={["token-intent:create"]} />
+
+### Install the SDK
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+Using NPM:
+```shell showLineNumbers title=NPM
+npm install --save @basis-theory/basis-theory-js
+```
+Using Yarn:
+```shell showLineNumbers title=Yarn
+yarn add @basis-theory/basis-theory-js
+```
+Using the CDN:
+```html showLineNumbers title=CDN
+<!-- Including this tag will export a global/window "BasisTheory" variable -->
+<script src="https://js.basistheory.com"></script>
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```shell showLineNumbers title=NPM
+npm install --save @basis-theory/basis-theory-react
+```
+```shell showLineNumbers title=Yarn
+yarn add @basis-theory/basis-theory-react
+```
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+To add the Basis Theory iOS package using [Swift Package Manager](https://www.swift.org/package-manager/), open XCode and click on `File → Add Packages`, search for `"https://github.com/Basis-Theory/ios-elements"`, and click on `Copy Dependency`.
+
+We also support installing our package via [CocoaPods](https://cocoapods.org/) by adding the following line to your `Podfile` under your `target`:
+
+```shell
+pod 'BasisTheoryElements'
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+Add the SDK dependency to your project's build file:
+
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.basis-theory:basistheory-android:<version>'
+}
+```
+
+The latest release version can be found in [GitHub](https://github.com/Basis-Theory/basistheory-android/tags).
+
+  </TabItem>
+</Tabs>
+
+## Storing Cards
+
+We won't get into details about particular frontend libraries or custom input implementations, but show how to use the SDKs to store cards in your Basis Theory Tenant.
+
+To do this, we will invoke the [Create Token](https://developers.basistheory.com/docs/api/tokens/#create-token) endpoint from the SDK, passing the cardholder data in the payload. This will securely create a token by transferring the card information from your frontend to Basis Theory, where the card will be strongly encrypted and stored in a compliant environment.
+
+Let's use a submit function to make the request, triggered from a button:
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+// highlight-next-line
+<button onclick="submit();">Submit</button>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+
+async function init () {
+  //highlight-start
+  bt = await new BasisTheory().init('<API_KEY>');
+  //highlight-end
+};
+
+async function submit () {
+  try {
+    // highlight-start
+    const token = await bt.tokens.create({
+      type: 'card',
+      data: {
+        number: '4242424242424242',
+        expiration_month: 12,
+        expiration_year: 2025,
+        cvc: '123',
+      }
+    });
+    // highlight-end
+    // store token.id in your database
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import {
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+export default function App() {
+  const { bt } = useBasisTheory('<API_KEY>');
+
+  const submit = async () => {
+    try {
+      // highlight-start
+      const token = await bt?.tokens.create({
+        type: 'card',
+        data: {
+          number: '4242424242424242',
+          expiration_month: 12,
+          expiration_year: 2025,
+          cvc: '123',
+        }
+      });
+      // highlight-end
+      // store token.id in your database
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <>
+      ...
+      // highlight-next-line
+      <button onClick={submit}>Submit</button>
+    </>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+```swift showLineNumbers title=ViewController.swift
+import Foundation
+import UIKit
+// highlight-next-line
+import BasisTheoryElements
+import Combine
+
+class ViewController: UIViewController {
+
+    // highlight-start
+      @IBAction func tokenize(_ sender: Any) {
+        let body: [String: Any] = [
+            "type": "card",
+            "data": [
+                "number": "4242424242424242",
+                "expiration_month": 12,
+                "expiration_year": 2025,
+                "cvc": "123"
+            ]
+        ]
+
+        BasisTheoryElements.tokenize(body: body, apiKey: "<API_KEY>") { token, error in
+            guard error == nil else {
+                print(error)
+                return
+            }
+            // store token.id in your database
+        }
+    }
+    // highlight-end
+
+    override func viewDidLoad() { ... }
+
+}
+```
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```xml showLineNumbers title=activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        ...
+
+      // highlight-start
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#00A4BA"
+            android:text="Submit" />
+      // highlight-end
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+```kotlin showLineNumbers title=MainActivity.kt
+class MainActivity : AppCompatActivity() {
+    // highlight-start
+    private lateinit var button: Button;
+
+    private val bt = BasisTheoryElements.builder()
+        .apiKey("<API_KEY>")
+        .build()
+    // highlight-end
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        // highlight-start
+        button = findViewById(R.id.submit_button)
+        button.setOnClickListener {
+            submit()
+        }
+        // highlight-end
+
+    }
+
+    // highlight-start
+    private fun submit() {
+      val token = runBlocking {
+        bt.tokens.create(object {
+          val type = "card"
+          val data = object {
+            val number = "4242424242424242"
+            val expiration_month = 12
+            val expiration_year = 2025
+            val cvc = "123"
+          }
+        })
+      }
+      // store token.id in your database
+    }
+    // highlight-end
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created in the <a href="#creating-a-public-application">Creating a Public Application</a> step.</Alert>
+
+The created card `token` object contains the non-sensitive information about the tokenized card, which follows the [Card Token specification](/docs/api/tokens/token-types#card):
+
+```json showLineNumbers title=token.json
+{
+  "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
+  "type": "card",
+  "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
+  "data": {
+    "number": "XXXXXXXXXXXX4242",
+    "expiration_month": 12,
+    "expiration_year": 2025
+  },
+  "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
+  "created_at": "2023-04-17T12:54:44.8320458+00:00",
+  "mask": {
+    "number": "{{ data.number | reveal_last: 4 }}",
+    "expiration_month": "{{ data.expiration_month }}",
+    "expiration_year": "{{ data.expiration_year }}"
+  },
+  "search_indexes": [],
+  "containers": [
+    "/pci/high/"
+  ]
+}
+```
+
+You can safely store the token's primary key `id` in your database to link it with the appropriate checkout, user profile, subscription, or any other record that requires association with the card.
+
+## Conclusion
+
+By following the steps outlined in this guide, you can ensure that your users' sensitive card data is protected by storing it with Basis Theory. The `token.id` obtained at the end of the [Storing Cards](#storing-cards) section is a synthetic replacement for the sensitive data and can be safely stored in your database, or transmitted through your systems, meeting compliance requirements and reducing the risk of exposure in case of data breaches.
+
+The optional [customization steps](#customizing-tokens) are meant to showcase platform capabilities that go beyond the examples given. Make sure to explore the provided links within each subsection to learn more about the possibilities for customization.
+
+For next steps, take a look at the following guides to proceed taking the most value of your secured card tokens:
+
+- [Process Card Payments](/docs/guides/share/process-card-payments)
+- [Search Data](/docs/guides/process/search-data)
+- [Analyze Data](/docs/guides/process/analyze-data)

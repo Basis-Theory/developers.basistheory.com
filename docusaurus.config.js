@@ -270,6 +270,7 @@ const config = {
           { from: "/docs/api/orchestration/stripe-forward", to: "/docs/api/connections/stripe-forward" },
           { from: "/docs/api/orchestration/google-pay", to: "/docs/api/connections/google-pay" }, // do not ever remove this, Google has this link embedded in their docs - https://developers.google.com/pay/api/#participating-processors
           { from: "/docs/guides/share/process-card-payments-connections", to: "/docs/guides/share/process-card-payments" },
+          { from: "/docs/guides/collect/receive-cards", to: "/docs/card-payments/receive-cards-api" },
         ],
       },
     ],
