@@ -1,8 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import {
-  BasisTheoryProvider,
-  useBasisTheory
-} from '@basis-theory/basis-theory-react';
+import { BasisTheoryProvider, useBasisTheory } from "@basis-theory/react-elements";
 
 import styles from "./BasisTheoryComponentDisplay.module.css";
 
@@ -11,7 +8,7 @@ interface ComponentDisplay {
 }
 
 export const BasisTheoryComponentDisplay = ({ title, children }: PropsWithChildren<ComponentDisplay>) => {
-  const { bt } = useBasisTheory( '.', { elements: true });
+  const { bt } = useBasisTheory(".");
 
   return (
     <BasisTheoryProvider bt={bt}>
@@ -26,12 +23,10 @@ export const BasisTheoryComponentDisplay = ({ title, children }: PropsWithChildr
             <span>{title}</span>
           </div>
           <div className={styles.formWrapper}>
-            <div className={styles.element}>
-              {children}
-            </div>
+            <div className={styles.element}>{children}</div>
           </div>
         </div>
       </div>
     </BasisTheoryProvider>
-  )
+  );
 };
