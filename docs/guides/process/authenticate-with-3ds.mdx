@@ -244,10 +244,22 @@ and <code>&lt;CARD_TOKEN_ID></code> with the token id created in the <a href="#c
 
 ## Authenticating a Session
 
+<Alert>
+There are many optional values that can be sent to the 3DS server. Basis Theory suggests you send as many as possible to increase chances of a frictionless authentication. The lack of any of these values will not prevent the authentication from happening, but the more information you can provide, the better chances of a frictionless challenge to be approved.
+</Alert>
+
 Once the `session` is created, it must be [authenticated](/docs/api/3ds/sessions#authenticate-session).
 In this process, the merchant or requestor must send information about the transaction to the 3DS server.
 
 This is done by calling [Authenticate 3DS Session](/docs/api/3ds/sessions#authenticate-session) endpoint from your own backend, with the private API key created earlier.
+
+One important note is the usage of [authenticationCategory](/docs/api/3ds/sessions#authentication-categories). The two values you can choose from are `payment` and `non-payment`, in nearly every use-case you will want to utilzie `payment`:
+
+| Authentication Category | Description                                                                                          |
+|-------------------------|------------------------------------------------------------------------------------------------------|
+| `payment`               | Used if you plan to ever charge the card                                                             |
+| `non-payment`           | Used if you do not plan to charge the card, and are only adding the card for authentication purposes |
+
 
 <Tabs className="bt-tabs" queryString="backend">
 <TabItem value="node" label="Node">
