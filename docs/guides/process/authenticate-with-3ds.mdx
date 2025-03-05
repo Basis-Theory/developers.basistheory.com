@@ -26,6 +26,16 @@ If you are looking to authenticate a Merchant Initiated Transaction (MIT), pleas
 
 <Alert type={Alerts.INFO}>3D Secure is an Enterprise feature. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
 
+## Going Live Prerequisites
+<Alert> These steps are only required if you are going to use the Basis Theory 3DS SDKs in a production environment. These steps can take lead time to complete - if you plan to use Basis Theory 3DS, it is wise to start these steps as soon as possible.</Alert>
+
+A few requirements are needed before you can start using the Basis Theory 3DS SDKs in a production environment:
+
+1. You must get your the MID for each Network(Visa, Mastercard, etc.) you plan to use with Basis Theory 3DS - your current primary processor will provide these.
+1.1 You will need to reach out to your Account Representative or Support to get these.
+2. You need to ensure your Processor is capable of accepting 3DS authentication values from a 3rd party 3DS provider.
+3. Map the 3DS authentication values Basis Theory provides to your Processor's 3DS authentication values.
+
 ## Getting Started
 
 <GettingStartedSection />
@@ -953,6 +963,10 @@ const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>", {
 ```
 
 ## Retrieving a Challenge Result
+
+<Alert>
+Keep in mind that the results from Test Tenants are mocked results and not actual results from the card issuer. These results should be used to prove your integration is working, but can not be used to test downstream processor 3DS integrations.
+</Alert>
 
 Once a challenge is complete, results are retrieved by calling the [Get Challenge Result](/docs/api/3ds/sessions#get-challenge-result) endpoint from your backend.
 
