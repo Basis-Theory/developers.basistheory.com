@@ -478,11 +478,15 @@ const sidebars = {
       items: [
         {
           type: "doc",
-          id: "api/connections/stripe-forward",
+          id: "api/connections/apple-pay",
         },
         {
           type: "doc",
           id: "api/connections/google-pay",
+        },
+        {
+          type: "doc",
+          id: "api/connections/stripe-forward",
         },
       ],
     },

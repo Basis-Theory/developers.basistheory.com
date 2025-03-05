@@ -1,0 +1,206 @@
+---
+title: Apple Pay™
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Apple Pay™
+
+## Create Session
+
+A proxy endpoint to start an Apple Pay session using Basis Theory's merchant identifier.
+See the [documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session) on Apple's site for more details.components
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/apple-pay/session" />
+
+#### Permissions
+
+<Permission content="token-intent:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url https://api.flock-dev.com/connections/apple-pay/session \
+      --header 'BT-API-KEY: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+      "validation_url": "https://apple-pay-gateway.apple.com/paymentservices/paymentSession",
+      "display_name": "My Ecommerce Store",
+      "domain": "my-site.example.com"
+    }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute  | Required | Description |
+|------------|----------|-------------|
+| `validation_url` | false | Validation URL returned from the [`onvalidatemerchant`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778021-onvalidatemerchant) event. Default: https://apple-pay-gateway.apple.com/paymentservices/paymentSession |
+| `display_name` | true | A string of 64 or fewer UTF-8 characters containing the canonical name for your store, suitable for display. A good display name remains a consistent value for the store and doesn't contain dynamic values such as incrementing order numbers. Don’t localize the name. Use only characters from the supported character sets in the fonts listed in the table below. |
+| `domain` | true | The fully qualified domain name of the website requesting the Apple Pay session.
+
+### Response
+
+Returns an opaque Apple Pay [session object](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session#3199963) that will be passed into the [`completeMerchantValidation`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778015-completemerchantvalidation) method.
+
+## Tokenize
+
+Decrypts an Apple Pay token and creates a [Token Intent](/docs/api/tokens/token-intents#token-intent-object).
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/apple-pay/tokenize" />
+
+#### Permissions
+
+<Permission content="token-intent:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url https://api.basistheory.com/connections/apple-pay/tokenize \
+      --header 'BT-API-KEY: key_prod_us_pvt_Ke2ANr9mRn2t8qP8LM98HB' \
+      --header 'Content-Type: application/json' \
+      --data '{
+      "apple_payment_method_token": {
+        "paymentData": {
+          "data": "...",
+          "signature": "...",
+          "header": {
+            "transactionId": "...",
+            "publicKeyHash": "...",
+            "applicationData": "...",
+            "ephemeralPublicKey": "..."
+          },
+          "version": "EC_v1"
+        },
+        "paymentMethod": {
+          "displayName": "...",
+          "network": "...",
+          "type": "..."
+        },
+        "transactionIdentifier": "..."
+      }
+    }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute  | Required | Description                                                        |
+|------------|----------|--------------------------------------------------------------------|
+| `apple_payment_method_token` | true | The Apple Pay [token](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypayment/1916095-token) from the [`onpaymentauthorized`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized) event. |
+
+### Response
+
+Returns a [Token Intent](/docs/api/tokens/token-intents#token-intent-object) if successful.
+Returns [an error](/docs/api/errors) if there were validation errors, if the Apple payment token failed to decrypt create, or the Token Intent failed to create.
+
+```json
+{
+  "token_intent": {
+    "id": "78f0fc3e-cebb-4e93-8609-d81594ce1fb0",
+    "type": "network_token",
+    "tenant_id": "9492840c-1308-4f5a-bb03-af66b83a04f9",
+    "fingerprint": "7bAjvyqJqfPc4jRjniEk87vNrjR74Xax1HnMREWsTiMz",
+    "created_by": "00ea333f-2fd7-4da2-b5fe-ec86316db024",
+    "created_at": "2025-03-05T20:58:59.8718437+00:00",
+    "expires_at": "2025-03-06T20:58:59.8718437+00:00",
+    "network_token": {
+      "bin": "411111",
+      "last4": "1111",
+      "expiration_month": 12,
+      "expiration_year": 2027,
+      "brand": "visa",
+      "funding": "credit",
+      "issuer_country": {
+        "alpha2": "US",
+        "name": "UNITED STATES OF AMERICA",
+        "numeric": "840"
+      }
+    },
+    "authentication": {
+      "threeds_cryptogram": "AcbNS...",
+      "eci_indicator": "7"
+    },
+    "_extras": {
+      "tsp_details": {
+        "tsp": "Apple",
+        "eci_indicator": "7",
+        "transaction_id": "abb87500d95157439c689e876c229cb9dfaf0c71737f4ac09f6703018c78519a",
+        "currency_code": "840",
+        "transaction_amount": 1,
+        "device_manufacturer_identifier": "040010030273",
+        "payment_data_type": "3DSecure"
+      }
+    }
+  }
+}
+```
+
+Token Intents and the resulting tokens created from an Apple payment token will contain a `tsp_details` object in the `_extras` attribute.
+
+<Alert type={Alerts.Information}>
+The attributes in the `_extras` object are NOT addressable in proxies or reactors.
+</Alert>
+
+| Attribute                         | Type      | Description                                   |
+|-----------------------------------|-----------|-----------------------------------------------|
+| `_extras`                         | Object    | Parent object containing additional details.  |
+| `tsp_details`                     | Object    | Details related to the transaction service provider (TSP). |
+| `tsp_details.tsp`                             | String    | The name of the transaction service provider. |
+| `tsp_details.transaction_id` | String | Transaction identifier, generated on the device |
+| `tsp_details.currency_code` | String | ISO 4217 numeric currency code, as a string to preserve leading zeros |
+| `tsp_details.transaction_amount` | String | Transaction amount |
+| `tsp_details.cardholder_name` | String | Optional. Cardholder name. |
+| `tsp_details.device_manufacturer_identifier` | String | Hex-encoded device manufacturer identifier |
+| `tsp_details.payment_data_type` | String | Either `3DSecure` or `EMV` |
+| `tsp_details.merchant_token_identifier` | String | For a merchant token request, the provisioned merchant token identifier from the payment network |
+| `tsp_details.authentication_responses[].merchant_identifier` | String | The submerchant identifier as provided by the coordinator merchant |
+| `tsp_details.authentication_responses[].authentication_data` | String | Payment network-generated cryptogram for the submerchant |
+| `tsp_details.authentication_responses[].transaction_amount` | String | The authorized amount for a given submerchant |
