@@ -1,3 +1,10 @@
+# [1.218.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.217.0...v1.218.0) (2025-03-07)
+
+
+### Features
+
+* add react-elements ([#514](https://github.com/Basis-Theory/developers.basistheory.com/issues/514)) ([7cdab8d](https://github.com/Basis-Theory/developers.basistheory.com/commit/7cdab8d75bf97950dc6334134b16be7342e517ba))
+
 # [1.217.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.216.0...v1.217.0) (2025-03-06)
 
 
