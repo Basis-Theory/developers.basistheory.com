@@ -1,3 +1,10 @@
+# [1.219.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.218.0...v1.219.0) (2025-03-07)
+
+
+### Features
+
+* **web-elements:** improve example when loading via cdn ([#515](https://github.com/Basis-Theory/developers.basistheory.com/issues/515)) ([a014a65](https://github.com/Basis-Theory/developers.basistheory.com/commit/a014a65fc6f62afc4113b4ee9a6d1ea01b4f7e25))
+
 # [1.218.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.217.0...v1.218.0) (2025-03-07)
 
 
