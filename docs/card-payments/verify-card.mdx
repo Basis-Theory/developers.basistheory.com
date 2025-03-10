@@ -17,9 +17,7 @@ import SaveCardSection from "./sections/_save-card-section.mdx";
   caption="Streamline card verification with a secure, proxy-powered solution."
 />
 
-
 Verifying a card is the process of confirming that the card details provided are valid and can be used for transactions. This operation, also known as card authentication, pre-authorization, or $0 authorization, typically involves sending a request to the card networks and issuers to validate the card's number, expiration date, and status. It ensures the card has not been reported lost or stolen and, in some cases, checks the availability of funds or credit.
-
 
 ```mermaid
   sequenceDiagram
@@ -28,12 +26,12 @@ Verifying a card is the process of confirming that the card details provided are
     participant psp as Processor<br>API
 
     activate backend
-    backend ->>+ btp: Verification payload<br>with {{ card token }}
+    backend ->>+ btp: Verification payload<br>with card {{ token }}
     btp ->> btp: Detokenize card data
     btp ->>+ psp: Verification payload<br>with card data
     psp ->> psp: Verify card against networks
-    psp -->> btp: Verification response
-    btp -->> backend: Verification response
+    psp -->>- btp: Verification response
+    btp -->>- backend: Verification response
     deactivate backend
 ```
 
@@ -120,8 +118,11 @@ curl 'https://api.basistheory.com/proxy' \
   "payment_method": "pm_1QaKJmG9VRQ2700S5JcsJv4Q",
   "latest_attempt": {
     "payment_method_details": {
-      // highlight-next-line
-      "network_transaction_id": "8723dfab9c4e56a1b8cd0291ef67ac43"
+      "card": {
+        // highlight-next-line
+        "network_transaction_id": "8723dfab9c4e56a1b8cd0291ef67ac43"
+        ...
+      }
       ...
     }
     ...

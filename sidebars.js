@@ -69,16 +69,8 @@ const sidebars = {
           type: "html",
           value: "<hr />",
         },
-        {
-          type: "doc",
-          id: "card-payments/verify-card",
-          label: "Verify a Card",
-        },
-        {
-          type: "doc",
-          id: "card-payments/placeholder",
-          label: "Charge a Card",
-        },
+        "card-payments/verify-card",
+        "card-payments/charge-card",
         {
           type: "doc",
           id: "guides/process/authenticate-mit-with-3ds",
