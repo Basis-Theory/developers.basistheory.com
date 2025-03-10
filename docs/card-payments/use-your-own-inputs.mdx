@@ -20,70 +20,11 @@ In this guide, we will set up Basis Theory SDKs to receive cards from your front
 
 <ApplicationSection type="public" permissions={["token-intent:create"]} />
 
-### Install the SDK
+## Tokenization
 
-<Tabs className="bt-tabs" queryString="sdk">
-  <TabItem value="javascript" label="JavaScript">
+We won't get into details about particular frontend libraries or custom input implementations, but show how to call the API to store cards in your Basis Theory Tenant.
 
-Using NPM:
-```shell showLineNumbers title=NPM
-npm install --save @basis-theory/basis-theory-js
-```
-Using Yarn:
-```shell showLineNumbers title=Yarn
-yarn add @basis-theory/basis-theory-js
-```
-Using the CDN:
-```html showLineNumbers title=CDN
-<!-- Including this tag will export a global/window "BasisTheory" variable -->
-<script src="https://js.basistheory.com"></script>
-```
-  </TabItem>
-  <TabItem value="react" label="React">
-
-```shell showLineNumbers title=NPM
-npm install --save @basis-theory/basis-theory-react
-```
-```shell showLineNumbers title=Yarn
-yarn add @basis-theory/basis-theory-react
-```
-
-  </TabItem>
-  <TabItem value="ios" label="iOS">
-
-To add the Basis Theory iOS package using [Swift Package Manager](https://www.swift.org/package-manager/), open XCode and click on `File → Add Packages`, search for `"https://github.com/Basis-Theory/ios-elements"`, and click on `Copy Dependency`.
-
-We also support installing our package via [CocoaPods](https://cocoapods.org/) by adding the following line to your `Podfile` under your `target`:
-
-```shell
-pod 'BasisTheoryElements'
-```
-
-  </TabItem>
-  <TabItem value="android" label="Android">
-
-Add the SDK dependency to your project's build file:
-
-```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
-dependencies {
-    implementation 'com.github.basis-theory:basistheory-android:<version>'
-}
-```
-
-The latest release version can be found in [GitHub](https://github.com/Basis-Theory/basistheory-android/tags).
-
-  </TabItem>
-</Tabs>
-
-## Storing Cards
-
-We won't get into details about particular frontend libraries or custom input implementations, but show how to use the SDKs to store cards in your Basis Theory Tenant.
-
-To do this, we will invoke the [Create Token](https://developers.basistheory.com/docs/api/tokens/#create-token) endpoint from the SDK, passing the cardholder data in the payload. This will securely create a token by transferring the card information from your frontend to Basis Theory, where the card will be strongly encrypted and stored in a compliant environment.
+To do this, we will invoke the [Create Token Intent](https://developers.basistheory.com/docs/api/token-intents#create-token-intent) endpoint from the frontend, passing the cardholder data in the payload. This will securely create a `card` token intent by transferring the card information from your frontend to the Basis Theory API, where the data will be strongly encrypted and stored in a compliant environment.
 
 Let's use a submit function to make the request, triggered from a button:
 
