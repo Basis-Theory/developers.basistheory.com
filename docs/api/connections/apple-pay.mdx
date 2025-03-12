@@ -11,6 +11,192 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Apple Pay™
 
+## Register Domain Address
+
+Apple Pay™ requires websites to associate their domain address with a merchant identifier.
+Basis Theory handles the merchant and certificate handling.
+To utilize Basis Theory's Apple Pay integration, you will need to add your domain and subdomains to our merchant.
+Review Apple's [documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/configuring_your_environment#3179109) for important considerations regarding your domain.
+
+### Prerequisite
+
+Before registering your domain with Basis Theory, our domain verification file needs to be available to Apple via your website.
+[Download](https://cdn.basistheory.com/.well-known/apple-developer-merchantid-domain-association) the file and add it to your server at the URL `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association`.
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/apple-pay/domain-registration" />
+
+#### Permissions
+
+<Permission content="???" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url http://localhost:5090/connections/apple-pay/domain-registration \
+      --header 'BT-API-KEY: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "domain": "<YOUR_DOMAIN>"
+      }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+| Attribute  | Required | Description |
+|------------|----------|-------------|
+| `domain` | true | Domain to register. |
+
+### Response
+
+```json
+{
+  "domains": [
+    {
+      "domain": "...",
+      "status": "verified"
+    }
+    ...
+  ]
+}
+```
+| Attribute                         | Type      | Description                                   |
+|-----------------------------------|-----------|-----------------------------------------------|
+| domains | Array | List of domains associated with the tenant |
+| domains[].domain | string | Domain or subdomain
+| domains[].status | string | Verification status of domain. Only `verified` |
+
+### Errors
+
+| Status Code | |
+|-------------|-|
+| 422 | Ensure that the domain registration file is [available](/docs/api/connections/apple-pay#prerequisite) from the domain being registered |
+| 50X | Please contact Basis Theory support and provide the domain name in your message. |
+
+## Get Domain Registrations
+
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/connections/apple-pay/domain-registration" />
+
+#### Permissions
+
+<Permission content="???" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request GET \
+      --url http://localhost:5090/connections/apple-pay/domain-registration \
+      --header 'BT-API-KEY: <API_KEY>'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+### Response
+
+```json
+{
+  "domains": [
+    {
+      "domain": "...",
+      "status": "verified"
+    }
+    ...
+  ]
+}
+```
+| Attribute                         | Type      | Description                                   |
+|-----------------------------------|-----------|-----------------------------------------------|
+| domains | Array | List of domains associated with the tenant |
+| domains[].domain | string | Domain or subdomain
+| domains[].status | string | Verification status of domain. Only `verified` |
+
+## Deregister Domain
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/apple-pay/domain-deregistration" />
+
+#### Permissions
+
+<Permission content="???" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url http://localhost:5090/connections/apple-pay/domain-deregistration \
+      --header 'BT-API-KEY: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "domain": "cdn.flock-dev.com"
+      }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+| Attribute  | Required | Description |
+|------------|----------|-------------|
+| `domain` | true | Domain to deregister. |
+
+### Response
+
+`204 No Content`
+
 ## Create Session
 
 A proxy endpoint to start an Apple Pay session using Basis Theory's merchant identifier.
