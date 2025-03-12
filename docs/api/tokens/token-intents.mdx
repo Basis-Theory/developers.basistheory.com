@@ -151,6 +151,105 @@ Returns a `201` status code with a response body containing a [Token Intent](#to
 }
 ```
 
+## Get a Token Intent
+
+Retrieves a Token Intent by its ID.
+
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/token-intents/{id}"/>
+
+#### Permissions
+
+<Permission content="token-intent:read"/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/token-intents/665bf471-d675-4165-9336-4fc9c1a73fad" \
+    -H "BT-API-KEY: <API_KEY>"
+    ```
+
+  </TabItem>
+  <TabItem value="node" label="Node">
+
+```javascript showLineNumbers
+await client.tokenIntents.get("665bf471-d675-4165-9336-4fc9c1a73fad");
+```
+
+  </TabItem>
+
+
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.TokenIntents.GetByIdAsync("665bf471-d675-4165-9336-4fc9c1a73fad");
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.token_intents.get(
+  id="665bf471-d675-4165-9336-4fc9c1a73fad"
+)
+```
+  </TabItem>
+    
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+tokenIntentsClient.get("665bf471-d675-4165-9336-4fc9c1a73fad");
+```
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+token, err := client.TokenIntents.Get(
+		context.TODO(),
+		"665bf471-d675-4165-9336-4fc9c1a73fad",
+	)
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Attribute | Required | Type     | Default | Description                |
+|-----------|----------|----------|---------|----------------------------|
+| `id`      | true     | _string_ | `null`  | The ID of the token intent |
+
+### Response
+
+Returns a `200` status code with a response body containing a [Token Intent](#token-intent-object) on success. Returns [an error](/docs/api/errors) if the Token Intent was not found or you don't have permission to access it.
+
+```json showLineNumbers
+{
+  "id": "665bf471-d675-4165-9336-4fc9c1a73fad",
+  "tenant_id": "8935ed5e-c082-4837-9063-6f0a2b4265dc",
+  "type": "card",
+  "card": {
+    "bin": "42424242",
+    "last4": "4242",
+    "expiration_month": 12,
+    "expiration_year": 2025,
+    "brand": "visa",
+    "funding": "credit",
+    "issuer_country": {
+      "alpha2": "PL",
+      "name": "Bermuda",
+      "numeric": "369"
+    }
+    "authentication": "sca_required"
+  },
+  "fingerprint": "BzQfn8W5PTjHMZgmJfbTjNceWNTnqLEEoEEuhtS7fHca",
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "expires_at": "2024-10-30T19:23:57+00:00"
+}
+```
+
 ## Delete Token Intent
 
 Deletes a Token Intent without waiting for expiration. Use this endpoint to remove Token Intents that fail validation.
@@ -218,7 +317,7 @@ Returns a `204` status code and empty body on success. Returns [an error](/docs/
 
 ## Convert Token Intent to Token
 
-To convert a Token Intent into a Token, you’ll utilize the [Create Token](/docs/api/tokens#create-token) or
+To convert a Token Intent into a Token, you'll utilize the [Create Token](/docs/api/tokens#create-token) or
 [Tokenize](/docs/api/tokens/tokenize) endpoint by passing in a `token_intent_id` instead of `type` and `data`. All other attributes of a token are available during the conversion.
 
 ### Conversion Rules
