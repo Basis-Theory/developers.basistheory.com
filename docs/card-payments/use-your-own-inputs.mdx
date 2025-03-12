@@ -4,15 +4,35 @@ import TabItem from "@theme/TabItem";
 import { Alert } from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
-
+import TokenIntentSample from "./sections/_token-intent-sample.mdx";
+import AuthenticateCardSection from "./sections/_authenticate-card-section.mdx";
 
 # Use Your Own Card Inputs
 
-Despite Basis Theory Elements being highly customizable and providing the most secure and efficient solution for collecting cards in user-facing applications, we understand that some companies are experienced with PCI DSS and feel comfortable having their frontend, or parts of it, handle cardholder data and be in scope for compliance.
+Despite Basis Theory Elements being highly customizable and providing the most secure and efficient solution for collecting cards in user-facing applications, we understand that some companies are experienced with PCI DSS and feel comfortable having their frontend, or parts of it, handle cardholder data and be in scope for such compliance.
 
 In this guide, we will set up Basis Theory SDKs to receive cards from your frontend application and securely store the cardholder data as tokens with the Basis Theory Platform. This practice is well-positioned to substantially de-scope your servers, networking resources and database from PCI DSS compliance, while retaining full control of the sensitive data. If you want to learn more how Basis Theory can help you achieve that, [reach out to our team](https://basistheory.com/contact)!
 
-[![Collect Cards with your Forms Flowchart](/img/guides/collect/collect-cards-with-your-inputs-flowchart.png)](https://mermaid.live/edit#pako:eNpdUV1LwzAU_SvhPm3QzLXrx5oHYU4FwYGoKNj6kDV3Npg2JU3VOfbfTbupaF6Sc-4591xyd1BogcCAUprXVlqFjCy1UlhYsuRGtORS6fei5Mbm9SDafGNyfZvXxJ22W78Y3pRECvRJdsZb2ZL7ErXZPh8Ub7xTNhs99Nf4yPFGZoubq19E6emgOxBYi3_dN0iyR1yTE7LSa6mQLJrm6EaFFda2HfUjk4sjGv8tUtpXS60EGiK45S7Qxf7EgQcVmopL4f5j19M52NJ5c2DuKbh5zSGv907HO6vvtnUBzJoOPega1w_PJXeTVsA2XLWObXgNbAcfwJJJGsZBGvvBPJ4liQdbYHQ28YMgisM0DKIw8qNw78Gn1s7vT6ZJlKaBP52ncZzMpr4HKKTVZnXY1rC0IeBpMAyB-y8IVZD_)
+```mermaid
+  sequenceDiagram
+    actor customer as Customer
+    participant storefront as Merchant<br>Storefront
+    participant bapi as Basis Theory<br>API
+    participant mapi as Merchant<br>API
+
+    activate customer
+    customer ->>+ storefront: Enter checkout
+    storefront -->> customer: Render checkout with Card Inputs
+    customer ->> storefront: Enter card data
+    customer ->> storefront: Submit
+    storefront ->>+ bapi: Create Token Intent
+    bapi -->>- storefront:  Token intent<br>w/ card information
+    storefront ->>+ mapi: Submit checkout
+    mapi ->> mapi: Process card
+    mapi -->>- storefront: OK
+    storefront -->>- customer: Success
+    deactivate customer
+```
 
 <GettingStartedSection />
 
@@ -36,27 +56,16 @@ Let's use a submit function to make the request, triggered from a button:
 <button onclick="submit();">Submit</button>
 ```
 ```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
-
-let bt;
-
-async function init () {
-  //highlight-start
-  bt = await new BasisTheory().init('<API_KEY>');
-  //highlight-end
-};
-
 async function submit () {
   try {
     // highlight-start
-    const token = await bt.tokens.create({
-      type: 'card',
-      data: {
-        number: '4242424242424242',
-        expiration_month: 12,
-        expiration_year: 2025,
-        cvc: '123',
-      }
+    const response = await fetch(`https://api.basistheory.com/token-intents`, {
+      method: "POST",
+      headers: {
+        "BT-API-KEY": apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cardData),
     });
     // highlight-end
     // store token.id in your database
@@ -226,44 +235,19 @@ class MainActivity : AppCompatActivity() {
   </TabItem>
 </Tabs>
 
-<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created in the <a href="#creating-a-public-application">Creating a Public Application</a> step.</Alert>
+<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created in the <a href="#public-application">Public Application</a> step.</Alert>
 
-The created card `token` object contains the non-sensitive information about the tokenized card, which follows the [Card Token specification](/docs/api/tokens/token-types#card):
+The created Token Intent is a short-lived tokenized `card` object which carries only non-sensitive information following the [Token Intent Object specification](/docs/api/tokens/token-intents#token-intent-object):
 
-```json showLineNumbers title=token.json
-{
-  "id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4",
-  "type": "card",
-  "tenant_id": "15f48eb5-8b52-4cdd-a396-608f7cf001d0",
-  "data": {
-    "number": "XXXXXXXXXXXX4242",
-    "expiration_month": 12,
-    "expiration_year": 2025
-  },
-  "created_by": "4a6ae2a6-79f8-4640-968f-88db913743df",
-  "created_at": "2023-04-17T12:54:44.8320458+00:00",
-  "mask": {
-    "number": "{{ data.number | reveal_last: 4 }}",
-    "expiration_month": "{{ data.expiration_month }}",
-    "expiration_year": "{{ data.expiration_year }}"
-  },
-  "search_indexes": [],
-  "containers": [
-    "/pci/high/"
-  ]
-}
-```
+<TokenIntentSample/>
 
-You can safely store the token's primary key `id` in your database to link it with the appropriate checkout, user profile, subscription, or any other record that requires association with the card.
+<Alert>You can either post the complete object to your backend for processing or [fetch it using its ID](/docs/api/tokens/token-intents#get-a-token-intent).</Alert>
 
-## Conclusion
+<AuthenticateCardSection />
 
-By following the steps outlined in this guide, you can ensure that your users' sensitive card data is protected by storing it with Basis Theory. The `token.id` obtained at the end of the [Storing Cards](#storing-cards) section is a synthetic replacement for the sensitive data and can be safely stored in your database, or transmitted through your systems, meeting compliance requirements and reducing the risk of exposure in case of data breaches.
+## Next Steps
 
-The optional [customization steps](#customizing-tokens) are meant to showcase platform capabilities that go beyond the examples given. Make sure to explore the provided links within each subsection to learn more about the possibilities for customization.
+Now that you are securely storing your users' sensitive card data with Basis Theory, the next step is to process payments using your newly tokenized card data. Check out the following guides to complete your integration:
 
-For next steps, take a look at the following guides to proceed taking the most value of your secured card tokens:
-
-- [Process Card Payments](/docs/guides/share/process-card-payments)
-- [Search Data](/docs/guides/process/search-data)
-- [Analyze Data](/docs/guides/process/analyze-data)
+- [Verify a Card](/docs/card-payments/verify-card) – Ensure the card is valid by performing a $0 auth.
+- [Charge a Card](/docs/card-payments/charge-card) – Process a payment using the stored token.
