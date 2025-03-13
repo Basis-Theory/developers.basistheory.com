@@ -38,7 +38,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Card Data",
+      label: "Card Payments",
       customProps: {
         icon: {
           light: "/img/sidebar/light/card.svg",
@@ -47,16 +47,10 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "guides/cards/index",
+        id: "card-payments/index",
       },
       items: [
-        "guides/collect/collect-cards",
-        "guides/share/process-card-payments",
-        "guides/collect/receive-cards",
-        "guides/process/extract-cards",
-        "guides/collect/issue-cards",
-        "guides/share/display-cards",
-        "guides/collect/set-card-pin",
+        "card-payments/replace-processor-iframes",
         {
           type: "doc",
           id: "guides/process/authenticate-with-3ds",
@@ -64,6 +58,19 @@ const sidebars = {
             enterprise: true,
           },
         },
+        "card-payments/use-your-own-inputs",
+        "card-payments/receive-cards-api",
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Recollect CVC",
+        },
+        {
+          type: "html",
+          value: "<hr />",
+        },
+        "card-payments/verify-card",
+        "card-payments/charge-card",
         {
           type: "doc",
           id: "guides/process/authenticate-mit-with-3ds",
@@ -71,12 +78,36 @@ const sidebars = {
             enterprise: true,
           },
         },
+        {
+          type: "html",
+          value: "<hr />",
+        },
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Keep cards up-to-date",
+        },
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Payments routing",
+        },
+        {
+          type: "doc",
+          id: "card-payments/placeholder",
+          label: "Using Network Tokens",
+        },
+        {
+          type: "html",
+          value: "<hr />",
+        },
+        "guides/process/extract-cards",
         "guides/process/backup-stripe-tokens",
       ],
     },
     {
       type: "category",
-      label: "Bank Data",
+      label: "Bank Payments",
       customProps: {
         icon: {
           light: "/img/sidebar/light/bank.svg",
@@ -139,7 +170,22 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Any Data",
+      label: "Card Issuing",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/card.svg",
+          dark: "/img/sidebar/dark/card.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/cards/index",
+      },
+      items: ["guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
+    },
+    {
+      type: "category",
+      label: "Other Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/any-data.svg",
