@@ -4,6 +4,7 @@ import TabItem from "@theme/TabItem";
 import { Alert } from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
+import { SdkList } from "@site/src/components/docs/SdkList";
 import TokenIntentSample from "./sections/_token-intent-sample.mdx";
 import AuthenticateCardSection from "./sections/_authenticate-card-section.mdx";
 
@@ -40,11 +41,23 @@ In this guide, we will set up Basis Theory SDKs to receive cards from your front
 
 <ApplicationSection type="public" permissions={["token-intent:create"]} />
 
+### Configure the SDK
+
+We will perform cardholder data tokenization by calling the Basis Theory API and passing the values from your inputs. The use of SDKs is optional, you can use your preferred HTTP Client in your frontend application.
+
+For **Javascript**, **React** and **React Native**:
+<SdkList sdks={['node']} />
+
+For **Android**:
+<SdkList sdks={['java']} />
+
+For **iOS**, use your preferred HTTP client to call the Basis Theory API.
+
 ## Tokenization
 
 We won't get into details about particular frontend libraries or custom input implementations, but show how to call the API to store cards in your Basis Theory Tenant.
 
-To do this, we will invoke the [Create Token Intent](https://developers.basistheory.com/docs/api/token-intents#create-token-intent) endpoint from the frontend, passing the cardholder data in the payload. This will securely create a `card` token intent by transferring the card information from your frontend to the Basis Theory API, where the data will be strongly encrypted and stored in a compliant environment.
+To do this, we will invoke the [Create Token Intent](/docs/api/tokens/token-intents#create-token-intent) endpoint from the frontend, passing the cardholder data in the payload. This will securely create a `card` token intent by transferring the card information from your frontend to the Basis Theory API, where the data will be strongly encrypted and stored in a compliant environment.
 
 Let's use a submit function to make the request, triggered from a button:
 
@@ -56,19 +69,25 @@ Let's use a submit function to make the request, triggered from a button:
 <button onclick="submit();">Submit</button>
 ```
 ```javascript showLineNumbers title=index.js
+import { BasisTheoryClient, BasisTheory } from "@basis-theory/node-sdk";
+
+const client = new BasisTheoryClient({ apiKey: "<PUBLIC_API_KEY>" });
+
 async function submit () {
   try {
     // highlight-start
-    const response = await fetch(`https://api.basistheory.com/token-intents`, {
-      method: "POST",
-      headers: {
-        "BT-API-KEY": apiKey,
-        "Content-Type": "application/json",
+    // get these values from your inputs
+    const intent = await client.tokenIntents.create({
+      type: "card",
+      data: {
+        number: '4242424242424242',
+        expiration_month: 12,
+        expiration_year: 2025,
+        cvc: '123'
       },
-      body: JSON.stringify(cardData),
     });
     // highlight-end
-    // store token.id in your database
+    // TODO post the intent object to your backend
   } catch (error) {
     console.error(error);
   }
@@ -76,84 +95,6 @@ async function submit () {
 
 init();
 ```
-  </TabItem>
-  <TabItem value="react" label="React">
-
-```jsx showLineNumbers title=App.jsx
-import {
-  useBasisTheory,
-} from '@basis-theory/basis-theory-react';
-
-export default function App() {
-  const { bt } = useBasisTheory('<API_KEY>');
-
-  const submit = async () => {
-    try {
-      // highlight-start
-      const token = await bt?.tokens.create({
-        type: 'card',
-        data: {
-          number: '4242424242424242',
-          expiration_month: 12,
-          expiration_year: 2025,
-          cvc: '123',
-        }
-      });
-      // highlight-end
-      // store token.id in your database
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  return (
-    <>
-      ...
-      // highlight-next-line
-      <button onClick={submit}>Submit</button>
-    </>
-  );
-}
-```
-  </TabItem>
-  <TabItem value="ios" label="iOS">
-
-```swift showLineNumbers title=ViewController.swift
-import Foundation
-import UIKit
-// highlight-next-line
-import BasisTheoryElements
-import Combine
-
-class ViewController: UIViewController {
-
-    // highlight-start
-      @IBAction func tokenize(_ sender: Any) {
-        let body: [String: Any] = [
-            "type": "card",
-            "data": [
-                "number": "4242424242424242",
-                "expiration_month": 12,
-                "expiration_year": 2025,
-                "cvc": "123"
-            ]
-        ]
-
-        BasisTheoryElements.tokenize(body: body, apiKey: "<API_KEY>") { token, error in
-            guard error == nil else {
-                print(error)
-                return
-            }
-            // store token.id in your database
-        }
-    }
-    // highlight-end
-
-    override func viewDidLoad() { ... }
-
-}
-```
-
   </TabItem>
   <TabItem value="android" label="Android">
 
@@ -191,15 +132,25 @@ class ViewController: UIViewController {
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 ```kotlin showLineNumbers title=MainActivity.kt
+import androidx.lifecycle.lifecycleScope
+import com.basistheory.core.ClientOptions;
+import com.basistheory.core.Environment
+import com.basistheory.resources.tokenintents.TokenIntentsClient;
+import com.basistheory.resources.tokenintents.requests.CreateTokenIntentRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 class MainActivity : AppCompatActivity() {
-    // highlight-start
-    private lateinit var button: Button;
 
-    private val bt = BasisTheoryElements.builder()
-        .apiKey("<API_KEY>")
-        .build()
-    // highlight-end
-
+    private val tokenClient by lazy {
+        TokenIntentsClient(
+            ClientOptions.builder()
+                .environment(Environment.DEFAULT)
+                .addHeader("BT-API-KEY", "<PUBLIC_API_KEY>")
+                .build()
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -207,30 +158,39 @@ class MainActivity : AppCompatActivity() {
         // highlight-start
         button = findViewById(R.id.submit_button)
         button.setOnClickListener {
-            submit()
+            lifecycleScope.launch {
+                submit()
+            }
         }
         // highlight-end
-
     }
 
     // highlight-start
-    private fun submit() {
-      val token = runBlocking {
-        bt.tokens.create(object {
-          val type = "card"
-          val data = object {
-            val number = "4242424242424242"
-            val expiration_month = 12
-            val expiration_year = 2025
-            val cvc = "123"
-          }
-        })
-      }
-      // store token.id in your database
+    private suspend fun submit() {
+        val intent = withContext(Dispatchers.IO) {
+            tokenClient.create(
+                CreateTokenIntentRequest.builder()
+                    .type("card")
+                    .data(mapOf(
+                        // get these values from your inputs
+                        "number" to "4242424242424242",
+                        "expiration_month" to 12,
+                        "expiration_year" to 2025,
+                        "cvc" to "123"
+                    ))
+                    .build()
+            )
+        }
+        // TODO post the intent object to your backend
     }
     // highlight-end
 }
 ```
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+Use your preferred HTTP client to call the [Create Token Intent](/docs/api/tokens/token-intents#create-token-intent) endpoint.
 
   </TabItem>
 </Tabs>
