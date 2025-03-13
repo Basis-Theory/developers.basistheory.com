@@ -1,3 +1,10 @@
+# [1.220.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.219.0...v1.220.0) (2025-03-13)
+
+
+### Features
+
+* update react-native-elements docs ([#519](https://github.com/Basis-Theory/developers.basistheory.com/issues/519)) ([bc7701b](https://github.com/Basis-Theory/developers.basistheory.com/commit/bc7701b928d5581ecefef6659d1649882f905031))
+
 # [1.219.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.218.0...v1.219.0) (2025-03-07)
 
 
