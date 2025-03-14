@@ -1,3 +1,10 @@
+# [1.221.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.220.0...v1.221.0) (2025-03-14)
+
+
+### Features
+
+* removing v1 list and search endpoints ([#520](https://github.com/Basis-Theory/developers.basistheory.com/issues/520)) ([7b6c974](https://github.com/Basis-Theory/developers.basistheory.com/commit/7b6c97476a0ba2616c29d504fc3336d11accc975))
+
 # [1.220.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.219.0...v1.220.0) (2025-03-13)
 
 
