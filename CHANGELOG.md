@@ -1,3 +1,10 @@
+# [1.222.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.221.0...v1.222.0) (2025-03-17)
+
+
+### Features
+
+* adding better descriptions for 3ds auth codes ([#522](https://github.com/Basis-Theory/developers.basistheory.com/issues/522)) ([7c4c41e](https://github.com/Basis-Theory/developers.basistheory.com/commit/7c4c41e6c25e0699caf8344427b072dfe95230c2))
+
 # [1.221.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.220.0...v1.221.0) (2025-03-14)
 
 
