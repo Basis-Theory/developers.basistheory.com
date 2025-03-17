@@ -4,14 +4,14 @@ import axios from "axios";
 import { Highlight } from "prism-react-renderer";
 
 const WebElementsCdnExample = ({ organization, repository }) => {
-  const [releaseName, setReleaseName] = useState("");
+  const [sri, setSri] = useState(undefined);
 
   useEffect(() => {
     const fetchLatestRelease = async () => {
       try {
-        const { data } = await axios.get(`https://api.github.com/repos/basis-theory/web-elements/releases/latest`);
+        const { data: sri } = await axios.get(`https://js.basistheory.com/sri/?version`);
 
-        setReleaseName(data.name);
+        setSri(sri);
       } catch (error) {
         console.error("Error fetching latest release:", error);
       }
@@ -31,8 +31,8 @@ const WebElementsCdnExample = ({ organization, repository }) => {
   -->
       
   <script src="https://js.basistheory.com/web-elements/latest/index.js"></script>
-  <!-- or -->
-  <script src="https://js.basistheory.com/web-elements/${releaseName}/index.js"></script>`}
+ <!-- or -->
+ ${sri?.html}`}
       language="html"
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (

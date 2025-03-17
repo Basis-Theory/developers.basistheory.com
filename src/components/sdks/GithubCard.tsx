@@ -21,53 +21,135 @@ interface GithubCard {
   organization: string;
   repository: string;
   version?: string;
+  fetchSri?: boolean;
+}
+
+interface SriData {
+  version: string;
+  integrity: string;
+}
+
+interface RepoData {
+  url: string;
+  stars: number;
+  contributors: number;
+  latestRelease: string | null;
+  sri?: SriData;
+  loading: boolean;
+  error: boolean;
 }
 
 const placeholder = "Loading";
-const placeholderUrl = "https://www.basistheory.com/";
+const SRI_ENDPOINT = "https://js.basistheory.com/sri/?version";
 
-export const GithubCard = ({ heading, organization, repository, icon, version }: GithubCard) => {
+const repoDataCache = new Map<string, RepoData>();
+
+const truncateHash = (hash: string, maxLength = 20) => {
+  if (!hash || hash.length <= maxLength) return hash;
+  return `${hash.substring(0, maxLength)}...`;
+};
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text).catch((err) => {
+    console.error("Failed to copy: ", err);
+  });
+};
+
+export const GithubCard = ({ heading, organization, repository, icon, version, fetchSri = false }: GithubCard) => {
   if (!icon) throw Error("Missing SDK icon");
   if (!isValidSdk(icon)) throw Error("Invalid SDK.");
 
-  const [githubUrl, setGithubUrl] = useState<string>("");
-  const [stargazersCount, setStargazersCount] = useState<number>(null);
-  const [releaseName, setReleaseName] = useState<string>(null);
-  const [contributors, setContributors] = useState<number>(null);
+  const [repoData, setRepoData] = useState<RepoData>({
+    url: "",
+    stars: null,
+    contributors: null,
+    latestRelease: null,
+    loading: true,
+    error: false,
+  });
 
-  const loadMetadata = async () => {
-    const { data } = await axios.get(`https://api.github.com/repos/${organization}/${repository}`);
+  const [copySuccess, setCopySuccess] = useState(false);
 
-    setGithubUrl(data.html_url);
-    setStargazersCount(data.stargazers_count);
-  };
+  const cacheKey = `${organization}/${repository}`;
+  const repoUrl = `https://github.com/${organization}/${repository}`;
 
-  const loadRelease = async () => {
-    // catches 404 from github when trying to load android/iOS releases
-    try {
-      const { data } = await axios.get(`https://api.github.com/repos/${organization}/${repository}/releases/latest`);
-
-      setReleaseName(data.name);
-    } catch (err) {}
-  };
-
-  const loadContributors = async () => {
-    const { data } = await axios.get(`https://api.github.com/repos/${organization}/${repository}/contributors`);
-
-    setContributors(data.length);
+  const handleCopySri = () => {
+    if (repoData.sri?.integrity) {
+      copyToClipboard(repoData.sri.integrity);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
   };
 
   useEffect(() => {
-    if (organization && repository) {
-      loadMetadata();
-
-      if (!version) {
-        loadRelease();
+    const fetchRepoData = async () => {
+      if (repoDataCache.has(cacheKey)) {
+        const cachedData = repoDataCache.get(cacheKey);
+        setRepoData(cachedData);
+        return;
       }
 
-      loadContributors();
+      try {
+        const { data: repoData } = await axios.get(`https://api.github.com/repos/${organization}/${repository}`);
+
+        let releaseData = null;
+        let sriData = null;
+        let contributorsCount = 0;
+
+        try {
+          const { data: contributors } = await axios.get(`https://api.github.com/repos/${organization}/${repository}/contributors`);
+          contributorsCount = contributors.length;
+        } catch (err) {
+          console.error(`Error fetching contributors for ${repository}:`, err);
+        }
+
+        if (!version) {
+          try {
+            const { data: release } = await axios.get(`https://api.github.com/repos/${organization}/${repository}/releases/latest`);
+            releaseData = release.name;
+          } catch (err) {
+            console.error(`Error fetching releases for ${repository}:`, err);
+          }
+        }
+
+        if (fetchSri) {
+          try {
+            const { data: sri } = await axios.get(SRI_ENDPOINT);
+            sriData = sri;
+          } catch (err) {
+            console.error(`Error fetching SRI data:`, err);
+          }
+        }
+
+        const newRepoData = {
+          url: repoData.html_url || repoUrl,
+          stars: repoData.stargazers_count || 0,
+          contributors: contributorsCount,
+          latestRelease: releaseData,
+          sri: sriData,
+          loading: false,
+          error: false,
+        };
+
+        repoDataCache.set(cacheKey, newRepoData);
+        setRepoData(newRepoData);
+      } catch (err) {
+        console.error(`Error fetching GitHub data for ${repository}:`, err);
+        setRepoData({
+          url: repoUrl,
+          stars: 0,
+          contributors: 0,
+          latestRelease: version || null,
+          loading: false,
+          error: true,
+        });
+      }
+    };
+
+    if (organization && repository) {
+      fetchRepoData();
     }
-  }, [organization, repository, version]);
+  }, [organization, repository, version, cacheKey, fetchSri, repoUrl]);
 
   const Icon = getSdkIcon(icon);
 
@@ -82,7 +164,7 @@ export const GithubCard = ({ heading, organization, repository, icon, version }:
       className={styles["gh-card"]}
       heading={<Card.PrimaryHeader>{heading}</Card.PrimaryHeader>}
       cta={
-        <Button href={githubUrl ?? placeholderUrl} className={styles["gh-button"]} target="_blank">
+        <Button href={repoData.url || repoUrl} className={styles["gh-button"]} target="_blank">
           <Github /> See it in GitHub
         </Button>
       }
@@ -91,16 +173,32 @@ export const GithubCard = ({ heading, organization, repository, icon, version }:
         <div className={utils.repository}>
           <Package /> {repository}
         </div>
-
         <div className={styles.metadata}>
-          {(version || releaseName) && <Version>{version ?? releaseName ?? placeholder}</Version>}
+          {(version || repoData.latestRelease) && <Version>{version || repoData.latestRelease || placeholder}</Version>}
           <p>
-            <Star /> {stargazersCount ?? placeholder} Stars
+            <Star /> {repoData.loading ? placeholder : repoData.stars || "0"} Stars
           </p>
           <p>
-            <Contributor /> {contributors ?? placeholder} Contributors
+            <Contributor /> {repoData.loading ? placeholder : repoData.contributors || "0"} Contributors
           </p>
+          {repoData.error && <p className={styles.rateLimitWarning}>GitHub limit reached</p>}
         </div>
+        {fetchSri && repoData.sri && (
+          <div className={styles.sriContainer}>
+            <p className={styles.sriHash} title={repoData.sri.integrity}>
+              SRI: {truncateHash(repoData.sri.integrity, 24)}
+              <button onClick={handleCopySri} className={styles.copyButton} aria-label="Copy SRI hash to clipboard">
+                {copySuccess ? (
+                  <span className={styles.copySuccess}>✓</span>
+                ) : (
+                  <svg className={styles.copyIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor" />
+                  </svg>
+                )}
+              </button>
+            </p>
+          </div>
+        )}
       </>
     </Card>
   );
