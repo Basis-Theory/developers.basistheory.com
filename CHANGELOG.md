@@ -1,3 +1,10 @@
+# [1.223.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.222.0...v1.223.0) (2025-03-17)
+
+
+### Features
+
+* add sri to github card and web elements cdn example ([#521](https://github.com/Basis-Theory/developers.basistheory.com/issues/521)) ([c783754](https://github.com/Basis-Theory/developers.basistheory.com/commit/c78375415e0b0cf0655f8937e4e5e23a19cc37da))
+
 # [1.222.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.221.0...v1.222.0) (2025-03-17)
 
 
