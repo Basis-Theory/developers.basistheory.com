@@ -181,7 +181,6 @@ export const GithubCard = ({ heading, organization, repository, icon, version, f
           <p>
             <Contributor /> {repoData.loading ? placeholder : repoData.contributors || "0"} Contributors
           </p>
-          {repoData.error && <p className={styles.rateLimitWarning}>GitHub limit reached</p>}
         </div>
         {fetchSri && repoData.sri && (
           <div className={styles.sriContainer}>
