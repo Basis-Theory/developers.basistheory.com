@@ -1,3 +1,10 @@
+## [1.223.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.0...v1.223.1) (2025-03-17)
+
+
+### Bug Fixes
+
+* add cvcLength to cvc component ([#523](https://github.com/Basis-Theory/developers.basistheory.com/issues/523)) ([c8fe8d9](https://github.com/Basis-Theory/developers.basistheory.com/commit/c8fe8d95fbc8559519bbf7d19fe368dfbb0e7918))
+
 # [1.223.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.222.0...v1.223.0) (2025-03-17)
 
 
