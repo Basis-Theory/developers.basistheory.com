@@ -3,27 +3,28 @@ title: Account Updater
 sidebar_label: Account Updater
 toc_max_heading_level: 2
 ---
+
 import { Enterprise } from "@site/src/components/shared/Enterprise";
 
 # Card Account Updater
 
 It's estimated that subscription businesses lose up to 5-10% of their revenue annually, most of it by accident. Before Account Updater, it was nearly impossible to minimize lost revenue tied to outdated card information.
 
-- Prevent Accidental Churn: Don't lose customers simply because they lost their card, their card expired or updated their billing address.
-- Improve Customer Experience: No one wants to update their card on file on no business wants to ask their customer to update their card. Now you don't have to!
-- Immediate ROI: It's easy to see the revenue lift by comparing the increase in successful authorizations vs. Account Updater cost.
+- **Prevent Accidental Churn**: Don't lose customers simply because they lost their card, their card expired, or updated their billing address.
+- **Improve Customer Experience**: No one wants to update their cards on file, and now businesses can manage this process more efficiently.
+- **Immediate ROI**: It's easy to see the revenue lift by comparing the increase in successful authorizations vs. Account Updater cost.
 
 ## How to use Account Updater with Basis Theory
 
 ### Basis Theory Account Updater
 
-The moment you store credit cards with Basis Theory, you're able to request on-demand or scheduled updates to those tokenized credit cards. In an effort to provide the most flexibility for the needs of scaling payment organizations, we've enabled the ability for Basis Theory to update your expiring credit cards seamlessly or to receive a list of tokens to update on-demand.
+The moment you store credit cards with Basis Theory, you're able to request updates to those tokenized credit cards by sending us a list of cards you’ve identified for updating. In an effort to provide the most flexibility for scaling payment organizations, we enable merchants to update cards under their own rules—such as those nearing expiration—by sending us a list of tokens to process on demand.
 
-This lifecycle enables the ability to keep all tokens created with other providers up to date as well, this ensures each card-on-file has the freshest data across all partners and processors.
+This lifecycle ensures that all tokens, including those created with other providers, can be kept up to date when you provide the list, maintaining the freshest data across all partners and processors.
 
-### Any Third Party Provider
+### Third Party Providers
 
-Basis Theory's out-of-the-box flexibility allows organizations with new vendors, existing partnerships, or a processor's Account Updater to integrate directly with those APIs - for example, [Pagos Loon](https://pagos.ai/loon/), [Cybersource](https://www.cybersource.com/en-us/solutions/additional-services.html#accountupdater), Chase Account Updater, Adyen, etc. In these cases, our Proxy and Reactors enable your team to keep your credit cards up to date with your vendor of choice. [Reach out](https://basistheory.com/contact) for a free session on how to architect this!
+Basis Theory's allows organizations with new vendors, existing partnerships, or a processor's Account Updater to integrate directly with those APIs - for example, [Pagos Loon](https://pagos.ai/loon/), [Cybersource](https://www.cybersource.com/en-us/solutions/additional-services.html#accountupdater), Chase Account Updater, Adyen, etc. In these cases, our Proxy and Reactors enable your team to keep your credit cards up to date with your vendor of choice. [Reach out](https://basistheory.com/contact) for a free session on how to design this!
 
 ## Basis Theory Account Updater <Enterprise />
 
@@ -35,36 +36,34 @@ Below is a flow diagram explaining how updating a list of card tokens works and 
 
 ![Updating List of Tokens Diagram](/img/features/account-updater/account-updater-overview.png)
 
-### Automatically update expiring cards
-
-There are situations where you'd like to put your card updates on auto-pilot and have them only be updated if they are nearing expiration. In cases like these, Basis Theory provides an automated service to keep your nearing expired tokens up to date - this process works identical to the on-demand option, except you would not need to send a list of tokens to be updated.
-
-![Updating List of Expiring Cards Diagram](/img/features/account-updater/account-updater-expiring-cards.png)
-
-### Keeping your processor tokens up to date
-
-As your cards stored with Basis Theory are updated, it is important to keep each of your processors up to date with the latest card information for each customer. This ensures that when using processor tokens, declines are avoided because the freshest card is being used. Basis Theory provides a webhook when each card is updated and also once the full card is complete, signaling the need for all processor tokens to be updated.
-
-![Keep processor tokens up to date Diagram](/img/features/account-updater/account-updater-processor-tokens.png)
+Batch Account Updater is ideal for specific merchant-driven scenarios:
+- **Merchant-Initiated Transactions**: Identify cards scheduled for charges in the next 7 to 14 days and submit a batch job to update them, ensuring successful transactions.
+- **Cards Nearing Expiration**: Target cards expiring within the next 30 days, where issuers are likely to have provided customers with new cards.
+- **Cards with Recent Declines**: Update cards that failed authorization in the last 30-60 days, addressing potential outdated details.
+- **High-Value Subscriptions**: Prioritize cards linked to recurring payments above a set threshold (e.g., $50/month) to protect key revenue streams.
 
 ## FAQ
 
-### Can I automatically update all cards in my vault on a regular schedule?
+### What card networks do you support?
 
-Yes, you can. However, while considering cost-effectiveness, it may be optimal to only update customer cards that are important to your business. Basis Theory is ready to offer the necessary controls to help you create a successful update strategy.
+Visa, Mastercard, American Express and Discover.
 
-### Do all Basis Theory platform features work with any Account Updater vendor?
+### How long does it take for an update job to complete?
 
-Yes! Any feature, you need is fully available to you to utilize with an existing Account Updater service. This means you're able to keep your tokens up to date and also keep any of your processor tokens up to date by utilizing the Basis Theory platform.
+We aggregate results from all the supported networks, which can take up to **7 days**. You can optimize this by splitting your files by card network and get individual results as soon as they are available.
+
+### Can I update all cards in my vault on a regular schedule?
+
+You can update cards by querying your database for those needing updates—such as cards nearing expiration—and sending us a list of tokens whenever needed. For cost-effectiveness, it may be optimal to only update customer cards that are important to your business. Basis Theory will help you apply the necessary controls to create a successful update strategy.
+
+### Do all Basis Theory platform features work with other Account Updater vendors?
+
+Yes. Our platform features enable you to integrate with third-party vendors to keep both your Basis Theory and processors tokens up to date.
 
 ### Do you support end-of-day / nightly batch Account Updater Reports?
 
 Yes. Some acquirers and payment processors have the ability to generate end-of-day transaction reports containing account updates. For such cases, Basis Theory can process the report, looking for updated card information.
 
-![Nightly update diagram](/img/features/account-updater/account-updater-nightly-report.png)
-
 ### Do you enable Real Time Account Updater?
 
-Yes. Typically, real-time account updates happen during transaction processing/authorization flow with your acquirer.
-
-![Real-time account updater diagram](/img/features/account-updater/account-updater-realtime.png)
+Yes. We provide a Real Time Account Updater service. [Reach out](https://basistheory.com/contact) if you'd like access to private documentation.
