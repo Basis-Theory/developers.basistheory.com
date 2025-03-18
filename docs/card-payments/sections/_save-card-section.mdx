@@ -1,4 +1,5 @@
 import { Alert } from "@site/src/components/shared/Alert";
+import TokenSample from "./_token-sample.mdx";
 
 ## Save a Card
 
@@ -18,36 +19,13 @@ curl "https://api.basistheory.com/tokens" \
 
 This operation returns a new or existing persistent Token depending on your fingerprinting and deduplication options:
 
-```json showLineNumbers title="Token sample"
-{
-  // highlight-next-line
-  "id": "1cd9c8bf-99fd-4784-ba69-68b15b301019",
-  "tenant_id": "74eca6ab-f94d-49bc-9f3c-6144eb3415ac",
-  "type": "card",
-  "card": {
-    "bin": "42424242",
-    // highlight-start
-    "brand": "visa",
-    "last4": "4242",
-    "expiration_month": 12,
-    "expiration_year": 2025,
-    // highlight-end
-    "funding": "credit",
-    "authentication": "sca_required"
-  },
-  "fingerprint": "H46vMHviE7DmGM5yCrvo9NkootV6SXX5GrXnaYsjRoXP",
-  "_extras": {
-    "deduplicated": false
-  },
-  ...
-}
-```
+<TokenSample />
 
 <Alert>[Click here](/docs/api/tokens/token-intents#convert-token-intent-to-token) to learn more about the token conversion behavior.</Alert>
 
 What you should store in your database:
 
-1. (Required) The token `id`, associating it with the rightful customer(s).
+1. **(Required)** The token `id`, associating it with the rightful customer account.
 2. The card details (`brand`, `last4`, `expiration_month`, and `expiration_year`) if your plan to use it for things like rendering a stored card to your customer.
    - Alternatively, you can later [retrieve the token](http://localhost:3000/docs/api/tokens/#get-a-token) to get that information from the API.
 3. The **Processor Token** if you plan to directly charge that card with the Processor (without going through Basis Theory Proxy).
