@@ -1,3 +1,10 @@
+## [1.223.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.1...v1.223.2) (2025-03-19)
+
+
+### Bug Fixes
+
+* realign our batch account updater supported features ([#524](https://github.com/Basis-Theory/developers.basistheory.com/issues/524)) ([d06811b](https://github.com/Basis-Theory/developers.basistheory.com/commit/d06811b5dbf8c11940a1119d035a8c3df0276918))
+
 ## [1.223.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.0...v1.223.1) (2025-03-17)
 
 
