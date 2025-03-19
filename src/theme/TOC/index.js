@@ -22,33 +22,35 @@ export default function TOCWrapper(props) {
     const dropdownRef = useRef(null);
     const location = useLocation();
     const {
-        siteConfig: { organizationName, projectName },
+        siteConfig: { organizationName, projectName, baseUrl },
     } = useDocusaurusContext();
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
+        function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
             }
-        };
+        }
 
-        document.addEventListener('mousedown', handleClickOutside);
+        // Add event listener
+        document.addEventListener('click', handleClickOutside, true);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            // Remove event listener
+            document.removeEventListener('click', handleClickOutside, true);
         };
-    }, []);
+    }, [dropdownRef]);
 
     // Get the paths for the markdown file
     const getMarkdownPaths = () => {
         const path = location.pathname;
-        // Remove trailing slash if exists
-        const cleanPath = path.endsWith('/') ? path.slice(0, -1) : path;
-        const contentPath = `${cleanPath}/content.md`;
+        // Remove trailing slash and baseUrl if exists
+        const cleanPath = path.replace(new RegExp(`^${baseUrl}`), '').replace(/\/$/, '');
+        // Ensure content.md path starts with / and includes baseUrl
+        const contentPath = `${baseUrl}${cleanPath}/content.md`.replace(/\/+/g, '/');
         return { contentPath };
     };
 
     const handleCopyMarkdown = async (e) => {
-        e.preventDefault();
         e.stopPropagation();
         try {
             const { contentPath } = getMarkdownPaths();
@@ -62,8 +64,7 @@ export default function TOCWrapper(props) {
         }
     };
 
-    const toggleDropdown = (e) => {
-        e.preventDefault();
+    const handleButtonClick = (e) => {
         e.stopPropagation();
         setIsOpen(!isOpen);
     };
@@ -74,23 +75,33 @@ export default function TOCWrapper(props) {
         <div className="toc-wrapper">
             <TOC {...props} />
             <div className={styles.markdown} ref={dropdownRef}>
-                <div onClick={toggleDropdown} className={styles.markdownButton}>
+                <button
+                    onClick={handleButtonClick}
+                    className={styles.markdownButton}
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-haspopup="true">
                     <span>Markdown</span>
-                </div>
-                <div className={`${styles.dropdownContainer} ${isOpen ? styles.dropdownOpen : ''}`}>
-                    <button onClick={handleCopyMarkdown} className={styles.dropdownItem}>
-                        <CopyIcon />
-                        Copy Markdown
-                    </button>
-                    <a href={contentPath}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.dropdownItem}
-                        onClick={() => setIsOpen(false)}>
-                        <ViewIcon />
-                        View Markdown
-                    </a>
-                </div>
+                </button>
+                {isOpen && (
+                    <div className={styles.dropdownContainer}>
+                        <button
+                            onClick={handleCopyMarkdown}
+                            className={styles.dropdownItem}
+                            type="button">
+                            <CopyIcon />
+                            Copy Markdown
+                        </button>
+                        <a href={contentPath}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.dropdownItem}
+                            onClick={() => setIsOpen(false)}>
+                            <ViewIcon />
+                            View Markdown
+                        </a>
+                    </div>
+                )}
             </div>
         </div>
     );
