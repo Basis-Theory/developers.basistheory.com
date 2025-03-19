@@ -97,7 +97,7 @@ const config = {
           {
             type: "custom-SignInButton",
             position: "right",
-          },
+          }
         ],
       },
       prism: {
