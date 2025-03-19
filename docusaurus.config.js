@@ -279,9 +279,13 @@ const config = {
       return {
         name: "llms-txt-plugin",
         loadContent: async () => {
+          console.log('LLMs plugin: Starting loadContent...');
           const { siteDir } = context;
           const contentDir = path.join(siteDir, "docs");
-          const allMdx = [];
+          console.log('LLMs plugin: Content directory:', contentDir);
+
+          /** @type {Map<string, string>} */
+          const mdxFiles = new Map(); // Store file path -> content mapping
 
           // recursive function to get all mdx files
           const getMdxFiles = async (dir) => {
@@ -293,54 +297,76 @@ const config = {
                 await getMdxFiles(fullPath);
               } else if (entry.name.endsWith(".mdx")) {
                 const content = await fs.promises.readFile(fullPath, "utf8");
-                allMdx.push(content);
+                const relativePath = path.relative(contentDir, fullPath);
+                mdxFiles.set(relativePath, content);
+                console.log('LLMs plugin: Found MDX file:', relativePath);
               }
             }
           };
 
           await getMdxFiles(contentDir);
-          return { allMdx };
+          console.log('LLMs plugin: Total MDX files found:', mdxFiles.size);
+          return { mdxFiles, contentDir };
         },
         postBuild: async ({ content, routes, outDir }) => {
-          const { allMdx } = content;
+          console.log('LLMs plugin: Starting postBuild...');
+          console.log('LLMs plugin: Output directory:', outDir);
 
-          // Write concatenated MDX content
-          const concatenatedPath = path.join(outDir, "llms-full.txt");
-          await fs.promises.writeFile(concatenatedPath, allMdx.join("\n\n---\n\n"));
+          // @ts-ignore
+          const { mdxFiles, contentDir } = content;
+          console.log('LLMs plugin: Retrieved MDX files:', mdxFiles?.size);
 
-          // we need to dig down several layers:
-          // find PluginRouteConfig marked by plugin.name === "docusaurus-plugin-content-docs"
-          const docsPluginRouteConfig = routes.filter(
-            (route) => route.plugin.name === "docusaurus-plugin-content-docs"
-          )[0];
+          // Create individual .md files and build links list
+          const markdownLinks = [];
+          let processedFiles = 0;
 
-          // docsPluginRouteConfig has a routes property has a record with the path "/" that contains all docs routes.
-          const allDocsRouteConfig = docsPluginRouteConfig.routes?.filter(
-            (route) => route.path === "/"
-          )[0];
+          // Process each MDX file
+          for (const [mdxPath, mdxContent] of mdxFiles.entries()) {
+            try {
+              // Convert the MDX path to the output path
+              const relativeOutputPath = mdxPath
+                .replace(/\.mdx$/, '')
+                .split('/')
+                .filter(Boolean);
 
-          // A little type checking first
-          if (!allDocsRouteConfig?.props?.version) {
-            return;
+              const outputDir = path.join(outDir, 'docs', ...relativeOutputPath);
+              const mdPath = path.join(outputDir, 'content.md');
+
+              // Ensure directory exists
+              await fs.promises.mkdir(outputDir, { recursive: true });
+
+              // Write markdown file
+              await fs.promises.writeFile(mdPath, mdxContent);
+              processedFiles++;
+
+              // Add to links list - use the docs path for linking
+              const docPath = '/docs/' + relativeOutputPath.join('/');
+              markdownLinks.push(`- [${docPath}](${path.relative(outDir, mdPath)})`);
+
+              console.log('LLMs plugin: Wrote markdown file:', mdPath);
+            } catch (error) {
+              console.error('LLMs plugin: Error processing file:', mdxPath, error);
+            }
           }
 
-          // this route config has a `props` property that contains the current documentation.
-          const currentVersionDocsRoutes = allDocsRouteConfig.props.version.docs;
+          console.log('LLMs plugin: Processed files:', processedFiles);
 
-          // for every single docs route we now parse a path (which is the key) and a title
-          const docsRecords = Object.entries(currentVersionDocsRoutes).map(([path, record]) => {
-            return `- [${record.title}](${path}): ${record.description}`;
-          });
-
-          // Build up llms.txt file
-          const llmsTxt = `# ${context.siteConfig.title}\n\n## Docs\n\n${docsRecords.join("\n")}`;
-
-          // Write llms.txt file
-          const llmsTxtPath = path.join(outDir, "llms.txt");
           try {
-            fs.writeFileSync(llmsTxtPath, llmsTxt);
-          } catch (err) {
-            throw err;
+            // Write llm.txt with links to all markdown files
+            const llmsTxt = `# ${context.siteConfig.title}\n\n## Documentation Files\n\n${markdownLinks.join('\n')}`;
+            const llmsTxtPath = path.join(outDir, 'llm.txt');
+            console.log('LLMs plugin: Writing llm.txt to:', llmsTxtPath);
+            await fs.promises.writeFile(llmsTxtPath, llmsTxt);
+
+            // Write llm-full.txt with concatenated content
+            const fullContent = Array.from(mdxFiles.values()).join('\n\n---\n\n');
+            const llmsFullPath = path.join(outDir, 'llm-full.txt');
+            console.log('LLMs plugin: Writing llm-full.txt to:', llmsFullPath);
+            await fs.promises.writeFile(llmsFullPath, fullContent);
+
+            console.log('LLMs plugin: Successfully wrote all files');
+          } catch (error) {
+            console.error('LLMs plugin: Error writing output files:', error);
           }
         },
       };
