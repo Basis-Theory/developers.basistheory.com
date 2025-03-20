@@ -1,27 +1,35 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import DocItem from '@theme-original/DocItem';
 import DocItemHeader from '@theme/DocItem/Header';
 
 export default function DocItemWrapper(props) {
-    const titleRef = useRef(null);
+    const [titleElement, setTitleElement] = useState(null);
 
     useEffect(() => {
-        const titleContainer = document.querySelector('.theme-doc-markdown header');
-        if (titleContainer && titleRef.current) {
-            titleContainer.style.display = 'flex';
-            titleContainer.style.alignItems = 'flex-start';
-            titleContainer.style.gap = '1rem';
-            titleContainer.style.justifyContent = 'space-between';
+        const header = document.querySelector('.theme-doc-markdown header');
+        if (header) {
+            header.style.display = 'flex';
+            header.style.alignItems = 'flex-start';
+            header.style.gap = '1rem';
+            header.style.justifyContent = 'space-between';
+            setTitleElement(header);
 
-            titleContainer.appendChild(titleRef.current);
+            return () => {
+                header.style.display = '';
+                header.style.alignItems = '';
+                header.style.gap = '';
+                header.style.justifyContent = '';
+            };
         }
     }, []);
 
     return (
         <>
-            <div ref={titleRef}>
-                <DocItemHeader />
-            </div>
+            {titleElement && createPortal(
+                <DocItemHeader />,
+                titleElement
+            )}
             <DocItem {...props} />
         </>
     );
