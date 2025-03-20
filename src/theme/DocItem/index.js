@@ -9,18 +9,7 @@ export default function DocItemWrapper(props) {
     useEffect(() => {
         const header = document.querySelector('.theme-doc-markdown header');
         if (header) {
-            header.style.display = 'flex';
-            header.style.alignItems = 'flex-start';
-            header.style.gap = '1rem';
-            header.style.justifyContent = 'space-between';
             setTitleElement(header);
-
-            return () => {
-                header.style.display = '';
-                header.style.alignItems = '';
-                header.style.gap = '';
-                header.style.justifyContent = '';
-            };
         }
     }, []);
 
