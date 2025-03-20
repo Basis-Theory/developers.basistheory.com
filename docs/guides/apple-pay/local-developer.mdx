@@ -1,0 +1,160 @@
+---
+title: Apple Pay Local Development
+hide_title: true
+hide_table_of_contents: true
+---
+
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Apple Pay Development
+
+Something something...
+
+<GettingStartedSection/>
+
+## Things to Know
+
+Basis Theory does not support the use of Apple's sandbox environment.
+You will need to use a real card in your Apple Wallet.
+Basis Theory will not return real card data for integrations using a test tenant.
+Therefore, although the Apple Pay token you receive during development is real, the Basis Theory Token Intent will contain simulated data.
+Only production tenants will return real, valid credit card tokens from Apple Pay tokens.
+
+## Prerequistes
+
+- A public Basis Theory application with `token-intent:create` permission
+- A valid credit card in your Apple Wallet. https://support.apple.com/en-us/108398
+- A method to publicly expose a website.
+    - ngrok https://ngrok.com/downloads
+    - localtunnel https://github.com/localtunnel/localtunnel
+    - serveo https://serveo.net/
+    <Alert type={Alerts.WARNING}>
+      These products are only listed as examples.
+      Basis Theory does not endorse these services.
+      Please do your own due diligence before utilizing any of the above products.
+    </Alert>
+
+## Demo Application
+
+This guide will be utilizing the [Apple Pay demo application](https://applepaydemo.apple.com/apple-pay-js-api) and the Basis Theory Apple Pay demo application.
+The Basis Theory Apple Pay demo application uses the Apple Pay JS API.
+The quickest way to get started with this guide is to clone the repo and follow along.
+
+1. Clone the demo application
+1. Set the BT_API_KEY environment variable to your public application.
+  `export BT_API_KEY=...`
+1. Run `npm start` to start the local development server on port `8080`.
+1. Expose the site publicly.
+    - ngrok: `ngrok http http://localhost:8080`
+    - localtunnel: `lt --port 8000`
+    - serveo: `ssh -R 80:localhost:8080 serveo.net`
+1. Add the public domain to your tenant using the [Customer Portal](https://portal.basistheory.com/settings?tab=connections) or the [API](/docs/api/connections/apple-pay#register-domain-address)
+1. Navigate to the public address in Safari
+    <Alert type={Alerts.INFO}>
+      The fingerprint scanner must be available. Meaning your macbook lid must be open. Otherwise, the payment modal will not show.
+    </Alert>
+1. Scan your fingerprint
+1. The apple pay token and token intent data should populate in the textareas
+
+## Details
+
+In a production application, there will be three interactions with Basis Theory.
+The first integration is to start the Apple Pay session.
+The second interaction will convert the encrypted Apple Pay token to a [Token Intent](/docs/api/tokens/token-intents#token-intent-object).
+The final interaction will proxy the Token Intent to the your payment processor.
+
+### Starting the Apple Pay Session
+
+In order to initiate the payment modal, an Apple Pay session needs to be started.
+Basis Theory implements the [integration](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session) with Apple to request the payment session.
+Apple's demo site states "For security reasons, your server needs to do this interaction, not your browser client code".
+However, since Basis Theory will be your server, this call can occur from the browser.
+The implementation in Basis Theory's demo application calls the Basis Theory [endpoint](/docs/api/connections/apple-pay#create-session) from the browser.
+You can see the implementation in the `validateMerchant` function in `./public/basis-theory.js` file.
+
+```js title="./public/basis-theory.js"
+const options = {
+  method: 'POST',
+  url: 'https://api.basistheory.com/connections/apple-pay/session',
+  headers: {
+    'Content-Type': 'application/json',
+    'BT-API-KEY': cachedApiKey
+  },
+  data: {
+    display_name: 'Ducks R Us',
+    domain: window.location.host
+  }
+};
+
+const response = await axios.request(options);
+return response.data;
+```
+
+### Convert Apple Token to Token Intent and Process Payment
+
+After the customer has authorized the payment, your application will need to call Basis Theory with the encrypted Apple Pay token.
+For security, this interaction should be on your server.
+The browser will need to call an endpoint on your backend server and pass the encrypted Apple Pay token.
+Your server will then call Basis Theory with the encrypted token to convert to a Token Intent.
+On success, your server will then call a Basis Theory proxy to your payment processor of choice.
+
+```js title="Browser-side function in ./public/basis-theory.js"
+async function performTransaction(event, session) {
+  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  const processPaymentUrl = baseUrl + '/processPayment'
+  try {
+    const details = event.payment;
+
+    // DEMO: Write out Apple Pay Token
+    const outcomeElement = document.getElementById("outcome");
+    outcomeElement.value = JSON.stringify(details.token);
+
+    const response = await axios.post(
+      processPaymentUrl,
+      {
+        token: details.token,
+        customerEmail: details.shippingContact?.emailAddress,
+        billingDetails: details.billingContact,
+        shippingDetails: details.shippingContact
+      },
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      }
+    );
+
+    // DEMO: Write out Basit Theory Token Intent
+    const intentElement = document.getElementById("token-intent");
+    intentElement.value = JSON.stringify(response.data);
+
+    session.completePayment(ApplePaySession.STATUS_SUCCESS);
+  } catch (error) {
+    console.error('Error performing transaction:', error);
+    session.completePayment(ApplePaySession.STATUS_FAILURE);
+    throw error;
+  }
+}
+```
+```js title="Server-side function in ./server.js"
+app.post('/processPayment', async (req, res) => {
+  // First, tokenize Apple Pay to Basis Theory Token Intent.
+  const tokenizeOptions = {
+    method: 'POST',
+    url: basisTheoryApiUrl + '/connections/apple-pay/tokenize',
+    headers: {'Content-Type': 'application/json', 'BT-API-KEY': btApiKey},
+    data: {
+      apple_payment_method_token: req.body.token
+    }
+  };
+  axios.request(tokenizeOptions)
+    .then(function (response) {
+    // Proxy the Token Intent to payment processor....
+
+    // For this demo, just return the token intent to browser
+    res.send(response.data);
+  })
+  .catch(function (error) {
+    res.send(error);
+  });
+});
+```

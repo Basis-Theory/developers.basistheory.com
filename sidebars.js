@@ -114,6 +114,11 @@ const sidebars = {
           id: "guides/apple-pay/accept",
           label: "Accept Payments",
         },
+        {
+          type: "doc",
+          id: "guides/apple-pay/local-developer",
+          label: "Development",
+        },
       ],
     },
     {
