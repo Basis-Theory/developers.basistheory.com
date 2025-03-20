@@ -391,21 +391,11 @@ const config = {
           });
           if (svgRuleIndex === -1 || svgrConfigIndex === -1) return;
 
-          // @ts-ignore
-          config.module.rules[svgRuleIndex].oneOf[svgrConfigIndex].use[0].options.svgoConfig = {
-            plugins: [
-              {
-                name: 'preset-default',
-                params: {
-                  overrides: {
-                    cleanupIds: false
-                  }
-                }
-              }
-            ]
-          };
+
         },
       };
+      // @ts-ignore
+      config.module.rules[svgRuleIndex].oneOf[svgrConfigIndex].use[0].options.svgoConfig.plugins[0].params.overrides.cleanupIDs = false;
     },
   ],
   webpack: {
