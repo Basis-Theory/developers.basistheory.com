@@ -1,3 +1,10 @@
+## [1.223.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.2...v1.223.3) (2025-03-20)
+
+
+### Bug Fixes
+
+* update react code samples ([#526](https://github.com/Basis-Theory/developers.basistheory.com/issues/526)) ([8cfc88b](https://github.com/Basis-Theory/developers.basistheory.com/commit/8cfc88b92ae8965d20f2870090e9d0d2e0edf0bb))
+
 ## [1.223.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.1...v1.223.2) (2025-03-19)
 
 
