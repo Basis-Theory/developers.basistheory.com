@@ -57,28 +57,30 @@ The examples below show how to use Elements' instances in the payload of the [`t
 ```jsx showLineNumbers title="Create generic token"
 import { useRef } from "react";
 import { useBasisTheory, BasisTheoryProvider, TextElement, BasisTheoryValidationError, BasisTheoryApiError } from "@basis-theory/react-elements";
+import type { TextElement as ITextElement } from "@basis-theory/react-elements/types";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("<API_KEY>"); // replace <API_KEY> w/ your public API key
-  const fullNameRef = useRef(null);
+  const fullNameRef = useRef<ITextElement | null>(null);
 
   const submit = async () => {
     const fullName = fullNameRef.current;
 
     try {
-      const token = await bt.tokens.create({
-        type: "token",
-        data: {
-          name: fullName,
-          nonSensitiveData: "plainText",
-        },
-        metadata: {
-          nonSensitiveField: "nonSensitiveValue",
-        },
-      });
-
+      if(fullName) {
+        const token = await bt.tokens.create({
+          type: "token",
+          data: {
+            name: fullName,
+            nonSensitiveData: "plainText",
+          },
+          metadata: {
+            nonSensitiveField: "nonSensitiveValue",
+          },
+        });
       console.log(token.id); // token to share
       console.log(JSON.stringify(token)); // full response
+      }
     } catch (error) {
       if (error instanceof BasisTheoryValidationError) {
         // check error details
@@ -104,25 +106,28 @@ const MyForm = () => {
 ```jsx showLineNumbers title="Create card token"
 import { useRef } from "react";
 import { useBasisTheory, BasisTheoryProvider, CardElement, BasisTheoryValidationError, BasisTheoryApiError } from "@basis-theory/react-elements";
+import { CardElement as ICardElement } from "@basis-theory/react-elements";
 
 const MyForm = () => {
   const { bt } = useBasisTheory("<API_KEY>"); // replace <API_KEY> w/ your public API key
-  const cardRef = useRef(null);
+  const cardRef = useRef<ICardElement | null>(null);
 
   const submit = async () => {
     const card = cardRef.current;
 
     try {
-      const token = await bt.tokens.create({
-        type: "card",
-        data: card,
-        metadata: {
-          nonSensitiveField: "nonSensitiveValue",
-        },
-      });
+      if(card) {
+        const token = await bt.tokens.create({
+          type: "card",
+          data: card,
+          metadata: {
+            nonSensitiveField: "nonSensitiveValue",
+          },
+        });
 
-      console.log(token.id); // token to share
-      console.log(JSON.stringify(token)); // full response
+        console.log(token.id); // token to share
+        console.log(JSON.stringify(token)); // full response
+      }
     } catch (error) {
       if (error instanceof BasisTheoryValidationError) {
         // check error details

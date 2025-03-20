@@ -153,13 +153,14 @@ import {
   TextElement,
   useBasisTheory,
 } from "@basis-theory/react-elements";
+import type { TextElement as ITextElement } from "@basis-theory/web-elements/types"
 
 const ssnMask = [/\d/, /\d/, /\d/, "-", /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/];
 
 const MyForm = () => {
   const { bt } = useBasisTheory("<API_KEY>");
-  const fullNameRef = useRef(null);
-  const ssnRef = useRef(null);
+  const fullNameRef = useRef<ITextElement | null>(null);
+  const ssnRef = useRef<ITextElement | null>(null);
 
   const submit = async () => {
     const fullName = fullNameRef.current;
@@ -215,7 +216,7 @@ const expirationDateRef = useRef(null);
 
 expirationDateRef.current.month(); // Error TS2551: property doesn't exist
 
-const expirationDateRef = useRef < CardExpirationDateElement > null;
+const expirationDateRef = useRef <CardExpirationDateElement | null> null;
 
 expirationDateRef.current.month(); // no error
 ```
