@@ -119,6 +119,11 @@ const sidebars = {
           id: "guides/apple-pay/local-developer",
           label: "Development",
         },
+        {
+          type: "doc",
+          id: "guides/apple-pay/go-live",
+          label: "Go Live",
+        },
       ],
     },
     {
