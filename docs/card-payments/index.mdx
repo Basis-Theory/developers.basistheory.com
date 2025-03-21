@@ -1,0 +1,124 @@
+---
+title: Card Payments
+hide_title: true
+hide_table_of_contents: true
+---
+
+import { Intro } from "@site/src/components/shared/Intro";
+
+<Intro
+  title="Card Payments"
+  caption="Learn how to introduce Basis Theory into your Payments Stack"
+  img={{
+    light: "/img/guides/cards/logo.svg",
+    dark: "/img/guides/cards/logo-dark.svg",
+  }}
+/>
+
+Adopting Basis Theory
+
+```mermaid
+flowchart LR
+  id1[Step 1<br>Agnostic Acceptance]
+  id2[Step 2<br>Routing & Processing]
+  id3[Step 3<br>Consolidate]
+  id4[Step 4<br>Optimize]
+
+  id1 --> id2 --> id3 --> id4
+```
+
+
+### Step 1 - Agnostic Acceptance
+
+One Form. Any Gateway. Maximum Conversions.
+
+Why
+- PCI compliance
+- No more toggling or switching between many PSP frontends / replace Processor iframed components
+- Agnostic 3DS
+- 100% uptime iframe guarantee
+  - Fallback writing
+
+How
+- Replace Processor iFrames
+- Authenticate with 3DS
+- Use your forms
+- Receive via API
+- Recollect CVC
+
+### Step 2 - Route to your existing processor
+
+How
+- Verify a Card (and save)
+  - Pick a PSP for verification ($0 auth)
+- Charge a Card (and save)
+  - Add a section about charging existing tokens
+
+### Step 3 - Consolidate
+- Bring all cards under the same roof
+
+How
+- Migration
+- Detokenization APIs
+- POS
+
+### Step 4 - Optimize
+- Add new PSP
+- Add routing logic
+  - Region
+  - funding type
+  - Retries
+
+
+[//]: # (- Store the last four digits and expiration date to later display to the customer)
+
+[//]: # (- Use cheaper debit rails to process debit cards)
+
+[//]: # (- Leverage localized payment processors for cards of a specific region)
+
+[//]: # (- Prevent accepting cards from high-risk issuers with higher chargeback or fraud rates)
+
+
+
+---
+
+Pick a checkout flow:
+
+### Direct Card Payments
+1. Accept Cards
+   - (Optional) Authenticate with 3DS
+2. Charge a new Card
+   - Produces PSP token, NT TX ID (store them)
+3. (Optional) Save a Card
+
+### Verify and Charge cards
+1. Accept Cards
+   - (Optional) Authenticate with 3DS
+2. Verify a Card
+   - Produces PSP token, NT TX ID (store them)
+3. Save a Card
+   - Produces BT Token ID (store it)
+4. Charge a Card
+   - Using PSP Token
+   - Using BT Token + NT TX ID (fallback)
+
+### Pay with Saved Cards
+1. Using a PSP Token (if you have one)
+2. Using a BT Token
+   - Recollect CVC (if needed)
+   - Charge token
+
+---
+
+Match your stack:
+
+### Frontend guides
+1. Accept Cards
+2. Authenticate with 3DS
+3. Recollect CVC
+
+### Backend guides
+1. Verify a Card
+2. Charge a new Card
+3. Save a Card
+4. Charge a saved Card

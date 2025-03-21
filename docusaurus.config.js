@@ -119,7 +119,7 @@ const config = {
             clusterBkg: "var(--bt-mermaid-cluster-bkg)",
             clusterBorder: "var(--bt-mermaid-cluster-border)",
             titleColor: "var(--bt-mermaid-title-color)",
-            edgeLabelBackground: "var(--bt-mermaid-edge-label-background)",
+            // edgeLabelBackground: "var(--bt-mermaid-edge-label-background)",
             nodeTextColor: "var(--bt-mermaid-node-text-color)",
           },
         },
@@ -270,6 +270,7 @@ const config = {
           { from: "/docs/api/orchestration/stripe-forward", to: "/docs/api/connections/stripe-forward" },
           { from: "/docs/api/orchestration/google-pay", to: "/docs/api/connections/google-pay" }, // do not ever remove this, Google has this link embedded in their docs - https://developers.google.com/pay/api/#participating-processors
           { from: "/docs/guides/share/process-card-payments-connections", to: "/docs/guides/share/process-card-payments" },
+          { from: "/docs/guides/collect/receive-cards", to: "/docs/card-payments/receive-cards-api" },
         ],
       },
     ],
