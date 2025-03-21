@@ -1,3 +1,52 @@
+## [1.223.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.2...v1.223.3) (2025-03-20)
+
+
+### Bug Fixes
+
+* update react code samples ([#526](https://github.com/Basis-Theory/developers.basistheory.com/issues/526)) ([8cfc88b](https://github.com/Basis-Theory/developers.basistheory.com/commit/8cfc88b92ae8965d20f2870090e9d0d2e0edf0bb))
+
+## [1.223.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.1...v1.223.2) (2025-03-19)
+
+
+### Bug Fixes
+
+* realign our batch account updater supported features ([#524](https://github.com/Basis-Theory/developers.basistheory.com/issues/524)) ([d06811b](https://github.com/Basis-Theory/developers.basistheory.com/commit/d06811b5dbf8c11940a1119d035a8c3df0276918))
+
+## [1.223.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.0...v1.223.1) (2025-03-17)
+
+
+### Bug Fixes
+
+* add cvcLength to cvc component ([#523](https://github.com/Basis-Theory/developers.basistheory.com/issues/523)) ([c8fe8d9](https://github.com/Basis-Theory/developers.basistheory.com/commit/c8fe8d95fbc8559519bbf7d19fe368dfbb0e7918))
+
+# [1.223.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.222.0...v1.223.0) (2025-03-17)
+
+
+### Features
+
+* add sri to github card and web elements cdn example ([#521](https://github.com/Basis-Theory/developers.basistheory.com/issues/521)) ([c783754](https://github.com/Basis-Theory/developers.basistheory.com/commit/c78375415e0b0cf0655f8937e4e5e23a19cc37da))
+
+# [1.222.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.221.0...v1.222.0) (2025-03-17)
+
+
+### Features
+
+* adding better descriptions for 3ds auth codes ([#522](https://github.com/Basis-Theory/developers.basistheory.com/issues/522)) ([7c4c41e](https://github.com/Basis-Theory/developers.basistheory.com/commit/7c4c41e6c25e0699caf8344427b072dfe95230c2))
+
+# [1.221.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.220.0...v1.221.0) (2025-03-14)
+
+
+### Features
+
+* removing v1 list and search endpoints ([#520](https://github.com/Basis-Theory/developers.basistheory.com/issues/520)) ([7b6c974](https://github.com/Basis-Theory/developers.basistheory.com/commit/7b6c97476a0ba2616c29d504fc3336d11accc975))
+
+# [1.220.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.219.0...v1.220.0) (2025-03-13)
+
+
+### Features
+
+* update react-native-elements docs ([#519](https://github.com/Basis-Theory/developers.basistheory.com/issues/519)) ([bc7701b](https://github.com/Basis-Theory/developers.basistheory.com/commit/bc7701b928d5581ecefef6659d1649882f905031))
+
 # [1.219.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.218.0...v1.219.0) (2025-03-07)
 
 
