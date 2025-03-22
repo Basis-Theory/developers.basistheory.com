@@ -329,7 +329,13 @@ const config = {
                 .split('/')
                 .filter(Boolean);
 
-              const outputDir = path.join(outDir, 'docs', ...relativeOutputPath);
+              // If the file is named index.mdx, don't include 'index' in the output path
+              const isIndexFile = relativeOutputPath[relativeOutputPath.length - 1] === 'index';
+              const outputPath = isIndexFile
+                ? relativeOutputPath.slice(0, -1)
+                : relativeOutputPath;
+
+              const outputDir = path.join(outDir, 'docs', ...outputPath);
               const mdPath = path.join(outputDir, 'content.md');
 
               // Ensure directory exists
