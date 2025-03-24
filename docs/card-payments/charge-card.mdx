@@ -5,14 +5,12 @@ description: This guide walks you through the process of charging a card against
 toc_max_heading_level: 3
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
 import { Intro } from "@site/src/components/shared/Intro";
 import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
-import { Alert } from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import FirstChargeSection from "./sections/_first-charge-section.mdx";
+import SubsequentChargesSection from "./sections/_subsequent-charges-section.mdx";
 import SaveCardSection from "./sections/_save-card-section.mdx";
-import TokenIntentSample from "./sections/_token-intent-sample.mdx";
 
 <Intro
   title="Charge a Card"
@@ -50,83 +48,8 @@ If you are not yet collecting your customers' cards with Basis Theory, here are 
 
 <ApplicationSection type="private" permissions={["token:use", "token:create"]} />
 
-## First Charge
-
-Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge." Understanding these variations allows merchants to optimize the process for efficiency and reliability, ensuring seamless processing in multi-psp scenarios and consistent fund settlement.
-
-Given you have previously created a Token Intent:
-
-<TokenIntentSample />
-
-Here is how you can leverage the [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy), a tool that transparently performs detokenization, to share the sensitive cardholder data to the Payments Processor or Acquirer API.
-
-<Tabs className="bt-tabs" queryString="processor">
-  <TabItem value="stripe" label="Stripe">
-
-In Stripe, you can charge a card by creating a [Payment Intent](https://docs.stripe.com/payments/payment-intents).
-
-```shell showLineNumbers title="Create a Payment Intent"
-curl 'https://api.basistheory.com/proxy' \
--X 'POST' \
-// highlight-start
--H 'BT-API-KEY: <PRIVATE_API_KEY>' \
--H 'BT-PROXY-URL: https://api.stripe.com/v1/payment_intents' \
--H 'Authorization: Bearer sk_test_51KMGNYGuvJF9SIWEW0y4rKcaQwLVLck2rGB8UEPHzSp1utx7gXKAfZ3DVgjMfAuvBIT42pQhg0sIx2PepEJkXv9g00yIrUwhI4' \
-// highlight-end
--H 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'amount=1000' \
---data-urlencode 'currency=USD' \
---data-urlencode 'customer=cus_RTEOvM5dSx9RCS' \
---data-urlencode 'confirm=true' \
---data-urlencode 'payment_method_data[type]=card' \
-// highlight-start
---data-urlencode 'payment_method_data[card][number]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}' \
---data-urlencode 'payment_method_data[card][exp_month]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" |  card_exp: "MM" }}' \
---data-urlencode 'payment_method_data[card][exp_year]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" | card_exp: "YYYY" }}' \
---data-urlencode 'payment_method_data[card][cvc]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
-// highlight-end
-```
-
-```json showLineNumbers title="Payment Intent Response"
-{
-  // highlight-next-line
-  "id": "pi_3MtwBwLkdIwHu7ix28a3tqPa",
-  "status": "succeeded",
-  "object": "payment_intent",
-  // highlight-next-line
-  "payment_method": "pm_1QaKJmG9VRQ2700S5JcsJv4Q",
-  "latest_charge": {
-    "payment_method_details": {
-      "card": {
-        // highlight-next-line
-        "network_transaction_id": "8723dfab9c4e56a1b8cd0291ef67ac43"
-        ...
-      }
-      ...
-    }
-    ...
-  }
-  ...
-}
-```
-  </TabItem>
-</Tabs>
+<FirstChargeSection />
 
 <SaveCardSection />
 
-## Subsequent Charges
-
-Once you've securely saved a card in the vault and generated a persistent token, you are ready to perform subsequent charges. Whether you have returning customers purchasing with a saved card, or you are performing recurring billing for subscriptions, the token allows you to process payments seamlessly without storing sensitive card details directly in your system.
-
-<Alert>If your business or payment processor needs it due to risk preferences, <a href="/docs/card-payments/recollect-cvc">click here</a> to find out how to recollect the CVC for a saved card.</Alert>
-
-
-### Using the PAN
-
-- why? go to a processor different from the one used in the first charge (at least the first time)
-
-### Using the PSP Token
-
-- why? not go through BT,
-- (automatic) processor payload optimization
-  - auto NTs, RTAU, NT TX ID
+<SubsequentChargesSection />
