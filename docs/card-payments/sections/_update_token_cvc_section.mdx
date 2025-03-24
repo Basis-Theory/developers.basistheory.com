@@ -1,12 +1,15 @@
-import { Alert } from "@site/src/components/shared/Alert";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
+import TokenSample from './_token-sample.mdx';
+
 ### Update the Token
 
-Now that you are securely capturing the cardholder data in your user-facing application(s), it is time to post it to your Basis Theory Tenant.
+Now we will invoke the [Update Token](https://developers.basistheory.com/docs/api/tokens#update-token) endpoint from the SDK, passing the `CardVerificationCode` Element in the payload. This will securely update the `card` token by transferring the value from the frontend Element to the Basis Theory API, where the data will be strongly encrypted and temporarily stored in a compliant environment.
 
-To do this, we will invoke the [Update Token](https://developers.basistheory.com/docs/api/tokens#update-token) endpoint from the SDK, passing the `CardVerificationCode` Element in the payload. This will securely update the `card` token by transferring the value from the frontend Element to the Basis Theory API, where the data will be strongly encrypted and temporarily stored in a compliant environment.
+Given you had previously saved a Token:
+
+<TokenSample />
 
 Add a submit function along with a button to trigger it:
 
@@ -19,7 +22,7 @@ Add a submit function along with a button to trigger it:
 <button id="submit">Submit</button>
 ```
 ```javascript showLineNumbers title=index.js
-import { BasisTheory } from '@basis-theory/basis-theory-js';
+import { BasisTheory } from '@basis-theory/web-elements';
 
 let bt;
 let cardNumberElement;
@@ -58,10 +61,10 @@ import {
   BasisTheoryProvider,
   CardVerificationCodeElement,
   useBasisTheory,
-} from '@basis-theory/basis-theory-react';
+} from '@basis-theory/react-elements';
 
 export default function App() {
-  const { bt } = useBasisTheory('<API_KEY>', { elements: true });
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
   // Ref to get access to the Element instance
   const cardVerificationRef = useRef(null);
 
@@ -106,12 +109,10 @@ Coming soon.
 import React, { useRef } from "react";
 import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import type { BTRef } from "@basis-theory/basis-theory-react-native";
-import { CardVerificationCodeElement, useBasisTheory } from "@basis-theory/basis-theory-react-native";
+import { CardVerificationCodeElement, useBasisTheory } from "@basis-theory/react-native-elements";
 
 const App = (): JSX.Element => {
-  // highlight-next-line
   const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
-
   const cardVerificationCodeRef = useRef<BTRef>(null);
 
   // highlight-start
@@ -167,4 +168,4 @@ export default App;
   </TabItem>
 </Tabs>
 
-The updated Token stores the `cvc` for 24 hours, allowing you to process the transaction.
+The updated Token stores the `cvc` for 24 hours, allowing you to process the new CIT.

@@ -62,8 +62,8 @@ const sidebars = {
         "card-payments/receive-cards-api",
         {
           type: "doc",
-          id: "card-payments/placeholder",
-          label: "Recollect CVC",
+          id: "card-payments/recollect-security-code",
+          label: "Recollect Security Code",
         },
         {
           type: "html",
