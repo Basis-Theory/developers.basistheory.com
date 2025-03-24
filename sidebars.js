@@ -58,13 +58,9 @@ const sidebars = {
             enterprise: true,
           },
         },
-        "card-payments/use-your-own-inputs",
+        "card-payments/recollect-security-code",
         "card-payments/receive-cards-api",
-        {
-          type: "doc",
-          id: "card-payments/recollect-security-code",
-          label: "Recollect Security Code",
-        },
+        "card-payments/use-your-own-inputs",
         {
           type: "html",
           value: "<hr />",
