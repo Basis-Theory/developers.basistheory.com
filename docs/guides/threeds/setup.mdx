@@ -1,0 +1,156 @@
+---
+toc_max_heading_level: 2
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# 3DS Setup
+
+This guide provides a comprehensive overview of how to enable **3D Secure (3DS)** authentication with Basis Theory.
+
+It covers everything from **sandbox access** for testing to **production setup** requirements, including the necessary merchant information that must be collected from your Payment Service Provider (PSP).
+Additionally, it provides a sample request template for contacting your PSP, and details expected implementation timelines.
+
+## Sandbox Access
+
+All Basis Theory Test Tenants can utilize the 3DS Sandbox; please request access in the [Basis Theory Portal](https://portal.basistheory.com/) using the steps below:
+
+1. Log in to the [Basis Theory Portal](https://portal.basistheory.com)
+2. Navigate to **Settings** in the sidebar, then click the [**Quotas**](https://portal.basistheory.com/settings?tab=quotas) tab.
+3. Locate the **3DS Enabled** row and click the pencil icon.
+4. Provide a brief description, then click **Request Change**.
+
+### Additional Settings
+
+No additional settings are required to utilize the Basis Theory 3DS Sandbox.
+Remember that this is a fully sandboxed environment that utilizes a mocked version of the 3DS production implementation, which will have its caveats as you implement and test end to end—we describe this process in the [implementation and testing guide](/docs/guides/threeds/implementation-cit).
+
+## Production Access
+
+Production access will be granted once a company has integrated with the Basis Theory Sandbox and provided the information below to set up its 3DS implementation. When you are ready, please request access to the [Basis Theory Portal](https://portal.basistheory.com/) using the steps below:
+
+1. Log in to the [Basis Theory  Portal](https://portal.basistheory.com)
+2. Navigate to **Settings** in the sidebar, then click the [**Quotas**](https://portal.basistheory.com/settings?tab=quotas) tab.
+3. Locate the **3DS Enabled** row and click the pencil icon.
+4. Provide a brief description, then click **Request Change**.
+
+## Required Information for 3DS in Production
+
+The sections below outline all of the information you'll need to collect from various sources to ensure you can successfully authenticate with our 3DS servers and process payments using the authentication values. We also provide a [sample message](#sample-request-for-your-psp) you can utilize to collect the information from your PSP.
+
+### Required Merchant Information From Your PSP
+
+To successfully process payments using **3D Secure (3DS)** authentication, you'll need to request specific values from your **Payment Service Provider (PSP)** (e.g., Processor, Acquirer, Gateway, etc.).
+These details identify your business to card networks, ensuring secure transactions and reducing fraud risk.
+
+<Alert type={Alerts.WARNING}>
+**Note:** Combinations of the following values may differ for various reasons for each implementation - depending on how your PSP sets up your processing regions, merchant accounts, etc. A few common situations are:
+
+- A merchant may have a MID and BIN per network and/or currency
+- A merchant may have a single MID with a BIN per network and/or currency
+- A merchant may have a combination of one-to-one and one-to-many MID-BIN relationships
+</Alert>
+
+| Value | Description |
+| --- | --- |
+| **Merchant Id (MID)** | A unique identifier assigned by your PSP to identify your merchant account. |
+| **Acquirer BIN** | Unique numeric identifier assigned to the PSP by each card network/brand. |
+| **Merchant Name** | The official business name associated with your PSP merchant account. |
+| **Merchant URL** | Your business official website URL. |
+| **Merchant Category Code (MCC)** | A four-digit number assigned by your PSP indicating your type of business. |
+| **Merchant Country Code** | Numeric code representing merchant's country location (ISO 3166-1 standard). |
+
+### Additional Values for American Express, Discover, or Cartes Bancaires
+
+Some card brands require additional specific values to process transactions using 3D Secure (3DS) successfully; please collect the below information for any additional brand you process:
+
+#### American Express (AMEX)
+
+American Express mandates a **3DS Requestor Type**. Most merchants fit into the **`MER`** category; if unsure, [please contact your PSP](#sample-request-for-your-psp) or AMEX directly to ensure you have the correct value. See other commonly used types below:
+
+| Requestor Type | Title | Description |
+| --- | --- | --- |
+| `MER` | General Merchant | All merchants that do not fit any of the other types. In most cases, merchants fit in this category. |
+| `AGG` | Aggregator | A Merchant that accepts cards on behalf of third parties. |
+| `OTA` | Online Travel Agency | Merchants in the travel or hospitality sector. |
+| `OPT` | OptBlue Seller | Merchants enrolled in AMEX OptBlue. |
+
+##### Additional American Express Requestor Types
+If you feel like your merchant does not fit any of the requestor types above, expand below to see additional values.
+
+| Requestor Type | Title | Descriptions |
+| --- | --- | --- |
+| `JCB` | JCB-Acquired Merchant | Merchants that use JCB as the acquirer. |
+| `WAL` | Digital Wallet | Specific to digital wallets like Google/Apple Pay. |
+
+#### Cartes Bancaires
+
+Cartes Bancaires, a French domestic card network, requires the following:
+
+| Value | Description |
+| --- | --- |
+| SIRET Number | 14-digit code that identifies a business establishment in France. This value is typically already known internally by businesses accepting Cartes Bancaires, if you are unsure of this value reach out to your PSP to verify. |
+
+#### Discover
+
+Discover cards, predominantly issued by U.S. banks, rarely require Strong Customer Authentication (SCA).
+If you need support for Discover 3DS authentication, please reach out via <a href="mailto:support@basistheory.com">support@basistheory.com</a>.
+
+## Sample Request for your PSP
+
+### Who to Request
+
+The best approach is typically to send this information to your PSP's support channel and then forward it to your Account Representative, letting them know you’ve requested the information and want to ensure it ends up with the correct department.
+
+### Sample Message
+
+```richtext
+Hello <Processor Name> Support,
+
+We are in the process of utilizing Basis Theory as our 3D-Secure (3DS) provider and need to collect specific information from you to ensure a smooth setup.
+Could you please provide the following details associated with our merchant account(s)?
+
+Required Merchant Information:
+
+For each Network, please provide all of the following values our Account utilizes:
+  • Merchant ID (MID): Our unique identifier.
+  • Acquirer BIN: The numeric identifier assigned to you by each card network/brand.
+  • Merchant Name: The official business name you have on file for us.
+  • Merchant Category Code (MCC): Our four-digit business type classification.
+  • Merchant Country Code: The numeric code representing our country (ISO 3166-1 standard).
+
+Additionally, if we process transactions with American Express or Cartes Bancaires, we need some extra details:
+
+American Express (if applicable)
+ • 3DS Requestor Type: We believe we fall under the MER (General Merchant) category, but could you confirm? If not, please advise which category best fits our business.
+
+Cartes Bancaires (if applicable)
+ • SIRET Number: Could you confirm our registered number?
+
+Thank you for your assistance. We appreciate your help in getting this information to us as soon as possible.
+```
+
+## Expected Timelines for Implementing Basis Theory 3DS
+- **Activation:** Typically less than one business day.
+- **Implementation & Testing:** Varies by complexity, typically ranging from hours to days.
+- **Obtaining Merchant Info from PSP:** Depending on the PSP, this process can take several days to weeks. Please plan accordingly.
+
+## 3DS Setup FAQs
+
+### What versions of 3DS does Basis Theory support?
+
+Basis Theory supports 3DS v2.20 and 3DS v2.1.0
+
+### What card brands/networks can be used with Basis Theory 3DS?
+
+Visa, Mastercard/Maestro, American Express, Discover, JCB, UnionPay, Cartes Bancaires
+
+### I have multiple PSPs. Will I need the MID and Acquirer BINs for each PSP and card networks they support?
+
+Officially, yes. However, in practice, many PSPs accept an authentication value (CAVV) even if the MID used during authentication does not precisely match the registered MID for that provider.
+Keep in mind that Issuers may reject the transaction or dispute liability shifts if the merchant information used in authentication does not match the details provided during authorization.
+
+### My PSP claims they don't have the required MID and Acquirer BIN values. What should I do?
+
+Every PSP must have these values registered to process transactions with card networks.
+Clarify to your PSP that you are performing external 3DS authentication and emphasize that they must provide you with these details.

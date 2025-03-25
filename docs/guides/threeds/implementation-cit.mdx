@@ -1,0 +1,738 @@
+---
+toc_max_heading_level: 2
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# 3DS Implementation & Testing (CIT)
+
+Customer Initiated Transactions (CIT) are 3DS transactions in which the customer is present during the transaction to complete any required external authorizations, such as a challenge.
+
+If you perform transactions without the customer present at checkout, these are classified as Merchant-Initiated Transactions (MIT). For guidance on implementing 3DS MIT, please refer to the implementation guide [here](/docs/guides/threeds/implementation-mit).
+
+## Summary
+
+This guide provides a comprehensive overview of determining when **3D Secure (3DS)** authentication is required, properly implementing the authentication flow, handling different challenge flows, and testing your implementation.
+
+<Alert type={Alerts.INFO}>
+TODO: FLOW CHART
+</Alert>
+
+## When is 3DS Required?
+
+It is important to keep in mind every business has its own bespoke needs when it comes to risk, fraud, and compliance, and all of these variables impact its decision on how to best implement the 3DS authentication pattern for your business.
+
+### Triggering 3DS Considerations
+
+Basis Theory simplifies this determination through the `authentication` field provided in the [card token details object](/docs/api/tokens/#card-details).
+When this value is `sca_required`, this suggests the underlying Issuer will require 3DS to be present during the transaction.
+
+While this could likely be true, there are a few considerations and scenarios to consider as you decide how to best optimize for triggering 3DS and optimizing Payment Authorization success:
+
+- **When a region always requires 3DS**:
+    - Consider always triggering 3DS when `card.authentication` is `sca_required` on your Token or Token Intent's card details object.
+- **When a region does not always require 3DS**:
+    - Consider triggering the 3DS flow after a declined payment authorization to retry the transaction quickly while the customer is still engaged.
+- **When receiving inconsistent payment authorization declines for Authentication data**:
+    - Consider triggering a frictionless only 3DS flow for these regions or BINs before Authorization. If a challenge is required, consider moving forward with your Authorization without the 3DS Authentication.
+    - Consider triggering the 3DS flow after a declined authorization to retry the transaction quickly while the customer is still engaged.
+
+### Regulatory Context
+
+<Alert type={Alerts.WARNING}>
+**Note:** Always verify regulatory requirements specific to your region and confirm with your PSP to ensure compliance and avoid declined transactions.
+ </Alert>
+
+Certain regions typically mandate 3DS authentication, notably:
+
+- European Economic Area (EEA)
+- United Kingdom (UK)
+- Other regions adopting Strong Customer Authentication (SCA): Australia, India, Brazil, and parts of Asia
+
+## Creating a CIT 3DS Session
+
+The 3D Secure process starts by gathering information from the customer's device to verify transaction validity.
+Creating a 3DS `session` with an existing `card` [Token](/docs/concepts/what-are-tokens) or [Token Intent](/docs/concepts/token-intents) will automatically collect device information and attach it to the session.
+
+The code examples below demonstrate how to create sessions using our available SDKs.
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="web" label="Web">
+    ```typescript showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="ios" label="iOS">
+    ```swift showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+    ```kotlin showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="react" label="React Native">
+    ```jsx showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+</Tabs>
+
+*3DS sessions that are not authenticated will expire according to the `token` or `token-intent`'s designated expiration date.
+If no expiration date is set, the session expires after **one hour**. Once a session is successfully authenticated, it remains active indefinitely.*
+
+## Authenticating a CIT 3DS Session
+
+Authenticating a 3DS session will initialize the process with the Issuing Banks to coordinate information and determine the level of authentication required for a specific session. This authentication process will either determine if a session will require a Challenge (2-factor authentication) or will be authenticated Frictionless (not requiring a challenge).
+
+It is the accepted practice that the more information you provide to a 3DS session, the higher the likelihood of a frictionless authentication.
+
+This section will outline all the **required** fields for your specific transaction type.
+
+### Making a 3DS Authentication Request
+
+This is the recommended minimum payload required for successful 3DS authentications in most scenarios:
+
+```json
+{
+  "authentication_category": "payment",
+  "authentication_type": "payment-transaction",
+  "challenge_preferrence": "no-challenge", // or challenge-requested if challenge is preferred (not guaranteed).
+  "merchant_info": {
+    "mid": "9876543210001",
+    "acquirer_bin": "000000999",
+    "name": "Example 3DS Merchant",
+    "country_code": "7922",
+    "category_code": "826",
+  },
+  "requestor_info": { // if accepting American Express, Discover or Cartes Bancaires
+    "amex_requestor_type": "MER", // if American Express is accepted
+    "cb_siret_number": "78467169500087", // If Cartes Bancaires is accepted
+  },
+  "purchase_info": {
+    "amount": "80000",
+    "currency": "826",
+    "exponent": "2",
+    "date": "20250101141010",
+    "transaction_type": "purchase",
+    "installment_count": "5", // only for installment transactions
+    "recurring_expiration": "20250131", // only for recurring transactions
+    "recurring_frequency": "30", // only for recurring transactions
+  },
+  "cardholder_info": {
+    "name": "John Doe",
+    "email": "john@example.com",
+  }
+}
+```
+
+And below is how you can use this object to initiate a 3DS session with the Basis Theory API and SDKs:
+
+<Tabs className="bt-tabs" queryString="backend">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    # TODO
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+    ```typescript showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    # TODO
+    ```
+  </TabItem>
+
+    <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+</Tabs>
+
+After authenticating, you'll receive an Authentication Response object, for which an example can be found below:
+
+```json
+// TODO: AUTHENTICATION RESPONSE
+```
+
+More information on how to handle the Authentication Response [can be found here.](/docs/guides/threeds/taking-threeds-live)
+
+Continue reading to learn more about each property in the Authentication Request object and how to best utilize them for your specific use case.
+
+### Authentication Request Property Details
+
+#### Authentication Category
+
+For the `authentication_category` field, there are two authentication categories available - **In most 3DS scenarios**, you'll select the `payment` category, indicating that a current or future financial transaction (including $0 authentications) is intended.
+
+| Authentication Category | Description |
+| --- | --- |
+| `payment` | Utilized when a future financial transaction is intended (including $0 authentications). |
+| `non-payment` | Utilized when the authentication is unrelated to an actual or anticipated charge. *If you believe you need to utilize this category, please reach out to confirm your use-case.* |
+
+#### Authentication Type
+
+For the `authentication_type` field, there are three most common types available. The below table outlines the common scenarios for most merchants and platforms:
+
+| Authentication Type | Description |
+| --- | --- |
+| `payment-transaction` | Used for a single exchange of goods (e.g. E-commerce checkout) |
+| `recurring-transaction` | Used for on-going subscriptions where the billed amount is always the same. (e.g. Monthly Subscription) |
+| `installment-transaction` | Used for breaking a single purchase into multiple installments. (e.g. Buy Now Pay Later) |
+
+*If your use case does not align with these options, please contact us at <a href="mailto:support@basistheory.com">support@basistheory.com</a> to discuss what you should select.*
+
+#### Merchant Information
+
+Merchant information allows the issuer and 3DS server to accurately identify your business during authentication. ***Correctly configuring these details is essential to prevent authentication failures.***
+
+Below is a detailed explanation of each merchant information field and guidelines for populating them.
+
+You should have received these values from your Payment Service Provider (PSP) during the [3DS Setup](/docs/guides/threeds/setup) process.
+If you have questions or haven't received the values for these fields, please contact your PSP and let them know that you need these details for each card network/brand you accept - [a request template can be found here](/docs/guides/threeds/setup#sample-request-for-your-psp).
+
+| Field | Description |
+| --- | --- |
+| `mid` | A unique identifier assigned by your PSP to identify your merchant account. |
+| `acquirer_bin` | Unique numeric identifier assigned to the PSP by each card network/brand. |
+| `name` | The official business name associated with your PSP merchant account. |
+| `country_code` | Numeric code representing merchant's country location (ISO 3166-1 standard). |
+| `category_code` | A four-digit number assigned by your PSP indicating your type of business. Also known as MCC. |
+| `url` | Business URL for the merchant. |
+
+<Alert type={Alerts.WARNING}>
+Merchant information often varies depending on the card network or brand. You must implement logic within your application to dynamically select the appropriate values based on the card network or brand used for each transaction.
+</Alert>
+
+##### Merchant Information Example Object
+```json
+"merchant_info": {
+  "mid": "9876543210001",
+  "acquirer_bin": "000000999",
+  "name": "Example 3DS Merchant",
+  "country_code": "7922",
+  "category_code": "826",
+  "url": "https://example.com",
+}
+```
+
+#### Requestor Information for AMEX, Discover, Cartes Bancaires
+
+American Express, Discover, and Cartes Bancaires (all supported by Basis Theory 3DS) require special 3DS Requestor information in addition to the standard [Merchant Information](#merchant-information).
+
+If you accept payments from these networks, you should have received the necessary 3DS Requestor Information from your Payment Service Provider (PSP), as outlined in our [3DS Setup Guide](/docs/guides/threeds/setup).
+
+If any details are missing or unclear, please contact your PSP directly, clearly communicating the specific data points required according to the setup guide - [a request template can be found here](/docs/guides/threeds/setup#sample-request-for-your-psp).
+
+##### Requestor Information for American Express (AMEX)
+
+| Field | Description |
+| --- | --- |
+| `amex_requestor_type` | Defines the merchant type according to American Express requirements. For most cases, we recommend using `MER`, which represents a general merchant. If your business operates as an aggregator, an online travel agency, or you're unsure whether `MER` applies to your scenario, refer to the [3DS Setup Guide](/docs/guides/threeds/setup) for alternative values and guidance. |
+
+##### Requestor Information for Cartes Bancaires
+
+| Field | Description |
+| --- | --- |
+| `cb_siret_number` | 14-digit code that identifies a business establishment in France. |
+
+##### Requestor Information for Discover
+
+Discover cards, predominantly issued by U.S. banks, rarely require Strong Customer Authentication (SCA).
+
+If you need support for Discover 3DS authentication, please reach out via <a href="mailto:support@basistheory.com">support@basistheory.com</a>.
+
+##### Requestor Information Example Object
+
+<Alert type={Alerts.INFO}>
+To simplify implementations - these requestor fields may be included in every request regardless of the brand. Basis Theory automatically handles these values internally, using only those relevant to the card network involved in each transaction.
+</Alert>
+
+```json
+"requestor_info": {
+  "amex_requestor_type": "MER", // if American Express is accepted
+  "cb_siret_number": "78467169500087", // If Cartes Bancaires is accepted, replace with your real SIRET number
+}
+```
+
+#### Purchase Information
+
+It is essential to provide accurate details about the transaction to ensure successful authentication; if you believe you do not need to provide these values, please reach out.
+
+The information below is recommended for all 3DS authentications regardless of the [Authentication Type](#authentication-type) selected.
+
+| Field | Description |
+| --- | --- |
+| `amount` | The purchase amount without any punctuation (i.e. 80000 for 800.00). |
+| `currency` | The purchase currency code in ISO 4127 standard. |
+| `exponent` | The minor units of currency as in the ISO 4127 standard. |
+| `date` | The purchase date in UTC timezone and `YYYYMMDDhhmmss` format. |
+| `transaction_type` | Specifies the type of transaction being authenticated. For most use cases, we recommend using `purchase`. If your transaction falls under special scenarios, such as check acceptance or other uncommon types, refer to our [API Reference](/docs/api/3ds/sessions#purchase-transaction-types) for additional values and their descriptions. |
+
+##### Recurring Purchase
+
+The following properties are required to be provided if your [Authentication Type](#authentication-type) is set to `recurring-transaction`
+
+<Alert type={Alerts.INFO}>
+Beyond the initial CIT authentication - Most recurring transactions or installments are exempt from 3DS authentication. However, the best practice is to verify with your PSP whether additional authentication exemptions or requirements apply to your recurring or installment transactions.
+</Alert>
+
+| Field | Description |
+| --- | --- |
+| `recurring_expiration` | Final recurring authorization date in **`YYYYMMDD`** format. |
+| `recurring_frequency` | Number of **days** between recurring charges. |
+
+##### Installment Purchase
+
+The following property is required to be provided if your [Authentication Type](#authentication-type) is set to `installment-transaction`
+
+<Alert type={Alerts.INFO}>
+Beyond the initial CIT authentication - Most recurring transactions or installments are exempt from 3DS authentication. However, the best practice is to verify with your PSP whether additional authentication exemptions or requirements apply to your recurring or installment transactions.
+</Alert>
+
+| Field | Description |
+| --- | --- |
+| `installment_count` | Total number of installments for installment payments. |
+
+##### Purchase Information Example Object
+
+```json
+"purchase_info": {
+  "amount": "80000",
+  "currency": "826",
+  "exponent": "2",
+  "date": "20250101141010"
+  "transaction_type": "purchase",
+
+  // only for installment transactions
+  "installment_count": "5",
+
+  // only for recurring transactions
+  "recurring_expiration": "20250131",
+  "recurring_frequency": "30",
+}
+```
+#### Cardholder Information
+
+Card networks strongly recommend including detailed cardholder information alongside transaction details to improve the likelihood of frictionless authentication.
+
+As a general rule, providing more comprehensive information increases the effectiveness of the 3DS authentication process.
+
+The fields below are, at a minimum, what most card networks **require**:
+
+| Field | Description |
+| --- | --- |
+| `name` | The full name of the cardholder full name. |
+| `email` | The email address on-file for the cardholder |
+
+##### Cardholder Information Example Object
+
+```json
+"cardholder_info": {
+  "name": "John Doe",
+  "email": "john@example.com",
+}
+```
+
+#### (Optional) Challenge Preference
+
+For the `challenge_preferrence` field, the two most common values are available to instruct the issuer of the authentication preference. The table below outlines the common scenarios for most merchants and platforms:
+
+<Alert type={Alerts.INFO}>
+**Note:** This preference is treated as a suggestion to the issuer and there is no guarantee it will be honored, as the final decision remains at the issuer's discretion.
+</Alert>
+
+| Challenge Preference | Description |
+| --- | --- |
+| `no-challenge` | Used when preference for a `frictionless` authentication, to minimize friction by avoiding authentication challenges. |
+| `challenge-requested` | Used when explicitly requiring a challenge for the transaction - typically used if you suspect fraud. |
+
+*To see more challenge preference options and related EMV codes, refer to our [API Reference](/docs/api/3ds/sessions#challenge-preferences).*
+
+### Authentication Response
+
+The authentication response contains everything you need to successfully validate a 3DS transaction or identify why it failed.
+
+See below a detailed table with descriptions for what each field means, and continue reading to understand different authentication scenarios that can happen with a 3DS transaction.
+
+| Field | Description |
+| --- | --- |
+| `session_id` | The id for the authenticated 3DS session |
+| **`threeds_version`** | The 3DS version (i.e. 2.2.0) used in the transaction |
+| **`token_id`** | The ID of the card token used in the 3DS transaction |
+| **`token_intent_id`** | The ID of the card token intent used in the 3DS transaction |
+| **`acs_transaction_id`** | The transaction ID from the 3DS Access Control Server (ACS) |
+| **`ds_transaction_id`** | The transaction ID from the 3DS Directory Server (DS) |
+| **`acs_reference_number`** | A unique identifier assigned to the DS by EMVCo |
+| **`ds_reference_number`** | A unique identifier assigned to the ACS by EMVCo |
+| **`authentication_value`** | The 3DS cryptogram value used to authorize the transaction. Also know as CAVV, AAV, AEVV, etc. |
+| **`authentication_status`** | The outcome of the 3DS authentication. See [Authentication Scenarios](#authentication-scenarios) |
+| **`authentication_status_code`** | EMVCo character code for the authentication status |
+| **`authentication_status_reason`** | Additional information about the authentication status if necessary. See [Failed Authentication](#failed-authentication). **Not provided on frictionless authentication** |
+| **`eci`** | Electronic Commerce Indicator (ECI) |
+| **`acs_challenge_mandated`** | Indicates whether regional mandates (e.g., PSD2) require a challenge to be performed |
+| **`authentication_challenge_type`** | The type of challenge authentication used (if challenge) |
+| **`acs_challenge_url`** | The URL to be used for the challenge |
+| **`challenge_preference`** | The selected [Challenge Preference](/docs/api/3ds/sessions#challenge-preferences) during authentication |
+| **`challenge_preference_code`** | EMVCo numeric code for the selected challenge preference |
+| **`challenge_attempts`** | The number of challenges attempted by the cardholder. **Not provided on frictionless authentication** |
+| **`challenge_cancel_reason`** | The reason why a challenge was cancelled. **Not provided on frictionless authentication** |
+| **`challenge_cancel_reason_code`** | EMVCo numeric code for the challenge cancel reason. **Not provided on frictionless authentication** |
+| **`cardholder_info`** | Unspecified information from the issuer to be displayed to the cardholder |
+| **`whitelist_status`** | Indicates if the cardholder whitelisted the merchant |
+| **`whitelist_status_source`** | Identifies the system that set the whitelist value |
+| **`message_extensions`** | Array of Message Extensions -  Data necessary to support requirements not defined in the standard 3DS format |
+
+#### Authentication Scenarios
+
+Below are how to handle the scenarios that could be returned from the Authentication step. Generally, this will fall into he following scenarios:
+
+| Authentication Scenarios | Statuses | Description |
+| --- | --- | --- |
+| [Frictionless](#frictionless-authentication) | `success`, `attempted` | The authentication was approved by the issuer and the transaction may proceed. |
+| [Challenge](#challenge-authentication) | `challenge` | The issuer is requesting additional authentication before allowing the transaction to proceed. |
+| [Decoupled Challenge](#decoupled-challenge-authentication) | `decoupled_challenge` | The issuer requires additional authentication to be performed outside of the transaction scope. |
+| [3DS Failed](#failed-authentication) | `failed`, `unavailable`, `rejected` | The 3DS authentication was not approved. Reason is provided in `authentication_status_reason` property.  |
+
+##### Frictionless Authentication
+
+If the `authentication_status` indicates `success`, your authentication has been approved, and the response includes the authentication [values needed to send to your Processor](/docs/guides/threeds/taking-threeds-live#using-3ds-results-with-popular-psps).
+
+***Note:** The `attempted` status also produces a frictionless authentication. However, in this case, it indicates the ACS (Access Control Server) encountered an issue authenticating the transaction. From the merchant’s perspective, it works like a `success` (no further authentication steps are required), although liability considerations may differ.*
+
+##### Challenge Authentication
+
+If the `authentication_status` indicates a `challenge`, the cardholder must complete an additional verification step—a “Challenge”—before the 3DS authentication can be finalized and the final authentication value (CAVV) provided.
+
+Challenges can vary significantly, often involving methods such as entering a one-time password (OTP) or authorizing the transaction via a banking app.
+
+The presentation and completion method of the challenge are determined entirely by the issuer, and the merchant has no control over this process. See below how to use the Basis Theory 3DS SDKs to successfully start a Challenge.
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="web" label="Web">
+    ```typescript showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="ios" label="iOS">
+    ```swift showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+    ```kotlin showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="react" label="React Native">
+    ```jsx showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+</Tabs>
+
+###### Verifying Challenge Completion
+
+This section refers strictly to the customer's having finished the Challenge process, not to the success or failure of the authentication. To verify the challenge's outcome (success or failure), refer to the [Getting a Challenge Result](#getting-a-challenge-result) section.
+
+The most common approach to receiving a Challenge Completion is via the front-end - awaiting the resolution of the SDK’s challenge method or promise.
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="web" label="Web">
+    ```typescript showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="ios" label="iOS">
+    ```swift showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+    ```kotlin showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="react" label="React Native">
+    ```jsx showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+</Tabs>
+
+Alternatively, you can use our **Webhooks** solution. Subscribing a webhook to the  `3ds.session.challenge-completed` event will trigger when a challenge completion has finished and contain the `id` to enable [Getting a Challenge Result](#getting-a-challenge-result).
+
+*Refer to our [API documentation](/docs/api/webhooks/) for details on setting up Webhooks and additional event properties.*
+
+###### Getting a Challenge Result
+
+Once a challenge is completed, you must retrieve the result directly from the API. This step is essential to determining the challenge's outcome (success or failure) and obtaining the necessary authentication values (e.g., CAVV, ECI) for successfully authenticated transactions.
+
+<Tabs className="bt-tabs" queryString="backend">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    # TODO
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+    ```typescript showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    # TODO
+    ```
+  </TabItem>
+
+    <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    // TODO
+    ```
+  </TabItem>
+</Tabs>
+
+##### Decoupled Challenge Authentication
+
+**Decoupled Challenge Authentication** is a 3DS method that separates cardholder authentication from the payment flow, allowing the issuer to handle authentication without direct cardholder interaction at the time of the transaction.
+
+This approach is more common in **Merchant-Initiated Transactions (MIT)** but possible in cases where the cardholder's device cannot support a typical challenge flow during a CIT.
+
+Since this authentication occurs outside the immediate transaction flow, you must subscribe to the `3ds.session.decoupled-challenge-notification` event via [Webhooks](/docs/api/webhooks/api.mdx) to confirm when the authentication is complete.
+
+##### Failed Authentication
+
+A 3DS authentication may fail for various reasons, ranging from technical issues to rejections triggered by fraud or risk concerns. When you encounter a `failed`, `unavailable`, or `rejected` `authentication_status`, refer to the `authentication_status_reason` property to understand why the authentication did not succeed.
+
+Depending on the reason, you can either:
+
+- Retry the 3DS authentication using the same information.
+- Adjust the authentication request (e.g., providing [more details](/docs/guides/threeds/taking-threeds-live#additional-information)) before retrying.
+
+The following table outlines possible `authentication_status_reason` values and recommended actions.
+
+| Authentication Status Reason| Recommended Action |
+| --- | --- |
+| `low-confidence`<br/>`medium-confidence`<br/>`high-confidence`<br/>`very-high-confidence`<br/>`authentication-attempted-but-not-performed`<br/>`identity-check-insights` | The authentication was successful even though it failed, use authentication results returned with payment. |
+| `invalid-transaction`<br/>`transaction-not-permitted`<br/>`cardholder-not-enrolled`<br/>`non-payment-transaction-not-support`<br/>`3ri-not-supported`<br/>`vmid-not-eligible-for-requested-program`<br/>`protocol-version-not-supported-by-acs` | Attempt payment without 3DS authentication. |
+| `card-authentication-failed`<br/>`too-many-authentication-attempts`<br/>`card-expired`<br/>`invalid-card-number`<br/>`no-card-record`<br/>`security-failure`<br/>`stolen-card`<br/>`suspected-fraud` | Inform consumer to use a different card or double-check details. |
+| `unknown-device`<br/>`unsupported-device` | Inform consumer to use a different device.
+| `timeout-at-acs`<br/>`max-challenges-exceeded`<br/>`acs-technical-issue`<br/>`decoupled-authentication-required`<br/>`decoupled-authentication-timeout`<br/>`insufficient-decoupled-authentication-time`<br/>`error-connecting-to-acs`<br/>`acs-timed-out`<br/>`invalid-response-from-acs`<br/>`system-error-response-from-acs`<br/>`internal-error-while-generating-cavv`<br/>`device-3ri-not-routed-to-smart-authentication-stand-in`<br/>`transaction-excluded-from-attempts-processing` | Retry authentication. |
+
+*Refer to our [API documentation](/docs/api/3ds/sessions#authentication-status-reason) for details on what each reason code means specifically.*
+
+## Testing Basis Theory 3DS
+
+Basis Theory **Test** Tenants automatically connect to the sandbox environment for testing your 3DS implementation.
+This environment allows you to simulate the 3DS authentication flow without real-world impacts safely. To utilize 3DS in your `Test` Tenant, ensure 3DS has been enabled in your Tenant Quotas.
+
+To guarantee a predictable and deterministic pattern for both automated and manual testing, a set of Test Cards exists to simulate different Authentication outcomes, helping validate various scenarios effectively.
+
+### Test Cards
+Below is a list of Luhn-valid test cards that can be used to simulate different authentication scenarios in the sandbox environment.
+These cards are not real and will not work for testing in production environments.
+
+| Card Number | Card Brand | Testing Scenario |
+| --- | --- | --- |
+| **`5204247750001471`** | MASTERCARD | Successful Frictionless Authentication |
+| **`6011601160116011`** | DISCOVER | Successful Frictionless Authentication |
+| **`340000000004001`** | AMEX | Successful Frictionless Authentication |
+| **`4000020000000000`** | VISA | Successful Challenge Authentication |
+| **`370000000000002`** | AMEX | Successful Challenge Authentication |
+| **`3566002020360505`** | JCB | Successful Challenge Authentication |
+| **`3566006663297692`** | JCB | Successful Challenge Authentication |
+| **`4005562231212123`** | VISA | Successful Challenge Authentication - Method not Required |
+| **`4761369980320253`** | VISA | Successful Mandated Challenge Authentication |
+| **`5200000000001104`** | MASTERCARD | Successful Mandated Challenge Authentication |
+| **`4000000000000341`** | VISA | Successful Out-of-Band Challenge Authentication |
+| **`4005571701111111`** | VISA | Attempted Challenge Authentication |
+| **`4111111111111111`** | VISA | Authentication Attempted |
+| **`5424180011113336`** | MASTERCARD | Authentication Attempted |
+| **`4264281511112228`** | VISA | Authentication Failed |
+| **`5424180000000171`** | MASTERCARD | Authentication Failed |
+| **`5405001111111165`** | MASTERCARD | Authentication Unavailable |
+| **`5405001111111116`** | MASTERCARD | Authentication Rejected |
+| **`4055011111111111`** | VISA | Failed Challenge Authentication |
+| **`5427660064241339`** | MASTERCARD | Failed Challenge Authentication |
+| **`6011361011110004`** | DISCOVER | Failed Out of Band Challenge Authentication |
+| **`6011361000008888`** | DISCOVER | Unavailable Challenge Authentication |
+| **`6011361000001115`** | DISCOVER | Rejected Challenge Authentication |
+| **`4264281500003339`** | VISA | 3DS Directory Server Error |
+| **`5424180011110001`** | MASTERCARD | 3DS Directory Server Error |
+| **`4264281500001119`** | VISA | Internal 3DS Server Error |
+
+## 3DS Implementation FAQs
+
+### What is a Basis Theory 3DS Session?
+
+A Basis Theory **3DS Session** represents the lifecycle of a 3DS authentication process.
+
+It stores transaction details and dynamically captures data as each step of the authentication flow is completed, providing a complete record of the transaction's 3DS authentication journey.
+
+### Can I create a CIT 3DS Session without using Basis Theory SDKs?
+
+For native mobile applications (iOS and Android), you must use Basis Theory's SDK due to specific device data collection and security requirements.
+
+For Web or React Native applications, creating a 3DS session manually via the API is technically possible but **not recommended**, as it involves manually managing device/browser data capture and handling the Method Request.
+
+If you prefer to implement this, refer to our [API reference on session creation](/docs/api/3ds/sessions#create-a-customer-session).
+
+### How long is a 3DS Session kept in the Basis Theory vault?
+
+When a 3DS session is created, its expiration date inherits that of the `token` or `token-intent` used. The session defaults to a one-hour expiration if no expiration date is present.
+
+However, once the session is authenticated, it no longer expires and remains stored indefinitely—provided your tenant remains active.
+
+### How can I retrieve a 3DS Session to see its details?
+
+Use the [**Get Session**](/docs/api/3ds/sessions#get-a-session) endpoint, ensuring you include a private application key with the `3ds:session:read` permission.
+
+### Are there limits on the number of 3DS sessions I can create?
+
+No. There are currently no restrictions on how many 3DS sessions you can create for the same `token`, `token-intent` or in general.
+
+You're free to create as many as you need for testing or operational purposes.
+
+### What authentication_category should I use in most authentication scenarios?
+
+In the majority of cases, including both current or future charges, set the `authentication_category` to `payment`.
+
+### What authentication_type should I use in most authentication scenarios?
+
+For most single-purchase or one-time payment scenarios, use the `purchase-transaction`.
+
+For recurring transactions where the same amount is charged each month, use `recurring-transaction`.
+
+For installment transactions where a product is broken into multiple payments, use `installment-transaction`
+
+### What settings do I use if I only do a $0 Authorization?
+
+Yes, when doing pre-authorizations, that signifies the intent to charge - you should use `payment` as the `authentication_category` and `purchase` as the `authentication_type`.
+
+### How do I find my Merchant Information?
+
+Your Payment Service Provider (PSP) is responsible for providing these details.
+
+Refer to our [Setup Guide](/docs/guides/threeds/setup) for specific instructions on communicating your requirements and ensuring your PSP gives you the necessary merchant data.
+
+### Can I store my Merchant Information with Basis Theory so I don't have to include it in every authentication request?
+
+At the moment, you must provide this information with each request. However, Basis Theory is actively developing a solution that will allow you to store these values and automatically populate them on future 3DS requests.
+
+### I support AMEX, what value should I use as the requestor_info.amex_requestor_type?
+
+If you are a merchant or are processing for a Merchant, you will usually set `requestor_info.amex_requestor_type` to `MER`.
+
+If your organization fits a different category (e.g., aggregator, online travel agency), refer to the available AMEX requestor types in our [Setup Guide](/docs/guides/threeds/setup) or consult your PSP.
+
+### How does a recurring or installment transaction work? Do I need to repeat 3DS authentication for each additional charge?
+
+When processing recurring or installment transactions using 3DS, we recommend performing an initial Cardholder-Initiated Transaction (CIT) authentication, ensuring you include the appropriate recurring or installment details.
+
+Typically, subsequent recurring or installment payments do not require additional 3DS authentications. However, it's best practice to confirm with your PSP if they have additional requirements or guidelines.
+
+If your PSP indicates that additional authentications are needed for subsequent payments, you can reuse the authentication value from the initial CIT authentication or perform a new 3DS authentication while including the prior authentication information.
+
+This approach helps ensure frictionless authentications for ongoing payments.
+
+### What information about the cardholder do I need to provide?
+
+Most card networks require, at a minimum, the cardholder's `name` and `email` address.
+
+Providing additional details (such as billing address or phone number) can help improve authentication success rates, especially if you experience lower-than-expected approval rates.
+
+Refer to the [Taking 3DS Live Guide](/docs/guides/threeds/taking-threeds-live) for further recommendations.
+
+### Will my set Challenge Preference always be respected by the issuer?
+
+No. The `challenge_preference` you set is only a suggestion. The issuer decides whether to prompt a challenge based on its risk assessment and compliance requirements.
+
+### What is a frictionless 3DS authentication?
+
+A frictionless 3DS authentication is a successful authentication where no challenge was required.
+
+### How can I verify a non-frictionless challenge was completed?
+
+You can either wait for the SDKs challenge methods promises to be completed or use the `3ds.session.challenge-completed` [webhook](/docs/api/webhooks/eventdata#challenge-completed).
+
+### Is it possible to detect when a user cancels a challenge in real time?
+
+No. To confirm that a user has canceled a challenge, you must retrieve the challenge result via the [Get a Challenge Result](#getting-a-challenge-result) endpoint.
+
+The response will include a `challenge_cancel_reason`, indicating that the user explicitly canceled the challenge.
+
+### How can I retrieve the authentication values of a completed challenge?
+
+You should use the [Get Challenge Result endpoint](#getting-a-challenge-result) to get the results of a challenge.
+
+### Is it possible for CITs to have decoupled challenges?
+
+Yes. Although decoupled challenges are more commonly used in Merchant-Initiated Transactions (MITs), they can occur in Customer-Initiated Transactions (CITs) as well—particularly if the cardholder's device doesn't support the standard challenge flow.
+
+### Is it possible to style the way a challenge window looks?
+
+The issuer or acquirer fully controls the design and layout of the challenge window (e.g., fonts and colors).
+
+However, Basis Theory allows you to customize the size and placement of the challenge window in your application.
+
+Refer to the [SDK documentation](/docs/sdks/) for platform-specific instructions.
+
+### Does Basis Theory provide a way to test a 3DS implementation?
+
+Yes, 3DS authentications from a `Test` Tenant will use our 3DS Sandbox environment. For more details, refer to the [Testing](#testing-basis-theory-3ds) session in this guide.
+
+### Does Basis Theory provide test cards for use in the testing environment?
+
+Yes, refer to the [Test Cards](#test-cards) session in this guide.
+
+### Why do I see a 'ACS browser fingerprinting FAILED!' message in the browser console when creating a session in the test environment?
+
+That message can be safely ignored as it only exists for internal test scenarios
+
+### Does Basis Theory provide test cards for use in a **production** environment?
+
+No. You must use your real cards or request production-ready test cards from your PSP.
+
+Basis Theory does not support test scenarios in production; any card used in a production tenant will undergo a live 3DS authentication with real data.
+
+### Can I test a 3DS implementation End-to-End(E2E) between Basis Theory and my PSP?
+
+There are a few options for how to test implementations in `Test` and `Production` Tenants.
+
+For `Test` Tenants: The nature of **standalone 3DS** typically prevents fully end-to-end payment tests in a sandbox environment because Basis Theory and the PSP each have separate test data sets.
+
+- **To test 3DS scenarios,** Use Basis Theory's 3DS [Test Cards](#test-cards).
+- **To test the PSP authorization with 3DS data:** Follow your PSP's testing guidelines. This often involves using their specific test cards and dummy 3DS values.
+
+For `Production` Tenants: You can utilize your real-life cards to test the implementation fully end to end with Basis Theory and all of your PSPs.

@@ -87,6 +87,47 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "3D Secure",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/threeds.svg",
+          dark: "/img/sidebar/dark/threeds.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/threeds/overview",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "guides/threeds/overview",
+          label: "Overview",
+        },
+        {
+          type: "doc",
+          id: "guides/threeds/setup",
+          label: "3DS Setup",
+        },
+        {
+          type: "doc",
+          id: "guides/threeds/implementation-cit",
+          label: "3DS Implementation (CIT)",
+        },
+        {
+          type: "doc",
+          id: "guides/threeds/implementation-mit",
+          label: "3DS Implementation (MIT)",
+        },
+        {
+          type: "doc",
+          id: "guides/threeds/taking-threeds-live",
+          label: "Taking 3DS Live"
+        }
+      ],
+    },
+    {
+      type: "category",
       label: "Apple Pay",
       customProps: {
         icon: {

@@ -1,0 +1,88 @@
+---
+title: 3DS Overview
+hide_title: true
+hide_table_of_contents: true
+---
+
+import { Intro } from "@site/src/components/shared/Intro";
+import { Card } from "@site/src/components/shared/Card";
+
+<Intro
+  title="3D Secure Overview"
+  caption="Enhance security and compliance with a streamlined, processor-agnostic 3DS authentication process."
+  img={{
+    light: "/img/guides/threeds/logo.svg",
+    dark: "/img/guides/threeds/logo-dark.svg",
+  }}
+/>
+
+3DS (3D Secure) is an online payment authentication protocol that enhances anti-fraud efforts.
+It requires cardholders to undergo an additional layer of verification, such as a one-time password or biometric scan, during online transactions.
+This extra step helps verify the cardholder's identity, reduces the risk of unauthorized payments, improves overall payment security, and allows merchants to shift chargeback liability to the Issuing Bank, providing additional protection.
+
+By integrating with Basis Theory, merchants can securely authenticate transactions using **Agnostic 3DS**, independent of payment processors, or utilize processor-specific 3DS implementations when required.
+
+## Start with a Guide
+
+This page introduces key 3DS concepts and best practices. For hands-on implementation, refer to the guides below:
+
+<Card.TwoColumnLayout>
+  <Card
+    column
+    img={null}
+    href="/docs/guides/threeds/setup"
+    heading="3DS Setup"
+  >Review the requirements and steps to enable 3D Secure in your payment flow.</Card>
+  <Card
+    column
+    img={null}
+    href="/docs/guides/threeds/implementation-cit"
+    heading="3DS Implementation (CIT)"
+  >Learn how to integrate and test Customer Initiated Transactions (CIT), ensuring seamless authentication for one-time payments.</Card>
+    <Card
+    column
+    img={null}
+    href="/docs/guides/threeds/implementation-mit"
+    heading="3DS Implementation (MIT)"
+  >Implement Merchant Initiated Transactions (MIT) for recurring or subscription-based payments while maintaining compliance. (Coming Soon!)</Card>
+      <Card
+    column
+    img={null}
+    href="/docs/guides/threeds/taking-threeds-live"
+    heading="Take 3DS Live"
+  >This guide will help you move from testing to production, ensuring your integration is secure and ready for live transactions.</Card>
+</Card.TwoColumnLayout>
+
+## Understanding 3DS Authentication
+
+### Customer-Initiated Transactions (CIT)
+
+- Applies when a customer is directly involved in the transaction
+    - Is active on a webpage or application during the purchasing scenario
+- The authentication process follows a **challenge-based or frictionless flow**:
+    1. **Device fingerprinting** collects risk data.
+    2. **3DS authentication** verifies the transaction.
+    3. **Frictionless authentication** completes automatically if the risk is low.
+    4. **Challenge authentication** prompts cardholders to verify their identity (e.g., OTP, biometrics).
+    5. Upon success, an **authentication result** can be generated and sent to the processor for authorization.
+
+**TODO - DIAGRAM**
+
+### Merchant-Initiated Transactions (MIT)
+
+- Used for recurring or stored card payments without customer involvement.
+- Requires **3DS authentication only during initial setup**.
+    - When necessary, the challenge is handled in a 'decoupled' manner—without a cardholder being present at the time of the transaction.
+- Subsequent charges can bypass authentication using the initial authorization result.
+- Ensures compliance while optimizing conversion rates.
+
+**TODO - DIAGRAM**
+
+## Key Concepts and Glossary
+
+- **3DS Server / Provider**:  Coordinates communication among all parties in the 3DS ecosystem (issuer, merchant, and card networks).
+- **ACS (Access Control Server)**: The bank system verifies the cardholder's identity.
+- **Frictionless Authentication**: When authentication is automatically approved without user interaction.
+- **Challenge Authentication**: When additional verification (e.g., OTP, biometrics) is required.
+- **Authentication Value**: The authentication cryptogram sent to the processor. Commonly known as CAVV.
+- **Liability Shift**: When the liability for fraud moves from the merchant to the card issuer after successful 3DS authentication.
