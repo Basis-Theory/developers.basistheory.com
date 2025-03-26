@@ -96,48 +96,12 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "guides/apple-pay/local-developer",
+        id: "guides/apple-pay/accept-payments",
       },
       items: [
         {
           type: "doc",
-          id: "guides/apple-pay/local-developer",
-          label: "Development",
-        },
-        {
-          type: "doc",
-          id: "guides/apple-pay/go-live",
-          label: "Go Live",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Apple Pay Reactor",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/apple.svg",
-          dark: "/img/sidebar/dark/apple.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "guides/apple-pay/overview",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "guides/apple-pay/overview",
-          label: "Overview",
-        },
-        {
-          type: "doc",
-          id: "guides/apple-pay/setup",
-          label: "Merchant Setup",
-        },
-        {
-          type: "doc",
-          id: "guides/apple-pay/accept",
+          id: "guides/apple-pay/accept-payments",
           label: "Accept Payments",
         },
       ],

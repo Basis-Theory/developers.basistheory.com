@@ -1,0 +1,331 @@
+---
+toc_max_heading_level: 2
+---
+
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Accept Apple Pay Payments
+
+This guide explains how to accept Apple Pay payments on your website using the Basis Theory platform to handle PCI-sensitive data securely.
+Let’s begin by reviewing the Apple Pay payment flow.
+
+When the user clicks the Apple "Pay" button, a sequence of high-level steps is initiated:
+
+1. **Creation of an Apple Pay session**
+   The client application calls Basis Theory to initiate an Apple Pay session.
+
+2. **Decryption of the payment data**
+   After the user authorizes the payment, the encrypted payment data is sent to Basis Theory for decryption and storage.
+   Basis Theory responds with a [Token Intent](/docs/api/tokens/token-intents#token-intent-object) that can be used to process the payment.
+
+3. **Processing of the payment data**
+   The Basis Theory Token Intents are forwarded to the payment processor via Basis Theory Proxy, which translates Token Intents back to raw data before sending the request.
+   Upon receiving a successful payment response, the client application can complete the payment and inform the user that the payment was successful.
+
+## Getting Started
+
+<GettingStartedSection/>
+
+## Things to Know
+
+Basis Theory does not support Apple's sandbox environment. You must use a real card in your Apple Wallet for testing.
+For integrations using a test tenant, Basis Theory will not return actual card data.
+While the Apple Pay token you receive during development is real, the Basis Theory Token Intent will contain simulated data.
+Only production tenants will return real, valid network tokens from Apple Pay tokens.
+
+The domain that serves your application must be registered with both Apple and Basis Theory. To complete the association, a specific file needs to be accessible by Apple at a designated path.
+The file’s contents are not sensitive.
+You can download the file from the following link: [https://cdn.basistheory.com/.well-known/apple-developer-merchantid-domain-association](https://cdn.basistheory.com/.well-known/apple-developer-merchantid-domain-association).
+After downloading, place the file in the same location on your domain: `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association`.
+
+## Prerequistes
+
+- A public Basis Theory application with `token-intent:create` permission
+- A private Basis Theory application with `token:use` permission
+- A valid credit card in your Apple Wallet. https://support.apple.com/en-us/108398
+
+### Creation of an Apple Pay session
+
+To initiate the payment modal, an Apple Pay session must be started.
+Basis Theory integrates with Apple to [request the payment session](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session).
+Apple's demo site states: "For security reasons, your server needs to handle this interaction, not your browser client code."
+However, since Basis Theory acts as the server in this interaction, the session request can safely be made from the browser.
+In Basis Theory's demo application, the implementation calls the Basis Theory [endpoint](/docs/api/connections/apple-pay#create-session) directly from the browser.
+This is demonstrated in the validateMerchant function located in the `./public/basis-theory.js` file.
+
+```html
+<style>
+    apple-pay-button {
+        --apple-pay-button-width: 194px;
+        --apple-pay-button-height: 64px;
+        --apple-pay-button-border-radius: 13px;
+        --apple-pay-button-padding: 0px 0px;
+        --apple-pay-button-box-sizing: border-box;
+    }
+</style>
+<apple-pay-button buttonstyle="black" type="plain" locale="en-US"></apple-pay-button>
+<script>
+  // Set up the onclick handler for the Apple Pay button
+  document.querySelector('apple-pay-button')
+      .addEventListener('click', onApplePayButtonClicked);
+</script>
+```
+```js title="Button Handler"
+function onApplePayButtonClicked() {
+  // Create ApplePaySession
+  const session = new ApplePaySession(3, request);
+
+  session.onvalidatemerchant = async event => {
+      // Call your own server to request a new merchant session.
+      const merchantSession = await validateMerchant();
+      session.completeMerchantValidation(merchantSession);
+  };
+}
+```
+```js title="Browser API Calls"
+async function validateMerchant() {
+  try {
+    if (!cachedApiKey) {
+      const configResponse = await axios.get('/config');
+      cachedApiKey = configResponse.data.apiKey;
+    }
+
+    const options = {
+      method: 'POST',
+      url: 'https://api.basistheory.com/connections/apple-pay/session',
+      headers: {
+      'Content-Type': 'application/json',
+      'BT-API-KEY': cachedApiKey
+      },
+      data: {
+        display_name: 'Ducks R Us',
+        domain: window.location.host
+      }
+    };
+
+    const response = await axios.request(options);
+    return response.data;
+  } catch (error) {
+    console.error('Error validating merchant:', error);
+    throw error;
+  }
+}
+```
+
+### Decryption of the payment data
+
+After the customer has authorized the payment, your application will need to call Basis Theory with the encrypted Apple Pay token.
+For security, this interaction should be on your server.
+The browser will need to call an endpoint on your backend server and pass the encrypted Apple Pay token.
+Your server will then call Basis Theory with the encrypted token to convert to a Token Intent.
+On success, your server will then call a Basis Theory proxy to your payment processor of choice.
+
+```js title="Button Handler"
+function onApplePayButtonClicked() {
+  // Create ApplePaySession
+  const session = new ApplePaySession(3, request);
+
+  session.onvalidatemerchant = async event => {
+      // Call your own server to request a new merchant session.
+      const merchantSession = await validateMerchant();
+      session.completeMerchantValidation(merchantSession);
+  };
+
+  // highlight-start
+  session.onpaymentauthorized = event => {
+    performTransaction(event, session);
+  };
+  // highlight-end
+}
+```
+```js title="Browser API Calls"
+async function performTransaction(event, session) {
+  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  const processPaymentUrl = baseUrl + '/processPayment'
+  try {
+    const details = event.payment;
+
+    const response = await axios.post(
+      processPaymentUrl,
+      {
+        token: details.token,
+        customerEmail: details.shippingContact?.emailAddress,
+        billingDetails: details.billingContact,
+        shippingDetails: details.shippingContact
+      },
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      }
+    );
+
+    session.completePayment(ApplePaySession.STATUS_SUCCESS);
+  } catch (error) {
+    console.error('Error performing transaction:', error);
+    session.completePayment(ApplePaySession.STATUS_FAILURE);
+    throw error;
+  }
+}
+```
+```js title="Backend Server"
+app.post('/processPayment', async (req, res) => {
+  // First, tokenize Apple Pay to Basis Theory Token Intent.
+  const tokenizeOptions = {
+    method: 'POST',
+    url: basisTheoryApiUrl + '/connections/apple-pay/tokenize',
+    headers: {'Content-Type': 'application/json', 'BT-API-KEY': btApiKey},
+    data: {
+      apple_payment_method_token: req.body.token
+    }
+  };
+  axios.request(tokenizeOptions)
+    .then(function (response) {
+      // highlight-start
+      // Proxy to the Payment Service Provider
+      // ...
+      //
+      // highlight-end
+      res.send(response.data);
+    })
+    .catch(function (error) {
+      res.send(error);
+    });
+});
+```
+
+### Processing of the payment data
+
+Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
+
+We'll setup and invoke the [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) on our backend.
+
+<Tabs className="bt-tabs" groupId="processor">
+  <TabItem value="javascript" label="Checkout">
+
+  ```shell showlineNumbers title="Charge Payment method through a Proxy"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+-H 'Content-Type: application/json' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://api.sandbox.checkout.com/payments' \
+-H 'Authorization: Bearer <CHECKOUT_AUTH_TOKEN>' \
+// highlight-end
+-d '{
+  "source": {
+    "type": "network_token",
+    "token_type": "googlepay",
+// highlight-start
+    "token": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }}",
+    "expiry_month": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiry_year": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}",
+    "eci": "06",
+    "cryptogram": "AgAAAAAAAIR8CQrXcIhbQAAAAAA"
+// highlight-end
+  },
+  "amount": 1000,
+  "currency": "USD",
+  "processing_channel_id": "<CHECKOUT_PROCESSING_CHANNEL_ID>"
+}'
+```
+  [Checkout Payment Method Docs](https://www.checkout.com/docs/payments/add-payment-methods/apple-pay/api-only#Request_a_payment).
+
+  </TabItem>
+</Tabs>
+
+<Alert>You are not restricted to only using Checkout. You can use any payment processor that accepts Google Pay tokens.</Alert>
+
+## Sample Application
+
+This application utilizes the [Apple Pay demo application](https://applepaydemo.apple.com/apple-pay-js-api) and the [Basis Theory Apple Pay demo application](https://github.com/Basis-Theory-Labs/apple-pay-web-example).
+The Basis Theory Apple Pay demo application uses the Apple Pay JS API.
+The quickest way to get started with this guide is to clone the repo and follow along.
+
+
+### Prerequistes for Sample Application
+A method to publicly expose a website is required in order to verify domain association with Basis Theory and Apple.
+There are several options to expose a local development environment.
+- cloudflared https://github.com/cloudflare/cloudflared
+- ngrok https://ngrok.com/downloads
+- localtunnel https://github.com/localtunnel/localtunnel
+- serveo https://serveo.net/
+    <Alert type={Alerts.WARNING}>
+      These products are only provided as examples.
+      Basis Theory does not endorse these services.
+      Please do your own due diligence before utilizing any of the above products.
+    </Alert>
+
+### Running the Sample Application
+
+1. Clone the demo application
+1. Set the BT_API_KEY environment variable to your public application.
+    -   `export BT_API_KEY=key_prod_us_pub_...`
+1. Run `npm start` to start the local development server on port `8080`.
+1. Expose the site publicly.
+    - ngrok: `ngrok http http://localhost:8080`
+    - localtunnel: `lt --port 8000`
+    - serveo: `ssh -R 80:localhost:8080 serveo.net`
+1. Add the public domain to your tenant using the [Customer Portal](https://portal.basistheory.com/settings?tab=connections) or the [API](/docs/api/connections/apple-pay#register-domain-address)
+1. Navigate to the public address in Safari
+    <Alert type={Alerts.INFO}>
+      Ensure that the fingerprint scanner is accessible by keeping your MacBook lid open. If the lid is closed, the payment modal will not appear.
+    </Alert>
+1. Scan your fingerprint
+1. The apple pay token and token intent data should populate in the textareas
+
+## Preparing for Production
+
+This checklist will guide you through the critical steps you need to follow before moving your Apple Pay integration into production. Ensuring that everything is properly set up and tested reduces the likelihood of errors during live transactions and offers a seamless payment experience to your customers.
+
+### Verify Your Domain
+
+- Download and serve the [domain association file](https://cdn.basistheory.com/.well-known/apple-developer-merchantid-domain-association) on your production server at `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association`.
+- Add the public domain to your tenant using the [Customer Portal](https://portal.basistheory.com/settings?tab=connections) or the [API](/docs/api/connections/apple-pay#register-domain-address)
+
+### Test in Production with a Live Wallet and Card
+
+- Before going live, perform test transactions using a **Live Apple Pay wallet** with a personal or corporate card added. This step ensures that everything is functioning correctly in the production environment with real-world payment methods.
+- Keep in mind that Apple Pay in production does not behave the same as in testing, so using live payment information is critical.
+
+### Handling Transaction Failures
+
+When a transaction fails, here’s what you should do:
+
+1. **Check the Error Code**:
+   - Look for any error codes returned as part of the failed transaction response. These error codes typically point to the cause of the failure.
+
+2. **Contact Your Payment Processor**:
+   - If the error code is unclear, reach out to your **Payment Processor** to diagnose the issue. As processors handle the transaction flow, they often have the most accurate and actionable information about why a transaction may have failed.
+
+3. **Seek Assistance from Basis Theory (if applicable)**:
+   - If your integration leverages Basis Theory and you’re unable to resolve the issue with your processor, Basis Theory support can assist in identifying potential issues. However, the **Processor** will usually have the best resources and tools to help address errors swiftly.
+
+### Determine Where to Send Apple Pay Token Payloads
+
+Apple Pay generates a secure token payload for each transaction. It’s essential to configure your integration properly to ensure these tokens are correctly routed. Follow these steps:
+
+1. **Review Processor Documentation**:
+   - Check the integration and setup documentation provided by your **Payment Processor** (PSP). They often provide detailed instructions on how and where to send Apple Pay token payloads.
+
+2. **Enable Apple Pay Support with Your PSP**:
+   - Some payment processors require you to explicitly enable Apple Pay within their systems. Reach out to your PSP to ensure Apple Pay functionality is activated for your account.
+
+3. **Understand How to Send Tokens**:
+   - Each PSP handles Apple Pay tokens differently, so it is critical to:
+     - Verify where the token payloads should be sent.
+     - Confirm the API endpoints, required headers, and payload formats specific to your PSP.
+
+4. **Contact PSP for Guidance**:
+   - If the documentation is unclear, **reach out to your PSP’s support team** to clarify:
+     - The process for enabling Apple Pay support.
+     - Steps to correctly transmit the token payload for processing.
+
+### Final Notes
+
+- Keep logs of your test transactions in production for future reference.
+- Double-check all API keys, certificates, and environment configurations to avoid common production issues.
+- If you encounter additional issues or have questions specific to Basis Theory functionality, don’t hesitate to contact Basis Theory’s support team for further assistance.
+
+By following this checklist, you’ll be prepared to seamlessly integrate and go live with Apple Pay, providing a secure and smooth payment experience for your users.
