@@ -1,3 +1,10 @@
+# [1.224.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.3...v1.224.0) (2025-03-24)
+
+
+### Features
+
+* adding llm.txt and ability to copy markdown ([#525](https://github.com/Basis-Theory/developers.basistheory.com/issues/525)) ([706e022](https://github.com/Basis-Theory/developers.basistheory.com/commit/706e022ae2ed7afdbd0b979d01601690b7d84be3))
+
 ## [1.223.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.2...v1.223.3) (2025-03-20)
 
 

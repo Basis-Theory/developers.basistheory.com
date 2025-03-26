@@ -1,5 +1,7 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
+import fs from "node:fs";
+import path from "node:path";
 
 const lightCodeTheme = require("./prism-custom-themes/light");
 const darkCodeTheme = require("./prism-custom-themes/dark");
@@ -95,7 +97,7 @@ const config = {
           {
             type: "custom-SignInButton",
             position: "right",
-          },
+          }
         ],
       },
       prism: {
@@ -274,6 +276,108 @@ const config = {
         ],
       },
     ],
+    async function pluginLlmsTxt(context) {
+      return {
+        name: "llms-txt-plugin",
+        loadContent: async () => {
+          console.log('LLMs plugin: Starting loadContent...');
+          const { siteDir } = context;
+          const contentDir = path.join(siteDir, "docs");
+          console.log('LLMs plugin: Content directory:', contentDir);
+
+          /** @type {Map<string, string>} */
+          const mdxFiles = new Map(); // Store file path -> content mapping
+
+          // recursive function to get all mdx files
+          const getMdxFiles = async (dir) => {
+            const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+
+            for (const entry of entries) {
+              const fullPath = path.join(dir, entry.name);
+              if (entry.isDirectory()) {
+                await getMdxFiles(fullPath);
+              } else if (entry.name.endsWith(".mdx")) {
+                const content = await fs.promises.readFile(fullPath, "utf8");
+                const relativePath = path.relative(contentDir, fullPath);
+                mdxFiles.set(relativePath, content);
+                console.log('LLMs plugin: Found MDX file:', relativePath);
+              }
+            }
+          };
+
+          await getMdxFiles(contentDir);
+          console.log('LLMs plugin: Total MDX files found:', mdxFiles.size);
+          return { mdxFiles, contentDir };
+        },
+        postBuild: async ({ content, routes, outDir }) => {
+          console.log('LLMs plugin: Starting postBuild...');
+          console.log('LLMs plugin: Output directory:', outDir);
+
+          // @ts-ignore
+          const { mdxFiles, contentDir } = content;
+          console.log('LLMs plugin: Retrieved MDX files:', mdxFiles?.size);
+
+          // Create individual .md files and build links list
+          const markdownLinks = [];
+          let processedFiles = 0;
+
+          // Process each MDX file
+          for (const [mdxPath, mdxContent] of mdxFiles.entries()) {
+            try {
+              // Convert the MDX path to the output path
+              const relativeOutputPath = mdxPath
+                .replace(/\.mdx$/, '')
+                .split('/')
+                .filter(Boolean);
+
+              // If the file is named index.mdx, don't include 'index' in the output path
+              const isIndexFile = relativeOutputPath[relativeOutputPath.length - 1] === 'index';
+              const outputPath = isIndexFile
+                ? relativeOutputPath.slice(0, -1)
+                : relativeOutputPath;
+
+              const outputDir = path.join(outDir, 'docs', ...outputPath);
+              const mdPath = path.join(outputDir, 'content.md');
+
+              // Ensure directory exists
+              await fs.promises.mkdir(outputDir, { recursive: true });
+
+              // Write markdown file
+              await fs.promises.writeFile(mdPath, mdxContent);
+              processedFiles++;
+
+              // Add to links list - use the docs path for linking
+              const docPath = '/docs/' + relativeOutputPath.join('/');
+              markdownLinks.push(`- [${docPath}](${path.relative(outDir, mdPath)})`);
+
+              console.log('LLMs plugin: Wrote markdown file:', mdPath);
+            } catch (error) {
+              console.error('LLMs plugin: Error processing file:', mdxPath, error);
+            }
+          }
+
+          console.log('LLMs plugin: Processed files:', processedFiles);
+
+          try {
+            // Write llm.txt with links to all markdown files
+            const llmsTxt = `# ${context.siteConfig.title}\n\n## Documentation Files\n\n${markdownLinks.join('\n')}`;
+            const llmsTxtPath = path.join(outDir, 'llm.txt');
+            console.log('LLMs plugin: Writing llm.txt to:', llmsTxtPath);
+            await fs.promises.writeFile(llmsTxtPath, llmsTxt);
+
+            // Write llm-full.txt with concatenated content
+            const fullContent = Array.from(mdxFiles.values()).join('\n\n---\n\n');
+            const llmsFullPath = path.join(outDir, 'llm-full.txt');
+            console.log('LLMs plugin: Writing llm-full.txt to:', llmsFullPath);
+            await fs.promises.writeFile(llmsFullPath, fullContent);
+
+            console.log('LLMs plugin: Successfully wrote all files');
+          } catch (error) {
+            console.error('LLMs plugin: Error writing output files:', error);
+          }
+        },
+      };
+    },
     // https://github.com/facebook/docusaurus/issues/8297
     // https://github.com/svg/svgo/issues/1714
     // @ts-ignore
@@ -294,10 +398,11 @@ const config = {
           });
           if (svgRuleIndex === -1 || svgrConfigIndex === -1) return;
 
-          // @ts-ignore
-          config.module.rules[svgRuleIndex].oneOf[svgrConfigIndex].use[0].options.svgoConfig.plugins[0].params.overrides.cleanupIDs = false;
+
         },
       };
+      // @ts-ignore
+      // config.module.rules[svgRuleIndex].oneOf[svgrConfigIndex].use[0].options.svgoConfig.plugins[0].params.overrides.cleanupIDs = false;
     },
   ],
   webpack: {
