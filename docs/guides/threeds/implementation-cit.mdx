@@ -16,9 +16,7 @@ If you perform transactions without the customer present at checkout, these are 
 
 This guide provides a comprehensive overview of determining when **3D Secure (3DS)** authentication is required, properly implementing the authentication flow, handling different challenge flows, and testing your implementation.
 
-<Alert type={Alerts.INFO}>
-TODO: FLOW CHART
-</Alert>
+![3DS CIT Implementation Flow Diagram](/img/guides/threeds/cit-implementation-flow.png)
 
 ## When is 3DS Required?
 
@@ -555,7 +553,24 @@ And below is how you can use this object to initiate a 3DS session with the Basi
 After authenticating, you'll receive an Authentication Response object, for which an example can be found below:
 
 ```json
-// TODO: AUTHENTICATION RESPONSE
+{
+  "pan_token_id": "ac7bade2-fe34-4194-aa86-13771b32fbef",
+  "token_id": "ac7bade2-fe34-4194-aa86-13771b32fbef",
+  "session_id": "e4de227e-b71a-450e-87a1-ed9fbbc57aaf",
+  "threeds_version": "2.2.0",
+  "acs_transaction_id": "ccfe56b0-2d38-414b-8a13-a7c1a6d13aa5",
+  "ds_transaction_id": "beb1370a-64ca-4988-8ac5-dd81ca2d77ea",
+  "acs_reference_number": "mock-acs-reference-number",
+  "ds_reference_number": "mock-directory-server-a",
+  "liability_shifted": false,
+  "authentication_value": "LVJhdmVsaW4gVGVzdCBWYWx1ZS0=",
+  "authentication_status": "successful",
+  "authentication_status_code": "Y",
+  "directory_status_code": "Y",
+  "eci": "05",
+  "challenge_preference": "no-challenge",
+  "challenge_preference_code": "02"
+}
 ```
 
 More information on how to handle the Authentication Response [can be found here.](/docs/guides/threeds/taking-threeds-live)
