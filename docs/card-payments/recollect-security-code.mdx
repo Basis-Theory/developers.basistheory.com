@@ -1,0 +1,64 @@
+---
+title: Recollect Security Code
+hide_title: true
+description: This guide details the process of recollecting a security code for a saved card by patching an existing token using a secure element.
+toc_max_heading_level: 3
+---
+
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
+import AddCvcElementSection from "./sections/_add-cvc-element-section.mdx";
+import UpdateTokenCvcSection from "./sections/_update_token_cvc_section.mdx";
+import { AuthenticateCardSection } from "./sections/AuthenticateCardSection";
+
+import { Intro } from "@site/src/components/shared/Intro";
+
+<Intro
+  title="Recollect Security Code"
+  caption="Securely recapture CVC codes for saved cards with a simple, efficient tool."
+/>
+
+To boost authorization rates while adhering to PCI compliance, some Payment Service Providers (PSPs) recommend or mandate that Customer-Initiated Transactions (CITs) with saved cards include the card security code (CSC, also known as CVV or CVC), which cannot be stored in long-term persisted tokens. This guide equips merchants and platforms with the tools to securely recollect the CVC/CVV from customers, enhancing transaction security and meeting PSP requirements. Recollection may be triggered by factors like heightened fraud detection, updated risk policies, card network rules, or regional regulatory changes, ensuring compliance and improved payment success.
+
+```mermaid
+  sequenceDiagram
+    actor customer as Customer
+    participant storefront as Merchant<br>Storefront
+    participant bte as Basis Theory<br>Elements
+    participant bapi as Basis Theory<br>API
+    participant mapi as Merchant<br>API
+
+    activate customer
+    customer ->> storefront: Select saved card Token
+    storefront -->> customer: Render Security Code input
+    customer -->> bte: Enter Security Code
+    customer ->> storefront: Submit
+    storefront ->> bte: Update Token
+    bte ->> bapi: Update Token
+    bapi -->> bte:  OK
+    bte -->> storefront: OK
+    storefront ->> mapi: Submit checkout
+    mapi ->> mapi: Process card
+    mapi -->> storefront: OK
+    storefront -->> customer: Success
+    deactivate customer
+```
+### Public Application
+
+<ApplicationSection type="public" permissions={["token:update"]} />
+
+### Configure Elements SDK
+
+<ConfigureElementsSection />
+
+<AddCvcElementSection />
+
+<UpdateTokenCvcSection />
+
+<AuthenticateCardSection type="token"/>
+
+## Next Steps
+
+Now that you've implemented this workflow in your application, the next step is to process payments using the refreshed token.
+
+[Click here](/docs/card-payments/charge-card#using-the-pan) to visit our Charge a Card guide.

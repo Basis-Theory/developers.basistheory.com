@@ -1,0 +1,35 @@
+import { Alert } from "@site/src/components/shared/Alert";
+import TokenSample from "./_token-sample.mdx";
+
+## Save a Card
+
+Once a card has been processed for the first time, merchants can store details in the long-term for future use and enable express checkouts, repeat transactions for subscription services, recurring payments and consumption-based charges. Merchants are responsible for obtaining explicit customer consent before saving card details, ensuring compliance with data protection regulations and fostering trust.
+
+To do that, we can convert the Token Intent into a Token, by calling the [Create Token API](/docs/api/tokens#create-token) and passing the `token_intent_id`.
+
+```shell showLineNumbers title="Create Token"
+curl "https://api.basistheory.com/tokens" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "token_intent_id": "d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4"
+  }'
+```
+
+This operation returns a new or existing persistent Token depending on your fingerprinting and deduplication options:
+
+<TokenSample />
+
+<Alert>[Click here](/docs/api/tokens/token-intents#convert-token-intent-to-token) to learn more about the token conversion behavior.</Alert>
+
+What you should store in your database:
+
+1. **(Required)** The token `id`, associating it with the rightful customer account.
+2. The card details (`brand`, `last4`, `expiration_month`, and `expiration_year`) if your plan to use it for things like rendering a stored card to your customer.
+   - Alternatively, you can later [retrieve the token](http://localhost:3000/docs/api/tokens/#get-a-token) to get that information from the API.
+3. The **Processor Token** if you plan to directly charge that card with the Processor (without going through Basis Theory Proxy).
+4. The **Network Transaction identifier** returned by the processor during the initial transaction;
+   - This allows you to seamlessly charge the card with new processors or acquirers in the future and achieve the best approval rates.
+   - Refer to your current processor’s documentation or support for guidance on accessing this value.
+
