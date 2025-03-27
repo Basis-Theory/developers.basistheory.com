@@ -225,10 +225,9 @@ client.threeds.sessions.get(
 
 #### URI Parameters
 
-| Parameter | Required | Type | Default | Description |
-| --- | --- | --- | --- | --- |
-| `id` | true | _string_ | `null` | The ID of the 3DS session |
-
+| Parameter | Required | Type     | Default | Description                |
+|-----------|----------|----------|---------|----------------------------|
+| `id`      | true     | _string_ | `null`  | The ID of the 3DS session. |
 
 ### Response
 Returns a 3DS [session](#session-object) with the `id` provided. Returns [an error](/docs/api/errors) if the session cannot be retrieved.
@@ -432,106 +431,109 @@ client.threeds.sessions.authenticate(
 
 #### Request Parameters
 
-| Attribute | Required | Type | Description
-| --- | --- | --- | --- |
-| `authentication_category` | true | _string_ | The category of the 3DS authentication, see [Authentication Categories](#authentication-categories) for allowed values |
-| `authentication_type` | true | _string_ | The type of 3DS transaction, see [Authentication Types](#authentication-types) for allowed values |
-| `request_decoupled_challenge` | false | _bool_ | If a decoupled challenge is required in case of a challenge. Defaults to `true` for `merchant` session `type`. |
-| `decoupled_challenge_max_time` | conditional | _number_ | The maximum time in minutes for the decoupled challenge. Required if `request_decoupled_challenge` is `true` or session `type` is `merchant`. |
-| `challenge_preference` | false | _string_ | The merchant 3DS challenge preference, see [Challenge Preferences](#challenge-preferences) for allowed values |
-| `purchase_info` | conditional | [Purchase Info](#purchase-info-object) | Information about the purchase (If any). Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
-| `merchant_info` | conditional | [Merchant Info](#merchant-info-object) | Information about the merchant. Required if `authentication_category` is `payment`  |
-| `requestor_info` | true | [Requestor Info](#requestor-info-object) | Information about the 3DS requestor |
-| `cardholder_info` | true | [Cardholder Info](#cardholder-info-object) | Information about the cardholder |
-| `broadcast_info` | false | _object_ | Unstructured information sent to the 3DS Server, Directory Server and Access Control Server |
-| `message_extensions` | false | _array_ | Array of [Message Extensions](#message-extension-object) - Data necessary to support requirements not defined in the standard 3DS format. |
+| Attribute                      | Required    | Type                                       | Description                                                                                                                                                                      |
+|--------------------------------|-------------|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `authentication_category`      | true        | _string_                                   | The category of the 3DS authentication, see [Authentication Categories](#authentication-categories) for allowed values.                                                          |
+| `authentication_type`          | true        | _string_                                   | The type of 3DS transaction, see [Authentication Types](#authentication-types) for allowed values.                                                                               |
+| `request_decoupled_challenge`  | false       | _bool_                                     | If a decoupled challenge is required in case of a challenge. Defaults to `true` for `merchant` session `type`.                                                                   |
+| `decoupled_challenge_max_time` | conditional | _number_                                   | The maximum time in minutes for the decoupled challenge. Required if `request_decoupled_challenge` is `true` or session `type` is `merchant`.                                    |
+| `challenge_preference`         | false       | _string_                                   | The merchant 3DS challenge preference, see [Challenge Preferences](#challenge-preferences) for allowed values.                                                                   |
+| `merchant_info`                | conditional | [Merchant Info](#merchant-info-object)     | Information about the merchant. Required if `authentication_category` is `payment`.                                                                                              |
+| `requestor_info`               | conditional | [Requestor Info](#requestor-info-object)   | Additional nformation about the 3DS requestor for certain card brands. Required only if authenticating American Express, Discover or Cartes Bancaires transactions.              |
+| `purchase_info`                | conditional | [Purchase Info](#purchase-info-object)     | Information about the purchase (If any). Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`. |
+| `cardholder_info`              | true        | [Cardholder Info](#cardholder-info-object) | Information about the cardholder.                                                                                                                                                |
+| `broadcast_info`               | false       | _object_                                   | Unstructured information sent to the 3DS Server, Directory Server and Access Control Server.                                                                                     |
+| `message_extensions`           | false       | _array_                                    | Array of [Message Extensions](#message-extension-object) - Data necessary to support requirements not defined in the standard 3DS format.                                        |
 
 #### Authentication Categories
 
 | Authentication Category | Description                                                                                          |
 |-------------------------|------------------------------------------------------------------------------------------------------|
-| `payment`               | Used if you plan to ever charge the card                                                             |
-| `non-payment`           | Used if you do not plan to charge the card, and are only adding the card for authentication purposes |
+| `payment`               | Utilized when a future financial transaction is intended (including $0 authentications).             |
+| `non-payment`           | Utilized when the authentication is unrelated to an actual or anticipated charge.                    |
 
 #### Authentication Types
-The authentication type can differt depending on the 3DS session type. See table below for details.
+The authentication type can differ depending on the 3DS session type. See table below for details.
 
-| Authentication Type | Allowed Session Type(s) |
-| --- | --- |
-| `payment-transaction` | `customer` |
-| `cardholder-emv-verification`| `customer` |
-| `split-or-delayed-shipment` | `merchant` |
-| `top-up` | `merchant` |
-| `mail-order` | `merchant` |
-| `telephone-order` | `merchant` |
-| `whitelist-status-check` | `merchant` |
-| `other-payment` | `merchant` |
-| `billing-agreement` | `merchant` |
-| `recurring-transaction` | `customer`, `merchant` |
-| `installment-transaction` | `customer`, `merchant` |
-| `add-card` | `customer`, `merchant` |
-| `maintain-card` | `customer`, `merchant` |
-| `account-verification` | `customer`, `merchant` |
+| Authentication Type           | Allowed Session Type(s) | Description                                                                                                  |
+|-------------------------------|-------------------------|--------------------------------------------------------------------------------------------------------------|
+| `payment-transaction`         | `customer`              | Used for a single exchange of goods. (e.g. E-commerce checkout)                                              |
+| `cardholder-emv-verification` | `customer`              | For verifying cardholder via EMV (chip-based authentication), typically in physical payment scenarios.       |
+| `recurring-transaction`       | `customer`, `merchant`  | Used for ongoing subscriptions where the billed amount is always the same. (e.g. Monthly Subscription)       |
+| `installment-transaction`     | `customer`, `merchant`  | Used for breaking a single purchase into multiple installments. (e.g. Buy Now Pay Later)                     |
+| `add-card`                    | `customer`, `merchant`  | For adding cards to a customer account—used to verify 3DS capability without an immediate transaction.       |
+| `maintain-card`               | `customer`, `merchant`  | Used to update or maintain existing card details without performing a payment.                               |
+| `account-verification`        | `customer`, `merchant`  | For verifying a cardholder's account without charging a payment.                                             |
+| `split-or-delayed-shipment`   | `merchant`              | For transactions where goods or services ship separately or at a delayed time from the initial order.        |
+| `top-up`                      | `merchant`              | Used for adding funds to existing prepaid accounts or cards.                                                 |
+| `mail-order`                  | `merchant`              | Transactions initiated by mail without direct cardholder interaction.                                        |
+| `telephone-order`             | `merchant`              | Transactions initiated via telephone by merchant without cardholder physically present.                      |
+| `whitelist-status-check`      | `merchant`              | Checks if the cardholder or merchant is on an issuer-approved whitelist.                                     |
+| `other-payment`               | `merchant`              | For transactions that do not match any other specific payment authentication type.                           |
+| `billing-agreement`           | `merchant`              | Establishes an agreement permitting future merchant-initiated transactions without further cardholder input. |
 
 #### Challenge Preferences
-| Value | EMV Code | Description |
-| --- | --- | --- |
-| `no-preference` | `01` | No preference |
-| `no-challenge` | `02` | No challenge requested |
-| `challenge-requested` | `03` | Challenge requested |
-| `challenge-mandated` | `04` | Challenge mandated by the issuer |
-| `no-challenge-risk-analysis-performed` | `05` | No challenge, risk analysis already performed |
-| `no-challenge-data-sharing-only` | `06` | No challenge, data sharing only |
-| `no-challenge-strong-consumer-auth` | `07` | No challenge, strong consumer authentication already performed |
-| `no-challenge-whitelist-exemption` | `08` | No challenge, whitelist exemption |
-| `challenge-requested-whitelist-prompt` | `09` | Challenge requested, whitelist prompt if required |
-| `cartes-bancaires` | `90` | Enable Cartes Bancaires Scoring Service |
+| Value                                  | Code | Description                                                     |
+|----------------------------------------|------|-----------------------------------------------------------------|
+| `no-preference`                        | `01` | No preference.                                                  |
+| `no-challenge`                         | `02` | No challenge requested.                                         |
+| `challenge-requested`                  | `03` | Challenge requested.                                            |
+| `challenge-mandated`                   | `04` | Challenge mandated by the issuer.                               |
+| `no-challenge-risk-analysis-performed` | `05` | No challenge, risk analysis already performed.                  |
+| `no-challenge-data-sharing-only`       | `06` | No challenge, data sharing only.                                |
+| `no-challenge-strong-consumer-auth`    | `07` | No challenge, strong consumer authentication already performed. |
+| `no-challenge-whitelist-exemption`     | `08` | No challenge, whitelist exemption.                              |
+| `challenge-requested-whitelist-prompt` | `09` | Challenge requested, whitelist prompt if required.              |
+| `cartes-bancaires`                     | `90` | Enable Cartes Bancaires Scoring Service.                        |
 
 #### Purchase Info Object
 This object contains information about the purchase itself (if the authentication category is a `payment` transaction).
 
-| Attribute | Required | Type | Description
-| --- | --- | --- | --- |
-| `amount` | conditional | _string_ | The purchase amount without any punctuation (i.e. 80000). Required if ``authentication_category`` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
-| `currency` | conditional | _string_ | The purchase currency in ISO 4217 currency code. Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
-| `exponent` | conditional | _string_ | Minor units of currency as specified in ISO 4217. Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
-| `date` | conditional | _string_ | The purchase date in UTC and `YYYYMMDDhhmmss` format. Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`  |
-| `transaction_type` | conditional | _string_ | The type of purchase transaction. See [Purchase Transaction Types](#purchase-transaction-types) for values. Required if `authentication_category` is `payment` |
-| `installment_count` | conditional | _string_ | Maximum number of installments for installment payments. Required if `authentication_type` is `installment-transaction` |
-| `recurring_expiration` | conditional | _string_ | Final recurring authorization date in `YYYYMMDD` format. Required if `authentication_type` is `recurring-transaction` |
-| `recurring_frequency` | conditional | _string_ | Minimum number of days between recurring authorizations. Required if `authentication_type` is `recurring-transaction` |
+| Attribute              | Required    | Type     | Description                                                                                                                                                                                       |
+|------------------------|-------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `amount`               | conditional | _string_ | The purchase amount without any punctuation (i.e. 80000). Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`. |
+| `currency`             | conditional | _string_ | The purchase currency in ISO 4217 currency code. Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`.          |
+| `exponent`             | conditional | _string_ | Minor units of currency as specified in ISO 4217. Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`.         |
+| `date`                 | conditional | _string_ | The purchase date in UTC and `YYYYMMDDhhmmss` format. Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`.     |
+| `transaction_type`     | conditional | _string_ | The type of purchase transaction. See [Purchase Transaction Types](#purchase-transaction-types) for values. Required if `authentication_category` is `payment`.                                   |
+| `installment_count`    | conditional | _string_ | Maximum number of installments for installment payments. Required if `authentication_type` is `installment-transaction`.                                                                          |
+| `recurring_expiration` | conditional | _string_ | Final recurring authorization date in `YYYYMMDD` format. Required if `authentication_type` is `recurring-transaction`.                                                                            |
+| `recurring_frequency`  | conditional | _string_ | Minimum number of days between recurring authorizations. Required if `authentication_type` is `recurring-transaction`.                                                                            |
 
 ##### Purchase Transaction Types
-- `purchase`
-- `check-acceptance`
-- `account-funding`
-- `quasi-cash`
-- `prepaid-activation-load`
+| Value                     | Description                                                                                              |
+|---------------------------|----------------------------------------------------------------------------------------------------------|
+| `purchase`                | For standard purchase transactions/exchange of goods.                                                    |
+| `check-acceptance`        | For transactions involving acceptance of checks as payment.                                              |
+| `account-funding`         | For funding transactions into an existing account or wallet (e.g., digital wallets, prepaid accounts).   |
+| `quasi-cash`              | Transactions involving purchasing items directly convertible to cash (e.g., casino chips, money orders). |
+| `prepaid-activation-load` | Transactions used to activate or load funds onto prepaid cards.                                          |
 
 #### Merchant Info Object
 This object contain information about the merchant (who is collecting the money from the purchase).
 
-| Attribute | Required | Type | Description
-| --- | --- | --- | --- |
-| `mid` | conditional | _string_ | The merchant identifier, typically found in billing statements or in the issuer dashboard. Required if `authentication_category` is `payment`.  |
-| `acquirer_bin` | conditional | _string_ | The merchant/acquirer BIN, provided by the card scheme. Required if `authentication_category` is `payment` |
-| `name` | conditional | _string_ | The merchant's name as defined in the payment system. Required if `authentication_category` is `payment` |
-| `country_code` | conditional | _string_ | ISO 3166-1 numeric three-digit country code of the merchant. Required if `authentication_category` is `payment` |
-| `category_code` | conditional | _string_ | The merchant's category code (mcc), as defined by the card scheme. Required if `authentication_category` is `payment` |
-| `risk_info` | false | [Merchant Risk Info](#merchant-info-object) | Optional information to de-risk the transaction |
+| Attribute       | Required    | Type                                        | Description                                                                                                                                |
+|-----------------|-------------|---------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `mid`           | conditional | _string_                                    | The merchant identifier. This value is provided by your acquirer/payments processor. Required if `authentication_category` is `payment`.   |
+| `acquirer_bin`  | conditional | _string_                                    | The merchant Acquirer BIN. This value is provided by your acquirer/payments processor. Required if `authentication_category` is `payment`. |
+| `name`          | conditional | _string_                                    | The merchant's name as defined in the payment system. Required if `authentication_category` is `payment`.                                  |
+| `url`           | conditional | _string_                                    | The merchant's URL. Required if `authentication_category` is `payment`.                                                                    |
+| `country_code`  | conditional | _string_                                    | ISO 3166-1 **numeric** three-digit country code of the merchant. Required if `authentication_category` is `payment`.                       |
+| `category_code` | conditional | _string_                                    | The merchant's category code (mcc), as defined by the card scheme. Required if `authentication_category` is `payment`.                     |
+| `risk_info`     | false       | [Merchant Risk Info](#merchant-info-object) | Optional information to de-risk the transaction.                                                                                           |
 
 #### Merchant Risk Info Object
-| Attribute | Required | Type | Description
-| --- | --- | --- | --- |
-| `delivery_email` | false | _string_ | The delivery email address for electronic delivery merchandise |
-| `delivery_time_frame` | false | _string_ | The merchandise delivery time frame. See [Merchant Risk Delivery Time Frames](#merchant-risk-delivery-time-frames) for allowed values |
-| `gift_card_amount` | false | _string_ | The purchase amount total of prepaid or gift card(s) as an integer |
-| `gift_card_count` | false | _string_ | The total count of individual prepaid or gift cards/codes purchased |
-| `gift_card_currency` | false | _string_ | The ISO 4217 three-digit currency code of the gift card |
-| `pre_order_purchase` | false | _bool_ | If the merchandise order is a pre-order or not |
-| `pre_order_date` | false | _string_ | The date for when the pre-ordered merchandise will be available in `YYYYMMDD` format |
-| `reordered_purchase` | false | _bool_ | If the cardholder is reordering previously purchase merchandise or not |
-| `shipping_method` | false | _string_ | The shipping method chosen. See [Merchant Risk Shipping Methods](#merchant-risk-shipping-methods) for allowed values |
+| Attribute             | Required | Type     | Description                                                                                                                            |
+|-----------------------|----------|----------|----------------------------------------------------------------------------------------------------------------------------------------|
+| `delivery_email`      | false    | _string_ | The delivery email address for electronic delivery merchandise.                                                                        |
+| `delivery_time_frame` | false    | _string_ | The merchandise delivery time frame. See [Merchant Risk Delivery Time Frames](#merchant-risk-delivery-time-frames) for allowed values. |
+| `gift_card_amount`    | false    | _string_ | The purchase amount total of prepaid or gift card(s) as an integer.                                                                    |
+| `gift_card_count`     | false    | _string_ | The total count of individual prepaid or gift cards/codes purchased.                                                                   |
+| `gift_card_currency`  | false    | _string_ | The ISO 4217 three-digit currency code of the gift card.                                                                               |
+| `pre_order_purchase`  | false    | _bool_   | If the merchandise order is a pre-order or not.                                                                                        |
+| `pre_order_date`      | false    | _string_ | The date for when the pre-ordered merchandise will be available in `YYYYMMDD` format.                                                  |
+| `reordered_purchase`  | false    | _bool_   | If the cardholder is reordering previously purchase merchandise or not.                                                                |
+| `shipping_method`     | false    | _string_ | The shipping method chosen. See [Merchant Risk Shipping Methods](#merchant-risk-shipping-methods) for allowed values.                  |
 
 ##### Merchant Risk Delivery Time Frames
 - `electronic-delivery`
@@ -549,45 +551,23 @@ This object contain information about the merchant (who is collecting the money 
 - `other`
 
 #### Requestor Info Object
-This object contains information about the 3DS requestor, some of it overlap w/ the merchant but has specific rules for different card issuers and brands.
-
-See [Instructions for Different Card Brands](#instructions-for-different-card-brands) on how to properly fill this information for the best results.
+TODO
 
 | Attribute | Required | Type | Description
 | --- | --- | --- | --- |
-| `id` | true | _string_ | The 3DS requestor id |
-| `name` | true | _string_ | The 3DS requestor name |
-| `url` | true | _string_ | A business URL for the 3DS requestor |
+| `amex_requestor_type` | true | _string_ | The 3DS requestor id |
+| `cb_siret_number` | true | _string_ | The 3DS requestor name |
+| `discover_client_id` | true | _string_ | A business URL for the 3DS requestor |
 
-#### Instructions for Different Card Brands
-See below instructions on how to fill the id and name properties of the Requestor Info Object according to different card brands:
-
-- **Visa**:
-    - `id`: Use the merchant id
-    - `name`: Use the merchant name
-- **Mastercard:**
-    - `id`: Use the merchant id
-    - `name`: Use `Ravelin 3DS Server_{MID}`
-- **Discover:**
-    - `id`: Use the Client ID from enrollment with Discover. Also use the ID assigned to the 3DS requestor if any like so: `Discover ClientID_Merchant Name` or `Discover ClientID_ID`
-    - `name`: Use the 'Merchant DBA' (Doing Business As) name
-- **JCB:**
-    - `id`: Use the Acquirer BIN + 'MCT' + MID like: `{BIN}MCT{MID}`
-    - `name`: Use the merchant id
-- **American Express**:
-    - `id`: Use the relevant 3DS requestor type from the table below together with the merchant id:
-        | Requestor Type | Description |
-        | --- | --- |
-        | MER | General Merchant |
-        | AGG | Aggregator |
-        | JCB | JCB-Acquired Merchant |
-        | OTA | Online Travel Agency |
-        | OPT | OptBlue Seller |
-        | WAL | Digital Wallet |
-    - `name`: Use the merchant id
-- **Cartes Bancaires**:
-    - `id`: If you are using a Carte Bancaire acquirer and it's a wallet transaction, use the merchant SIRET Number+ 'Identifiant Wallet' for payment/enrolment - Or, just the SIRET Number for non-payment/enrolment. For all other scenarios, use merchant name.
-    - `name`: Use the merchant name
+##### American Express Requestor Types
+| Requestor Type | Description |
+| --- | --- |
+| `MER` | General Merchant |
+| `AGG` | Aggregator |
+| `JCB` | JCB-Acquired Merchant |
+| `OTA` | Online Travel Agency |
+| `OPT` | OptBlue Seller |
+| `WAL` | Digital Wallet |
 
 #### Cardholder Info Object
 This object has information about who the cardholder is.
@@ -595,13 +575,13 @@ Take note that most issuers tend to request at least the `name` and `email` prop
 
 | Attribute | Required | Type | Description
 | --- | --- | --- | --- |
+| `name` | true | _string_ | The cardholder name |
+| `email` | true | _string_ | The cardholder email |
 | `account_id` | false | _string_ | The cardholder account identifier - used to reference the cardholder in the merchant's system. |
 | `account_type` | false | _string_ | The type of cardholder account. See [Cardholder Account Types](#cardholder-account-types) for allowed values |
 | `account_info` | false | [Cardholder Account Info](#cardholder-account-info-object) | Information about the cardholder's account |
 | `authentication_info` | false | [Cardholder Authentication Info](#cardholder-authentication-info-object) | Information on how the cardholder was authenticated in the merchant platform |
 | `prior_authentication_info` | false | [Cardholder Prior Authentication Info](#cardholder-prior-authentication-info-object) | Information about the cardholder's previous 3DS authentication |
-| `name` | true | _string_ | The cardholder name |
-| `email` | true | _string_ | The cardholder email |
 | `phone_number` | false | [Cardholder Phone Number](#cardholder-phone-number-object) | The cardholder main phone number |
 | `mobile_phone_number` | false | [Cardholder Phone Number](#cardholder-phone-number-object) | The cardholder mobile phone number |
 | `work_phone_number` | false | [Cardholder Phone Number](#cardholder-phone-number-object) | The cardholder work phone number |

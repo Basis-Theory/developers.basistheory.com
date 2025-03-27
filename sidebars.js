@@ -57,20 +57,6 @@ const sidebars = {
         "guides/collect/issue-cards",
         "guides/share/display-cards",
         "guides/collect/set-card-pin",
-        {
-          type: "doc",
-          id: "guides/process/authenticate-with-3ds",
-          customProps: {
-            enterprise: true,
-          },
-        },
-        {
-          type: "doc",
-          id: "guides/process/authenticate-mit-with-3ds",
-          customProps: {
-            enterprise: true,
-          },
-        },
         "guides/process/backup-stripe-tokens",
       ],
     },
