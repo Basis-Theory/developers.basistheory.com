@@ -59,24 +59,118 @@ The code examples below demonstrate how to create sessions using our available S
 <Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="web" label="Web">
     ```typescript showLineNumbers
-    // TODO
-    ```
-  </TabItem>
+    // highlight-start
+    import { BasisTheory3ds } from "@basis-theory/web-threeds";
+    // highlight-end
 
-  <TabItem value="ios" label="iOS">
-    ```swift showLineNumbers
-    // TODO
-    ```
-  </TabItem>
+    const authenticate = async () => {
+       // highlight-start
+      const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>");
+      // highlight-end
 
-  <TabItem value="android" label="Android">
-    ```kotlin showLineNumbers
-    // TODO
+      // highlight-start
+      // creating the session
+      // (in this example we are using tokenId for a card token, use tokenIntentId for a token intent)
+      const session = await bt3ds.createSession({ tokenId: "<CARD_TOKEN_ID>" });
+      // highlight-end
+    }
     ```
   </TabItem>
 
   <TabItem value="react" label="React Native">
     ```jsx showLineNumbers
+    // highlight-start
+    import { BasisTheory3dsProvider, useBasisTheory3ds } from "@basis-theory/react-native-threeds";
+    // highlight-end
+
+    const App = () => {
+      return (
+        // highlight-start
+        <BasisTheory3dsProvider apiKey={"<PUBLIC_API_KEY>"}>
+          <MyApp />
+        </BasisTheory3dsProvider>
+        // highlight-end
+      );
+    }
+
+    const MyApp = () => {
+      // highlight-start
+      const { createSession, startChallenge } = useBasisTheory3ds();
+      // highlight-end
+
+      // higlight-start
+      //creating the session
+      // (in this example we are using tokenId for a card token, use tokenIntentId for a token intent)
+      const session = await createSession({ tokenId: "<CARD_TOKEN_ID>" });
+      // highlight-end
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="ios" label="iOS">
+    ```swift showLineNumbers
+    // highlight-start
+    import ThreeDS
+    // highlight-end
+    import UIKit
+
+    class ViewController: UIViewController, UITextFieldDelegate {
+        // highlight-start
+        private var threeDSService: ThreeDSService!
+        // highlight-end
+        private var sessionId: String? = nil
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+
+
+            do {
+                // highlight-start
+                threeDSService = try ThreeDSService.builder()
+                    .withApiKey("<PUBLIC_API_KEY>")
+                    .withAuthenticationEndpoint("<YOUR_BACKEND_AUTHENTICATION_ENDPOINT>", headers: ["Header-Name": "value"])
+                    .build()
+                // highlight-end
+
+                Task {
+                    // highlight-start
+                    try await threeDSService.initialize { [weak self] warnings in
+                        DispatchQueue.main.async {
+                            if let warnings = warnings, !warnings.isEmpty {
+                                let messages = warnings.map { $0.message }.joined(separator: "\n")
+
+                                print(messages)
+                            } else {
+                                print("3DS SDK initialized successfully.")
+                            }
+                        }
+                    }
+                    // highlight-end
+                }
+            } catch {
+              // handle error
+            }
+        }
+
+        // highlight-start
+        // call this method from your app when you want to create a session
+        @objc func createThreeDsSession() {
+            Task {
+                do {
+                    let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
+                    sessionId = session.id
+                } catch {
+                    // handle error
+                }
+            }
+        }
+        // highlight-end
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+    ```kotlin showLineNumbers
     // TODO
     ```
   </TabItem>
@@ -829,24 +923,168 @@ The presentation and completion method of the challenge are determined entirely 
 <Tabs className="bt-tabs" queryString="frontend">
   <TabItem value="web" label="Web">
     ```typescript showLineNumbers
-    // TODO
-    ```
-  </TabItem>
+    import { BasisTheory3ds } from "@basis-theory/web-threeds";
 
-  <TabItem value="ios" label="iOS">
-    ```swift showLineNumbers
-    // TODO
-    ```
-  </TabItem>
+    const authenticate = async () => {
+      const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>");
 
-  <TabItem value="android" label="Android">
-    ```kotlin showLineNumbers
-    // TODO
+      // creating the session
+      // (in this example we are using tokenId for a card token, use tokenIntentId for a token intent)
+      const session = await bt3ds.createSession({ tokenId: "<CARD_TOKEN_ID>" });
+
+      // ... backend code to authenticate the session and return the authentication response
+      // (in this example, we assume you received the authentication response in a variable called `authentication`)
+
+      // highlight-start
+      if (authentication.authenticationStatus === 'challenge') {
+        // check casing for the payload to see if it matches with what your backend returned
+        const challengePayload = {
+          sessionId: session.id,
+          acsChallengeUrl: authentication.acs_challenge_url,
+          acsTransactionId: authentication.acs_transaction_id,
+          threeDSVersion: authentication.threeds_version,
+        }
+
+        // starting the challenge
+        // when user completes the challenge, the SDK will resolve the promise (or reject it in case of errors)
+        const challenge = await bt3ds.startChallenge(challengePayload);
+      }
+      // highlight-end
+    }
     ```
   </TabItem>
 
   <TabItem value="react" label="React Native">
     ```jsx showLineNumbers
+    import { BasisTheory3dsProvider, useBasisTheory3ds } from "@basis-theory/react-native-threeds";
+
+    const App = () => {
+      return (
+        <BasisTheory3dsProvider apiKey={"<PUBLIC_API_KEY>"}>
+          <MyApp />
+        </BasisTheory3dsProvider>
+      );
+    }
+
+    const MyApp = () => {
+      const { createSession, startChallenge } = useBasisTheory3ds();
+
+      //creating the session
+      // (in this example we are using tokenId for a card token, use tokenIntentId for a token intent)
+      const session = await createSession({ tokenId: "<CARD_TOKEN_ID>" });
+
+      // ... backend code to authenticate the session and return the authentication response
+      // (in this example, we assume you received the authentication response in a variable called `authentication`)
+
+      // highlight-start
+      if (authentication.status === "challenge") {
+        // check casing for the payload to see if it matches with what your backend returned
+        const challengePayload = {
+          sessionId: session.id,
+          acsChallengeUrl: authentication.acs_challenge_url,
+          acsTransactionId: authentication.acs_transaction_id,
+          threeDSVersion: authentication.threeds_version,
+        }
+
+        // starting a challenge
+        // when user completes the challenge, the SDK will resolve the promise (or reject it in case of errors)
+        const challengeCompleted = await startChallenge(challengeInfo);
+      }
+      // highlight-end
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="ios" label="iOS">
+    ```swift showLineNumbers
+    import ThreeDS
+    import UIKit
+
+    class ViewController: UIViewController, UITextFieldDelegate {
+        private var threeDSService: ThreeDSService!
+        private var sessionId: String? = nil
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+
+
+            do {
+                threeDSService = try ThreeDSService.builder()
+                    .withApiKey("<PUBLIC_API_KEY>")
+                    .withAuthenticationEndpoint("<YOUR_BACKEND_AUTHENTICATION_ENDPOINT>", headers: ["Header-Name": "value"])
+                    .build()
+
+                Task {
+                    try await threeDSService.initialize { [weak self] warnings in
+                        DispatchQueue.main.async {
+                            if let warnings = warnings, !warnings.isEmpty {
+                                let messages = warnings.map { $0.message }.joined(separator: "\n")
+
+                                print(messages)
+                            } else {
+                                print("3DS SDK initialized successfully.")
+                            }
+                        }
+                    }
+                }
+            } catch {
+              // handle error
+            }
+        }
+
+        // call this method from your app when you want to create a session
+        @objc func createThreeDsSession() {
+            Task {
+                do {
+
+                    let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
+                    sessionId = session.id
+                } catch {
+                    // handle error
+                }
+            }
+        }
+
+        // highlight-start
+        // call this method from your app when you want to start a challenge
+        // (in this example, we assume your app received confirmation from your backend that a challenge is necessary)
+        @objc func startChallenge() {
+            Task {
+                do {
+                    guard let sessionId = sessionId else {
+                        throw ThreeDSError.missingSessionId
+                    }
+
+                    try await self.threeDSService.startChallenge(
+                        sessionId: sessionId, viewController: self,
+                        onCompleted: { result in
+                            DispatchQueue.main.async {
+                                print("Challenge completed with result: \(result)")
+                            }
+                            guard let details = result.details else {
+                                return
+                            }
+                            DispatchQueue.main.async {
+                                self.detailsLabel.text = "\(details)"
+                            }
+                        },
+                        onFailure: { result in
+                            DispatchQueue.main.async {
+                                print("Challenge failed with error: \(result)")
+                            }
+                        })
+                } catch {
+                    // handle error
+                }
+            }
+        }
+        // highlight-end
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+    ```kotlin showLineNumbers
     // TODO
     ```
   </TabItem>
@@ -856,33 +1094,8 @@ The presentation and completion method of the challenge are determined entirely 
 
 This section refers strictly to the customer's having finished the Challenge process, not to the success or failure of the authentication. To verify the challenge's outcome (success or failure), refer to the [Getting a Challenge Result](#getting-a-challenge-result) section.
 
-The most common approach to receiving a Challenge Completion is via the front-end - awaiting the resolution of the SDK’s challenge method or promise.
-
-<Tabs className="bt-tabs" queryString="frontend">
-  <TabItem value="web" label="Web">
-    ```typescript showLineNumbers
-    // TODO
-    ```
-  </TabItem>
-
-  <TabItem value="ios" label="iOS">
-    ```swift showLineNumbers
-    // TODO
-    ```
-  </TabItem>
-
-  <TabItem value="android" label="Android">
-    ```kotlin showLineNumbers
-    // TODO
-    ```
-  </TabItem>
-
-  <TabItem value="react" label="React Native">
-    ```jsx showLineNumbers
-    // TODO
-    ```
-  </TabItem>
-</Tabs>
+The most common approach to receiving a Challenge Completion is via the front-end - awaiting the resolution of the SDK's challenge method or promise.
+Refer to the instructions for your specific [Basis Theory 3DS SDK](/docs/sdks) to see how to handle the challenge completion.
 
 Alternatively, you can use our **Webhooks** solution. Subscribing a webhook to the  `3ds.session.challenge-completed` event will trigger when a challenge completion has finished and contain the `id` to enable [Getting a Challenge Result](#getting-a-challenge-result).
 
