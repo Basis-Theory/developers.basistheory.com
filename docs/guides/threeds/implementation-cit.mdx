@@ -49,6 +49,30 @@ Certain regions typically mandate 3DS authentication, notably:
 - United Kingdom (UK)
 - Other regions adopting Strong Customer Authentication (SCA): Australia, India, Brazil, and parts of Asia
 
+## Provisioning Resources
+
+To successfully process 3DS authentications, you must first create two applications in the Basis Theory Portal: a **Public Application** and a **Private Application**. These applications will handle creating and authenticating 3DS sessions.
+
+### Public Application
+
+The **Public Application** allows your front-end or client-side integration to create 3DS sessions securely.
+
+- **Permissions Required:** `3ds:session:create`
+
+[Click here to create the Public Application](https://portal.basistheory.com/applications/create?permissions=3ds%3Asession%3Acreate&type=public)
+
+***Important:** Save the generated API Key. You'll use it later in this guide.*
+
+### Private Application
+
+The **Private Application** is used by your backend system to authenticate the created 3DS sessions.
+
+- **Permissions Required:** `3ds:session:authenticate`
+
+[Click here to create the Private Application](https://portal.basistheory.com/applications/create?type=private&permissions=3ds%3Asession%3Aauthenticat)
+
+***Important:** Save the generated API Key. You'll use it later in this guide.*
+
 ## Creating a CIT 3DS Session
 
 The 3D Secure process starts by gathering information from the customer's device to verify transaction validity.
@@ -157,6 +181,7 @@ The code examples below demonstrate how to create sessions using our available S
         @objc func createThreeDsSession() {
             Task {
                 do {
+                    // (in this example we are using tokenId for a card token, use tokenIntentId for a token intent)
                     let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
                     sessionId = session.id
                 } catch {
@@ -171,7 +196,85 @@ The code examples below demonstrate how to create sessions using our available S
 
   <TabItem value="android" label="Android">
     ```kotlin showLineNumbers
-    // TODO
+    // ... other imports
+
+    // highlight-start
+    import com.basistheory.threeds.service.ThreeDSService
+    import com.basistheory.threeds.model.CreateThreeDsSessionResponse
+    // highlight-end
+
+    open class ThreeDsViewModel(application: Application) : AndroidViewModel(application) {
+        private val _errorMessage = MutableLiveData<String?>(null)
+        val errorMessage: LiveData<String?> = _errorMessage
+
+        val session = MutableLiveData<CreateThreeDsSessionResponse?>(null)
+
+        // highlight-start
+        private val threeDsService = ThreeDSService
+            .Builder()
+            .withApiKey("<PUBLIC_API_KEY>")
+            .withAuthenticationEndpoint("<YOUR_BACKEND_AUTHENTICATION_ENDPOINT>")
+            .withApplicationContext(application.applicationContext)
+            .build()
+        // highlight-end
+
+        fun initialize(): LiveData<List<String>> = liveData {
+            try {
+                // highlight-start
+                val warnings = threeDsService.initialize()
+                // highlight-end
+
+                if (!warnings.isNullOrEmpty()) {
+                    emit(warnings.map { it.message })
+                } else {
+                    emit(emptyList())
+                }
+            } catch (e: Throwable) {
+                _errorMessage.postValue(e.message)
+                emit(emptyList())
+            }
+        }
+
+        // highlight-start
+        fun createSession(tokenId: String): LiveData<CreateThreeDsSessionResponse?> = liveData {
+            try {
+                session.value = threeDsService.createSession(tokenId = tokenId)
+                emit(session.value)
+            } catch (e: Throwable) {
+                _errorMessage.postValue(e.message)
+                emit(null)
+            }
+        }
+        // highlight-end
+
+        private fun onChallengeCompleted(result: ChallengeResponse) {
+            challengeResponse.postValue(result)
+            status.postValue(result.status)
+            result.details?.let {
+                statusReason.postValue(it)
+            }
+        }
+
+        private fun onChallengeFailed(result: ChallengeResponse) {
+            _errorMessage.postValue(result.toString())
+        }
+
+        fun startChallenge(sessionId: String, activity: Activity): LiveData<Boolean> = liveData {
+            _errorMessage.value = null
+            try {
+                threeDsService.startChallenge(
+                    sessionId = sessionId,
+                    activity = activity,
+                    onCompleted = ::onChallengeCompleted,
+                    onFailed = ::onChallengeFailed
+                )
+                emit(true)
+            } catch (e: Throwable) {
+                _errorMessage.postValue(e.message)
+                emit(false)
+            }
+        }
+    }
     ```
   </TabItem>
 </Tabs>
@@ -1085,7 +1188,91 @@ The presentation and completion method of the challenge are determined entirely 
 
   <TabItem value="android" label="Android">
     ```kotlin showLineNumbers
-    // TODO
+    // ... other imports
+
+    import com.basistheory.threeds.service.ThreeDSService
+    import com.basistheory.threeds.model.CreateThreeDsSessionResponse
+    // highlight-start
+    import com.basistheory.threeds.model.ChallengeResponse
+    // highlight-end
+
+    open class ThreeDsViewModel(application: Application) : AndroidViewModel(application) {
+        private val _errorMessage = MutableLiveData<String?>(null)
+        val errorMessage: LiveData<String?> = _errorMessage
+
+        val session = MutableLiveData<CreateThreeDsSessionResponse?>(null)
+        // highlight-start
+        val challengeResponse = MutableLiveData<ChallengeResponse?>(null)
+        val status = MutableLiveData<String?>(null)
+        val statusReason = MutableLiveData<String?>(null)
+        // highlight-end
+
+        private val threeDsService = ThreeDSService
+            .Builder()
+            .withApiKey("<PUBLIC_API_KEY>")
+            .withAuthenticationEndpoint("<YOUR_BACKEND_AUTHENTICATION_ENDPOINT>")
+            .withApplicationContext(application.applicationContext)
+            .build()
+
+        fun initialize(): LiveData<List<String>> = liveData {
+            try {
+                val warnings = threeDsService.initialize()
+
+                if (!warnings.isNullOrEmpty()) {
+                    emit(warnings.map { it.message })
+                } else {
+                    emit(emptyList())
+                }
+            } catch (e: Throwable) {
+                _errorMessage.postValue(e.message)
+                emit(emptyList())
+            }
+        }
+
+        fun createSession(tokenId: String): LiveData<CreateThreeDsSessionResponse?> = liveData {
+            try {
+                session.value = threeDsService.createSession(tokenId = tokenId)
+                emit(session.value)
+            } catch (e: Throwable) {
+                _errorMessage.postValue(e.message)
+                emit(null)
+            }
+        }
+
+        // highlight-start
+        private fun onChallengeCompleted(result: ChallengeResponse) {
+            challengeResponse.postValue(result)
+            status.postValue(result.status)
+            result.details?.let {
+                statusReason.postValue(it)
+            }
+        }
+
+        private fun onChallengeFailed(result: ChallengeResponse) {
+            _errorMessage.postValue(result.toString())
+        }
+        // highlight-end
+
+        // highlight-start
+        // call this method from your app when you want to start a challenge
+        // (in this example, we assume your app received confirmation from your backend that a challenge is necessary)
+        fun startChallenge(sessionId: String, activity: Activity): LiveData<Boolean> = liveData {
+            _errorMessage.value = null
+            try {
+                threeDsService.startChallenge(
+                    sessionId = sessionId,
+                    activity = activity,
+                    onCompleted = ::onChallengeCompleted,
+                    onFailed = ::onChallengeFailed
+                )
+                emit(true)
+            } catch (e: Throwable) {
+                _errorMessage.postValue(e.message)
+                emit(false)
+            }
+        }
+        // highlight-end
+    }
     ```
   </TabItem>
 </Tabs>
