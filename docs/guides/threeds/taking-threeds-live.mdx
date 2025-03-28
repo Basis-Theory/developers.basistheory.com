@@ -1,0 +1,241 @@
+---
+toc_max_heading_level: 2
+---
+
+# Taking 3DS Live
+
+his guide provides all the information you need to begin processing real 3DS transactions in a production environment.
+It includes essential steps, best practices, and troubleshooting tips to ensure a smooth 3DS implementation, reducing fraud while maintaining a frictionless customer experience.
+
+## Using 3DS Results with Popular PSPs
+Basis Theory provides PSP-agnostic 3DS transaction data. According to their documentation, each payment service provider (PSP) handles "External 3DS" data differently.
+
+The best resource for utilizing 3rd Party 3DS authentication values with a PSP is to contact them directly or review their documentation. Below are a few common examples of how to map the Basis Theory 3DS authentication values to populate PSP requests.
+
+### Adyen
+External 3DS data can be passed for Adyen's `/authorise` request.
+
+#### Sample Payload
+```json
+{
+  // ...
+  "mpiData" : {
+    "cavv": authentication.authentication_value,
+    "eci": authentication.eci,
+    "dsTransId": authentication.ds_transaction_id,
+    "directoryResponse": authentication.directory_status_code,
+    "authenticationResponse": authentication.authentication_status_code,
+    "threeDSVersion": authentication.threeds_version,
+    "challengeCancel": authentication.challenge_cancel_reason_code,
+    // ...
+  },
+  "threeDS2RequestData": {
+    "threeDSRequestorChallengeInd": authentication.challenge_preference_code,
+  },
+  // ...
+}
+```
+
+#### Property Mapping
+| Adyen Value | Basis Theory 3DS Value | Notes |
+| --- | --- | --- |
+| `paymentMethod.type` | - | Specific to Adyen flow, refer to Adyen's documentation. |
+| `mpiData.authenticationResponse` | `authentication.authentication_status_code` | - |
+| `mpiData.directoryResponse` | `authentication.directory_status_code` | - |
+| `mpiData.cavv` | `authentication.authentication_value` | - |
+| `mpiData.dsTransID` | `authentication.ds_transaction_id` | - |
+| `mpiData.eci` | `authentication.eci` | - |
+| `mpiData.threeDSVersion` | `authentication.threeds_version` | - |
+| `threeDS2RequestData.threeDSRequestorChallengeInd` | `authentication.challenge_preference_code` | - |
+| `mpiData.cavvAlgorithm` | - | Applies only to Cartes Bancaires on 3DS v1. 3DS v1 is unsupported by Basis Theory. |
+| `mpiData.challengeCancel`  | `authentication.challenge_cancel_reason_code` | - |
+| `mpiData.riskScore`  | `authentication.message_extensions[X].data` | Applies only to Cartes Bancaires. Data would be on unspecified message extension. |
+| `additionalData.acquirerCode` | - | Applies only to Cartes Bancaires. Adyen asks the value to be set as '`AdyenCartesBancaires`' |
+| `additionalData.scaExemption` | - | Applies only to Cartes Bancaires. Specific to Adyen flow, refer to Adyen's [documentation](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#request-additionalData-AdditionalData3DSecure-scaExemption). |
+| `shopperInteraction` | - | Specific to Adyen flow, refer to Adyen's [documentation](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#request-shopperInteraction). |
+| `recurringProcessingModel` | - | Specific to Adyen flow, refer to Adyen's [documentation](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#request-recurringProcessingModel). |
+
+### Stripe
+
+External 3DS data can be added as part of a Stripe `PaymentIntent` or `SetupIntent`.
+
+#### Sample Payload
+This example payload shows how you can pass a `payment_method_options` property into both Payment Intents and Setup Intents and how this may be implemented; if you have questions, the best place to start is the [Stripe Official Documentation](https://docs.stripe.com/payments/payment-intents/three-d-secure-import).
+```json
+{
+  //...
+  "payment_method_options": {
+    "card": {
+      //...
+      "three_d_secure": {
+        "cryptogram": authentication.authentication_value,
+        "transaction_id": authentication.ds_transaction_id,
+        "version": authentication.threeds_version,
+        "ares_trans_status": authentication.authentication_status_code,
+        "electronic_commerce_indicator": authentication.eci,
+        "exemption_indicator": null,
+        "requestor_challenge_indicator": authentication.challenge_preference_code,
+      }
+    }
+  }
+}
+```
+#### Property Mapping
+
+| Stripe Value | Basis Theory 3DS Value | Observations |
+| --- | --- | --- |
+| `three_d_secure.cryptogram` | `authentication.authentication_value` | - |
+| `three_d_secure.transaction_id` | `authentication.ds_transaction_id` | - |
+| `three_d_secure.version` | `authentication.threeds_version` | - |
+| `three_d_secure.ares_trans_status` | `authentication.authentication_status_code` | - |
+| `three_d_secure.electronic_commerce_indicator` | `authentication.eci` | - |
+| `three_d_secure.exemption_indicator` | - | Specific to Stripe's flow, refer to Stripe's [documentation](https://docs.stripe.com/api/payment_intents/create#create_payment_intent-payment_method_options-card-three_d_secure-exemption_indicator). |
+| `three_d_secure.network_options` | See [Stripe 3DS Network Options](#network-options) table below. | - |
+| `three_d_secure.requestor_challenge_indicator` | `challenge_preference_code` | - |
+
+##### Stripe 3DS Network Options
+
+| Stripe Value | Basis Theory 3DS Value | Observations |
+| --- | --- | --- |
+| `cartes_bancaires.cb_avalgo` | `authentication.message_extensions[X].data` | Check `authentication.message_extensions` array for `message_extensions[X].name == **CB-AVALGO**` for the value of `X` (index). |
+| `cartes_bancaires.cb_exemption` | `authentication.message_extensions[X].data` | Check `authentication.message_extensions` array for `message_extensions[X].name == **CB-EXEMPTION**` for the value of `X` (index). |
+| `cartes_bancaires.cb_score` | `authentication.message_extensions[X].data` | Check `authentication.message_extensions` array for `message_extensions[X].name == **CB-SCORE**` for the value of `X` (index). |
+
+`message_extensions` is an array that could have `X` number of extensions in any given order. The best course is to go through the array and look for the `name`s of the extensions you're looking for.
+
+### Checkout.com
+
+#### Sample Payload
+
+This example payload shows you this may be implemented; if you have questions, the best place to start is the [Checkout Official Documentation](https://api-reference.checkout.com/#operation/requestAPaymentOrPayout) (select “Third-party authentication” under the `3ds` object)
+
+```json
+{
+  //...
+  "3ds": {
+    "enabled": true,
+    "cryptogram": authentication.authentication_value,
+    "eci": authentication.eci,
+    "version": authentication.threeds_version,
+    "xid": authentication.ds_transaction_id,
+    "status": authentication.authentication_status_code,
+    "status_reason_code": authentication_status_reason
+  }
+}
+```
+
+#### Property Mapping
+
+| Checkout Value | Basis Theory 3DS Value | Observations |
+| --- | --- | --- |
+| `3ds.challenge_indicator` | See [Challenge Indicator](#checkout-3ds-challenge-indicator) table below.  | The same value you pass into Basis Theory 3DS should be passed here. If you're unsure, leave it blank. |
+| `3ds.cryptogram` | `authentication.authentication_value` | - |
+| `3ds.eci` | `authentication.eci` | - |
+| `3ds.enabled` | - | Checkout asks the value to be set as `true` for using 3DS. |
+| `3ds.version` | `authentication.threeds_version` | - |
+| `3ds.xid` | `authentication.ds_transaction_id` | - |
+| `3ds.status` | `authentication.authentication_status_code` | - |
+| `3ds.status_reason_code` | `authentication.authentication_status_reason` | - |
+
+##### Checkout 3DS Challenge Indicator
+
+| Basis Theory `challenge_preference`  | Checkout `challenge_indicator`|
+| --- | --- |
+| `no-preference` | `no_preference` |
+| `no-challenge` | `no_challenge_requested` |
+| `challenge-requested` | `challenge_requested` |
+| `challenge-mandated` | `challenge_requested_mandate` |
+
+Basis Theory provides [additional](https://developers.basistheory.com/docs/api/3ds/sessions#challenge-preferences) `challenge_preference` values, but those not included here can be considered NOT SUPPORTED by Checkout.
+
+### Other PSPs - EMVCo 3DS Specification
+
+While each PSP may define its property names, the EMVCo 3DS specification widely standardizes the underlying concepts.
+Refer to the table below to see how the EMVCo 3DS specification field names map to PSPs not specifically listed in this guide.
+
+| BT 3DS Authentication Field | EMVCo Specification Field | Observations |
+| --- | --- | --- |
+| `session_id` | `threeDSServerTransID` | - |
+| `threeds_version` |  - | Although not a 3DS spec field, some PSPs require this information (3DS version). |
+| `acs_transaction_id` | `acsTransID` | - |
+| `ds_transaction_id` | `dsTransID` | - |
+| `sdk_transaction_id` | `sdkTransID` | - |
+| `acs_reference_number` | `acsReferenceNumber` | - |
+| `ds_reference_number` | `dsReferenceNumber` | - |
+| `liability_shifted` | - | Although not a 3DS spec field, some PSPs require this information. (Liability shift). |
+| `authentication_value` | `authenticationValue` |  |
+| `authentication_status` | - | Human readable format of `authentication_status_code`  |
+| `authentication_status_code` | `transStatus` | - |
+| `authentication_status_reason` | `transStatusReason` | - |
+| `eci` | `eci` | - |
+| `acs_challenge_mandated` | `acsChallengeMandated` | - |
+| `acs_decoupled_authentication` | `acsDecConInd` | - |
+| `authentication_challenge_type` | - | - |
+| `acs_signed_content` | `acsSignedContent` | - |
+| `acs_challenge_url` | `acsUrl` | - |
+| `challenge_preference` | - | Human readable format of `challenge_preference_code` |
+| `challenge_preference_code` | `threeDSRequestorChallengeInd` | - |
+| `challenge_attempts` | `interactionCounter` | - |
+| `challenge_cancel_reason` | - | Human readable format of `challenge_cancel_reason_code` |
+| `challenge_cancel_reason_code` | `challengeCancel` | - |
+| `cardholder_info` | `cardholderInfo` | - |
+| `whitelist_status` | `trustListStatus` | - |
+| `whitelist_status_source` | `trustListStatusSource` | - |
+| `message_extensions` | `messageExtension` | - |
+
+*If you are still in doubt about what fields to use with your PSP, please reach out to us via <a href="mailto:support@basistheory.com">support@basistheory.com</a>.*
+
+## Analyzing 3DS Authentications
+
+Basis Theory enables the Merchant to store all details surrounding their 3DS authentications.
+
+A merchant should consider storing all the properties and values returned from the Basis Theory 3DS Session to enable their ability to better understand details and specifics about their 3DS scenarios.
+
+If details about past authentications weren't previously stored, they can be retrieved at any time using the [Get Session](https://developers.basistheory.com/docs/api/3ds/sessions#get-a-session) endpoint.
+
+*If you need specific analytics or help, please get in touch with <a href="mailto:support@basistheory.com">support@basistheory.com</a>.*
+
+## Optimizing 3DS
+
+3DS has many complicated rules, which can vary depending on the issuer you're connecting to, affecting your ability to achieve frictionless authentication, liability shift, or authenticate period successfully.
+Below are a few rules of thumb you should consider when optimizing for the above scenarios.
+
+### Additional Information
+
+In our 3DS Implementation guides, we've suggested the bare minimum options you should consider sending within the [Merchant Info](https://developers.basistheory.com/docs/api/3ds/sessions#merchant-info-object) object and [Cardholder Info](https://developers.basistheory.com/docs/api/3ds/sessions#cardholder-info-object) during Authentication.
+
+The general rule of thumb is that the more data you send for these, the better chance of success for frictionless and liability shift you will have with the issuers.
+
+## Taking 3DS Live FAQs
+
+### What versions of 3DS does the Basis Theory 3DS support?
+
+Basis Theory supports 3DS v2.20 and 3DS v2.1.0
+
+### What card brands/networks can be used with Basis Theory 3DS?
+
+Visa, Mastercard/Maestro, American Express, Discover, JCB, UnionPay, Cartes Bancaires
+
+### My transactions keep failing with a 403 status - what could be wrong?
+
+A 403 error often indicates issues with your `merchant_info` fields, specifically an incorrect or unrecognized `mid` or `acquirer_bin` passed on the `authenticate` request.
+
+Double-check these values with your PSP to ensure they’re set correctly and valid.
+
+### My PSP mentions a `xid` field, but I don't see it in the Basis Theory 3DS responses.
+
+The `xid` field was part of the older 3DS v1 specification, which Basis Theory does not support.
+
+In most scenarios, you can safely rely on the `ds_transaction_id` in the authentication as the value for `xid`. If you still need more information, confirm with your PSP how they handle 3DS v2 fields.
+
+### Can I use merchant information (MID, Acquirer BIN, etc.) from one PSP/acquirer for 3DS with another PSP/acquirer?
+
+Although this may be technically feasible, it is generally not recommended.
+
+Issuers may reject the transaction or dispute liability shifts if the merchant information used in authentication does not match the details provided during authorization.
+
+### Can I retry a declined transaction using the same authentication value (CAVV)?
+
+Yes, as long as the transaction details are unchanged, you can reuse the same 3DS authentication value for a short validity window (often up to 30 days).
+
+However, confirm this with your PSP and card network to ensure compliance with their policies.
