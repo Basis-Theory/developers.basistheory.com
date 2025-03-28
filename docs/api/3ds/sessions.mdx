@@ -35,31 +35,53 @@ import TestCards from "@site/docs/api/3ds/_test-cards.mdx";
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
     ```shell showLineNumbers
-
+    curl "https://api.basistheory.com/3ds/sessions/" \
+      -H "BT-API-KEY: <API_KEY>" \
+      -H "Content-Type: application/json" \
+      -X "POST" \
+      -d '{
+        "token_id": "af9f65fd-932f-4b3d-960a-1bd7a1d14d18",
+        "type": "merchant"
+      }'
     ```
   </TabItem>
 
   <TabItem value="node" label="Node">
     ```typescript showLineNumbers
-
+    await client.threeds.sessions.create({
+      tokenId: "af9f65fd-932f-4b3d-960a-1bd7a1d14d18",
+      type: "merchant"
+    });
     ```
   </TabItem>
 
   <TabItem value="csharp" label="C#">
     ```csharp showLineNumbers
-
+    await client.Threeds.Sessions.CreateAsync(new CreateThreeDsSessionRequest
+    {
+      TokenId = "af9f65fd-932f-4b3d-960a-1bd7a1d14d18",
+      Type = "merchant"
+    });
     ```
   </TabItem>
 
   <TabItem value="python" label="Python">
     ```python showLineNumbers
-
+    client.threeds.sessions.create(
+        token_id="af9f65fd-932f-4b3d-960a-1bd7a1d14d18",
+        type="merchant"
+    )
     ```
   </TabItem>
 
   <TabItem value="go" label="Go">
     ```go showLineNumbers
+    createRequest := &threeds.CreateThreeDsSessionRequest{
+      TokenId: "af9f65fd-932f-4b3d-960a-1bd7a1d14d18",
+      Type:    "merchant",
+    }
 
+    createResponse, createErr := client.Threeds.Sessions.Create(context.Background(), createRequest)
     ```
   </TabItem>
 </Tabs>
@@ -76,7 +98,7 @@ import TestCards from "@site/docs/api/3ds/_test-cards.mdx";
 | `device_info`        | conditional       | _object_ | Information about the device. See [Device Info](#device-info-object) for details. Required if `type` is `customer`. |
 
 <Alert type={Alerts.WARNING}>
-  3DS sessions of type `customer` (CIT) are  only officially supported through our <a href="/docs/sdks/web/3ds/">web</a>, <a href="/docs/sdks/mobile/3ds-react-native">react-native</a> and <a href="/docs/sdks/mobile/3ds/">mobile</a> SDKs.
+  3DS sessions of type `customer` (CIT) are  only officially supported through our frontend <a href="/docs/sdks/web/3ds/">web</a>, <a href="/docs/sdks/mobile/3ds-react-native">react-native</a> and <a href="/docs/sdks/mobile/3ds/">mobile</a> SDKs.
   Using the API directly is not recommended and may lead to lower success rates. Basis Theory only supports creation of type `merchant` (MIT) through the API or backend SDKs.
 </Alert>
 
@@ -155,31 +177,32 @@ Get a 3DS Session by ID in the Tenant.
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
     ```shell showLineNumbers
-
+    curl "https://api.basistheory.com/3ds/sessions/c0c22fcd-d42c-497e-a9a6-2eacd31770d7" \
+      -H "BT-API-KEY: <API_KEY>"
     ```
   </TabItem>
 
   <TabItem value="node" label="Node">
     ```typescript showLineNumbers
-
+    await client.threeds.sessions.get("c0c22fcd-d42c-497e-a9a6-2eacd31770d7");
     ```
   </TabItem>
 
   <TabItem value="csharp" label="C#">
     ```csharp showLineNumbers
-
+    await client.Threeds.Sessions.GetAsync("c0c22fcd-d42c-497e-a9a6-2eacd31770d7");
     ```
   </TabItem>
 
   <TabItem value="python" label="Python">
     ```python showLineNumbers
-
+    client.threeds.sessions.get("c0c22fcd-d42c-497e-a9a6-2eacd31770d7")
     ```
   </TabItem>
 
   <TabItem value="go" label="Go">
     ```go showLineNumbers
-
+    getResponse, getErr := client.Threeds.Sessions.Get(context.Background(), sessionId)
     ```
   </TabItem>
 </Tabs>
@@ -279,31 +302,187 @@ Authenticate a 3DS Session.
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
     ```shell showLineNumbers
-
+    curl "https://api.basistheory.com/3ds/sessions/c0c22fcd-d42c-497e-a9a6-2eacd31770d7/authenticate" \
+      -H "BT-API-KEY: <API_KEY>" \
+      -H "Content-Type: application/json" \
+      -X "POST" \
+      -d '{
+        "authentication_category": "payment",
+        "authentication_type": "payment-transaction",
+        "challenge_preference": "no-challenge",
+        "merchant_info": {
+          "mid": "9876543210001",
+          "acquirer_bin": "000000999",
+          "name": "Example 3DS Merchant",
+          "category_code": "7922",
+          "country_code": "826",
+          "url": "https://example.com"
+        },
+        "requestor_info": {
+          "amex_requestor_type": "MER",
+          "cb_siret_number": "78467169500087"
+        },
+        "purchase_info": {
+          "amount": "80000",
+          "currency": "826",
+          "exponent": "2",
+          "date": "20240109141010",
+          "transaction_type": "purchase"
+        },
+        "cardholder_info": {
+          "name": "John Doe",
+          "email": "john@example.com"
+        }
+      }'
     ```
   </TabItem>
 
   <TabItem value="node" label="Node">
     ```typescript showLineNumbers
-
+    await client.threeds.sessions.authenticate(sessionId, {
+      authenticationCategory: "payment",
+      authenticationType: "payment-transaction",
+      challengePreference: "no-challenge",
+      merchantInfo: {
+        mid: "9876543210001",
+        acquirerBin: "000000999",
+        name: "Example 3DS Merchant",
+        categoryCode: "7922",
+        countryCode: "826",
+        url: "https://example.com",
+      },
+      requestorInfo: {
+        amexRequestorType: "MER",
+        cbSiretNumber: "78467169500087",
+      },
+      purchaseInfo: {
+        amount: "80000",
+        currency: "826",
+        exponent: "2",
+        date: "20240109141010",
+        transactionType: "purchase",
+      },
+      cardholderInfo: {
+        name: "John Doe",
+        email: "john@example.com"
+      }
+    });
     ```
   </TabItem>
 
   <TabItem value="csharp" label="C#">
     ```csharp showLineNumbers
-
+    await client.Threeds.Sessions.AuthenticateAsync(sessionId.ToString(), new AuthenticateThreeDsSessionRequest
+    {
+      AuthenticationCategory = "payment",
+      AuthenticationType = "payment-transaction",
+      ChallengePreference = "no-challenge",
+      MerchantInfo = new ThreeDsMerchantInfo
+      {
+        Mid = "9876543210001",
+        AcquirerBin = "000000999",
+        Name = "Example 3DS Merchant",
+        CategoryCode = "7922",
+        CountryCode = "826",
+        Url = "https://example.com"
+      },
+      RequestorInfo = new ThreeDsRequestorInfo
+      {
+        AmexRequestorType = "MER",
+        CbSiretNumber = "78467169500087"
+      },
+      PurchaseInfo = new ThreeDsPurchaseInfo
+      {
+        Amount = "80000",
+        Currency = "826",
+        Exponent = "2",
+        Date = "20240109141010",
+        TransactionType = "purchase",
+      },
+      CardholderInfo = new ThreeDsCardholderInfo
+      {
+        Name = "John Doe",
+        Email = "john@example.com"
+      }
+    });
     ```
   </TabItem>
 
   <TabItem value="python" label="Python">
     ```python showLineNumbers
-
+    client.threeds.sessions.authenticate(
+        session_id=sessionId,
+        authentication_category="payment",
+        authentication_type="payment-transaction",
+        challenge_preference="no-challenge",
+        merchant_info=ThreeDsMerchantInfo(
+            mid="9876543210001",
+            acquirer_bin="000000999",
+            name="Example 3DS Merchant",
+            category_code="7922",
+            country_code="826",
+            url="https://example.com"
+        ),
+        requestor_info=ThreeDsRequestorInfo(
+            amex_requestor_type="MER",
+            cb_siret_number="78467169500087"
+        ),
+        purchase_info=ThreeDsPurchaseInfo(
+            amount="80000",
+            currency="826",
+            exponent="2",
+            date="20240109141010",
+            transaction_type="purchase",
+        ),
+        cardholder_info=ThreeDsCardholderInfo(
+            name="John Doe",
+            email="john@me.com"
+        )
+    )
     ```
   </TabItem>
 
   <TabItem value="go" label="Go">
     ```go showLineNumbers
+    authRequest := &threeds.AuthenticateThreeDsSessionRequest{
+        AuthenticationCategory: "payment",
+        AuthenticationType:     "payment-transaction",
+        ChallengePreference:    "no-challenge",
+      }
 
+    merchantInfo := &basistheory.ThreeDsMerchantInfo{
+      Mid:          pointerToString("9876543210001"),
+      AcquirerBin:  pointerToString("000000999"),
+      Name:         pointerToString("Example 3DS Merchant"),
+      CategoryCode: pointerToString("7922"),
+      CountryCode:  pointerToString("826"),
+      Url:          pointerToString("https://example.com"),
+    }
+
+    requestorInfo := &basistheory.ThreeDsRequestorInfo{
+      AmexRequestorType: pointerToString("MER"),
+      CbSiretNumber:     pointerToString("78467169500087"),
+    }
+
+    purchaseInfo := &basistheory.ThreeDsPurchaseInfo{
+      Amount:   pointerToString("80000"),
+      Currency: pointerToString("826"),
+      Exponent: pointerToString("2"),
+      Date:     pointerToString("20240109141010"),
+      TransactionType: pointerToString("purchase"),
+    }
+
+    cardholderInfo := &basistheory.ThreeDsCardholderInfo{
+      Name:  pointerToString("John Doe"),
+      Email: pointerToString("john@example.com"),
+    }
+
+    authRequest.MerchantInfo = merchantInfo
+    authRequest.RequestorInfo = requestorInfo
+    authRequest.PurchaseInfo = purchaseInfo
+    authRequest.CardholderInfo = cardholderInfo
+
+    authenticateResponse, authenticateErr := client.Threeds.Sessions.Authenticate(context.Background(), sessionId, authRequest)
     ```
   </TabItem>
 </Tabs>
@@ -405,6 +584,7 @@ This object contain information about the merchant (who is collecting the money 
 | `risk_info`     | false       | [Merchant Risk Info](#merchant-info-object) | Optional information to de-risk the transaction.                                                                                           |
 
 #### Merchant Risk Info Object
+
 | Attribute             | Required | Type     | Description                                                                                                                            |
 |-----------------------|----------|----------|----------------------------------------------------------------------------------------------------------------------------------------|
 | `delivery_email`      | false    | _string_ | The delivery email address for electronic delivery merchandise.                                                                        |
@@ -662,31 +842,32 @@ Get the result of a 3DS Challenge for the given session `id`.
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
     ```shell showLineNumbers
-
+    curl "https://api.basistheory.com/3ds/sessions/c0c22fcd-d42c-497e-a9a6-2eacd31770d7/challenge-result" \
+      -H "BT-API-KEY: <API_KEY>"
     ```
   </TabItem>
 
   <TabItem value="node" label="Node">
     ```typescript showLineNumbers
-
+    await client.threeds.sessions.getChallengeResult("c0c22fcd-d42c-497e-a9a6-2eacd31770d7");
     ```
   </TabItem>
 
   <TabItem value="csharp" label="C#">
     ```csharp showLineNumbers
-
+    await client.Threeds.Sessions.GetChallengeResultAsync("c0c22fcd-d42c-497e-a9a6-2eacd31770d7");
     ```
   </TabItem>
 
   <TabItem value="python" label="Python">
     ```python showLineNumbers
-
+    await client.threeds.sessions.get_challenge_result("c0c22fcd-d42c-497e-a9a6-2eacd31770d7")
     ```
   </TabItem>
 
   <TabItem value="go" label="Go">
     ```go showLineNumbers
-
+    result, err := client.Threeds.Sessions.GetChallengeResult("c0c22fcd-d42c-497e-a9a6-2eacd31770d7")
     ```
   </TabItem>
 </Tabs>

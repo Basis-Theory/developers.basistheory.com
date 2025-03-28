@@ -1372,7 +1372,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
       const { sessionId } = req.params;
 
       try {
-        const result = await bt.threeds.getChallengeResult(sessionId);
+        const result = await bt.threeds.sessions.getChallengeResult(sessionId);
 
         if (!result) {
           return res.status(500).send({ error: "Failed to get challenge result." });
@@ -1509,7 +1509,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
         public async Task<ActionResult> GetChallengeResult([FromRoute] Guid sessionId)
         {
           try {
-            var result = await _client.GetChallengeResultAsync(sessionId.ToString());
+            var result = await _client.Threeds.Sessions.GetChallengeResultAsync(sessionId.ToString());
 
             if (result == null)
             {
@@ -1597,7 +1597,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
     @app.route('/<sessionId>/challenge-result', methods=['GET'])
     def get_challenge_result(sessionId):
       try:
-        result = client.threeds.get_challenge_result(sessionId)
+        result = client.threeds.sessions.get_challenge_result(sessionId)
 
         if result is None:
           return jsonify({"error": "Failed to get challenge result."}), 500
@@ -1716,7 +1716,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
       vars := mux.Vars(r)
       sessionId := vars["sessionId"]
 
-      result, err := client.Threeds.GetChallengeResult(context.Background(), sessionId)
+      result, err := client.Threeds.Sessions.GetChallengeResult(context.Background(), sessionId)
 
       if err != nil {
         rw.WriteHeader(http.StatusInternalServerError)
