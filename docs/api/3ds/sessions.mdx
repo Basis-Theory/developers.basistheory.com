@@ -19,15 +19,7 @@ import TestCards from "@site/docs/api/3ds/_test-cards.mdx";
 
 <Alert type={Alerts.INFO}>3D Secure is an Enterprise feature. Contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> to request access.</Alert>
 
-## Create a Customer Session
-
-Create a 3DS Session for a customer initiated transaction (CIT).
-
-<Alert type={Alerts.WARNING}>Customer 3DS session creation is only officially supported through our <a href="/docs/sdks/web/3ds/">web</a>, <a href="/docs/sdks/mobile/3ds-react-native">react-native</a> and <a href="/docs/sdks/mobile/3ds/">mobile</a> SDKs.</Alert>
-
-## Create a Merchant Session
-
-Create a 3DS Session for a merchant initiated transaction (MIT).
+## Create a 3DS Session
 
 <HttpMethod
   method={HttpMethods.POST}
@@ -42,86 +34,80 @@ Create a 3DS Session for a merchant initiated transaction (MIT).
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
 
-```shell showLineNumbers
-curl "https://api.basistheory.com/3ds/sessions" \
-  -H "BT-API-KEY: <API_KEY>" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "token_id": "bfe0060c-a465-41a0-a620-c804952d3468",
-    "type": "merchant"
-  }'
-```
-
+    ```
   </TabItem>
+
   <TabItem value="node" label="Node">
+    ```typescript showLineNumbers
 
-```javascript showLineNumbers
-await client.threeds.sessions.create({
-  tokenId: "bfe0060c-a465-41a0-a620-c804952d3468",
-  type: "merchant"
-});
-```
-
+    ```
   </TabItem>
-  <TabItem value="javascript" label="JavaScript (legacy)">
-```javascript showLineNumbers
-import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("<API_KEY>");
-
-const result = await bt.threeds.createSession({
-  tokenId: "bfe0060c-a465-41a0-a620-c804952d3468",
-  type: "merchant"
-});
-```
-  </TabItem>
   <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
 
-```csharp showLineNumbers
-await client.Threeds.Sessions.CreateAsync(new CreateThreeDsSessionRequest {
-  TokenId = "bfe0060c-a465-41a0-a620-c804952d3468",
-  Type = "merchant"
-});
-```
-
+    ```
   </TabItem>
-  <TabItem value="java" label="Java">
 
-```java showLineNumbers
-
-```
-
-  </TabItem>
   <TabItem value="python" label="Python">
+    ```python showLineNumbers
 
-```python showLineNumbers
-client.threeds.sessions.create(
-        token_id="bfe0060c-a465-41a0-a620-c804952d3468",
-        type="merchant"
-    )
-```
-
+    ```
   </TabItem>
+
   <TabItem value="go" label="Go">
+    ```go showLineNumbers
 
-```go showLineNumbers
-
-```
+    ```
   </TabItem>
 </Tabs>
 
 #### Request Parameters
 
-| Attribute         | Required | Type     | Description                                                                                              |
-|-------------------|----------|----------|----------------------------------------------------------------------------------------------------------|
-| `token_id`        | false    | _string_ | A card type token `id`.                                                                                  |
-| `token_intent_id` | false    | _string_ | A card type token intent `id`.                                                                           |
-| `pan`             | false    | _string_ | <Deprecated/> A card type token `id`.                                                                    |
-| `type`            | true     | _string_ | The 3DS session type. Defaults to `customer`.  Use `merchant` for merchant initiated transactions (MIT). |
+| Attribute            | Required          | Type     | Description                                                                                                         |
+|----------------------|-------------------|----------|---------------------------------------------------------------------------------------------------------------------|
+| `token_id`           | conditional       | _string_ | A card type token `id`. Required if `token_intent_id` not present.                                                  |
+| `token_intent_id`    | conditional       | _string_ | A card type token intent `id`. Required if `token_id` not present.                                                  |
+| `pan`                | false             | _string_ | <Deprecated/> A card type token `id`.                                                                               |
+| `type`               | false             | _string_ | The 3DS session type between `customer` (CIT) and `merchant` (MIT). Defaults to `customer`.                         |
+| `device`             | conditional       | _string_ | The device type for the 3DS session between `browser` (web) or `app` (mobile). Required if `type` is `customer`.    |
+| `device_info`        | conditional       | _object_ | Information about the device. See [Device Info](#device-info-object) for details. Required if `type` is `customer`. |
 
-Either `token_id` or `token_intent_id` are required.
+<Alert type={Alerts.WARNING}>
+  3DS sessions of type `customer` (CIT) are  only officially supported through our <a href="/docs/sdks/web/3ds/">web</a>, <a href="/docs/sdks/mobile/3ds-react-native">react-native</a> and <a href="/docs/sdks/mobile/3ds/">mobile</a> SDKs.
+  Using the API directly is not recommended and may lead to lower success rates. Basis Theory only supports creation of type `merchant` (MIT) through the API or backend SDKs.
+</Alert>
+
+##### Device Info Object
+
+| Attribute                    | Required    | Type     | Description                                                                                                                                       |
+|------------------------------|-------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| `browser_javascript_enabled` | conditional | _bool_   | Indicates if JavaScript is enabled in the browser. Required if session `device` is `browser` and `type` is `customer`.                            |
+| `browser_java_enabled`       | conditional | _bool_   | Indicates if Java is enabled in the browser. Required if session `device` is `browser` and `type` is `customer`.                                  |
+| `browser_language`           | conditional | _string_ | The language set in the browser. Required if session `device` is `browser` and `type` is `customer`.                                              |
+| `browser_color_depth`        | conditional | _string_ | The color depth of the browser. Required if session `device` is `browser` and `type` is `customer`.                                               |
+| `browser_screen_height`      | conditional | _string_ | The screen height of the browser. Required if session `device` is `browser` and `type` is `customer`.                                             |
+| `browser_screen_width`       | conditional | _string_ | The screen width of the browser.Required if session `device` is `browser` and `type` is `customer`.                                               |
+| `browser_tz`                 | conditional | _string_ | The timezone of the browser. Required if session `device` is `browser` and `type` is `customer`.                                                  |
+| `browser_user_agent`         | conditional | _string_ | The user agent string of the browser. Required if session `device` is `browser` and `type` is `customer`.                                         |
+| `browser_accept_header`      | false       | _string_ | The HTTP Accept header value from the browser.                                                                                                    |
+| `browser_ip`                 | false       | _string_ | The IP address of the browser.                                                                                                                    |
+| `sdk_transaction_id`         | conditional | _string_ | The ID of the SDK transaction. Required if session `device` is `app` and `type` is `customer`.                                                    |
+| `sdk_application_id`         | conditional | _string_ | The ID for the application using the SDK. Required if session `device` is `app` and `type` is `customer`.                                         |
+| `sdk_encryption_data`        | conditional | _string_ | The encryption data used by the SDK. Required if session `device` is `app` and `type` is `customer`.                                              |
+| `sdk_ephemeral_public_key`   | conditional | _string_ | The ephemeral public key used by the SDK. Required if session `device` is `app` and `type` is `customer`.                                         |
+| `sdk_max_timeout`            | conditional | _string_ | The maximum timeout for the SDK. Required if session `device` is `app` and `type` is `customer`.                                                  |
+| `sdk_reference_number`       | conditional | _string_ | The reference number used by the SDK. Required if session `device` is `app` and `type` is `customer`.                                             |
+| `sdk_render_options`         | conditional | _object_ | The render options used by the SDK. See [SDK Render Options](#sdk-render-options) Required if session `device` is `app` and `type` is `customer`. |
+
+###### SDK Render Options
+
+| Attribute            | Required    | Type     | Description                                                                                                                    |
+|----------------------|-------------|----------|--------------------------------------------------------------------------------------------------------------------------------|
+| `sdk_interface`      | conditional | _string_ | The interface types the mobile device supports.. Required if session `device` is `app` and `type` is `customer`.               |
+| `sdk_ui_type`        | conditional | _array_  | The UI types the device supports for displaying challenge UIs. Required if session `device` is `app` and `type` is `customer`. |
 
 ### Response
 
@@ -129,27 +115,27 @@ Returns relevant information about the created 3DS session in a [Create Session 
 
 ```json showLineNumbers
 {
-    "id": "be3bec00-a1c3-4ffe-8971-20a30bbee031",
-    "type": "merchant",
-    "card_brand": "Visa",
-    "method_url": "https://acs.example.com/3ds/acs/browser/method",
-    "method_notification_url": "https://api.basistheory.com/3ds/sessions/be3bec00-a1c3-4ffe-8971-20a30bbee031/method-notification",
-    "directory_server_id": "M000000003",
-    "recommended_version": "2.2.0",
+  "id": "c0c22fcd-d42c-497e-a9a6-2eacd31770d7",
+  "type": "customer",
+  "cardBrand": "Visa",
+  "method_url": "https://acs.example.com/3ds/acs/browser/method",
+  "method_notification_url": "https://api.basistheory.com/3ds/sessions/c0c22fcd-d42c-497e-a9a6-2eacd31770d7/method-notification",
+  "directory_server_id": "M000000003",
+  "recommended_version": "2.2.0"
 }
 ```
 
 #### Create Session Response Object
 
-| Attribute                 | Type     | Description                                                                        |
-|---------------------------|----------|------------------------------------------------------------------------------------|
-| `id`                      | _string_ | The ID of the 3DS session.                                                         |
-| `type`                    | _string_ | The 3DS session type.                                                              |
-| `card_brand`              | _string_ | The brand for the card used in the 3DS transaction.                                |
-| `method_url`              | _string_ | The URL for the Method request, used by the 3DS SDK.                               |
-| `method_notification_url` | _string_ | The URL for which to send the method completion notification, used by the 3DS SDK. |
-| `directory_server_id`     | _string_ | The 3DS directory server ID, used by the 3DS SDK.                                  |
-| `recommended_version`     | _string_ | The 3DS version that was used for the transaction.                                 |
+| Attribute                 | Type     | Description                                                                            |
+|---------------------------|----------|----------------------------------------------------------------------------------------|
+| `id`                      | _string_ | The ID of the 3DS session.                                                             |
+| `type`                    | _string_ | The 3DS session type.                                                                  |
+| `card_brand`              | _string_ | The brand for the card used in the 3DS transaction.                                    |
+| `method_url`              | _string_ | The URL for the Method request, used by the 3DS SDK.                                   |
+| `method_notification_url` | _string_ | The URL for which to send the method completion notification, used by the 3DS Web SDK. |
+| `directory_server_id`     | _string_ | The 3DS directory server ID, used by the 3DS Mobile SDKs.                              |
+| `recommended_version`     | _string_ | The 3DS version that was used for the transaction.                                     |
 
 ## Get a Session
 
@@ -168,58 +154,33 @@ Get a 3DS Session by ID in the Tenant.
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
 
-```shell showLineNumbers
-curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f76f1" \
-  -H "BT-API-KEY: <PRIVATE_API_KEY>"
-```
-
+    ```
   </TabItem>
+
   <TabItem value="node" label="Node">
+    ```typescript showLineNumbers
 
-```javascript showLineNumbers
-await client.threeds.sessions.get("id");
-```
-
+    ```
   </TabItem>
-  <TabItem value="javascript" label="JavaScript (legacy)">
-```javascript showLineNumbers
-import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
-
-const session = await bt.threeds.getSessionById("c06d0789-0a38-40be-b7cc-c28a718f76f1");
-```
-  </TabItem>
   <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
 
-```csharp showLineNumbers
-await client.Threeds.Sessions.GetAsync("id");
-```
-
+    ```
   </TabItem>
-  <TabItem value="java" label="Java">
 
-```java showLineNumbers
-
-```
-
-  </TabItem>
   <TabItem value="python" label="Python">
+    ```python showLineNumbers
 
-```python showLineNumbers
-client.threeds.sessions.get(
-    id="id",
-)
-```
-
+    ```
   </TabItem>
+
   <TabItem value="go" label="Go">
+    ```go showLineNumbers
 
-```go showLineNumbers
-
-```
-
+    ```
   </TabItem>
 </Tabs>
 
@@ -234,59 +195,69 @@ Returns a 3DS [session](#session-object) with the `id` provided. Returns [an err
 
 ```json showLineNumbers
 {
-    "id": "be3bec00-a1c3-4ffe-8971-20a30bbee031",
-    "tenant_id": "9f328a79-b397-42ac-9b8d-18312157cc6b",
-    "type": "customer",
-    "token_id": "bfe0060c-a465-41a0-a620-c804952d3468",
-    "card_brand": "Visa",
-    "expiration_date": "2024-03-23T14:01:26.4544211+00:00",
-    "created_date": "2024-03-22T14:01:26.455016+00:00",
-    "created_by": "68909d60-3e1d-4b3d-bf68-166c95745c4c",
-    "modified_date": "2024-03-22T14:01:45.3094992+00:00",
-    "modified_by": "7da53434-d814-4bd7-a455-6a4757c5c888",
-    "device": "browser",
-    "device_info": {
-        "browser_accept_header": "*/*",
-        "browser_javascript_enabled": true,
-        "browser_java_enabled": false,
-        "browser_language": "en-US",
-        "browser_color_depth": "24",
-        "browser_screen_height": "1440",
-        "browser_screen_width": "3440",
-        "browser_tz": "180",
-        "browser_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-    },
-    "version": {
-        "recommended_version": "2.2.0",
-        "available_version": [
-            "2.1.0",
-            "2.2.0"
-        ],
-        "earliest_acs_supported_version": "2.1.0",
-        "earliest_ds_supported_version": "2.1.0",
-        "latest_acs_supported_version": "2.2.0",
-        "latest_ds_supported_version": "2.2.0",
-        "acs_information": []
-    },
-    "method": {
-        "method_url": "https://acs.example.com/3ds/acs/browser/method",
-        "method_completion_indicator": "Y"
-    },
-    "authentication": {
-        "threeds_version": "2.2.0",
-        "acs_transaction_id": "50b9c543-4abc-4fbd-8bed-7e1931ed862c",
-        "ds_transaction_id": "497acd8d-4b50-4f55-9e56-c6dcaeff2933",
-        "acs_reference_number": "mock-acs-reference-number",
-        "ds_reference_number": "mock-directory-server-a",
-        "authentication_value": "LVJhdmVsaW4gVGVzdCBWYWx1ZS0=",
-        "authentication_status": "successful",
-        "eci": "05",
-        "acs_challenge_mandated": "N",
-        "authentication_challenge_type": "static",
-        "acs_challenge_url": "https://acs.example.com/3ds/acs/browser/creq",
-        "challenge_attempts": "01",
-        "message_extensions": []
-    }
+  "id": "c0c22fcd-d42c-497e-a9a6-2eacd31770d7",
+  "type": "customer",
+  "tenant_id": "2fd20ec9-1255-4286-a0bc-bbb9b70f747f",
+  "pan_token_id": "f9e45271-b3de-4729-8c1a-9cdd42417fc5",
+  "token_id": "f9e45271-b3de-4729-8c1a-9cdd42417fc5",
+  "card_brand": "Visa",
+  "created_date": "2025-03-28T11:26:42.3528855+00:00",
+  "created_by": "aea3512e-c9fb-4304-b6a8-7e53f8a33075",
+  "modified_date": "2025-03-28T11:26:59.3003079+00:00",
+  "modified_by": "8fc7beed-ac06-4529-a19f-bde6de591227",
+  "device": "browser",
+  "device_info": {
+    "browser_accept_header": "*/*",
+    "browser_javascript_enabled": true,
+    "browser_java_enabled": false,
+    "browser_language": "en-US",
+    "browser_color_depth": "24",
+    "browser_screen_height": "1440",
+    "browser_screen_width": "2560",
+    "browser_tz": "180",
+    "browser_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+  },
+  "version": {
+    "recommended_version": "2.2.0",
+    "available_versions": [
+      "2.1.0",
+      "2.2.0"
+    ],
+    "earliest_acs_supported_version": "2.1.0",
+    "earliest_ds_supported_version": "2.1.0",
+    "latest_acs_supported_version": "2.2.0",
+    "latest_ds_supported_version": "2.2.0",
+    "acs_information": [
+      "threeds-auth-available",
+      "threeds-attempts-supported",
+      "threeds-whitelisting-supported"
+    ],
+  },
+  "method": {
+    "method_url": "https://acs.example.com/3ds/acs/browser/method",
+    "method_completion_indicator": "Y"
+  },
+  "authentication": {
+    "pan_token_id": "f9e45271-b3de-4729-8c1a-9cdd42417fc5",
+    "token_id": "f9e45271-b3de-4729-8c1a-9cdd42417fc5",
+    "session_id": "c0c22fcd-d42c-497e-a9a6-2eacd31770d7",
+    "threeds_version": "2.2.0",
+    "acs_transaction_id": "ec2a5868-ce1b-44c7-9249-bc5b0aa409a3",
+    "ds_transaction_id": "22aeb643-1489-46ee-83aa-af1a01b457c9",
+    "acs_reference_number": "mock-acs-reference-number",
+    "ds_reference_number": "mock-directory-server-a",
+    "liability_shifted": false,
+    "authentication_value": "LVJhdmVsaW4gVGVzdCBWYWx1ZS0=",
+    "authentication_status": "successful",
+    "authentication_status_code": "Y",
+    "directory_status_code": "C",
+    "eci": "05",
+    "acs_challenge_mandated": "N",
+    "authentication_challenge_type": "static",
+    "acs_challenge_url": "https://acs.example.com/3ds/acs/browser/creq",
+    "challenge_attempts": "01",
+    "message_extensions": []
+  }
 }
 ```
 
@@ -307,125 +278,33 @@ Authenticate a 3DS Session.
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
 
-```shell showLineNumbers
-curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f76f1/authenticate" \
-  -H "BT-API-KEY: <API_KEY>" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "authentication_category": "payment",
-    "authentication_type": "payment-transaction",
-    "purchase_info": {
-        "amount": "80000",
-        "currency": "826",
-        "exponent": "2",
-        "date": "20240109141010"
-    },
-    "requestor_info":  {
-        "id": "example-3ds-merchant",
-        "name": "Example 3DS Merchant",
-        "url": "https://www.example.com/example-merchant"
-    },
-    "merchant_info": {
-        "mid": "9876543210001",
-        "acquirer_bin": "000000999",
-        "name": "Example 3DS Merchant",
-        "category_code": "7922",
-        "country_code": "826"
-    },
-    "cardholder_info": {
-        "name": "John Doe",
-        "email": "john@me.com"
-    }
-  }'
-```
-
+    ```
   </TabItem>
+
   <TabItem value="node" label="Node">
+    ```typescript showLineNumbers
 
-```javascript showLineNumbers
-await client.threeds.sessions.authenticate("sessionId", {
-    authenticationCategory: "authentication_category",
-    authenticationType: "authentication_type",
-    ...
-});
-```
-
+    ```
   </TabItem>
-  <TabItem value="javascript" label="JavaScript (legacy)">
-```javascript showLineNumbers
-import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("<API_KEY>");
-
-const authentication = await bt.threeds.authenticateSession("c06d0789-0a38-40be-b7cc-c28a718f76f1", {
-  authenticationCategory: "payment",
-  authenticationType: "payment-transaction",
-  purchaseInfo: {
-    amount: "80000",
-    currency: "826",
-    exponent: "2",
-    date: "20240109141010"
-  },
-  requestorInfo: {
-    id: "example-3ds-merchant",
-    name: "Example 3DS Merchant",
-    url: "https://www.example.com/example-merchant"
-  },
-  merchantInfo: {
-    mid: "9876543210001",
-    acquirerBin: "000000999",
-    name: "Example 3DS Merchant",
-    categoryCode: "7922",
-    countryCode: "826"
-  },
-  cardholderInfo: {
-    name: "John Doe",
-    email: "john@me.com"
-  }
-});
-```
-  </TabItem>
   <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
 
-```csharp showLineNumbers
-await client.Threeds.Sessions.AuthenticateAsync(
-    "sessionId",
-    new AuthenticateThreeDsSessionRequest
-    {
-        AuthenticationCategory = "authentication_category",
-        AuthenticationType = "authentication_type",
-        RequestorInfo = new ThreeDsRequestorInfo(),
-    }
-);
-```
-
+    ```
   </TabItem>
-  <TabItem value="java" label="Java">
 
-```java showLineNumbers
-
-```
-
-  </TabItem>
   <TabItem value="python" label="Python">
+    ```python showLineNumbers
 
-```python showLineNumbers
-client.threeds.sessions.authenticate(
-    session_id="sessionId",
-    authentication_category="authentication_category",
-    authentication_type="authentication_type",
-    requestor_info=ThreeDsRequestorInfo(),
-)
-```
-
+    ```
   </TabItem>
+
   <TabItem value="go" label="Go">
+    ```go showLineNumbers
 
-```go showLineNumbers
-
-```
+    ```
   </TabItem>
 </Tabs>
 
@@ -745,14 +624,23 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 
 ```json showLineNumbers
 {
+  "pan_token_id": "f9e45271-b3de-4729-8c1a-9cdd42417fc5",
+  "token_id": "f9e45271-b3de-4729-8c1a-9cdd42417fc5",
+  "session_id": "c0c22fcd-d42c-497e-a9a6-2eacd31770d7",
   "threeds_version": "2.2.0",
-  "acs_transaction_id": "5657c648-6e5e-4472-aac6-5400b9dab678",
-  "ds_transaction_id": "6159159e-ad57-43bf-a886-f5328583d5b2",
+  "acs_transaction_id": "ec2a5868-ce1b-44c7-9249-bc5b0aa409a3",
+  "ds_transaction_id": "22aeb643-1489-46ee-83aa-af1a01b457c9",
   "acs_reference_number": "mock-acs-reference-number",
   "ds_reference_number": "mock-directory-server-a",
-  "authentication_value": "LVJhdmVsaW4gVGVzdCBWYWx1ZS0=",
-  "authentication_status": "successful",
-  "eci": "05"
+  "liability_shifted": false,
+  "authentication_status": "challenge",
+  "authentication_status_code": "C",
+  "directory_status_code": "C",
+  "acs_challenge_mandated": "N",
+  "authentication_challenge_type": "static",
+  "acs_challenge_url": "https://acs.example.com/3ds/acs/browser/creq",
+  "challenge_preference": "no-challenge",
+  "challenge_preference_code": "02"
 }
 ```
 
@@ -773,58 +661,33 @@ Get the result of a 3DS Challenge for the given session `id`.
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
 
-```shell showLineNumbers
-curl "https://api.basistheory.com/3ds/sessions/c06d0789-0a38-40be-b7cc-c28a718f76f1/challenge-result" \
-  -H "BT-API-KEY: <PRIVATE_API_KEY>"
-```
-
+    ```
   </TabItem>
+
   <TabItem value="node" label="Node">
+    ```typescript showLineNumbers
 
-```javascript showLineNumbers
-await client.threeds.sessions.getChallengeResult("sessionId");
-```
-
+    ```
   </TabItem>
-  <TabItem value="javascript" label="JavaScript (legacy)">
-```javascript showLineNumbers
-import { BasisTheory } from "@basis-theory/basis-theory-js";
 
-const bt = await new BasisTheory().init("<PRIVATE_API_KEY>");
-
-const result = await bt.threeds.getChallengeResult("c06d0789-0a38-40be-b7cc-c28a718f76f1");
-```
-  </TabItem>
   <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
 
-```csharp showLineNumbers
-await client.Threeds.Sessions.GetChallengeResultAsync("sessionId");
-```
-
+    ```
   </TabItem>
-  <TabItem value="java" label="Java">
 
-```java showLineNumbers
-
-```
-
-  </TabItem>
   <TabItem value="python" label="Python">
+    ```python showLineNumbers
 
-```python showLineNumbers
-client.threeds.sessions.get_challenge_result(
-    session_id="sessionId",
-)
-```
-
+    ```
   </TabItem>
+
   <TabItem value="go" label="Go">
+    ```go showLineNumbers
 
-```go showLineNumbers
-
-```
-
+    ```
   </TabItem>
 </Tabs>
 
@@ -841,10 +704,10 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 {
   "pan_token_id": "f9e45271-b3de-4729-8c1a-9cdd42417fc5",
   "token_id": "f9e45271-b3de-4729-8c1a-9cdd42417fc5",
-  "session_id": "bde59c80-08e9-45e3-b2a4-530a4dff1e8d",
+  "session_id": "c0c22fcd-d42c-497e-a9a6-2eacd31770d7",
   "threeds_version": "2.2.0",
-  "acs_transaction_id": "330bafb9-c397-4b58-b256-ac5dd131c6b5",
-  "ds_transaction_id": "cb56d6fb-61e4-4949-900d-692fa1c25634",
+  "acs_transaction_id": "ec2a5868-ce1b-44c7-9249-bc5b0aa409a3",
+  "ds_transaction_id": "22aeb643-1489-46ee-83aa-af1a01b457c9",
   "acs_reference_number": "mock-acs-reference-number",
   "ds_reference_number": "mock-directory-server-a",
   "liability_shifted": false,
@@ -855,9 +718,7 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
   "eci": "05",
   "acs_challenge_mandated": "N",
   "authentication_challenge_type": "static",
-  "acs_challenge_url": "https://acs.ravelin.com/3ds/acs/browser/creq",
-  "challenge_preference": "no-challenge",
-  "challenge_preference_code": "02",
+  "acs_challenge_url": "https://acs.example.com/3ds/acs/browser/creq",
   "challenge_attempts": "01",
   "message_extensions": []
 }
@@ -887,24 +748,25 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 
 ### Device Info Object
 
-| Attribute                    | Type                                             | Description                                                                                 |
-|------------------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------|
-| `browser_accept_header`      | _string_                                         | The HTTP accept headers from the browser (`browser` device only).                           |
-| `browser_ip_address`         | _string_                                         | The browser's IP address (`browser` device only).                                           |
-| `browser_javascript_enabled` | _bool_                                           | If javascript is enabled on the browser (`browser` device only).                            |
-| `browser_java_enabled`       | _bool_                                           | If java is enabled on the browser (`browser` device only).                                  |
-| `browser_color_depth`        | _string_                                         | The bit depth of the browser's color palette for displaying images (`browser` device only). |
-| `browser_screen_height`      | _string_                                         | Total height of the device screen (not browser window) in pixels (`browser` device only).   |
-| `browser_screen_width`       | _string_                                         |Total width of the device screen (not browser window) in pixels (`browser` device only).     |
-| `browser_tz`                 | _string_                                         | Timezone offset in minutes between UTC and the browser local time (`browser` device only).  |
-| `browser_user_agent`         | _string_                                         | Exact content of the browser HTTP user-agent header (`browser` device only).                |
-| `sdk_transaction_id`         | _uuid_                                           | Unique identifier for a mobile SDK transaction (`mobile` device only).                      |
-| `sdk_application_id`         | _uuid_                                           | Unique identifier created upon installation of the mobile SDK (`mobile` device only).       |
-| `sdk_encryption_data`        | _uuid_                                           | Device data encrypted by the SDK (`mobile` device only).                                    |
-| `sdk_ephemeral_public_key`   | _object_                                         | Public key component of the ephemeral key pair generated by the SDK (`mobile` device only). |
-| `sdk_max_timeout`            | _string_                                         | Maximum amount of time (in minutes) for all exchanges (`mobile` device only).               |
-| `sdk_reference_number`       | _string_                                         | Identifies the version of the 3DS SDK.                                                      |
-| `sdk_render_options`         | [SDK Render Options](#sdk-render-options-object) | The SDK UI types that the device supports (`mobile` device only).                           |
+| Attribute                    | Type                                             | Description                                                           |
+|------------------------------|--------------------------------------------------|-----------------------------------------------------------------------|
+| `browser_javascript_enabled` | _bool_   | Indicates if JavaScript is enabled in the browser. (`browser` device only)                                    |
+| `browser_java_enabled`       | _bool_   | Indicates if Java is enabled in the browser. (`browser` device only)                                          |
+| `browser_language`           | _string_ | The language set in the browser. (`browser` device only)                                                      |
+| `browser_color_depth`        | _string_ | The color depth of the browser. (`browser` device only)                                                       |
+| `browser_screen_height`      | _string_ | The screen height of the browser. (`browser` device only)                                                     |
+| `browser_screen_width`       | _string_ | The screen width of the browser. (`browser` device only)                                                      |
+| `browser_tz`                 | _string_ | The timezone of the browser. (`browser` device only)                                                          |
+| `browser_user_agent`         | _string_ | The user agent string of the browser. (`browser` device only)                                                 |
+| `browser_accept_header`      | _string_ | The HTTP Accept header value from the browser. (`browser` device only)                                        |
+| `browser_ip`                 | _string_ | The IP address of the browser. (`browser` device only)                                                        |
+| `sdk_transaction_id`         | _string_ | The ID of the SDK transaction. (`app` device only)                                                            |
+| `sdk_application_id`         | _string_ | The ID for the application using the SDK. (`app` device only)                                                 |
+| `sdk_encryption_data`        | _string_ | The encryption data used by the SDK. (`app` device only)                                                      |
+| `sdk_ephemeral_public_key`   | _string_ | The ephemeral public key used by the SDK. (`app` device only)                                                 |
+| `sdk_max_timeout`            | _string_ | The maximum timeout for the SDK. (`app` device only)                                                          |
+| `sdk_reference_number`       | _string_ | The reference number used by the SDK. (`app` device only)                                                     |
+| `sdk_render_options`         | _object_ | The render options used by the SDK. See [SDK Render Options](#sdk-render-options-object). (`app` device only) |
 
 #### SDK Render Options Object
 
@@ -915,10 +777,16 @@ Returns a 3DS [authentication](#authentication-object). Returns [an error](/docs
 
 ### Version Object
 
-| Attribute              | Type     | Description                                                    |
-|------------------------|----------|----------------------------------------------------------------|
-| `recommended_version`  | _string_ | The 3DS version that was used for the transaction.             |
-| `available_version`    | _array_  | The UI types the device supports for displaying challenge UIs. |
+| Attribute              | Type     | Description                                                                      |
+|------------------------|----------|----------------------------------------------------------------------------------|
+| `recommended_version`            | _string_ | The 3DS version that was used for the transaction.                     |
+| `available_version`              | _array_  | All 3DS versions the card supports.                                    |
+| `earliest_acs_supported_version` | _string_ | The earliest 3DS version supported by the Access Control Server (ACS). |
+| `latest_acs_supported_version`   | _string_ | The latest 3DS version supported by the Access Control Server (ACS).   |
+| `earliest_ds_supported_version`  | _string_ | The earliest 3DS version supported by the Directory Server (DS).       |
+| `latest_ds_supported_version`    | _string_ | The latest 3DS version supported by the Directory Server (DS).         |
+| `acs_information`                | _array_  | Additional information provided by the Access Control Server (ACS).    |
+
 
 ### Method Object
 
