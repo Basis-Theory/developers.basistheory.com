@@ -1,3 +1,10 @@
+# [1.225.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.224.0...v1.225.0) (2025-03-28)
+
+
+### Features
+
+* 3ds documentation overhaul ([#529](https://github.com/Basis-Theory/developers.basistheory.com/issues/529)) ([36221fe](https://github.com/Basis-Theory/developers.basistheory.com/commit/36221fe5e8a1a1199edf187c3950642a3b7abdfa))
+
 # [1.224.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.223.3...v1.224.0) (2025-03-24)
 
 
