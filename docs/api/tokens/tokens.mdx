@@ -146,7 +146,22 @@ client.tokens.create(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+token, err := client.Tokens.Create(ctx, &basistheory.CreateTokenRequest{
+    Type: "token",
+    Data: "Sensitive Value",
+    Mask: "{{ data | reveal_last: 4 }}",
+    Containers: []string{"/general/high/"},
+    Metadata: map[string]string{
+        "nonSensitiveField": "Non-Sensitive Value",
+    },
+    SearchIndexes: []string{
+        "{{ data }}",
+        "{{ data | last4 }}",
+    },
+    FingerprintExpression: "{{ data }}",
+    DeduplicateToken: true,
+    ExpiresAt: "8/26/2030 7:23:57 PM -07:00",
+})
 ```
 
   </TabItem>
@@ -284,6 +299,8 @@ for page in response.iter_pages():
 
 ```go showLineNumbers
 
+tokens, err := client.Tokens.ListV2(ctx, &basistheory.TokensListRequest{})
+
 ```
 
   </TabItem>
@@ -398,7 +415,7 @@ client.tokens.get(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+token, err := client.Tokens.Get(ctx, "id")
 ```
 
   </TabItem>
@@ -557,7 +574,18 @@ client.tokens.update(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+token, err := client.Tokens.Update(ctx, "id", &basistheory.UpdateTokenRequest{
+    Data: "Sensitive Value",
+    Mask: "{{ data | reveal_last: 4 }}",
+    Metadata: map[string]string{
+        "nonSensitiveField": "Non-Sensitive Value",
+    },
+    SearchIndexes: []string{
+        "{{ data }}",
+        "{{ data | last4 }}",
+    },
+    FingerprintExpression: "{{ data }}"
+})
 ```
 
   </TabItem>
@@ -667,7 +695,7 @@ client.tokens.delete(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+err := client.Tokens.Delete(ctx, "id")
 ```
 
   </TabItem>

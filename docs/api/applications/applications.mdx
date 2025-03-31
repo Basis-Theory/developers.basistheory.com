@@ -99,11 +99,14 @@ client.applications.create(
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    application, err := client.Applications.Create(ctx, &basistheory.CreateApplicationRequest{
+        Name:         "My Example App",
+        Type:         "private",
+        Permissions:  []string{"token:create", "token:read"},
+        CreateKey:    true,
+    })
+    ```
   </TabItem>
 </Tabs>
 
@@ -213,10 +216,9 @@ for page in response.iter_pages():
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-```
-
+    ```go showLineNumbers
+    applications, err := client.Applications.List(ctx, &basistheory.ApplicationsListRequest{})
+    ```
   </TabItem>
 </Tabs>
 
@@ -321,11 +323,9 @@ client.applications.get(
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    application, err := client.Applications.Get(ctx, "id")
+    ```
   </TabItem>
 </Tabs>
 
@@ -416,11 +416,9 @@ client.applications.get_by_key()
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    application, err := client.Applications.GetByKey(ctx)
+    ```
   </TabItem>
 </Tabs>
 
@@ -526,11 +524,12 @@ client.applications.update(
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    application, err := client.Applications.Update(ctx, "id", &basistheory.UpdateApplicationRequest{
+        Name:         "My Example App",
+        Permissions:  []string{"application:create", "application:read"},
+    })
+    ```
   </TabItem>
 </Tabs>
 
@@ -634,11 +633,9 @@ client.applications.delete(
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    err := client.Applications.Delete(ctx, "id")
+    ```
   </TabItem>
 </Tabs>
 

@@ -111,7 +111,10 @@ client.tokens.tokenize(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+result, err := client.Tokens.Tokenize(ctx, map[string]interface{}{
+    "first_name": "John",
+    "last_name": "Doe"
+});
 ```
 
   </TabItem>
@@ -232,7 +235,17 @@ client.tokens.tokenize(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+result, err := client.Tokens.Tokenize(ctx, &basistheory.TokenizeRequest{
+    Type: "token",
+    Data: "Sensitive Value",
+    Metadata: map[string]string{
+        "nonSensitiveField": "Non-Sensitive Value",
+    },
+    SearchIndexes: []string{
+        "{{ data }}",
+    },
+    FingerprintExpression: "{{ data }}",
+})
 ```
 
   </TabItem>
@@ -375,7 +388,18 @@ client.tokens.tokenize(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+result, err := client.Tokens.Tokenize(ctx, &basistheory.TokenizeRequest{
+    Type: "card",
+    Data: map[string]interface{}{
+        "number": "4242424242424242",
+        "expiration_month": 12,
+        "expiration_year": 2025,
+        "cvc": "123",
+    },
+    Metadata: map[string]string{
+        "nonSensitiveField": "Non-Sensitive Value",
+    },
+})
 ```
 
   </TabItem>
@@ -560,7 +584,26 @@ client.tokens.tokenize(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+result, err := client.Tokens.Tokenize(ctx, []interface{}{
+    "John",
+    "Doe",
+    &basistheory.TokenizeRequest{
+        Type: "card",
+        Data: map[string]interface{}{
+            "number": "4242424242424242",
+            "expiration_month": 12,
+            "expiration_year": 2025,
+            "cvc": "123",
+        },
+        Metadata: map[string]string{
+            "nonSensitiveField": "Non-Sensitive Value",
+        },
+    },
+    &basistheory.TokenizeRequest{
+        Type: "token",
+        Data: "Sensitive Value",
+    },
+})
 ```
 
   </TabItem>
@@ -752,7 +795,26 @@ client.tokens.tokenize(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+result, err := client.Tokens.Tokenize(ctx, map[string]interface{}{
+    "first_name": "John",
+    "last_name": "Doe",
+    "primary_card": &basistheory.TokenizeRequest{
+        Type: "card",
+        Data: map[string]interface{}{
+            "number": "4242424242424242",
+            "expiration_month": 12,
+            "expiration_year": 2025,
+            "cvc": "123",
+        },
+    },
+    "sensitive_tags": []interface{}{
+        "preferred",
+        &basistheory.TokenizeRequest{
+            Type: "token",
+            Data: "vip",
+        },
+    },
+})
 ```
 
   </TabItem>

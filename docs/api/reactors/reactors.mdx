@@ -177,7 +177,26 @@ client.reactors.create(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
+code := `module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
 
+  return {
+    raw: {
+      foo: "bar"
+    }
+  };
+};`
+
+reactor, err := client.Reactors.Create(ctx, &basistheory.CreateReactorRequest{
+    Name: "My Reactor",
+    Code: code,
+    Configuration: map[string]string{
+        "SERVICE_API_KEY": "key_abcd1234",
+    },
+    Application: &basistheory.Application{
+        ID: applicationID,
+    },
+})
 ```
 
   </TabItem>
@@ -301,7 +320,8 @@ for page in response.iter_pages():
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+// List all reactors
+reactors, err := client.Reactors.List(ctx, &basistheory.ReactorsListRequest{})
 ```
 
   </TabItem>
@@ -419,7 +439,7 @@ client.reactors.get(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+reactor, err := client.Reactors.Get(ctx, "id")
 ```
 
   </TabItem>
@@ -596,6 +616,7 @@ await client.Reactors.UpdateAsync(
   }
 );
 ```
+
   </TabItem>
   <TabItem value="java" label="Java">
 
@@ -631,7 +652,23 @@ client.reactors.update(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
+code := `module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
 
+  return {
+    raw: {
+      foo: "bar"
+    }
+  };
+};`
+
+reactor, err := client.Reactors.Patch(ctx, reactorId, &basistheory.PatchReactorRequest{
+    Code: code,
+    Name: "My Reactor",
+    Configuration: map[string]string{
+        "SERVICE_API_KEY": "key_abcd1234",
+    },
+})
 ```
 
   </TabItem>
@@ -763,6 +800,7 @@ await client.Reactors.PatchAsync(
   }
 );
 ```
+
   </TabItem>
   <TabItem value="java" label="Java">
 
@@ -787,6 +825,12 @@ client.reactors.patch(
 
 ```go showLineNumbers
 
+reactor, err := client.Reactors.Patch(ctx, reactorId, &basistheory.PatchReactorRequest{
+    Name: "My Reactor",
+    Configuration: map[string]string{
+        "SERVICE_API_KEY": "key_abcd1234",
+    },
+})
 ```
 
   </TabItem>
@@ -878,7 +922,7 @@ client.reactors.delete(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+err := client.Reactors.Delete(ctx, "id")
 ```
 
   </TabItem>
@@ -1002,7 +1046,12 @@ client.reactors.react(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+response, err := client.Reactors.React(ctx, reactorId, &basistheory.ReactRequest{
+    Args: map[string]interface{}{
+        "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+        "customer_id": "myCustomerId1234",
+    },
+})
 ```
 
   </TabItem>
