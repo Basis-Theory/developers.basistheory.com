@@ -207,7 +207,15 @@ await client.Proxies.CreateAsync(new CreateProxyRequest
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Proxy proxy = client.proxies().create(Proxy.builder()
+    .name("My Proxy")
+    .destinationUrl("https://example.com/api")
+    .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+    .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+    .configuration(new HashMap<>())
+    .application(new Application(applicationId))
+    .requireAuth(true)
+    .build());
 ```
 
   </TabItem>
@@ -399,7 +407,7 @@ await client.Proxies.ListAsync(new ProxiesListRequest());
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Page<Proxy> page = client.proxies().list();
 ```
 
   </TabItem>
@@ -540,8 +548,8 @@ const proxy = await bt.proxies.retrieve("5b493235-6917-4307-906a-2cd6f1a90b13");
   </TabItem>
   <TabItem value="java" label="Java">
 
-```csharp showLineNumbers
-await client.Proxies.GetAsync("id");
+```java showLineNumbers
+Proxy proxy = client.proxies().get("id");
 ```
 
   </TabItem>
@@ -803,7 +811,15 @@ await client.Proxies.UpdateAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Proxy updatedProxy = client.proxies().update("id", Proxy.builder()
+    .name("My Proxy")
+    .destinationUrl("https://example.com/api")
+    .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+    .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+    .configuration(new HashMap<>())
+    .application(new Application(applicationId))
+    .requireAuth(true)
+    .build());
 ```
 
   </TabItem>
@@ -1019,7 +1035,11 @@ await client.Proxies.PatchAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Proxy patchedProxy = client.proxies().patch("id", Proxy.builder()
+    .name("My Proxy")
+    .destinationUrl("https://example.com/api")
+    .configuration(new HashMap<>())
+    .build());
 ```
 
   </TabItem>
@@ -1122,7 +1142,7 @@ await client.Proxies.DeleteAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+client.proxies().delete("id");
 ```
 
   </TabItem>

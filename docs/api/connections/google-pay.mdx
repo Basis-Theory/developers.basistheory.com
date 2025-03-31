@@ -104,6 +104,19 @@ The table below shows the resulting Token Intent type based on the Google Paymen
       <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+GooglePayTokenizationRequest request = GooglePayTokenizationRequest.builder()
+    .googlePaymentMethodToken(new HashMap<String, Object>() {{
+        put("protocolVersion", "ECv2");
+        put("signature", "...");
+        put("intermediateSigningKey", new HashMap<String, Object>() {{
+            put("signedKey", "...");
+            put("signatures", Arrays.asList("..."));
+        }});
+        put("signedMessage", "...");
+    }})
+    .build();
+
+TokenIntent tokenIntent = client.googlePay().tokenize(request);
 ```
 
   </TabItem>

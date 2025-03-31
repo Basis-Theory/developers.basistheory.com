@@ -92,6 +92,12 @@ resource "basistheory_webhook" "example" {
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+Webhook webhook = client.webhooks().create(Webhook.builder()
+    .name("webhook-create")
+    .url("https://www.example.com")
+    .notifyEmail("notify@basistheory.com")
+    .events(Arrays.asList("token.created"))
+    .build());
 ```
 
   </TabItem>
@@ -182,6 +188,7 @@ client.webhooks.list()
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+List<Webhook> webhooks = client.webhooks().list();
 ```
 
   </TabItem>
@@ -263,6 +270,7 @@ client.webhooks.get(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+Webhook webhook = client.webhooks().get("id");
 ```
 
   </TabItem>
@@ -370,6 +378,13 @@ client.webhooks.update(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+Webhook updatedWebhook = client.webhooks().update("id", Webhook.builder()
+    .name("webhook-update")
+    .url("https://www.example1.com")
+    .notifyEmail("notify@basistheory.com")
+    .status("enabled")
+    .events(Arrays.asList("token.created"))
+    .build());
 ```
 
   </TabItem>
@@ -466,6 +481,7 @@ client.webhooks.delete(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+client.webhooks().delete("id");
 ```
 
   </TabItem>

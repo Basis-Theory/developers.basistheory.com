@@ -92,7 +92,10 @@ await client.Tokens.TokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Token token = client.tokens().tokenize(new HashMap<String, String>() {{
+    put("first_name", "John");
+    put("last_name", "Doe");
+}});
 ```
 
   </TabItem>
@@ -209,7 +212,15 @@ await client.Tokens.TokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Token token = client.tokens().tokenize(Token.builder()
+    .type("token")
+    .data("Sensitive Value")
+    .metadata(new HashMap<String, String>() {{
+        put("nonSensitiveField", "Non-Sensitive Value");
+    }})
+    .searchIndexes(Arrays.asList("{{ data }}"))
+    .fingerprintExpression("{{ data }}")
+    .build());
 ```
 
   </TabItem>
@@ -361,7 +372,18 @@ await client.Tokens.TokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Token cardToken = client.tokens().tokenize(Token.builder()
+    .type("card")
+    .data(new HashMap<String, Object>() {{
+        put("number", "4242424242424242");
+        put("expiration_month", 12);
+        put("expiration_year", 2025);
+        put("cvc", "123");
+    }})
+    .metadata(new HashMap<String, String>() {{
+        put("nonSensitiveField", "Non-Sensitive Value");
+    }})
+    .build());
 ```
 
   </TabItem>
@@ -549,7 +571,28 @@ await client.Tokens.TokenizeAsync(new List<object>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+List<Object> tokens = Arrays.asList(
+    "John",
+    "Doe",
+    Token.builder()
+        .type("card")
+        .data(new HashMap<String, Object>() {{
+            put("number", "4242424242424242");
+            put("expiration_month", 12);
+            put("expiration_year", 2025);
+            put("cvc", "123");
+        }})
+        .metadata(new HashMap<String, String>() {{
+            put("nonSensitiveField", "Non-Sensitive Value");
+        }})
+        .build(),
+    Token.builder()
+        .type("token")
+        .data("Sensitive Value")
+        .build()
+);
 
+List<Object> result = client.tokens().tokenize(tokens);
 ```
 
   </TabItem>
@@ -789,6 +832,32 @@ client.tokens.tokenize(
         ]
     }
 )
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+Map<String, Object> result = client.tokens().tokenize(new HashMap<String, Object>() {{
+    put("first_name", "John");
+    put("last_name", "Doe");
+    put("primary_card", Token.builder()
+        .type("card")
+        .data(new HashMap<String, Object>() {{
+            put("number", "4242424242424242");
+            put("expiration_month", 12);
+            put("expiration_year", 2025);
+            put("cvc", "123");
+        }})
+        .build());
+    put("sensitive_tags", Arrays.asList(
+        "preferred",
+        Token.builder()
+            .type("token")
+            .data("vip")
+            .build()
+    ));
+}});
 ```
 
   </TabItem>

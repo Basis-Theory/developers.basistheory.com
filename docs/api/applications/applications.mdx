@@ -84,6 +84,14 @@ await client.Applications.CreateAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+Map<String, Object> metadata = new HashMap<>();
+metadata.put("nonSensitiveField", "Non-Sensitive Value");
+
+Application application = client.applications().create(Application.builder()
+    .name("My Application")
+    .type("private")
+    .metadata(metadata)
+    .build());
 ```
 
   </TabItem>
@@ -198,7 +206,8 @@ await client.Applications.ListAsync(new ApplicationsListRequest());
   </TabItem>
   <TabItem value="java" label="Java">
 
-```java
+```java showLineNumbers
+List<Application> applications = client.applications().list();
 ```
 
   </TabItem>
@@ -309,7 +318,7 @@ await client.Applications.GetAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Application application = client.applications().get("id");
 ```
 
   </TabItem>
@@ -404,7 +413,7 @@ await client.Applications.GetByKeyAsync();
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Application application = client.applications().getByKey();
 ```
 
   </TabItem>
@@ -509,7 +518,10 @@ await client.Applications.UpdateAsync("id", new UpdateApplicationRequest { Name 
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Application updatedApplication = client.applications().update("id", Application.builder()
+    .name("My Example App")
+    .permissions(Arrays.asList("application:create", "application:read"))
+    .build());
 ```
 
   </TabItem>
@@ -619,7 +631,7 @@ await client.Applications.DeleteAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+client.applications().delete("id");
 ```
 
   </TabItem>

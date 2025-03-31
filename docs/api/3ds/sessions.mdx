@@ -78,6 +78,10 @@ import TestCards from "@site/docs/api/3ds/_test-cards.mdx";
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+ThreeDSSession session = client.threeDSSessions().create(ThreeDSSession.builder()
+    .tokenId("af9f65fd-932f-4b3d-960a-1bd7a1d14d18")
+    .type("merchant")
+    .build());
 ```
 
   </TabItem>
@@ -212,6 +216,7 @@ Get a 3DS Session by ID in the Tenant.
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+ThreeDSSession session = client.threeDSSessions().get("c0c22fcd-d42c-497e-a9a6-2eacd31770d7");
 ```
 
   </TabItem>
@@ -462,6 +467,34 @@ Authenticate a 3DS Session.
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+ThreeDSSession session = client.threeDSSessions().authenticate("c0c22fcd-d42c-497e-a9a6-2eacd31770d7", ThreeDSSession.builder()
+    .authenticationCategory("payment")
+    .authenticationType("payment-transaction")
+    .challengePreference("no-challenge")
+    .merchantInfo(new HashMap<String, String>() {{
+        put("mid", "9876543210001");
+        put("acquirer_bin", "000000999");
+        put("name", "Example 3DS Merchant");
+        put("category_code", "7922");
+        put("country_code", "826");
+        put("url", "https://example.com");
+    }})
+    .requestorInfo(new HashMap<String, String>() {{
+        put("amex_requestor_type", "MER");
+        put("cb_siret_number", "78467169500087");
+    }})
+    .purchaseInfo(new HashMap<String, String>() {{
+        put("amount", "80000");
+        put("currency", "826");
+        put("exponent", "2");
+        put("date", "20240109141010");
+        put("transaction_type", "purchase");
+    }})
+    .cardholderInfo(new HashMap<String, String>() {{
+        put("name", "John Doe");
+        put("email", "john@example.com");
+    }})
+    .build());
 ```
 
   </TabItem>
@@ -892,6 +925,7 @@ Get the result of a 3DS Challenge for the given session `id`.
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+ThreeDSSession session = client.threeDSSessions().getChallengeResult("c0c22fcd-d42c-497e-a9a6-2eacd31770d7");
 ```
 
   </TabItem>

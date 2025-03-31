@@ -84,7 +84,9 @@ await client.Tokens.DetokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Map<String, String> detokenizedData = client.tokens().detokenize(new HashMap<String, String>() {{
+    put("card_number", "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}");
+}});
 ```
 
   </TabItem>
@@ -185,7 +187,12 @@ await client.Tokens.DetokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Map<String, Object> detokenizedData = client.tokens().detokenize(new HashMap<String, Object>() {{
+    put("tokens", Arrays.asList(
+        "{{ token: 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
+        "{{ token: a1883f97-2e4c-439a-bf73-dffb681de929 }}"
+    ));
+}});
 ```
 
   </TabItem>
