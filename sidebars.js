@@ -51,13 +51,6 @@ const sidebars = {
       },
       items: [
         "card-payments/replace-processor-iframes",
-        {
-          type: "doc",
-          id: "guides/process/authenticate-with-3ds",
-          customProps: {
-            enterprise: true,
-          },
-        },
         "card-payments/recollect-security-code",
         "card-payments/receive-cards-api",
         "card-payments/use-your-own-inputs",
@@ -67,13 +60,6 @@ const sidebars = {
         },
         "card-payments/verify-card",
         "card-payments/charge-card",
-        {
-          type: "doc",
-          id: "guides/process/authenticate-mit-with-3ds",
-          customProps: {
-            enterprise: true,
-          },
-        },
         {
           type: "html",
           value: "<hr />",
@@ -103,7 +89,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Bank Payments",
+      label: "Bank Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/bank.svg",
@@ -111,6 +97,47 @@ const sidebars = {
         },
       },
       items: ["guides/banks/collect-bank-accounts", "guides/banks/process-bank-payments"],
+    },
+    {
+      type: "category",
+      label: "3D Secure",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/threeds.svg",
+          dark: "/img/sidebar/dark/threeds.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/threeds/overview",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "guides/threeds/overview",
+          label: "Overview",
+        },
+        {
+          type: "doc",
+          id: "guides/threeds/setup",
+          label: "3DS Setup",
+        },
+        {
+          type: "doc",
+          id: "guides/threeds/implementation-cit",
+          label: "3DS Implementation (CIT)",
+        },
+        {
+          type: "doc",
+          id: "guides/threeds/implementation-mit",
+          label: "3DS Implementation (MIT)",
+        },
+        {
+          type: "doc",
+          id: "guides/threeds/taking-threeds-live",
+          label: "Taking 3DS Live",
+        },
+      ],
     },
     {
       type: "category",
@@ -166,22 +193,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Card Issuing",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/card.svg",
-          dark: "/img/sidebar/dark/card.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "guides/cards/index",
-      },
-      items: ["guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
-    },
-    {
-      type: "category",
-      label: "Other Data",
+      label: "Any Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/any-data.svg",
