@@ -1,3 +1,10 @@
+## [1.225.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.225.1...v1.225.2) (2025-03-31)
+
+
+### Bug Fixes
+
+* more react elements types ([#532](https://github.com/Basis-Theory/developers.basistheory.com/issues/532)) ([6d73ade](https://github.com/Basis-Theory/developers.basistheory.com/commit/6d73ade8709cc8420be74931b2686c1705374524))
+
 ## [1.225.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.225.0...v1.225.1) (2025-03-31)
 
 
