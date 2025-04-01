@@ -104,15 +104,7 @@ The table below shows the resulting Token Intent type based on the Google Paymen
       <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-import com.basis.theory.api.core.ClientOptions;
-import com.basis.theory.api.resources.connections.GooglePayClient;
-import com.basis.theory.api.models.GooglePayTokenizationRequest;
-
-TokenIntent tokenIntent = new GooglePayClient(
-    ClientOptions.builder()
-        .addHeader("BT-API-KEY", "<API_KEY>")
-        .build()
-).tokenize(GooglePayTokenizationRequest.builder()
+GooglePayTokenizationRequest request = GooglePayTokenizationRequest.builder()
     .googlePaymentMethodToken(new HashMap<String, Object>() {{
         put("protocolVersion", "ECv2");
         put("signature", "...");
@@ -122,7 +114,9 @@ TokenIntent tokenIntent = new GooglePayClient(
         }});
         put("signedMessage", "...");
     }})
-    .build());
+    .build();
+
+TokenIntent tokenIntent = client.googlePay().tokenize(request);
 ```
 
   </TabItem>
