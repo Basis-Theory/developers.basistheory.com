@@ -18,7 +18,7 @@ export const AuthenticateCardSection = ({ type }: Props) => {
   // trigger the 3DS authentication flow
 }`}
       </CodeBlock>
-      <a href="/docs/guides/process/authenticate-with-3ds">Click here</a> to visit the Basis Theory Universal 3DS integration guide.
+      <a href="/docs/guides/threeds/overview">Click here</a> to visit the Basis Theory Universal 3DS integration guide.
       <Alert>
         Learn more about 3DS and all supported integration options <a href="/docs/features/3d-secure">here</a>.
       </Alert>

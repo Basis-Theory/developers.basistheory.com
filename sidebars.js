@@ -64,21 +64,9 @@ const sidebars = {
           type: "html",
           value: "<hr />",
         },
-        {
-          type: "doc",
-          id: "card-payments/placeholder",
-          label: "Keep cards up-to-date",
-        },
-        {
-          type: "doc",
-          id: "card-payments/placeholder",
-          label: "Payments routing",
-        },
-        {
-          type: "doc",
-          id: "card-payments/placeholder",
-          label: "Using Network Tokens",
-        },
+        "card-payments/keep-cards-up-to-date",
+        "card-payments/payments-routing",
+        "card-payments/using-network-tokens",
         {
           type: "html",
           value: "<hr />",
@@ -89,7 +77,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Bank Data",
+      label: "Bank Payments",
       customProps: {
         icon: {
           light: "/img/sidebar/light/bank.svg",
@@ -193,7 +181,22 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Any Data",
+      label: "Card Issuing",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/card.svg",
+          dark: "/img/sidebar/dark/card.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/cards/index",
+      },
+      items: ["guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
+    },
+    {
+      type: "category",
+      label: "Other Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/any-data.svg",
