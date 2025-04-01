@@ -207,15 +207,16 @@ await client.Proxies.CreateAsync(new CreateProxyRequest
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Proxy proxy = client.proxies().create(Proxy.builder()
-    .name("My Proxy")
-    .destinationUrl("https://example.com/api")
-    .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
-    .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
-    .configuration(new HashMap<>())
-    .application(new Application(applicationId))
-    .requireAuth(true)
-    .build());
+Proxy updatedProxy = new ProxiesClient(ClientOptions.builder().build())
+    .update(Proxy.builder()
+        .id("id")
+        .name("My Proxy")
+        .destinationUrl("https://example.com/api")
+        .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+        .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+        .configuration(new HashMap<>())
+        .application(new Application(applicationId))
+        .build());
 ```
 
   </TabItem>
@@ -811,15 +812,16 @@ await client.Proxies.UpdateAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Proxy updatedProxy = client.proxies().update("id", Proxy.builder()
-    .name("My Proxy")
-    .destinationUrl("https://example.com/api")
-    .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
-    .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
-    .configuration(new HashMap<>())
-    .application(new Application(applicationId))
-    .requireAuth(true)
-    .build());
+Proxy updatedProxy = new ProxiesClient(ClientOptions.builder().build())
+    .update(Proxy.builder()
+        .id("id")
+        .name("My Proxy")
+        .destinationUrl("https://example.com/api")
+        .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+        .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+        .configuration(new HashMap<>())
+        .application(new Application(applicationId))
+        .build());
 ```
 
   </TabItem>
@@ -1035,11 +1037,15 @@ await client.Proxies.PatchAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Proxy patchedProxy = client.proxies().patch("id", Proxy.builder()
-    .name("My Proxy")
-    .destinationUrl("https://example.com/api")
-    .configuration(new HashMap<>())
-    .build());
+Proxy patchedProxy = new ProxiesClient(ClientOptions.builder().build())
+    .update(Proxy.builder()
+        .id("id")
+        .name("My Proxy")
+        .destinationUrl("https://example.com/api")
+        .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+        .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+        .configuration(new HashMap<>())
+        .build());
 ```
 
   </TabItem>

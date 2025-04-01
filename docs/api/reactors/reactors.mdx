@@ -147,14 +147,15 @@ await client.Reactors.CreateAsync(new CreateReactorRequest
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Reactor reactor = client.reactors().create(Reactor.builder()
-    .name("My Reactor")
-    .applicationId("application-id")
-    .configuration(new HashMap<>())
-    .metadata(new HashMap<>() {{
-        put("nonSensitiveField", "Non-Sensitive Value");
-    }})
-    .build());
+Reactor reactor = new ReactorsClient(ClientOptions.builder().build())
+    .create(Reactor.builder()
+        .name("My Reactor")
+        .applicationId("application-id")
+        .configuration(new HashMap<>())
+        .metadata(new HashMap<>() {{
+            put("nonSensitiveField", "Non-Sensitive Value");
+        }})
+        .build());
 ```
 
   </TabItem>
@@ -430,7 +431,10 @@ await client.Reactors.GetAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Reactor reactor = client.reactors().get("id");
+Reactor reactor = new ReactorsClient(ClientOptions.builder().build())
+    .get(Reactor.builder()
+        .id("id")
+        .build());
 ```
 
   </TabItem>
@@ -628,14 +632,16 @@ await client.Reactors.UpdateAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Reactor updatedReactor = client.reactors().update("id", Reactor.builder()
-    .name("My Reactor")
-    .applicationId("application-id")
-    .configuration(new HashMap<>())
-    .metadata(new HashMap<>() {{
-        put("nonSensitiveField", "Non-Sensitive Value");
-    }})
-    .build());
+Reactor updatedReactor = new ReactorsClient(ClientOptions.builder().build())
+    .update(Reactor.builder()
+        .id("id")
+        .name("My Reactor")
+        .applicationId("application-id")
+        .configuration(new HashMap<>())
+        .metadata(new HashMap<>() {{
+            put("nonSensitiveField", "Non-Sensitive Value");
+        }})
+        .build());
 ```
 
   </TabItem>
@@ -677,9 +683,9 @@ code := `module.exports = async function (req) {
   };
 };`
 
-reactor, err := client.Reactors.Patch(ctx, reactorId, &basistheory.PatchReactorRequest{
-    Code: code,
+reactor, err := client.Reactors.Update(ctx, reactorId, &basistheory.UpdateReactorRequest{
     Name: "My Reactor",
+    Code: code,
     Configuration: map[string]string{
         "SERVICE_API_KEY": "key_abcd1234",
     },
@@ -820,15 +826,14 @@ await client.Reactors.PatchAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Reactor updatedReactor = client.reactors().patch(
-    "id",
-    Reactor.builder()
+Reactor updatedReactor = new ReactorsClient(ClientOptions.builder().build())
+    .patch(Reactor.builder()
+        .id("id")
         .name("My Reactor")
         .configuration(new HashMap<>() {{
             put("SERVICE_API_KEY", "key_abcd1234");
         }})
-        .build()
-);
+        .build());
 ```
 
   </TabItem>

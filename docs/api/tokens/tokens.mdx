@@ -119,18 +119,19 @@ await client.Tokens.CreateAsync(new CreateTokenRequest
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Token token = client.tokens().create(Token.builder()
-    .type("token")
-    .data("Sensitive Value")
-    .mask("{{ data | reveal_last: 4 }}")
-    .containers(Arrays.asList("/general/high/"))
-    .metadata(new HashMap<String, String>() {{
-        put("nonSensitiveField", "Non-Sensitive Value");
-    }})
-    .searchIndexes(Arrays.asList("{{ data }}", "{{ data | last4 }}"))
-    .fingerprintExpression("{{ data }}")
-    .deduplicateToken(true)
-    .build());
+Token token = new TokensClient(ClientOptions.builder().build())
+    .create(Token.builder()
+        .type("token")
+        .data("Sensitive Value")
+        .mask("{{ data | reveal_last: 4 }}")
+        .containers(Arrays.asList("/general/high/"))
+        .metadata(new HashMap<String, String>() {{
+            put("nonSensitiveField", "Non-Sensitive Value");
+        }})
+        .searchIndexes(Arrays.asList("{{ data }}", "{{ data | last4 }}"))
+        .fingerprintExpression("{{ data }}")
+        .deduplicateToken(true)
+        .build());
 ```
 
   </TabItem>
@@ -288,7 +289,8 @@ await client.Tokens.ListAsyncV2(new TokensListRequest());
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Page<Token> page = client.tokens().listV2();
+Page<Token> page = new TokensClient(ClientOptions.builder().build())
+    .listV2();
 ```
 
   </TabItem>
@@ -410,7 +412,8 @@ await client.Tokens.GetAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Token token = client.tokens().get("id");
+Token token = new TokensClient(ClientOptions.builder().build())
+    .get("id");
 ```
 
   </TabItem>
@@ -557,17 +560,18 @@ await client.Tokens.UpdateAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Token updatedToken = client.tokens().update("id", Token.builder()
-    .data("Sensitive Value")
-    .mask("{{ data | reveal_last: 4 }}")
-    .containers(Arrays.asList("/general/high/"))
-    .metadata(new HashMap<String, String>() {{
-        put("nonSensitiveField", "Non-Sensitive Value");
-    }})
-    .searchIndexes(Arrays.asList("{{ data }}", "{{ data | last4 }}"))
-    .fingerprintExpression("{{ data }}")
-    .deduplicateToken(true)
-    .build());
+Token updatedToken = new TokensClient(ClientOptions.builder().build())
+    .update("id", Token.builder()
+        .data("Sensitive Value")
+        .mask("{{ data | reveal_last: 4 }}")
+        .containers(Arrays.asList("/general/high/"))
+        .metadata(new HashMap<String, String>() {{
+            put("nonSensitiveField", "Non-Sensitive Value");
+        }})
+        .searchIndexes(Arrays.asList("{{ data }}", "{{ data | last4 }}"))
+        .fingerprintExpression("{{ data }}")
+        .deduplicateToken(true)
+        .build());
 ```
 
   </TabItem>
@@ -700,7 +704,8 @@ await client.Tokens.DeleteAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-client.tokens().delete("id");
+new TokensClient(ClientOptions.builder().build())
+    .delete("id");
 ```
 
   </TabItem>
@@ -741,67 +746,4 @@ Returns [an error](/docs/api/errors) if the token failed to delete.
 | `type`                   | _string_               | [Token type](#token-types)                                                                                                                                                                                               |
 | `data`                   | _any_                  | Token data                                                                                                                                                                                                               |
 | `mask`                   | _any_                  | An [expression](/docs/expressions/masks) defining the mask to apply when retrieving token data with restricted permissions.                                                                                              |
-| `enrichments`            | _object_               | _Only available when detokenizing and with expressions._<br /><br /> An object containing the enrichments applied to this token. See [Token Enrichments](/docs/api/tokens/token-enrichments) for available enrichements. |
-| `card`                   | _object_               | _Only available when token type is `card` or `card_number`_<br /><br /> An object containing the card data. See [Card Details](#card-details) for more information.                                                      |
-| `bank`                   | _object_               | The [Bank Details](#bank-details) when `type` is `bank`, otherwise `null`.                                                                                                                                               |
-| `network_token`          | _object_               | _Only available when token type is `network_token`_<br /><br /> An object containing the card data. See [Card Details](#card-details) for more information.                                                              |
-| `fingerprint`            | _string_               | Uniquely identifies the contents of this token. See [Token Types](/docs/api/tokens/token-types) for the default expression for each token type.                                                                          |
-| `containers`             | _array_                | Array of containers to place this token within. Each container is a path representing a logical grouping of tokens. See [Token Containers](/docs/concepts/what-are-containers/) for details.                             |
-| `metadata`               | _map\<string, string>_ | A key-value map of strings containing non-sensitive data.                                                                                                                                                                |
-| `search_indexes`         | _array_                | (Optional) Array of search index [expressions](/docs/expressions/search-indexes) used when creating the token.                                                                                                           |
-| `fingerprint_expression` | _string_               | (Optional) An [expression](/docs/expressions/fingerprints) defining the value to fingerprint when creating the token.                                                                                                    |
-| `expires_at`             | _string_               | (Optional) The [token expiration](/docs/api/tokens/#token-expiration) date.                                                                                                                                              |
-| `created_by`             | _uuid_                 | The [Application](/docs/api/applications#application-object) ID which created the token                                                                                                                                  |
-| `created_at`             | _date_                 | Created date of the token in ISO 8601 format                                                                                                                                                                             |
-| `modified_by`            | _uuid_                 | (Optional) The [Application](/docs/api/applications) ID which last modified the token                                                                                                                                    |
-| `modified_at`            | _date_                 | (Optional) Last modified date of the token in ISO 8601 format                                                                                                                                                            |
-| `_extras`                | _object_               | (Response-Only) An [object](#extras-object) containing information regarding the tokenization process                                                                                                                    |
-
-### Extras Object
-
-| Attribute | Type | Description |
-| --------- | ---- | ------------|
-| `deduplicated` | boolean | Indicates if the token was [deduplicated](/docs/concepts/what-are-tokens#deduplication) during tokenization |
-| `deduplication_behavior` | string | Indicates the behavior of the deduplication process, either `read_existing` or `update_existing`. See [Deduplication Behavior](/docs/concepts/what-are-tokens#deduplication) for more information. |
-
-<CardDetails/>
-<BankDetails/>
-
-### Token Data Validations
-
-#### Bank Object
-
-| Attribute        | Required | Type     | Default | Description                                               |
-| ---------------- | -------- | -------- | ------- | --------------------------------------------------------- |
-| `routing_number` | true     | _string_ | `null`  | Nine-digit ABA routing number. Its checksum is validated. |
-| `account_number` | true     | _string_ | `null`  | Account number up to seventeen-digits                     |
-
-#### Card Object
-
-| Attribute          | Required | Type      | Default | Description                                                          |
-| ------------------ | -------- | --------- | ------- | -------------------------------------------------------------------- |
-| `number`           | true     | _string_  | `null`  | The card number without any separators                               |
-| `expiration_month` | false    | _integer_ | `null`  | Number representing the card's expiration month                      |
-| `expiration_year`  | false    | _integer_ | `null`  | Number representing the card's expiration year                       |
-| `cvc`              | false    | _string_  | `null`  | Three or four-digit card verification code with automatic expiration |
-
-See [Test Card Numbers](/docs/api/testing#card-numbers) for suggested test data when using cards.
-
-The `cvc` property automatically expires and is deleted based on your [CVC Retention Quota](/docs/api/rate-limits#default-quotas), with a default of one hour in order to comply with PCI requirements.
-
-
-<CvcTtlInfoAlert />
-
-### Token Expiration
-
-By default a created token will not expire, however, users can optionally set the `expires_at` property with an ISO8601 `DateTime` when creating a token to determine its expiration date.
-An expired token is **deleted** from the tenant up to **1 hour** after its expiration time.
-
-### Expiration Date Formats
-
-| Format                      | Example                     |
-| --------------------------- | --------------------------- |
-| `DateTime` String w/ Offset | 8/26/2030 7:23:57 PM -07:00 |
-| `ShortDate` String          | 9/27/2030                   |
-
-<Alert>If an offset is not provided with the <code>DateTime</code> string, it's considered that the provided time is in <b>UTC</b>. When using the <code>ShortDate</code> format, the expiration time will be set as <b>12AM UTC</b>.</Alert>
+| `enrichments`
