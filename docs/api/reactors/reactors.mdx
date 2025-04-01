@@ -147,15 +147,23 @@ await client.Reactors.CreateAsync(new CreateReactorRequest
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Reactor reactor = new ReactorsClient(ClientOptions.builder().build())
-    .create(Reactor.builder()
-        .name("My Reactor")
-        .applicationId("application-id")
-        .configuration(new HashMap<>())
-        .metadata(new HashMap<>() {{
-            put("nonSensitiveField", "Non-Sensitive Value");
-        }})
-        .build());
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.reactors.ReactorsClient;
+
+ReactorsClient client = new ReactorsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Reactor reactor = client.create(Reactor.builder()
+    .name("My Reactor")
+    .applicationId("application-id")
+    .configuration(new HashMap<>())
+    .metadata(new HashMap<>() {{
+        put("nonSensitiveField", "Non-Sensitive Value");
+    }})
+    .build());
 ```
 
   </TabItem>
@@ -307,7 +315,16 @@ await client.Reactors.ListAsync(new ReactorsListRequest());
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Page<Reactor> page = client.reactors().list();
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.reactors.ReactorsClient;
+
+ReactorsClient client = new ReactorsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Page<Reactor> page = client.list();
 ```
 
   </TabItem>
@@ -431,10 +448,16 @@ await client.Reactors.GetAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Reactor reactor = new ReactorsClient(ClientOptions.builder().build())
-    .get(Reactor.builder()
-        .id("id")
-        .build());
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.reactors.ReactorsClient;
+
+ReactorsClient client = new ReactorsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Reactor reactor = client.get("id");
 ```
 
   </TabItem>
@@ -632,16 +655,24 @@ await client.Reactors.UpdateAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Reactor updatedReactor = new ReactorsClient(ClientOptions.builder().build())
-    .update(Reactor.builder()
-        .id("id")
-        .name("My Reactor")
-        .applicationId("application-id")
-        .configuration(new HashMap<>())
-        .metadata(new HashMap<>() {{
-            put("nonSensitiveField", "Non-Sensitive Value");
-        }})
-        .build());
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.reactors.ReactorsClient;
+
+ReactorsClient client = new ReactorsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Reactor updatedReactor = client.update(Reactor.builder()
+    .id("id")
+    .name("My Reactor")
+    .applicationId("application-id")
+    .configuration(new HashMap<>())
+    .metadata(new HashMap<>() {{
+        put("nonSensitiveField", "Non-Sensitive Value");
+    }})
+    .build());
 ```
 
   </TabItem>
@@ -826,14 +857,22 @@ await client.Reactors.PatchAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Reactor updatedReactor = new ReactorsClient(ClientOptions.builder().build())
-    .patch(Reactor.builder()
-        .id("id")
-        .name("My Reactor")
-        .configuration(new HashMap<>() {{
-            put("SERVICE_API_KEY", "key_abcd1234");
-        }})
-        .build());
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.reactors.ReactorsClient;
+
+ReactorsClient client = new ReactorsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Reactor updatedReactor = client.patch(Reactor.builder()
+    .id("id")
+    .name("My Reactor")
+    .configuration(new HashMap<>() {{
+        put("SERVICE_API_KEY", "key_abcd1234");
+    }})
+    .build());
 ```
 
   </TabItem>
@@ -934,7 +973,16 @@ await client.Reactors.DeleteAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-client.reactors().delete("id");
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.reactors.ReactorsClient;
+
+ReactorsClient client = new ReactorsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+client.delete("id");
 ```
 
   </TabItem>
@@ -1054,7 +1102,16 @@ await client.Reactors.ReactAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Map<String, Object> response = client.reactors().react("id", new HashMap<>() {{
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.reactors.ReactorsClient;
+
+ReactorsClient client = new ReactorsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Map<String, Object> response = client.react("id", new HashMap<>() {{
     put("args", new HashMap<>() {{
         put("card", "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}");
         put("customer_id", "myCustomerId1234");
@@ -1296,7 +1353,16 @@ client.reactors.results.get(
 
     <TabItem value="java" label="Java">
 ```java showLineNumbers
-Map<String, Object> result = client.reactors().results().get("id", "requestId");
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.reactors.ReactorsClient;
+
+ReactorsClient client = new ReactorsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Map<String, Object> result = client.results().get("id", "requestId");
 ```
   </TabItem>
 

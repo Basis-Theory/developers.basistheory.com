@@ -115,16 +115,24 @@ client.token_intents.create(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-TokenIntent tokenIntent = new TokenIntentsClient(ClientOptions.builder().build())
-    .create(TokenIntent.builder()
-        .type("card")
-        .data(new HashMap<String, Object>() {{
-            put("number", "4242424242424242");
-            put("expiration_month", 12);
-            put("expiration_year", 2025);
-            put("cvc", "123");
-        }})
-        .build());
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.tokens.TokenIntentsClient;
+
+TokenIntentsClient client = new TokenIntentsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+TokenIntent tokenIntent = client.create(TokenIntent.builder()
+    .type("card")
+    .data(new HashMap<String, Object>() {{
+        put("number", "4242424242424242");
+        put("expiration_month", 12);
+        put("expiration_year", 2025);
+        put("cvc", "123");
+    }})
+    .build());
 ```
 
   </TabItem>
@@ -232,8 +240,16 @@ client.token_intents.get(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-TokenIntent tokenIntent = new TokenIntentsClient(ClientOptions.builder().build())
-    .get("665bf471-d675-4165-9336-4fc9c1a73fad");
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.tokens.TokenIntentsClient;
+
+TokenIntentsClient client = new TokenIntentsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+TokenIntent tokenIntent = client.get("665bf471-d675-4165-9336-4fc9c1a73fad");
 ```
 
   </TabItem>
@@ -340,7 +356,16 @@ client.token_intents.delete(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-client.tokenIntents().delete("dda42a6b-964b-46d8-b315-eb6dfda37c32");
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.tokens.TokenIntentsClient;
+
+TokenIntentsClient client = new TokenIntentsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+client.delete("dda42a6b-964b-46d8-b315-eb6dfda37c32");
 ```
 
   </TabItem>

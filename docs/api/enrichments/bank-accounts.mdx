@@ -76,7 +76,16 @@ actual = client.enrichments.bank_account_verify(
     <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-BankVerificationResult result = client.enrichments().bankAccountVerify(BankVerificationRequest.builder()
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.enrichments.EnrichmentsClient;
+
+EnrichmentsClient client = new EnrichmentsClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+BankVerificationResult result = client.bankAccountVerify(BankVerificationRequest.builder()
     .tokenId("5dae2960-8d7d-11ef-806c-1b5325d52a83")
     .countryCode("US")
     .routingNumber("021000021")

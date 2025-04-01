@@ -92,10 +92,16 @@ await client.Tokens.TokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Token token = new TokensClient(ClientOptions.builder().build())
-    .tokenize(new HashMap<String, String>() {{
-        put("first_name", "John");
-Token token = client.tokens().tokenize(new HashMap<String, String>() {{
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.tokens.TokensClient;
+
+TokensClient client = new TokensClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Token token = client.tokenize(new HashMap<String, String>() {{
     put("first_name", "John");
     put("last_name", "Doe");
 }});
@@ -215,7 +221,16 @@ await client.Tokens.TokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Token token = client.tokens().tokenize(Token.builder()
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.tokens.TokensClient;
+
+TokensClient client = new TokensClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Token token = client.tokenize(Token.builder()
     .type("token")
     .data("Sensitive Value")
     .metadata(new HashMap<String, String>() {{
@@ -375,7 +390,16 @@ await client.Tokens.TokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Token cardToken = client.tokens().tokenize(Token.builder()
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.tokens.TokensClient;
+
+TokensClient client = new TokensClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Token cardToken = client.tokenize(Token.builder()
     .type("card")
     .data(new HashMap<String, Object>() {{
         put("number", "4242424242424242");
@@ -574,6 +598,15 @@ await client.Tokens.TokenizeAsync(new List<object>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.tokens.TokensClient;
+
+TokensClient client = new TokensClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
 List<Object> tokens = Arrays.asList(
     "John",
     "Doe",
@@ -595,7 +628,7 @@ List<Object> tokens = Arrays.asList(
         .build()
 );
 
-List<Object> result = client.tokens().tokenize(tokens);
+List<Object> result = client.tokenize(tokens);
 ```
 
   </TabItem>
@@ -841,7 +874,16 @@ client.tokens.tokenize(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-Map<String, Object> result = client.tokens().tokenize(new HashMap<String, Object>() {{
+import com.basis.theory.api.core.ClientOptions;
+import com.basis.theory.api.resources.tokens.TokensClient;
+
+TokensClient client = new TokensClient(
+    ClientOptions.builder()
+        .addHeader("BT-API-KEY", "<API_KEY>")
+        .build()
+);
+
+Map<String, Object> result = client.tokenize(new HashMap<String, Object>() {{
     put("first_name", "John");
     put("last_name", "Doe");
     put("primary_card", Token.builder()
