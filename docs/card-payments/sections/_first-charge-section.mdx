@@ -13,6 +13,57 @@ Given you have previously created a Token Intent:
 Here is how you can leverage the [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy), a tool that transparently performs detokenization, to share the sensitive cardholder data to the Payments Processor or Acquirer API.
 
 <Tabs className="bt-tabs" queryString="processor">
+  <TabItem value="checkout.com" label="Checkout.com">
+
+In Checkout.com, you can charge a card [by calling the `/payments` API](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-using-the-api#Request_a_payment_with_full_card_details).
+
+```shell showLineNumbers title="Request a Payment"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://api.sandbox.checkout.com/payments' \
+-H 'Authorization: Bearer <CHECKOUT_SECRET_KEY>' \
+// highlight-end
+-H 'Content-Type: application/json' \
+--data '{
+  "source": {
+    "type": "card",
+// highlight-start
+    "number": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiry_month": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiry_year": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
+    "cvv": "{{ token_intent: d96b9925-85d7-495e-88fe-a9c3ecb23b61 | json: \"$.data.cvc\" }}",
+// highlight-end
+    "store_for_future_use": true
+  },
+  "amount": 1000,
+  "currency": "USD",
+  "processing_channel_id": "pc_svyx12xvaaduraq3ckb2gwnvzq"
+}'
+```
+```json showLineNumbers title="Payment Response"
+{
+  "id": "pay_myvj6zxrt45edgrswrliyxbtnq",
+// highlight-start
+  "approved": true,
+  "status": "Authorized",
+// highlight-end
+  "amount": 1000,
+  "currency": "USD",
+  "source": {
+    "type": "card",
+// highlight-next-line
+    "id": "src_gguer4xlawke3ctljczft7573a",
+    ...
+  },
+// highlight-next-line
+  "scheme_id": "647537243670773",
+  ...
+}
+```
+
+  </TabItem>
   <TabItem value="stripe" label="Stripe">
 
 In Stripe, you can charge a card by creating a [Payment Intent](https://docs.stripe.com/payments/payment-intents).
@@ -41,8 +92,8 @@ curl 'https://api.basistheory.com/proxy' \
 
 ```json showLineNumbers title="Payment Intent Response"
 {
-  // highlight-next-line
   "id": "pi_3MtwBwLkdIwHu7ix28a3tqPa",
+  // highlight-next-line
   "status": "succeeded",
   "object": "payment_intent",
   // highlight-next-line
