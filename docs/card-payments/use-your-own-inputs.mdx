@@ -28,21 +28,21 @@ In this guide, we will set up Basis Theory SDKs to receive cards from your front
 ```mermaid
   sequenceDiagram
     actor customer as Customer
-    participant storefront as Merchant<br>Storefront
+    participant frontend as Merchant<br>Frontend
     participant bapi as Basis Theory<br>API
-    participant mapi as Merchant<br>API
+    participant mbe as Merchant<br>Backend
 
     activate customer
-    customer ->>+ storefront: Enter checkout
-    storefront -->> customer: Render checkout with Card Inputs
-    customer ->> storefront: Enter card data
-    customer ->> storefront: Submit
-    storefront ->>+ bapi: Create Token Intent
-    bapi -->>- storefront:  Token intent<br>w/ card information
-    storefront ->>+ mapi: Submit checkout
-    mapi ->> mapi: Process card
-    mapi -->>- storefront: OK
-    storefront -->>- customer: Success
+    customer ->>+ frontend: Enter checkout
+    frontend -->> customer: Render checkout with Card Inputs
+    customer ->> frontend: Enter card data
+    customer ->> frontend: Submit
+    frontend ->>+ bapi: Create Token Intent
+    bapi -->>- frontend:  Token intent<br>w/ card information
+    frontend ->>+ mbe: Submit checkout
+    mbe ->> mbe: Process card
+    mbe -->>- frontend: OK
+    frontend -->>- customer: Success
     deactivate customer
 ```
 

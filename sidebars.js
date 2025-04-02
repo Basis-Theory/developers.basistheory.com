@@ -190,7 +190,7 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "guides/cards/index",
+        id: "card-issuing/index",
       },
       items: ["guides/collect/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
     },

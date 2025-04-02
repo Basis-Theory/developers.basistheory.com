@@ -23,24 +23,24 @@ When handling payments, merchants often rely on processor-specific iFrames to co
 ```mermaid
   sequenceDiagram
     actor customer as Customer
-    participant storefront as Merchant<br>Storefront
+    participant frontend as Merchant<br>Frontend
     participant bte as Basis Theory<br>Elements
     participant bapi as Basis Theory<br>API
-    participant mapi as Merchant<br>API
+    participant mbe as Merchant<br>Backend
 
     activate customer
-    customer ->>+ storefront: Enter checkout
-    storefront -->> customer: Render checkout with Elements
+    customer ->>+ frontend: Enter checkout
+    frontend -->> customer: Render checkout with Elements
     customer ->>+ bte: Enter card data
-    customer ->> storefront: Submit
-    storefront ->> bte: Create Token Intent
+    customer ->> frontend: Submit
+    frontend ->> bte: Create Token Intent
     bte ->>+ bapi: Create Token Intent
     bapi -->>- bte:  Token intent<br>card information
-    bte -->>- storefront: Token intent<br>w/ card information
-    storefront ->>+ mapi: Submit checkout
-    mapi ->> mapi: Process card
-    mapi -->>- storefront: OK
-    storefront -->>- customer: Success
+    bte -->>- frontend: Token intent<br>w/ card information
+    frontend ->>+ mbe: Submit checkout
+    mbe ->> mbe: Process card
+    mbe -->>- frontend: OK
+    frontend -->>- customer: Success
     deactivate customer
 ```
 

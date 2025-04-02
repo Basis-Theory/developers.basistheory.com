@@ -23,24 +23,24 @@ To boost authorization rates while adhering to PCI compliance, some Payment Serv
 ```mermaid
   sequenceDiagram
     actor customer as Customer
-    participant storefront as Merchant<br>Storefront
+    participant frontend as Merchant<br>Frontend
     participant bte as Basis Theory<br>Elements
     participant bapi as Basis Theory<br>API
-    participant mapi as Merchant<br>API
+    participant mbe as Merchant<br>Backend
 
     activate customer
-    customer ->> storefront: Select saved card Token
-    storefront -->> customer: Render Security Code input
+    customer ->> frontend: Select saved card Token
+    frontend -->> customer: Render Security Code input
     customer -->> bte: Enter Security Code
-    customer ->> storefront: Submit
-    storefront ->> bte: Update Token
+    customer ->> frontend: Submit
+    frontend ->> bte: Update Token
     bte ->> bapi: Update Token
     bapi -->> bte:  OK
-    bte -->> storefront: OK
-    storefront ->> mapi: Submit checkout
-    mapi ->> mapi: Process card
-    mapi -->> storefront: OK
-    storefront -->> customer: Success
+    bte -->> frontend: OK
+    frontend ->> mbe: Submit checkout
+    mbe ->> mbe: Process card
+    mbe -->> frontend: OK
+    frontend -->> customer: Success
     deactivate customer
 ```
 ### Public Application
