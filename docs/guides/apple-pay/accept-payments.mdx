@@ -301,9 +301,7 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
 </head>
 <body>
 
-// highlight-start
 <apple-pay-button buttonstyle="black" type="plain" locale="en-US"></apple-pay-button>
-// highlight-end
 <script>
     // Set up the onclick handler for the Apple Pay button
     document.querySelector('apple-pay-button')
@@ -327,7 +325,7 @@ We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/epheme
 
 Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
 
-We'll change our frontend application one last time to pass in the Token Intent Ids to the backend to process the payment.
+We'll change our frontend application one last time to pass in the Token Intent ID to the backend to process the payment.
 
 ```javascript
 async function performTransaction(event, session) {
@@ -405,8 +403,8 @@ curl 'https://api.basistheory.com/proxy' \
     "token": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }}",
     "expiry_month": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }}",
     "expiry_year": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}",
-    "eci": "06",
-    "cryptogram": "AgAAAAAAAIR8CQrXcIhbQAAAAAA"
+    "eci": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.authentication.eci_indicator\" }}",
+    "cryptogram": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.authentication.threeds_cryptogram\" }}"
 // highlight-end
   },
   "amount": 1000,
