@@ -85,7 +85,11 @@ await client.Tokens.SearchV2Async(new SearchTokensRequestV2());
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+SyncPagingIterable<Token> response = new TokensClient(ClientOptions.builder().build())
+    .search(SearchTokensRequest.builder()
+        .query("data:6789")
+        .size(20)
+        .build());
 ```
 
   </TabItem>
@@ -105,8 +109,13 @@ for page in response.iter_pages():
   </TabItem>
   <TabItem value="go" label="Go">
 
-```go showLineNumbers showLineNumbers
-
+```go showLineNumbers
+query := "data:6789"
+size := 20
+response, err := client.Tokens.SearchV2(ctx, &basistheory.SearchTokensRequestV2{
+	Query: &query,
+	Size:  &size,
+}))
 ```
 
   </TabItem>

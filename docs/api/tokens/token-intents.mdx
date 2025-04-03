@@ -111,6 +111,38 @@ client.token_intents.create(
 )
 ```
   </TabItem>
+  
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+new TokenIntentsClient(ClientOptions.builder().build()).create(CreateTokenIntentRequest.builder()
+    .type("card")
+    .data(new HashMap<String, Object>() {{
+        put("number", "4242424242424242");
+        put("expiration_month", 12);
+        put("expiration_year", 2025);
+        put("cvc", "123");
+    }})
+    .build());
+```
+
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+tokenIntent, err := client.TokenIntents.Create(ctx, &basistheory.CreateTokenIntentRequest{
+    Type: "card",
+    Data: map[string]interface{}{
+        "number": "4242424242424242",
+        "expiration_month": 12,
+        "expiration_year": 2025,
+        "cvc": "123",
+    },
+})
+```
+
+  </TabItem>
 </Tabs>
 
 #### Request Parameters
@@ -199,17 +231,15 @@ client.token_intents.get(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-tokenIntentsClient.get("665bf471-d675-4165-9336-4fc9c1a73fad");
+new TokenIntentsClient(ClientOptions.builder().build()).get("665bf471-d675-4165-9336-4fc9c1a73fad");
 ```
+
   </TabItem>
 
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-token, err := client.TokenIntents.Get(
-		context.TODO(),
-		"665bf471-d675-4165-9336-4fc9c1a73fad",
-	)
+tokenIntent, err := client.TokenIntents.Get(ctx, "665bf471-d675-4165-9336-4fc9c1a73fad")
 ```
 
   </TabItem>
@@ -303,6 +333,22 @@ client.token_intents.delete(
   id="id",
 )
 ```
+  </TabItem>
+    
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+new TokenIntentsClient(ClientOptions.builder().build()).delete("dda42a6b-964b-46d8-b315-eb6dfda37c32");
+```
+
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+err := client.TokenIntents.Delete(ctx, "dda42a6b-964b-46d8-b315-eb6dfda37c32")
+```
+
   </TabItem>
 </Tabs>
 

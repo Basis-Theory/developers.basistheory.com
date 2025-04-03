@@ -147,7 +147,12 @@ await client.Reactors.CreateAsync(new CreateReactorRequest
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ReactorsClient(ClientOptions.builder().build()).create(CreateReactorRequest.builder()
+    .name("My Reactor")
+    .code("...")
+    .configuration(new HashMap<>())
+    .application(Application.builder().id("applicationId").build())
+    .build());
 ```
 
   </TabItem>
@@ -177,7 +182,26 @@ client.reactors.create(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
+code := `module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
 
+  return {
+    raw: {
+      foo: "bar"
+    }
+  };
+};`
+
+reactor, err := client.Reactors.Create(ctx, &basistheory.CreateReactorRequest{
+	Name: "My Reactor",
+	Code: code,
+	Configuration: map[string]*string{
+		"SERVICE_API_KEY": func(s string) *string { return &s }("key_abcd1234"),
+	},
+	Application: &basistheory.Application{
+		ID: applicationID,
+	},
+})
 ```
 
   </TabItem>
@@ -280,7 +304,7 @@ await client.Reactors.ListAsync(new ReactorsListRequest());
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ReactorsClient(ClientOptions.builder().build()).list();
 ```
 
   </TabItem>
@@ -301,7 +325,8 @@ for page in response.iter_pages():
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+// List all reactors
+reactors, err := client.Reactors.List(ctx, &basistheory.ReactorsListRequest{})
 ```
 
   </TabItem>
@@ -403,7 +428,7 @@ await client.Reactors.GetAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ReactorsClient(ClientOptions.builder().build()).get("id");
 ```
 
   </TabItem>
@@ -419,7 +444,7 @@ client.reactors.get(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+reactor, err := client.Reactors.Get(ctx, "id")
 ```
 
   </TabItem>
@@ -596,12 +621,19 @@ await client.Reactors.UpdateAsync(
   }
 );
 ```
+
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ReactorsClient(ClientOptions.builder().build()).update("id", UpdateReactorRequest.builder()
+    .name("My Reactor")
+    .code("...")
+    .configuration(new HashMap<>())
+    .application(Application.builder().id("applicationId").build())
+    .build());
 ```
+
   </TabItem>
   <TabItem value="python" label="Python">
 
@@ -631,7 +663,23 @@ client.reactors.update(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
+code := `module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
 
+  return {
+    raw: {
+      foo: "bar"
+    }
+  };
+};`
+
+reactor, err := client.Reactors.Update(ctx, reactorId, &basistheory.UpdateReactorRequest{
+	Name: "My Reactor",
+	Code: code,
+	Configuration: map[string]*string{
+		"SERVICE_API_KEY": func(s string) *string { return &s }("key_abcd1234"),
+	},
+})
 ```
 
   </TabItem>
@@ -763,12 +811,19 @@ await client.Reactors.PatchAsync(
   }
 );
 ```
+
   </TabItem>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ReactorsClient(ClientOptions.builder().build()).patch("id", PatchReactorRequest.builder()
+    .name("My Reactor")
+    .configuration(new HashMap() {{
+        put("SERVICE_API_KEY", "key_abcd1234");
+    }})
+    .build());
 ```
+
   </TabItem>
   <TabItem value="python" label="Python">
 
@@ -786,7 +841,12 @@ client.reactors.patch(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+err := client.Reactors.Patch(ctx, reactorId, &basistheory.PatchReactorRequest{
+	Name: "My Reactor",
+	Configuration: map[string]*string{
+		"SERVICE_API_KEY": func(s string) *string { return &s }("key_abcd1234"),
+	},
+})
 ```
 
   </TabItem>
@@ -862,7 +922,7 @@ await client.Reactors.DeleteAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ReactorsClient(ClientOptions.builder().build()).delete("id");
 ```
 
   </TabItem>
@@ -878,7 +938,7 @@ client.reactors.delete(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+err := client.Reactors.Delete(ctx, "id")
 ```
 
   </TabItem>
@@ -982,7 +1042,14 @@ await client.Reactors.ReactAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ReactorsClient(ClientOptions.builder().build()).react("id", ReactRequest.builder()
+    .args(new HashMap() {{
+        put("args", new HashMap() {{
+            put("card", "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}");
+            put("customer_id", "myCustomerId1234");
+        }});
+    }})
+    .build());
 ```
 
   </TabItem>
@@ -1002,7 +1069,12 @@ client.reactors.react(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+response, err := client.Reactors.React(ctx, reactorId, &basistheory.ReactRequest{
+    Args: map[string]interface{}{
+        "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+        "customer_id": "myCustomerId1234",
+    },
+})
 ```
 
   </TabItem>
@@ -1212,6 +1284,19 @@ client.reactors.results.get(
 )
 ```
   </TabItem>
+
+    <TabItem value="java" label="Java">
+```java showLineNumbers
+new ReactorsClient(ClientOptions.builder().build()).results().get("id", "requestId");
+```
+  </TabItem>
+
+    <TabItem value="go" label="Go">
+```go showLineNumbers
+response, err := client.Reactors.Results.Get(ctx, "reactorId", "requestId")
+```
+
+  </TabItem>  
 </Tabs>
 
 #### URI Parameters
