@@ -1,3 +1,10 @@
+# [1.226.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.225.2...v1.226.0) (2025-04-03)
+
+
+### Features
+
+* go and java api reference documentation ([39a1940](https://github.com/Basis-Theory/developers.basistheory.com/commit/39a19401fd6ecfad7e583f3143ce9a01ca6fdc89))
+
 ## [1.225.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.225.1...v1.225.2) (2025-03-31)
 
 
