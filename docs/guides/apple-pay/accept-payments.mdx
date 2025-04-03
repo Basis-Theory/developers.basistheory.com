@@ -182,14 +182,13 @@ Let's add the Apple Pay button and modify the `session.onvalidatemerchant` event
 </html>
 ```
 
-Adding the `apple-pay-sdk.js` script will enables the `<apple-pay-button>` directive to your website.
+Adding the `apple-pay-sdk.js` script will enable the `<apple-pay-button>` directive to your website.
+The `validateMerchant` function calls Basis Theory to initiate the Apple Pay session.
 
-The `validateMerchant` function Basis Theory to initiate the Apple Pay session.
-
-### Decryption of the payment data
+## Tokenization
 
 After the customer has authorized the payment, your application will need to call Basis Theory with the encrypted Apple Pay token.
-Let's modify the `session.onpaymentauthorized` event to call Basis Theory.
+Let's add the `session.onpaymentauthorized` event to call Basis Theory.
 
 ```html
 <html>
@@ -288,13 +287,10 @@ Let's modify the `session.onpaymentauthorized` event to call Basis Theory.
                     session.completePayment(ApplePaySession.STATUS_FAILURE);
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                session.completePayment(ApplePaySession.STATUS_SUCCESS);
 
                 const tokenIntent = await response.json().tokent_intent;
                 console.log('token intent', tokenIntent);
-
-                // Call backend server to proxy the token intent to the payment processor
-                // ...
+                session.completePayment(ApplePaySession.STATUS_SUCCESS);
             } catch (error) {
                 session.completePayment(ApplePaySession.STATUS_FAILURE);
                 throw new Error(`Failed payment`);
@@ -318,13 +314,74 @@ Let's modify the `session.onpaymentauthorized` event to call Basis Theory.
 </html>
 ```
 
-### Processing of the payment data
+## Processing of the Payment (async)
 
-We'll send the Basis Theory Token Intent to a Payments Service Provider (PSP) to test charging a card. We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/ephemeral-proxy) and a Private Application.
+We'll send the Basis Theory Token Intent to a Payments Service Provider (PSP) to test charging a card.
+We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/ephemeral-proxy) and a Private Application.
+
+### Create a Private Application
 
 <ApplicationSection type="private" permissions={["token:use"]}/>
 
+### Charge the Payment
+
 Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
+
+We'll change our frontend application one last time to pass in the Token Intent Ids to the backend to process the payment.
+
+```javascript
+async function performTransaction(event, session) {
+    try {
+        const response = await fetch('https://api.basistheory.com/connections/apple-pay/tokenize', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'BT-API-KEY': '<PUBLIC_APPLICATION_KEY>'
+            },
+            body: JSON.stringify({
+                apple_payment_method_token: event.payment.token
+            })
+        });
+
+        if (!response.ok) {
+            session.completePayment(ApplePaySession.STATUS_FAILURE);
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const tokenIntent = await response.json().tokent_intent;
+        console.log('token intent', tokenIntent);
+
+        // highlight-start
+        let { response } = await chargePayment(tokenIntent.id);
+        if (!response.ok) {
+            session.completePayment(ApplePaySession.STATUS_FAILURE);
+            throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        // highlight-end
+        session.completePayment(ApplePaySession.STATUS_SUCCESS);
+    } catch (error) {
+        session.completePayment(ApplePaySession.STATUS_FAILURE);
+        throw new Error(`Failed payment`);
+    }
+}
+
+// highlight-start
+// Charge Payment in backend
+async function chargePayment(tokenIntentId) {
+    const response = await fetch('http://localhost:3000/charge-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            tokenIntentId: tokenIntentId
+        })
+    });
+
+    return await response;
+}
+// highlight-end
+```
 
 We'll setup and invoke the [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) on our backend.
 
