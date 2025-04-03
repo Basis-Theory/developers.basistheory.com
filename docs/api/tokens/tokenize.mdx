@@ -116,8 +116,8 @@ client.tokens.tokenize(
 ```go showLineNumbers
 result, err := client.Tokens.Tokenize(ctx, map[string]interface{}{
     "first_name": "John",
-    "last_name": "Doe"
-});
+    "last_name": "Doe",
+})
 ```
 
   </TabItem>
@@ -215,8 +215,8 @@ await client.Tokens.TokenizeAsync(new
 new TokensClient(ClientOptions.builder().build()).tokenize(Token.builder()
     .type("token")
     .data("Sensitive Value")
-    .metadata(new HashMap<String, String>() {{
-        put("nonSensitiveField", "Non-Sensitive Value");
+    .metadata(new HashMap<String, Optional<String>>() {{
+        put("nonSensitiveField", Optional.of("Non-Sensitive Value"));
     }})
     .searchIndexes(Arrays.asList("{{ data }}"))
     .fingerprintExpression("{{ data }}")
@@ -246,16 +246,14 @@ client.tokens.tokenize(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-result, err := client.Tokens.Tokenize(ctx, &basistheory.TokenizeRequest{
-    Type: "token",
-    Data: "Sensitive Value",
-    Metadata: map[string]string{
-        "nonSensitiveField": "Non-Sensitive Value",
-    },
-    SearchIndexes: []string{
-        "{{ data }}",
-    },
-    FingerprintExpression: "{{ data }}",
+result, err := client.Tokens.Tokenize(ctx, map[string]interface{}{
+	"type": "token",
+	"data": "Sensitive Value",
+	"metadata": map[string]interface{}{
+		"nonSensitiveField": "Non-Sensitive Value",
+	},
+	"search_indexes":         []string{"{{ data }}"},
+	"fingerprint_expression": "{{ data }}",
 })
 ```
 
@@ -380,8 +378,8 @@ new TokensClient(ClientOptions.builder().build()).tokenize(Token.builder()
         put("expiration_year", 2025);
         put("cvc", "123");
     }})
-    .metadata(new HashMap<String, String>() {{
-        put("nonSensitiveField", "Non-Sensitive Value");
+    .metadata(new HashMap<String, Optional<String>>() {{
+        put("nonSensitiveField", Optional.of("Non-Sensitive Value"));
     }})
     .build());
 ```
@@ -410,17 +408,14 @@ client.tokens.tokenize(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-result, err := client.Tokens.Tokenize(ctx, &basistheory.TokenizeRequest{
-    Type: "card",
-    Data: map[string]interface{}{
-        "number": "4242424242424242",
-        "expiration_month": 12,
-        "expiration_year": 2025,
-        "cvc": "123",
-    },
-    Metadata: map[string]string{
-        "nonSensitiveField": "Non-Sensitive Value",
-    },
+result, err := client.Tokens.Tokenize(ctx, map[string]interface{}{
+	"type": "token",
+	"data": "Sensitive Value",
+	"metadata": map[string]interface{}{
+		"nonSensitiveField": "Non-Sensitive Value",
+	},
+	"search_indexes":         []string{"{{ data }}"},
+	"fingerprint_expression": "{{ data }}",
 })
 ```
 
@@ -571,7 +566,8 @@ await client.Tokens.TokenizeAsync(new List<object>
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-List<Object> tokens = Arrays.asList(
+new TokensClient(ClientOptions.builder().build())
+    .tokenize(Arrays.asList(
     "John",
     "Doe",
     Token.builder()
@@ -582,17 +578,15 @@ List<Object> tokens = Arrays.asList(
             put("expiration_year", 2025);
             put("cvc", "123");
         }})
-        .metadata(new HashMap<String, String>() {{
-            put("nonSensitiveField", "Non-Sensitive Value");
+        .metadata(new HashMap<String, Optional<String>>() {{
+            put("nonSensitiveField", Optional.of("Non-Sensitive Value"));
         }})
         .build(),
     Token.builder()
         .type("token")
         .data("Sensitive Value")
         .build()
-);
-
-new TokensClient(ClientOptions.builder().build()).tokenize(tokens);
+    ));
 ```
 
   </TabItem>
@@ -628,24 +622,24 @@ client.tokens.tokenize(
 
 ```go showLineNumbers
 result, err := client.Tokens.Tokenize(ctx, []interface{}{
-    "John",
-    "Doe",
-    &basistheory.TokenizeRequest{
-        Type: "card",
-        Data: map[string]interface{}{
-            "number": "4242424242424242",
-            "expiration_month": 12,
-            "expiration_year": 2025,
-            "cvc": "123",
-        },
-        Metadata: map[string]string{
-            "nonSensitiveField": "Non-Sensitive Value",
-        },
-    },
-    &basistheory.TokenizeRequest{
-        Type: "token",
-        Data: "Sensitive Value",
-    },
+	"John",
+	"Doe",
+	map[string]interface{}{
+		"type": "card",
+		"data": map[string]interface{}{
+			"number": "4242424242424242",
+			"expiration_month": 12,
+			"expiration_year": 2025,
+			"cvc": "123",
+		},
+		"metadata": map[string]string{
+			"nonSensitiveField": "Non-Sensitive Value",
+		},
+	},
+	map[string]interface{}{
+		"type": "token",
+		"data": "Sensitive Value",
+	},
 })
 ```
 
@@ -865,24 +859,24 @@ new TokensClient(ClientOptions.builder().build()).tokenize(new HashMap<String, O
 
 ```go showLineNumbers
 result, err := client.Tokens.Tokenize(ctx, map[string]interface{}{
-    "first_name": "John",
-    "last_name": "Doe",
-    "primary_card": &basistheory.TokenizeRequest{
-        Type: "card",
-        Data: map[string]interface{}{
-            "number": "4242424242424242",
-            "expiration_month": 12,
-            "expiration_year": 2025,
-            "cvc": "123",
-        },
-    },
-    "sensitive_tags": []interface{}{
-        "preferred",
-        &basistheory.TokenizeRequest{
-            Type: "token",
-            Data: "vip",
-        },
-    },
+	"first_name": "John",
+	"last_name": "Doe",
+	"primary_card": map[string]interface{}{
+		"type": "card",
+		"data": map[string]interface{}{
+			"number": "4242424242424242",
+			"expiration_month": 12,
+			"expiration_year": 2025,
+			"cvc": "123",
+		},
+	},
+	"sensitive_tags": []interface{}{
+		"preferred",
+		map[string]interface{}{
+			"type": "token",
+			"data": "vip",
+		},
+	},
 })
 ```
 

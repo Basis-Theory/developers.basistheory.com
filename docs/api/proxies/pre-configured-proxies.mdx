@@ -208,15 +208,15 @@ await client.Proxies.CreateAsync(new CreateProxyRequest
 
 ```java showLineNumbers
 Proxy updatedProxy = new ProxiesClient(ClientOptions.builder().build())
-    .update(Proxy.builder()
-        .id("id")
-        .name("My Proxy")
-        .destinationUrl("https://example.com/api")
-        .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
-        .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
-        .configuration(new HashMap<>())
-        .application(new Application(applicationId))
-        .build());
+                .update(Proxy.builder()
+                        .id("id")
+                        .name("My Proxy")
+                        .destinationUrl("https://example.com/api")
+                        .requestTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+                        .responseTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+                        .configuration(new HashMap<>())
+                        .applicationId(applicationId)
+                        .build());
 ```
 
   </TabItem>
@@ -274,21 +274,21 @@ transform := `module.exports = async function (req) {
 };`
 
 proxy, err := client.Proxies.Create(ctx, &basistheory.CreateProxyRequest{
-    Name: "My Proxy",
-    DestinationURL: "https://example.com/api",
-    RequestTransform: &basistheory.ProxyTransform{
-        Code: transform,
-    },
-    ResponseTransform: &basistheory.ProxyTransform{
-        Code: transform,
-    },
-    Configuration: map[string]string{
-        "SERVICE_API_KEY": "key_abcd1234",
-    },
-    Application: &basistheory.Application{
-        ID: applicationID,
-    },
-    RequireAuth: true,
+	Name: "My Proxy",
+	DestinationURL: "https://example.com/api",
+	RequestTransform: &basistheory.ProxyTransform{
+		Code: &transform,
+	},
+	ResponseTransform: &basistheory.ProxyTransform{
+		Code: &transform,
+	},
+	Configuration: map[string]*string{
+		"SERVICE_API_KEY": func(s string) *string { return &s }("key_abcd1234"),
+	},
+	Application: &basistheory.Application{
+		ID: applicationID,
+	},
+	RequireAuth: true,
 })
 ```
 
@@ -434,8 +434,11 @@ proxies, err := client.Proxies.List(ctx, &basistheory.ProxiesListRequest{})
 
 // List proxies with filters
 proxies, err := client.Proxies.List(ctx, &basistheory.ProxiesListRequest{
-    IDs: []string{"id1", "id2"},
-    Name: "My Proxy",
+	ID: []*string{
+		func(s string) *string { return &s }("id1"),
+		func(s string) *string { return &s }("id2"),
+	},
+	Name: "My Proxy",
 })
 ```
 
@@ -813,15 +816,15 @@ await client.Proxies.UpdateAsync(
 
 ```java showLineNumbers
 Proxy updatedProxy = new ProxiesClient(ClientOptions.builder().build())
-    .update(Proxy.builder()
-        .id("id")
-        .name("My Proxy")
-        .destinationUrl("https://example.com/api")
-        .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
-        .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
-        .configuration(new HashMap<>())
-        .application(new Application(applicationId))
-        .build());
+                .update(Proxy.builder()
+                        .id("id")
+                        .name("My Proxy")
+                        .destinationUrl("https://example.com/api")
+                        .requestTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+                        .responseTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+                        .configuration(new HashMap<>())
+                        .applicationId(applicationId)
+                        .build());
 ```
 
   </TabItem>
@@ -870,7 +873,7 @@ client.proxies.update(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-proxy, err := client.Proxies.Patch(ctx, "id", &basistheory.PatchProxyRequest{
+err := client.Proxies.Patch(ctx, "id", &basistheory.PatchProxyRequest{
     Name: "My Proxy",
     DestinationURL: "https://example.com/api",
     Configuration: map[string]string{
@@ -1038,12 +1041,11 @@ await client.Proxies.PatchAsync(
 
 ```java showLineNumbers
 Proxy patchedProxy = new ProxiesClient(ClientOptions.builder().build())
-    .update(Proxy.builder()
-        .id("id")
+    .update("id", UpdateProxyRequest.builder()
         .name("My Proxy")
         .destinationUrl("https://example.com/api")
-        .requestTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
-        .responseTransform(new ProxyTransform("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };"))
+        .requestTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+        .responseTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
         .configuration(new HashMap<>())
         .build());
 ```
@@ -1066,12 +1068,12 @@ client.proxies.patch(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-proxy, err := client.Proxies.Patch(ctx, "id", &basistheory.PatchProxyRequest{
-    Name: "My Proxy",
-    DestinationURL: "https://example.com/api",
-    Configuration: map[string]string{
-        "SERVICE_API_KEY": "key_abcd1234",
-    },
+err := client.Proxies.Patch(ctx, "id", &basistheory.PatchProxyRequest{
+	Name: "My Proxy",
+	DestinationURL: "https://example.com/api",
+	Configuration: map[string]*string{
+		"SERVICE_API_KEY": func(s string) *string { return &s }("key_abcd1234"),
+	},
 })
 ```
 

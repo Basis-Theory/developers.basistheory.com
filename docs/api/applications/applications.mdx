@@ -84,7 +84,7 @@ await client.Applications.CreateAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-new ApplicationsClient(ClientOptions.builder().build()).create(Application.builder()
+new ApplicationsClient(ClientOptions.builder().build()).create(CreateApplicationRequest.builder()
     .name("My Application")
     .type("private")
     .build());
@@ -108,7 +108,13 @@ client.applications.create(
         Name:         "My Example App",
         Type:         "private",
         Permissions:  []string{"token:create", "token:read"},
-        CreateKey:    true,
+createKey := true
+application, err := client.Applications.Create(ctx, &basistheory.CreateApplicationRequest{
+	Name:        "My Example App",
+	Type:        "private",
+	Permissions: []string{"token:create", "token:read"},
+	CreateKey:   &createKey,
+})
     })
     ```
   </TabItem>
@@ -514,7 +520,7 @@ await client.Applications.UpdateAsync("id", new UpdateApplicationRequest { Name 
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-new ApplicationsClient(ClientOptions.builder().build()).update("id", Application.builder()
+new ApplicationsClient(ClientOptions.builder().build()).update("id", UpdateApplicationRequest.builder()
     .name("My Example App")
     .permissions(Arrays.asList("application:create", "application:read"))
     .build());

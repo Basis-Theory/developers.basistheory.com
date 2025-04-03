@@ -67,6 +67,7 @@ await client.Tenants.Self.GetAsync();
 
 ```java showLineNumbers
 Tenant tenant = new TenantsClient(ClientOptions.builder().build())
+    .self()
     .get();
 ```
 
@@ -179,7 +180,8 @@ await client.Tenants.Self.UpdateAsync(new UpdateTenantRequest { Name = "name" })
 
 ```java showLineNumbers
 Tenant updatedTenant = new TenantsClient(ClientOptions.builder().build())
-    .update(Tenant.builder()
+    .self()
+    .update(UpdateTenantRequest.builder()
         .name("My Example Tenant")
         .build());
 ```
@@ -197,7 +199,7 @@ client.tenants.self_.update(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-tenant, err := client.Tenants.Self.Update(ctx, &basistheory.UpdateTenantRequest{
+tenant, err := client.Tenants.Self.Update(ctx, &tenants.UpdateTenantRequest{
     Name: "My Example Tenant",
 })
 ```
@@ -286,6 +288,7 @@ await client.Tenants.Self.DeleteAsync();
 
 ```java showLineNumbers
 new TenantsClient(ClientOptions.builder().build())
+   .self()
     .delete();
 ```
 
@@ -361,6 +364,7 @@ await client.Tenants.Self.GetUsageReportsAsync();
 
 ```java showLineNumbers
 TenantUsageReport report = new TenantsClient(ClientOptions.builder().build())
+    .self()
     .getUsageReports();
 ```
 

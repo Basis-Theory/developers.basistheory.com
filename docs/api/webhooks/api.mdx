@@ -93,7 +93,7 @@ resource "basistheory_webhook" "example" {
 
 ```java showLineNumbers
 Webhook webhook = new WebhooksClient(ClientOptions.builder().build())
-    .create(Webhook.builder()
+    .create(CreateWebhookRequest.builder()
         .name("webhook-create")
         .url("https://www.example.com")
         .notifyEmail("notify@basistheory.com")
@@ -108,7 +108,7 @@ Webhook webhook = new WebhooksClient(ClientOptions.builder().build())
     createRequest := &basistheory.CreateWebhookRequest{
         Name:         "webhook-create",
         URL:          "https://www.example.com",
-        NotifyEmail:  "notify@basistheory.com",
+        NotifyEmail:  func(s string) *string { return &s }("notify@basistheory.com"),
         Events:       []string{"token.created"},
     }
 
@@ -189,7 +189,7 @@ client.webhooks.list()
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-List<Webhook> webhooks = new WebhooksClient(ClientOptions.builder().build())
+WebhookList webhooks = new WebhooksClient(ClientOptions.builder().build()).list();
     .list();
 ```
 
@@ -197,7 +197,7 @@ List<Webhook> webhooks = new WebhooksClient(ClientOptions.builder().build())
 
   <TabItem value="go" label="Go">
     ```go showLineNumbers
-    webhooks, err := client.Webhooks.List(ctx, &basistheory.WebhooksListRequest{})
+    webhooks, err := client.Webhooks.List(ctx)
     ```
   </TabItem>
 </Tabs>
@@ -382,11 +382,10 @@ client.webhooks.update(
 
 ```java showLineNumbers
 Webhook updatedWebhook = new WebhooksClient(ClientOptions.builder().build())
-    .update("id", Webhook.builder()
+    .update("id", UpdateWebhookRequest.builder()
         .name("webhook-update")
         .url("https://www.example1.com")
         .notifyEmail("notify@basistheory.com")
-        .status("enabled")
         .events(Arrays.asList("token.created"))
         .build());
 ```
@@ -398,8 +397,7 @@ Webhook updatedWebhook = new WebhooksClient(ClientOptions.builder().build())
     updateRequest := &basistheory.UpdateWebhookRequest{
         Name:         "webhook-update",
         URL:          "https://www.example.com",
-        NotifyEmail:  "notify@basistheory.com",
-        Status:       "enabled",
+        NotifyEmail:  func(s string) *string { return &s }("notify@basistheory.com"),
         Events:       []string{"token.created"},
     }
 
