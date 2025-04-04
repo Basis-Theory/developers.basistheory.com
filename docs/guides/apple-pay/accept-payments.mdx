@@ -32,6 +32,7 @@ sequenceDiagram
 	participant bta as Basis Theory<br>API
 	participant psp as Processor<br>API
 
+	activate cus
 	cus ->>+ mfe: Click Apple "Pay" button
 	mfe ->>+ bta: Create Apple Pay Session
 	bta -->>- mfe: Apple Pay Session
@@ -40,7 +41,9 @@ sequenceDiagram
 	mfe ->>+ bta: Tokenize Apple Pay DPAN
 
 	bta -->>- mfe: Token Intent
-	mfe -->>- cus: Success Message
+	mfe -->> cus: Apple Pay<br>success notification
+	deactivate cus
+
 	alt Optionally Async
 		mfe ->>+ msb: Process Payment
 		msb ->>+ bta: [Proxy]<br>Process Payment<br>w/ {{ token intent }}
@@ -50,9 +53,8 @@ sequenceDiagram
 		psp -->>- bta: Transaction Response
 		bta -->>- msb: Transaction Response
 		msb -->>- mfe: Response
+	  deactivate mfe
 	end
-
-
 ```
 
 ## Getting Started
