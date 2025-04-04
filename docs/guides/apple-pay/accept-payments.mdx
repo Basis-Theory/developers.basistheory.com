@@ -40,9 +40,10 @@ sequenceDiagram
 	mfe ->>+ bta: Tokenize Apple Pay DPAN
 
 	bta -->>- mfe: Token Intent
+	mfe -->>- cus: Success Message
 	alt Optionally Async
 		mfe ->>+ msb: Process Payment
-		msb ->>+ bta: [Proxy] Process Payment<br>w/ token intent
+		msb ->>+ bta: [Proxy]<br>Process Payment<br>w/ {{ token intent }}
 		bta ->> bta: Detokenize DPAN
 		bta ->>+ psp: Process Payment<br>w/ DPAN
 		psp ->> psp: Process Transaction
@@ -50,7 +51,6 @@ sequenceDiagram
 		bta -->>- msb: Transaction Response
 		msb -->>- mfe: Response
 	end
-	mfe -->>- cus: Success Message
 
 
 ```
