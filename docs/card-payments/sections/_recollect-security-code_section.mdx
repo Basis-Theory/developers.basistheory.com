@@ -1,0 +1,43 @@
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
+import AddCvcElementSection from "./_add-cvc-element-section.mdx";
+import UpdateTokenCvcSection from "./_update_token_cvc_section.mdx";
+
+## Recollect Security Code
+
+To improve authorization rates, some PSPs recommend, or even require, that CITs performed with saved cards include the card security code (CSC, also known as CVV or CVC). Since long-term persisted Tokens can't store Security Code per PCI Compliance, merchants have the option to recollect it from the customer.
+
+```mermaid
+  sequenceDiagram
+    actor customer as Customer
+    participant frontend as Merchant<br>Frontend
+    participant bte as Basis Theory<br>Elements
+    participant bapi as Basis Theory<br>API
+    participant mbe as Merchant<br>Backend
+
+    activate customer
+    customer ->> frontend: Select saved card Token
+    frontend -->> customer: Render Security Code input
+    customer -->> bte: Enter Security Code
+    customer ->> frontend: Submit
+    frontend ->> bte: Update Token
+    bte ->> bapi: Update Token
+    bapi -->> bte:  OK
+    bte -->> frontend: OK
+    frontend ->> mbe: Submit checkout
+    mbe ->> mbe: Process card
+    mbe -->> frontend: OK
+    frontend -->> customer: Success
+    deactivate customer
+```
+### Public Application
+
+<ApplicationSection type="public" permissions={["token:update"]} />
+
+### Configure Elements SDK
+
+<ConfigureElementsSection />
+
+<AddCvcElementSection />
+
+<UpdateTokenCvcSection />

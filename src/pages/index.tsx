@@ -56,7 +56,7 @@ export default function Home(): JSX.Element {
                 A quick overview of how Basis Theory works and key concepts.
               </Card>
               <Card
-                href="/docs/guides/cards"
+                href="/docs/card-payments"
                 img={
                   <ThemedImage
                     alt="Card icon"
@@ -67,7 +67,7 @@ export default function Home(): JSX.Element {
                     className={styles["explore-cards-image"]}
                   />
                 }
-                heading={<Card.PrimaryHeader>Cards</Card.PrimaryHeader>}
+                heading={<Card.PrimaryHeader>Card Payments</Card.PrimaryHeader>}
                 column
                 raised
               >
