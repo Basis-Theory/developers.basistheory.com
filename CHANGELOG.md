@@ -1,3 +1,10 @@
+# [1.227.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.226.0...v1.227.0) (2025-04-07)
+
+
+### Features
+
+* new Apple Pay Integration Docs ([#527](https://github.com/Basis-Theory/developers.basistheory.com/issues/527)) ([801e3a5](https://github.com/Basis-Theory/developers.basistheory.com/commit/801e3a55421e6972e737940ba69b9c6d4a99d889))
+
 # [1.226.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.225.2...v1.226.0) (2025-04-03)
 
 
