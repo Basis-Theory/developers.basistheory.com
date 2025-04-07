@@ -123,22 +123,12 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "guides/apple-pay/overview",
+        id: "guides/apple-pay/accept-payments",
       },
       items: [
         {
           type: "doc",
-          id: "guides/apple-pay/overview",
-          label: "Overview",
-        },
-        {
-          type: "doc",
-          id: "guides/apple-pay/setup",
-          label: "Merchant Setup",
-        },
-        {
-          type: "doc",
-          id: "guides/apple-pay/accept",
+          id: "guides/apple-pay/accept-payments",
           label: "Accept Payments",
         },
       ],
@@ -505,11 +495,15 @@ const sidebars = {
       items: [
         {
           type: "doc",
-          id: "api/connections/stripe-forward",
+          id: "api/connections/apple-pay",
         },
         {
           type: "doc",
           id: "api/connections/google-pay",
+        },
+        {
+          type: "doc",
+          id: "api/connections/stripe-forward",
         },
       ],
     },

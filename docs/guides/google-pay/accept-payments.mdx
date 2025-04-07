@@ -16,9 +16,9 @@ First, you will render the Google Pay button on your page using Google's SDKs. W
 
 When the user clicks the Google "Pay" button, a sequence of three high-level steps is initiated:
 
-1. Creation of Google Pay payment data - The client application (Android or Web) creates a payment data request object that contains the payment information and sends that request to the Google Pay API. The Google Pay API returns a payment data response object, which contains the encrypted payment information.
-2. Decryption of the payment data - The encrypted payment data is then sent to Basis Theory for decryption and storage of the sensitive cardholder information. Then Basis Theory returns a [Token Intent](/docs/api/tokens/token-intents#token-intent-object) that can be used to process the payment.
-3. Processing of the payment data - The Basis Theory Token Intents are forwarded to the payment processor via Basis Theory Proxy, which translates Token Intents back to raw data before sending the request. When the successful payment response returns, the client application can complete the payment and inform the user that the payment was successful.
+1. **Creation of Google Pay payment data** - The client application (Android or Web) creates a payment data request object that contains the payment information and sends that request to the Google Pay API. The Google Pay API returns a payment data response object, which contains the encrypted payment information.
+2. **Decryption of the payment data** - The encrypted payment data is then sent to Basis Theory for decryption and storage of the sensitive cardholder information. Then Basis Theory returns a [Token Intent](/docs/api/tokens/token-intents#token-intent-object) that can be used to process the payment.
+3. **Processing of the payment data** - The Basis Theory Token Intents are forwarded to the payment processor via Basis Theory Proxy, which translates Token Intents back to raw data before sending the request. When the successful payment response returns, the client application can complete the payment and inform the user that the payment was successful.
 
 ## Getting Started
 
@@ -212,7 +212,7 @@ Let's try clicking the "GPay" button again and then the "Continue" button once a
 
 ## Processing the Google Pay Payment Data
 
-We'll send the Basis Theory Token Intent to a Payments Service Provider (PSP) to test charging a card. We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/ephemeral-proxy) and a Private Application. 
+We'll send the Basis Theory Token Intent to a Payments Service Provider (PSP) to test charging a card. We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/ephemeral-proxy) and a Private Application.
 
 ### Create a Private Application
 
@@ -295,7 +295,7 @@ curl 'https://api.basistheory.com/proxy' \
   "processing_channel_id": "<CHECKOUT_PROCESSING_CHANNEL_ID>"
 }'
 ```
-  [Checkout Payment Method Docs](https://www.checkout.com/docs/payments/add-payment-methods/google-pay#Pay_with_a_pre-decrypted_Google_Pay_token).
+  [Checkout Payment Method Docs](https://www.checkout.com/docs/payments/add-payment-methods/google-pay/api-only#Pay_with_a_pre-decrypted_Google_Pay_token).
 
 You may notice that in this example we are not passing in any 3DS cryptogram or eci indicator. This is not necessary for charging FPANs. If you need to charge a DPAN, you will need to pass in the 3DS cryptogram and eci indicator available on the `authentication` property of the Token Intent.
 
@@ -308,7 +308,7 @@ You may notice that in this example we are not passing in any 3DS cryptogram or 
         "expiry_month": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }}",
         "expiry_year": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}",
 // highlight-start
-        "eci": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.authentication.eciIndicator\" }}",
+        "eci": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.authentication.eci_indicator\" }}",
         "cryptogram": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.authentication.threeds_cryptogram\" }}"
 // highlight-end
     },
