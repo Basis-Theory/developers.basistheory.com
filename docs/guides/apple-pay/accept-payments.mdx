@@ -23,39 +23,7 @@ When the user clicks the Apple "Pay" button, a sequence of high-level steps is i
 3. **Processing of the payment data** - The Basis Theory Token Intents are forwarded to the payment processor via Basis Theory Proxy, which translates Token Intents back to raw data before sending the request.
    Upon receiving a successful payment response, the client application can complete the payment and inform the user that the payment was successful.
 
-```mermaid
-sequenceDiagram
-
-	actor cus as Customer
-	participant mfe as Merchant<br>Frontend
-	participant msb as Merchant<br>Backend
-	participant bta as Basis Theory<br>API
-	participant psp as Processor<br>API
-
-	activate cus
-	cus ->>+ mfe: Click Apple "Pay" button
-	mfe ->>+ bta: Create Apple Pay Session
-	bta -->>- mfe: Apple Pay Session
-	mfe -->> cus: Apple Payment Sheet
-	cus ->> mfe: Authorize Payment
-	mfe ->>+ bta: Tokenize Apple Pay DPAN
-
-	bta -->>- mfe: Token Intent
-	mfe -->> cus: Apple Pay<br>success notification
-	deactivate cus
-
-	alt Optionally Async
-		mfe ->>+ msb: Process Payment
-		msb ->>+ bta: [Proxy]<br>Process Payment<br>w/ {{ token intent }}
-		bta ->> bta: Detokenize DPAN
-		bta ->>+ psp: Process Payment<br>w/ DPAN
-		psp ->> psp: Process Transaction
-		psp -->>- bta: Transaction Response
-		bta -->>- msb: Transaction Response
-		msb -->>- mfe: Response
-	  deactivate mfe
-	end
-```
+![Accept Apple Pay](/img/guides/apple-pay/accept-payments.png)
 
 ## Getting Started
 
