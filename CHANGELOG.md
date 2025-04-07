@@ -1,3 +1,10 @@
+## [1.227.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.227.0...v1.227.1) (2025-04-07)
+
+
+### Bug Fixes
+
+* rotate PGP key ([#535](https://github.com/Basis-Theory/developers.basistheory.com/issues/535)) ([b4de995](https://github.com/Basis-Theory/developers.basistheory.com/commit/b4de9952163b9bf35e7a3e1c4b687a2716ed3fcc))
+
 # [1.227.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.226.0...v1.227.0) (2025-04-07)
 
 
