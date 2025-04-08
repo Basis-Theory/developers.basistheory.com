@@ -84,6 +84,10 @@ await client.Applications.CreateAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
+new ApplicationsClient(ClientOptions.builder().build()).create(CreateApplicationRequest.builder()
+    .name("My Application")
+    .type("private")
+    .build());
 ```
 
   </TabItem>
@@ -99,11 +103,20 @@ client.applications.create(
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    application, err := client.Applications.Create(ctx, &basistheory.CreateApplicationRequest{
+        Name:         "My Example App",
+        Type:         "private",
+        Permissions:  []string{"token:create", "token:read"},
+createKey := true
+application, err := client.Applications.Create(ctx, &basistheory.CreateApplicationRequest{
+	Name:        "My Example App",
+	Type:        "private",
+	Permissions: []string{"token:create", "token:read"},
+	CreateKey:   &createKey,
+})
+    })
+    ```
   </TabItem>
 </Tabs>
 
@@ -195,7 +208,8 @@ await client.Applications.ListAsync(new ApplicationsListRequest());
   </TabItem>
   <TabItem value="java" label="Java">
 
-```java
+```java showLineNumbers
+new ApplicationsClient(ClientOptions.builder().build()).list();
 ```
 
   </TabItem>
@@ -213,10 +227,9 @@ for page in response.iter_pages():
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-```
-
+    ```go showLineNumbers
+    applications, err := client.Applications.List(ctx, &basistheory.ApplicationsListRequest{})
+    ```
   </TabItem>
 </Tabs>
 
@@ -307,7 +320,7 @@ await client.Applications.GetAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ApplicationsClient(ClientOptions.builder().build()).get("id");
 ```
 
   </TabItem>
@@ -321,11 +334,9 @@ client.applications.get(
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    application, err := client.Applications.Get(ctx, "id")
+    ```
   </TabItem>
 </Tabs>
 
@@ -404,7 +415,7 @@ await client.Applications.GetByKeyAsync();
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ApplicationsClient(ClientOptions.builder().build()).getByKey();
 ```
 
   </TabItem>
@@ -416,11 +427,9 @@ client.applications.get_by_key()
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    application, err := client.Applications.GetByKey(ctx)
+    ```
   </TabItem>
 </Tabs>
 
@@ -511,7 +520,10 @@ await client.Applications.UpdateAsync("id", new UpdateApplicationRequest { Name 
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ApplicationsClient(ClientOptions.builder().build()).update("id", UpdateApplicationRequest.builder()
+    .name("My Example App")
+    .permissions(Arrays.asList("application:create", "application:read"))
+    .build());
 ```
 
   </TabItem>
@@ -526,11 +538,12 @@ client.applications.update(
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    application, err := client.Applications.Update(ctx, "id", &basistheory.UpdateApplicationRequest{
+        Name:         "My Example App",
+        Permissions:  []string{"application:create", "application:read"},
+    })
+    ```
   </TabItem>
 </Tabs>
 
@@ -620,7 +633,7 @@ await client.Applications.DeleteAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ApplicationsClient(ClientOptions.builder().build()).delete("id");
 ```
 
   </TabItem>
@@ -634,11 +647,9 @@ client.applications.delete(
 
   </TabItem>
   <TabItem value="go" label="Go">
-
-```go showLineNumbers
-
-```
-
+    ```go showLineNumbers
+    err := client.Applications.Delete(ctx, "id")
+    ```
   </TabItem>
 </Tabs>
 

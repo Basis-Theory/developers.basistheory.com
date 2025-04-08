@@ -65,10 +65,18 @@ client.sessions.create()
 ```
 
   </TabItem>
+      <TabItem value="java" label="Java">
+
+```java showLineNumbers
+CreateSessionResponse session = new SessionsClient(ClientOptions.builder().build())
+    .create();
+```
+
+  </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+session, err := client.Sessions.Create(ctx)
 ```
 
   </TabItem>
@@ -157,10 +165,24 @@ client.sessions.authorize(
 ```
 
   </TabItem>
+    <TabItem value="java" label="Java">
+
+```java showLineNumbers
+new SessionsClient(ClientOptions.builder().build())
+    .authorize(AuthorizeSessionRequest.builder()
+        .nonce("4J7SiRvfADwJ9ZqwviJJs8")
+        .permissions(Arrays.asList("token:create", "token:read"))
+        .build());
+```
+
+  </TabItem>
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+err := client.Sessions.Authorize(ctx, &basistheory.AuthorizeSessionRequest{
+    Nonce:       "4J7SiRvfADwJ9ZqwviJJs8",
+    Permissions: []string{"token:create", "token:read"},
+})
 ```
 
   </TabItem>

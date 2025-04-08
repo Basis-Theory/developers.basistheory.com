@@ -84,7 +84,10 @@ await client.Tokens.DetokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Object detokenizedData = new TokensClient(ClientOptions.builder().build())
+    .detokenize(new HashMap<String, String>() {{
+        put("card_number", "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}");
+    }});
 ```
 
   </TabItem>
@@ -102,7 +105,9 @@ client.tokens.detokenize(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+result, err := client.Tokens.Detokenize(ctx, map[string]interface{}{
+    "card_number": "{{ 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb | json: '$.number' }}",
+})
 ```
 
   </TabItem>
@@ -183,7 +188,13 @@ await client.Tokens.DetokenizeAsync(new
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Object detokenizedData = new TokensClient(ClientOptions.builder().build())
+    .detokenize(new HashMap<String, Object>() {{
+        put("tokens", Arrays.asList(
+            "{{ token: 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
+            "{{ token: a1883f97-2e4c-439a-bf73-dffb681de929 }}"
+        ));
+    }});
 ```
 
   </TabItem>
@@ -204,7 +215,12 @@ client.tokens.detokenize(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+result, err := client.Tokens.Detokenize(ctx, map[string]interface{}{
+    "tokens": []string{
+        "{{ token: 7993dbd8-19d5-44bf-b6dc-078e8b44c6cb }}",
+        "{{ token: a1883f97-2e4c-439a-bf73-dffb681de929 }}",
+    },
+})
 ```
 
   </TabItem>

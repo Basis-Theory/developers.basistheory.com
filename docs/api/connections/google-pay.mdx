@@ -101,6 +101,35 @@ The table below shows the resulting Token Intent type based on the Google Paymen
   )
   ```
     </TabItem>
+      <TabItem value="java" label="Java">
+
+```java showLineNumbers
+BasisTheoryApiClient client = new BasisTheoryApiClient(ClientOptions.builder().build());
+GooglePayTokenizeRequest request = GooglePayTokenizeRequest.builder()
+    .googlePaymentMethodToken(...)
+    .build();
+TokenIntent tokenIntent = client.googlepay().tokenize(request);
+```
+
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    tokenizeRequest := &basistheory.GooglePayTokenizeRequest{
+        GooglePaymentMethodToken: &basistheory.GooglePaymentMethodToken{
+            ProtocolVersion: "ECv2",
+            Signature:      "...",
+            IntermediateSigningKey: &basistheory.IntermediateSigningKey{
+                SignedKey:  "...",
+                Signatures: []string{"..."},
+            },
+            SignedMessage: "...",
+        },
+    }
+
+    tokenIntent, err := client.Googlepay.Tokenize(ctx, tokenizeRequest)
+    ```
+  </TabItem>
 </Tabs>
 
 #### Request Parameters

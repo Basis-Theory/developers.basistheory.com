@@ -207,7 +207,16 @@ await client.Proxies.CreateAsync(new CreateProxyRequest
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Proxy updatedProxy = new ProxiesClient(ClientOptions.builder().build())
+                .update(Proxy.builder()
+                        .id("id")
+                        .name("My Proxy")
+                        .destinationUrl("https://example.com/api")
+                        .requestTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+                        .responseTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+                        .configuration(new HashMap<>())
+                        .applicationId(applicationId)
+                        .build());
 ```
 
   </TabItem>
@@ -255,7 +264,32 @@ client.proxies.create(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
+transform := `module.exports = async function (req) {
+  // Do something with req.configuration.SERVICE_API_KEY
 
+  return {
+    headers: req.args.headers,
+    body: req.args.body
+  };
+};`
+
+proxy, err := client.Proxies.Create(ctx, &basistheory.CreateProxyRequest{
+	Name: "My Proxy",
+	DestinationURL: "https://example.com/api",
+	RequestTransform: &basistheory.ProxyTransform{
+		Code: &transform,
+	},
+	ResponseTransform: &basistheory.ProxyTransform{
+		Code: &transform,
+	},
+	Configuration: map[string]*string{
+		"SERVICE_API_KEY": func(s string) *string { return &s }("key_abcd1234"),
+	},
+	Application: &basistheory.Application{
+		ID: applicationID,
+	},
+	RequireAuth: true,
+})
 ```
 
   </TabItem>
@@ -374,7 +408,7 @@ await client.Proxies.ListAsync(new ProxiesListRequest());
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ProxiesClient(ClientOptions.builder().build()).list();
 ```
 
   </TabItem>
@@ -389,6 +423,23 @@ for item in response:
 # alternatively, you can paginate page-by-page
 for page in response.iter_pages():
     yield page
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+// List all proxies
+proxies, err := client.Proxies.List(ctx, &basistheory.ProxiesListRequest{})
+
+// List proxies with filters
+proxies, err := client.Proxies.List(ctx, &basistheory.ProxiesListRequest{
+	ID: []*string{
+		func(s string) *string { return &s }("id1"),
+		func(s string) *string { return &s }("id2"),
+	},
+	Name: "My Proxy",
+})
 ```
 
   </TabItem>
@@ -501,8 +552,8 @@ const proxy = await bt.proxies.retrieve("5b493235-6917-4307-906a-2cd6f1a90b13");
   </TabItem>
   <TabItem value="java" label="Java">
 
-```csharp showLineNumbers
-await client.Proxies.GetAsync("id");
+```java showLineNumbers
+new ProxiesClient(ClientOptions.builder().build()).get("id");
 ```
 
   </TabItem>
@@ -518,7 +569,7 @@ client.proxies.get(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+proxy, err := client.Proxies.Get(ctx, "id")
 ```
 
   </TabItem>
@@ -764,7 +815,16 @@ await client.Proxies.UpdateAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Proxy updatedProxy = new ProxiesClient(ClientOptions.builder().build())
+                .update(Proxy.builder()
+                        .id("id")
+                        .name("My Proxy")
+                        .destinationUrl("https://example.com/api")
+                        .requestTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+                        .responseTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+                        .configuration(new HashMap<>())
+                        .applicationId(applicationId)
+                        .build());
 ```
 
   </TabItem>
@@ -813,7 +873,13 @@ client.proxies.update(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+err := client.Proxies.Patch(ctx, "id", &basistheory.PatchProxyRequest{
+    Name: "My Proxy",
+    DestinationURL: "https://example.com/api",
+    Configuration: map[string]string{
+        "SERVICE_API_KEY": "key_abcd1234",
+    },
+})
 ```
 
   </TabItem>
@@ -974,7 +1040,14 @@ await client.Proxies.PatchAsync(
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+Proxy patchedProxy = new ProxiesClient(ClientOptions.builder().build())
+    .update("id", UpdateProxyRequest.builder()
+        .name("My Proxy")
+        .destinationUrl("https://example.com/api")
+        .requestTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+        .responseTransform(ProxyTransform.builder().code("module.exports = async function (req) { return { headers: req.args.headers, body: req.args.body }; };").build())
+        .configuration(new HashMap<>())
+        .build());
 ```
 
   </TabItem>
@@ -995,7 +1068,13 @@ client.proxies.patch(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+err := client.Proxies.Patch(ctx, "id", &basistheory.PatchProxyRequest{
+	Name: "My Proxy",
+	DestinationURL: "https://example.com/api",
+	Configuration: map[string]*string{
+		"SERVICE_API_KEY": func(s string) *string { return &s }("key_abcd1234"),
+	},
+})
 ```
 
   </TabItem>
@@ -1071,7 +1150,7 @@ await client.Proxies.DeleteAsync("id");
   <TabItem value="java" label="Java">
 
 ```java showLineNumbers
-
+new ProxiesClient(ClientOptions.builder().build()).delete("id");
 ```
 
   </TabItem>
@@ -1087,7 +1166,7 @@ client.proxies.delete(
   <TabItem value="go" label="Go">
 
 ```go showLineNumbers
-
+err := client.Proxies.Delete(ctx, "id")
 ```
 
   </TabItem>

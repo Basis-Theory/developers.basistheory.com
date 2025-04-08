@@ -117,6 +117,116 @@ Here is a complete list of the supported CSS properties:
 
 <Alert type={Alerts.WARNING}>For security reasons, we currently support only the 1000+ Google Fonts families. If you need a custom font in your <strong>Basis Theory Elements</strong>, don't hesitate to <a href="mailto:support@basistheory.com">reach out</a>.</Alert>
 
+## Validation
+
+### Basic Patterns
+
+| Data Type              | Pattern                                                    | Example                    | Description                                                                       |
+| ---------------------- | ---------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------- |
+| Alphanumeric           | `^[a-zA-Z0-9]+$`                                           | abc123                     | Letters and numbers only                                                          |
+| Credit Card Number     | `^\\d{4} \\d{4} \\d{4} \\d{4}$`                            | 1234 5678 9012 3456        | Credit card with spaces between groups                                            |
+| Currency               | `^\\$\\d{1,3}(,\\d{3})*(\\.[0-9]{2})?$`                    | $1,234.56                  | US currency format with optional decimal                                          |
+| Email Address          | `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$`        | test@example.com           | Standard email validation                                                         |
+| Password               | `^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{8,}$`         | Pass123!                   | At least 8 chars with at least one letter, one number, and optional special chars |
+| Social Security Number | `^\\d{3} \\d{2} \\d{4}$`                                   | 123 45 6789                | SSN with spaces between groups                                                    |
+| Tax ID                 | `^\\d{5}\\d{0,12}$`                                        | 12345 to 12345678901234567 | Tax identification numbers (5-17 digits)                                          |
+| US Phone Number        | `^\\(\\d{3}\\) \\d{3}-\\d{4}$`                             | (123) 456-7890             | Standard US phone number format with area code in parentheses                     |
+| US ZIP Code            | `^\\d{5}(-\\d{4})?$`                                       | 12345 or 12345-6789        | US ZIP code (5 digits or ZIP+4 format)                                            |
+
+### Implementation Examples
+
+#### Adding a US Phone Number Validation
+
+```javascript
+textElement.update({
+  validation: /^\(\d{3}\) \d{3}-\d{4}$/,
+  mask: [
+    '(',
+    /\d/,
+    /\d/,
+    /\d/,
+    ')',
+    ' ',
+    /\d/,
+    /\d/,
+    /\d/,
+    '-',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+  ],
+});
+```
+
+#### Using SSN Validation
+
+```javascript
+textElement.update({
+  validation: /^\d{3} \d{2} \d{4}$/,
+  mask: [/\d/, /\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/],
+});
+```
+
+#### ZIP Code with Mask
+
+```javascript
+textElement.update({
+  validation: /^\d{5}(-\d{4})?$/,
+  // Optional extended ZIP code
+  mask: [/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
+});
+```
+
+#### Email Address Validation
+
+```javascript
+textElement.update({
+  validation: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+});
+```
+
+## Best Practices
+
+1. **Always use anchors**: Include `^` (start) and `$` (end) anchors to ensure the entire value is validated, not just a portion.
+
+2. **Match mask and validation**: When using both mask and validation, ensure they are compatible with each other.
+
+3. **Consider validation timing**: Choose appropriate validation timing based on user experience:
+
+   - `validateOnBlur`: Validates when the field loses focus
+   - `validateOnChange`: Validates as the user types
+
+4. **Handle optional segments**: For patterns with optional segments (like ZIP+4), ensure your mask and validation logic accommodate both formats.
+
+5. **Test thoroughly**: Test your regex patterns with various inputs, including edge cases.
+
+## Advanced Validation
+
+For more complex validation needs, consider combining regex patterns with custom validation functions:
+
+```javascript
+textElement.update({
+  validation: (value) => {
+    // Basic format check
+    const isValidFormat = /^\d{5}$/.test(value);
+
+    // Additional custom validation logic
+    const isValidZipCode = someZipCodeValidationFunction(value);
+
+    return isValidFormat && isValidZipCode;
+  },
+});
+```
+
+## Notes on Regex Support
+
+When using regex patterns in Elements:
+
+- Escape special characters properly
+- Remember that `\d` matches any digit (0-9)
+- Use quantifiers like `?` (zero or one), `*` (zero or more), `+` (one or more) appropriately
+
 ## Mask
 
 Text elements can restrict and fill user input by using the `mask` attribute. It consists of an array of `RegExp`

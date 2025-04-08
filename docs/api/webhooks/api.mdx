@@ -75,6 +75,46 @@ client.webhooks.create(
 )
 ```
   </TabItem>
+    
+    <TabItem value="terraform" label="Terraform">
+
+```terraform showLineNumbers
+resource "basistheory_webhook" "example" {
+  name         = "webhook-create"
+  url          = "https://www.example.com"
+  notify_email = "notify@basistheory.com"
+  events       = ["token.created"]
+}
+```
+
+  </TabItem>
+
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+Webhook webhook = new WebhooksClient(ClientOptions.builder().build())
+    .create(CreateWebhookRequest.builder()
+        .name("webhook-create")
+        .url("https://www.example.com")
+        .notifyEmail("notify@basistheory.com")
+        .events(Arrays.asList("token.created"))
+        .build());
+```
+
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    createRequest := &basistheory.CreateWebhookRequest{
+        Name:         "webhook-create",
+        URL:          "https://www.example.com",
+        NotifyEmail:  func(s string) *string { return &s }("notify@basistheory.com"),
+        Events:       []string{"token.created"},
+    }
+
+    webhook, err := client.Webhooks.Create(ctx, createRequest)
+    ```
+  </TabItem>
 </Tabs>
 
 #### Request Parameters
@@ -145,7 +185,21 @@ await client.Webhooks.ListAsync();
 client.webhooks.list()
 ```
   </TabItem>
+  
+  <TabItem value="java" label="Java">
 
+```java showLineNumbers
+WebhookList webhooks = new WebhooksClient(ClientOptions.builder().build()).list();
+    .list();
+```
+
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    webhooks, err := client.Webhooks.List(ctx)
+    ```
+  </TabItem>
 </Tabs>
 
 Returns a [paginated object](/docs/api/pagination#cursor-pagination) with the `data` property containing an array of webhooks.
@@ -214,6 +268,21 @@ client.webhooks.get(
 )
 ```
   </TabItem>
+    
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+Webhook webhook = new WebhooksClient(ClientOptions.builder().build())
+    .get("id");
+```
+
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    webhook, err := client.Webhooks.Get(ctx, "id")
+    ```
+  </TabItem>
 </Tabs>
 
 #### URI Parameters
@@ -262,7 +331,7 @@ Updates a Webhook.
   <TabItem value="shell" label="cURL">
 
 ```shell showLineNumbers
-curl --location --request PUT 'http://api.basistheory.com/webhooks/e08b1fa8-172d-4d5c-b4bc-692134162565' \
+curl --location --request PUT 'https://api.basistheory.com/webhooks/e08b1fa8-172d-4d5c-b4bc-692134162565' \
 --header 'BT-API-KEY: <MANAGEMENT_API_KEY>' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -307,6 +376,33 @@ client.webhooks.update(
     events=["token:created"],
 )
 ```
+  </TabItem>
+    
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+Webhook updatedWebhook = new WebhooksClient(ClientOptions.builder().build())
+    .update("id", UpdateWebhookRequest.builder()
+        .name("webhook-update")
+        .url("https://www.example1.com")
+        .notifyEmail("notify@basistheory.com")
+        .events(Arrays.asList("token.created"))
+        .build());
+```
+
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    updateRequest := &basistheory.UpdateWebhookRequest{
+        Name:         "webhook-update",
+        URL:          "https://www.example.com",
+        NotifyEmail:  func(s string) *string { return &s }("notify@basistheory.com"),
+        Events:       []string{"token.created"},
+    }
+
+    webhook, err := client.Webhooks.Update(ctx, "id", updateRequest)
+    ```
   </TabItem>
 </Tabs>
 
@@ -361,7 +457,7 @@ Deletes a Webhook.
   <TabItem value="shell" label="cURL">
 
 ```shell showLineNumbers
-curl --location --request DELETE 'http://api.basistheory.com/webhooks/7d52263c-2af4-49d7-99ac-1a1c6dc99d66' \
+curl --location --request DELETE 'https://api.basistheory.com/webhooks/7d52263c-2af4-49d7-99ac-1a1c6dc99d66' \
 --header 'BT-API-KEY: <MANAGEMENT_API_KEY>'
 ```
   </TabItem>
@@ -382,6 +478,21 @@ client.webhooks.delete(
     id="id",
 )
 ```
+  </TabItem>
+    
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+new WebhooksClient(ClientOptions.builder().build())
+    .delete("id");
+```
+
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    err := client.Webhooks.Delete(ctx, "id")
+    ```
   </TabItem>
 </Tabs>
 
@@ -408,7 +519,7 @@ Gets a list of valid event types.
   <TabItem value="shell" label="cURL">
 
 ```shell showLineNumbers
-curl --location 'http://api.basistheory.com/webhooks/event-types' \
+curl --location 'https://api.basistheory.com/webhooks/event-types' \
 --header 'BT-API-KEY: <MANAGEMENT_API_KEY>'
 ```
   </TabItem>
@@ -422,6 +533,18 @@ await client.webhooks.events.list();
 ```python showLineNumbers
 client.webhooks.events.list()
 ```
+  </TabItem>
+    <TabItem value="java" label="Java">
+```java showLineNumbers
+List<String> eventTypes = new WebhooksClient(ClientOptions.builder().build())
+    .events()
+    .list();
+```
+  </TabItem>
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    eventTypes, err := client.Webhooks.Events.List(ctx)
+    ```
   </TabItem>
 </Tabs>
 

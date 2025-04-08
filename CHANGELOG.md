@@ -1,3 +1,33 @@
+## [1.227.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.227.1...v1.227.2) (2025-04-08)
+
+## [1.227.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.227.0...v1.227.1) (2025-04-07)
+
+
+### Bug Fixes
+
+* rotate PGP key ([#535](https://github.com/Basis-Theory/developers.basistheory.com/issues/535)) ([b4de995](https://github.com/Basis-Theory/developers.basistheory.com/commit/b4de9952163b9bf35e7a3e1c4b687a2716ed3fcc))
+
+# [1.227.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.226.0...v1.227.0) (2025-04-07)
+
+
+### Features
+
+* new Apple Pay Integration Docs ([#527](https://github.com/Basis-Theory/developers.basistheory.com/issues/527)) ([801e3a5](https://github.com/Basis-Theory/developers.basistheory.com/commit/801e3a55421e6972e737940ba69b9c6d4a99d889))
+
+# [1.226.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.225.2...v1.226.0) (2025-04-03)
+
+
+### Features
+
+* go and java api reference documentation ([39a1940](https://github.com/Basis-Theory/developers.basistheory.com/commit/39a19401fd6ecfad7e583f3143ce9a01ca6fdc89))
+
+## [1.225.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.225.1...v1.225.2) (2025-03-31)
+
+
+### Bug Fixes
+
+* more react elements types ([#532](https://github.com/Basis-Theory/developers.basistheory.com/issues/532)) ([6d73ade](https://github.com/Basis-Theory/developers.basistheory.com/commit/6d73ade8709cc8420be74931b2686c1705374524))
+
 ## [1.225.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.225.0...v1.225.1) (2025-03-31)
 
 
