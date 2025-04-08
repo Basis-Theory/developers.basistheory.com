@@ -71,7 +71,7 @@ export default function Home(): JSX.Element {
                 column
                 raised
               >
-                Start collecting, issuing, processing and sharing card data safely.
+                Integrate Basis Theory to optimize payments, increase flexibility, and reduce complexity.
               </Card>
               <Card
                 href="/docs/guides/any"
