@@ -1,3 +1,5 @@
+## [1.227.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.227.1...v1.227.2) (2025-04-08)
+
 ## [1.227.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.227.0...v1.227.1) (2025-04-07)
 
 
