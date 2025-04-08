@@ -15,10 +15,16 @@ Or what if your API receives inbound HTTP requests that contain sensitive data t
 The Proxy allows you to use tokens with HTTP APIs without needing to access sensitive data directly within your systems.
 This enables solving both these problems securely while keeping your systems out of compliance scope.
 
-There are two options available when proxying HTTP requests:
+There are two options available when proxying HTTP requests
 
-1. [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy): Simply invoke the proxy API endpoint and specify the configuration in your request. No configuration is needed ahead of time. This option is best for basic use cases.
-2. [Pre-Configured Proxies](/docs/api/proxies/pre-configured-proxies): First configure a proxy instance, then invoke it by its unique key. This option is best for more complex use cases requiring custom request or response [transforms](/docs/api/proxies/pre-configured-proxies#transforms).
+1. **[Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy):**  
+   - **How it works:** Call the proxy API with all settings (destination, tokens, etc.) in the request. No prior setup needed.
+   - **Use case:** Basic tasks, like sending tokenized data to a third-party API, without additional customization.
+
+2. **[Pre-Configured Proxy](/docs/api/proxies/pre-configured-proxies):**  
+   - **How it works:** Create a proxy instance with a unique key and set configuration upfront, then use it as needed.
+   - **Use case:** Scenarios requiring fixed settings, such as whitelisting destinations in production, or cases where custom logic might be added.
+   - **Optional feature:** Request/response transforms with custom code.
 
 ## Outbound Requests
 
@@ -62,7 +68,7 @@ You [pre-configure](/docs/api/proxies/pre-configured-proxies) a proxy instance, 
 proxy that can be shared with a third party integrator. The third party can then make HTTP requests to this URL that pass
 through the proxy before being forwarded on to your system.
 
-The proxy instance can be configured with a [request transform](/docs/api/proxies/pre-configured-proxies#request-transforms) containing
+The proxy instance is configured with a [request transform](/docs/api/proxies/pre-configured-proxies#request-transforms) containing
 custom Node.js code that will execute within the proxy before the request is forwarded to your servers. This allows you to parse the request
 and tokenize sensitive data fields within the payload, substituting in non-sensitive tokens into the request. Your systems will receive a request
 containing the non-sensitive token identifiers that can be safely stored in your system.
