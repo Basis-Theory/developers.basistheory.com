@@ -1013,11 +1013,11 @@ Below are how to handle the scenarios that could be returned from the Authentica
 
 If the `authentication_status` indicates `success`, your authentication has been approved, and the response includes the authentication [values needed to send to your Processor](/docs/guides/threeds/taking-threeds-live#using-3ds-results-with-popular-psps).
 
-***Note:** The `attempted` status also produces a frictionless authentication. However, in this case, it indicates the ACS (Access Control Server) encountered an issue authenticating the transaction. From the merchant’s perspective, it works like a `success` (no further authentication steps are required), although liability considerations may differ.*
+***Note:** The `attempted` status also produces a frictionless authentication. However, in this case, it indicates the ACS (Access Control Server) encountered an issue authenticating the transaction. From the merchant's perspective, it works like a `success` (no further authentication steps are required), although liability considerations may differ.*
 
 ##### Challenge Authentication
 
-If the `authentication_status` indicates a `challenge`, the cardholder must complete an additional verification step—a “Challenge”—before the 3DS authentication can be finalized and the final authentication value (CAVV) provided.
+If the `authentication_status` indicates a `challenge`, the cardholder must complete an additional verification step—a "Challenge"—before the 3DS authentication can be finalized and the final authentication value (CAVV) provided.
 
 Challenges can vary significantly, often involving methods such as entering a one-time password (OTP) or authorizing the transaction via a banking app.
 
@@ -1800,6 +1800,423 @@ These cards are not real and will not work for testing in production environment
 | **`4264281500003339`** | VISA | 3DS Directory Server Error |
 | **`5424180011110001`** | MASTERCARD | 3DS Directory Server Error |
 | **`4264281500001119`** | VISA | Internal 3DS Server Error |
+
+## Error Handling
+
+Proper error handling is crucial for delivering a smooth user experience when implementing 3DS authentication. There are two primary categories of errors you'll encounter:
+
+- **[Basis Theory API Errors](/docs/api/errors)** - Standard Basis Theory API errors (e.g., invalid API keys, validation errors).
+- **[3DS Service Errors](/docs/api/3ds/sessions#)** - Errors from the 3DS Server, Directory Server, or Access Control Server.
+
+### Handling 3DS Service Errors
+
+3DS Service Errors occur when issues arise during the external 3DS authentication process.
+These errors are returned with a `424` HTTP status code, providing detailed information on the failure:
+
+```json
+{
+  "error": {
+    "title": "3DS Service Error",
+    "detail": "The 3DS service returned an error. See the 'error' field for more details.",
+    "status": 424,
+    "error": {
+      "service_status": "403",
+      "session_id": "c0c22fcd-d42c-497e-a9a6-2eacd31770d7",
+      "error_source": "3DS Server",
+      "message": "Access denied by issuer. See 'details' for additional detail.",
+      "detail": "The merchant_info.acquirer_bin is not recognized by the issuer."
+    }
+  }
+}
+```
+
+The error object will contain all the necessary details on what the error was and how to handle it.
+Below are some suggestions on how to handle common errors based on the received `error.service_status` code.
+
+| Service Status | Error Scenario          | Possible Actions                                                                                                     |
+|----------------|-------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `400`          | Bad Request             | Check the request payload and ensure it's correct. Details are include in the `message` and `detail` fields.         |
+| `401`, `403`   | Access Denied           | Check your merchant information (MID, Acquirer BIN, etc.) and ensure it's correct for the card network you're using. |
+| `404`          | Not Found               | Check if the session ID is correct and that the session exists in the tenant.                                        |
+| `5XX`          | Internal Service Errors | Check the error message and if applicable, retry the authentication.                                                 |
+
+*If you have questions about specific error codes or how to handle them, please reach out to our support team at <a href="mailto:support@basistheory.com">support@basistheory.com</a>.*
+
+You can find below examples of how to handle 3DS Service Errors using the backend SDKs.
+
+<Tabs className="bt-tabs" queryString="backend">
+  <TabItem value="node" label="Node">
+    ```typescript showLineNumbers
+    import { BasisTheoryClient, BasisTheoryError } from "@basis-theory/node-sdk";
+
+    try {
+      const authentication = await bt.threeds.sessions.authenticate(sessionId, {
+        authenticationCategory: "payment",
+        authenticationType: "payment-transaction",
+        // ... other properties
+      });
+
+      // ... handle successful authentication
+
+    // highlight-start
+    } catch (error) {
+      if (error instanceof BasisTheoryError) {
+        const statusCode = error.statusCode;
+
+        if (statusCode === 424) {
+          // handle specific 3DS service error
+          const serviceError = JSON.parse(error.body).error;
+
+          console.error("Error Message:", serviceError.message);
+          console.error("Details:", serviceError.detail);
+          console.error("Service Status:", serviceError.service_status);
+          console.error("Error Source:", serviceError.error_source);
+          console.error("Session ID:", serviceError.session_id);
+        } else {
+          // handle other Basis Theory API errors
+          console.error("Basis Theory API Error:", error.message);
+        }
+      } else {
+        // handle unknown errors
+        console.error("Unexpected Error:", error);
+      }
+    }
+    // highlight-end
+    ```
+  </TabItem>
+
+  <TabItem value="csharp" label=".NET">
+    ```csharp showLineNumbers
+    using BasisTheory.Client;
+    using BasisTheory.Client.Threeds;
+    using Newtonsoft.Json.Linq;
+
+    var client = new BasisTheory.Client.BasisTheory(apiKey: "<PRIVATE_API_KEY>");
+
+    try
+    {
+        var authentication = await client.Threeds.Sessions.AuthenticateAsync(sessionId.ToString(), new AuthenticateThreeDsSessionRequest
+        {
+            AuthenticationCategory = "payment",
+            AuthenticationType = "payment-transaction",
+            // ... other properties
+        });
+
+        // ... handle successful authentication
+
+    }
+    // highlight-start
+    catch (BasisTheoryApiException e)
+    {
+        if (e.StatusCode == 424)
+        {
+            // handle specific 3DS service error
+            var errorJson = JObject.Parse(e.Body);
+            var serviceError = errorJson["error"];
+
+            Console.WriteLine("3DS Service Error:");
+            Console.WriteLine($"Message: {serviceError["message"]}");
+            Console.WriteLine($"Detail: {serviceError["detail"]}");
+            Console.WriteLine($"Service Status: {serviceError["service_status"]}");
+            Console.WriteLine($"Error Source: {serviceError["error_source"]}");
+            Console.WriteLine($"Session ID: {serviceError["session_id"]}");
+        }
+        else
+        {
+            // handle other Basis Theory API errors
+            Console.WriteLine($"Basis Theory API Error: {e.Message} (Status: {e.StatusCode})");
+        }
+    }
+    catch (Exception ex)
+    {
+        // handle unknown errors
+        Console.WriteLine($"Unexpected Error: {ex.Message}");
+    }
+    // highlight-end
+    ```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    from basis_theory import BasisTheory
+    from basis_theory.core.api_error import ApiError
+    import json
+
+    client = BasisTheory(api_key="<PRIVATE_API_KEY>")
+
+    try:
+        authentication = client.threeds.sessions.authenticate(
+            session_id=sessionId,
+            authentication_category="payment",
+            authentication_type="payment-transaction",
+            # ... other properties
+        )
+
+        # ... handle successful authentication
+
+    # highlight-start
+    except ApiError as e:
+        if e.status_code == 424:
+            # handle specific 3DS service error
+            error_body = json.loads(e.body)
+            service_error = error_body.get("error", {})
+
+            print("3DS Service Error:")
+            print(f"Message: {service_error.get('message')}")
+            print(f"Detail: {service_error.get('detail')}")
+            print(f"Service Status: {service_error.get('service_status')}")
+            print(f"Error Source: {service_error.get('error_source')}")
+            print(f"Session ID: {service_error.get('session_id')}")
+        else:
+            # handle other Basis Theory API errors
+            print(f"Basis Theory API Error: {e.body} (Status: {e.status_code})")
+
+    except Exception as ex:
+        # handle unknown errors
+        print(f"Unexpected Error: {ex}")
+    # highlight-end
+    ```
+  </TabItem>
+
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    package main
+
+    import (
+      "context"
+      "encoding/json"
+      "fmt"
+
+      "github.com/Basis-Theory/go-sdk/client"
+      "github.com/Basis-Theory/go-sdk/core"
+      "github.com/Basis-Theory/go-sdk/option"
+      "github.com/Basis-Theory/go-sdk/threeds"
+    )
+
+    func main() {
+      btClient := client.NewClient(
+        option.WithAPIKey("<PRIVATE_API_KEY>"),
+      )
+
+      sessionId := "<SESSION_ID>"
+
+      authRequest := &threeds.AuthenticateThreeDsSessionRequest{
+        AuthenticationCategory: "payment",
+        AuthenticationType:     "payment-transaction",
+        // ... other properties
+      }
+
+      authResponse, err := btClient.Threeds.Sessions.Authenticate(context.Background(), sessionId, authRequest)
+
+      // highlight-start
+      if err != nil {
+        if apiErr, ok := err.(*core.APIError); ok {
+          if apiErr.StatusCode == 424 {
+            var errorDetails map[string]interface{}
+            // Use apiErr.Error() which returns the error message (body included)
+            if jsonErr := json.Unmarshal([]byte(apiErr.Unwrap().Error()), &errorDetails); jsonErr == nil {
+              if svcErr, exists := errorDetails["error"].(map[string]interface{}); exists {
+                fmt.Println("3DS Service Error:")
+                fmt.Printf("Message: %v\n", svcErr["message"])
+                fmt.Printf("Detail: %v\n", svcErr["detail"])
+                fmt.Printf("Service Status: %v\n", svcErr["service_status"])
+                fmt.Printf("Error Source: %v\n", svcErr["error_source"])
+                fmt.Printf("Session ID: %v\n", svcErr["session_id"])
+              } else {
+                fmt.Println("Unable to parse detailed error fields.")
+              }
+            } else {
+              fmt.Printf("Error decoding JSON: %v\n", jsonErr)
+            }
+          } else {
+            fmt.Printf("Basis Theory API Error (Status: %d): %v\n", apiErr.StatusCode, apiErr.Error())
+          }
+        } else {
+          fmt.Printf("Unexpected error: %v\n", err)
+        }
+        return
+      }
+      // highlight-end
+
+      // ... handle successful authentication
+    }
+
+    ```
+  </TabItem>
+</Tabs>
+
+
+### Handling Errors in Frontend SDKs
+
+When using the Basis Theory 3DS SDKs, errors are handled through the SDK's built-in error handling mechanisms.
+
+The SDK will throw exceptions or return error objects that you can catch and handle in your application. See below examples on how to handle with our current SDKs.
+
+<Tabs className="bt-tabs" queryString="frontend">
+  <TabItem value="web" label="Web">
+    ```typescript showLineNumbers
+    import { BasisTheory3ds } from "@basis-theory/web-threeds";
+
+    const authenticate = async () => {
+      const bt3ds = BasisTheory3ds("<PUBLIC_API_KEY>");
+
+      try {
+        const session = await bt3ds.createSession({ tokenId: "<CARD_TOKEN_ID>" });
+      // highlight-start
+      } catch (error) {
+        // handle error
+        console.error("Error creating session:", error);
+        return;
+      }
+      // highlight-end
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="react" label="React Native">
+    ```jsx showLineNumbers
+    import { BasisTheory3dsProvider, useBasisTheory3ds } from "@basis-theory/react-native-threeds";
+
+    const App = () => {
+      return (
+        <BasisTheory3dsProvider apiKey={"<PUBLIC_API_KEY>"}>
+          <MyApp />
+        </BasisTheory3dsProvider>
+      );
+    }
+
+    const MyApp = () => {
+      const { createSession, startChallenge } = useBasisTheory3ds();
+
+      try {
+        const session = await createSession({ tokenId: "<CARD_TOKEN_ID>" });
+
+        // ... handle successful session creation
+
+      // highlight-start
+      } catch (error) {
+        // handle error
+        console.error("Error creating session:", error);
+        return;
+      }
+      // highlight-end
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="ios" label="iOS">
+    ```swift showLineNumbers
+    import ThreeDS
+    import UIKit
+
+    class ViewController: UIViewController, UITextFieldDelegate {
+        private var threeDSService: ThreeDSService!
+        private var sessionId: String? = nil
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+
+
+            do {
+                threeDSService = try ThreeDSService.builder()
+                    .withApiKey("<PUBLIC_API_KEY>")
+                    .withAuthenticationEndpoint("<YOUR_BACKEND_AUTHENTICATION_ENDPOINT>", headers: ["Header-Name": "value"])
+                    .build()
+
+                Task {
+                    try await threeDSService.initialize { [weak self] warnings in
+                        DispatchQueue.main.async {
+                            if let warnings = warnings, !warnings.isEmpty {
+                                let messages = warnings.map { $0.message }.joined(separator: "\n")
+
+                                print(messages)
+                            } else {
+                                print("3DS SDK initialized successfully.")
+                            }
+                        }
+                    }
+                }
+            } catch {
+              // handle error
+            }
+        }
+
+        // call this method from your app when you want to create a session
+        @objc func createThreeDsSession() {
+            Task {
+                do {
+
+                    let session = try await self.threeDSService.createSession(tokenId: "<CARD_TOKEN_ID>")
+                    sessionId = session.id
+
+                    // ... handle successful session creation
+
+                // highlight-start
+                } catch {
+                    // handle error
+                }
+                // highlight-end
+            }
+        }
+    }
+    ```
+  </TabItem>
+
+  <TabItem value="android" label="Android">
+    ```kotlin showLineNumbers
+    // ... other imports
+
+    import com.basistheory.threeds.service.ThreeDSService
+    import com.basistheory.threeds.model.CreateThreeDsSessionResponse
+
+    open class ThreeDsViewModel(application: Application) : AndroidViewModel(application) {
+        private val _errorMessage = MutableLiveData<String?>(null)
+        val errorMessage: LiveData<String?> = _errorMessage
+
+        val session = MutableLiveData<CreateThreeDsSessionResponse?>(null)
+
+        private val threeDsService = ThreeDSService
+            .Builder()
+            .withApiKey("<PUBLIC_API_KEY>")
+            .withAuthenticationEndpoint("<YOUR_BACKEND_AUTHENTICATION_ENDPOINT>")
+            .withApplicationContext(application.applicationContext)
+            .build()
+
+        fun initialize(): LiveData<List<String>> = liveData {
+            try {
+                val warnings = threeDsService.initialize()
+
+                if (!warnings.isNullOrEmpty()) {
+                    emit(warnings.map { it.message })
+                } else {
+                    emit(emptyList())
+                }
+            } catch (e: Throwable) {
+                _errorMessage.postValue(e.message)
+                emit(emptyList())
+            }
+        }
+
+        fun createSession(tokenId: String): LiveData<CreateThreeDsSessionResponse?> = liveData {
+            try {
+                session.value = threeDsService.createSession(tokenId = tokenId)
+                emit(session.value)
+
+                // ... handle successful session creation
+
+            // highlight-start
+            } catch (e: Throwable) {
+                // handle error
+                _errorMessage.postValue(e.message)
+                emit(null)
+            }
+            // highlight-end
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
 
 ## 3DS Implementation FAQs
 
