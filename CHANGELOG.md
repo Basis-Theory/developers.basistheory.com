@@ -1,3 +1,10 @@
+## [1.228.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.1...v1.228.2) (2025-04-10)
+
+
+### Bug Fixes
+
+* apple checkout example ([#539](https://github.com/Basis-Theory/developers.basistheory.com/issues/539)) ([ac615d3](https://github.com/Basis-Theory/developers.basistheory.com/commit/ac615d3c80a5c3abeeb9378b53aafef8a7323d33))
+
 ## [1.228.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.0...v1.228.1) (2025-04-10)
 
 
