@@ -1,3 +1,10 @@
+## [1.228.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.0...v1.228.1) (2025-04-10)
+
+
+### Bug Fixes
+
+* improve descriptions for the proxy ([#537](https://github.com/Basis-Theory/developers.basistheory.com/issues/537)) ([55dd7f2](https://github.com/Basis-Theory/developers.basistheory.com/commit/55dd7f2eb51677d6d1d791f8ded473b4269220ca))
+
 # [1.228.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.227.2...v1.228.0) (2025-04-10)
 
 
