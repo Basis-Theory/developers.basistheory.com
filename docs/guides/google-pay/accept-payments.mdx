@@ -331,14 +331,16 @@ You may notice that in this example we are not passing in any 3DS cryptogram or 
     -d "payment_method_types[]"=card \
     -d confirm=true \
     -d "payment_method_data[type]"=card \
+    -d "payment_method_data[card][network_token][tokenization_method]"=google_pay \
+    // highlight-start
     -d "payment_method_data[card][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
     -d "payment_method_data[card][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
     -d "payment_method_data[card][last4]"={{token_intent: <TOKEN_INTENT_ID> | json: '$.data.number' | last4 }} \
     -d "payment_method_data[card][network_token][number]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }} \
     -d "payment_method_data[card][network_token][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
     -d "payment_method_data[card][network_token][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
-    -d "payment_method_data[card][network_token][tokenization_method]"=google_pay \
     -d "payment_method_options[card][network_token][cryptogram]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.threeds_cryptogram\" }} \
+    // highlight-end
     ```
 
     You may need to ask Stripe to enable Google Pay for your account.
