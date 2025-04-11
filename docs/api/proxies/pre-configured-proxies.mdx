@@ -13,17 +13,15 @@ import { Enterprise } from "@site/src/components/shared/Enterprise";
 
 # Pre-Configured Proxies
 
-As an alternative to the [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy), the Basis Theory Proxy also supports
-pre-configuring proxy instances before they are invoked. This can be useful to reuse common configurations across requests,
-or to accept inbound HTTP requests from third parties. When using a proxy to accept inbound requests from third parties,
-pre-configured proxies allow you to define the proxy's behavior and simply share that proxy's unique URL with
-the third party integrator.
+Pre-Configured Proxies differ from the [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) by requiring setup beforehand. You define a proxy instance with a unique URL and fixed settings, which can be reused across requests or shared with third parties for inbound HTTP requests (e.g., providing an integrator with a proxy URL). This approach suits scenarios needing consistent configurations or stricter controls, such as whitelisting destinations in production environments.
 
-Pre-configured proxies also support additional configuration options, including:
+Additional options for Pre-Configured Proxies include:
 
-- Request and response [transforms](#transforms) to invoke custom code during the request pipeline
-- Securely storing proxy-specific secrets within a [configuration](#proxy-object) map
-- Allowing anonymous proxy requests
+- **Request and response transforms**: Optionally use custom Node.js code to alter requests or responses—useful for specific cases, but not mandatory.
+- **Configuration map**: Store proxy-specific secrets, like API keys, securely.
+- **Anonymous access**: Permit requests without authentication if needed.
+
+In production, Pre-Configured Proxies are often preferred for their ability to enforce defined settings. Transforms are available but not required—standard setups work just as well without them.
 
 ## Create a Proxy
 

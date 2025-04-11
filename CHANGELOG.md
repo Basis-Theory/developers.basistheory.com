@@ -1,3 +1,24 @@
+## [1.228.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.1...v1.228.2) (2025-04-10)
+
+
+### Bug Fixes
+
+* apple checkout example ([#539](https://github.com/Basis-Theory/developers.basistheory.com/issues/539)) ([ac615d3](https://github.com/Basis-Theory/developers.basistheory.com/commit/ac615d3c80a5c3abeeb9378b53aafef8a7323d33))
+
+## [1.228.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.0...v1.228.1) (2025-04-10)
+
+
+### Bug Fixes
+
+* improve descriptions for the proxy ([#537](https://github.com/Basis-Theory/developers.basistheory.com/issues/537)) ([55dd7f2](https://github.com/Basis-Theory/developers.basistheory.com/commit/55dd7f2eb51677d6d1d791f8ded473b4269220ca))
+
+# [1.228.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.227.2...v1.228.0) (2025-04-10)
+
+
+### Features
+
+* add docs on 3ds error handling ([#538](https://github.com/Basis-Theory/developers.basistheory.com/issues/538)) ([1f8afb3](https://github.com/Basis-Theory/developers.basistheory.com/commit/1f8afb3e7ce4b36d670086d2d0a1d9950a00286e))
+
 ## [1.227.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.227.1...v1.227.2) (2025-04-08)
 
 ## [1.227.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.227.0...v1.227.1) (2025-04-07)
