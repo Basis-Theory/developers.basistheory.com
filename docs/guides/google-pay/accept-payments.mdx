@@ -318,6 +318,10 @@ You may notice that in this example we are not passing in any 3DS cryptogram or 
   </TabItem>
 
   <TabItem value="stripe" label="Stripe">
+    <Alert>
+      You may need to ask Stripe to enable Google Pay for your account.
+    </Alert>
+    Please note that Stripe does not recognize network token parameters on creation of a payment methods.
 
     ```shell showlineNumbers title="Charge Payment method through a Proxy"
   curl 'https://api.basistheory.com/proxy'
@@ -338,14 +342,21 @@ You may notice that in this example we are not passing in any 3DS cryptogram or 
     -d "payment_method_data[card][last4]"={{token_intent: <TOKEN_INTENT_ID> | json: '$.data.number' | last4 }} \
     -d "payment_method_data[card][network_token][number]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }} \
     -d "payment_method_data[card][network_token][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
-    -d "payment_method_data[card][network_token][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
-    -d "payment_method_options[card][network_token][cryptogram]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.threeds_cryptogram\" }} \
+    -d "payment_method_data[card][network_token][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}
     // highlight-end
     ```
 
-    You may need to ask Stripe to enable Google Pay for your account.
+You may notice that in this example we are not passing in any 3DS cryptogram or eci indicator. This is not necessary for charging FPANs. If you need to charge a DPAN, you will need to pass in the 3DS cryptogram and eci indicator available on the `authentication` property of the Token Intent.
 
-    Please note that Stripe does not recognize network token parameters on creation of a payment methods.
+```shell showLineNumbers title="Create a payment transaction for a DPAN"
+  curl 'https://api.basistheory.com/proxy'
+    ...
+    -d "payment_method_data[card][network_token][tokenization_method]"=google_pay \
+    // highlight-start
+    -d "payment_method_options[card][network_token][cryptogram]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.threeds_cryptogram\" }} \
+    -d "payment_method_options[card][network_token][electronic_commerce_indicator]"={{token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.eci_indicator\" }}
+    // highlight-end
+```
 
     </TabItem>
 </Tabs>
