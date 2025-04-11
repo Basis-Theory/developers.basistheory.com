@@ -329,7 +329,7 @@ We'll change our frontend application one last time to pass in the Token Intent 
 We'll set up and invoke the [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) on our backend.
 
 <Tabs className="bt-tabs" groupId="processor">
-  <TabItem value="javascript" label="Checkout">
+  <TabItem value="checkout" label="Checkout">
 
   ```shell showlineNumbers title="Charge Payment method through a Proxy"
 curl 'https://api.basistheory.com/proxy' \
@@ -360,9 +360,39 @@ curl 'https://api.basistheory.com/proxy' \
   [Checkout Payment Method Docs](https://www.checkout.com/docs/payments/add-payment-methods/apple-pay/api-only#Request_a_payment).
 
   </TabItem>
+
+  <TabItem value="stripe" label="Stripe">
+
+  ```shell showlineNumbers title="Charge Payment method through a Proxy"
+curl 'https://api.basistheory.com/proxy'
+  // highlight-start
+  -H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+  -H 'BT-PROXY-URL: https://api.stripe.com/v1/payment_intents' \
+  -H 'Authorization: Bearer <STRIPE_AUTH_TOKEN>' \
+  // highlight-end
+  -d amount=1000 \
+  -d currency=usd \
+  -d "payment_method_types[]"=card \
+  -d confirm=true \
+  -d "payment_method_data[type]"=card \
+  -d "payment_method_data[card][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
+  -d "payment_method_data[card][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
+  -d "payment_method_data[card][last4]"={{token_intent: <TOKEN_INTENT_ID> | json: '$.data.number' | last4 }} \
+  -d "payment_method_data[card][network_token][number]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }} \
+  -d "payment_method_data[card][network_token][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
+  -d "payment_method_data[card][network_token][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
+  -d "payment_method_data[card][network_token][tokenization_method]"=apple_pay \
+  -d "payment_method_options[card][network_token][cryptogram]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.threeds_cryptogram\" }} \
+  ```
+
+  You may need to ask Stripe to enable Apple Pay for your account.
+
+  Please note that Stripe does not recognize network token parameters on creation of a payment methods.
+
+  </TabItem>
 </Tabs>
 
-<Alert>You are not restricted to only using Checkout. You can use any payment processor that accepts Apple Pay tokens.</Alert>
+<Alert>You are not restricted to only using Checkout or Stripe. You can use any payment processor that accepts Apple Pay tokens.</Alert>
 
 ## Testing
 
