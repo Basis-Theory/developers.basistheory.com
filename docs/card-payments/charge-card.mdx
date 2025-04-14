@@ -19,21 +19,7 @@ import SaveCardSection from "./sections/_save-card-section.mdx";
 
 Charging a card involves finalizing the transaction by requesting approval from the card networks and issuers to transfer funds. In checkout flows, this operation typically constitutes a Customer-Initiated Transaction (CIT), where the cardholder actively authorizes the payment. Properly flagged CITs help issuers distinguish these transactions from merchant-initiated ones, often leading to higher approval rates and a smoother payment experience.
 
-```mermaid
-  sequenceDiagram
-    participant backend as Merchant<br>Backend
-    participant btp as Basis Theory<br>Proxy
-    participant psp as Processor<br>API
-
-    activate backend
-    backend ->>+ btp: Charge payload<br>with card {{ token_intent }}
-    btp ->> btp: Detokenize card data
-    btp ->>+ psp: Charge payload<br>with card data
-    psp ->> psp: Process transaction against networks
-    psp -->>- btp: Transaction response
-    btp -->>- backend: Transaction response
-    deactivate backend
-```
+![Charge a Card Diagram](/img/guides/cards/charge-card-diagram.png)
 
 This guide will show you how to use the Proxy to charge a card with your chosen Payment Service Provider (PSP) while offloading PCI compliance scope with ease. We’ll explore a variety of processor-specific standards and their unique verification quirks, offering practical examples you can adapt to your selected PSP.
 

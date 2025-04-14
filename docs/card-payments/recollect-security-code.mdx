@@ -6,6 +6,7 @@ toc_max_heading_level: 3
 ---
 
 import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
 import AddCvcElementSection from "./sections/_add-cvc-element-section.mdx";
 import UpdateTokenCvcSection from "./sections/_update_token_cvc_section.mdx";
@@ -20,29 +21,10 @@ import { Intro } from "@site/src/components/shared/Intro";
 
 To boost authorization rates while adhering to PCI compliance, some Payment Service Providers (PSPs) recommend or mandate that Customer-Initiated Transactions (CITs) with saved cards include the card security code (CSC, also known as CVV or CVC), which cannot be stored in long-term persisted tokens. This guide equips merchants and platforms with the tools to securely recollect the CVC/CVV from customers, enhancing transaction security and meeting PSP requirements. Recollection may be triggered by factors like heightened fraud detection, updated risk policies, card network rules, or regional regulatory changes, ensuring compliance and improved payment success.
 
-```mermaid
-  sequenceDiagram
-    actor customer as Customer
-    participant frontend as Merchant<br>Frontend
-    participant bte as Basis Theory<br>Elements
-    participant bapi as Basis Theory<br>API
-    participant mbe as Merchant<br>Backend
+![Recollect Security Code Diagram](/img/guides/cards/recollect-security-code-diagram.png)
 
-    activate customer
-    customer ->> frontend: Select saved card Token
-    frontend -->> customer: Render Security Code input
-    customer -->> bte: Enter Security Code
-    customer ->> frontend: Submit
-    frontend ->> bte: Update Token
-    bte ->> bapi: Update Token
-    bapi -->> bte:  OK
-    bte -->> frontend: OK
-    frontend ->> mbe: Submit checkout
-    mbe ->> mbe: Process card
-    mbe -->> frontend: OK
-    frontend -->> customer: Success
-    deactivate customer
-```
+<GettingStartedSection />
+
 ### Public Application
 
 <ApplicationSection type="public" permissions={["token:update"]} />

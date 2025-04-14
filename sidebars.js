@@ -174,8 +174,8 @@ const sidebars = {
       label: "Card Issuing",
       customProps: {
         icon: {
-          light: "/img/sidebar/light/card.svg",
-          dark: "/img/sidebar/dark/card.svg",
+          light: "/img/sidebar/light/issue-card.svg",
+          dark: "/img/sidebar/dark/issue-card.svg",
         },
       },
       link: {

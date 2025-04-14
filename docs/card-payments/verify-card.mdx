@@ -19,21 +19,7 @@ import VerifyCardExamples from "./sections/_verify-card-examples.mdx";
 
 Verifying a card is the process of confirming that the card details provided are valid and can be used for transactions. This operation, also known as card authentication, pre-authorization, or $0 authorization, typically involves sending a request to the card networks and issuers to validate the card's number, expiration date, and status. It ensures the card has not been reported lost or stolen and, in some cases, checks the availability of funds or credit.
 
-```mermaid
-  sequenceDiagram
-    participant backend as Merchant<br>Backend
-    participant btp as Basis Theory<br>Proxy
-    participant psp as Processor<br>API
-
-    activate backend
-    backend ->>+ btp: Verification payload<br>with card {{ token_intent }}
-    btp ->> btp: Detokenize card data
-    btp ->>+ psp: Verification payload<br>with card data
-    psp ->> psp: Verify card against networks
-    psp -->>- btp: Verification response
-    btp -->>- backend: Verification response
-    deactivate backend
-```
+![Verify a Card Diagram](/img/guides/cards/verify-card-diagram.png)
 
 This guide will show you how to use the Proxy to verify a card with your chosen Payment Service Provider (PSP) while offloading PCI compliance scope with ease. We’ll explore a variety of processor-specific standards and their unique verification quirks, offering practical examples you can adapt to your selected PSP.
 

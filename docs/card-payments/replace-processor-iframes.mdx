@@ -20,29 +20,7 @@ import { AuthenticateCardSection } from "./sections/AuthenticateCardSection";
 
 When handling payments, merchants often rely on processor-specific iFrames to collect cardholder data securely. However, this approach can lead to vendor lock-in, limiting flexibility and control over payment processing. To future-proof their business, merchants need a solution that enables seamless processor switching and true data ownership. Basis Theory empowers businesses to replace processor iFrames with vault-agnostic secure elements, unlocking greater freedom and scalability.
 
-```mermaid
-  sequenceDiagram
-    actor customer as Customer
-    participant frontend as Merchant<br>Frontend
-    participant bte as Basis Theory<br>Elements
-    participant bapi as Basis Theory<br>API
-    participant mbe as Merchant<br>Backend
-
-    activate customer
-    customer ->>+ frontend: Enter checkout
-    frontend -->> customer: Render checkout with Elements
-    customer ->>+ bte: Enter card data
-    customer ->> frontend: Submit
-    frontend ->> bte: Create Token Intent
-    bte ->>+ bapi: Create Token Intent
-    bapi -->>- bte:  Token intent<br>card information
-    bte -->>- frontend: Token intent<br>w/ card information
-    frontend ->>+ mbe: Submit checkout
-    mbe ->> mbe: Process card
-    mbe -->>- frontend: OK
-    frontend -->>- customer: Success
-    deactivate customer
-```
+![Replace Processor iFrames Diagram](/img/guides/cards/replace-processor-iframes-diagram.png)
 
 In this guide, you'll learn how to set up Basis Theory SDKs to capture cards in a frontend application, Web or Mobile, and securely store the cardholder data as flexible and agnostic token intents within your Basis Theory vault.
 
