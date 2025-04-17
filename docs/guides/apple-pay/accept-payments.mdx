@@ -363,10 +363,10 @@ curl 'https://api.basistheory.com/proxy' \
 
   <TabItem value="stripe" label="Stripe">
   <Alert>
-  You may need to ask Stripe to enable Apple Pay for your account.
+  You may need to ask Stripe to enable accepting decrypted Apple Pay in your account.
   </Alert>
 
-  Please note that Stripe does not recognize network token parameters on creation of a payment methods.
+  Please note that Stripe does not recognize network token parameters on creation of a payment method.
 
   ```shell showlineNumbers title="Charge Payment method through a Proxy"
 curl 'https://api.basistheory.com/proxy'
@@ -389,13 +389,13 @@ curl 'https://api.basistheory.com/proxy'
   -d "payment_method_data[card][network_token][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
   -d "payment_method_data[card][network_token][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
   -d "payment_method_options[card][network_token][cryptogram]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.threeds_cryptogram\" }} \
-  -d "payment_method_options[card][network_token][electronic_commerce_indicator]"={{token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.eci_indicator\" }}
+  -d "payment_method_options[card][network_token][electronic_commerce_indicator]"={{token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.eci_indicator\" | pad_left: 2, \"0\" }}
   // highlight-end
   ```
   </TabItem>
 </Tabs>
 
-<Alert>You are not restricted to only using Checkout or Stripe. You can use any payment processor that accepts Apple Pay tokens.</Alert>
+<Alert>You are not restricted to only using Checkout or Stripe. You can use any payment processor that accepts decrypted Apple Pay tokens.</Alert>
 
 ## Testing
 
