@@ -1,3 +1,10 @@
+# [1.229.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.2...v1.229.0) (2025-04-21)
+
+
+### Features
+
+* Add Stripe example to google and apple pay docs ([#540](https://github.com/Basis-Theory/developers.basistheory.com/issues/540)) ([8a7418f](https://github.com/Basis-Theory/developers.basistheory.com/commit/8a7418f02fa5483c9dc81e916c519e0ef8b2a7c1))
+
 ## [1.228.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.1...v1.228.2) (2025-04-10)
 
 
