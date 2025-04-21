@@ -269,7 +269,7 @@ async function chargePayment(tokenIntentId) {
 We'll setup and invoke the [ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) on our backend.
 
 <Tabs className="bt-tabs" groupId="processor">
-  <TabItem value="javascript" label="Checkout">
+  <TabItem value="checkout" label="Checkout">
 
   ```shell showlineNumbers title="Charge Payment method through a Proxy"
 curl 'https://api.basistheory.com/proxy' \
@@ -316,9 +316,52 @@ You may notice that in this example we are not passing in any 3DS cryptogram or 
 }
 ```
   </TabItem>
+
+  <TabItem value="stripe" label="Stripe">
+    <Alert>
+      You may need to ask Stripe to enable accepting decrypted Google Pay in your account.
+    </Alert>
+    Please note that Stripe does not recognize network token parameters on creation of a payment methods.
+
+    ```shell showlineNumbers title="Charge Payment method through a Proxy"
+  curl 'https://api.basistheory.com/proxy'
+    // highlight-start
+    -H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+    -H 'BT-PROXY-URL: https://api.stripe.com/v1/payment_intents' \
+    -H 'Authorization: Bearer <STRIPE_AUTH_TOKEN>' \
+    // highlight-end
+    -d amount=1000 \
+    -d currency=usd \
+    -d "payment_method_types[]"=card \
+    -d confirm=true \
+    -d "payment_method_data[type]"=card \
+    -d "payment_method_data[card][network_token][tokenization_method]"=google_pay \
+    // highlight-start
+    -d "payment_method_data[card][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
+    -d "payment_method_data[card][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
+    -d "payment_method_data[card][last4]"={{token_intent: <TOKEN_INTENT_ID> | json: '$.data.number' | last4 }} \
+    -d "payment_method_data[card][network_token][number]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }} \
+    -d "payment_method_data[card][network_token][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
+    -d "payment_method_data[card][network_token][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}
+    // highlight-end
+    ```
+
+You may notice that in this example we are not passing in any 3DS cryptogram or eci indicator. This is not necessary for charging FPANs. If you need to charge a DPAN, you will need to pass in the 3DS cryptogram and eci indicator available on the `authentication` property of the Token Intent.
+
+```shell showLineNumbers title="Create a payment transaction for a DPAN"
+  curl 'https://api.basistheory.com/proxy'
+    ...
+    -d "payment_method_data[card][network_token][tokenization_method]"=google_pay \
+    // highlight-start
+    -d "payment_method_options[card][network_token][cryptogram]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.threeds_cryptogram\" }} \
+    -d "payment_method_options[card][network_token][electronic_commerce_indicator]"={{token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.eci_indicator\" }}
+    // highlight-end
+```
+
+    </TabItem>
 </Tabs>
 
-<Alert>You are not restricted to only using Checkout. You can use any payment processor that accepts Google Pay tokens.</Alert>
+<Alert>You are not restricted to only using Checkout or Stripe. You can use any payment processor that accepts decrypted Google Pay tokens.</Alert>
 
 ## Preparing for Production
 
