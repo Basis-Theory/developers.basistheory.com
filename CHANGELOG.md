@@ -1,3 +1,10 @@
+## [1.229.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.229.0...v1.229.1) (2025-04-23)
+
+
+### Bug Fixes
+
+* updating token expiration date format ([#543](https://github.com/Basis-Theory/developers.basistheory.com/issues/543)) ([d036e0b](https://github.com/Basis-Theory/developers.basistheory.com/commit/d036e0b6b85c6f969ecb9329110a9aeac361bd79))
+
 # [1.229.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.2...v1.229.0) (2025-04-21)
 
 
