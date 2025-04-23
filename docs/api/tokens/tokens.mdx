@@ -800,14 +800,13 @@ The `cvc` property automatically expires and is deleted based on your [CVC Reten
 
 ### Token Expiration
 
-By default a created token will not expire, however, users can optionally set the `expires_at` property with an ISO8601 `DateTime` when creating a token to determine its expiration date.
-An expired token is **deleted** from the tenant up to **1 hour** after its expiration time.
+By default a created token will not expire, however, users can optionally set the `expires_at` property with an ISO8601 timestamp to specify its expiration.
+An expired token will no longer be accessible immediately after expiration, and the token will be asynchronously **deleted** from the tenant.
+Tokens are typically deleted within a few minutes, but may be delayed up to **48 hours**, at which time a [token.expired](/docs/api/webhooks/eventdata#token-expired) event will be emitted.
 
-### Expiration Date Formats
+#### Supported Date Formats
 
 | Format              | Example                   |
 | ------------------- | ------------------------- |
 | ISO8601 in UTC      | 2030-04-23T13:24:28Z      |
 | ISO8601 with offset | 2030-04-23T17:24:28-04:00 |
-
-<Alert>If an offset is not provided with the <code>DateTime</code> string, it's considered that the provided time is in <b>UTC</b>. When using the <code>ShortDate</code> format, the expiration time will be set as <b>12AM UTC</b>.</Alert>
