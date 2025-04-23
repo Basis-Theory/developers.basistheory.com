@@ -1,3 +1,10 @@
+## [1.229.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.229.1...v1.229.2) (2025-04-23)
+
+
+### Bug Fixes
+
+* updating token expiration docs to remove reference to short date and updating SLA ([#545](https://github.com/Basis-Theory/developers.basistheory.com/issues/545)) ([7b0fda2](https://github.com/Basis-Theory/developers.basistheory.com/commit/7b0fda24853ff0194745e97d7df94d11d801e532))
+
 ## [1.229.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.229.0...v1.229.1) (2025-04-23)
 
 
