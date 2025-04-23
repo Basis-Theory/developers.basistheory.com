@@ -1,3 +1,10 @@
+# [1.230.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.229.2...v1.230.0) (2025-04-23)
+
+
+### Features
+
+* Update permissions for Google and Apple Pay ([#544](https://github.com/Basis-Theory/developers.basistheory.com/issues/544)) ([f9f78e6](https://github.com/Basis-Theory/developers.basistheory.com/commit/f9f78e69ea1ae59e51582ebb4b4308b69bc071fa))
+
 ## [1.229.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.229.1...v1.229.2) (2025-04-23)
 
 
