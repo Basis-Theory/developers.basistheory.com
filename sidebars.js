@@ -182,7 +182,7 @@ const sidebars = {
         type: "doc",
         id: "card-issuing/index",
       },
-      items: ["card-issuing/issue-cards", "guides/share/display-cards", "guides/collect/set-card-pin"],
+      items: ["card-issuing/issue-cards", "card-issuing/display-cards", "card-issuing/set-card-pin"],
     },
     {
       type: "category",

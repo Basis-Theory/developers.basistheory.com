@@ -274,6 +274,8 @@ const config = {
           { from: "/docs/guides/share/process-card-payments-connections", to: "/docs/guides/share/process-card-payments" },
           { from: "/docs/guides/collect/receive-cards", to: "/docs/card-payments/receive-cards-api" },
           { from: "/docs/guides/collect/issue-cards", to: "/docs/card-issuing/issue-cards" },
+          { from: "/docs/guides/share/display-cards", to: "/docs/card-issuing/display-cards" },
+          { from: "/docs/guides/collect/set-card-pin", to: "/docs/card-issuing/set-card-pin" },
         ],
       },
     ],
