@@ -1,3 +1,31 @@
+# [1.230.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.229.2...v1.230.0) (2025-04-23)
+
+
+### Features
+
+* Update permissions for Google and Apple Pay ([#544](https://github.com/Basis-Theory/developers.basistheory.com/issues/544)) ([f9f78e6](https://github.com/Basis-Theory/developers.basistheory.com/commit/f9f78e69ea1ae59e51582ebb4b4308b69bc071fa))
+
+## [1.229.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.229.1...v1.229.2) (2025-04-23)
+
+
+### Bug Fixes
+
+* updating token expiration docs to remove reference to short date and updating SLA ([#545](https://github.com/Basis-Theory/developers.basistheory.com/issues/545)) ([7b0fda2](https://github.com/Basis-Theory/developers.basistheory.com/commit/7b0fda24853ff0194745e97d7df94d11d801e532))
+
+## [1.229.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.229.0...v1.229.1) (2025-04-23)
+
+
+### Bug Fixes
+
+* updating token expiration date format ([#543](https://github.com/Basis-Theory/developers.basistheory.com/issues/543)) ([d036e0b](https://github.com/Basis-Theory/developers.basistheory.com/commit/d036e0b6b85c6f969ecb9329110a9aeac361bd79))
+
+# [1.229.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.2...v1.229.0) (2025-04-21)
+
+
+### Features
+
+* Add Stripe example to google and apple pay docs ([#540](https://github.com/Basis-Theory/developers.basistheory.com/issues/540)) ([8a7418f](https://github.com/Basis-Theory/developers.basistheory.com/commit/8a7418f02fa5483c9dc81e916c519e0ef8b2a7c1))
+
 ## [1.228.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.228.1...v1.228.2) (2025-04-10)
 
 
