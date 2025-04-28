@@ -24,7 +24,7 @@ The answers are persistent to the browser (local storage), and can be reset by c
 
 <QuestionCard question="Did you create at least one PROD Tenant?">
   <Content type="yes">
-    <Alert type="info">Share your Tenant ID(s) with your Basis Theory Account Manager to configure it towards your plan</Alert>
+    <Alert type="info">Share your Tenant ID(s) with your Basis Theory Account Manager to configure it towards your plan.<br/>You can see your Tenant's quotas in the [Customer Portal](https://portal.basistheory.com/settings?tab=quotas).</Alert>
   </Content>
   <Content type="no">
     <Alert type="warning">Create a new `PROD` Tenant in the [Basis Theory Portal](https://portal.basistheory.com/).</Alert>
@@ -43,16 +43,16 @@ The questions below are designed to help you understand the potential PCI Compli
 
 <QuestionCard question="Do you know the level of PCI Compliance your business needs?">
   <Content type="no">
-    <Alert type="warning">We can help. <a href="https://basistheory.com/contact" target="_blank">Contact us</a> to find out more.</Alert>
+    <Alert type="warning">We can help. <a href="https://basistheory.com/contact" target="_blank">Contact us</a> to learn more.</Alert>
   </Content>
   <Content type="na">
     <Alert type="neutral">"I don't handle any form of cardholder data in my systems"</Alert>
   </Content>
 </QuestionCard>
 
-<QuestionCard question="Did you complete your PCI DSS SAQ-A with Basis Theory?">
+<QuestionCard question="Did you complete your PCI DSS SAQ-A with Basis Theory?" noType="right">
   <Content type="no">
-    <Alert type="warning"><a href="https://basistheory.com/contact" target="_blank">Contact us</a> to get started.</Alert>
+    <Alert type="warning">This may be required for your business. <a href="https://basistheory.com/contact" target="_blank">Contact us</a> to learn more and started.</Alert>
   </Content>
   <Content type="na">
     <Alert type="neutral">"I don't need a PCI DSS SAQ-A"</Alert>
@@ -61,7 +61,7 @@ The questions below are designed to help you understand the potential PCI Compli
 
 <QuestionCard question="Did you include a reference to the data storage at Basis Theory in your user terms of service?">
   <Content type="no">
-    <Alert type="warning">Have your team add the following: "COMPANY uses Basis Theory, a third-party service provider for payment tokenization. Learn more about <a href="https://basistheory.com" target="_blank">Basis Theory</a>."</Alert>
+    <Alert type="warning">Have your team add the following paragraph to your TOS:<br/><br/>"&lt;COMPANY&gt; uses Basis Theory, a third-party service provider for payment tokenization. Learn more about <a href="https://basistheory.com" target="_blank">Basis Theory</a>."</Alert>
   </Content>
 </QuestionCard>
 
@@ -96,16 +96,16 @@ The questions below are designed to help you understand the potential PCI Compli
 
 ### Data Processing
 
-<QuestionCard question="Are you using Basis Theory Reactors for processing any plaintext cardholder data?">
+<QuestionCard question="Are you using Basis Theory Reactors for processing any plaintext cardholder data?" noType="right">
   <Content type="no">
     <Alert type="warning">I understand that my systems that process plaintext cardholder data are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
   </Content>
   <Content type="na">
-    <Alert type="neutral">I don't need to perform any type of processing of plaintext cardholder data</Alert>
+    <Alert type="neutral">I don't need to perform any type of processing of plaintext cardholder data.</Alert>
   </Content>
 </QuestionCard>
 
-<QuestionCard question="Are you reading only masked cardholder data from the vault in retrieve/list/search operations?">
+<QuestionCard question="Are you reading only masked cardholder data from the vault in retrieve/list/search operations?" noType="right">
   <Content type="yes">
     <Alert type="info">I don't have any Private Applications with a rule that defines `token:read` permission with `reveal` transform. </Alert>
   </Content>
@@ -119,7 +119,7 @@ The questions below are designed to help you understand the potential PCI Compli
 
 ### Data Egress
 
-<QuestionCard question="Are you using Basis Theory Proxies or Reactors to send cardholder data to 3rd parties?">
+<QuestionCard question="Are you using Basis Theory Proxies or Reactors to send cardholder data to 3rd parties?" noType="right">
   <Content type="no">
     <Alert type="warning">I understand that my systems which process plaintext cardholder data are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
   </Content>
@@ -128,7 +128,7 @@ The questions below are designed to help you understand the potential PCI Compli
   </Content>
 </QuestionCard>
 
-<QuestionCard question="Are you using Basis Theory Elements to display cardholder data to users, with the proper use of Sessions and data retrieval through the Elements context?">
+<QuestionCard question="Are you using Basis Theory Elements to display cardholder data to users, with the proper use of Sessions and data retrieval through the Elements context?" noType="right">
   <Content type="no">
     <Alert type="warning">I understand that my systems that read, transmit and display plaintext cardholder data are subjective to PCI Scope and must comply with all relevant PCI DSS requirements.</Alert>
   </Content>
@@ -162,13 +162,16 @@ The questions below are designed to help you understand the potential PCI Compli
 
 <QuestionCard question="Are your systems well represented by Basis Theory Applications?">
   <Content type="no">
-    <Alert type="warning">“iOS app”, “Android app”, “Frontend”, “Backend”, “CLI”, “Github Actions” are a few examples of applications that should be directly mapped to a Basis Theory Application and have their own API Key.</Alert>
+    <Alert type="warning">Each system should have a unique [Application](/docs/concepts/access-controls#what-are-applications) with its own API key, ensuring traceable actions. Examples include “iOS app,” “Android app,” “Frontend,” “Backend,” “CLI,” and “Github Actions,” each mapped to a distinct Basis Theory Application.</Alert>
   </Content>
 </QuestionCard>
 
 <QuestionCard question="Are you organizing tokens in containers considering your present and near-future needs?">
   <Content type="no">
-    <Alert type="warning">Default containers offer generic segmentation by data classification. Find out if they fit your needs or if you should customize them <a href="/docs/concepts/what-are-containers">here</a>.</Alert>
+    <Alert type="warning">[Default containers](/docs/api/tokens/token-types) offer generic segmentation by data classification. Find out if they fit your needs or if you should customize them <a href="/docs/concepts/what-are-containers">here</a>.</Alert>
+  </Content>
+  <Content type="na">
+    <Alert type="neutral">[Default containers](/docs/api/tokens/token-types) are enough for my needs.</Alert>
   </Content>
 </QuestionCard>
 
@@ -197,7 +200,7 @@ The questions below are designed to help you understand the potential PCI Compli
     <Alert type="warning">While this is fine for most use-cases, consider that in the event of having to replace/rotate the key, a new app distribution may be necessary.</Alert>
   </Content>
   <Content type="no">
-    <Alert type="info">Ideally, the app would fetch the present Application Key from your server.</Alert>
+    <Alert type="info">Ideally, the app would fetch the current Public Application Key from your server.</Alert>
   </Content>
   <Content type="na">
     <Alert type="neutral">I don't maintain a mobile app integration.</Alert>
@@ -210,30 +213,18 @@ The questions below are designed to help you understand the potential PCI Compli
   </Content>
 </QuestionCard>
 
-<QuestionCard question="Are you storing PSP tokens in your own database, next to the Basis Theory Token?" noType="right">
+<QuestionCard question="Are you storing PSP tokens in your own database, associated with the Basis Theory Token?" noType="right">
   <Content type="yes">
-    <Alert type="info">Pro: immediate availability for connecting with the Processor<br/>Con: extra DB columns to maintain</Alert>
+    <Alert type="info">By maintaining PSP tokens, your systems can directly connect with the Processor for subsequent transactions.</Alert>
   </Content>
-</QuestionCard>
-
-<QuestionCard question="Are you storing PSP tokens in Basis Theory Token metadata?" noType="right">
-  <Content type="yes">
-    <Alert type="info">Pros: single source of truth, no extra columns to maintain<br/>Con: going through Basis Theory whenever connecting with the Processor</Alert>
+  <Content type="no">
+    <Alert type="info">Not storing the PSP token means having to go through the Basis Theory Proxy everytime you need to process a transaction for a consumer.</Alert>
   </Content>
 </QuestionCard>
 
 <QuestionCard question="Are you storing your Basis Theory API Keys in a secret manager or using a specialized tool to manage IaC sensitive outputs?">
   <Content type="no">
     <Alert type="warning">Consider using a secret manager to store keys after they are provisioned, and to inject them into your applications.</Alert>
-  </Content>
-</QuestionCard>
-
-<QuestionCard question="Do you need to correlate tokenized data? For example: track if the same credit card has been used multiple times by different users." noType="right">
-  <Content type="yes">
-    <Alert type="info">Learn more about <a href="docs/concepts/what-are-tokens#fingerprinting">fingerprinting</a>.</Alert>
-  </Content>
-  <Content type="no">
-    <Alert type="warning">Make sure you are not calculating fingerprint at Tenant-level or during token creation.</Alert>
   </Content>
 </QuestionCard>
 
@@ -256,7 +247,7 @@ The questions below are designed to help you understand the potential PCI Compli
 
 <QuestionCard question="Do you version your Proxy/Reactor code to maintain an audit trail of changes to system components?">
   <Content type="no">
-    <Alert type="warning">We strongly advise you to version Proxy/Reactor code similarly to any other of your systems.</Alert>
+    <Alert type="warning">It is strongly advisable to version Proxy and Reactor code similarly to any other of your systems.</Alert>
   </Content>
   <Content type="na">
     <Alert type="neutral">I don't use Proxy Transforms or Reactors.</Alert>

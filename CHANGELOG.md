@@ -1,3 +1,10 @@
+## [1.230.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.230.0...v1.230.1) (2025-04-28)
+
+
+### Bug Fixes
+
+* update prod checklist ([#548](https://github.com/Basis-Theory/developers.basistheory.com/issues/548)) ([e40412d](https://github.com/Basis-Theory/developers.basistheory.com/commit/e40412df5533c485676f3a67473f9a0e6ada16bc))
+
 # [1.230.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.229.2...v1.230.0) (2025-04-23)
 
 
