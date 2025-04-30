@@ -1,0 +1,175 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import TokenSample from './_token-sample.mdx';
+
+## Update the Token
+
+Now we will invoke the [Update Token](https://developers.basistheory.com/docs/api/tokens#update-token) endpoint from the SDK, passing the `CardVerificationCode` Element in the payload. This will securely update the `card` token by transferring the value from the frontend Element to the Basis Theory API, where the data will be strongly encrypted and temporarily stored in a compliant environment.
+
+Given you had previously saved a Token:
+
+<TokenSample />
+
+Add a submit function along with a button to trigger it:
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+<div id="cardVerificationCode" style="width: 100%;"></div>
+// highlight-next-line
+<button id="submit">Submit</button>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/web-elements';
+
+let bt;
+let cardNumberElement;
+let cardExpirationDateElement;
+let cardVerificationCodeElement;
+
+async function init () {
+  ...
+  //highlight-next-line
+  document.getElementById("submit").addEventListener("click", submit);
+}
+
+// highlight-start
+async function submit () {
+  try {
+    await bt.tokens.update('1cd9c8bf-99fd-4784-ba69-68b15b301019', {
+      data: {
+        cvc: cardVerificationCodeElement,
+      }
+    });
+    // TODO process the card payment
+  } catch (error) {
+    console.error(error);
+  }
+}
+// highlight-end
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef, useState } from 'react';
+import {
+  BasisTheoryProvider,
+  CardVerificationCodeElement,
+  useBasisTheory,
+} from '@basis-theory/react-elements';
+
+export default function App() {
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+  // Ref to get access to the Element instance
+  const cardVerificationRef = useRef(null);
+
+  // highlight-start
+  const submit = async () => {
+    try {
+      await bt.tokens.update('1cd9c8bf-99fd-4784-ba69-68b15b301019', {
+        data: {
+          cvc: cardVerificationRef.current,
+        }
+      });
+      // TODO process the card payment
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
+      // highlight-next-line
+      <button onClick={submit}>Submit</button>
+    </BasisTheoryProvider>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+Implementation snippets are coming soon.
+
+Please check our [SDKs](/docs/sdks/) for examples.
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+Implementation snippets are coming soon.
+
+Please check our [SDKs](/docs/sdks/) for examples.
+
+  </TabItem>
+   <TabItem value="react-native" label="React Native">
+
+```typescript showLineNumbers title=App.tsx
+import React, { useRef } from "react";
+import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import type { BTRef } from "@basis-theory/basis-theory-react-native";
+import { CardVerificationCodeElement, useBasisTheory } from "@basis-theory/react-native-elements";
+
+const App = (): JSX.Element => {
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+
+  // highlight-start
+  const submit = async () => {
+      try {
+        await bt.tokens.update('1cd9c8bf-99fd-4784-ba69-68b15b301019', {
+          data: {
+            cvc: cardVerificationRef.current,
+          }
+        });
+        // TODO process the card payment
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  // highlight-end
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" style={styles.elements} />
+        </View>
+        // highlight-start
+        <Button onPress={submit} title="Submit" />
+        // highlight-end
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
+    borderWidth: 2,
+    color: "purple",
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+  </TabItem>
+</Tabs>
+
+The updated Token stores the `cvc` for 24 hours, allowing you to process the new CIT.

@@ -38,7 +38,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Card Data",
+      label: "Card Payments",
       customProps: {
         icon: {
           light: "/img/sidebar/light/card.svg",
@@ -47,22 +47,37 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "guides/cards/index",
+        id: "card-payments/index",
       },
       items: [
-        "guides/collect/collect-cards",
-        "guides/share/process-card-payments",
-        "guides/collect/receive-cards",
+        "card-payments/replace-processor-iframes",
+        "card-payments/recollect-security-code",
+        "card-payments/receive-cards-api",
+        "card-payments/use-your-own-inputs",
+        {
+          type: "html",
+          value: "<hr />",
+        },
+        "card-payments/verify-card",
+        "card-payments/charge-card",
+        {
+          type: "html",
+          value: "<hr />",
+        },
+        "card-payments/keep-cards-up-to-date",
+        "card-payments/payments-routing",
+        "card-payments/using-network-tokens",
+        {
+          type: "html",
+          value: "<hr />",
+        },
         "guides/process/extract-cards",
-        "guides/collect/issue-cards",
-        "guides/share/display-cards",
-        "guides/collect/set-card-pin",
         "guides/process/backup-stripe-tokens",
       ],
     },
     {
       type: "category",
-      label: "Bank Data",
+      label: "Bank Payments",
       customProps: {
         icon: {
           light: "/img/sidebar/light/bank.svg",
@@ -108,8 +123,8 @@ const sidebars = {
         {
           type: "doc",
           id: "guides/threeds/taking-threeds-live",
-          label: "Taking 3DS Live"
-        }
+          label: "Taking 3DS Live",
+        },
       ],
     },
     {
@@ -156,7 +171,22 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Any Data",
+      label: "Card Issuing",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/issue-card.svg",
+          dark: "/img/sidebar/dark/issue-card.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "card-issuing/index",
+      },
+      items: ["card-issuing/issue-cards", "card-issuing/display-cards", "card-issuing/set-card-pin"],
+    },
+    {
+      type: "category",
+      label: "Other Data",
       customProps: {
         icon: {
           light: "/img/sidebar/light/any-data.svg",

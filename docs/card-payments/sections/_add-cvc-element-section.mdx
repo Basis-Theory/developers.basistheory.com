@@ -1,0 +1,132 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+## Add the CVC Element
+
+Once installed and configured, add the `CardVerificationCode` Element to your application. This will enable your users to type in their Card Security Code in your form, while ensuring your systems never come in contact with the data.
+
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+<div id="cardVerificationCode" style="width: 100%;"></div>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/web-elements';
+
+let bt;
+let cardVerificationCodeElement;
+
+async function init() {
+  bt = await basistheory('<PUBLIC_API_KEY>');
+
+  //highlight-start
+  cardVerificationCodeElement = bt.createElement('cardVerificationCode', {
+    targetId: 'myCardVerification',
+    cardBrand: 'visa',
+  });
+  await cardVerificationCodeElement.mount('#cardVerificationCode');
+  //highlight-end
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef, useState } from 'react';
+import {
+  BasisTheoryProvider,
+  // highlight-start
+  CardVerificationCodeElement,
+  //highlight-end
+  useBasisTheory,
+} from '@basis-theory/react-elements';
+
+export default function App() {
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+  // highlight-start
+  // Ref to get access to the Element instance
+  const cardVerificationRef = useRef(null);
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      // highlight-start
+      <CardVerificationCodeElement
+        id="myCardVerification"
+        ref={cardVerificationRef}
+        cardBrand="visa"
+      />
+    </BasisTheoryProvider>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+Implementation snippets are coming soon.
+
+Please check our [SDKs](/docs/sdks/) for examples.
+
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+Implementation snippets are coming soon.
+
+Please check our [SDKs](/docs/sdks/) for examples.
+
+  </TabItem>
+   <TabItem value="react-native" label="React Native">
+
+```typescript showLineNumbers title=App.tsx
+import React, { useRef } from "react";
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import type { BTRef } from "@basis-theory/react-native-elements";
+// highlight-next-line
+import { CardVerificationCodeElement, useBasisTheory } from "@basis-theory/react-native-elements";
+
+const App = (): JSX.Element => {
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+  // highlight-start
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+  // highlight-end
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          // highlight-start
+          <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" style={styles.elements} />
+          // highlight-end
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
+    borderWidth: 2,
+    color: "purple",
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+  </TabItem>
+</Tabs>

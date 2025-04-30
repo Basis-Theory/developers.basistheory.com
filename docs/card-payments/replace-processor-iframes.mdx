@@ -1,0 +1,59 @@
+---
+title: Replace Processor iFrames
+hide_title: true
+description: This guide walks you through the process of replacing processor-specific iFrames with external vault-agnostic secure frontend elements, ensuring a more flexible and scalable payment integration.
+toc_max_heading_level: 3
+---
+import { Alert } from "@site/src/components/shared/Alert";
+import { Intro } from "@site/src/components/shared/Intro";
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import AddElementsSection from "./sections/_add-card-elements-section.mdx";
+import TokenizationSection from "./sections/_tokenization-section.mdx";
+import { AuthenticateCardSection } from "./sections/AuthenticateCardSection";
+
+<Intro
+  title="Replace Processor iFrames"
+  caption="Own your card data by replacing processor iFrames with modern agnostic elements."
+/>
+
+When handling payments, merchants often rely on processor-specific iFrames to collect cardholder data securely. However, this approach can lead to vendor lock-in, limiting flexibility and control over payment processing. To future-proof their business, merchants need a solution that enables seamless processor switching and true data ownership. Basis Theory empowers businesses to replace processor iFrames with vault-agnostic secure elements, unlocking greater freedom and scalability.
+
+![Replace Processor iFrames Diagram](/img/guides/cards/replace-processor-iframes-diagram.png)
+
+In this guide, you'll learn how to set up Basis Theory SDKs to capture cards in a frontend application, Web or Mobile, and securely store the cardholder data as flexible and agnostic token intents within your Basis Theory vault.
+
+## Alternative/Local Payment Methods
+
+This guide focuses on replacing processor iFrames for collecting **cardholder data** using agnostic secure elements. If you need to tokenize other credential types, refer to the links below:
+- [Bank accounts (ACH)](/docs/guides/banks/collect-bank-accounts)
+- [Google Pay](/docs/guides/google-pay/accept-payments)
+- [Apple Pay](/docs/guides/apple-pay/accept)
+
+If you also support alternative and local payment methods (APMs/LPMs) like SEPA, iDEAL, Boleto, and WeChat Pay, you can remove tokenizable payment methods (such as cards) from your PSP’s frontend components while keeping non-tokenizable options as-is.
+
+<Alert>Whenever possible, we recommend integrating directly with providers like PayPal and Klarna for greater control and reduced dependency on intermediaries.</Alert>
+
+<GettingStartedSection />
+
+### Public Application
+
+<ApplicationSection type="public" permissions={["token-intent:create"]} />
+
+### Configure Elements SDK
+
+<ConfigureElementsSection />
+
+<AddElementsSection/>
+
+<TokenizationSection />
+
+<AuthenticateCardSection type="intent" />
+
+## Next Steps
+
+Now that you’ve replaced processor iFrames with agnostic secure elements, the next step is to process payments using your newly tokenized card data. Check out the following guides to complete your integration:
+
+- [Verify a Card](/docs/card-payments/verify-card) – Ensure the card is valid by performing a $0 auth.
+- [Charge a Card](/docs/card-payments/charge-card) – Process a payment using the stored token.
