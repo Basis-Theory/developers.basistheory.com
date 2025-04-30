@@ -1,3 +1,10 @@
+## [1.231.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.231.0...v1.231.1) (2025-04-30)
+
+
+### Bug Fixes
+
+* psp sample ([#549](https://github.com/Basis-Theory/developers.basistheory.com/issues/549)) ([f81cd6f](https://github.com/Basis-Theory/developers.basistheory.com/commit/f81cd6f8a2ed0b94e2f88ab3388ebd035fe16228))
+
 # [1.231.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.230.1...v1.231.0) (2025-04-30)
 
 
