@@ -1,3 +1,10 @@
+# [1.231.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.230.1...v1.231.0) (2025-04-30)
+
+
+### Features
+
+* new card payments guides ([f7ce605](https://github.com/Basis-Theory/developers.basistheory.com/commit/f7ce605f5df0d451a7f02dab1bb09063df93bc62))
+
 ## [1.230.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.230.0...v1.230.1) (2025-04-28)
 
 
