@@ -20,7 +20,7 @@ export const KapaButton: React.FC = () => {
 
     return (
         <div className={clsx([styles.container])}>
-            <button onClick={handleClick}></button>
+            <button onClick={handleClick} data-button="true"></button>
         </div>
     );
 };
