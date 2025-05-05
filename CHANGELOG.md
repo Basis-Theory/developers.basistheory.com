@@ -1,3 +1,10 @@
+## [1.232.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.232.0...v1.232.1) (2025-05-05)
+
+
+### Bug Fixes
+
+* Fix endpoint method ([#553](https://github.com/Basis-Theory/developers.basistheory.com/issues/553)) ([12ae34a](https://github.com/Basis-Theory/developers.basistheory.com/commit/12ae34a2800aabf4ea94245b81b5f791a8ddb60b))
+
 # [1.232.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.231.2...v1.232.0) (2025-05-05)
 
 
