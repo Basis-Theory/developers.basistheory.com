@@ -1,0 +1,46 @@
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
+import AddElementsSection from "./_add-card-elements-section.mdx";
+import TokenizationSection from "./_tokenization-section.mdx";
+import { AuthenticateCardSection } from "./AuthenticateCardSection";
+
+## Collect Cards
+
+In this section, we will set up Basis Theory SDKs to capture cards in a frontend application, Web or Mobile, and securely store the cardholder data as flexible and agnostic token intents within your Basis Theory vault.
+
+```mermaid
+  sequenceDiagram
+    actor customer as Customer
+    participant frontend as Merchant<br>Frontend
+    participant bte as Basis Theory<br>Elements
+    participant bapi as Basis Theory<br>API
+    participant mbe as Merchant<br>Backend
+
+    activate customer
+    customer ->>+ frontend: Enter checkout
+    frontend -->> customer: Render checkout with Elements
+    customer ->>+ bte: Enter card data
+    customer ->> frontend: Submit
+    frontend ->> bte: Create Token Intent
+    bte ->>+ bapi: Create Token Intent
+    bapi -->>- bte:  Card information
+    bte -->>- frontend: Card information
+    frontend ->>+ mbe: Submit checkout
+    mbe ->> mbe: Process card
+    mbe -->>- frontend: OK
+    frontend -->>- customer: Success
+    deactivate customer
+```
+### Public Application
+
+<ApplicationSection type="public" permissions={["token-intent:create"]}/>
+
+### Configure Elements SDK
+
+<ConfigureElementsSection/>
+
+<AddElementsSection/>
+
+<TokenizationSection/>
+
+<AuthenticateCardSection type="intent"/>

@@ -1,0 +1,135 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import NotRestrictedAlert from "./_not-restricted-alert.mdx";
+
+
+<Tabs className="bt-tabs" queryString="processor">
+  <TabItem value="checkout.com" label="Checkout.com">
+
+In Checkout.com, you can verify a card without charging it [by calling the `/payments` API](https://www.checkout.com/docs/payments/authenticate-payments/verify-a-card).
+
+```shell showLineNumbers title="Verify a Card"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://api.sandbox.checkout.com/payments' \
+-H 'Authorization: Bearer <CHECKOUT_SECRET_KEY>' \
+// highlight-end
+-H 'Content-Type: application/json' \
+--data '{
+  "source": {
+    "type": "card",
+// highlight-start
+    "number": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiry_month": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiry_year": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
+    "cvv": "{{ token_intent: d96b9925-85d7-495e-88fe-a9c3ecb23b61 | json: \"$.data.cvc\" }}",
+// highlight-end
+    "store_for_future_use": true
+  },
+  "currency": "USD",
+  "processing_channel_id": "pc_svyx12xvaaduraq3ckb2gwnvzq"
+}'
+```
+```json showLineNumbers title="Verification Response"
+{
+  "id": "pay_myvj6zxrt45edgrswrliyxbtnq",
+// highlight-next-line
+  "approved": true,
+// highlight-next-line
+  "status": "Card Verified",
+  "amount": 0,
+  "currency": "USD",
+  "source": {
+    "type": "card",
+// highlight-start
+    "id": "src_gguer4xlawke3ctljczft7573a",
+    "avs_check": "G",
+    "cvv_check": "Y",
+// highlight-end
+    ...
+  },
+// highlight-next-line
+  "scheme_id": "647537243670773",
+  ...
+}
+```
+
+  </TabItem>
+  <TabItem value="stripe" label="Stripe">
+
+In Stripe, you can verify a card without charging it [by saving the card to a customer](https://support.stripe.com/questions/check-if-a-card-is-valid-without-a-charge).
+
+1. [Create a Customer](https://docs.stripe.com/api/customers/create)
+2. [Create a Setup Intent](https://docs.stripe.com/api/setup_intents) using the [Proxy](/docs/api/proxies/ephemeral-proxy)
+  - This will create a new Payment Method (Processor Token), whose ID will be included in the response at `payment_method`
+  - If the card is invalid, this request may fail immediately.
+
+```shell showLineNumbers title="Create a Setup Intent"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://api.stripe.com/v1/setup_intents' \
+-H 'Authorization: Bearer <STRIPE_SECRET_KEY>' \
+// highlight-end
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'customer=cus_RTEOvM5dSx9RCS' \
+--data-urlencode 'confirm=true' \
+--data-urlencode 'payment_method_data[type]=card' \
+// highlight-start
+--data-urlencode 'payment_method_data[card][number]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}' \
+--data-urlencode 'payment_method_data[card][exp_month]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" |  card_exp: "MM" }}' \
+--data-urlencode 'payment_method_data[card][exp_year]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data" | card_exp: "YYYY" }}' \
+--data-urlencode 'payment_method_data[card][cvc]={{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.cvc" }}'
+// highlight-end
+```
+
+```json showLineNumbers title="Setup Intent Response"
+{
+  "id": "seti_1QaI1YG9VRQ2700SF1DSos0x",
+  // highlight-next-line
+  "status": "succeeded",
+  "object": "setup_intent",
+  // highlight-next-line
+  "payment_method": "pm_1QaKJmG9VRQ2700S5JcsJv4Q",
+  "latest_attempt": {
+    "payment_method_details": {
+      "card": {
+        // highlight-next-line
+        "network_transaction_id": "8723dfab9c4e56a1b8cd0291ef67ac43"
+        ...
+      }
+      ...
+    }
+    ...
+  }
+  ...
+}
+```
+
+3. [Retrieve the Payment Method](https://docs.stripe.com/api/payment_methods/retrieve) to get granular `checks` information.
+
+```json showLineNumbers title="Payment Method Response"
+{
+  "id": "pm_1QaKJmG9VRQ2700S5JcsJv4Q",
+  "type": "card",
+  "object": "payment_method",
+  "card": {
+    // highlight-start
+    "checks": {
+      "address_line1_check": "pass",
+      "address_postal_code_check": "pass",
+      "cvc_check": "pass"
+    }
+    // highlight-end
+    ...
+  }
+  ...
+}
+```
+  </TabItem>
+</Tabs>
+
+<NotRestrictedAlert />

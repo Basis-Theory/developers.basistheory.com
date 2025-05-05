@@ -1,0 +1,209 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert } from "@site/src/components/shared/Alert";
+import NotRestrictedAlert from "./_not-restricted-alert.mdx";
+
+## Subsequent Charges
+
+Once you've securely saved a card in the vault and generated a persistent token, you are ready to perform subsequent charges. Whether you have returning customers purchasing with a saved card, or you are performing recurring billing, the token allows you to process payments seamlessly without storing sensitive card details directly in your system.
+
+<Alert>If your business or payment processor needs it due to risk preferences, <a href="/docs/card-payments/recollect-security-code">click here</a> to find out how to recollect the CVC for a saved card.</Alert>
+
+
+### Using the PAN
+
+If you [charged](#first-charge) or [verified](/docs/card-payments/verify-card) a card used a different acquirer than the one required for subsequent charges, we recommend using this method, which relies on the Proxy to securely route tokenized cardholder data to the payment processor.
+
+<Tabs className="bt-tabs" queryString="processor">
+  <TabItem value="checkout.com" label="Checkout.com">
+
+In Checkout.com, you can charge a saved card [by calling the `/payments` API](https://www.checkout.com/docs/payments/accept-payments/pay-with-stored-card-details#Request_a_payment_with_stored_card_details).
+
+```shell showLineNumbers title="Request a Payment"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://api.sandbox.checkout.com/payments' \
+-H 'Authorization: Bearer <CHECKOUT_SECRET_KEY>' \
+// highlight-end
+-H 'Content-Type: application/json' \
+--data '{
+  "source": {
+    "type": "card",
+// highlight-start
+    "number": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiry_month": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiry_year": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
+// highlight-end
+    "stored": true
+  },
+  "amount": 1000,
+  "currency": "USD",
+  "processing_channel_id": "pc_svyx12xvaaduraq3ckb2gwnvzq"
+}'
+```
+```json showLineNumbers title="Payment Response"
+{
+  "id": "pay_myvj6zxrt45edgrswrliyxbtnq",
+// highlight-start
+  "approved": true,
+  "status": "Authorized",
+// highlight-end
+  "amount": 1000,
+  "currency": "USD",
+  "source": {
+    "type": "card",
+// highlight-next-line
+    "id": "src_gguer4xlawke3ctljczft7573a",
+    ...
+  },
+// highlight-next-line
+  "scheme_id": "647537243670773",
+  ...
+}
+```
+
+  </TabItem>
+  <TabItem value="stripe" label="Stripe">
+
+In Stripe, you can charge a saved card by creating a [Payment Intent](https://docs.stripe.com/payments/payment-intents).
+
+```shell showLineNumbers title="Create a Payment Intent"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://api.stripe.com/v1/payment_intents' \
+-H 'Authorization: Bearer <STRIPE_SECRET_KEY>' \
+// highlight-end
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'amount=1000' \
+--data-urlencode 'currency=USD' \
+--data-urlencode 'customer=cus_RTEOvM5dSx9RCS' \
+--data-urlencode 'confirm=true' \
+--data-urlencode 'payment_method_data[type]=card' \
+// highlight-start
+--data-urlencode 'payment_method_data[card][number]={{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: "$.data.number" }}' \
+--data-urlencode 'payment_method_data[card][exp_month]={{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: "$.data" |  card_exp: "MM" }}' \
+--data-urlencode 'payment_method_data[card][exp_year]={{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: "$.data" | card_exp: "YYYY" }}' \
+--data-urlencode 'payment_method_data[card][cvc]={{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: "$.data.cvc" }}'
+// highlight-end
+```
+
+```json showLineNumbers title="Payment Intent Response"
+{
+  // highlight-next-line
+  "id": "pi_3MtwBwLkdIwHu7ix28a3tqPa",
+  "status": "succeeded",
+  "object": "payment_intent",
+  // highlight-next-line
+  "payment_method": "pm_1QaKJmG9VRQ2700S5JcsJv4Q",
+  "latest_charge": {
+    "payment_method_details": {
+      "card": {
+        // highlight-next-line
+        "network_transaction_id": "8723dfab9c4e56a1b8cd0291ef67ac43"
+        ...
+      }
+      ...
+    }
+    ...
+  }
+  ...
+}
+```
+  </TabItem>
+</Tabs>
+
+<NotRestrictedAlert />
+
+### Using the Processor Token
+
+If you have already [charged](#first-charge) or [verified](/docs/card-payments/verify-card) a card using a payments processor and saved its token, we recommend using this method, which doesn't require going through Basis Theory.
+
+
+<Tabs className="bt-tabs" queryString="processor">
+  <TabItem value="checkout.com" label="Checkout.com">
+
+In Checkout.com, you can charge a saved card [by calling the `/payments` API](https://www.checkout.com/docs/payments/accept-payments/pay-with-stored-card-details#Request_a_payment_with_stored_card_details).
+
+```shell showLineNumbers title="Request a Payment"
+curl 'https://api.sandbox.checkout.com/payments' \
+-X 'POST' \
+-H 'Authorization: Bearer <CHECKOUT_SECRET_KEY>' \
+-H 'Content-Type: application/json' \
+--data '{
+  "source": {
+    "type": "id",
+// highlight-next-line
+    "id": "src_gguer4xlawke3ctljczft7573a",
+  },
+  "amount": 1000,
+  "currency": "USD",
+  "processing_channel_id": "pc_svyx12xvaaduraq3ckb2gwnvzq"
+}'
+```
+```json showLineNumbers title="Payment Response"
+{
+  "id": "pay_myvj6zxrt45edgrswrliyxbtnq",
+// highlight-start
+  "approved": true,
+  "status": "Authorized",
+// highlight-end
+  "amount": 1000,
+  "currency": "USD",
+  "source": {
+    "type": "card",
+// highlight-next-line
+    "id": "src_gguer4xlawke3ctljczft7573a",
+    ...
+  },
+// highlight-next-line
+  "scheme_id": "647537243670773",
+  ...
+}
+```
+
+  </TabItem>
+  <TabItem value="stripe" label="Stripe">
+
+In Stripe, you can charge a card by creating a [Payment Intent](https://docs.stripe.com/payments/payment-intents).
+
+```shell showLineNumbers title="Create a Payment Intent"
+curl 'https://api.stripe.com/v1/payment_intents' \
+-X 'POST' \
+-H 'Authorization: Bearer <STRIPE_SECRET_KEY>' \
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'amount=1000' \
+--data-urlencode 'currency=USD' \
+--data-urlencode 'customer=cus_RTEOvM5dSx9RCS' \
+--data-urlencode 'confirm=true' \
+// highlight-next-line
+--data-urlencode 'payment_method=pm_1QaKJmG9VRQ2700S5JcsJv4Q'
+```
+
+```json showLineNumbers title="Payment Intent Response"
+{
+  // highlight-next-line
+  "id": "pi_3MtwBwLkdIwHu7ix28a3tqPa",
+  "status": "succeeded",
+  "object": "payment_intent",
+  // highlight-next-line
+  "payment_method": "pm_1QaKJmG9VRQ2700S5JcsJv4Q",
+  "latest_charge": {
+    "payment_method_details": {
+      "card": {
+        // highlight-next-line
+        "network_transaction_id": "8723dfab9c4e56a1b8cd0291ef67ac43"
+        ...
+      }
+      ...
+    }
+    ...
+  }
+  ...
+}
+```
+  </TabItem>
+</Tabs>

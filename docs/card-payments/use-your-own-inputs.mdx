@@ -1,0 +1,207 @@
+---
+title: Use Your Own Inputs
+hide_title: true
+description: This guide explains how to integrate Basis Theory SDKs with your own inputs, securely tokenizing cardholder data for a flexible, controlled payment solution.
+toc_max_heading_level: 3
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Intro } from "@site/src/components/shared/Intro";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
+import { SdkList } from "@site/src/components/docs/SdkList";
+import TokenIntentSample from "./sections/_token-intent-sample.mdx";
+import { AuthenticateCardSection } from "./sections/AuthenticateCardSection";
+
+<Intro
+  title="Use Your Own Card Inputs"
+  caption="Tokenize with your inputs for flexibility and secure tokenization."
+/>
+
+Despite Basis Theory Elements being highly customizable and providing the most secure and efficient solution for collecting cards in user-facing applications, we understand that some companies are experienced with PCI DSS and feel comfortable having their frontend, or parts of it, handle cardholder data and be in scope for such compliance.
+
+<Alert type={Alerts.WARNING}>Using custom inputs with Basis Theory is fully supported but requires SAQ D PCI compliance due to handling cardholder data. For simpler SAQ A compliance, try our <a href="https://docs.basistheory.com/guides/elements">Elements guide</a> unless you need full control over your form.</Alert>
+
+In this guide, we will set up Basis Theory SDKs to receive cards from your frontend application and securely store the cardholder data as tokens with the Basis Theory Platform. This practice is well-positioned to substantially de-scope your servers, networking resources and database from PCI DSS compliance, while retaining full control of the sensitive data. If you want to learn more how Basis Theory can help you achieve that, [reach out to our team](https://basistheory.com/contact)!
+
+![Use your own inputs Diagram](/img/guides/cards/use-your-own-inputs-diagram.png)
+
+<GettingStartedSection />
+
+### Public Application
+
+<ApplicationSection type="public" permissions={["token-intent:create"]} />
+
+### Configure the SDK
+
+We will perform cardholder data tokenization by calling the Basis Theory API and passing the values from your inputs. The use of SDKs is optional, you can use your preferred HTTP Client in your frontend application.
+
+For **Javascript**, **React** and **React Native**:
+<SdkList sdks={['node']} />
+
+For **Android**:
+<SdkList sdks={['java']} />
+
+For **iOS**, use your preferred HTTP client to call the Basis Theory API.
+
+## Tokenization
+
+We won't get into details about particular frontend libraries or custom input implementations, but show how to call the API to store cards in your Basis Theory Tenant.
+
+To do this, we will invoke the [Create Token Intent](/docs/api/tokens/token-intents#create-token-intent) endpoint from the frontend, passing the cardholder data in the payload. This will securely create a `card` token intent by transferring the card information from your frontend to the Basis Theory API, where the data will be strongly encrypted and stored in a compliant environment.
+
+Let's use a submit function to make the request, triggered from a button:
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+// highlight-next-line
+<button onclick="submit();">Submit</button>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheoryClient, BasisTheory } from "@basis-theory/node-sdk";
+
+const client = new BasisTheoryClient({ apiKey: "<PUBLIC_API_KEY>" });
+
+async function submit () {
+  try {
+    // highlight-start
+    // get these values from your inputs
+    const intent = await client.tokenIntents.create({
+      type: "card",
+      data: {
+        number: '4242424242424242',
+        expiration_month: 12,
+        expiration_year: 2025,
+        cvc: '123'
+      },
+    });
+    // highlight-end
+    // TODO post the intent object to your backend
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="android" label="Android">
+
+```xml showLineNumbers title=activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        ...
+
+      // highlight-start
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#00A4BA"
+            android:text="Submit" />
+      // highlight-end
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+```kotlin showLineNumbers title=MainActivity.kt
+import androidx.lifecycle.lifecycleScope
+import com.basistheory.core.ClientOptions;
+import com.basistheory.core.Environment
+import com.basistheory.resources.tokenintents.TokenIntentsClient;
+import com.basistheory.resources.tokenintents.requests.CreateTokenIntentRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+class MainActivity : AppCompatActivity() {
+
+    private val tokenClient by lazy {
+        TokenIntentsClient(
+            ClientOptions.builder()
+                .environment(Environment.DEFAULT)
+                .addHeader("BT-API-KEY", "<PUBLIC_API_KEY>")
+                .build()
+        )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        // highlight-start
+        button = findViewById(R.id.submit_button)
+        button.setOnClickListener {
+            lifecycleScope.launch {
+                submit()
+            }
+        }
+        // highlight-end
+    }
+
+    // highlight-start
+    private suspend fun submit() {
+        val intent = withContext(Dispatchers.IO) {
+            tokenClient.create(
+                CreateTokenIntentRequest.builder()
+                    .type("card")
+                    .data(mapOf(
+                        // get these values from your inputs
+                        "number" to "4242424242424242",
+                        "expiration_month" to 12,
+                        "expiration_year" to 2025,
+                        "cvc" to "123"
+                    ))
+                    .build()
+            )
+        }
+        // TODO post the intent object to your backend
+    }
+    // highlight-end
+}
+```
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+
+Use your preferred HTTP client to call the [Create Token Intent](/docs/api/tokens/token-intents#create-token-intent) endpoint.
+
+  </TabItem>
+</Tabs>
+
+<Alert>Be sure to replace <code>&lt;API_KEY></code> with the Public API Key you created in the <a href="#public-application">Public Application</a> step.</Alert>
+
+The created Token Intent is a short-lived tokenized `card` object which carries only non-sensitive information following the [Token Intent Object specification](/docs/api/tokens/token-intents#token-intent-object):
+
+<TokenIntentSample/>
+
+<Alert>You can either post the complete object to your backend for processing or [fetch it using its ID](/docs/api/tokens/token-intents#get-a-token-intent).</Alert>
+
+<AuthenticateCardSection type="intent"/>
+
+## Next Steps
+
+Now that you are securely storing your users' sensitive card data with Basis Theory, the next step is to process payments using your newly tokenized card data. Check out the following guides to complete your integration:
+
+- [Verify a Card](/docs/card-payments/verify-card) – Ensure the card is valid by performing a $0 auth.
+- [Charge a Card](/docs/card-payments/charge-card) – Process a payment using the stored token.

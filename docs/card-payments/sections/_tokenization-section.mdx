@@ -1,0 +1,212 @@
+import { Alert } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import TokenIntentSample from "./_token-intent-sample.mdx";
+
+## Tokenization
+
+Now that you are securely capturing the cardholder data in your user-facing application(s), it is time to post it to create a [Token Intent](/docs/concepts/token-intents), which temporarily stores the card information and can be later converted to a [long-term Token](/docs/concepts/what-are-tokens).
+
+To do this, we will invoke the [Create Token Intent](https://developers.basistheory.com/docs/api/token-intents#create-token-intent) endpoint from the SDK, passing the Card Elements as data points in the payload. This will securely create a `card` token intent by transferring the card information from the frontend Elements to the Basis Theory API, where the data will be strongly encrypted and stored in a compliant environment.
+
+Add a submit function along with a button to trigger it:
+
+<Tabs className="bt-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title=index.html
+<div id="cardNumber"></div>
+<div style="display: flex;">
+  <div id="cardExpirationDate" style="width: 100%;"></div>
+  <div id="cardVerificationCode" style="width: 100%;"></div>
+</div>
+// highlight-next-line
+<button id="submit">Submit</button>
+```
+```javascript showLineNumbers title=index.js
+import { BasisTheory } from '@basis-theory/basis-theory-js';
+
+let bt;
+let cardNumberElement;
+let cardExpirationDateElement;
+let cardVerificationCodeElement;
+
+async function init () {
+  ...
+  //highlight-next-line
+  document.getElementById("submit").addEventListener("click", submit);
+}
+
+// highlight-start
+async function submit () {
+  try {
+    const intent = await bt.tokenIntents.create({
+      type: 'card',
+      data: {
+        number: cardNumberElement,
+        expiration_month: cardExpirationDateElement.month(),
+        expiration_year: cardExpirationDateElement.year(),
+        cvc: cardVerificationCodeElement,
+      }
+    });
+    // TODO post the intent object to your backend
+  } catch (error) {
+    console.error(error);
+  }
+}
+// highlight-end
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef, useState } from 'react';
+import {
+  BasisTheoryProvider,
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  useBasisTheory,
+} from '@basis-theory/basis-theory-react';
+
+export default function App() {
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+  // Refs to get access to the Elements instance
+  const cardNumberRef = useRef(null);
+  const cardExpirationRef = useRef(null);
+  const cardVerificationRef = useRef(null);
+  // stores the current card brand in state, to pass to CardVerificationCodeElement
+  const [cardBrand, setCardBrand] = useState();
+
+  // highlight-start
+  const submit = async () => {
+    try {
+      const intent = await bt?.tokenIntents.create({
+        type: 'card',
+        data: {
+          number: cardNumberRef.current,
+          expiration_month: cardExpirationRef.current.month(),
+          expiration_year: cardExpirationRef.current.year(),
+          cvc: cardVerificationRef.current,
+        }
+      });
+      // TODO post the intent object to your backend
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // highlight-end
+
+  return (
+    <BasisTheoryProvider bt={bt}>
+      ...
+      // highlight-next-line
+      <button onClick={submit}>Submit</button>
+    </BasisTheoryProvider>
+  );
+}
+```
+  </TabItem>
+[//]: # (TODO add iOS example when intents are supported)
+  <TabItem value="ios" label="iOS">
+
+Implementation snippets are coming soon.
+
+Please check our [SDKs](/docs/sdks/) for examples.
+
+  </TabItem>
+[//]: # (TODO add iOS example when intents are supported)
+  <TabItem value="android" label="Android">
+
+Implementation snippets are coming soon.
+
+Please check our [SDKs](/docs/sdks/) for examples.
+
+  </TabItem>
+[//]: # (TODO review React Native example when intents are supported)
+   <TabItem value="react-native" label="React Native">
+
+```tsx showLineNumbers title=App.tsx
+import React, { useRef } from "react";
+import { Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, View } from "react-native";
+import type { BTRef } from "@basis-theory/react-native-elements";
+import {
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  useBasisTheory
+} from "@basis-theory/react-native-elements";
+
+const App = (): JSX.Element => {
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+  // Refs to get access to the Elements instance
+  const cardNumberRef = useRef<BTRef>(null);
+  const cardExpirationDateRef = useRef<BTRef>(null);
+  const cardVerificationCodeRef = useRef<BTRef>(null);
+
+  // highlight-start
+  const submit = async () => {
+      try {
+        const intent = await bt?.tokenIntents.create({
+          type: 'card',
+          data: {
+            number: cardNumberRef.current,
+            expiration_month: cardExpirationRef.current.month(),
+            expiration_year: cardExpirationRef.current.year(),
+            cvc: cardVerificationRef.current,
+          }
+        });
+        // TODO post the intent object to your backend
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  // highlight-end
+
+  return (
+    <SafeAreaView>
+      <StatusBar />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={styles.viewContainer}>
+          <CardNumberElement btRef={cardNumberRef} placeholder="Card Number" style={styles.elements} />
+          <CardExpirationDateElement btRef={cardExpirationDateRef} placeholder="Card Expiration Date" style={styles.elements} />
+          <CardVerificationCodeElement btRef={cardVerificationCodeRef} placeholder="CVC" style={styles.elements} />
+        </View>
+        // highlight-start
+        <Button onPress={submit} title="Submit" />
+        // highlight-end
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardNumber: {
+    backgroundColor: "#eeeeee",
+    borderColor: "blue",
+    borderWidth: 2,
+    color: "purple",
+    height: 40,
+    margin: 12,
+    padding: 10,
+  },
+  viewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 32,
+  },
+});
+
+export default App;
+```
+
+  </TabItem>
+</Tabs>
+
+The created Token Intent is a short-lived tokenized `card` object which carries only non-sensitive information following the [Token Intent Object specification](/docs/api/tokens/token-intents#token-intent-object):
+
+<TokenIntentSample/>
+
+<Alert>You can either post the complete object to your backend for processing or [fetch it using its ID](/docs/api/tokens/token-intents#get-a-token-intent).</Alert>
