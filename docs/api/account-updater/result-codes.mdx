@@ -1,0 +1,44 @@
+---
+title: Result Codes
+---
+
+import {Alert, Alerts} from "@site/src/components/shared/Alert";
+
+# Account Updater Result Codes
+
+Batch and Real-Time Account Updater include result codes in their responses to indicate the outcome of an attempted update.
+
+## Result Codes
+
+| Result Code               | Description                                                                                                             | Action                                                                                                                                                              |
+|---------------------------|-------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `NO_UPDATE`               | No update was received from the network.                                                                                | No action needed.                                                                                                                                                   |
+| `UPD_PAN`                 | The issuer updated the account number, or account number and expiration date.                                           | A new token has been created. Update your records.                                                                                                                  |
+| `UPD_EXP_DATE`            | The issuer updated the expiration date.                                                                                 | A new token has been created. Update your records.                                                                                                                  |
+| `UPD_BRAND_CONV`          | The card brand has changed but the issuer remains the same. The account number or expiration may or may not be changed. | If a new token has been created, update your records.                                                                                                               |
+| `UPD_CORRECTED`           | The issuer corrected a previous update.                                                                                 | A new token has been created. Update your records.                                                                                                                  |
+| `WRN_CLOSED_ACCOUNT`      | The issuer closed the account holder's account.                                                                         | No Update - Card may still be valid, retry transaction or contact the customer and verify account closure - if account is closed, remove token from future updates. |
+| `WRN_CONTACT_CARDHOLDER`  | The merchant should contact the account holder for additional information on the account.                               | No Update - Reach out to customer.                                                                                                                                  |
+| `WRN_ISSUER_NOT_ENROLLED` | The issuer for the requested card number does not participate in the Account Updater program.                           | No update - Continue to update this token, as issuer may opt in.                                                                                                    |
+| `WRN_ISSUER_NO_DATA`      | The issuer provided no information regarding the specific card number requested.                                        | No update - Continue to update this token, as issuer may have incorrectly responded.                                                                                |
+| `WRN_OPT_OUT`             | The cardholder has opted out of the account updater service.                                                            | No update - Continue to update this token, as consumer may opt in.                                                                                                  |
+| `WRN_UNSUPPORTED_NETWORK` | The card number corresponds to a card network that does not participate in the Account Updater program.                 | No update - Contact Basis Theory for more information requesting additional networks.                                                                               |
+| `ERR_UNDEFINED`           | Undefined error.                                                                                                        | Contact support.                                                                                                                                                    |
+| `ERR_INVALID_PAN`         | The card number is invalid.                                                                                             | Check that this token contains a valid card number for one of the supported networks. Omit from future requests.                                                    |
+| `ERR_INVALID_TOKEN`       | Token not found.                                                                                                        | Check that the token is of type `card` and that the token exists in this tenant.                                                                                    |
+| `ERR_INVALID_EXP_DATE`    | The expiration date was invalid.                                                                                        | Check expiration month and year exist on the token or in the row's expiration_month and expiration_year fields.                                                     |
+| `ERR_INVALID_CONFIG`      | Invalid Account Updater configuration.                                                                                  | Verify that the merchant_id matches one of those given to you during onboarding. If your merchant_id matches, contact support.                                      |
+
+<Alert type={Alerts.INFO}>`NO_UPDATE` is only returned from Real-Time Account Updater. Batch Account Updater will omit rows with no updates from the response to minimize the result file size and to reduce the amount of post-processing required in your system.</Alert>
+
+## Result Code Categories
+
+Result codes are grouped into categories using a standard prefix, and are formatted as `<CATEGORY>_`.
+You can use the category prefix when troubleshooting to quickly identify whether any action is required on your part.
+
+| Prefix | Category Description                                                                                        |
+|--------|-------------------------------------------------------------------------------------------------------------|
+| `NO`   | No update was received from the network.                                                                    |
+| `UPD`  | A update was received from the network; update your records with the updated token.                         |
+| `WRN`  | The token was correctly processed, although it did not result in an update. Action is potentially required. |
+| `ERR`  | An error occurred while processing the file or token, requiring action.                                     |

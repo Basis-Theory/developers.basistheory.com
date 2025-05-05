@@ -1,0 +1,94 @@
+---
+title: Real-Time Account Updater
+---
+
+import {Alert, Alerts} from "@site/src/components/shared/Alert";
+import {Enterprise} from "@site/src/components/shared/Enterprise";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import {Permission} from "@site/src/components/shared/Permission";
+
+# Real-Time Account Updater <Enterprise />
+
+<Alert type={Alerts.INFO}>Account Updater is an Enterprise feature. Request access in the <a href="https://portal.basistheory.com/settings?tab=quotas" target="_blank">portal</a>.</Alert>
+
+## Real-Time Update
+
+Attempt to retrieve updates to a single `card` token in real-time. Possibly returns a new `card` token if there were updates available.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/account-updater/real-time"
+/>
+
+#### Permissions
+<Permission content="account-updater:real-time:invoke"/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/account-updater/real-time" \
+    -H 'Content-Type: application/json' \
+    -H 'BT-API-KEY: ...' \
+    -X POST \
+    -d '{
+      "token_id": "b4b89606-794a-4652-b375-f4e1d717a5db"
+    }'
+    ```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute          | Required | Type      | Description                                                                                                   |
+|--------------------|----------|-----------|---------------------------------------------------------------------------------------------------------------|
+| `token_id`         | true     | _string_  | Card Token identifier                                                                                         |
+| `expiration_month` | false    | _integer_ | The 2-digit expiration month of the account number. Not required if the card token already stores this value. |
+| `expiration_year`  | false    | _integer_ | The 4-digit expiration year of the account number. Not required if the card token already stores this value.  |
+
+The `token_id` must correspond to a `card` token in your tenant and the card must contain a `number` valid for the Visa or Mastercard networks.
+If the card number corresponds to a different network, the `WRN_UNSUPPORTED_NETWORK` [result code](/docs/api/account-updater/result-codes) will be returned.
+
+If the `card` token is missing an expiration date, the `expiration_month` and `expiration_year` parameters must be provided.
+If the token already contains an expiration date, these parameters will override the token's expiration date when requesting updates from the network.
+
+### Response
+
+| Property      | Type     | Description                                                                      |
+|---------------|----------|----------------------------------------------------------------------------------|
+| `new_token`   | _object_ | Returns a new [token](/docs/api/tokens/#token-object) if an update was found.    |
+| `result_code` | _string_ | The [result code](/docs/api/account-updater/result-codes) of this update request |
+
+```json
+{
+  "new_token": {
+    "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+    "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+    "type": "card",
+    "card": {
+      "bin": "42424242",
+      "last4": "4242",
+      "expiration_month": 12,
+      "expiration_year": 2027,
+      "brand": "visa",
+      "funding": "credit",
+      "issuer_country": {
+        "alpha2": "PL",
+        "name": "Bermuda",
+        "numeric": "369"
+      },
+      "authentication": "sca_required"
+    },
+    ...
+  },
+  "result_code": "UPD_PAN"
+}
+```
+

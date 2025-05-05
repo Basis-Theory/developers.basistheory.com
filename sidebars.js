@@ -114,6 +114,42 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Account Updater",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/account-updater.svg",
+          dark: "/img/sidebar/dark/account-updater.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/account-updater/overview",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "guides/account-updater/overview",
+          label: "Overview",
+        },
+        {
+          type: "doc",
+          id: "guides/account-updater/setup",
+          label: "Account Updater Setup",
+        },
+        {
+          type: "doc",
+          id: "guides/account-updater/batch-implementation",
+          label: "Batch Implementation",
+        },
+        {
+          type: "doc",
+          id: "guides/account-updater/real-time-implementation",
+          label: "Real-Time Implementation",
+        }
+      ],
+    },
+    {
+      type: "category",
       label: "Apple Pay",
       customProps: {
         icon: {
@@ -468,15 +504,30 @@ const sidebars = {
       label: "Account Updater",
       link: {
         type: "doc",
-        id: "api/account-updater/account-updater",
+        id: "api/account-updater/batch",
       },
       items: [
         {
           type: "doc",
-          id: "api/account-updater/account-updater",
+          id: "api/account-updater/batch",
           customProps: {
             enterprise: true,
           },
+        },
+        {
+          type: "doc",
+          id: "api/account-updater/real-time",
+          customProps: {
+            enterprise: true,
+          },
+        },
+        {
+          type: "doc",
+          id: "api/account-updater/result-codes",
+        },
+        {
+          type: "doc",
+          id: "api/account-updater/testing",
         },
       ],
     },

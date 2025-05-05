@@ -1,0 +1,100 @@
+---
+title: Account Updater Overview
+hide_title: true
+hide_table_of_contents: true
+---
+
+import { Intro } from "@site/src/components/shared/Intro";
+import { Card } from "@site/src/components/shared/Card";
+import LogoGuides from "@site/static/img/guides/threeds/logo-guides.svg";
+
+<Intro
+  title="Account Updater Overview"
+  caption="Keep vaulted cards up to date and reduce failed transactions with seamless, token-based card updates with real-time or batch workflows."
+  img={{
+    light: "/img/guides/account-updater/logo-light.svg",
+    dark: "/img/guides/account-updater/logo-dark.svg",
+  }}
+/>
+
+Basis Theory supports merchants who leverage [card-on-file transactions](https://blog.basistheory.com/card-on-file-transactions) or [subscription](https://blog.basistheory.com/subscription-payment-processing) billing models by allowing payment card data to be collected and securely vaulted for future transactions.
+However, vaulted card details can become outdated when cards are re-issued due to card expiration, account closures, lost or stolen cards, or fraud prevention.
+
+Maintaining accurate and up-to-date card information is crucial for minimizing payment failures, reducing customer churn, and optimizing revenue.
+The Account Updater service enables you to keep vaulted card tokens updated with the latest information from the card networks.
+
+Basis Theory offers two complementary Account Updater solutions:
+- **Batch Account Updater** for routine, bulk updates.
+- **Real-Time Account Updater** for updating cards immediately before processing a payment.
+
+## Start with a Guide
+
+This page provides an overview of the account updater services and best practices. For hands-on implementation, refer to the guides below:
+
+<Card.TwoColumnLayout>
+  <Card
+    column
+    img={<LogoGuides />}
+    href="/docs/guides/account-updater/setup"
+    heading="Account Updater Setup"
+  >Review the requirements and steps to enable 3D Secure in your payment flow.</Card>
+  <Card
+    column
+    img={<LogoGuides />}
+    href="/docs/guides/account-updater/batch"
+    heading="Batch Implementation"
+  >Learn how to integrate and test Customer Initiated Transactions (CIT), ensuring seamless authentication for one-time payments.</Card>
+  <Card
+    column
+    img={<LogoGuides />}
+    href="/docs/guides/account-updater/real-time"
+    heading="Real-Time Implementation"
+  >Implement Merchant Initiated Transactions (MIT) for recurring or subscription-based payments while maintaining compliance. (Coming Soon!)</Card>
+  <Card
+    column
+    img={<LogoGuides />}
+    href="/docs/api/account-updater"
+    heading="API Docs"
+  >This guide will help you move from testing to production, ensuring your integration is secure and ready for live transactions.</Card>
+</Card.TwoColumnLayout>
+
+## Overview
+
+### Batch Account Updater
+
+Batch Account Updater enables bulk periodic updates to vaulted `card` tokens, ensuring that your stored card data remains current and valid.
+This service can be used to keep your entire portfolio of vaulted cards up to date, proactively updating expired cards and reducing the risk of failed transactions.
+
+- Bulk maintenance of vaulted `card` tokens.
+- Requests and responses are transmitted in batch CSV files.
+- Supports Visa, Mastercard, Discover networks for all merchants.
+- Limited support for American Express is available. Please [reach out](https://basistheory.com/contact) for more information.
+
+For more detailed information, refer to the [Batch Implementation guide](/docs/guides/account-updater/batch-implementation) or the [API docs](/docs/api/account-updater/batch).
+
+### Real-Time Account Updater
+
+Real-Time Account Updater enables individual vaulted `card` tokens to be updated on demand in real-time.
+This service can be directly integrated into your payment flows to securely refresh card details before transacting with a PSP, improving auth rates by avoiding declines caused by account expiration or reissuances.
+
+- Each request updates one `card` token at a time.
+- Get a response in real-time via API.
+- Supports Visa and Mastercard networks.
+
+For more detailed information, refer to the [Real-Time Implementation guide](/docs/guides/account-updater/real-time-implementation) or the [API docs](/docs/api/account-updater/real-time).
+
+## When to Use Batch or Real-Time
+
+Batch Account Updater is ideal for:
+- **Recurring billing continuity**: Proactively refresh vaulted cards ahead of subscription renewals to prevent declines and reduce involuntary churn.
+- **Portfolio hygiene**: Maintain the validity of stored card data across your customer base with scheduled updates.
+- **Pre-billing assurance**: Run updates in advance of large billing events (e.g. monthly cycles) to ensure higher first-attempt success rates.
+
+Real-Time Account Updater complements this by enabling
+- **Just-in-time updates**: Refresh card data immediately before processing a payment to increase authorization success.
+- **Decline recovery**: Instantly update and retry a transaction after a card is declined due to expiration or reissuance.
+- **Seamless checkout for returning users**: Ensure that vaulted cards can be charged without friction, even if a card has recently changed.
+
+The choice between Batch and Real-Time Account Updater solutions isn’t mutually exclusive — many organizations benefit by using both in tandem.
+Batch ensures your stored cards are regularly refreshed ahead of billing events, while Real-Time acts as a safety net for last-minute updates and decline recovery.
+Together, they maximize payment success, reduce customer friction, and create a resilient, revenue-optimized payments strategy.

@@ -1,0 +1,38 @@
+---
+title: Real-Time Implementation
+---
+
+# Real-Time Implementation
+
+This guide provides an overview of how to implement Batch Account Updater. It covers the entire process, from initial setup to creating the batch job, generating and uploading the input request file, downloading the batch job results, and processing the results.
+
+## Initial Setup
+
+First, ensure that you have completed the [Account Updater Setup](/docs/guides/account-updater/setup) guide.
+
+### Private Application
+
+Create a **Private Application** for your backend system to create and manage Account Updater batch jobs in your tenant.
+
+**Permissions Required:**
+- `account-updater:real-time:invoke`
+
+[Click here to create the Private Application](https://portal.basistheory.com/applications/create?type=private&permissions=account-updater%3Areal-time%3Ainvoke&name=Real+Time+Account+Updater)
+
+***Important:** Save the generated API Key. You'll use it later in this guide.*
+
+## Request Real-Time Update
+
+Given a vaulted `card` token that you wish to update, first identify whether your system persists the expiration date within the `card` token.
+If not persisted in the token, you will need to provide the `expiration_month` and `expiration_year` parameters in the update request.
+
+Submit a request for a [real-time update](/docs/api/account-updater/real-time#real-time-update) through the API or an SDK using the API key for the application created above.
+
+## Processing the Result File
+
+The API [response](/docs/api/account-updater/real-time#response) will include a [result_code](/docs/api/account-updater/result-codes) that indicates the outcome of the update request.
+Note that some warning results may require additional action on your part.
+
+If an update was received, the response will contain the `new_card` field containing a [token](/docs/api/tokens/#token-object).
+The token references in your system should be updated accordingly, and this new token should be used for future transactions.
+You have the option to retain the old token that was replaced or [delete it](/docs/api/tokens/#delete-token) once it is no longer needed.
