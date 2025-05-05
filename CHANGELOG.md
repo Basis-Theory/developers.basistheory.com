@@ -1,3 +1,10 @@
+# [1.232.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.231.2...v1.232.0) (2025-05-05)
+
+
+### Features
+
+* add 3ds challenge authentication_status docs ([#551](https://github.com/Basis-Theory/developers.basistheory.com/issues/551)) ([f3dfbbc](https://github.com/Basis-Theory/developers.basistheory.com/commit/f3dfbbc641f5e7d229da894b642fe0c793ac06f5))
+
 ## [1.231.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.231.1...v1.231.2) (2025-05-05)
 
 
