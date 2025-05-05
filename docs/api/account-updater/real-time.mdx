@@ -32,15 +32,52 @@ Attempt to retrieve updates to a single `card` token in real-time. Possibly retu
 
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL">
-
     ```shell showLineNumbers
     curl "https://api.basistheory.com/account-updater/real-time" \
-    -H 'Content-Type: application/json' \
-    -H 'BT-API-KEY: ...' \
-    -X POST \
-    -d '{
-      "token_id": "b4b89606-794a-4652-b375-f4e1d717a5db"
-    }'
+      -H 'Content-Type: application/json' \
+      -H 'BT-API-KEY: ...' \
+      -X POST \
+      -d '{
+        "token_id": "b4b89606-794a-4652-b375-f4e1d717a5db"
+      }'
+    ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.accountUpdater.realTime.invoke({
+      tokenId: 'b4b89606-794a-4652-b375-f4e1d717a5db',
+    });
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.AccountUpdater.RealTime.InvokeAsync(new RealTimeAccountUpdaterRequest
+    {
+      TokenId = "b4b89606-794a-4652-b375-f4e1d717a5db"
+    });
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    AccountUpdaterRealTimeResponse response = new AccountUpdaterClient(ClientOptions.builder().build())
+        .realTime()
+        .invoke(AccountUpdaterRealTimeRequest.builder()
+            .tokenId("b4b89606-794a-4652-b375-f4e1d717a5db")
+            .build());
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    client.account_updater.real_time.invoke(
+      token_id = "b4b89606-794a-4652-b375-f4e1d717a5db"
+    )
+    ```
+  </TabItem>
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    client.AccountUpdater.RealTime.Invoke(ctx, &basistheory.RealTimeAccountUpdaterRequest{
+        TokenId: "b4b89606-794a-4652-b375-f4e1d717a5db",
+    })
     ```
   </TabItem>
 </Tabs>
