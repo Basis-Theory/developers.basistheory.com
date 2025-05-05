@@ -1,3 +1,10 @@
+## [1.231.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.231.1...v1.231.2) (2025-05-05)
+
+
+### Bug Fixes
+
+* limits docs ([#554](https://github.com/Basis-Theory/developers.basistheory.com/issues/554)) ([859d89c](https://github.com/Basis-Theory/developers.basistheory.com/commit/859d89c032c482da1be3f24c34debc6fc7f13572))
+
 ## [1.231.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.231.0...v1.231.1) (2025-04-30)
 
 
