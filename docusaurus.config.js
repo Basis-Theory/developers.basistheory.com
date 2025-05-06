@@ -1,4 +1,4 @@
-  // @ts-check
+// @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 import fs from "node:fs";
 import path from "node:path";
