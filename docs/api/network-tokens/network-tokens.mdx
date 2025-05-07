@@ -1,0 +1,293 @@
+import {Permission} from "../../../src/components/shared/Permission";import {HttpMethod, HttpMethods} from "@site/src/components/shared/HttpMethod";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import {Alert, Alerts} from "../../../src/components/shared/Alert";
+import CardDetails from "@site/docs/api/tokens/_card_details.mdx";
+
+# Network Tokens
+
+## Create a Network Token
+
+Creates a Network Token.
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/network-tokens"/>
+
+### Permissions
+
+<Permission content="network_token:create"/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL" default>
+    ```shell showLineNumbers
+    curl -L 'https://api.basistheory.com/network-tokens' \
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'Content-Type: application/json' \
+    -d '{
+          "data": {
+            "number": "4111111111111111",
+            "expiration_month": "03",
+            "expiration_year": "2027",
+            "cvc": "123"
+          },
+          "cardholder_info": {
+            "name": "Jonh Doe",
+            "address": {
+              "line1": "123 Main Street",
+              "line2": "Apt 4B",
+              "line3": "Building 7",
+              "postal_code": "90210",
+              "city": "Beverly Hills",
+              "state_code": "CA",
+              "country_code": "USA"
+            }
+          }
+        }'
+  ```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute                            | Required | Type   | Description                                       |
+|--------------------------------------|----------|--------|---------------------------------------------------|
+| data                                 | Yes      | object | Card details required to generate a network token |
+| data.number                          | Yes      | string | The card number to tokenize                       |
+| data.expiration_month                | Yes      | string | The card's expiration month                       |
+| data.expiration_year                 | Yes      | string | The card's four-digit expiration year             |
+| data.cvc                             | Yes      | string | The card's verification code                      |
+| cardholder_info                      | Yes      | object | Contains the cardholder's personal information    |
+| cardholder_info.name                 | Yes      | string | The full name of the cardholder                   |
+| cardholder_info.address              | Yes      | object | Contains the cardholder's address details         |
+| cardholder_info.address.line1        | Yes      | string | The first line of the street address              |
+| cardholder_info.address.line2        | No       | string | The second line of the street address             |
+| cardholder_info.address.line3        | No       | string | The third line of the street address              |
+| cardholder_info.address.postal_code  | Yes      | string | The postal code of the address                    |
+| cardholder_info.address.city         | Yes      | string | The city of the address                           |
+| cardholder_info.address.state_code   | No       | string | The state or province code of the address         |
+| cardholder_info.address.country_code | Yes      | string | The country code of the address                   |
+
+### Response
+
+Returns a [network token object](#network-token-object) if successful. Returns [an error](/docs/api/errors) if there were validation errors, or the network token failed to create.
+
+```json
+{
+    "id": "1a97a7f6-5d7e-4a8e-ad08-c2472cfedf7f",
+    "tenant_id": "a4ed655d-325e-4490-8c5a-2ff288db7aa5",
+    "data": {
+        "number": "XXXXXXXXXXXX2426",
+        "expiration_month": 12,
+        "expiration_year": 2029
+    },
+    "network_token": {
+        "bin": "433561",
+        "last4": "2426",
+        "expiration_month": 12,
+        "expiration_year": 2029,
+        "brand": "visa",
+        "funding": "debit",
+        "issuer": {
+            "country": "US",
+            "name": "CENTRAL FEDERAL SAVINGS AND LOAN ASSOCIATION"
+        },
+        "issuer_country": {
+            "alpha2": "US",
+            "name": "UNITED STATES OF AMERICA",
+            "numeric": "840"
+        },
+        "segment": "Consumer",
+        "additional": [
+            {
+                "brand": "star",
+                "funding": "debit",
+                "issuer": {
+                    "country": "US"
+                }
+            }
+        ]
+    },
+    "status": "active",
+    "created_by": "f8dee6b4-2f92-4052-81f9-8b0fc8078a6e",
+    "created_at": "2025-05-07T17:04:06.3338559+00:00"
+}
+```
+
+
+## Get a network token
+
+Retrieves a Network Token.
+
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/network-tokens/{id}"/>
+
+### Permissions
+
+<Permission content="network_token:read"/>
+<Permission content="network_token:reveal"/>
+
+<Alert type={Alerts.INFO}>
+  At least one of these permissions is required to access the information.
+  The `network-token:read` permission displays the card number in `data.number` with a masked format (showing only the last 4 digits), while the `network-token:reveal` permission provides access to view the complete unmasked card number.
+</Alert>
+
+<Alert type={Alerts.INFO}>If both permissions are set, the `network-token:reveal` permission will take precedence and display the complete unmasked card number.</Alert>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL" default>
+    ```shell showLineNumbers
+    curl -L 'https://api.basistheory.com/network-tokens/485fcc69-e105-4239-b821-92c612f9b03d' \
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'Content-Type: application/json'
+    ```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+| Attribute | Required | Type   | Description                             |
+|-----------|----------|--------|-----------------------------------------|
+| id        | Yes      | string | The ID of the network token to retrieve |
+
+### Response
+
+Returns a [network token object](#network-token-object) if successful. Returns [an error](/docs/api/errors) if there were validation errors, or the network token failed to retrieve.
+
+```json
+{
+    "id": "1a97a7f6-5d7e-4a8e-ad08-c2472cfedf7f",
+    "tenant_id": "a4ed655d-325e-4490-8c5a-2ff288db7aa5",
+    "data": {
+        "number": "XXXXXXXXXXXX2426",
+        "expiration_month": 12,
+        "expiration_year": 2029
+    },
+    "network_token": {
+        "bin": "433561",
+        "last4": "2426",
+        "expiration_month": 12,
+        "expiration_year": 2029,
+        "brand": "visa",
+        "funding": "debit",
+        "issuer": {
+            "country": "US",
+            "name": "CENTRAL FEDERAL SAVINGS AND LOAN ASSOCIATION"
+        },
+        "issuer_country": {
+            "alpha2": "US",
+            "name": "UNITED STATES OF AMERICA",
+            "numeric": "840"
+        },
+        "segment": "Consumer",
+        "additional": [
+            {
+                "brand": "star",
+                "funding": "debit",
+                "issuer": {
+                    "country": "US"
+                }
+            }
+        ]
+    },
+    "status": "active",
+    "created_by": "f8dee6b4-2f92-4052-81f9-8b0fc8078a6e",
+    "created_at": "2025-05-07T17:04:06.3338559+00:00"
+}
+```
+
+## Generate a Cryptogram
+
+Generate a cryptogram for a network token.
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/network-tokens/{id}/cryptogram"/>
+
+### Permissions
+<Permission content="network_token:cryptogram"/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL" default>
+    ```shell showLineNumbers
+    curl -L -X POST 'https://api.flock-dev.com/network-tokens/2c1577f3-6c1b-4575-9488-13202405fefe/cryptogram' \
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'Content-Type: application/json'
+    ```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+| Attribute | Required | Type   | Description                                      |
+|-----------|----------|--------|--------------------------------------------------|
+| id        | Yes      | string | The ID of the network token to create cryptogram |
+
+### Response
+
+Returns a [cryptogram object](#cryptogram-object) if successful. Returns [an error](/docs/api/errors) if there were validation errors, or the cryptogram failed to create.
+
+```json
+{
+    "cryptogram": "2z8pd6WGPUi/BBesvjJcyw==",
+    "eci": "07"
+}
+```
+## Delete a Network Token
+
+Deletes a Network Token.
+
+<HttpMethod method={HttpMethods.DELETE} endpoint="https://api.basistheory.com/network-tokens/{id}"/>
+
+### Permissions
+
+<Permission content="network_token:delete"/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL" default>
+    ```shell showLineNumbers
+    curl -L -X DELETE 'https://api.basistheory.com/network-tokens/485fcc69-e105-4239-b821-92c612f9b03d' \
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'Content-Type: application/json'
+    ```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute | Required | Type   | Description                             |
+|-----------|----------|--------|-----------------------------------------|
+| id        | Yes      | string | The ID of the network token to delete   |
+
+### Response
+
+Returns a 204 No Content response if successful. Returns [an error](/docs/api/errors) if there were validation errors, or the network token failed to delete.
+
+## Network Token Object
+
+| Attribute               | Type      | Description                                                                                 |
+|-------------------------|-----------|---------------------------------------------------------------------------------------------|
+| `id`                    | _string_  | Unique identifier of the network token                                                      |
+| `tenant_id`             | _uuid_    | The tenant ID associated with the network token                                             |
+| `data.number`           | _string_  | Masked card number                                                                          |
+| `data.expiration_month` | _integer_ | Card's expiration month                                                                     |
+| `data.expiration_year`  | _integer_ | Card's expiration year                                                                      |
+| `network_token`         | _object_  | An object containing the card data. See [Card Details](#card-details) for more information. |
+| `created_by`            | _uuid_    | ID of the entity that created the network token                                             |
+| `created_at`            | _date_    | Timestamp of when the network token was created                                             |
+
+
+<CardDetails />
+
+## Cryptogram Object
+
+| Attribute    | Type     | Description                                    |
+|--------------|----------|------------------------------------------------|
+| `cryptogram` | _string_ | The cryptogram generated for the network token |
+| `eci`        | _string_ | The ECI value associated with the cryptogram   |
+
+
+
+
+

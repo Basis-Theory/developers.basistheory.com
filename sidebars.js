@@ -478,6 +478,20 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Network Tokens",
+      link: {
+        type: "doc",
+        id: "api/network-tokens/network-tokens",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/network-tokens/network-tokens",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "3D Secure",
       link: {
         type: "doc",
