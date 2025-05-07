@@ -50,23 +50,33 @@ Creates a Network Token.
 
 #### Request Parameters
 
-| Attribute                            | Required | Type   | Description                                       |
-|--------------------------------------|----------|--------|---------------------------------------------------|
-| data                                 | Yes      | object | Card details required to generate a network token |
-| data.number                          | Yes      | string | The card number to tokenize                       |
-| data.expiration_month                | Yes      | string | The card's expiration month                       |
-| data.expiration_year                 | Yes      | string | The card's four-digit expiration year             |
-| data.cvc                             | Yes      | string | The card's verification code                      |
-| cardholder_info                      | Yes      | object | Contains the cardholder's personal information    |
-| cardholder_info.name                 | Yes      | string | The full name of the cardholder                   |
-| cardholder_info.address              | Yes      | object | Contains the cardholder's address details         |
-| cardholder_info.address.line1        | Yes      | string | The first line of the street address              |
-| cardholder_info.address.line2        | No       | string | The second line of the street address             |
-| cardholder_info.address.line3        | No       | string | The third line of the street address              |
-| cardholder_info.address.postal_code  | Yes      | string | The postal code of the address                    |
-| cardholder_info.address.city         | Yes      | string | The city of the address                           |
-| cardholder_info.address.state_code   | No       | string | The state or province code of the address         |
-| cardholder_info.address.country_code | Yes      | string | The country code of the address                   |
+| Attribute             | Required | Type   | Description                                           |
+|-----------------------|----------|--------|-------------------------------------------------------|
+| data                  | Yes      | object | Card details required to generate a network token     |
+| data.number           | Yes      | string | The card number to tokenize                           |
+| data.expiration_month | Yes      | string | The card's expiration month                           |
+| data.expiration_year  | Yes      | string | The card's four-digit expiration year                 |
+| data.cvc              | Yes      | string | The card's verification code                          |
+| cardholder_info       | Yes      | object | The [cardholder information](#cardholder-information) |
+
+#### Cardholder Information
+
+| Attribute | Required | Type   | Description                                        |
+|-----------|----------|--------|----------------------------------------------------|
+| name      | Yes      | string | The full name of the cardholder                    |
+| address   | Yes      | object | The cardholder [address details](#address-details) |
+
+#### Address Details
+
+| Attribute    | Required | Type   | Description                               |
+|--------------|----------|--------|-------------------------------------------|
+| line1        | Yes      | string | The first line of the street address      |
+| line2        | No       | string | The second line of the street address     |
+| line3        | No       | string | The third line of the street address      |
+| postal_code  | Yes      | string | The postal code of the address            |
+| city         | Yes      | string | The city of the address                   |
+| state_code   | No       | string | The state or province code of the address |
+| country_code | Yes      | string | The country code of the address           |
 
 ### Response
 
@@ -286,6 +296,7 @@ Returns a 204 No Content response if successful. Returns [an error](/docs/api/er
 |--------------|----------|------------------------------------------------|
 | `cryptogram` | _string_ | The cryptogram generated for the network token |
 | `eci`        | _string_ | The ECI value associated with the cryptogram   |
+
 
 
 
