@@ -616,7 +616,7 @@ const sidebars = {
             type: "doc",
             id: "sdks/web/web-elements/index",
           },
-          items: ["sdks/web/web-elements/initialization", "sdks/web/web-elements/components", "sdks/web/web-elements/lifecycle", "sdks/web/web-elements/events", "sdks/web/web-elements/services", "sdks/web/web-elements/migration", "sdks/web/content-security-policy"],
+          items: ["sdks/web/web-elements/initialization", "sdks/web/web-elements/components", "sdks/web/web-elements/methods", "sdks/web/web-elements/events", "sdks/web/web-elements/lifecycle", "sdks/web/web-elements/services", "sdks/web/web-elements/migration", "sdks/web/content-security-policy"],
         },
         /* TODO add redirects for these         
 

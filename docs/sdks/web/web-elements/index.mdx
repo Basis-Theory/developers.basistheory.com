@@ -27,6 +27,25 @@ Elements are secure, PCI-compliant iframes that enable your application to colle
 - **Customizable UI** - Style Elements to match your application's design
 - **Secure Tokenization** - Create tokens from collected data without exposing raw values
 
+## How Elements work?
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant YourApp as Your Application
+    participant Elements as Elements
+    participant BTAPI as Basis Theory API
+    
+    User->>YourApp: Interacts with page
+    YourApp->>Elements: Creates & configures Element
+    User->>Elements: Enters sensitive data
+    YourApp->>Elements: Invokes Elements Method 
+    Elements->>BTAPI: Sends sensitive data via HTTPS
+    BTAPI-->>Elements: Returns token ID and masked data
+    Elements-->>YourApp: Returns token ID and masked data
+    YourApp-->>User: Confirms operation was successful
+```
+
 ## Available Implementations
 
 Basis Theory offers two implementation options:
@@ -194,16 +213,10 @@ Both Element SDKs use JavaScript camelCase for method and property names, which 
 
 ## Learn More
 
-- [Detailed initialization guide](/docs/sdks/elements/initialization)
-- [Element types and examples](/docs/sdks/elements/types)
-- [Styling and options](/docs/sdks/elements/options)
-- [Event handling](/docs/sdks/elements/events)
-- [Services (tokenization and sessions)](/docs/sdks/elements/services)
-- [Element lifecycle](/docs/sdks/elements/lifecycle)
-- [React-specific components](/docs/sdks/elements/components)
+- [Detailed initialization guide](/docs/sdks/web/web-elements/initialization)
+- [Components reference](/docs/sdks/web/web-elements/components)
+- [Element methods](/docs/sdks/web/web-elements/methods)
+- [Event handling](/docs/sdks/web/web-elements/events)
+- [Services (tokenization, sessions and proxy)](/docs/sdks/web/web-elements/services)
+- [Element lifecycle](/docs/sdks/web/web-elements/lifecycle)
 
-## Additional Resources
-
-- [Implementation guides](/docs/guides/collect/collect-data-from-web)
-- [Code examples](https://github.com/Basis-Theory/basis-theory-js-examples)
-- [API Reference](/docs/api/tokens) 

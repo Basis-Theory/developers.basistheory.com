@@ -510,80 +510,17 @@ import { CardVerificationCodeElement } from "@basis-theory/react-elements";
 - Should be updated when card brand changes in `CardNumberElement`
 - Input is masked for security
 
-
 ## Element Methods
 
-Once you have [created](/docs/sdks/web/web-elements/lifecycle#create-element) and [mounted](/docs/sdks/web/web-elements/lifecycle#mount-element) an element, you can invoke the following methods to interact with it:
+Basis Theory Elements provide a rich set of methods for interacting with and manipulating the components. These methods allow you to clear input values, focus elements, extract data, and more.
 
-```html showLineNumbers
-<!-- HTML container for the element -->
-<div id="my-card"></div>
+See the [Element Methods](/docs/sdks/web/web-elements/methods) documentation for details on how to:
 
-<script>
-  // Create and mount the element
-  var cardElement = bt.createElement("card");
-  await cardElement.mount("#my-card");
-
-  // Interact with the element
-  cardElement.focus();
-</script>
-```
-
-| Method | Return Type | Eligible Elements | Description |
-|--------|-------------|-------------------|-------------|
-| `clear()` | _void_ | All | Clears the element input(s) value |
-| `focus()` | _void_ | All | Focuses on the element input |
-| `blur()` | _void_ | All | Blurs (unfocuses) the element input |
-| `month()` | _number_ | cardExpirationDate | Returns the month value of the input date (1-12) |
-| `year()` | _number_ | cardExpirationDate | Returns the four-digit year value of the input date |
-| `format(formatString)` | _string_ | cardExpirationDate | Returns the expiration date formatted according to the specified pattern |
-| `setValue(tokenData)` | _void_ | All | Sets the element's value from a token reference (for displaying tokenized data) |
-| `setValueRef(element)` | _void_ | text, cardNumber, cardExpirationDate, cardElement, cardVerificationCode | Sets the element's value to match the value of another element |
-
-### Date Formatting
-
-The `format()` method for card expiration dates implements Luxon's [toFormat](https://moment.github.io/luxon/api-docs/index.html#datetimetoformat) method, supporting all of Luxon's [formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens):
-
-```javascript
-// Create the expiration date element
-const cardExpirationDateElement = bt.createElement("cardExpirationDate", {
-  targetId: "expirationDate",
-  value: "04/25", // April 2025
-});
-
-// Format the date in different ways
-const formats = {
-  yearMonth: cardExpirationDateElement.format("yyyy-MM"),     // "2025-04"
-  monthOnly: cardExpirationDateElement.format("MM"),          // "04"
-  monthNumeric: cardExpirationDateElement.format("M"),        // "4"
-  fullDate: cardExpirationDateElement.format("MM/yyyy"),      // "04/2025"
-  shortYear: cardExpirationDateElement.format("yy")           // "25"
-};
-```
-
-### Element Value Synchronization
-
-The `setValueRef()` method allows you to synchronize one element's value with another:
-
-```javascript
-// Create the source element (active input)
-const cardExpirationDateElement = bt.createElement("cardExpirationDate", {
-  targetId: "expirationDate",
-  value: "04/25",
-});
-
-// Create a read-only element to display the same value
-const cardExpirationDateElementReadOnly = bt.createElement("cardExpirationDate", {
-  targetId: "expirationDateReadOnly",
-  readOnly: true // Important: Make the target element read-only
-});
-
-// Link the elements - target will update whenever source changes
-cardExpirationDateElementReadOnly.setValueRef(cardExpirationDateElement);
-```
-
-<Alert>When using <code>setValueRef</code> to keep an element in sync with another, always make the target element <code>readOnly</code>. This prevents conflicting inputs and ensures a consistent user experience.</Alert>
-
+- Clear, focus, and blur elements
+- Extract values from card expiration dates
+- Format dates with various patterns
+- Set values from tokens
+- Synchronize values between elements
 
 ## Style Reference
 

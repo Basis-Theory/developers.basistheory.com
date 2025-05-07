@@ -1,0 +1,191 @@
+---
+title: Methods
+sidebar_label: Methods
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Element Methods
+
+Once you have [created](/docs/sdks/web/web-elements/lifecycle#create-element) and [mounted](/docs/sdks/web/web-elements/lifecycle#mount-element) an element, you can invoke the following methods to interact with it. These methods provide a consistent API for manipulating elements regardless of which component type you're using.
+
+## Core Methods
+
+All Elements support these fundamental interaction methods:
+
+| Method | Return Type | Description |
+|--------|-------------|-------------|
+| `clear()` | _void_ | Clears the element input(s) value |
+| `focus()` | _void_ | Focuses on the element input |
+| `blur()` | _void_ | Blurs (unfocuses) the element input |
+| `setValue(tokenData)` | _void_ | Sets the element's value from a token reference (for displaying tokenized data) |
+
+## Component-Specific Methods
+
+Some element types provide additional methods for specialized functionality:
+
+| Method | Return Type | Eligible Elements | Description |
+|--------|-------------|-------------------|-------------|
+| `month()` | _number_ | cardExpirationDate | Returns the month value of the input date (1-12) |
+| `year()` | _number_ | cardExpirationDate | Returns the four-digit year value of the input date |
+| `format(formatString)` | _string_ | cardExpirationDate | Returns the expiration date formatted according to the specified pattern |
+| `setValueRef(element)` | _void_ | text, cardNumber, cardExpirationDate, cardElement, cardVerificationCode | Sets the element's value to match the value of another element |
+
+## Method Examples
+
+### Basic Element Manipulation
+
+<Tabs className="bt-tabs">
+  <TabItem value="js" label="Web Elements">
+
+```javascript
+// Create and mount the element
+const textElement = bt.createElement('text', {
+  targetId: 'my-input'
+});
+await textElement.mount('#container');
+
+// Clear the value
+textElement.clear();
+
+// Focus the element
+textElement.focus();
+
+// Later, blur (unfocus) the element
+textElement.blur();
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { useRef } from 'react';
+import { TextElement } from '@basis-theory/react-elements';
+
+function MyComponent() {
+  const textRef = useRef();
+  
+  const handleReset = () => {
+    // Access the element methods via ref
+    textRef.current.clear();
+    textRef.current.focus();
+  };
+  
+  return (
+    <>
+      <TextElement id="my-input" ref={textRef} />
+      <button onClick={handleReset}>Reset</button>
+    </>
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Card Expiration Date Methods
+
+The `cardExpirationDate` element provides specialized methods for working with date values:
+
+### Date Part Extraction
+
+```javascript
+// Create and mount the expiration date element
+const expirationElement = bt.createElement('cardExpirationDate', {
+  targetId: 'expiration'
+});
+await expirationElement.mount('#expiration-container');
+
+// User enters "04/26" in the field
+
+// Get individual date parts
+const month = expirationElement.month(); // 4 (as number)
+const year = expirationElement.year(); // 2026 (as number)
+
+// Use these values when tokenizing
+const token = await bt.tokens.create({
+  type: 'card',
+  data: {
+    number: cardNumberElement,
+    expiration_month: expirationElement.month(), // 4
+    expiration_year: expirationElement.year(),   // 2026
+    cvc: cvcElement
+  }
+});
+```
+
+### Date Formatting
+
+The `format()` method implements Luxon's [toFormat](https://moment.github.io/luxon/api-docs/index.html#datetimetoformat) method, supporting all of Luxon's [formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens):
+
+```javascript
+// Create the expiration date element
+const cardExpirationDateElement = bt.createElement("cardExpirationDate", {
+  targetId: "expirationDate",
+  value: "04/25", // April 2025
+});
+
+// Format the date in different ways
+const formats = {
+  yearMonth: cardExpirationDateElement.format("yyyy-MM"),     // "2025-04"
+  monthOnly: cardExpirationDateElement.format("MM"),          // "04"
+  monthNumeric: cardExpirationDateElement.format("M"),        // "4"
+  fullDate: cardExpirationDateElement.format("MM/yyyy"),      // "04/2025"
+  shortYear: cardExpirationDateElement.format("yy")           // "25"
+};
+```
+
+## Element Value Synchronization
+
+The `setValueRef()` method allows you to synchronize one element's value with another, which is useful for creating "read-only" displays of sensitive data:
+
+```javascript
+// Create the source element (active input)
+const cardExpirationDateElement = bt.createElement("cardExpirationDate", {
+  targetId: "expirationDate",
+  value: "04/25",
+});
+
+// Create a read-only element to display the same value
+const cardExpirationDateElementReadOnly = bt.createElement("cardExpirationDate", {
+  targetId: "expirationDateReadOnly",
+  readOnly: true // Important: Make the target element read-only
+});
+
+// Link the elements - target will update whenever source changes
+cardExpirationDateElementReadOnly.setValueRef(cardExpirationDateElement);
+```
+
+<Alert>When using <code>setValueRef</code> to keep an element in sync with another, always make the target element <code>readOnly</code>. This prevents conflicting inputs and ensures a consistent user experience.</Alert>
+
+## Setting Values from Tokens
+
+The `setValue()` method allows you to populate an element with previously tokenized data:
+
+```javascript
+// Create an element to display tokenized data
+const cardElement = bt.createElement('card', {
+  targetId: 'display-card',
+  readOnly: true
+});
+await cardElement.mount('#display-container');
+
+// Retrieve a token and populate the element
+const token = await bt.tokens.retrieve('ca9f3fd7-3906-4087-83aa-9a6129221297', {
+  apiKey: sessionKey 
+});
+
+// Set the token data into the element
+cardElement.setValue(token.data);
+```
+
+<Alert type={Alerts.WARNING}>The <code>setValue</code> method only works with data retrieved through Basis Theory services. You cannot pass arbitrary values into this method due to the security boundary between your application and the Element's secure iframe.</Alert>
+
+## Related Topics
+
+- [Element Lifecycle](/docs/sdks/web/web-elements/lifecycle) - Learn about element creation, mounting, and updating
+- [Component Reference](/docs/sdks/web/web-elements/components) - View all available Element components
+- [Events](/docs/sdks/web/web-elements/events) - Handle element events like change, focus, blur
+- [Services](/docs/sdks/web/web-elements/services) - Tokenize data and integrate with third parties
