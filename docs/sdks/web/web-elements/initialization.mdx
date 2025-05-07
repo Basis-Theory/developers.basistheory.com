@@ -1,0 +1,166 @@
+---
+title: Initialization
+sidebar_label: Initialization
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { WebElementsCdnExample } from "@site/src/components/sdks/WebElementsCdnExample";
+
+# Initialization
+
+This document covers setting up Elements in your project, from installation to initialization, with comprehensive examples for common scenarios.
+
+## Installation Options
+
+<Tabs className="bt-tabs" queryString="implementation">
+ <TabItem value="web" label="Web Elements">
+    <Tabs className="bt-tabs" queryString="package-manager">
+      <TabItem value="npm" label="npm">
+
+```shell
+npm install --save @basis-theory/web-elements
+```
+
+      </TabItem>
+      <TabItem value="yarn" label="yarn">
+
+```shell
+yarn add @basis-theory/web-elements
+```
+
+      </TabItem>
+      <TabItem value="cdn" label="CDN">
+
+<WebElementsCdnExample />
+
+<Alert>The CDN approach is ideal for quickly adding Elements to existing websites or when working with frameworks that don't use a build process.</Alert>
+<Alert>Our web-elements loader includes a robust hash verification mechanism to ensure code integrity. If your version includes a hash, you can verify its authenticity by visiting: `https://js.basistheory.com/sri/?version=<YOUR VERSION>`. For a complete list of published hashes, please refer to our [Github repository](https://github.com/Basis-Theory/web-elements/blob/master/sri.json). </Alert>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  
+  <TabItem value="react" label="React Elements">
+    <Tabs className="bt-tabs" queryString="package-manager">
+      <TabItem value="npm" label="npm">
+
+```shell
+npm install --save @basis-theory/react-elements
+```
+
+      </TabItem>
+      <TabItem value="yarn" label="yarn">
+
+```shell
+yarn add @basis-theory/react-elements
+```
+
+      </TabItem>
+    </Tabs>
+  </TabItem>
+ 
+
+</Tabs>
+
+<Alert>When using React Elements, you don't need to install <code>@basis-theory/web-elements</code> separately as it's included as a dependency.</Alert>
+<Alert type={Alerts.WARNING}>React Elements SDK `>1.12.1` is not compatible with <a href="https://create-react-app.dev/">Create React App</a> <code>v5.0.0</code> or above due to a known <a href="https://github.com/Basis-Theory/basis-theory-js/issues/365#issuecomment-1662883062">issue</a>.</Alert>
+
+## Initialization
+
+<Tabs className="bt-tabs" queryString="implementation">
+  <TabItem value="web" label="Web Elements">
+    <Tabs className="bt-tabs" queryString="package-manager">
+      <TabItem value="module" label="ES Module">
+
+```javascript
+import { basistheory } from "@basis-theory/web-elements";
+
+// Async initialization
+const bt = await basistheory("<PUBLIC_API_KEY>");
+
+// Now bt is ready to use
+const cardElement = bt.createElement('card', {
+  targetId: 'my-card'
+});
+```
+
+      </TabItem>
+      <TabItem value="cdn" label="CDN">
+
+```html
+<script src="https://js.basistheory.com/web-elements/latest/index.js"></script>
+<script>
+  // Initialize after the window loads
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      // Global basistheory function from the CDN
+      const bt = await basistheory("<PUBLIC_API_KEY>");
+      
+      // Create elements after initialization
+      const cardElement = bt.createElement('card', {
+        targetId: 'my-card'
+      });
+      
+      cardElement.mount('#card-container');
+    } catch (error) {
+      console.error("Failed to initialize Elements:", error);
+    }
+  });
+</script>
+```
+
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { useBasisTheory, BasisTheoryProvider } from "@basis-theory/react-elements";
+
+function App() {
+  // The useBasisTheory hook handles initialization asynchronously
+  const { bt, error } = useBasisTheory("<PUBLIC_API_KEY>");
+
+  // Handle loading state
+  if (!bt) {
+    return <div>Loading Elements...</div>;
+  }
+
+  // Handle initialization errors
+  if (error) {
+    return <div>Error initializing Elements: {error.message}</div>;
+  }
+
+  return (
+    // Provide the instance to your component tree
+    <BasisTheoryProvider bt={bt}>
+      <YourApp />
+    </BasisTheoryProvider>
+  );
+}
+```
+
+  </TabItem>
+
+</Tabs>
+
+## Initialization Options
+
+| Property           | Default Value | Description                                                                                                                                                                                                                                                                                                                                       |
+| ------------------ | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `debug`            | `false`       | When enabled, the library will append a `debug` object to every response payload to help you trace and diagnose rendering or integration issues step by step. |
+| `disableTelemetry` | `false`       | Opts out of sending anonymous usage metrics, error reports, and performance data back to Basis Theory.                                                           |
+| `useSameOriginApi` | `true`        | Routes all API calls through the same origin (`https://js.basistheory.com/api`), leveraging HTTP/2 connection reuse and eliminating CORS preflight overhead—resulting in lower latency and fewer round-trips.                  |
+
+
+### Best Practices
+
+1. **Single Instance**: Create one Elements instance and share it throughout your application
+2. **Loading States**: Show appropriate loading indicators while Elements initialize
+3. **Error Handling**: Always wrap initialization in try/catch blocks
+4. **Lazy Loading**: For applications where Elements are only needed in specific sections, consider lazy-loading the Elements library
+5. **API Key Security**: Only use Public API keys in frontend code
+
+<Alert type={Alerts.WARNING}>If you're experiencing [CSP (Content Security Policy)](/docs/sdks/web/content-security-policy) errors, make sure your policy allows connections to <code>*.basistheory.com</code> domains for both script sources and frame-src directives.</Alert> 

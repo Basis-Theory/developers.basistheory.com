@@ -1,0 +1,165 @@
+---
+title: Migration Guide
+sidebar_label: Migrating to Web Elements
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Migration Guide: JavaScript Elements to Web Elements
+
+This guide will help you migrate from the deprecated JavaScript Elements SDK to the new Web Elements SDK. The migration process is straightforward as the core functionality remains similar, with most changes focused on package names and initialization.
+
+## Quick Migration Checklist
+
+1. Update package dependencies
+2. Change import statements
+3. Update initialization code
+4. Review and update element creation (if needed)
+5. Test your implementation
+
+## Package Installation
+
+<Tabs className="bt-tabs" queryString="package-manager">
+  <TabItem value="npm" label="npm">
+
+```diff
+- npm install --save @basis-theory/basis-theory-js
++ npm install --save @basis-theory/web-elements
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```diff
+- yarn add @basis-theory/basis-theory-js
++ yarn add @basis-theory/web-elements
+```
+
+  </TabItem>
+  <TabItem value="cdn" label="CDN">
+
+```diff
+- <script src="https://js.basistheory.com"></script>
++ <script src="https://js.basistheory.com/web-elements/<version>/index.js" integrity="<integrity>" crossorigin="anonymous"></script>
+
+```
+
+<Alert>Our web-elements loader includes a robust hash verification mechanism to ensure code integrity. If your version includes a hash, you can verify its authenticity by visiting: `https://js.basistheory.com/sri/?version=<YOUR VERSION>`. For a complete list of published hashes, please refer to our [Github repository](https://github.com/Basis-Theory/web-elements/blob/master/sri.json). </Alert>
+
+  </TabItem>
+</Tabs>
+
+## Initialization Changes
+
+The most significant change is how you initialize the SDK:
+
+<Tabs className="bt-tabs" queryString="package-manager">
+  <TabItem value="module" label="ES Module">
+
+```diff
+- import { BasisTheory } from "@basis-theory/basis-theory-js";
++ import { basistheory } from "@basis-theory/web-elements";
+
+- const bt = await new BasisTheory().init("<API_KEY>");
++ const bt = await basistheory("<API_KEY>");
+```
+
+  </TabItem>
+  <TabItem value="cdn" label="CDN">
+
+```diff
+<script>
+  window.addEventListener("load", async () => {
+    try {
+-     await BasisTheory.init("<API_KEY>");
+-     // use BasisTheory instance globally
++     const bt = await basistheory("<API_KEY>");
+      // use bt instance
+    } catch (e) {
+      // handle errors
+    }
+  });
+</script>
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert type={Alerts.INFO}>Note that in the Web Elements SDK, <code>basistheory</code> is a function rather than a class, and returns a promise that resolves to the instance.</Alert>
+
+## Element Creation and Lifecycle
+
+The core Element lifecycle methods remain the same:
+
+```javascript
+// Create an element - identical in both SDKs
+const cardElement = bt.createElement('card', options);
+
+// Mount an element - identical in both SDKs
+cardElement.mount('#container');
+
+// Update an element - identical in both SDKs
+cardElement.update(options);
+
+// Unmount an element - identical in both SDKs
+cardElement.unmount();
+```
+
+## Event Handling
+
+Event handling is functionally identical between both SDKs:
+
+```javascript
+// Both SDKs support this pattern
+element.on('change', (event) => {
+  // handle change event
+});
+
+// Removing event listeners
+element.off('change', handlerFunction);
+```
+
+## Tokenization
+
+The tokenization process remains the same:
+
+```javascript
+// Tokenizing with elements is the same in both SDKs
+const { token } = await bt.tokenize({
+  card: cardElement
+});
+
+// Or with individual elements
+const { token } = await bt.tokenize({
+  card: {
+    number: cardNumberElement,
+    expiration_date: cardExpirationElement,
+    cvc: cardCvcElement
+  }
+});
+```
+
+## Troubleshooting
+
+### Common Migration Issues
+
+| Issue | Solution |
+|-------|----------|
+| `Cannot read properties of undefined (reading 'createElement')` | Make sure to capture and use the `bt` instance returned from `basistheory()` |
+| `basistheory is not defined` | Check that you've imported correctly from '@basis-theory/web-elements' or included the correct CDN script |
+| Element not rendering | Make sure the container exists in the DOM when mounting |
+| Tokenization errors | Verify your API key has the necessary permissions (`token:create`) |
+
+### Browser Support
+
+Web Elements supports the same browsers as JavaScript Elements:
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+<Alert type={Alerts.WARNING}>
+If you encounter any issues during migration that aren't covered in this guide, please contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> for assistance.
+</Alert>

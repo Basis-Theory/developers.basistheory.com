@@ -1,92 +1,224 @@
 ---
+title: Element Lifecycle
 sidebar_label: Lifecycle
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
-# Elements Lifecycle
+# Element Lifecycle
 
-After [initialization](/docs/sdks/web/javascript#initialization), **Elements** are available through `BasisTheory` instance.
+Understanding the lifecycle of Elements is important for properly creating, mounting and updating them in your application.
 
-## Create Element
+## Element Lifecycle Overview
 
-This lifecycle method returns a new instance of an element type.
+Elements go through several stages in their lifecycle:
+
+1. **Initialization** - Creating the BasisTheory instance
+2. **Creation** - Creating an Element instance
+3. **Mounting** - Attaching the Element to the DOM
+4. **Updating** - Changing Element properties
+
+## Initialization
+
+The first step is initializing the BasisTheory instance:
+
+<Tabs className="bt-tabs" queryString="platform">
+  <TabItem value="web" label="Web Elements">
 
 ```javascript showLineNumbers
-var cardElement = bt.createElement("card", options);
+import { basistheory } from "@basis-theory/web-elements";
 
-var textElement = bt.createElement("text", {
-  targetId: "myInputId",
-  ...options,
+// Async initialization
+const bt = await basistheory("<PUBLIC_API_KEY>");
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```javascript showLineNumbers
+import { useBasisTheory } from "@basis-theory/react-elements";
+
+// Hook-based initialization
+const { bt, error } = useBasisTheory("<PUBLIC_API_KEY>");
+
+// bt is undefined during initialization
+if (bt) {
+  // Ready to use
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Creation
+
+After initialization, you can create Element instances:
+
+<Tabs className="bt-tabs" queryString="platform">
+  <TabItem value="web" label="Web Elements">
+
+```javascript showLineNumbers
+// Create a text element
+const textElement = bt.createElement('text', {
+  targetId: 'my-text-element',
+  placeholder: 'Full Name'
+});
+
+// Create a card element
+const cardElement = bt.createElement('card', {
+  targetId: 'my-card-element'
 });
 ```
 
-| Parameter | Required | Type     | Description                                                               |
-|-----------|----------|----------|---------------------------------------------------------------------------|
-| `type`    | true     | _string_ | [Type](/docs/sdks/web/web-elements/types) of the element you want to create |
-| `options` | false    | _object_ | [Options](/docs/sdks/web/web-elements/options) for customizing the element  |
+  </TabItem>
+  <TabItem value="react" label="React Elements">
 
-<Alert type={Alerts.WARNING}>Unknown <code>type</code> values will throw an error.</Alert>
-
-## Mount Element
-
-This lifecycle method attaches the element to the DOM, under a specific DOM container.
-
-### Using a Selector
-
-```html showLineNumbers
-<div id="my-card"></div>
-
-<script>
-  cardElement.mount("#my-card");
-</script>
+```jsx showLineNumbers
+// React handles element creation automatically when you render components
+<TextElement id="my-text-element" placeholder="Full Name" />
+<CardElement id="my-card-element" />
 ```
 
-| Parameter  | Required | Type     | Description                                                                    |
-|------------|----------|----------|--------------------------------------------------------------------------------|
-| `selector` | true     | _string_ | CSS selector that matches the DOM container where your element will be mounted |
+  </TabItem>
+</Tabs>
 
-### Using a DOM Element
+## Mounting
 
-```html showLineNumbers
-<div id="my-card"></div>
+Elements must be mounted to the DOM to be interactive:
 
-<script>
-  var container = document.querySelector("#my-card");
-  cardElement.mount(container);
-</script>
-```
-
-| Parameter  | Required | Type      | Description                                                                                                             |
-|------------|----------|-----------|-------------------------------------------------------------------------------------------------------------------------|
-| `element` | true      | _Element_ | DOM [Element](https://developer.mozilla.org/en-US/docs/Web/API/Element) where your Basis Theory element will be mounted |
-
-
-<Alert type={Alerts.WARNING}>Multiple calls to <code>element.mount</code> will result in an error.</Alert>
-
-<Alert type={Alerts.WARNING}>If the Application key used to initialize <code>BasisTheory</code> doesn't exist or doesn't have the required <a href="/docs/api/applications/permissions">permissions</a>, an error will be thrown by this method.</Alert>
-
-## Update Element
-
-This lifecycle method updates the element options the element was initialized with. The values are merged into the previous options.
+<Tabs className="bt-tabs" queryString="platform">
+  <TabItem value="web" label="Web Elements">
 
 ```javascript showLineNumbers
-cardElement.update(options);
+// Mount elements to DOM containers
+textElement.mount('#text-container');
+cardElement.mount('#card-container');
+
+// You can listen for the 'ready' event to know when mounting is complete
+textElement.on('ready', () => {
+  console.log('Text element is mounted and ready');
+});
 ```
 
-| Parameter | Required | Type     | Description                                                              |
-|-----------|----------|----------|--------------------------------------------------------------------------|
-| `options` | false    | _object_ | [Options](/docs/sdks/web/web-elements/options) for customizing the element |
+  </TabItem>
+  <TabItem value="react" label="React Elements">
 
-## Unmount Element
-
-This lifecycle method safely removes the element from the DOM, stopping any further communication with it.
-
-```javascript showLineNumbers
-cardElement.unmount();
-```
-
-<Alert
-  type={Alerts.WARNING}
-  content="Trying to mount an element that has been unmounted will result in an error."
+```jsx showLineNumbers
+// React handles mounting automatically
+// You can use the onReady event to know when mounting is complete
+<TextElement 
+  id="my-text-element" 
+  onReady={() => console.log('Text element is mounted and ready')} 
 />
+```
+
+  </TabItem>
+</Tabs>
+
+## Updating
+
+You can update Element properties after creation:
+
+<Tabs className="bt-tabs" queryString="platform">
+  <TabItem value="web" label="Web Elements">
+
+```javascript showLineNumbers
+// Update properties
+textElement.update({
+  placeholder: 'Enter your full name',
+  disabled: false,
+  style: {
+    base: {
+      color: '#333333'
+    }
+  }
+});
+
+// Get the current state
+const state = textElement.getState();
+console.log('Is element complete?', state.complete);
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx showLineNumbers
+// React handles updates through re-rendering with new props
+const [isDisabled, setIsDisabled] = useState(false);
+
+return (
+  <TextElement 
+    id="my-text-element" 
+    disabled={isDisabled}
+    placeholder="Enter your full name"
+    style={{
+      base: {
+        color: '#333333'
+      }
+    }}
+  />
+);
+```
+
+  </TabItem>
+</Tabs>
+
+
+## Multiple Elements
+
+Managing multiple elements is straightforward:
+
+<Tabs className="bt-tabs" queryString="platform">
+  <TabItem value="web" label="Web Elements">
+
+```javascript showLineNumbers
+// Create multiple elements
+const nameElement = bt.createElement('text', { targetId: 'name' });
+const cardNumberElement = bt.createElement('cardNumber', { targetId: 'cardNumber' });
+const expirationElement = bt.createElement('cardExpirationDate', { targetId: 'expiration' });
+const cvcElement = bt.createElement('cardVerificationCode', { targetId: 'cvc' });
+
+// Mount all elements
+Promise.all([
+  nameElement.mount('#name-container'),
+  cardNumberElement.mount('#card-number-container'),
+  expirationElement.mount('#expiration-container'),
+  cvcElement.mount('#cvc-container')
+]).then(() => {
+  console.log('All elements mounted');
+});
+
+// Retrieve elements by ID later
+const name = bt.getElement('name');
+const cardNumber = bt.getElement('cardNumber');
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx showLineNumbers
+// React manages multiple elements naturally
+// Use refs to access the element instances
+const nameRef = useRef(null);
+const cardNumberRef = useRef(null);
+const expirationRef = useRef(null);
+const cvcRef = useRef(null);
+
+return (
+  <>
+    <TextElement id="name" ref={nameRef} />
+    <CardNumberElement id="cardNumber" ref={cardNumberRef} />
+    <CardExpirationDateElement id="expiration" ref={expirationRef} />
+    <CardVerificationCodeElement id="cvc" ref={cvcRef} />
+  </>
+);
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert type={Alerts.WARNING}>
+For optimal performance, it's generally better to reuse the same BasisTheory instance across your application rather than creating and tearing down instances repeatedly.
+</Alert> 

@@ -1,0 +1,803 @@
+---
+title: Components
+sidebar_label: Components
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import {
+  CardElement,
+  CardExpirationDateElement,
+  CardNumberElement,
+  CardVerificationCodeElement,
+  TextElement,
+} from "@basis-theory/react-elements";
+import { BasisTheoryComponentDisplay } from "@site/src/components/sdks/BasisTheoryComponentDisplay";
+
+# Components
+
+This document describes the available Basis Theory Element components for both JavaScript and React implementations. Each component provides a secure method for collecting sensitive data without exposing it to your application code.
+
+## CardElement
+
+A complete payment card input that combines card number, expiration date, and security code fields in a single component.
+
+<BasisTheoryComponentDisplay title="Card Element">
+  <CardElement id="card-element-demo" />
+</BasisTheoryComponentDisplay>
+
+**Properties:**
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| id / targetId | `string` | Yes | Unique identifier for the element |
+| placeholder | `object` | No | Custom placeholders for each field: `{cardNumber, cardExpirationDate, cardSecurityCode}` |
+| style | `object` | No | Custom styling for the element (see [Style Object](#style-object)) |
+| enableCopy | `boolean` | No | Enable copy functionality (Chromium browsers only) |
+| copyIconStyles | `object` | No | Customize copy icon appearance |
+| cardBrands | `array` | No | Limit accepted card brands |
+
+**Implementation:**
+
+<Tabs className="bt-tabs">
+  <TabItem value="js" label="Web Elements">
+
+```javascript
+// Create the element
+const cardElement = bt.createElement('card', {
+  targetId: 'my-card',
+  placeholder: {
+    cardNumber: 'Card number',
+    cardExpirationDate: 'MM/YY',
+    cardSecurityCode: 'CVC'
+  },
+  style: {
+    base: {
+      color: "#32325d",
+      fontFamily: "Arial, sans-serif",
+      fontSize: "16px"
+    }
+  }
+});
+
+// Mount the element
+cardElement.mount('#card-container');
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { CardElement } from "@basis-theory/react-elements";
+
+    <CardElement 
+      id="my-card"
+      placeholder={{
+        cardNumber: "Card number",
+        cardExpirationDate: "MM/YY",
+        cardSecurityCode: "CVC"
+      }}
+      style={{
+        base: {
+          color: "#32325d",
+          fontFamily: "Arial, sans-serif",
+      fontSize: "16px"
+        }
+      }}
+    />
+```
+
+  </TabItem>
+</Tabs>
+
+**Usage Notes:**
+- Best suited for standard payment forms
+- Not recommended for mobile viewports under 400px wide
+- Automatically validates and formats card information
+
+## TextElement
+
+A general-purpose input for any sensitive string data.
+
+<BasisTheoryComponentDisplay title="Text Element">
+  <TextElement id="text-element-demo" placeholder="Sensitive Data" />
+</BasisTheoryComponentDisplay>
+
+**Properties:**
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| id / targetId | `string` | Yes | Unique identifier for the element |
+| placeholder | `string` | No | Placeholder text |
+| mask | `array` | No | Format input with regex patterns and static characters |
+| transform | `regexp` or `array` | No | Transform input before tokenization |
+| validation | `regexp` or `function` | No | Input validation rule |
+| validateOnChange | `boolean` | No | Validate while typing vs. on blur |
+| maxLength | `number` | No | Maximum input length |
+| password | `boolean` | No | Display as password input (masked characters) |
+| style | `object` | No | Custom styling for the element |
+
+**Implementation:**
+
+<Tabs className="bt-tabs">
+  <TabItem value="js" label="Web Elements">
+
+```javascript
+// Create the element
+const ssnElement = bt.createElement('text', {
+  targetId: 'ssn-input',
+  placeholder: 'XXX-XX-XXXX',
+  mask: [/\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
+  transform: /[-]/g,  // Remove hyphens when tokenizing
+  validation: /^\d{3}-\d{2}-\d{4}$/
+});
+
+// Mount the element
+ssnElement.mount('#ssn-container');
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { TextElement } from "@basis-theory/react-elements";
+
+<TextElement 
+  id="ssn-input"
+  placeholder="XXX-XX-XXXX"
+  mask={[/\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+  transform={/[-]/g}  // Remove hyphens when tokenizing
+  validation={/^\d{3}-\d{2}-\d{4}$/}
+/>
+```
+
+  </TabItem>
+</Tabs>
+
+**Usage Notes:**
+- Suitable for any sensitive data: SSN, bank accounts, addresses, PII, etc.
+- Supports sophisticated input formatting via masks
+- Can transform data before tokenization
+
+
+### Validation
+
+#### Basic Patterns
+
+| Data Type              | Pattern                                                    | Example                    | Description                                                                       |
+| ---------------------- | ---------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------- |
+| Alphanumeric           | `^[a-zA-Z0-9]+$`                                           | abc123                     | Letters and numbers only                                                          |
+| Credit Card Number     | `^\\d{4} \\d{4} \\d{4} \\d{4}$`                            | 1234 5678 9012 3456        | Credit card with spaces between groups                                            |
+| Currency               | `^\\$\\d{1,3}(,\\d{3})*(\\.[0-9]{2})?$`                    | $1,234.56                  | US currency format with optional decimal                                          |
+| Email Address          | `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$`        | test@example.com           | Standard email validation                                                         |
+| Password               | `^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{8,}$`         | Pass123!                   | At least 8 chars with at least one letter, one number, and optional special chars |
+| Social Security Number | `^\\d{3} \\d{2} \\d{4}$`                                   | 123 45 6789                | SSN with spaces between groups                                                    |
+| Tax ID                 | `^\\d{5}\\d{0,12}$`                                        | 12345 to 12345678901234567 | Tax identification numbers (5-17 digits)                                          |
+| US Phone Number        | `^\\(\\d{3}\\) \\d{3}-\\d{4}$`                             | (123) 456-7890             | Standard US phone number format with area code in parentheses                     |
+| US ZIP Code            | `^\\d{5}(-\\d{4})?$`                                       | 12345 or 12345-6789        | US ZIP code (5 digits or ZIP+4 format)                                            |
+
+#### Implementation Examples
+
+#### Adding a US Phone Number Validation
+
+```javascript
+textElement.update({
+  validation: /^\(\d{3}\) \d{3}-\d{4}$/,
+  mask: [
+    '(',
+    /\d/,
+    /\d/,
+    /\d/,
+    ')',
+    ' ',
+    /\d/,
+    /\d/,
+    /\d/,
+    '-',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+  ],
+});
+```
+
+##### Using SSN Validation
+
+```javascript
+textElement.update({
+  validation: /^\d{3} \d{2} \d{4}$/,
+  mask: [/\d/, /\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/],
+});
+```
+
+#### ZIP Code with Mask
+
+```javascript
+textElement.update({
+  validation: /^\d{5}(-\d{4})?$/,
+  // Optional extended ZIP code
+  mask: [/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
+});
+```
+
+#### Email Address Validation
+
+```javascript
+textElement.update({
+  validation: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+});
+```
+
+#### Best Practices
+
+1. **Always use anchors**: Include `^` (start) and `$` (end) anchors to ensure the entire value is validated, not just a portion.
+
+2. **Match mask and validation**: When using both mask and validation, ensure they are compatible with each other.
+
+3. **Consider validation timing**: Choose appropriate validation timing based on user experience:
+
+   - `validateOnBlur`: Validates when the field loses focus
+   - `validateOnChange`: Validates as the user types
+
+4. **Handle optional segments**: For patterns with optional segments (like ZIP+4), ensure your mask and validation logic accommodate both formats.
+
+5. **Test thoroughly**: Test your regex patterns with various inputs, including edge cases.
+
+
+
+#### Notes on Regex Support
+
+When using regex patterns in Elements:
+
+- Escape special characters properly
+- Remember that `\d` matches any digit (0-9)
+- Use quantifiers like `?` (zero or one), `*` (zero or more), `+` (one or more) appropriately
+
+### Input Masking
+
+The `TextElement` component supports sophisticated input formatting through the `mask` attribute. This feature enables you to control exactly what users can type and how their input is automatically formatted as they type.
+
+#### How Masking Works
+
+A mask is defined as an array where each position corresponds to a character position in the input:
+- **RegExp objects** (e.g., `/\d/`) specify which characters are allowed at that position
+- **String values** (e.g., '-') define static characters that are automatically inserted
+- The total **length of the array** determines the maximum input length
+
+The component will:
+1. Automatically insert static characters as the user types
+2. Only allow input that matches the RegExp patterns
+3. Format the value according to the specified mask
+
+#### Example: US Phone Number Mask
+
+Consider the following mask for formatting a US phone number:
+
+```javascript
+mask: ['(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]
+```
+
+This creates the pattern: `(XXX) XXX-XXXX`
+
+| Position | Mask Element | Effect |
+|----------|--------------|--------|
+| 1 | `'('` | Automatically inserts opening parenthesis |
+| 2-4 | `/\d/` | Only allows digits (0-9) |
+| 5 | `')'` | Automatically inserts closing parenthesis |
+| 6 | `' '` | Automatically inserts a space |
+| 7-9 | `/\d/` | Only allows digits (0-9) |
+| 10 | `'-'` | Automatically inserts a hyphen |
+| 11-14 | `/\d/` | Only allows digits (0-9) |
+
+
+#### Complete Implementation Example
+
+```jsx
+// React implementation
+    <TextElement 
+  id="phone-input"
+  placeholder="(XXX) XXX-XXXX"
+  mask={['(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+  onChange={(e) => {
+    console.log('Is complete:', e.complete);
+    
+    // Enable submit button only when input is complete
+    setSubmitEnabled(e.complete);
+  }}
+/>
+```
+
+These improvements maintain the core message while enhancing clarity, adding visual structure, improving the technical explanation, and providing more context for implementation.
+
+<Alert>Once set, we do not currently allow updating the mask. If you need to update the mask programmatically, don't hesitate to <a href="mailto:support@basistheory.com">reach out</a>.</Alert>
+
+<Alert type={Alerts.WARNING}>For security and performance reasons, we attempt to detect that the regex provided is valid and not susceptible to catastrophic backtracking. If it fails this validation, we will reject the <a href="/docs/sdks/web/web-elements/lifecycle#mount-element">mount</a> promise.</Alert>
+
+
+## CardNumberElement
+
+
+A specialized input for card numbers with automatic brand detection.
+
+<BasisTheoryComponentDisplay title="Card Number Element">
+  <CardNumberElement id="card-number-element-demo" />
+</BasisTheoryComponentDisplay>
+
+**Properties:**
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| id / targetId | `string` | Yes | Unique identifier for the element |
+| placeholder | `string` | No | Placeholder text |
+| iconPosition | `string` | No | Card brand icon position: 'left', 'right', 'none' |
+| cardTypes | `array` | No | Supported card brands (see [Card Types](#card-types)) |
+| enableCopy | `boolean` | No | Enable copy functionality |
+| copyIconStyles | `object` | No | Customize copy icon appearance |
+| style | `object` | No | Custom styling for the element |
+
+**Implementation:**
+
+<Tabs className="bt-tabs">
+  <TabItem value="js" label="Web Elements">
+
+```javascript
+// Create the element
+const cardNumberElement = bt.createElement('cardNumber', {
+  targetId: 'card-number',
+  placeholder: 'Card number',
+  iconPosition: 'right'
+});
+
+// Mount the element
+cardNumberElement.mount('#card-number-container');
+
+// Handle card brand detection
+cardNumberElement.on('change', (event) => {
+  if (event.cardBrand) {
+    console.log("Detected card brand:", event.cardBrand);
+  }
+});
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { CardNumberElement } from "@basis-theory/react-elements";
+
+    <CardNumberElement 
+      id="card-number"
+      placeholder="Card number"
+  iconPosition="right"
+      onChange={(e) => {
+        if (e.cardBrand) {
+          console.log("Detected card brand:", e.cardBrand);
+        }
+      }}
+/>
+```
+
+  </TabItem>
+</Tabs>
+
+**Usage Notes:**
+- Automatically detects and validates card brand
+- Formats number according to card brand specifications
+- Can be used to conditionally render other form fields based on card brand
+
+## CardExpirationDateElement
+
+An input specifically for card expiration dates in MM/YY format.
+
+<BasisTheoryComponentDisplay title="Card Expiration Date Element">
+  <CardExpirationDateElement id="card-expiration-date-element-demo" />
+</BasisTheoryComponentDisplay>
+
+**Properties:**
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| id / targetId | `string` | Yes | Unique identifier for the element |
+| placeholder | `string` | No | Placeholder text (default: 'MM/YY') |
+| enableCopy | `boolean` | No | Enable copy functionality |
+| copyIconStyles | `object` | No | Customize copy icon appearance |
+| style | `object` | No | Custom styling for the element |
+
+**Implementation:**
+
+<Tabs className="bt-tabs">
+  <TabItem value="js" label="Web Elements">
+
+```javascript
+// Create the element
+const cardExpirationElement = bt.createElement('cardExpirationDate', {
+  targetId: 'card-expiration',
+  placeholder: 'MM/YY'
+});
+
+// Mount the element
+cardExpirationElement.mount('#expiration-container');
+
+// Check completion status
+cardExpirationElement.on('change', (event) => {
+  if (event.complete) {
+    console.log("Expiration date is complete");
+  }
+});
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { CardExpirationDateElement } from "@basis-theory/react-elements";
+
+    <CardExpirationDateElement 
+      id="card-expiration"
+      placeholder="MM/YY"
+      onChange={(e) => {
+        if (e.complete) {
+          console.log("Expiration date is complete");
+        }
+      }}
+    />
+```
+
+  </TabItem>
+</Tabs>
+
+**Usage Notes:**
+- Automatically formats input into MM/YY format
+- Validates that date is not in the past
+- Returns complete status for form validation
+
+## CardVerificationCodeElement
+
+An input for card security codes (CVV/CVC).
+
+<BasisTheoryComponentDisplay title="Card Verification Code Element">
+  <CardVerificationCodeElement id="card-verification-code-element-demo" />
+</BasisTheoryComponentDisplay>
+
+**Properties:**
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| id / targetId | `string` | Yes | Unique identifier for the element |
+| placeholder | `string` | No | Placeholder text (default: 'CVC') |
+| cardBrand | `string` | No | Card brand to determine validation rules |
+| enableCopy | `boolean` | No | Enable copy functionality |
+| copyIconStyles | `object` | No | Customize copy icon appearance |
+| style | `object` | No | Custom styling for the element |
+
+**Implementation:**
+
+<Tabs className="bt-tabs">
+  <TabItem value="js" label="Web Elements">
+
+```javascript
+// Create the element
+const cardCvcElement = bt.createElement('cardVerificationCode', {
+  targetId: 'card-cvc',
+  placeholder: 'CVC',
+  cardBrand: 'visa'
+});
+
+// Mount the element
+cardCvcElement.mount('#cvc-container');
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { CardVerificationCodeElement } from "@basis-theory/react-elements";
+
+    <CardVerificationCodeElement 
+      id="card-cvc"
+      placeholder="CVC"
+  cardBrand="visa" // Determines validation (3 digits for most cards, 4 for Amex)
+/>
+```
+
+  </TabItem>
+</Tabs>
+
+**Usage Notes:**
+- Adjusts validation based on card brand (3 digits for most cards, 4 for American Express)
+- Should be updated when card brand changes in `CardNumberElement`
+- Input is masked for security
+
+
+## Element Methods
+
+Once you have [created](/docs/sdks/web/web-elements/lifecycle#create-element) and [mounted](/docs/sdks/web/web-elements/lifecycle#mount-element) an element, you can invoke the following methods to interact with it:
+
+```html showLineNumbers
+<!-- HTML container for the element -->
+<div id="my-card"></div>
+
+<script>
+  // Create and mount the element
+  var cardElement = bt.createElement("card");
+  await cardElement.mount("#my-card");
+
+  // Interact with the element
+  cardElement.focus();
+</script>
+```
+
+| Method | Return Type | Eligible Elements | Description |
+|--------|-------------|-------------------|-------------|
+| `clear()` | _void_ | All | Clears the element input(s) value |
+| `focus()` | _void_ | All | Focuses on the element input |
+| `blur()` | _void_ | All | Blurs (unfocuses) the element input |
+| `month()` | _number_ | cardExpirationDate | Returns the month value of the input date (1-12) |
+| `year()` | _number_ | cardExpirationDate | Returns the four-digit year value of the input date |
+| `format(formatString)` | _string_ | cardExpirationDate | Returns the expiration date formatted according to the specified pattern |
+| `setValue(tokenData)` | _void_ | All | Sets the element's value from a token reference (for displaying tokenized data) |
+| `setValueRef(element)` | _void_ | text, cardNumber, cardExpirationDate, cardElement, cardVerificationCode | Sets the element's value to match the value of another element |
+
+### Date Formatting
+
+The `format()` method for card expiration dates implements Luxon's [toFormat](https://moment.github.io/luxon/api-docs/index.html#datetimetoformat) method, supporting all of Luxon's [formatting tokens](https://moment.github.io/luxon/#/formatting?id=table-of-tokens):
+
+```javascript
+// Create the expiration date element
+const cardExpirationDateElement = bt.createElement("cardExpirationDate", {
+  targetId: "expirationDate",
+  value: "04/25", // April 2025
+});
+
+// Format the date in different ways
+const formats = {
+  yearMonth: cardExpirationDateElement.format("yyyy-MM"),     // "2025-04"
+  monthOnly: cardExpirationDateElement.format("MM"),          // "04"
+  monthNumeric: cardExpirationDateElement.format("M"),        // "4"
+  fullDate: cardExpirationDateElement.format("MM/yyyy"),      // "04/2025"
+  shortYear: cardExpirationDateElement.format("yy")           // "25"
+};
+```
+
+### Element Value Synchronization
+
+The `setValueRef()` method allows you to synchronize one element's value with another:
+
+```javascript
+// Create the source element (active input)
+const cardExpirationDateElement = bt.createElement("cardExpirationDate", {
+  targetId: "expirationDate",
+  value: "04/25",
+});
+
+// Create a read-only element to display the same value
+const cardExpirationDateElementReadOnly = bt.createElement("cardExpirationDate", {
+  targetId: "expirationDateReadOnly",
+  readOnly: true // Important: Make the target element read-only
+});
+
+// Link the elements - target will update whenever source changes
+cardExpirationDateElementReadOnly.setValueRef(cardExpirationDateElement);
+```
+
+<Alert>When using <code>setValueRef</code> to keep an element in sync with another, always make the target element <code>readOnly</code>. This prevents conflicting inputs and ensures a consistent user experience.</Alert>
+
+
+## Style Reference
+
+### Style Object
+
+Elements can be styled using a style object with the following structure:
+
+```javascript
+{
+  base: {             // Default style
+    color: '#32325d',
+    fontFamily: '"Helvetica Neue", sans-serif',
+    fontSize: '16px',
+    '::placeholder': {
+      color: '#aab7c4'
+    }
+  },
+  invalid: {          // Style when input is invalid
+    color: '#fa755a'
+  },
+  complete: {         // Style when input is complete
+    color: '#4CAF50'
+  },
+  empty: {            // Style when input is empty
+    color: '#c4c4c4'
+  },
+  focus: {            // Style when input has focus
+    borderColor: '#80bdff',
+    boxShadow: '0 0 0 0.2rem rgba(0, 123, 255, 0.25)'
+  }
+}
+```
+
+### Style Properties
+
+Elements support the following CSS properties:
+
+- `color`
+- `fontFamily`, `fontSize`, `fontWeight`, `fontStyle`
+- `lineHeight`, `letterSpacing`
+- `textAlign`, `textTransform`
+- `backgroundColor`, `borderColor`, `borderWidth`, `borderRadius`
+- `padding`, `margin`
+- `boxShadow`
+- `::placeholder` (for placeholder styling)
+
+
+
+
+| Attribute  | Required | Type     | Description                                                                        |
+| ---------- | -------- | -------- | ---------------------------------------------------------------------------------- |
+| `fonts`    | false    | _array_  | Array of <a href="#fonts">font</a> URLs |
+| `base`     | false    | _object_ | Base variant style - all other variant styles inherit from this one                |
+| `complete` | false    | _object_ | Variant style applied when the element input is complete                           |
+| `empty`    | false    | _object_ | Variant style applied when the element input has no value                          |
+| `invalid`  | false    | _object_ | Variant style applied when the element input has invalid value                     |
+
+You can customize the following pseudo-classes and pseudo-elements inside each variant using a nested object:
+
+- `:hover`
+- `:focus`
+- `:disabled`
+- `::placeholder`
+- `::selection`
+
+Here is a complete list of the supported CSS properties:
+
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/background-color" target="_blank">backgroundColor</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/color" target="_blank">color</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-family" target="_blank">fontFamily</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-size" target="_blank">fontSize</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-smooth" target="_blank">fontSmooth</a> (we replace this with the user-agent alternate names automatically)
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-style" target="_blank">fontStyle</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant" target="_blank">fontVariant</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight" target="_blank">fontWeight</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/line-height" target="_blank">lineHeight</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/letter-spacing" target="_blank">letterSpacing</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/text-align" target="_blank">textAlign</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/padding" target="_blank">padding</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration" target="_blank">textDecoration</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/text-shadow" target="_blank">textShadow</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform" target="_blank">textTransform</a>
+
+<Alert>Variants are resolved per element input. In other words, variant styles will be applied on each element input individually based on their own value.</Alert>
+
+<Alert type={Alerts.WARNING}>For security reasons, we currently support only the 1000+ Google Fonts families. If you need a custom font in your <strong>Basis Theory Elements</strong>, don't hesitate to <a href="mailto:support@basistheory.com">reach out</a>.</Alert>
+
+### Fonts
+
+#### Custom Fonts
+
+The `fonts` attribute accepts an array of custom font urls from <a href="https://fonts.google.com/" target="_blank">Google Fonts</a> and the Basis Theory CDN. The fonts will be loaded asynchronously and will be applied to the elements as soon as they are available.
+
+Fonts located in Basis Theory CDN are:
+
+- Euclid Circular B
+  - `https://cdn.basistheory.com/fonts/EuclidCircularB/font-euclidcircularb.css`
+
+#### Included Font Families
+
+We include the following fonts by default and are able to be used without the need to load them from Google Fonts or the Basis Theory CDN:
+
+- `inter`
+- `conceal` (for `password` elements)
+
+## Validation and Tokenization
+
+When using masked inputs:
+
+- The input is considered **incomplete** if the user hasn't provided all required characters matching the mask pattern
+- Incomplete inputs will trigger a validation error during [tokenization](/docs/sdks/web/web-elements/services#tokenization-services)
+- The `change` event includes a `complete` property that indicates whether the full mask pattern has been satisfied
+- The displayed value (with formatting) will be used during tokenization unless a [transform](/docs/sdks/web/web-elements/options#transform) is applied
+
+
+## Transform
+
+The `transform` attribute allows you to modify user input before [tokenization](/docs/sdks/web/web-elements/services#tokenization-services), enabling you to store data in a standardized format regardless of how it's displayed to users.
+
+### How Transform Works
+
+Transform applies a string replacement operation on the input value:
+
+- You can specify it as a `RegExp` object (e.g., `/[()-]/g`)
+- Alternatively, use an array with a `RegExp` object and an optional replacement string
+- The operation uses JavaScript's [String.replace()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) function internally
+- If no replacement string is provided, an empty string is used (effectively removing matched characters)
+
+### Transform vs. Masking
+
+For a US phone number that displays as `(123) 456-7890` but should be stored as `1234567890`:
+
+```javascript showLineNumbers
+var phoneNumberElement = bt.createElement("text", {
+  targetId: "myPhoneNumberElement",
+  mask: ["(", /\d/, /\d/, /\d/, ")", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/],
+  transform: /[()-]/g,  // Remove parentheses and hyphens
+});
+```
+
+| Input Stage | Value | Description |
+|-------------|-------|-------------|
+| User input | `(123) 456-7890` | What the user sees in the input field |
+| After transform | `1234567890` | What gets stored after tokenization |
+
+The transform operation happens automatically during the [tokenization](/docs/sdks/web/web-elements/services#tokenization-services) process, ensuring that your stored data is in a clean, consistent format while maintaining a user-friendly display format.
+
+<Alert>We strip all <code>RegExp</code> object flags defined in the <code>transform</code> and set <code>gu</code> as the flags.</Alert>
+
+<Alert type={Alerts.WARNING}>For security and performance reasons, we attempt to detect that the regex provided is valid and not susceptible to catastrophic backtracking. If it fails this validation, we will reject the <a href="/docs/sdks/web/web-elements/lifecycle#mount-element">mount</a> or <a href="/docs/sdks/web/web-elements/lifecycle#update-element">update</a> promise.</Alert>
+
+## Card Types
+
+Supported card brands with their identifiers:
+
+| Brand | Identifier | Card Number Digits | CVC Digits |
+|-------|------------|-------------------|------------|
+| American Express | american-express | 15 | 4 |
+| Diners Club | diners-club | 14, 16, 19 | 3 |
+| Discover | discover | 16, 19 | 3 |
+| Elo | elo | 16 | 3 |
+| Hiper | hiper | 16 | 3 |
+| HiperCard | hipercard | 16 | 3 |
+| JCB | jcb | 16-19 | 3 |
+| Maestro | maestro | 12-19 | 3 |
+| Mastercard | mastercard | 16 | 3 |
+| MIR | mir | 16-19 | 3 |
+| UnionPay | unionpay | 14-19 | 3 |
+| Visa | visa | 16, 18, 19 | 3 |
+
+### Customizing Card Types
+
+You can extend default card brands or create custom ones:
+
+```javascript
+import { VISA, DEFAULT_CARD_TYPES } from "@basis-theory/basis-theory-js/types/elements"
+
+// Create a custom VISA type with additional BIN patterns
+const CUSTOM_VISA = {
+  ...VISA,
+  patterns: [...VISA.patterns, 8456]
+};
+
+// Filter out the default VISA type
+const customCardTypes = DEFAULT_CARD_TYPES.filter(
+  ({ type }) => type !== 'visa'
+);
+
+// Add your custom VISA type
+const cardNumberElement = bt.createElement('cardNumber', {
+  targetId: 'card-number',
+  cardTypes: [...customCardTypes, CUSTOM_VISA]
+});
+```
+
+## Complete Options Reference
+
+| Attribute | Type | Updatable | Elements | Description |
+|-----------|------|-----------|----------|-------------|
+| aria-label | `string` | Yes | text, cardNumber, cardExpirationDate, cardVerificationCode | Accessibility label |
+| autoComplete | `string` | Yes | All | Autocomplete attribute |
+| cardBrand | `string` | Yes | cardVerificationCode | Card brand for CVC validation |
+| cardTypes | `array` | No | cardNumber | Supported card brands |
+| copyIconStyles | `object` | No | cardNumber, cardExpirationDate, cardElement, cardVerificationCode | Copy icon styling |
+| disabled | `boolean` | Yes | All | Disables the input |
+| enableCopy | `boolean` | Yes | cardNumber, cardExpirationDate, cardElement, cardVerificationCode | Enables copy feature |
+| iconPosition | `string` | Yes | cardNumber | Brand icon position |
+| inputMode | `string` | Yes | All | Input mode attribute |
+| mask | `array` | No | text | Input formatting mask |
+| maxLength | `number` | No | text | Maximum input length |
+| password | `boolean` | Yes | text | Password input type |
+| placeholder | `string` or `object` | Yes | All | Placeholder text |
+| readOnly | `boolean` | Yes | All | Makes input read-only |
+| style | `object` | Yes | All | Custom styling |
+| transform | `regexp` or `array` | Yes | text | Transform before tokenization |
+| validation | `regexp` or `function` | Yes | text | Validation rule |
+| validateOnChange | `boolean` | Yes | All | Validation timing |

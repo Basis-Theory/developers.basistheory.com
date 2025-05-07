@@ -1,192 +1,747 @@
 ---
+title: Element Events
 sidebar_label: Events
 ---
 
-# Events
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
-You can communicate with Elements by listening to events. When you subscribe to an event, you'll get back a <a href="https://rxjs.dev/guide/subscription" target="_blank">Subscription</a> that you can unsubscribe if/when it fits your workflow.
+# Element Events
 
-```javascript showLineNumbers
-// Make sure to replace 'event-type' with an actual event type.
-var subscription = cardElement.on("event-type", (event) => {
-  // handle event
-});
+Elements emit events that allow your application to respond to user interactions and state changes. This document explains how to effectively work with Element events.
 
-subscription.unsubscribe(); // stops listening to the event type
-```
+## Quick Reference
 
-### On Ready
+| Event | Description | Common Use Cases |
+|-------|-------------|-----------------|
+| `ready` | Triggered when the Element is mounted and ready | Initialize UI state, show the form after Elements are ready |
+| `focus` | Triggered when the Element receives focus | Apply visual focus styles, show help text |
+| `blur` | Triggered when the Element loses focus | Validate input, hide help text |
+| `change` | Triggered when the Element's value changes | Update UI based on input state, enable/disable submit buttons |
+| `keydown` | Triggered when a key is pressed while the Element has focus | Handle special key actions (Enter to submit, etc.) |
 
-This event is triggered when the element has rendered and user is able to start interacting with it.
+## Handling Events
 
-```javascript showLineNumbers
-cardElement.on("ready", () => {
-  // handle ready event
-});
-```
+<Tabs className="bt-tabs" queryString="implementation">
+  <TabItem value="web" label="Web Elements">
 
-### On Change
-
-This event is triggered whenever element's value(s) change. For example, if the user types data that doesn't change the state of a field between valid/invalid or empty/filled, you shouldn't expect the event to trigger.
-
-```javascript showLineNumbers
-cardElement.on("change", (changeEvent) => {
-  if (changeEvent.complete) {
-    // enable submit button
-  } else {
-    // disable submit button
-    // present validation message
+```javascript
+// Create a card element with inline event handlers
+const cardElement = bt.createElement('card', { 
+  targetId: 'my-card',
+  onReady: () => {
+    console.log('Card element is ready');
+    showForm(); // Show the form once Element is ready
+  },
+  onChange: (event) => {
+    // Update UI based on card input state
+    updateSubmitButton(event.complete);
+    
+    if (event.error) {
+      showError(event.error.message);
+    } else {
+      clearError();
+    }
   }
 });
+
+// Mount the element
+cardElement.mount('#card-container');
+
+// You can also add event listeners after creation
+cardElement.on('focus', () => {
+  highlightCardField(); // Apply visual focus styles
+  showCardHelpText(); // Show help text when field is focused
+});
+
+cardElement.on('blur', () => {
+  resetCardFieldHighlight();
+  hideCardHelpText();
+});
+
+// Add keydown handler to submit form on Enter key
+cardElement.on('keydown', (event) => {
+  if (event.key === 'Enter' && cardElement.getState().complete) {
+    document.getElementById('payment-form').requestSubmit();
+  }
+});
+
+// Remove event listeners when no longer needed
+const changeHandler = (event) => {
+  // Handle change events
+};
+
+cardElement.on('change', changeHandler); // Add listener
 ```
 
-| Parameter | Required | Type       | Description                                                                                     |
-| --------- | -------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| `event`   | true     | _"change"_ | The event type to listen to.                                                                    |
-| `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [ChangeEvent](#changeevent). |
+  </TabItem>
+  <TabItem value="react" label="React Elements">
 
-#### ChangeEvent
+```jsx
+import { useState, useEffect } from 'react';
+import {
+  CardElement,
+  useBasisTheory
+} from '@basis-theory/react-elements';
 
-`ChangeEvent`s are emitted depending on the validation strategy set for each element; by default, validations run `onBlur`. You can change this behavior by setting the boolean flag [`validateOnChange`](/docs/sdks/web/web-elements/options) to `true`.
-
-When running validations <code>onChange</code>, elements emit events
-whenever an <code>error</code> occurs or if the input's <code>value</code>
-changes. Default validation (`onBlur`) triggers an event every time one of the values below changes:
-
-```json showLineNumbers
-{
-  "complete": false,
-  "valid": false,
-  "maskSatisfid": false,
-  "empty": false,
-  "errors": [
-    {...},
-    {...}
-  ],
-  "cardBrand": "american-express",
-  "cardLast4": "8431",
-  "cardBin": "341212"
+function PaymentForm() {
+  const { bt } = useBasisTheory('<PUBLIC_API_KEY>');
+  const [isReady, setIsReady] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  
+  // Element event handlers
+  const handleReady = () => {
+    console.log('Card element is ready');
+    setIsReady(true);
+  };
+  
+  const handleChange = (event) => {
+    console.log('Card element changed:', event);
+    
+    setIsComplete(event.complete);
+    
+    if (event.error) {
+      setErrorMessage(event.error.message);
+    } else {
+      setErrorMessage('');
+    }
+    
+    if (event.cardBrand) {
+      console.log('Card brand detected:', event.cardBrand);
+    }
+  };
+  
+  const handleFocus = () => {
+    console.log('Card element focused');
+    setIsFocused(true);
+  };
+  
+  const handleBlur = () => {
+    console.log('Card element blurred');
+    setIsFocused(false);
+  };
+  
+  const handleKeyDown = (event) => {
+    console.log('Key pressed:', event.key);
+    
+    // Submit form on Enter key if input is complete
+    if (event.key === 'Enter' && isComplete) {
+      handleSubmit();
+    }
+  };
+  
+  const handleSubmit = async () => {
+    // Tokenization logic
+  };
+  
+  return (
+    <div className={`payment-form ${!isReady ? 'loading' : ''}`}>
+      {!isReady && <div className="loader">Loading payment form...</div>}
+      
+      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+        <div className={`form-group ${isFocused ? 'focused' : ''}`}>
+          <label htmlFor="card-element">Card details</label>
+          <CardElement 
+            id="card-element"
+            onReady={handleReady}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+          />
+          
+          {errorMessage && (
+            <div className="error-message">{errorMessage}</div>
+          )}
+          
+          {isFocused && (
+            <div className="help-text">
+              Enter your card details as they appear on your card.
+            </div>
+          )}
+        </div>
+        
+        <button 
+          type="submit" 
+          disabled={!isComplete}
+          className={isComplete ? 'btn-primary' : 'btn-disabled'}
+        >
+          Pay Now
+        </button>
+      </form>
+    </div>
+  );
 }
 ```
 
-| Attribute       | Type      | Eligible Elements                                                                                                          | Description                                                                                                                                                                                               |
-| --------------- | --------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`      | _boolean_ | All                                                                                                                        | Whether the input `valid` and `maskSatisfied` properties are `true`.                                                                                                                                      |
-| `valid`         | _boolean_ | All                                                                                                                        | Whether the input is `valid` according to `validation` for each element. Defaults to `true` if no validation is defined for the element.                                                                  |
-| `maskSatisfied` | _boolean_ | All                                                                                                                        | Whether the input satisfies the `mask` length requirements. Defaults to `true` if no mask is provided.                                                                                                    |
-| `empty`         | _boolean_ | All                                                                                                                        | Whether the element is empty. Multi-input Elements will be `empty` only if all inputs are.                                                                                                                |
-| `errors`        | _array_   | All                                                                                                                        | Array of [FieldError](#fielderror).                                                                                                                                                                       |
-| `cardBrand`     | _string_  | [card](/docs/sdks/web/web-elements/types#card-element)<br/>[cardNumber](/docs/sdks/web/web-elements/types#card-number-element) | (Optional) The credit card [brand](/docs/sdks/web/web-elements/options#card-brands) (e.g., `'american-express'`, `'visa'`, `'unknown'`). The value defaults to `'unknown'` until a card brand is recognized. |
-| `cardLast4`     | _string_  | [card](/docs/sdks/web/web-elements/types#card-element)<br/>[cardNumber](/docs/sdks/web/web-elements/types#card-number-element) | (Optional) The credit card's last 4 digits. The value is not provided until a complete card number is entered.                                                                                            |
-| `cardBin`       | _string_  | [card](/docs/sdks/web/web-elements/types#card-element)<br/>[cardNumber](/docs/sdks/web/web-elements/types#card-number-element) | (Optional) The credit card number's first 6 or 8 digits when the input is considered complete. It is 6 digits for card numbers less than 16 digit long and 8 otherwise.                                   |
+  </TabItem>
+</Tabs>
 
-#### Metadata
+## Event Data Reference
 
-Instead of subscribing to events, the same properties can be accessed at any time from the `metadata` property on all elements.
+### Ready Event
 
-Additionally, the card related event [change events](#changeevent) can be accessed from the `cardMetadata` property only on [Card](/docs/sdks/web/web-elements/types#card-element) and [CardNumber](/docs/sdks/web/web-elements/types#card-number-element) elements.
+The `ready` event is fired when the Element has been mounted and is ready for user interaction.
 
-| Attribute      | Eligible Elements                                                                                                          | Attributes                                              |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `metadata`     | All                                                                                                                        | `complete`, `valid`, `maskSatisfied`, `empty`, `errors` |
-| `cardMetadata` | [card](/docs/sdks/web/web-elements/types#card-element)<br/>[cardNumber](/docs/sdks/web/web-elements/types#card-number-element) | `cardLast4`, `cardBin`, `cardBrand`                     |
-
-
-#### FieldError
-
-```json showLineNumbers
+```javascript
+// Event data
 {
-  "targetId": "cardNumber",
-  "type": "invalid"
+  type: 'ready'
 }
 ```
 
-| Attribute  | Type                          | Description                                                                                         |
-| ---------- | ----------------------------- | --------------------------------------------------------------------------------------------------- |
-| `targetId` | _string_                      | Input ID that triggered the error. Values vary per [element type](/docs/sdks/web/web-elements/types). |
-| `type`     | _"invalid"_ or _"incomplete"_ | Type of the error.                                                                                  |
+### Change Event
 
-### On Focus
+The `change` event is fired when the Element's value changes. The data varies by element type.
 
-Triggered when an element input is focused.
+#### Base Change Event Properties (All Elements)
 
-```javascript showLineNumbers
-cardElement.on("focus", (focusEvent) => {});
-```
-
-| Parameter | Required | Type       | Description                                                                                   |
-| --------- | -------- | ---------- | --------------------------------------------------------------------------------------------- |
-| `event`   | true     | _"focus"_  | The event type to listen to.                                                                  |
-| `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [FocusEvent](#focusevent). |
-
-#### FocusEvent
-
-```json showLineNumbers
+```typescript
 {
-  "targetId": "cardNumber"
+  complete: false,        // Whether the input is complete/valid
+  empty: true,            // Whether the input is empty
+  errors: FieldError[],   // Array of FieldErrors
+  maskSatisfied: false,   // Whether the mask, if provided, is satisfied
+  type: "change"
+  valid: false,           // Whether the current input is valid
 }
 ```
 
-| Attribute  | Type     | Description                                                                                         |
-| ---------- | -------- | --------------------------------------------------------------------------------------------------- |
-| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](/docs/sdks/web/web-elements/types). |
+#### Card Element Change Event Properties
 
-### On Blur
-
-Triggered when an element input focus is lost.
-
-```javascript showLineNumbers
-cardElement.on("blur", (blurEvent) => {});
-```
-
-| Parameter | Required | Type       | Description                                                                                 |
-| --------- | -------- | ---------- | ------------------------------------------------------------------------------------------- |
-| `event`   | true     | _"blur"_   | The event type to listen to.                                                                |
-| `handler` | true     | _function_ | Callback function to be called when the event is fired. Takes in a [BlurEvent](#blurevent). |
-
-#### BlurEvent
-
-```json showLineNumbers
+```javascript
 {
-  "targetId": "cardNumber"
+  cardBin: undefined,     // First 6 to 8 digits of a credit or debit card number
+  cardBrand: 'visa',      // Detected card brand (visa, mastercard, amex, etc.)
+  cardLast4: undefined,   // Last 4 digits of a credit or debit card number
+  complete: true,         // Whether all required card fields are complete
+  empty: true,            // Whether the input is empty
+  errors: FieldError[],    // Array of FieldErrors
+  maskSatisfied: false,   // Whether the mask, if provided, is satisfied
+  valid: false            // Whether the current input is valid
 }
 ```
 
-| Attribute  | Type     | Description                                                                                         |
-| ---------- | -------- | --------------------------------------------------------------------------------------------------- |
-| `targetId` | _string_ | Input ID that triggered the event. Values vary per [element type](/docs/sdks/web/web-elements/types). |
+[Card brands](/docs/sdks/web/web-elements/components#card-types)
 
-### On Keydown
 
-Triggered when user hits a special key inside an element input.
 
-```javascript showLineNumbers
-cardElement.on("keydown", (keydownEvent) => {});
-```
+#### Card Number Element Change Event Properties
 
-| Parameter | Required | Type        | Description                                                                                       |
-| --------- | -------- | ----------- | ------------------------------------------------------------------------------------------------- |
-| `event`   | true     | _"keydown"_ | The event type to listen to.                                                                      |
-| `handler` | true     | _function_  | Callback function to be called when the event is fired. Takes in a [KeydownEvent](#keydownevent). |
-
-#### KeydownEvent
-
-```json showLineNumbers
+```javascript
 {
-  "targetId": "cardNumber",
-  "key": "Enter",
-  "ctrlKey": false,
-  "altKey": false,
-  "shiftKey": false,
-  "metaKey": false
+  cardBin: undefined,     // First 6 to 8 digits of a credit or debit card number
+  cardBrand: 'visa',      // Detected card brand (visa, mastercard, amex, etc.)
+  cardLast4: undefined,   // Last 4 digits of a credit or debit card number
+  complete: true,         // Whether all required card fields are complete
+  empty: true,            // Whether the input is empty
+  errors: FieldError[],   // Array of FieldErrors
+  maskSatisfied: false,   // Whether the mask, if provided, is satisfied
+  valid: false,           // Whether the current input is valid
+}
+```
+[Card brands](/docs/sdks/web/web-elements/components#card-types)
+
+#### Expiration Date Element Change Event Properties
+
+```javascript
+{
+  complete: true,         // Whether all required card fields are complete
+  empty: true,            // Whether the input is empty
+  errors: FieldError[],   // Array of FieldErrors
+  maskSatisfied: false,   // Whether the mask, if provided, is satisfied
+  valid: false,           // Whether the current input is valid
 }
 ```
 
-| Attribute  | Type                | Description                                                                                                                                                             |
-| ---------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `targetId` | _string_            | Input targetId that triggered the event. Values vary per [element type](/docs/sdks/web/web-elements/types).                                                               |
-| `key`      | _Escape_ or _Enter_ | Key pressed by the user.                                                                                                                                                |
-| `ctrlKey`  | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/ctrlKey" target="_blank">`control` key</a> was pressed when the event occurred. |
-| `altKey`   | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/altKey" target="_blank">`alt` key</a> was pressed when the event occurred.      |
-| `shiftKey` | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/shiftKey" target="_blank">`shift` key</a> was pressed when the event occurred.  |
-| `metaKey`  | _boolean_           | Flag indicating <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey" target="_blank">`meta` key</a> was pressed when the event occurred.    |
+#### Card Verification Code Element Change Event Properties
+
+```javascript
+{
+  complete: true,         // Whether all required card fields are complete
+  empty: true,            // Whether the input is empty
+  errors: FieldError[],   // Array of FieldErrors
+  maskSatisfied: false,   // Whether the mask, if provided, is satisfied
+  valid: false,           // Whether the current input is valid
+}
+```
+
+### Focus Events
+
+```javascript
+{
+  targetId: string,
+  type: 'focus', 
+}
+```
+
+### Blur Events
+
+```javascript
+{
+  complete: true,         // Whether all required card fields are complete
+  empty: true,            // Whether the input is empty
+  errors: FieldError[],   // Array of FieldErrors
+  maskSatisfied: false,   // Whether the mask, if provided, is satisfied
+  targetId: string,       // Elements targetId
+  type: "blur",
+  valid: false,           // Whether the current input is valid
+}
+```
+
+### Keydown Event
+
+The `keydown` event includes information about the key that was pressed. It is triggered when user hits a special key inside an element input.
+
+
+```javascript
+{
+  altKey: false,
+  ctrlKey: false,
+  key: "Enter",
+  metaKey: false,
+  shiftKey: false,
+  targetId: string,
+}
+```
+
+### Errors
+
+```typescript
+type FieldError = {
+  type: "incomplete" | "invalid",
+  targetId: string
+}
+```
+
+## Best Practices for Event Handling
+
+### Form Validation with Events
+
+<Tabs className="bt-tabs" queryString="implementation">
+  <TabItem value="web" label="Web Elements">
+
+```javascript
+// Track the state of multiple elements
+const formState = {
+  cardNumber: { complete: false },
+  cardExpiry: { complete: false },
+  cardCvc: { complete: false }
+};
+
+// Update form state when each element changes
+cardNumberElement.on('change', (event) => {
+  formState.cardNumber = {
+    complete: event.complete,
+    valid: event.valid,
+    cardBrand: event.cardBrand
+  };
+  updateFormState();
+});
+
+cardExpiryElement.on('change', (event) => {
+  formState.cardExpiry = {
+    complete: event.complete,
+    valid: event.valid
+  };
+  updateFormState();
+});
+
+cardCvcElement.on('change', (event) => {
+  formState.cardCvc = {
+    complete: event.complete,
+    valid: event.valid
+  };
+  updateFormState();
+});
+
+// Update the UI based on overall form state
+function updateFormState() {
+  const submitButton = document.getElementById('submit-button');
+  const isFormComplete = 
+    formState.cardNumber.complete && 
+    formState.cardExpiry.complete && 
+    formState.cardCvc.complete;
+  
+  submitButton.disabled = !isFormComplete;
+  
+  // Show the card brand icon if detected
+  if (formState.cardNumber.cardBrand) {
+    showCardBrandIcon(formState.cardNumber.cardBrand);
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { useState, useRef } from 'react';
+import {
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  useBasisTheory
+} from '@basis-theory/react-elements';
+
+function PaymentForm() {
+  const { bt } = useBasisTheory();
+  const [cardBrand, setCardBrand] = useState(null);
+  const [formState, setFormState] = useState({
+    cardNumber: { complete: false, valid: false },
+    cardExpiry: { complete: false, valid: false },
+    cardCvc: { complete: false, valid: false }
+  });
+  
+  // Element refs for tokenization
+  const cardNumberRef = useRef(null);
+  const cardExpiryRef = useRef(null);
+  const cardCvcRef = useRef(null);
+  
+  // Calculate if the form is ready to submit
+  const isFormComplete = 
+    formState.cardNumber.complete && 
+    formState.cardExpiry.complete && 
+    formState.cardCvc.complete;
+  
+  // Handle card number changes
+  const handleCardNumberChange = (event) => {
+    setFormState(prevState => ({
+      ...prevState,
+      cardNumber: {
+        complete: event.complete,
+        valid: event.valid
+      }
+    }));
+    
+    if (event.cardBrand) {
+      setCardBrand(event.cardBrand);
+    }
+  };
+  
+  // Handle expiry date changes
+  const handleExpiryChange = (event) => {
+    setFormState(prevState => ({
+      ...prevState,
+      cardExpiry: {
+        complete: event.complete,
+        valid: event.valid
+      }
+    }));
+  };
+  
+  // Handle CVC changes
+  const handleCvcChange = (event) => {
+    setFormState(prevState => ({
+      ...prevState,
+      cardCvc: {
+        complete: event.complete,
+        valid: event.valid
+      }
+    }));
+  };
+  
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!isFormComplete) return;
+    
+    try {
+      const { token } = await bt.tokenize({
+        card: {
+          number: cardNumberRef.current,
+          expiration_date: cardExpiryRef.current,
+          cvc: cardCvcRef.current
+        }
+      });
+      
+      console.log('Token created:', token.id);
+    } catch (error) {
+      console.error('Tokenization failed:', error);
+    }
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="form-row">
+        <label>Card Number</label>
+        <CardNumberElement 
+          id="card-number"
+          ref={cardNumberRef}
+          onChange={handleCardNumberChange}
+        />
+        {cardBrand && <div className="card-brand-icon">{cardBrand}</div>}
+      </div>
+      
+      <div className="form-row-split">
+        <div className="form-col">
+          <label>Expiration</label>
+          <CardExpirationDateElement 
+            id="card-expiry"
+            ref={cardExpiryRef}
+            onChange={handleExpiryChange}
+          />
+        </div>
+        <div className="form-col">
+          <label>CVC</label>
+          <CardVerificationCodeElement 
+            id="card-cvc"
+            ref={cardCvcRef}
+            cardBrand={cardBrand}
+            onChange={handleCvcChange}
+          />
+        </div>
+      </div>
+      
+      <button 
+        type="submit" 
+        disabled={!isFormComplete}
+        className={isFormComplete ? 'btn-primary' : 'btn-disabled'}
+      >
+        Submit Payment
+      </button>
+    </form>
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Loading States with the Ready Event
+
+<Tabs className="bt-tabs" queryString="implementation">
+  <TabItem value="web" label="Web Elements">
+
+```javascript
+// Show a loading state initially
+const formContainer = document.getElementById('payment-form-container');
+const loadingIndicator = document.getElementById('loading-indicator');
+
+// Hide the form, show loading indicator
+formContainer.style.display = 'none';
+loadingIndicator.style.display = 'block';
+
+// Track ready state of multiple elements
+let elementsReady = {
+  cardNumber: false,
+  cardExpiry: false,
+  cardCvc: false
+};
+
+// Create and mount elements
+const cardNumberElement = bt.createElement('cardNumber', {
+  targetId: 'card-number',
+  onReady: () => {
+    elementsReady.cardNumber = true;
+    checkAllElementsReady();
+  }
+});
+
+const cardExpiryElement = bt.createElement('cardExpirationDate', {
+  targetId: 'card-expiry',
+  onReady: () => {
+    elementsReady.cardExpiry = true;
+    checkAllElementsReady();
+  }
+});
+
+const cardCvcElement = bt.createElement('cardVerificationCode', {
+  targetId: 'card-cvc',
+  onReady: () => {
+    elementsReady.cardCvc = true;
+    checkAllElementsReady();
+  }
+});
+
+// Mount all elements
+cardNumberElement.mount('#card-number-container');
+cardExpiryElement.mount('#card-expiry-container');
+cardCvcElement.mount('#card-cvc-container');
+
+// Check if all elements are ready
+function checkAllElementsReady() {
+  const allReady = 
+    elementsReady.cardNumber && 
+    elementsReady.cardExpiry && 
+    elementsReady.cardCvc;
+  
+  if (allReady) {
+    // Hide loading indicator, show the form
+    loadingIndicator.style.display = 'none';
+    formContainer.style.display = 'block';
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { useState } from 'react';
+import {
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  useBasisTheory
+} from '@basis-theory/react-elements';
+
+function PaymentForm() {
+  const { bt } = useBasisTheory();
+  
+  // Track ready state of all elements
+  const [elementsReady, setElementsReady] = useState({
+    cardNumber: false,
+    cardExpiry: false,
+    cardCvc: false
+  });
+  
+  // Check if all elements are ready
+  const allElementsReady = 
+    elementsReady.cardNumber && 
+    elementsReady.cardExpiry && 
+    elementsReady.cardCvc;
+  
+  // Handle ready events for each element
+  const handleCardNumberReady = () => {
+    setElementsReady(prev => ({ ...prev, cardNumber: true }));
+  };
+  
+  const handleCardExpiryReady = () => {
+    setElementsReady(prev => ({ ...prev, cardExpiry: true }));
+  };
+  
+  const handleCardCvcReady = () => {
+    setElementsReady(prev => ({ ...prev, cardCvc: true }));
+  };
+  
+  return (
+    <div className="payment-form-container">
+      {!allElementsReady && (
+        <div className="loading-indicator">
+          <div className="spinner"></div>
+          <p>Loading secure payment form...</p>
+        </div>
+      )}
+      
+      <div className={`payment-form ${allElementsReady ? 'visible' : 'hidden'}`}>
+        <h3>Enter Payment Details</h3>
+        
+        <div className="form-row">
+          <label>Card Number</label>
+          <CardNumberElement 
+            id="card-number"
+            onReady={handleCardNumberReady}
+          />
+        </div>
+        
+        <div className="form-row-split">
+          <div className="form-col">
+            <label>Expiration</label>
+            <CardExpirationDateElement 
+              id="card-expiry"
+              onReady={handleCardExpiryReady}
+            />
+          </div>
+          <div className="form-col">
+            <label>CVC</label>
+            <CardVerificationCodeElement 
+              id="card-cvc"
+              onReady={handleCardCvcReady}
+            />
+          </div>
+        </div>
+        
+        <button type="submit">Pay Now</button>
+      </div>
+    </div>
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Troubleshooting
+
+### Common Event Handling Issues
+
+| Issue | Possible Cause | Solution |
+|-------|---------------|----------|
+| Events not firing | Element not properly mounted | Check if element.mount() was called and the container exists |
+| Multiple events firing | Event listener registered multiple times | Register event listeners once, ensure code isn't in a loop |
+| Event handler not receiving data | Incorrect event listener syntax | Ensure the callback function accepts the event parameter |
+| Custom styling not applying on focus | CSS selectors not matching | Use the focused state from events to apply custom focus styles |
+| Element not updating on props change (React) | Missing dependency in useEffect | Add all dependencies to useEffect array |
+
+### Debugging Events
+
+<Tabs className="bt-tabs" queryString="implementation">
+  <TabItem value="web" label="Web Elements">
+
+```javascript
+// Add debug listeners to all events
+const debugElement = (element, elementName) => {
+  // Log all events for debugging
+  element.on('ready', (e) => console.log(`${elementName} ready:`, e));
+  element.on('focus', () => console.log(`${elementName} focused`));
+  element.on('blur', () => console.log(`${elementName} blurred`));
+  element.on('change', (e) => console.log(`${elementName} changed:`, e));
+  element.on('keydown', (e) => console.log(`${elementName} keydown:`, e));
+  
+  return element;
+};
+
+// Apply debug wrapper to elements
+const cardElement = debugElement(
+  bt.createElement('card', { targetId: 'card' }),
+  'cardElement'
+);
+
+cardElement.mount('#card-container');
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+function DebugEventWrapper({ children, elementName }) {
+  // Handlers that log all events
+  const handleReady = (e) => console.log(`${elementName} ready:`, e);
+  const handleFocus = () => console.log(`${elementName} focused`);
+  const handleBlur = () => console.log(`${elementName} blurred`);
+  const handleChange = (e) => console.log(`${elementName} changed:`, e);
+  const handleKeyDown = (e) => console.log(`${elementName} keydown:`, e);
+  
+  // Clone the child element and add the debug handlers
+  return React.cloneElement(children, {
+    onReady: handleReady,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+    onChange: handleChange,
+    onKeyDown: handleKeyDown
+  });
+}
+
+// Use the debug wrapper in your component
+function PaymentForm() {
+  return (
+    <form>
+      <DebugEventWrapper elementName="CardElement">
+        <CardElement id="card" />
+      </DebugEventWrapper>
+    </form>
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert type={Alerts.INFO}>
+When debugging events, remember that Element values are sensitive and never exposed directly in events. This is a security feature to ensure sensitive data like card numbers never touch your application code.
+</Alert> 

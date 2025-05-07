@@ -1,8 +1,7 @@
 ---
-title: Web Elements
-description: Web Elements make it easy to build secure web applications that collect or reveal sensitive data. Learn more.
-sidebar_label: Web Elements
-toc_max_heading_level: 2
+title: Elements
+description: Basis Theory Elements make it easy to build secure applications that collect or reveal sensitive data without touching it directly.
+sidebar_label: Overview
 ---
 
 import Tabs from "@theme/Tabs";
@@ -10,112 +9,201 @@ import TabItem from "@theme/TabItem";
 
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { GithubCard } from "@site/src/components/sdks/GithubCard";
-import { WebElementsCdnExample } from "@site/src/components/sdks/WebElementsCdnExample"
+import { WebElementsCdnExample } from "@site/src/components/sdks/WebElementsCdnExample";
 import { SDK } from "@site/src/components/types";
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
 
+# Elements
 
-# Web Elements
+## What are Elements?
 
-<GithubCard heading="Web Elements" icon={SDK.JAVASCRIPT} organization="basis-theory" repository="web-elements" fetchSri={true} />
+Elements are secure, PCI-compliant iframes that enable your application to collect, display, and interact with sensitive data without it ever touching your systems. This approach significantly reduces your compliance scope and security risk.
 
-The Basis Theory Web elements makes it easy to build secure web applications that
-[collect](/docs/concepts/elements#collect-sensitive-data) or [reveal](/docs/concepts/elements#reveal-sensitive-data)
-sensitive data using [Elements](/docs/concepts/elements).
+### Key Benefits
 
-Get started with our [guide](/docs/guides/collect/collect-data-from-web), explore our
-[examples](https://github.com/Basis-Theory/basis-theory-js-examples),
-or continue reading the [reference docs](/docs/sdks/web/web-elements/types).
+- **Reduced PCI Scope** - Collect card data without the burden of full PCI compliance
+- **Enhanced Security** - Sensitive data never touches your systems or frontend code
+- **Developer Friendly** - Simple API with intuitive React components or vanilla JS implementation
+- **Customizable UI** - Style Elements to match your application's design
+- **Secure Tokenization** - Create tokens from collected data without exposing raw values
 
-## Before You Begin
+## Available Implementations
 
-This SDK requires the use of an API Key associated with a **Public Application**, which only allows `token:create` or `token:update`
-permissions to mitigate the risk that these API keys may be publicly exposed within your frontend applications.
+Basis Theory offers two implementation options:
 
-To create one, login into our [Portal](https://portal.basistheory.com) and create a new "Public" Application with the permissions you require.
+- **Web Elements** - Vanilla JavaScript SDK for any web application
+- **React Elements** - React-specific SDK with hooks, components, and React-friendly patterns
 
-## Considerations
+## Quick Start
 
-Basis Theory Web Elements SDK uses conventional camel case for most methods and converts these properties to snake case when sending requests to the API. One notable exception to this is the [Tokenize](/docs/api/tokens/tokenize) method which uses snake case for the request body.
+### 1. Install the SDK
 
+<Tabs className="bt-tabs" queryString="implementation">
+  <TabItem value="web" label="Web Elements">
+    <Tabs className="bt-tabs" queryString="package-manager">
+      <TabItem value="npm" label="npm">
 
-## Installation
-
-To install **web elements** you can choose either our ES module or CDN hosted bundle through a `script` tag.
-
-<Tabs className="bt-tabs" queryString="platform">
-  <TabItem value="npm" label="npm">
-
-```shell showLineNumbers
+```shell
 npm install --save @basis-theory/web-elements
 ```
 
-  </TabItem>
-  <TabItem value="yarn" label="yarn">
+      </TabItem>
+      <TabItem value="yarn" label="yarn">
 
-```shell showLineNumbers
+```shell
 yarn add @basis-theory/web-elements
 ```
 
-  </TabItem>
-  <TabItem value="cdn" label="CDN">
+      </TabItem>
+      <TabItem value="cdn" label="CDN">
 
-    <WebElementsCdnExample />
+```html
+<script src="https://js.basistheory.com/web-elements/latest/index.js"></script>
+```
+
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  
+  <TabItem value="react" label="React Elements">
+    <Tabs className="bt-tabs" queryString="package-manager">
+      <TabItem value="npm" label="npm">
+
+```shell
+npm install --save @basis-theory/react-elements
+```
+
+      </TabItem>
+      <TabItem value="yarn" label="yarn">
+
+```shell
+yarn add @basis-theory/react-elements
+```
+
+      </TabItem>
+    </Tabs>
   </TabItem>
 </Tabs>
 
+### 2. Initialize the SDK
 
-<Alert>Our web-elements loader includes a robust hash verification mechanism to ensure code integrity. If your version includes a hash, you can verify its authenticity by visiting: `https://js.basistheory.com/sri/?version=<YOUR VERSION>`. For a complete list of published hashes, please refer to our [Github repository](https://github.com/Basis-Theory/web-elements/blob/master/sri.json). </Alert>
+<Tabs className="bt-tabs" queryString="implementation">
+  <TabItem value="web" label="Web Elements">
 
-## Initialization
-
-<Tabs className="bt-tabs" queryString="platform">
-  <TabItem value="npm" label="npm">
-
-```javascript showLineNumbers
+```javascript
 import { basistheory } from "@basis-theory/web-elements";
 
-const bt = await basistheory("<PUBLIC_API_KEY>")
-// use Elements
+// Initialize with your API key
+const bt = await basistheory("<YOUR_API_KEY>");
 ```
 
   </TabItem>
+  <TabItem value="react" label="React Elements">
 
-    <TabItem value="yarn" label="yarn">
+```jsx
+import { useBasisTheory, BasisTheoryProvider } from "@basis-theory/react-elements";
 
-```javascript showLineNumbers
-import { basistheory } from "@basis-theory/web-elements";
-
-const bt = await basistheory("<PUBLIC_API_KEY>")
-// use Elements
+function App() {
+  // Initialize with your API key using the hook
+  const { bt } = useBasisTheory("<YOUR_API_KEY>");
+  
+  return (
+    <BasisTheoryProvider bt={bt}>
+      {/* Your app content */}
+    </BasisTheoryProvider>
+  );
+}
 ```
 
   </TabItem>
-  <TabItem value="cdn" label="CDN">
+</Tabs>
 
-```html showLineNumbers
-<script>
-  // you can initialize it wherever it suits your workflow best
-  // here we are waiting for the window to load, to make sure BasisTheory instance
-  // has been injected in the window variable
-  let bt;
+### 3. Create and Use Elements
 
-  window.addEventListener("load", async () => {
-    try {
-      // global/window variable basistheory is an instance, but requires initialization
-      bt = await basistheory("<PUBLIC_API_KEY>");
-      // use Elements
-    } catch (e) {
-      // handle errors that could happen while loading elements script
-    }
+<Tabs className="bt-tabs" queryString="implementation">
+  <TabItem value="web" label="Web Elements">
+
+```javascript
+// Create a card element
+const cardElement = bt.createElement('card', {
+  targetId: 'my-card'
+});
+
+// Mount it to a container in your DOM
+cardElement.mount('#card-container');
+
+// Tokenize the data when ready
+document.getElementById('payment-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const { token } = await bt.tokenize({
+    card: cardElement
   });
-</script>
+  
+  console.log('Token created:', token.id);
+});
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { useRef } from 'react';
+import { CardElement, useBasisTheory } from "@basis-theory/react-elements";
+
+function PaymentForm() {
+  const { bt } = useBasisTheory();
+  const cardRef = useRef(null);
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const { token } = await bt.tokenize({
+      card: cardRef.current
+    });
+    
+    console.log('Token created:', token.id);
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <CardElement id="my-card" ref={cardRef} />
+      <button type="submit">Pay Now</button>
+    </form>
+  );
+}
 ```
 
   </TabItem>
 </Tabs>
 
-| Parameter | Required | Type                     | Description                                                                        |
-| --------- | -------- | ------------------------ | ---------------------------------------------------------------------------------- |
-| `apiKey`  | true     | _string_                 | The API Key used to identify an [Application](/docs/api/applications).             |
+## Before You Begin
 
-<Alert type={Alerts.WARNING}>Elements are meant to be used in browser environments only. If you installed <code>web-elements</code> as a module, make sure the instance that loads elements runs on the browser-side code.</Alert>
+Both Element SDKs require an API Key associated with a **Public Application** with appropriate permissions like `token:create`. This limits the risk of exposing API keys in your frontend code.
+
+To create one:
+1. Log in to the [Basis Theory Portal](https://portal.basistheory.com)
+2. Create a new "Public" Application 
+3. Select only the permissions you need (typically `token:create` and possibly `token:update`)
+
+<Alert type={Alerts.WARNING}>Never use Management or Private API keys in frontend code.</Alert>
+
+## API Naming Conventions
+
+Both Element SDKs use JavaScript camelCase for method and property names, which are automatically converted to _snake_case_ when communicating with the Basis Theory API. One notable exception is the [Tokenize](/docs/api/tokens/tokenize) method which directly accepts _snake_case_ for request bodies.
+
+## Learn More
+
+- [Detailed initialization guide](/docs/sdks/elements/initialization)
+- [Element types and examples](/docs/sdks/elements/types)
+- [Styling and options](/docs/sdks/elements/options)
+- [Event handling](/docs/sdks/elements/events)
+- [Services (tokenization and sessions)](/docs/sdks/elements/services)
+- [Element lifecycle](/docs/sdks/elements/lifecycle)
+- [React-specific components](/docs/sdks/elements/components)
+
+## Additional Resources
+
+- [Implementation guides](/docs/guides/collect/collect-data-from-web)
+- [Code examples](https://github.com/Basis-Theory/basis-theory-js-examples)
+- [API Reference](/docs/api/tokens) 
