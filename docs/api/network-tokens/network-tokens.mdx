@@ -6,6 +6,11 @@ import CardDetails from "@site/docs/api/tokens/_card_details.mdx";
 
 # Network Tokens
 
+Network Tokens enables merchants to convert raw card details into secure, network-issued tokens.
+The network token endpoints support one-time purchases, card-on-file transactions, subscriptions and
+other recurring or cross-border payments by issuing tokens that automatically update on card reissues and boost authorization rates—all without ever storing PANs.
+
+
 ## Create a Network Token
 
 Creates a Network Token.
@@ -45,6 +50,111 @@ Creates a Network Token.
           }
         }'
   ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.networkTokens.create({
+        data: {
+          number: "4111111111111111",
+          expiration_month: "03",
+          expiration_year: "2027",
+          cvc: "123"
+        },
+        cardholder_info: {
+          name: "Jonh Doe",
+          address: {
+            line1: "123 Main Street",
+            line2: "Apt 4B",
+            line3: "Building 7",
+            postal_code: "90210",
+            city: "Beverly Hills",
+            state_code: "CA",
+            country_code: "USA"
+          }
+        }
+      }
+    );
+    ```
+  </TabItem>
+
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.NetworkTokens.CreateAsync(
+        new CreateNetworkTokenRequest
+        {
+            Data = new Card
+            {
+                Number = "4111111111111111",
+                ExpirationMonth = 03,
+                ExpirationYear = 2027,
+                Cvc = "123"
+            },
+            CardholderInfo = new CardholderInfo
+            {
+                Name = "John Doe",
+                Address = new Address
+                {
+                    Line1 = "123 Main Street",
+                    Line2 = "Apt 4B",
+                    Line3 = "Building 7",
+                    PostalCode = "90210",
+                    City = "Beverly Hills",
+                    StateCode = "CA",
+                    CountryCode = "USA"
+                }
+            }
+        });
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    NetworkToken networkToken = new NetworkTokensClient(ClientOptions.builder().build())
+      .create(CreateNetworkTokenRequest.builder()
+        .cardholderInfo(CardholderInfo.builder()
+        .name("Jonh Doe")
+        .address(Address.builder()
+          .line1("123 Main Street")
+          .line2("Apt 4B")
+          .line3("Building 7")
+          .postalCode("90210")
+          .city("Beverly Hills")
+          .stateCode("CA")
+          .countryCode("USA")
+          .build())
+        .build())
+      .data(Card.builder()
+        .number("4111111111111111")
+        .expirationMonth(3)
+        .expirationYear(2027)
+        .cvc("123")
+        .build())
+      .build());
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    await client.network_tokens.create(
+        data=Card(
+            number="4111111111111111",
+            expiration_month=3,
+            expiration_year=2027,
+            cvc="123"
+        ),
+
+        cardholder_info=CardholderInfo(
+            name="John Doe",
+            address=Address(
+                line1="123 Main Street",
+                line2="Apt 4B",
+                line3="Building 7",
+                postal_code="90210",
+                city="Beverly Hills",
+                state_code="CA",
+                country_code="US"
+            )
+        )
+    )
+    ```
   </TabItem>
 </Tabs>
 
@@ -153,6 +263,27 @@ Retrieves a Network Token.
     -H 'Content-Type: application/json'
     ```
   </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.networkTokens.get("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.NetworkTokens.GetAsync("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    NetworkToken networkToken = new NetworkTokensClient(ClientOptions.builder().build())
+      .get("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    await client.network_tokens.get("485fcc69-e105-4239-b821-92c612f9b03d")
+    ```
+  </TabItem>
 </Tabs>
 
 #### Request Parameters
@@ -225,6 +356,27 @@ Generate a cryptogram for a network token.
     -H 'Content-Type: application/json'
     ```
   </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.networkTokens.cryptogram("2c1577f3-6c1b-4575-9488-13202405fefe");
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.NetworkTokens.CryptogramAsync("2c1577f3-6c1b-4575-9488-13202405fefe");
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    NetworkTokenCryptogram cryptogram = new NetworkTokensClient(ClientOptions.builder().build())
+      .cryptogram("2c1577f3-6c1b-4575-9488-13202405fefe");
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    await client.network_tokens.cryptogram("2c1577f3-6c1b-4575-9488-13202405fefe")
+    ```
+  </TabItem>
 </Tabs>
 
 #### Request Parameters
@@ -260,6 +412,27 @@ Deletes a Network Token.
     curl -L -X DELETE 'https://api.basistheory.com/network-tokens/485fcc69-e105-4239-b821-92c612f9b03d' \
     -H 'BT-API-KEY: <API_KEY>' \
     -H 'Content-Type: application/json'
+    ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.networkTokens.delete("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.NetworkTokens.DeleteAsync("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    new NetworkTokensClient(ClientOptions.builder().build())
+      .delete("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    await client.network_tokens.delete("485fcc69-e105-4239-b821-92c612f9b03d")
     ```
   </TabItem>
 </Tabs>
