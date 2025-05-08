@@ -142,13 +142,8 @@ const sidebars = {
       items: [
         {
           type: "doc",
-          id: "guides/account-updater/overview",
-          label: "Overview",
-        },
-        {
-          type: "doc",
           id: "guides/account-updater/setup",
-          label: "Account Updater Setup",
+          label: "Setup",
         },
         {
           type: "doc",
