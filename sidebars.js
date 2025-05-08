@@ -64,7 +64,6 @@ const sidebars = {
           type: "html",
           value: "<hr />",
         },
-        "card-payments/keep-cards-up-to-date",
         "card-payments/payments-routing",
         "card-payments/using-network-tokens",
         {
