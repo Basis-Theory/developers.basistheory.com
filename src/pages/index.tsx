@@ -123,7 +123,7 @@ export default function Home(): JSX.Element {
               <div>
                 Web SDKs
                 <div className={styles["sdk-column"]}>
-                  <Card href="/docs/sdks/web/react/" img={<ReactSvg />} className={styles.sdk}>
+                  <Card href="/docs/sdks/web/web-elements/?implementation=react" img={<ReactSvg />} className={styles.sdk}>
                     React
                   </Card>
                   <Card href="/docs/sdks/web/web-elements/" img={<JavaScript />} className={styles.sdk}>
