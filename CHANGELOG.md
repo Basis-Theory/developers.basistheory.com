@@ -1,3 +1,10 @@
+# [1.235.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.234.0...v1.235.0) (2025-05-09)
+
+
+### Features
+
+* add faq for stripe applepay currency ([#562](https://github.com/Basis-Theory/developers.basistheory.com/issues/562)) ([aebd355](https://github.com/Basis-Theory/developers.basistheory.com/commit/aebd3556cf82dc9b49e52d6d931b5d52145009ad))
+
 # [1.234.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.233.0...v1.234.0) (2025-05-09)
 
 
