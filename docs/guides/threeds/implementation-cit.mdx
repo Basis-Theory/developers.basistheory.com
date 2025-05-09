@@ -282,6 +282,21 @@ The code examples below demonstrate how to create sessions using our available S
 *3DS sessions that are not authenticated will expire according to the `token` or `token-intent`'s designated expiration date.
 If no expiration date is set, the session expires after **one hour**. Once a session is successfully authenticated, it remains active indefinitely.*
 
+### Co-Badged Cards in 3DS Sessions
+
+Co-badged cards are payment cards associated with multiple card networks or brands. For example, a single card might be accepted as both Visa and Cartes Bancaires.
+When creating a 3DS session with a co-badged card, the response will include the `additionalCardBrands` property containing an array of all brands the card identifies with.
+
+  ```json showLineNumbers
+  {
+    "id": "e4de227e-b71a-450e-87a1-ed9fbbc57aaf",
+    "cardBrand": "Visa",
+    "additionalCardBrands": ["Visa", "Cartes Bancaires"]
+  }
+  ```
+
+After receiving this information, you can [choose](#optional-card-brand-selection) which brand's authentication rails to use during the authentication step.
+
 ## Authenticating a CIT 3DS Session
 
 Authenticating a 3DS session will initialize the process with the Issuing Banks to coordinate information and determine the level of authentication required for a specific session. This authentication process will either determine if a session will require a Challenge (2-factor authentication) or will be authenticated Frictionless (not requiring a challenge).
@@ -299,6 +314,7 @@ This is the recommended minimum payload required for successful 3DS authenticati
   "authentication_category": "payment",
   "authentication_type": "payment-transaction",
   "challenge_preference": "no-challenge", // or challenge-requested if challenge is preferred (not guaranteed).
+  "card_brand": "Visa", // optional for co-badged cards
   "merchant_info": {
     "mid": "9876543210001",
     "acquirer_bin": "000000999",
@@ -341,6 +357,7 @@ And below is how you can use this object to initiate a 3DS session with the Basi
         "authentication_category": "payment",
         "authentication_type": "payment-transaction",
         "challenge_preference": "no-challenge",
+        "card_brand": "Visa",
         "merchant_info": {
           "mid": "9876543210001",
           "acquirer_bin": "000000999",
@@ -405,6 +422,7 @@ And below is how you can use this object to initiate a 3DS session with the Basi
           authenticationCategory: "payment",
           authenticationType: "payment-transaction",
           challengePreference: "no-challenge",
+          // cardBrand: "Visa", // optional - used if co-badged card
           merchantInfo: {
             mid: "9876543210001",
             acquirerBin: "000000999",
@@ -517,6 +535,7 @@ And below is how you can use this object to initiate a 3DS session with the Basi
               AuthenticationCategory = "payment",
               AuthenticationType = "payment-transaction",
               ChallengePreference = "no-challenge",
+              // CardBrand = "Visa", // optional - used if co-badged card
               MerchantInfo = new ThreeDsMerchantInfo
               {
                 Mid = "9876543210001",
@@ -599,6 +618,7 @@ And below is how you can use this object to initiate a 3DS session with the Basi
           authentication_category="payment",
           authentication_type="payment-transaction",
           challenge_preference="no-challenge",
+          # card_brand="Visa", # optional - used if co-badged card
           merchant_info=ThreeDsMerchantInfo(
               mid="9876543210001",
               acquirer_bin="000000999",
@@ -690,9 +710,10 @@ And below is how you can use this object to initiate a 3DS session with the Basi
       sessionId := vars["sessionId"]
 
       authRequest := &threeds.AuthenticateThreeDsSessionRequest{
-        AuthenticationCategory: "payment",
-        AuthenticationType:     "payment-transaction",
-        ChallengePreference:    "no-challenge",
+        AuthenticationCategory: pointerToString("payment"),
+        AuthenticationType:     pointerToString("payment-transaction"),
+        ChallengePreference:    pointerToString("no-challenge"),
+        // CardBrand:              pointerToString("Visa"), // optional - used if co-badged card
       }
 
       merchantInfo := &basistheory.ThreeDsMerchantInfo{
@@ -963,6 +984,21 @@ For the `challenge_preference` field, the two most common values are available t
 | `challenge-requested` | Used when explicitly requiring a challenge for the transaction - typically used if you suspect fraud. |
 
 *To see more challenge preference options and related EMV codes, refer to our [API Reference](/docs/api/3ds/sessions#challenge-preferences).*
+
+#### (Optional) Card Brand Selection
+
+For co-badged cards (cards associated with multiple card networks), you can specify which card brand to use for authentication:
+
+| Field        | Description                                                                                                                                                 |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `card_brand` | The specific card brand to use for authentication. Should be one of the brands returned in the `additional_card_brands` property when creating the session. |
+
+Selecting a specific brand allows you to route the authentication through the preferred network, which may be beneficial for:
+- Regional regulatory compliance (such as European PSD2 requirements)
+- Cost optimization by choosing the most economical network for a transaction
+- Customer preference for specific brand loyalty or rewards programs
+
+If `card_brand` is not specified for a co-badged card, the default primary brand (returned in the `card_brand` property on session response) will be used.
 
 ### Authentication Response
 
@@ -1800,6 +1836,8 @@ These cards are not real and will not work for testing in production environment
 | **`4264281500003339`** | VISA | 3DS Directory Server Error |
 | **`5424180011110001`** | MASTERCARD | 3DS Directory Server Error |
 | **`4264281500001119`** | VISA | Internal 3DS Server Error |
+| **`4150580996517927`** | VISA, CARTES BANCAIRES | Co-Badged Card - Successful Challenge Authentication |
+| **`4150580996517927`** | MASTERCARD, CARTES BANCAIRES | Co-Badged Card - Successful Challenge Authentication |
 
 ## Error Handling
 
@@ -2311,6 +2349,14 @@ A frictionless 3DS authentication is a successful authentication where no challe
 ### How can I verify a non-frictionless challenge was completed?
 
 You can either wait for the SDKs challenge methods promises to be completed or use the `3ds.session.challenge-completed` [webhook](/docs/api/webhooks/eventdata#challenge-completed).
+
+### How do I handle co-badged cards in 3DS authentication?
+
+When creating a 3DS session for a co-badged card (a card associated with multiple networks), the response will include an `additionalCardBrands` array listing all brands the card supports.
+
+During authentication, you can specify which brand to use by including the `card_brand` parameter with the desired brand name. This allows you to route the authentication through your preferred network based on considerations like regional regulations, costs, or customer preferences.
+
+If no `card_brand` is specified, the authentication will default to the primary card brand (the first one in the `additionalCardBrands` array).
 
 ### Is it possible to detect when a user cancels a challenge in real time?
 
