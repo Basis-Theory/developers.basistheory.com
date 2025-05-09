@@ -1,3 +1,10 @@
+# [1.233.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.232.1...v1.233.0) (2025-05-09)
+
+
+### Features
+
+* add 3ds cobadged cards docs ([#561](https://github.com/Basis-Theory/developers.basistheory.com/issues/561)) ([40e3ad1](https://github.com/Basis-Theory/developers.basistheory.com/commit/40e3ad1901d3abab794087c17ba52489f29d0b3e))
+
 ## [1.232.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.232.0...v1.232.1) (2025-05-05)
 
 
