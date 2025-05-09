@@ -8,36 +8,50 @@ import { SDK } from "@site/src/components/types";
 
 # Elements
 
-Basis Theory Elements are simple and secure inputs that empower developers to collect sensitive data
-from users or to reveal sensitive data back to users, all without having direct access to the plaintext data.
-This last point is key - any application code that interacts with sensitive regulated data can be subject to costly and
-time-consuming audits to prove that your application meets various compliance standards (e.g., PCI-DSS, HIPAA, SOC 2, ISO-27001).
-Using Elements can completely remove your frontend applications from compliance scope, saving your development
-team time and money.
+Basis Theory Elements are secure, isolated components that enable your application to collect and reveal sensitive data without directly accessing it. This architecture significantly reduces your compliance scope for standards such as PCI-DSS, HIPAA, SOC 2, and ISO-27001, saving your team time and money on complex audits.
 
-Think about it as an isolated sandbox within your frontend application that your end users are able to seamlessly
-interact with, and which securely communicates with the Basis Theory vault to tokenize or detokenize data.
-Sensitive data is not directly exposed to your application code, and only the non-sensitive token identifiers are
-exposed to be referenced within your systems.
+## How Elements Work
 
-Here's how Basis Theory Elements make this possible:
+Elements function as a secure sandbox within your application, creating a seamless experience for your users while maintaining strict data isolation:
 
-- Install one of our [Elements SDKs](#elements-sdks) into your web or mobile application
-- Build forms using our **Element** input components
-- Interact with the Basis Theory API using **Element** references, not plaintext data
-- Own your UI/UX by fully customizing how **Elements** are styled
+```mermaid
+sequenceDiagram
+    participant User
+    participant YourApp as Your Application
+    participant Elements as Elements
+    participant BTAPI as Basis Theory API
+    
+    User->>YourApp: Interacts with your application
+    YourApp->>Elements: Creates & configures Element
+    User->>Elements: Enters sensitive data
+    YourApp->>Elements: Invokes service with references to sensitive data
+    Elements->>BTAPI: Sends sensitive data via HTTPS
+    BTAPI-->>Elements: Returns token ID and masked data
+    Elements-->>YourApp: Returns token ID and masked data
+    YourApp-->>User: Confirms operation was successful
+```
+
+This workflow ensures sensitive data remains isolated from your application code while providing control over styling and user experience.
+
+## Key Benefits
+
+- **Reduced Compliance Scope**: Your application never directly handles sensitive data
+- **Seamless User Experience**: Users interact with Elements as if they were native inputs
+- **UI/UX Customization**: Customize Elements to match your design system
+- **Framework Support**: Available for web and mobile applications
 
 ## Collect Sensitive Data
 
-Data entered by your end users into an **Element** is tokenized and secured within the Basis Theory vault, without your application
-needing to have direct access to this data.
+Elements securely capture data entered by your users and tokenize it in the Basis Theory vault without exposing plaintext data to your application.
 
-Our SDKs provide several types of inputs to collect various types of data, such as the [CardElement](/docs/sdks/web/web-elements/types#card-element)
-for collecting credit card data and [TextElement](/docs/sdks/web/web-elements/types#text-element) for collecting arbitrary textual data.
+Our SDKs provide specialized components for various data types:
+- [CardElement](/docs/sdks/web/web-elements/components#cardelement) for credit card collection
+- [TextElement](/docs/sdks/web/web-elements/components#textelement) for general text input
+- And [more specialized Elements](/docs/sdks/web/web-elements/components) for different data types
 
-Elements can be configured to support custom input masking, validation, and transformation rules to satisfy your unique requirements.
+Each Element can be configured with custom input masking, validation, and transformation rules to meet your specific requirements.
 
-To get started collecting data, check out one of our guides that best suits your use case:
+To get started collecting data, choose the guide that fits your technology stack:
 
 - [Collect Data from Web](/docs/guides/collect/collect-data-from-web)
 - [Collect Data with React](/docs/guides/collect/collect-data-with-react)
@@ -46,26 +60,24 @@ To get started collecting data, check out one of our guides that best suits your
 
 ## Reveal Sensitive Data
 
-Tokens stored within the Basis Theory Vault can be securely revealed to end users without accessing the plaintext
-data directly within your application code.
+Elements can securely display tokenized data to your users without your application accessing the plaintext values.
 
-Using one of our [SDKs](#elements-sdks), sensitive data can be securely retrieved and applied to one or more Elements within your UI.
-The SDK will manage encapsulating the sensitive data so that your application can reference these value without having direct access to it.
+Using our SDKs, you can retrieve tokens and display their content within your UI while maintaining complete data isolation. Your application only references these values through secure token identifiers.
 
-To get started revealing sensitive data to your users, check out our [Reveal Tokenized Data](/docs/guides/share/reveal-tokenized-data) guide.
+To start revealing sensitive data to your users, see our [Reveal Tokenized Data](/docs/guides/share/reveal-tokenized-data) guide.
 
 ## Elements SDKs
 
 <SdkCard.TwoColumnLayout>
   <SdkCard
-    href="/docs/sdks/web/javascript"
+    href="/docs/sdks/web/web-elements"
     heading="JavaScript Elements SDK"
     icon={SDK.JAVASCRIPT}
     repository="basis-theory-js"
   />
 
   <SdkCard
-    href="/docs/sdks/web/react"
+    href="/docs/sdks/web/web-elements"
     heading="React Elements SDK"
     icon={SDK.REACT}
     repository="react-elements"

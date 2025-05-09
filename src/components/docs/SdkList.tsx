@@ -46,7 +46,7 @@ export const SdkList = ({ type, sdks }: { type?: keyof typeof SDK_TYPES; sdks: (
       </Card>
     ),
     react: (
-      <Card href="/docs/sdks/web/react/" img={<ReactSvg />} className={styles.sdk}>
+      <Card href="/docs/sdks/web/web-elements/?implementation=react" img={<ReactSvg />} className={styles.sdk}>
         React
       </Card>
     ),

@@ -59,5 +59,11 @@ module.exports = {
         color: "rgb(245, 149, 81)",
       },
     },
+    {
+      types: ["inserted"],
+      style: {
+        color: "rgb(80, 250, 123)",
+      },
+    },
   ],
 };

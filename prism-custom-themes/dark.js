@@ -11,7 +11,7 @@ module.exports = {
       },
     },
     {
-      types: ["inserted", "function"],
+      types: ["function"],
       style: {
         color: "rgb(102, 216, 239)",
       },
@@ -54,7 +54,7 @@ module.exports = {
       },
     },
     {
-      types: ["attr-name"],
+      types: ["inserted", "attr-name"],
       style: {
         color: "rgb(80, 250, 123)",
       },
