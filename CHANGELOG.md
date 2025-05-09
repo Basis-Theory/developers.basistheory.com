@@ -1,3 +1,10 @@
+# [1.234.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.233.0...v1.234.0) (2025-05-09)
+
+
+### Features
+
+* Adds account updater guide and real time docs ([#556](https://github.com/Basis-Theory/developers.basistheory.com/issues/556)) ([dd3d125](https://github.com/Basis-Theory/developers.basistheory.com/commit/dd3d12525f758601b381a36233905e2698dd735c))
+
 # [1.233.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.232.1...v1.233.0) (2025-05-09)
 
 
