@@ -1,0 +1,59 @@
+---
+title: Account Updater Setup
+---
+
+# Account Updater Setup
+
+## Test Tenant Onboarding
+
+Account Updater is an Enterprise feature, and access can be requested from your test tenant in the Basis Theory Portal under <a href="https://portal.basistheory.com/settings?tab=quotas" target="_blank">Settings/Quotas</a>.
+
+Once enabled, your test tenant will be configured to use the Account Updater sandbox, providing stubbed responses without forwarding requests to card networks.
+See [Account Updater Testing](/docs/api/account-updater/testing) for more information.
+
+## Production Tenant Onboarding
+
+Account Updater is an Enterprise feature, and access can be requested from your production tenant in the Basis Theory Portal under <a href="https://portal.basistheory.com/settings?tab=quotas" target="_blank">Settings/Quotas</a>.
+Once requested, Basis Theory will reach out to complete the onboarding process and to gather the necessary merchant configuration.
+
+You can begin preparing for this process by having the following business information ready:
+- **Business Registration Number (BRN)**: Your business's government-issued registration number.
+- **Merchant Descriptor**: The name that appears on customer statements.
+- **Business MCC**: Merchant Category Code representing your business type.
+
+And by collecting the following card network information from your acquirer:
+- **Acquirer Identifier**: Identifier used by your acquiring bank for processing transactions.
+- **Card Acceptor ID (CAID)**: Unique ID assigned to your business by the card networks.
+- **Discover MID**: Merchant ID for Discover transactions (only required for Batch Account Updater).
+- **Amex Establishment/SE Number**: Specific identifier for American Express transactions (only required for Batch Account Updater).
+
+## Tenant Configuration
+
+The following configuration applies to both test and production tenants after onboarding is completed.
+
+### Application Setup
+
+Create a **Private Application** for your backend system to perform Account Updater operations within your tenant.
+
+#### Batch Permissions
+
+- `account-updater:job:create`
+- `account-updater:job:read`
+
+[Click here](https://portal.basistheory.com/applications/create?type=private&permissions=account-updater%3Ajob%3Acreate&permissions=account-updater%3Ajob%3Aread&name=Batch+Account+Updater) to create a Private Application for use with Batch Account Updater.
+
+#### Real-Time Permissions
+
+- `account-updater:real-time:invoke`
+
+[Click here](https://portal.basistheory.com/applications/create?type=private&permissions=account-updater%3Areal-time%3Ainvoke&name=Real+Time+Account+Updater) to create a Private Application for use with Real-Time Account Updater.
+
+### Webhook Configuration
+
+You need to configure a [webhook endpoint](/docs/api/webhooks) to receive notifications for batch job status changes.
+
+Use the [webhook management API](/docs/api/webhooks/api/#create-webhook) or the [Portal](https://portal.basistheory.com/webhooks) to register an endpoint URL to receive one or more of the following Account Updater events:
+
+- [account-updater.job.created](/docs/api/webhooks/eventdata#job-created)
+- [account-updater.job.completed](/docs/api/webhooks/eventdata#job-completed)
+- [account-updater.job.failed](/docs/api/webhooks/eventdata#job-failed)

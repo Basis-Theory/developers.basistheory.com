@@ -165,10 +165,8 @@ const config = {
           { from: "/getting-started/quickstart-with-nodejs", to: "/docs" },
           { from: "/getting-started/quickstart-with-ruby", to: "/docs" },
           { from: "/getting-started/quickstart-with-python", to: "/docs" },
-          {
-            from: "/docs/api/applications/keys",
-            to: "/docs/api/applications/application-keys",
-          },
+          { from: "/docs/api/applications/keys", to: "/docs/api/applications/application-keys" },
+          { from: "/docs/api/account-updater", to: "/docs/api/account-updater/batch"},
 
           {
             from: "/concepts/access-controls",
