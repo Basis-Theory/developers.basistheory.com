@@ -1,3 +1,10 @@
+## [1.235.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.235.0...v1.235.1) (2025-05-12)
+
+
+### Bug Fixes
+
+* adds additional account updater test cards for all brands ([#563](https://github.com/Basis-Theory/developers.basistheory.com/issues/563)) ([0d5c221](https://github.com/Basis-Theory/developers.basistheory.com/commit/0d5c2215f367916242b3d308912ede49f9a99c43))
+
 # [1.235.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.234.0...v1.235.0) (2025-05-09)
 
 
