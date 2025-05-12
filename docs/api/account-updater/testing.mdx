@@ -30,36 +30,64 @@ BT_API_KEY="<Enter Your BT-API-KEY>"
 
 # Define the card data
 cards=(
-  # Format: "PAN,ExpirationMonth,ExpirationYear,ResultCode"
-  "4111111111111111,12,2023,UPD_PAN"
-  "5105105105105100,12,2023,UPD_PAN"
-  "6011690151507086,12,2023,UPD_EXP_DATE"
-  "6011760519541711,12,2023,UPD_BRAND_CONV"
-  "6011490740263725,12,2023,UPD_CORRECTED"
-  "5461310156953048,12,2023,WRN_CLOSED_ACCOUNT"
-  "4929980395567582,12,2023,WRN_CONTACT_CARDHOLDER"
-  "4916725297925395,12,2023,WRN_ISSUER_NO_DATA"
-  "5580422612666704,12,2023,WRN_ISSUER_NOT_ENROLLED"
-  "4035501000000008,12,2023,WRN_OPT_OUT"
-  "122000000000003,12,2023,WRN_UNSUPPORTED_NETWORK"
-  "6011178332216017,12,2023,ERR_UNDEFINED"
-  "6011648103759866,12,2023,ERR_INVALID_EXP_DATE"
-  "378025849667382,12,2023,ERR_INVALID_PAN"
-  "370000000000002,12,2023,ERR_INVALID_CONFIG"
-  "4711358892785746,12,2023,NO_UPDATE"
+  # Format: "PAN,ExpMonth,ExpYear,CardBrand,ResultCode"
+  "4111111111111111,12,2023,VISA,UPD_PAN"
+  "4012888888881881,12,2023,VISA,UPD_PAN"
+  "4539097887163333,12,2023,VISA,UPD_EXP_DATE"
+  "4711358892785746,12,2023,VISA,NO_UPDATE"
+  "4929980395567582,12,2023,VISA,WRN_CONTACT_CARDHOLDER"
+  "4929544240318920,12,2023,VISA,WRN_ISSUER_NOT_ENROLLED"
+  "4916725297925395,12,2023,VISA,WRN_ISSUER_NO_DATA"
+  "4035501000000008,12,2023,VISA,WRN_OPT_OUT"
+  "4035501428146300,12,2023,VISA,ERR_INVALID_PAN"
+  "4111111145551142,12,2023,VISA,ERR_INVALID_EXP_DATE"
+  "4111112014267661,12,2023,VISA,ERR_INVALID_CONFIG"
+
+  "5555555555554444,12,2023,MASTERCARD,UPD_PAN"
+  "5105105105105100,12,2023,MASTERCARD,UPD_PAN"
+  "5325191087030619,12,2023,MASTERCARD,UPD_EXP_DATE"
+  "5412000000001009,12,2023,MASTERCARD,NO_UPDATE"
+  "5461310156953048,12,2023,MASTERCARD,WRN_CLOSED_ACCOUNT"
+  "5580422612666704,12,2023,MASTERCARD,WRN_ISSUER_NOT_ENROLLED"
+  "5157204564548129,12,2023,MASTERCARD,WRN_ISSUER_NO_DATA"
+  "5555341244441115,12,2023,MASTERCARD,ERR_INVALID_PAN"
+  "5577000055770004,12,2023,MASTERCARD,ERR_INVALID_EXP_DATE"
+  "5555444433331111,12,2023,MASTERCARD,ERR_INVALID_CONFIG"
+
+  "6011111111111117,12,2023,DISCOVER,UPD_PAN"
+  "6011601160116611,12,2023,DISCOVER,UPD_PAN"
+  "6011690151507086,12,2023,DISCOVER,UPD_EXP_DATE"
+  "6011760519541711,12,2023,DISCOVER,UPD_BRAND_CONV"
+  "6011490740263725,12,2023,DISCOVER,UPD_CORRECTED"
+  "6011168802268945,12,2023,DISCOVER,WRN_CLOSED_ACCOUNT"
+  "6011444770992901,12,2023,DISCOVER,WRN_CONTACT_CARDHOLDER"
+  "6011178332216017,12,2023,DISCOVER,ERR_UNDEFINED"
+  "6011829379808385,12,2023,DISCOVER,ERR_INVALID_PAN"
+  "6011648103759866,12,2023,DISCOVER,ERR_INVALID_EXP_DATE"
+
+  "378282246310005,12,2023,AMEX,UPD_PAN"
+  "371449635398431,12,2023,AMEX,UPD_PAN"
+  "373555735376156,12,2023,AMEX,UPD_EXP_DATE"
+  "370488998077498,12,2023,AMEX,WRN_CLOSED_ACCOUNT"
+  "378025849667382,12,2023,AMEX,ERR_INVALID_PAN"
+  "378734493671000,12,2023,AMEX,ERR_INVALID_EXP_DATE"
+  "370000000000002,12,2023,AMEX,ERR_INVALID_CONFIG"
+
+  "122000000000003,12,2023,N/A,WRN_UNSUPPORTED_NETWORK"
 )
 
 # Batch size
 batch_size=5 # default tokenization limit tenant setting
 total_cards=${#cards[@]}
-declare -a pan_array result_array token_array
+declare -a pan_array brand_array result_array token_array
 
 for ((i=0; i<total_cards; i+=batch_size)); do
   batch_json="["
 
   for ((j=i; j<i+batch_size && j<total_cards; j++)); do
-    IFS=',' read -r pan exp_month exp_year result_code <<< "${cards[j]}"
+    IFS=',' read -r pan exp_month exp_year brand result_code <<< "${cards[j]}"
     pan_array+=("$pan")
+    brand_array+=("$brand")
     result_array+=("$result_code")
 
     token_json=$(cat <<EOF
@@ -94,33 +122,61 @@ EOF
   token_array+=("${token_ids[@]}")
 done
 
-printf "| %-36s | %-20s | %-25s |\n" "Token ID" "Test Card Number" "Result Code"
-printf -- "|--------------------------------------|----------------------|---------------------------|\n"
+printf "| %-36s | %-20s | %-12s | %-25s |\n" "Token ID" "Test Card Number" "Card Brand" "Result Code"
+printf -- "|--------------------------------------|----------------------|--------------|---------------------------|\n"
 
 for ((i = 0; i < ${#token_array[@]}; i++)); do
-  printf "| %-36s | %-20s | %-25s |\n" "${token_array[$i]}" "${pan_array[$i]}" "${result_array[$i]}"
+  printf "| %-36s | %-20s | %-12s | %-25s |\n" \
+    "${token_array[$i]}" \
+    "${pan_array[$i]}" \
+    "${brand_array[$i]}" \
+    "${result_array[$i]}"
 done
 ```
 
 Running this script with your API key should print the following output:
 
 ```bash
-| Token ID                             | Test Card Number     | Result Code               |
-|--------------------------------------|----------------------|---------------------------|
-| <token id>                           | 4111111111111111     | UPD_PAN                   |
-| <token id>                           | 5105105105105100     | UPD_PAN                   |
-| <token id>                           | 6011690151507086     | UPD_EXP_DATE              |
-| <token id>                           | 6011760519541711     | UPD_BRAND_CONV            |
-| <token id>                           | 6011490740263725     | UPD_CORRECTED             |
-| <token id>                           | 5461310156953048     | WRN_CLOSED_ACCOUNT        |
-| <token id>                           | 4929980395567582     | WRN_CONTACT_CARDHOLDER    |
-| <token id>                           | 4916725297925395     | WRN_ISSUER_NO_DATA        |
-| <token id>                           | 5580422612666704     | WRN_ISSUER_NOT_ENROLLED   |
-| <token id>                           | 4035501000000008     | WRN_OPT_OUT               |
-| <token id>                           | 122000000000003      | WRN_UNSUPPORTED_NETWORK   |
-| <token id>                           | 6011178332216017     | ERR_UNDEFINED             |
-| <token id>                           | 6011648103759866     | ERR_INVALID_EXP_DATE      |
-| <token id>                           | 378025849667382      | ERR_INVALID_PAN           |
-| <token id>                           | 370000000000002      | ERR_INVALID_CONFIG        |
-| <token id>                           | 4711358892785746     | NO_UPDATE                 |
+| Token ID   | Test Card Number     | Card Brand   | Result Code               |
+|------------|----------------------|--------------|---------------------------|
+| <token id> | 4111111111111111     | VISA         | UPD_PAN                   |
+| <token id> | 4012888888881881     | VISA         | UPD_PAN                   |
+| <token id> | 4539097887163333     | VISA         | UPD_EXP_DATE              |
+| <token id> | 4711358892785746     | VISA         | NO_UPDATE                 |
+| <token id> | 4929980395567582     | VISA         | WRN_CONTACT_CARDHOLDER    |
+| <token id> | 4929544240318920     | VISA         | WRN_ISSUER_NOT_ENROLLED   |
+| <token id> | 4916725297925395     | VISA         | WRN_ISSUER_NO_DATA        |
+| <token id> | 4035501000000008     | VISA         | WRN_OPT_OUT               |
+| <token id> | 4035501428146300     | VISA         | ERR_INVALID_PAN           |
+| <token id> | 4111111145551142     | VISA         | ERR_INVALID_EXP_DATE      |
+| <token id> | 4111112014267661     | VISA         | ERR_INVALID_CONFIG        |
+| <token id> | 5555555555554444     | MASTERCARD   | UPD_PAN                   |
+| <token id> | 5105105105105100     | MASTERCARD   | UPD_PAN                   |
+| <token id> | 5325191087030619     | MASTERCARD   | UPD_EXP_DATE              |
+| <token id> | 5412000000001009     | MASTERCARD   | NO_UPDATE                 |
+| <token id> | 5461310156953048     | MASTERCARD   | WRN_CLOSED_ACCOUNT        |
+| <token id> | 5580422612666704     | MASTERCARD   | WRN_ISSUER_NOT_ENROLLED   |
+| <token id> | 5157204564548129     | MASTERCARD   | WRN_ISSUER_NO_DATA        |
+| <token id> | 5555341244441115     | MASTERCARD   | ERR_INVALID_PAN           |
+| <token id> | 5577000055770004     | MASTERCARD   | ERR_INVALID_EXP_DATE      |
+| <token id> | 5555444433331111     | MASTERCARD   | ERR_INVALID_CONFIG        |
+| <token id> | 6011111111111117     | DISCOVER     | UPD_PAN                   |
+| <token id> | 6011601160116611     | DISCOVER     | UPD_PAN                   |
+| <token id> | 6011690151507086     | DISCOVER     | UPD_EXP_DATE              |
+| <token id> | 6011760519541711     | DISCOVER     | UPD_BRAND_CONV            |
+| <token id> | 6011490740263725     | DISCOVER     | UPD_CORRECTED             |
+| <token id> | 6011168802268945     | DISCOVER     | WRN_CLOSED_ACCOUNT        |
+| <token id> | 6011444770992901     | DISCOVER     | WRN_CONTACT_CARDHOLDER    |
+| <token id> | 6011178332216017     | DISCOVER     | ERR_UNDEFINED             |
+| <token id> | 6011829379808385     | DISCOVER     | ERR_INVALID_PAN           |
+| <token id> | 6011648103759866     | DISCOVER     | ERR_INVALID_EXP_DATE      |
+| <token id> | 378282246310005      | AMEX         | UPD_PAN                   |
+| <token id> | 371449635398431      | AMEX         | UPD_PAN                   |
+| <token id> | 373555735376156      | AMEX         | UPD_EXP_DATE              |
+| <token id> | 370488998077498      | AMEX         | WRN_CLOSED_ACCOUNT        |
+| <token id> | 378025849667382      | AMEX         | ERR_INVALID_PAN           |
+| <token id> | 378734493671000      | AMEX         | ERR_INVALID_EXP_DATE      |
+| <token id> | 370000000000002      | AMEX         | ERR_INVALID_CONFIG        |
+| <token id> | 122000000000003      | N/A          | WRN_UNSUPPORTED_NETWORK   |
+
 ```
