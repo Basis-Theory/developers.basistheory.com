@@ -1,3 +1,10 @@
+# [1.237.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.236.0...v1.237.0) (2025-05-13)
+
+
+### Features
+
+* framework support ([#565](https://github.com/Basis-Theory/developers.basistheory.com/issues/565)) ([3bc2104](https://github.com/Basis-Theory/developers.basistheory.com/commit/3bc2104321d54f7e8d4ca473e89aafc0512658ff))
+
 # [1.236.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.235.2...v1.236.0) (2025-05-13)
 
 
