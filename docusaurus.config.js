@@ -103,7 +103,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["csharp", "hcl", "kotlin", "swift", "java", "bash", "json"],
+        additionalLanguages: ["csharp", "hcl", "kotlin", "swift", "java", "bash", "json", "diff"],
       },
       mermaid: {
         theme: {
@@ -262,9 +262,12 @@ const config = {
           },
           { from: "/docs/sdks/web/javascript/events", to: "/docs/sdks/web/web-elements/events" },
           { from: "/docs/sdks/web/javascript/lifecycle", to: "/docs/sdks/web/web-elements/lifecycle" },
-          { from: "/docs/sdks/web/javascript/options", to: "/docs/sdks/web/web-elements/options" },
+          { from: "/docs/sdks/web/javascript/options", to: "/docs/sdks/web/web-elements/components" },
           { from: "/docs/sdks/web/javascript/services", to: "/docs/sdks/web/web-elements/services" },
-          { from: "/docs/sdks/web/javascript/types", to: "/docs/sdks/web/web-elements/types" },
+          { from: "/docs/sdks/web/javascript/types", to: "/docs/sdks/web/web-elements/components" },
+          { from: "/docs/sdks/web/react", to: "/docs/sdks/web/web-elements/?implementation=react" },
+          { from: "/docs/sdks/web/web-elements/types", to: "/docs/sdks/web/web-elements/components" },
+          { from: "/docs/sdks/web/web-elements/options", to: "/docs/sdks/web/web-elements/components" },
           { from: "/docs/sdks/mobile/3ds-react-native", to: "/docs/sdks/mobile/react-native-threeds" },
           { from: "/docs/sdks/mobile/3ds-react-native/methods", to: "/docs/sdks/mobile/react-native-threeds/methods" },
           { from: "/docs/api/orchestration/stripe-forward", to: "/docs/api/connections/stripe-forward" },
