@@ -14,7 +14,7 @@ curl 'https://api.basistheory.com/proxy' \
 // highlight-start
 -H 'BT-API-KEY: <PRIVATE_API_KEY>' \
 -H 'BT-PROXY-URL: https://api.sandbox.checkout.com/payments' \
--H 'X-API-Key: Bearer <CHECKOUT_SECRET_KEY>' \
+-H 'Authorization: Bearer <CHECKOUT_SECRET_KEY>' \
 // highlight-end
 -H 'Content-Type: application/json' \
 --data '{
@@ -39,8 +39,6 @@ curl 'https://api.basistheory.com/proxy' \
   "approved": true,
 // highlight-next-line
   "status": "Card Verified",
-  "amount": 0,
-  "currency": "USD",
   "source": {
     "type": "card",
 // highlight-start
@@ -55,6 +53,7 @@ curl 'https://api.basistheory.com/proxy' \
   ...
 }
 ```
+
   </TabItem>
   <TabItem value="stripe" label="Stripe">
 
@@ -130,8 +129,10 @@ curl 'https://api.basistheory.com/proxy' \
 ```
   </TabItem>
   <TabItem value="adyen" label="Adyen">
-  In Ayden, you can verify a card without charging it [by calling the `/payments` API with 0 value amount.](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
-  ```shell showLineNumbers title="Verify a Card"
+
+In Ayden, you can verify a card without charging it [by calling the `/payments` API with 0 value amount.](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
+
+```shell showLineNumbers title="Verify a Card"
 curl 'https://api.basistheory.com/proxy' \
 -X 'POST' \
 // highlight-start
@@ -141,43 +142,43 @@ curl 'https://api.basistheory.com/proxy' \
 // highlight-end
 -H 'Content-Type: application/json' \
 --data '{
-  {
   "amount": {
-    "currency": "USD",
-    "value": 1000
+    "value": 0,
+    "currency": "USD"
   },
-  "reference": "Your order number",
   "paymentMethod": {
     "type": "scheme",
-    // highlight-start
-    "encryptedCardNumber": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: "$.data.number" }}",
-    "encryptedExpiryMonth": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
-    "encryptedExpiryYear": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
-    "encryptedSecurityCode": "{{ token_intent: d96b9925-85d7-495e-88fe-a9c3ecb23b61 | json: \"$.data.cvc\" }}"
-    // highlight-end
+// highlight-start
+    "number": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiryMonth": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiryYear": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
+    "cvc": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
+// highlight-end
+    "holderName": "John Smith"
   },
-  "returnUrl": "https://your-company.com/...",
-  "merchantAccount": "YOUR_AYDEN_MERCHANT_ACCOUNT"
-}
+  "reference": "6a54sd546as11",
+  "shopperInteraction":  "Ecommerce",
+  "recurringProcessingModel":  "CardOnFile",
+  "storePaymentMethod":  true,
+  "merchantAccount": "MyMerchantAccount"
 }'
 ```
 ```json showLineNumbers title="Verification Response"
 {
-  "additionalData": {
-    "cvcResult": "1 Matches",
-    "authCode": "065696",
-    "avsResult": "4 AVS not supported for this card type",
-    "avsResultRaw": "4",
-    "cvcResultRaw": "M",
-    // highlight-next-line
-    "refusalReasonRaw": "AUTHORISED",
-    "acquirerCode": "TestPmmAcquirer",
-    "acquirerReference": "8PQMP9VIE9N"
-  },
-  "pspReference": "993617895215577D",
   // highlight-next-line
   "resultCode": "Authorised",
-  "merchantReference": "string"
+  "additionalData": {
+  // highlight-start
+    "networkTxReference": "377216678422238",
+    "tokenization.storedPaymentMethodId": "BKG9RB2SBSHHSXT5",
+    "avsResult": "4 AVS not supported for this card type",
+    "avsResultRaw": "4",
+    "cvcResult": "1 Matches",
+    "cvcResultRaw": "M",
+  // highlight-end
+    ...
+  },
+  ...
 }
 ```
   </TabItem>
