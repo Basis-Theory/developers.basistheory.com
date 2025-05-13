@@ -1,0 +1,67 @@
+---
+title: Real-Time Implementation
+---
+
+import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Real-Time Implementation
+
+This guide provides an overview of how to implement Real-Time Account Updater. It covers the initial setup, how to request an update, and how to process the results.
+
+## Initial Setup
+
+First, ensure that you have completed the [Account Updater Setup](/docs/guides/account-updater/setup) guide. This step is only required once.
+
+### Private Application
+
+<ApplicationSection type="private" permissions={["account-updater:real-time:invoke"]} />
+
+## Request Real-Time Update
+
+Given a vaulted `card` token that you wish to update, first identify whether your system persists the expiration date within the `card` token.
+If not persisted in the token, you will need to provide the `expiration_month` and `expiration_year` parameters in the update request.
+
+Submit a request for a [real-time update](/docs/api/account-updater/real-time#real-time-update) through the API or an SDK using the API key for the application created above.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="request" label="Request">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/account-updater/real-time" \
+      -H 'Content-Type: application/json' \
+      -H 'BT-API-KEY: ...' \
+      -X POST \
+      -d '{
+        "token_id": "b4b89606-794a-4652-b375-f4e1d717a5db"
+      }'
+    ```
+  </TabItem>
+  <TabItem value="response" label="Response">
+    ```json showLineNumbers
+    {
+      "new_token": {
+        "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+        "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+        "type": "card",
+        "card": {
+          "bin": "42424242",
+          "last4": "4242",
+          ...
+        },
+        ...
+      },
+      "result_code": "UPD_PAN"
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Process the Result
+
+The API [response](/docs/api/account-updater/real-time#response) will include a [result_code](/docs/api/account-updater/result-codes) that indicates the outcome of the update request.
+Note that some warning-level result codes may require additional action on your part.
+
+If an update was received, the response will contain the `new_card` field containing a [token](/docs/api/tokens/#token-object).
+The token references in your system should be updated accordingly, and this new token should be used for future transactions.
+You have the option to retain the old token that was replaced or [delete it](/docs/api/tokens/#delete-token) once it is no longer needed.

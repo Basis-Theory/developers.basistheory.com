@@ -1,0 +1,319 @@
+---
+title: Batch Account Updater
+---
+
+import {Alert, Alerts} from "@site/src/components/shared/Alert";
+import {Enterprise} from "@site/src/components/shared/Enterprise";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import {Permission} from "@site/src/components/shared/Permission";
+
+# Batch Account Updater <Enterprise />
+
+<Alert type={Alerts.INFO}>Account Updater is an Enterprise feature. Request access in the <a href="https://portal.basistheory.com/settings?tab=quotas" target="_blank">portal</a>.</Alert>
+
+## Create Account Updater Batch Job
+
+Creates an Account Updater Batch Job to update a batch of `card` tokens. Responds with an [Account Updater Job](#account-updater-job) including an `upload_url` to submit a request CSV file for processing.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/account-updater/jobs"
+/>
+
+#### Permissions
+<Permission content="account-updater:job:create"/>
+
+#### Expiration
+
+You have one hour to upload a request file, at which time the job and upload url will expire and the job will be removed. Attempting to retrieve an expired job will result in a `404` status code. If a job expires, simply start the process again by creating a new job.
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/account-updater/jobs" \
+      -X POST \
+      -H 'Content-Type: application/json' \
+      -H 'BT-API-KEY: ...'
+    ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.accountUpdater.jobs.create();
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.AccountUpdater.Jobs.CreateAsync();
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    AccountUpdaterJob job = new AccountUpdaterClient(ClientOptions.builder().build())
+        .jobs()
+        .create();
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    client.account_updater.jobs.create()
+    ```
+  </TabItem>
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    client.AccountUpdater.Jobs.Create(ctx)
+    ```
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns the created [Account Updater Job](#account-updater-job).
+
+```json
+{
+  "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
+  "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
+  "status": "pending",
+  "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
+  "created_at": "2024-04-09T13:56:37.864Z",
+  "expires_at": "2024-04-09T14:56:37.864Z",
+  "upload_url": "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
+}
+```
+
+## Get Account Updater Job
+
+Retrieves an [Account Updater Job](#account-updater-job). This endpoint can be used to poll for job failure or completion if webhook callbacks are not desired.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/account-updater/jobs/{id}"
+/>
+
+#### Permissions
+<Permission content="account-updater:job:read"/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/account-updater/jobs/93f3da5e-7887-408c-88ed-b10a5fdb423a" \
+      -H 'BT-API-KEY: ...'
+    ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.accountUpdater.jobs.get('93f3da5e-7887-408c-88ed-b10a5fdb423a');
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.AccountUpdater.Jobs.GetAsync("93f3da5e-7887-408c-88ed-b10a5fdb423a");
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    AccountUpdaterJob job = new AccountUpdaterClient(ClientOptions.builder().build())
+        .jobs()
+        .get("93f3da5e-7887-408c-88ed-b10a5fdb423a");
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    client.account_updater.jobs.get(
+      id = "93f3da5e-7887-408c-88ed-b10a5fdb423a"
+    )
+    ```
+  </TabItem>
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    client.AccountUpdater.Jobs.Get(ctx, "93f3da5e-7887-408c-88ed-b10a5fdb423a")
+    ```
+  </TabItem>
+</Tabs>
+
+### Response
+```jsx
+{
+  "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
+  "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
+  "status": "pending",
+  "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
+  "created_at": "2024-04-09T13:56:37.864Z",
+  "expires_at": "2024-04-09T14:56:37.864Z",
+  "upload_url": "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
+}
+```
+
+## List Account Updater Jobs
+
+Return a list of all [Account Updater Jobs](#account-updater-job) created for the tenant.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/account-updater/jobs"
+/>
+
+#### Permissions
+<Permission content="account-updater:job:read"/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl "https://api.basistheory.com/account-updater/jobs" \
+      -H 'BT-API-KEY: ...'
+    ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.accountUpdater.jobs.list();
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.AccountUpdater.Jobs.ListAsync(new JobsListRequest());
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    AccountUpdaterJob job = new AccountUpdaterClient(ClientOptions.builder().build())
+      .jobs()
+      .list();
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    client.account_updater.jobs.list()
+    ```
+  </TabItem>
+  <TabItem value="go" label="Go">
+    ```go showLineNumbers
+    client.AccountUpdater.Jobs.List(ctx, &accountupdater.JobsListRequest{})
+    ```
+  </TabItem>
+</Tabs>
+
+#### Sort Order
+
+This endpoint returns newest jobs first.
+
+#### Query Params
+
+| Param   | Description                                                                                                              |
+|---------|--------------------------------------------------------------------------------------------------------------------------|
+| `size`  | The maximum number of jobs to return in the response. Defaults to 20.                                                    |
+| `start` | The cursor at which the result set should start. This is the value of the next cursor returned in the previous response. |
+
+### Response
+
+Returns a [cursor paginated list](/docs/api/pagination#cursor-pagination) of [Account Updater Jobs](#account-updater-job).
+
+```jsx
+{
+  "pagination": {
+    "next": "Q1JFQVRFRF9BVCMyMDI0LTA0LTI1VDE2OjU4OjA3LjgyMVo=",
+    "page_size": 20
+  },
+  "data": [
+   {
+     "id": "93f3da5e-7887-408c-88ed-b10a5fdb423a",
+     "tenant_id": "9a63ab82-1d11-59a0-93ab-4e1ec98b9fdd",
+     "status": "pending",
+     "created_by": "2c8f4156-4ac6-5e71-9e03-8811fd6bc514",
+     "created_at": "2024-04-09T13:56:37.864Z",
+     "expires_at": "2024-04-09T14:56:37.864Z",
+     "upload_url": "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
+   },
+  ...
+  ]
+}
+```
+
+## File Format Specifications
+
+### **Request File Format**
+
+Account Updater request CSV files must use the following format:
+
+
+| Property           | Definition                                                                                                                                         | Required |
+|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|----------|
+| `token`            | A `card` token to be updated. The expiration date in this token is optional, and if present, will be sent to the networks when requesting updates. | true     |
+| `expiration_year`  | (Optional) The 2-digit expiration year of the account number. This is not required if the `card` token has `expiration_year` stored.               | false    |
+| `expiration_month` | (Optional) The 2-digit expiration month of the account number. This is not required if the `card` token has `expiration_month` stored.             | false    |
+| `merchant_id`      | (Optional) The merchant identifier (if provided by Basis Theory) under which this update request is submitted                                      | false    |
+
+Certain Account Updater configurations may require a `merchant_id` to be submitted in the request file to distinguish between multiple merchants within your tenant.
+During Account Updater onboarding, Basis Theory will identify whether a `merchant_id` is required and these values will be provided to you.
+If you were not provided with `merchant_ids` during onboarding, leave the `merchant_id` field empty.
+
+#### Example
+
+```csv
+token,expiration_year,expiration_month,merchant_id
+d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,
+f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,30,02,
+```
+
+### **Result File Format**
+
+<Alert type={Alerts.INFO}>We do not consider the addition of columns to this file a breaking change.</Alert>
+
+The result file is used to communicate any tokens created as a result of an updated account number or expiration date.
+This file only includes rows that resulted in a successful update, a warning, or an error (see [Result Codes](/docs/api/account-updater/result-codes) for details).
+Rows that did not result in any updates (i.e. the `NO_UPDATE` result code), warnings, or errors are omitted from the result file.
+
+Account Updater result CSV files will use the following format:
+
+| Property               | Definition                                                                                                                       | Always Returned                   |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------|
+| `token`                | The `card` token to be updated, as sent in the request file                                                                      | true                              |
+| `expiration_month`     | The `expiration_month` that was sent in the request file.                                                                        | false                             |
+| `expiration_year`      | The expiration year that was originally sent.                                                                                    | false                             |
+| `new_token`            | The new `card` token created with updated card details. Update any references to this token in your systems.                     | false (only on successful update) |
+| `new_expiration_month` | The new expiration month returned from the update.                                                                               | false                             |
+| `new_expiration_year`  | The new expiration year returned from the update.                                                                                | false                             |
+| `result_code`          | Code summarizing the processing status of the row. See [Result Codes](/docs/api/account-updater/result-codes) below for details. | true                              |
+
+#### Example
+
+```csv
+token,expiration_year,expiration_month,new_token,new_expiration_year,new_expiration_month,result_code
+d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,b2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,UPD_PAN
+f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,30,02,,,,WRN_CLOSED_ACCOUNT
+```
+
+## Resources
+
+### Account Updater Job
+
+| Property       | Type                  | Description                                                                                                                                                                                         |
+|----------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`           | _string_              | Identifier for the account updater job                                                                                                                                                              |
+| `tenant_id`    | _uuid_                | The tenant this job is associated with                                                                                                                                                              |
+| `status`       | _string_              | The [job status](#job-statuses)                                                                                                                                                                     |
+| `expires_at`   | _datetime_            | Time the upload URL will expire. This property is only returned while the job is in the `pending` status.                                                                                           |
+| `created_by`   | _uuid_                | The id of the application used to create the job                                                                                                                                                    |
+| `created_at`   | _datetime_            | Timestamp when this job was created                                                                                                                                                                 |
+| `upload_url`   | _string_              | The URL to which the [Request File](/docs/guides/account-updater/batch-implementation/#upload-request-file) should be uploaded. This will only be returned when the job is in the `pending` status. |
+| `errors`       | _array&lt;string&gt;_ | An array of error messages encountered when attempting to process the job                                                                                                                           |
+| `download_url` | _string_              | The URL to download the [Result File](/docs/guides/account-updater/batch-implementation/#download-result-file). This will only be returned when the job is in the `completed` status.               |
+
+### Job Statuses
+
+| Status       | Description                                                                                                              |
+|--------------|--------------------------------------------------------------------------------------------------------------------------|
+| `pending`    | The job has been created and is waiting for the request file to be uploaded.                                             |
+| `processing` | The job is currently being processed.                                                                                    |
+| `completed`  | The job has been processed and the result file is available for download.                                                |
+| `failed`     | The job failed to process, and the result file is not available. Errors will be included in the job's `errors` property. |

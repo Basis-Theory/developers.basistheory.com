@@ -64,7 +64,6 @@ const sidebars = {
           type: "html",
           value: "<hr />",
         },
-        "card-payments/keep-cards-up-to-date",
         "card-payments/payments-routing",
         "card-payments/using-network-tokens",
         {
@@ -125,6 +124,37 @@ const sidebars = {
           id: "guides/threeds/taking-threeds-live",
           label: "Taking 3DS Live",
         },
+      ],
+    },
+    {
+      type: "category",
+      label: "Account Updater",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/account-updater.svg",
+          dark: "/img/sidebar/dark/account-updater.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/account-updater/overview",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "guides/account-updater/setup",
+          label: "Setup",
+        },
+        {
+          type: "doc",
+          id: "guides/account-updater/batch-implementation",
+          label: "Batch Implementation",
+        },
+        {
+          type: "doc",
+          id: "guides/account-updater/real-time-implementation",
+          label: "Real-Time Implementation",
+        }
       ],
     },
     {
@@ -478,6 +508,20 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Network Tokens",
+      link: {
+        type: "doc",
+        id: "api/network-tokens/network-tokens",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/network-tokens/network-tokens",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "3D Secure",
       link: {
         type: "doc",
@@ -498,15 +542,30 @@ const sidebars = {
       label: "Account Updater",
       link: {
         type: "doc",
-        id: "api/account-updater/account-updater",
+        id: "api/account-updater/batch",
       },
       items: [
         {
           type: "doc",
-          id: "api/account-updater/account-updater",
+          id: "api/account-updater/batch",
           customProps: {
             enterprise: true,
           },
+        },
+        {
+          type: "doc",
+          id: "api/account-updater/real-time",
+          customProps: {
+            enterprise: true,
+          },
+        },
+        {
+          type: "doc",
+          id: "api/account-updater/result-codes",
+        },
+        {
+          type: "doc",
+          id: "api/account-updater/testing",
         },
       ],
     },

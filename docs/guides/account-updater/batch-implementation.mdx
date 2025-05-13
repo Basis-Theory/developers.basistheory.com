@@ -1,0 +1,146 @@
+---
+title: Batch Implementation
+---
+
+import {Alert, Alerts} from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { ApplicationSection } from "@site/src/components/docs/ApplicationSection";
+
+# Batch Implementation
+
+This guide provides an overview of how to implement Batch Account Updater. It covers the entire process, from initial setup to creating the batch job, generating and uploading the input request file, downloading the batch job results, and processing the results.
+
+## Initial Setup
+
+First, ensure that you have completed the [Account Updater Setup](/docs/guides/account-updater/setup) guide. This step is only required once.
+
+### Private Application
+
+<ApplicationSection type="private" permissions={["account-updater:job:create", "account-updater:job:read"]} />
+
+### Configure Webhooks (Recommended)
+
+Configure a [webhook](/docs/api/webhooks) to receive notifications for job status changes. You are able to subscribe to the following event types:
+
+- [account-updater.job.created](/docs/api/webhooks/eventdata#job-created)
+- [account-updater.job.completed](/docs/api/webhooks/eventdata#job-completed)
+- [account-updater.job.failed](/docs/api/webhooks/eventdata#job-failed)
+
+## 1. Create Batch Job
+
+Start by [creating an Account Updater Batch Job](/docs/api/account-updater/batch/#create-account-updater-batch-job) which responds with an [Account Updater Job](#account-updater-job).
+We will use the `upload_url` in the response below to [upload a request CSV file](#upload-request-file) for processing.
+
+You have one hour to upload a request file, at which time the job and upload url will expire. If a job expires before uploading the request file, simply start the process again by creating a new job.
+
+## 2. Create Request File
+
+Next we must create a [request CSV file](/docs/api/account-updater/batch/#request-file-format) containing the `card` tokens you would like to update.
+
+When testing, you can simulate various scenarios using the [Account Updater Test Cards](/docs/api/account-updater/testing#test-cards).
+You can either use the API to [create tokens](/docs/api/tokens/#create-token) containing these test card numbers, or use [this script](/docs/api/account-updater/testing#generating-test-tokens) to quickly generate test `card` tokens within your test tenant.
+
+If your `card` tokens include an expiration date, you may omit the `expiration_month` and `expiration_year` fields.
+
+Test tenants can always omit the `merchant_id` field -- only include `merchant_id` in production requests IF Basis Theory explicitly instructed you to do so during Account Updater onboarding.
+
+**Example Request File**
+
+```csv
+token,expiration_year,expiration_month,merchant_id
+d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,,,
+f32bc1b4-5c3a-45a3-9ee2-392a1c475d53,,,
+```
+
+<Alert>Large batches of tokens over the [request file size limit](/docs/api/rate-limits/#account-updater) can be split into multiple files and processed in parallel by creating multiple jobs.</Alert>
+
+## 3. Upload Request File
+
+Once you have created a request CSV file, you can use the `upload_url` received when [creating the batch job](#create-batch-job) to submit your file for processing.
+You can use the `upload_url` to upload your file using any usage patterns supported by [S3 pre-signed URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html).
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl -X PUT -T "/local/path/to/file" "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
+    ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```jsx
+    const fileName = `.data/${jobId}/request.csv`; // create your csv request file here
+    const fileStats = fs.statSync(fileName);
+
+    const response = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'text/csv',
+        'Content-Length': fileStats.size,
+      },
+      body: fs.createReadStream(fileName),
+      duplex: 'half',
+    });
+    ```
+  </TabItem>
+</Tabs>
+
+## 4. Wait for Job Completion
+
+There are two ways to receive notifications about the status of your batch jobs:
+
+1. (Preferred) Configure [webhooks](#configure-webhooks-recommended) to receive an [account-updater.job.completed](/docs/api/webhooks/eventdata#job-completed) event when the job is completed.
+2. Poll the [Get Account Updater Job](/docs/api/account-updater/batch/#get-account-updater-job) endpoint and wait for the job `status` to change to `completed`.
+
+### Job Timing
+
+| Tenant Type | Job Completion Time                    |
+|-------------|----------------------------------------|
+| Test        | Near real-time                         |
+| Production  | Typically 1 day, can take up to 7 days |
+
+<Alert>Production jobs may take longer to complete and are dependent on the card networks' processing times, which can take up to 7 days.</Alert>
+
+<Alert>We recommend submitting your batch jobs at least 7 days before any recurring transactions are scheduled to ensure the update has time to complete.</Alert>
+
+## 5. Download Result File
+
+Once a job is in the `completed` status, [retrieve the job details](/docs/api/account-updater/batch/#get-account-updater-job) to obtain the `download_url` which you will invoke to download the [Result File](/docs/api/account-updater/batch/#result-file-format).
+
+You may use any usage patterns supported by [S3 pre-signed URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html) to download this file.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell showLineNumbers
+    curl -o "output-file-name" "https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/..."
+    ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await axios.get("https://bt-prod-us-east-2-account-updater-data.s3.us-east-2.amazonaws.com/...", {responseType: 'stream'})
+      .then(response => {
+        // Create a write stream to save the file
+        const writer = fs.createWriteStream("results.csv");
+
+        // Pipe the response stream into the write stream
+        response.data.pipe(writer);
+
+        // Return a promise that resolves when the file has been downloaded
+        return new Promise((resolve, reject) => {
+          writer.on('finish', resolve);
+          writer.on('error', reject);
+        });
+  })
+    ```
+  </TabItem>
+</Tabs>
+
+
+## 6. Process the Result File
+
+The [Result File](/docs/api/account-updater/batch/#result-file-format) contains the results of the batch job, including a [result_code](/docs/api/account-updater/result-codes) for each row.
+Process this file in your system and take appropriate actions based on the result codes - note that some warning-level result codes may require additional action on your part.
+
+Rows that received an update will contain the `new_card` field with the id of a new `card` token. The token references in your system should be updated accordingly, and this new token should be used for future transactions.
+You have the option to retain the old token that was replaced or [delete it](/docs/api/tokens/#delete-token) once it is no longer needed.
+
+Rows that did not result in any updates, warnings, or errors are omitted from the result file.

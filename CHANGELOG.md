@@ -1,3 +1,59 @@
+## [1.235.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.235.0...v1.235.1) (2025-05-12)
+
+
+### Bug Fixes
+
+* adds additional account updater test cards for all brands ([#563](https://github.com/Basis-Theory/developers.basistheory.com/issues/563)) ([0d5c221](https://github.com/Basis-Theory/developers.basistheory.com/commit/0d5c2215f367916242b3d308912ede49f9a99c43))
+
+# [1.235.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.234.0...v1.235.0) (2025-05-09)
+
+
+### Features
+
+* add faq for stripe applepay currency ([#562](https://github.com/Basis-Theory/developers.basistheory.com/issues/562)) ([aebd355](https://github.com/Basis-Theory/developers.basistheory.com/commit/aebd3556cf82dc9b49e52d6d931b5d52145009ad))
+
+# [1.234.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.233.0...v1.234.0) (2025-05-09)
+
+
+### Features
+
+* Adds account updater guide and real time docs ([#556](https://github.com/Basis-Theory/developers.basistheory.com/issues/556)) ([dd3d125](https://github.com/Basis-Theory/developers.basistheory.com/commit/dd3d12525f758601b381a36233905e2698dd735c))
+
+# [1.233.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.232.1...v1.233.0) (2025-05-09)
+
+
+### Features
+
+* add 3ds cobadged cards docs ([#561](https://github.com/Basis-Theory/developers.basistheory.com/issues/561)) ([40e3ad1](https://github.com/Basis-Theory/developers.basistheory.com/commit/40e3ad1901d3abab794087c17ba52489f29d0b3e))
+
+## [1.232.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.232.0...v1.232.1) (2025-05-05)
+
+
+### Bug Fixes
+
+* Fix endpoint method ([#553](https://github.com/Basis-Theory/developers.basistheory.com/issues/553)) ([12ae34a](https://github.com/Basis-Theory/developers.basistheory.com/commit/12ae34a2800aabf4ea94245b81b5f791a8ddb60b))
+
+# [1.232.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.231.2...v1.232.0) (2025-05-05)
+
+
+### Features
+
+* add 3ds challenge authentication_status docs ([#551](https://github.com/Basis-Theory/developers.basistheory.com/issues/551)) ([f3dfbbc](https://github.com/Basis-Theory/developers.basistheory.com/commit/f3dfbbc641f5e7d229da894b642fe0c793ac06f5))
+
+## [1.231.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.231.1...v1.231.2) (2025-05-05)
+
+
+### Bug Fixes
+
+* limits docs ([#554](https://github.com/Basis-Theory/developers.basistheory.com/issues/554)) ([859d89c](https://github.com/Basis-Theory/developers.basistheory.com/commit/859d89c032c482da1be3f24c34debc6fc7f13572))
+
+## [1.231.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.231.0...v1.231.1) (2025-04-30)
+
+
+### Bug Fixes
+
+* psp sample ([#549](https://github.com/Basis-Theory/developers.basistheory.com/issues/549)) ([f81cd6f](https://github.com/Basis-Theory/developers.basistheory.com/commit/f81cd6f8a2ed0b94e2f88ab3388ebd035fe16228))
+
 # [1.231.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.230.1...v1.231.0) (2025-04-30)
 
 
