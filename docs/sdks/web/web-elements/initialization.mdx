@@ -164,3 +164,83 @@ function App() {
 5. **API Key Security**: Only use Public API keys in frontend code
 
 <Alert type={Alerts.WARNING}>If you're experiencing [CSP (Content Security Policy)](/docs/sdks/web/content-security-policy) errors, make sure your policy allows connections to <code>*.basistheory.com</code> domains for both script sources and frame-src directives.</Alert> 
+
+
+## Framework-Specific Setup
+
+### Next.js
+
+When using Basis Theory Elements with Next.js, you need to ensure the Elements are only initialized on the client side. This is because Elements require browser-specific APIs and DOM access.
+
+Here's how to properly set up Elements in a Next.js application:
+
+```tsx
+// components/CreditCardForm.tsx
+"use client";
+
+import { useRef } from "react";
+import { CardElement, useBasisTheory } from "@basis-theory/react-elements";
+
+const CreditCardForm = () => {
+  const cardRef = useRef<ICardElement | null>(null);
+  const { bt } = useBasisTheory(process.env.NEXT_PUBLIC_BASIS_THEORY_KEY);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const token = await bt.tokens.create({
+        type: "card",
+        data: cardRef.current,
+      });
+      // Handle the token
+    } catch (err) {
+      console.error("Tokenization error", err);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <CardElement id="card" bt={bt} ref={cardRef} />
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+
+export default CreditCardForm;
+```
+
+For a complete Next.js implementation example, check out our [Next.js Example Repository](https://github.com/Basis-Theory-Labs/nextjs-example).
+
+### Nuxt.js
+
+For Nuxt.js applications, you'll need to set up Elements as a client-side plugin. Here's how to configure it:
+
+```js
+// plugins/basistheory.js
+import Vue from "vue";
+import { basistheory } from "@basis-theory/web-elements";
+
+export default async ({ $config }, inject) => {
+  try {
+    const bt = await basistheory(process.env.BASIS_PUBLIC_API_KEY);
+    inject("bt", bt);
+  } catch (e) {
+    console.error("Basis Theory init error", e);
+  }
+};
+```
+
+```js
+// nuxt.config.js
+export default {
+  plugins: [{ src: "~/plugins/basistheory.js", mode: "client" }],
+  build: {
+    transpile: ["@basis-theory/web-elements"],
+  },
+  publicRuntimeConfig: {
+    basisPublicApiKey: process.env.BASIS_PUBLIC_API_KEY,
+  },
+};
+```
+
+For a complete Nuxt.js implementation example, check out our [Nuxt.js Example Repository](https://github.com/Basis-Theory-Labs/nuxt-2-example).
