@@ -1,3 +1,10 @@
+# [1.236.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.235.2...v1.236.0) (2025-05-13)
+
+
+### Features
+
+* add next/nuxt examples ([#564](https://github.com/Basis-Theory/developers.basistheory.com/issues/564)) ([0c2b383](https://github.com/Basis-Theory/developers.basistheory.com/commit/0c2b383d38b281d1155cfd5a3452fcb8e3020adb))
+
 ## [1.235.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.235.1...v1.235.2) (2025-05-13)
 
 ## [1.235.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.235.0...v1.235.1) (2025-05-12)
