@@ -130,7 +130,7 @@ curl 'https://api.basistheory.com/proxy' \
   </TabItem>
   <TabItem value="adyen" label="Adyen">
 
-In Ayden, you can verify a card without charging it [by calling the `/payments` API with 0 value amount.](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
+In Ayden, you can verify a card without charging it [by calling the `/payments` API](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments) with 0 value amount.
 
 ```shell showLineNumbers title="Verify a Card"
 curl 'https://api.basistheory.com/proxy' \
@@ -154,19 +154,25 @@ curl 'https://api.basistheory.com/proxy' \
     "expiryYear": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
     "cvc": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}",
 // highlight-end
-    "holderName": "John Smith"
   },
-  "reference": "6a54sd546as11",
+  "reference": "YourTransactionReference",
+  "shopperReference":"YourShopperId",
   "shopperInteraction":  "Ecommerce",
   "recurringProcessingModel":  "CardOnFile",
   "storePaymentMethod":  true,
-  "merchantAccount": "MyMerchantAccount"
+  "merchantAccount": "YourMerchantAccount"
 }'
 ```
 ```json showLineNumbers title="Verification Response"
 {
+  "pspReference": "HFGFCL72V3XW24V5",
+  "merchantReference": "YourTransactionReference",
   // highlight-next-line
   "resultCode": "Authorised",
+  "amount": {
+    "currency": "USD",
+    "value": 0
+  },
   "additionalData": {
   // highlight-start
     "networkTxReference": "377216678422238",

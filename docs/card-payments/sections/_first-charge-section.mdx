@@ -114,6 +114,62 @@ curl 'https://api.basistheory.com/proxy' \
 }
 ```
   </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+In Ayden, you can charge a card [by calling the `/payments` API](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
+
+```shell showLineNumbers title="Verify a Card"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://checkout-test.adyen.com/v71/payments' \
+-H 'X-API-Key: <AYDEN_API_KEY>' \
+// highlight-end
+-H 'Content-Type: application/json' \
+--data '{
+  "amount": {
+    "value": 1000,
+    "currency": "USD"
+  },
+  "paymentMethod": {
+    "type": "scheme",
+// highlight-start
+    "number": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
+    "expiryMonth": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiryYear": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
+    "cvc": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.cvc\" }}"
+// highlight-end
+  },
+  "reference": "YourTransactionReference",
+  "shopperReference":"YourShopperId",
+  "shopperInteraction":  "Ecommerce",
+  "recurringProcessingModel":  "CardOnFile",
+  "storePaymentMethod":  true,
+  "merchantAccount": "YourMerchantAccount"
+}'
+```
+```json showLineNumbers title="Payment Response"
+{
+  "pspReference": "CNX333SGC7ZN6KV5",
+  "merchantReference": "YourTransactionReference",
+  // highlight-next-line
+  "resultCode": "Authorised",
+  "amount": {
+    "currency": "USD",
+    "value": 1000
+  },
+  "additionalData": {
+  // highlight-start
+    "networkTxReference": "377216678422238",
+    "tokenization.storedPaymentMethodId": "NKLT7KJ7BVP5MNV5",
+  // highlight-end
+    ...
+  },
+  ...
+}
+```
+  </TabItem>
 </Tabs>
 
 <NotRestrictedAlert />
