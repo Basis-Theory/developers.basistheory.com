@@ -26,6 +26,7 @@ Creates a Network Token.
 <Tabs className="bt-tabs" groupId="languages">
   <TabItem value="shell" label="cURL" default>
     ```shell showLineNumbers
+    # Using raw card data
     curl -L 'https://api.basistheory.com/network-tokens' \
     -H 'BT-API-KEY: <API_KEY>' \
     -H 'Content-Type: application/json' \
@@ -49,10 +50,51 @@ Creates a Network Token.
             }
           }
         }'
-  ```
+
+    # Using an existing token ID
+    curl -L 'https://api.basistheory.com/network-tokens' \
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'Content-Type: application/json' \
+    -d '{
+          "token_id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+          "cardholder_info": {
+            "name": "Jonh Doe",
+            "address": {
+              "line1": "123 Main Street",
+              "line2": "Apt 4B",
+              "line3": "Building 7",
+              "postal_code": "90210",
+              "city": "Beverly Hills",
+              "state_code": "CA",
+              "country_code": "USA"
+            }
+          }
+        }'
+
+    # Using a token intent ID
+    curl -L 'https://api.basistheory.com/network-tokens' \
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'Content-Type: application/json' \
+    -d '{
+          "token_intent_id": "ti_5NGHYgCcnRQK9Ho8B3JHBe8",
+          "cardholder_info": {
+            "name": "Jonh Doe",
+            "address": {
+              "line1": "123 Main Street",
+              "line2": "Apt 4B",
+              "line3": "Building 7",
+              "postal_code": "90210",
+              "city": "Beverly Hills",
+              "state_code": "CA",
+              "country_code": "USA"
+            }
+          }
+        }'
+    ```
   </TabItem>
   <TabItem value="node" label="Node">
     ```javascript showLineNumbers
+    // Using raw card data
     await client.networkTokens.create({
         data: {
           number: "4111111111111111",
@@ -74,11 +116,48 @@ Creates a Network Token.
         }
       }
     );
+
+    // Using an existing token ID
+    await client.networkTokens.create({
+        token_id: "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+        cardholder_info: {
+          name: "Jonh Doe",
+          address: {
+            line1: "123 Main Street",
+            line2: "Apt 4B",
+            line3: "Building 7",
+            postal_code: "90210",
+            city: "Beverly Hills",
+            state_code: "CA",
+            country_code: "USA"
+          }
+        }
+      }
+    );
+
+    // Using a token intent ID
+    await client.networkTokens.create({
+        token_intent_id: "ti_5NGHYgCcnRQK9Ho8B3JHBe8",
+        cardholder_info: {
+          name: "Jonh Doe",
+          address: {
+            line1: "123 Main Street",
+            line2: "Apt 4B",
+            line3: "Building 7",
+            postal_code: "90210",
+            city: "Beverly Hills",
+            state_code: "CA",
+            country_code: "USA"
+          }
+        }
+      }
+    );
     ```
   </TabItem>
 
   <TabItem value="csharp" label="C#">
     ```csharp showLineNumbers
+    // Using raw card data
     await client.NetworkTokens.CreateAsync(
         new CreateNetworkTokenRequest
         {
@@ -104,11 +183,54 @@ Creates a Network Token.
                 }
             }
         });
+
+    // Using an existing token ID
+    await client.NetworkTokens.CreateAsync(
+        new CreateNetworkTokenRequest
+        {
+            TokenId = "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+            CardholderInfo = new CardholderInfo
+            {
+                Name = "John Doe",
+                Address = new Address
+                {
+                    Line1 = "123 Main Street",
+                    Line2 = "Apt 4B",
+                    Line3 = "Building 7",
+                    PostalCode = "90210",
+                    City = "Beverly Hills",
+                    StateCode = "CA",
+                    CountryCode = "USA"
+                }
+            }
+        });
+
+    // Using a token intent ID
+    await client.NetworkTokens.CreateAsync(
+        new CreateNetworkTokenRequest
+        {
+            TokenIntentId = "ti_5NGHYgCcnRQK9Ho8B3JHBe8",
+            CardholderInfo = new CardholderInfo
+            {
+                Name = "John Doe",
+                Address = new Address
+                {
+                    Line1 = "123 Main Street",
+                    Line2 = "Apt 4B",
+                    Line3 = "Building 7",
+                    PostalCode = "90210",
+                    City = "Beverly Hills",
+                    StateCode = "CA",
+                    CountryCode = "USA"
+                }
+            }
+        });
     ```
   </TabItem>
   <TabItem value="java" label="Java">
     ```java showLineNumbers
-    NetworkToken networkToken = new NetworkTokensClient(ClientOptions.builder().build())
+    // Using raw card data
+    NetworkToken networkToken1 = new NetworkTokensClient(ClientOptions.builder().build())
       .create(CreateNetworkTokenRequest.builder()
         .cardholderInfo(CardholderInfo.builder()
         .name("Jonh Doe")
@@ -129,10 +251,47 @@ Creates a Network Token.
         .cvc("123")
         .build())
       .build());
+
+    // Using an existing token ID
+    NetworkToken networkToken2 = new NetworkTokensClient(ClientOptions.builder().build())
+      .create(CreateNetworkTokenRequest.builder()
+        .tokenId("c06d0789-0a38-40be-b7cc-c28a718f76f1")
+        .cardholderInfo(CardholderInfo.builder()
+        .name("Jonh Doe")
+        .address(Address.builder()
+          .line1("123 Main Street")
+          .line2("Apt 4B")
+          .line3("Building 7")
+          .postalCode("90210")
+          .city("Beverly Hills")
+          .stateCode("CA")
+          .countryCode("USA")
+          .build())
+        .build())
+      .build());
+
+    // Using a token intent ID
+    NetworkToken networkToken3 = new NetworkTokensClient(ClientOptions.builder().build())
+      .create(CreateNetworkTokenRequest.builder()
+        .tokenIntentId("ti_5NGHYgCcnRQK9Ho8B3JHBe8")
+        .cardholderInfo(CardholderInfo.builder()
+        .name("Jonh Doe")
+        .address(Address.builder()
+          .line1("123 Main Street")
+          .line2("Apt 4B")
+          .line3("Building 7")
+          .postalCode("90210")
+          .city("Beverly Hills")
+          .stateCode("CA")
+          .countryCode("USA")
+          .build())
+        .build())
+      .build());
     ```
   </TabItem>
   <TabItem value="python" label="Python">
     ```python showLineNumbers
+    # Using raw card data
     await client.network_tokens.create(
         data=Card(
             number="4111111111111111",
@@ -140,7 +299,40 @@ Creates a Network Token.
             expiration_year=2027,
             cvc="123"
         ),
+        cardholder_info=CardholderInfo(
+            name="John Doe",
+            address=Address(
+                line1="123 Main Street",
+                line2="Apt 4B",
+                line3="Building 7",
+                postal_code="90210",
+                city="Beverly Hills",
+                state_code="CA",
+                country_code="US"
+            )
+        )
+    )
 
+    # Using an existing token ID
+    await client.network_tokens.create(
+        token_id="c06d0789-0a38-40be-b7cc-c28a718f76f1",
+        cardholder_info=CardholderInfo(
+            name="John Doe",
+            address=Address(
+                line1="123 Main Street",
+                line2="Apt 4B",
+                line3="Building 7",
+                postal_code="90210",
+                city="Beverly Hills",
+                state_code="CA",
+                country_code="US"
+            )
+        )
+    )
+
+    # Using a token intent ID
+    await client.network_tokens.create(
+        token_intent_id="ti_5NGHYgCcnRQK9Ho8B3JHBe8",
         cardholder_info=CardholderInfo(
             name="John Doe",
             address=Address(
@@ -160,14 +352,33 @@ Creates a Network Token.
 
 #### Request Parameters
 
-| Attribute             | Required | Type   | Description                                           |
-|-----------------------|----------|--------|-------------------------------------------------------|
-| data                  | Yes      | object | Card details required to generate a network token     |
-| data.number           | Yes      | string | The card number to tokenize                           |
-| data.expiration_month | Yes      | string | The card's expiration month                           |
-| data.expiration_year  | Yes      | string | The card's four-digit expiration year                 |
-| data.cvc              | Yes      | string | The card's verification code                          |
-| cardholder_info       | Yes      | object | The [cardholder information](#cardholder-information) |
+| Attribute       | Required | Type   | Description                                                            |
+|-----------------|----------|--------|------------------------------------------------------------------------|
+| data            | No       | object | The [card data](#card-data-object) to create a Network Token           |
+| token_intent_id | No       | string | The ID of a Token Intent to use as source for creating a Network Token |
+| token_id        | No       | string | The ID of a Token to use as source for creating a Network Token        |
+| cardholder_info | Yes      | object | The [cardholder information](#cardholder-information)                  |
+
+<Alert type={Alerts.INFO}>
+  Exactly one of the following is required: `data`, `token_intent_id` or `token_id` when creating a Network Token.
+</Alert>
+
+<Alert type={Alerts.WARNING}>
+    When using the <code>data</code> object with raw card details, your system must be PCI DSS compliant. Consider using <code>token_id</code> or <code>token_intent_id</code> instead to reduce compliance scope.
+</Alert>
+
+<Alert type={Alerts.WARNING}>
+    When using a Token ID or Token Intent ID, the record must be a card token containing at least number, expiration month and expiration year.
+</Alert>
+
+####  Card Data Object
+
+| Attribute        | Required | Type   | Description                           |
+|------------------|----------|--------|---------------------------------------|
+| number           | Yes      | string | The card number to tokenize           |
+| expiration_month | Yes      | string | The card's expiration month           |
+| expiration_year  | Yes      | string | The card's four-digit expiration year |
+| cvc              | No       | string | The card's verification code          |
 
 #### Cardholder Information
 
@@ -230,7 +441,9 @@ Returns a [network token object](#network-token-object) if successful. Returns [
     },
     "status": "active",
     "created_by": "f8dee6b4-2f92-4052-81f9-8b0fc8078a6e",
-    "created_at": "2025-05-07T17:04:06.3338559+00:00"
+    "created_at": "2025-05-07T17:04:06.3338559+00:00",
+    "token_id": "c06d0789-0a38-40be-b7cc-c28a718f76f1", // If network token was created using a token_id
+    "token_intent_id": "c06d0789-0a38-40be-b7cc-c28a718f76f1" // If network token was created using a token_intent_id
 }
 ```
 
@@ -457,8 +670,13 @@ Returns a 204 No Content response if successful. Returns [an error](/docs/api/er
 | `data.expiration_month` | _integer_ | Card's expiration month                                                                     |
 | `data.expiration_year`  | _integer_ | Card's expiration year                                                                      |
 | `network_token`         | _object_  | An object containing the card data. See [Card Details](#card-details) for more information. |
+| `status`                | _string_  | The status of the network token. Possible values: `active`, `suspended` or `deleted`        |
 | `created_by`            | _uuid_    | ID of the entity that created the network token                                             |
 | `created_at`            | _date_    | Timestamp of when the network token was created                                             |
+| `token_id`              | _uuid_    | The ID of the token if created using a token_id                                             |
+| `token_intent_id`       | _uuid_    | The ID of the token intent if created using a token_intent_id                               |
+
+<Alert type={Alerts.INFO}>Both `token_id` and `token_intent_id` can be present if a token intent is eventually transformed into a token.</Alert>
 
 
 <CardDetails />
