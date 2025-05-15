@@ -455,6 +455,7 @@ const sidebars = {
       },
       items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
     },
+    "api/client-keys",
     "api/logs",
     {
       type: "category",
