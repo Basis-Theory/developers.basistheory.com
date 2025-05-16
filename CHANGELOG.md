@@ -1,3 +1,10 @@
+## [1.238.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.0...v1.238.1) (2025-05-16)
+
+
+### Bug Fixes
+
+* broken link ([#568](https://github.com/Basis-Theory/developers.basistheory.com/issues/568)) ([4cd75f7](https://github.com/Basis-Theory/developers.basistheory.com/commit/4cd75f7fdeb8620025370564a294912465dc554b))
+
 # [1.238.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.237.0...v1.238.0) (2025-05-16)
 
 
