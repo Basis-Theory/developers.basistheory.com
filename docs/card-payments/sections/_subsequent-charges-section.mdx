@@ -12,12 +12,14 @@ Once you've securely saved a card in the vault and generated a persistent token,
 
 ### Using the PAN
 
-If you [charged](#first-charge) or [verified](/docs/card-payments/verify-card) a card used a different acquirer than the one required for subsequent charges, we recommend using this method, which relies on the Proxy to securely route tokenized cardholder data to the payment processor.
+If you [charged](#first-charge) or [verified](/docs/card-payments/verify-card) a card used a different acquirer than the one required for subsequent charges, we recommend using this method, which relies on the Basis Theory Proxy to securely route tokenized cardholder data to the payment processor.
 
 <Tabs className="bt-tabs" queryString="processor">
   <TabItem value="checkout.com" label="Checkout.com">
 
 In Checkout.com, you can charge a saved card [by calling the `/payments` API](https://www.checkout.com/docs/payments/accept-payments/pay-with-stored-card-details#Request_a_payment_with_stored_card_details).
+
+Pass the Network Transaction identifier of the first charge into the `previous_payment_id` field.
 
 ```shell showLineNumbers title="Request a Payment"
 curl 'https://api.basistheory.com/proxy' \
@@ -32,15 +34,17 @@ curl 'https://api.basistheory.com/proxy' \
   "source": {
     "type": "card",
 // highlight-start
-    "number": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data.number\" }}",
-    "expiry_month": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"MM\" }}",
-    "expiry_year": "{{ token_intent: d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4 | json: \"$.data\" | card_exp: \"YYYY\" }}",
+    "number": "{{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: \"$.data.number\" }}",
+    "expiry_month": "{{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiry_year": "{{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: \"$.data\" | card_exp: \"YYYY\" }}",
 // highlight-end
     "stored": true
   },
   "amount": 1000,
   "currency": "USD",
-  "processing_channel_id": "pc_svyx12xvaaduraq3ckb2gwnvzq"
+  "processing_channel_id": "pc_svyx12xvaaduraq3ckb2gwnvzq",
+// highlight-next-line
+  "previous_payment_id": "<first_network_transaction_identifier>"
 }'
 ```
 ```json showLineNumbers title="Payment Response"
@@ -69,6 +73,8 @@ curl 'https://api.basistheory.com/proxy' \
 
 In Stripe, you can charge a saved card by creating a [Payment Intent](https://docs.stripe.com/payments/payment-intents).
 
+Pass the Network Transaction identifier of the first charge into the `payment_method_options[card][mit_exemption][network_transaction_id]` field.
+
 ```shell showLineNumbers title="Create a Payment Intent"
 curl 'https://api.basistheory.com/proxy' \
 -X 'POST' \
@@ -87,7 +93,7 @@ curl 'https://api.basistheory.com/proxy' \
 --data-urlencode 'payment_method_data[card][number]={{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: "$.data.number" }}' \
 --data-urlencode 'payment_method_data[card][exp_month]={{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: "$.data" |  card_exp: "MM" }}' \
 --data-urlencode 'payment_method_data[card][exp_year]={{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: "$.data" | card_exp: "YYYY" }}' \
---data-urlencode 'payment_method_data[card][cvc]={{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: "$.data.cvc" }}'
+--data-urlencode 'payment_method_options[card][mit_exemption][network_transaction_id]=<first_network_transaction_identifier>'
 // highlight-end
 ```
 
@@ -110,6 +116,65 @@ curl 'https://api.basistheory.com/proxy' \
     }
     ...
   }
+  ...
+}
+```
+  </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+In Ayden, you can charge a saved card [by calling the `/payments` API](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
+
+Pass the Network Transaction identifier of the first charge into the `additionalData.networkTxReference` field.
+
+```shell showLineNumbers title="Request a Payment"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://checkout-test.adyen.com/v71/payments' \
+-H 'X-API-Key: <AYDEN_API_KEY>' \
+// highlight-end
+-H 'Content-Type: application/json' \
+--data '{
+  "amount": {
+    "value": 1000,
+    "currency": "USD"
+  },
+  "paymentMethod": {
+    "type": "scheme",
+// highlight-start
+    "number": "{{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: \"$.data.number\" }}",
+    "expiryMonth": "{{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: \"$.data\" | card_exp: \"MM\" }}",
+    "expiryYear": "{{ token: 1cd9c8bf-99fd-4784-ba69-68b15b301019 | json: \"$.data\" | card_exp: \"YYYY\" }}"
+// highlight-end
+  },
+  "additionalData": {
+// highlight-next-line
+    "networkTxReference": "<first_network_transaction_identifier>"
+  },
+  "reference": "YourTransactionReference",
+  "shopperReference":"YourShopperId",
+  "shopperInteraction":  "Ecommerce",
+  "recurringProcessingModel":  "CardOnFile",
+  "merchantAccount": "MyMerchantAccount"
+}'
+```
+```json showLineNumbers title="Payment Response"
+{
+  "pspReference": "MSM4SD53V3XW24V5",
+  "merchantReference": "YourTransactionReference",
+  // highlight-next-line
+  "resultCode": "Authorised",
+  "amount": {
+    "currency": "USD",
+    "value": 1000
+  },
+  "additionalData": {
+  // highlight-start
+    "networkTxReference": "377216678422238",
+  // highlight-end
+    ...
+  },
   ...
 }
 ```
@@ -202,6 +267,57 @@ curl 'https://api.stripe.com/v1/payment_intents' \
     }
     ...
   }
+  ...
+}
+```
+  </TabItem>
+  <TabItem value="adyen" label="Adyen">
+
+In Ayden, you can charge a saved card [by calling the `/payments` API](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments).
+
+```shell showLineNumbers title="Request a Payment"
+curl 'https://api.basistheory.com/proxy' \
+-X 'POST' \
+// highlight-start
+-H 'BT-API-KEY: <PRIVATE_API_KEY>' \
+-H 'BT-PROXY-URL: https://checkout-test.adyen.com/v71/payments' \
+-H 'X-API-Key: <AYDEN_API_KEY>' \
+// highlight-end
+-H 'Content-Type: application/json' \
+--data '{
+  "amount": {
+    "value": 1000,
+    "currency": "USD"
+  },
+  "paymentMethod": {
+    "type": "scheme",
+// highlight-next-line
+    "storedPaymentMethodId": "NKLT7KJ7BVP5MNV5"
+  },
+  "reference": "YourTransactionReference",
+  "shopperReference":"YourShopperId",
+  "shopperInteraction":  "Ecommerce",
+  "recurringProcessingModel":  "CardOnFile",
+  "merchantAccount": "MyMerchantAccount"
+}'
+```
+```json showLineNumbers title="Payment Response"
+{
+  "pspReference": "CNX333SGC7ZN6KV5",
+  "merchantReference": "YourTransactionReference",
+  // highlight-next-line
+  "resultCode": "Authorised",
+  "amount": {
+    "currency": "USD",
+    "value": 1000
+  },
+  "additionalData": {
+  // highlight-start
+    "networkTxReference": "377216678422238",
+    "tokenization.storedPaymentMethodId": "NKLT7KJ7BVP5MNV5",
+  // highlight-end
+    ...
+  },
   ...
 }
 ```
