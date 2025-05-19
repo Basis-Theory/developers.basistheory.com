@@ -522,6 +522,20 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Apple Pay Tokens",
+      link: {
+        type: "doc",
+        id: "api/apple-pay/api",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/apple-pay/api",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "3D Secure",
       link: {
         type: "doc",
@@ -677,7 +691,7 @@ const sidebars = {
           },
           items: ["sdks/web/web-elements/initialization", "sdks/web/web-elements/components", "sdks/web/web-elements/methods", "sdks/web/web-elements/events", "sdks/web/web-elements/lifecycle", "sdks/web/web-elements/services", "sdks/web/web-elements/migration", "sdks/web/content-security-policy"],
         },
-        /* TODO add redirects for these         
+        /* TODO add redirects for these
 
   {
           type: "category",
