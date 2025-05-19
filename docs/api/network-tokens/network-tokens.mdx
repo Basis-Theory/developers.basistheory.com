@@ -3,6 +3,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import {Alert, Alerts} from "../../../src/components/shared/Alert";
 import CardDetails from "@site/docs/api/tokens/_card_details.mdx";
+import Info from "@site/static/img/getting-started/icons/information.svg";
 
 # Network Tokens
 
@@ -361,17 +362,11 @@ Creates a Network Token.
 | token_id        | No       | string | The ID of a Token to use as source for creating a Network Token        |
 | cardholder_info | Yes      | object | The [cardholder information](#cardholder-information)                  |
 
-<Alert type={Alerts.INFO}>
-  Exactly one of the following is required: `data`, `token_intent_id` or `token_id` when creating a Network Token.
-</Alert>
+<Alert type={Alerts.INFO}>Exactly one of the following is required: `data`, `token_intent_id` or `token_id` when creating a Network Token.</Alert>
 
-<Alert type={Alerts.WARNING}>
-    When using the <code>data</code> object with raw card details, your system must be PCI DSS compliant. Consider using <code>token_id</code> or <code>token_intent_id</code> instead to reduce compliance scope.
-</Alert>
+<Alert type={Alerts.WARNING}>When using the <code>data</code> object with raw card details, your system must be PCI DSS compliant. Consider using <code>token_id</code> or <code>token_intent_id</code> instead to reduce compliance scope.</Alert>
 
-<Alert type={Alerts.WARNING}>
-    When using a Token ID or Token Intent ID, the record must be a card token containing at least `number`, `expiration_month` and `expiration_year` attributes.
-</Alert>
+<Alert type={Alerts.WARNING}>When using a Token ID or Token Intent ID, the record must be a card token containing at least `number`, `expiration_month` and `expiration_year` attributes.</Alert>
 
 ####  Card Data Object
 
@@ -691,6 +686,64 @@ Returns a 204 No Content response if successful. Returns [an error](/docs/api/er
 | `eci`        | _string_ | The ECI value associated with the cryptogram   |
 
 
+## Test Cards
+
+The following test cards can be used to test different error and success scenarios when creating network tokens.
+
+<Alert type={Alerts.INFO}>These cards are not valid for real transactions and should only be used in the Basis Theory sandbox environment.</Alert>
+
+
+### Visa Cards
+
+| Test PAN           | Response                 |
+|--------------------|--------------------------|
+| `4111111111111111` | Success                  |
+| `4012888888881881` | Provision Data Expired   |
+| `4330251207506660` | Card Verification Failed |
+| `4539097887163333` | Card Not Eligible        |
+| `4929980395567582` | Card Not Allowed         |
+| `4929544240318920` | Card Declined            |
+| `4916725297925395` | Provision Not Allowed    |
+| `4711358892785746` | Card Eligibility Error   |
+
+### Mastercard Cards
+
+| Test PAN           | Response                 |
+|--------------------|--------------------------|
+| `5555555555554444` | Success                  |
+| `5105105105105100` | Provision Data Expired   |
+| `5461310156953048` | Card Verification Failed |
+| `5325191087030619` | Card Not Eligible        |
+| `5580422612666704` | Card Not Allowed         |
+| `5157204564548129` | Card Declined            |
+| `5336475987107024` | Provision Not Allowed    |
+| `5233580618829955` | Card Eligibility Error   |
+
+### Discover Cards
+
+| Test PAN           | Response                 |
+|--------------------|--------------------------|
+| `6011111111111117` | Success                  |
+| `6011601160116611` | Provision Data Expired   |
+| `6011168802268945` | Card Verification Failed |
+| `6011690151507086` | Card Not Eligible        |
+| `6011444770992901` | Card Not Allowed         |
+| `6011760519541711` | Card Declined            |
+| `6011490740263725` | Provision Not Allowed    |
+| `6011000990139424` | Card Eligibility Error   |
+
+### American Express Cards
+
+| Test PAN          | Response                 |
+|-------------------|--------------------------|
+| `378282246310005` | Success                  |
+| `371449635398431` | Provision Data Expired   |
+| `370488998077498` | Card Verification Failed |
+| `373555735376156` | Card Not Eligible        |
+| `378025849667382` | Card Not Allowed         |
+| `348322853530243` | Card Declined            |
+| `375155165213132` | Provision Not Allowed    |
+| `348835199015504` | Card Eligibility Error   |
 
 
 
