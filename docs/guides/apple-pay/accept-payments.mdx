@@ -18,9 +18,9 @@ When the user clicks the Apple "Pay" button, a sequence of high-level steps is i
 1. **Creation of an Apple Pay session** - The client application calls Basis Theory to initiate an Apple Pay session.
 
 2. **Decryption of the payment data** - After the user authorizes the payment, the encrypted payment data is sent to Basis Theory for decryption and storage.
-   Basis Theory responds with a [Token Intent](/docs/api/tokens/token-intents#token-intent-object) that can be used to process the payment.
+   Basis Theory responds with an Apple Pay Token that can be used to process the payment.
 
-3. **Processing of the payment data** - The Basis Theory Token Intents are forwarded to the payment processor via Basis Theory Proxy, which translates Token Intents back to raw data before sending the request.
+3. **Processing of the payment data** - The Basis Theory Apple Pay Token is forwarded to the payment processor via Basis Theory Proxy, which translates Token back to raw data before sending the request.
    Upon receiving a successful payment response, the client application can complete the payment and inform the user that the payment was successful.
 
 ![Accept Apple Pay](/img/guides/apple-pay/accept-payments.png)
@@ -208,7 +208,7 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
             'BT-API-KEY': '<PUBLIC_APPLICATION_KEY>'
           },
           body: JSON.stringify({
-            apple_payment_method_token: event.payment.token
+            apple_payment_data: event.payment.token
           })
         });
 
@@ -216,8 +216,9 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const tokenIntent = await response.json().token_intent;
-        console.log('token intent', tokenIntent);
+        const appleToken = await response.json().apple_pay;
+        console.log('apple token', appleToken);
+        return appleToken;
       }
       // highlight-end
     </script>
@@ -235,7 +236,7 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
 
 ## Processing the Payment
 
-We'll send the Basis Theory Token Intent to a Payments Service Provider (PSP) to test charging a card.
+We'll send the Basis Theory Apple Pay Token to a Payments Service Provider (PSP) to test charging a card.
 We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/ephemeral-proxy) and a Private Application.
 
 ### Create a Private Application
@@ -246,7 +247,7 @@ We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/epheme
 
 Payment service providers (PSPs) may differ in how they handle this operation, offering workflows like "authorization and capture" or "direct charge."
 
-We'll change our frontend application one last time to pass in the Token Intent ID to the backend to process the payment.
+We'll change our frontend application one last time to pass in the Token ID to the backend to process the payment.
 
 ```html showLineNumbers
 <html>
@@ -277,12 +278,12 @@ We'll change our frontend application one last time to pass in the Token Intent 
         session.onpaymentauthorized = async (event, session) => {
           try {
             // decrypt and tokenize Apple Pay
-            const tokenIntent = await tokenize(event);
+            const token = await tokenize(event);
             // present green check to the user before the timeout (30 seconds)
             session.completePayment(ApplePaySession.STATUS_SUCCESS);
             // highlight-start
             // send the token to the backend for payment processing
-            const response = await chargePayment(tokenIntent.id);
+            const response = await chargePayment(token.id);
             console.log(response);
             // highlight-end
           } catch (e) {
@@ -299,14 +300,14 @@ We'll change our frontend application one last time to pass in the Token Intent 
       async function tokenize(event) { ... }
 
       // highlight-start
-      async function chargePayment(tokenIntentId) {
+      async function chargePayment(tokenId) {
         return fetch('http://localhost:3000/charge-payment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            tokenIntentId: tokenIntentId
+            applePayId: tokenId
           })
         });
       }
@@ -343,11 +344,11 @@ curl 'https://api.basistheory.com/proxy' \
        "type": "network_token",
        "token_type": "applepay",
        // highlight-start
-       "token": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }}",
-       "expiry_month": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }}",
-       "expiry_year": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}",
-       "eci": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.eci_indicator\" }}",
-       "cryptogram": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.threeds_cryptogram\" }}"
+       "token": "{{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.data.number\" }}",
+       "expiry_month": "{{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.data\" | card_exp: \"MM\" }}",
+       "expiry_year": "{{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}",
+       "eci": "{{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.authentication.eci_indicator\" }}",
+       "cryptogram": "{{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.authentication.threeds_cryptogram\" }}"
        // highlight-end
      },
      "amount": 1000,
@@ -380,14 +381,14 @@ curl 'https://api.basistheory.com/proxy'
   -d "payment_method_data[type]"=card \
   -d "payment_method_data[card][network_token][tokenization_method]"=apple_pay \
     // highlight-start
-  -d "payment_method_data[card][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
-  -d "payment_method_data[card][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
-  -d "payment_method_data[card][last4]"={{token_intent: <TOKEN_INTENT_ID> | json: '$.data.number' | last4 }} \
-  -d "payment_method_data[card][network_token][number]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }} \
-  -d "payment_method_data[card][network_token][exp_month]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
-  -d "payment_method_data[card][network_token][exp_year]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
-  -d "payment_method_options[card][network_token][cryptogram]"={{ token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.threeds_cryptogram\" }} \
-  -d "payment_method_options[card][network_token][electronic_commerce_indicator]"={{token_intent: <TOKEN_INTENT_ID> | json: \"$.authentication.eci_indicator\" | pad_left: 2, \"0\" }}
+  -d "payment_method_data[card][exp_month]"={{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
+  -d "payment_method_data[card][exp_year]"={{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
+  -d "payment_method_data[card][last4]"={{apple_pay: <APPLE_PAY_TOKEN_ID> | json: '$.data.number' | last4 }} \
+  -d "payment_method_data[card][network_token][number]"={{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.data.number\" }} \
+  -d "payment_method_data[card][network_token][exp_month]"={{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.data\" | card_exp: \"MM\" }} \
+  -d "payment_method_data[card][network_token][exp_year]"={{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.data\" | card_exp: \"YYYY\" }} \
+  -d "payment_method_options[card][network_token][cryptogram]"={{ apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.authentication.threeds_cryptogram\" }} \
+  -d "payment_method_options[card][network_token][electronic_commerce_indicator]"={{apple_pay: <APPLE_PAY_TOKEN_ID> | json: \"$.authentication.eci_indicator\" | pad_left: 2, \"0\" }}
   // highlight-end
   ```
   </TabItem>
@@ -397,7 +398,9 @@ curl 'https://api.basistheory.com/proxy'
 
 ## Testing
 
-Basis Theory does not support Apple’s sandbox environment, requiring the use of an actual card from your Apple Wallet for testing purposes. When operating within a **Test tenant**, Basis Theory will not return real card data. Although the Apple Pay token generated during development is authentic, the associated Basis Theory Token Intent will contain simulated data only.
+Basis Theory does not support Apple’s sandbox environment, requiring the use of an actual card from your Apple Wallet for testing purposes.
+When operating within a **Test tenant**, Basis Theory will not return real card data.
+Although the Apple Pay token generated during development is authentic, the associated Basis Theory Apple Pay token will contain simulated data only.
 
 To access genuine, valid network tokens derived from Apple Pay tokens, a **Production tenant** must be utilized.
 
