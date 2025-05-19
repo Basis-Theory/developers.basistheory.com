@@ -1,3 +1,10 @@
+## [1.238.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.1...v1.238.2) (2025-05-19)
+
+
+### Bug Fixes
+
+* adds Node SDK and config options for Reactors ([#557](https://github.com/Basis-Theory/developers.basistheory.com/issues/557)) ([6b710dc](https://github.com/Basis-Theory/developers.basistheory.com/commit/6b710dc71aa66b6d0da9628a0f89b7be276b156a))
+
 ## [1.238.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.0...v1.238.1) (2025-05-16)
 
 
