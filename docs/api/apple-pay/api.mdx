@@ -10,3 +10,502 @@ import { Permission } from "@site/src/components/shared/Permission";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Apple Pay™
+
+## Register Domain Address
+
+Apple Pay™ requires websites to associate their domain address with a merchant identifier.
+Basis Theory handles the merchant and certificate handling.
+To utilize Basis Theory's Apple Pay integration, you will need to add your domain and subdomains to our merchant.
+Review Apple's [documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/configuring_your_environment#3179109) for important considerations regarding your domain.
+
+### Prerequisite
+
+Before registering your domain with Basis Theory, our domain verification file needs to be available to Apple via your website.
+[Download](https://cdn.basistheory.com/.well-known/apple-developer-merchantid-domain-association) the file and add it to your server at the URL `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association`.
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay/domain-registration" />
+
+#### Permissions
+
+<Permission content="apple-pay:manage" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url https://api.basistheory.com/apple-pay/domain-registration \
+      --header 'BT-API-KEY: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "domain": "<YOUR_DOMAIN>"
+      }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+| Attribute  | Required | Description |
+|------------|----------|-------------|
+| `domain` | true | Domain to register. |
+
+### Response
+
+```json
+{
+  "domains": [
+    {
+      "domain": "...",
+      "status": "verified"
+    }
+    ...
+  ]
+}
+```
+| Attribute                         | Type      | Description                                   |
+|-----------------------------------|-----------|-----------------------------------------------|
+| domains | Array | List of domains associated with the tenant |
+| domains[].domain | string | Domain or subdomain
+| domains[].status | string | Verification status of domain. Only `verified` |
+
+### Errors
+
+| Status Code | |
+|-------------|-|
+| 422 | Ensure that the domain registration file is [available](/docs/api/apple-pay#prerequisite) from the domain being registered |
+| 50X | Please contact Basis Theory support and provide the domain name in your message. |
+
+## Register All Domain Addresses
+
+<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/apple-pay/domain-registration" />
+
+#### Permissions
+
+<Permission content="apple-pay:manage" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request PUT \
+      --url https://api.basistheory.com/apple-pay/domain-registration \
+      --header 'BT-API-KEY: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "domains": ["<DOMAIN_ONE>", "DOMAIN_TWO"]
+      }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+  client.applePay.domain.registerAll({
+    domains: ["DOMAIN_ONE", "DOMAIN_TWO"]
+  })
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+  await client.ApplePay.Domain.RegisterAllAsync(new ApplePayDomainRegistrationListRequest
+    {
+      Domains = ["DOMAIN_ONE", "DOMAIN_TWO"]
+    });
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+  client.apple_pay.domain.register_all(domains=["DOMAIN_ONE", "DOMAIN_TWO"])
+  ```
+    </TabItem>
+    <TabItem value="terraform" label="Terraform">
+  ```terraform showLineNumbers
+  resource "basistheory_applepay_domain" "my_apple_pay_domains" {
+    domains = ["DOMAIN_ONE", "DOMAIN_TWO"]
+  }
+  ```
+    </TabItem>
+</Tabs>
+
+| Attribute  | Required | Description |
+|------------|----------|-------------|
+| `domains` | true | List of domain names to register. |
+
+### Response
+
+```json
+{
+  "domains": [
+    {
+      "domain": "...",
+      "status": "verified"
+    }
+    ...
+  ]
+}
+```
+| Attribute                         | Type      | Description                                   |
+|-----------------------------------|-----------|-----------------------------------------------|
+| domains | Array | List of domains associated with the tenant |
+| domains[].domain | string | Domain or subdomain
+| domains[].status | string | Verification status of domain. Only `verified` |
+
+### Errors
+
+| Status Code | |
+|-------------|-|
+| 422 | Ensure that the domain registration file is [available](/docs/api/apple-pay#prerequisite) from the domain being registered |
+| 50X | Please contact Basis Theory support and provide the domain name in your message. |
+
+## Get Domain Registrations
+
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/apple-pay/domain-registration" />
+
+#### Permissions
+
+<Permission content="apple-pay:manage" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request GET \
+      --url https://api.basistheory.com/apple-pay/domain-registration \
+      --header 'BT-API-KEY: <API_KEY>'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+### Response
+
+```json
+{
+  "domains": [
+    {
+      "domain": "...",
+      "status": "verified"
+    }
+    ...
+  ]
+}
+```
+| Attribute                         | Type      | Description                                   |
+|-----------------------------------|-----------|-----------------------------------------------|
+| domains | Array | List of domains associated with the tenant |
+| domains[].domain | string | Domain or subdomain
+| domains[].status | string | Verification status of domain. Only `verified` |
+
+## Deregister Domain
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay/domain-deregistration" />
+
+#### Permissions
+
+<Permission content="apple-pay:manage" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url https://api.basistheory.com/apple-pay/domain-deregistration \
+      --header 'BT-API-KEY: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "domain": "cdn.basistheory.com"
+      }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+| Attribute  | Required | Description |
+|------------|----------|-------------|
+| `domain` | true | Domain to deregister. |
+
+### Response
+
+`204 No Content`
+
+## Create Session
+
+A proxy endpoint to start an Apple Pay session using Basis Theory's merchant identifier.
+See the [documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session) on Apple's site for more details.components
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay/session" />
+
+#### Permissions
+
+<Permission content="apple-pay:session" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url https://api.basistheory.com/apple-pay/session \
+      --header 'BT-API-KEY: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+      "validation_url": "https://apple-pay-gateway.apple.com/paymentservices/paymentSession",
+      "display_name": "My Ecommerce Store",
+      "domain": "my-site.example.com"
+    }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute  | Required | Description |
+|------------|----------|-------------|
+| `validation_url` | false | Validation URL returned from the [`onvalidatemerchant`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778021-onvalidatemerchant) event. Default: https://apple-pay-gateway.apple.com/paymentservices/paymentSession |
+| `display_name` | true | A string of 64 or fewer UTF-8 characters containing the canonical name for your store, suitable for display. A good display name remains a consistent value for the store and doesn't contain dynamic values such as incrementing order numbers. Don’t localize the name. Use only characters from the supported character sets in the fonts listed in the table below. |
+| `domain` | true | The fully qualified domain name of the website requesting the Apple Pay session.
+
+### Response
+
+Returns an opaque Apple Pay [session object](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session#3199963) that will be passed into the [`completeMerchantValidation`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778015-completemerchantvalidation) method.
+
+## Tokenize
+
+Decrypts an Apple Pay token and creates an Apple Pay token.
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay" />
+
+#### Permissions
+
+<Permission content="apple-pay:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url https://api.basistheory.com/apple-pay/tokenize \
+      --header 'BT-API-KEY: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+      "expires_at": "2030-12-25"
+      "apple_payment_data": {
+        "paymentData": {
+          "data": "...",
+          "signature": "...",
+          "header": {
+            "transactionId": "...",
+            "publicKeyHash": "...",
+            "applicationData": "...",
+            "ephemeralPublicKey": "..."
+          },
+          "version": "EC_v1"
+        },
+        "paymentMethod": {
+          "displayName": "...",
+          "network": "...",
+          "type": "..."
+        },
+        "transactionIdentifier": "..."
+      }
+    }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+
+  ```
+    </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute  | Required | Description                                                        |
+|------------|----------|--------------------------------------------------------------------|
+| `expires_at` | false | An optional expiration date for the token. If blank, defaults to the expiration date in the decrypted Apple Payment data. |
+| `apple_payment_data` | true | The Apple Pay [token](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypayment/1916095-token) from the [`onpaymentauthorized`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized) event. |
+
+### Response
+
+Returns an Apple Pay Token.
+The return will include the Card BIN enrichments according to the tenant settings.
+
+```json
+{
+  "apple_pay": {
+    "id": "c2995d93-600a-44a2-b6f1-2c25e46603a9",
+    "type": "dpan",
+    "tenant_id": "...",
+    "status": "active",
+    "expires_at": "2030-12-15T00:00:00+00:00",
+    "created_by": "0a6475a5-4bb8-4165-8c31-7fbc058843bf",
+    "created_at": "2025-05-19T16:19:50.9013495+00:00",
+    "card": {...}
+  }
+}
+```
+
+## Retrieve
+
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/apple-pay/{:id}" />
+
+#### Permissions
+
+<Permission content="apple-pay:read" />
+<Permission content="apple-pay:reveal" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell
+    curl --request GET \
+      --url https://api.basistheory.com/apple-pay/c2995d93-600a-44a2-b6f1-2c25e46603a9 \
+      --header 'BT-API-KEY: <API_KEY>'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+    ```javascript
+
+    ```
+      </TabItem>
+      <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+
+    ```
+      </TabItem>
+      <TabItem value="python" label="Python">
+    ```python showLineNumbers
+
+    ```
+      </TabItem>
+</Tabs>
+
+### Response
+
+Returns an Apple Pay token.
+If the application has `apple-pay:reveal`, then the `data` element will contain the unencrypted card information.
+If the application has `apple-pay:reveal`, then the `data` element will contain masked card information.
+
+```json
+{
+  "id": "c2995d93-600a-44a2-b6f1-2c25e46603a9",
+  "type": "dpan",
+  "tenant_id": "0def1587-e30b-44b7-ad3f-484b323a3917",
+  "status": "active",
+  "expires_at": "2025-12-12T00:00:00+00:00",
+  "created_by": "0a6475a5-4bb8-4165-8c31-7fbc058843bf",
+  "created_at": "2025-05-19T16:19:50.9013495+00:00",
+  "card": {
+    "bin": "42424242",
+    "last4": "4242",
+    "expiration_month": 6,
+    "expiration_year": 2025,
+    "brand": "mastercard",
+    "funding": "credit",
+    "authentication": "sca_required",
+    "issuer": {
+      "country": "PL",
+      "name": "3DS Test Cards (TEST)"
+    },
+    "issuer_country": {
+      "alpha2": "PL",
+      "name": "Bermuda",
+      "numeric": "369"
+    },
+    "segment": "Commercial"
+  },
+  "data": {
+    "number": "4242424242424242",
+    "expiration_month": 6,
+    "expiration_year": 2025
+  },
+  "authentication": {
+    "threeds_cryptogram": "AAAAAA=",
+    "eci_indicator": "7"
+  }
+}
+```
