@@ -32,7 +32,7 @@ When the user clicks the Apple "Pay" button, a sequence of high-level steps is i
 Domain verification is a key step in getting Apple Pay up and running on your site. It is a required step for development and production servers, to confirm that you own the domain where Apple Pay will be implemented, preventing unauthorized use and maintaining the integrity of the payment system.
 
 1. Download and serve the [domain association file](https://cdn.basistheory.com/.well-known/apple-developer-merchantid-domain-association) on your server at `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association`.
-2. Add the public domain to your tenant using the [Customer Portal](https://portal.basistheory.com/settings?tab=connections) or the [API](/docs/api/connections/apple-pay#register-domain-address)
+2. Add the public domain to your tenant using the [Customer Portal](https://portal.basistheory.com/settings?tab=connections) or the [API](/docs/api/apple-pay/api#register-domain-address)
 
 <Alert type={Alerts.INFO}>
   Apple requires the website to be served via HTTPS, which can be tricky during the development phase. Tunneling may represent a good option to preview local projects through a working HTTPS connection. [Cloudflare tunnel](https://developers.cloudflare.com/pages/how-to/preview-with-cloudflare-tunnel/) may be worth checking out.
@@ -47,7 +47,7 @@ Basis Theory integrates with Apple to [request the payment session](https://deve
 
 ### Create a Public Application
 
-<ApplicationSection type="public" permissions={["connections:apple-pay:invoke"]}/>
+<ApplicationSection type="public" permissions={["apple-pay:session", "apple-pay:create"]}/>
 
 ### Configure Apple Pay
 
@@ -107,7 +107,7 @@ Let's add the Apple Pay button and modify the `session.onvalidatemerchant` event
       // highlight-start
       async function validateMerchant() {
         try {
-          const response = await fetch('https://api.basistheory.com/connections/apple-pay/session', {
+          const response = await fetch('https://api.basistheory.com/apple-pay/session', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
 
       // highlight-start
       async function tokenize(event) {
-        const response = await fetch('https://api.basistheory.com/connections/apple-pay/tokenize', {
+        const response = await fetch('https://api.basistheory.com/apple-pay/tokenize', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
