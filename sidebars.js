@@ -599,6 +599,9 @@ const sidebars = {
         {
           type: "doc",
           id: "api/connections/apple-pay",
+          customProps: {
+            deprecated: true,
+          },
         },
         {
           type: "doc",
