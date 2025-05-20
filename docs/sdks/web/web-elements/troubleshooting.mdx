@@ -373,22 +373,21 @@ Value resolution is a critical security mechanism in Elements. To maintain PCI c
 </Alert>
 
 **Technical explanation:**  
-Elements uses a secure multi-layered architecture where user input happens in iframes that are isolated from your main application. When you request data from these iframes (like during tokenization), the system must:
+Elements uses a secure multi-layered architecture where user input happens in iframes that are isolated from your main application. When you request data from our elements (like during tokenization), the system must:
 
-1. Securely establish a trusted channel between frames
+1. Securely establish a trusted channel between elements
 2. Validate the request's origin and permissions
-3. Coordinate data retrieval across multiple isolated iframes
-4. Package and encrypt the values
-5. Transfer the data across domain boundaries using postMessage
-6. Verify the data's integrity before proceeding
+3. Coordinate data retrieval across elements
+4. Transfer the data across domain boundaries
+5. Verify the data's integrity before proceeding
 
 This complex secure communication can fail in various environments for several reasons:
 
 **Solutions:**
 
-1. **Understand the Internal Retry Mechanism**
+1. **Introduce a Retry Mechanism**
 
-   Elements implement progressive backoff for value resolution failures:
+   To provide a better experience you may introduce a progressive backoff to handle value resolution failures:
    
    ```javascript
    // You can implement similar logic in your tokenization flow
