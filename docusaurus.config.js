@@ -166,7 +166,7 @@ const config = {
           { from: "/getting-started/quickstart-with-ruby", to: "/docs" },
           { from: "/getting-started/quickstart-with-python", to: "/docs" },
           { from: "/docs/api/applications/keys", to: "/docs/api/applications/application-keys" },
-          { from: "/docs/api/account-updater", to: "/docs/api/account-updater/batch"},
+          { from: "/docs/api/account-updater", to: "/docs/api/account-updater/batch" },
 
           {
             from: "/concepts/access-controls",
@@ -266,8 +266,13 @@ const config = {
           { from: "/docs/sdks/web/javascript/services", to: "/docs/sdks/web/web-elements/services" },
           { from: "/docs/sdks/web/javascript/types", to: "/docs/sdks/web/web-elements/components" },
           { from: "/docs/sdks/web/react", to: "/docs/sdks/web/web-elements/?implementation=react" },
+          { from: "/docs/sdks/web/react/components", to: "/docs/sdks/web/web-elements/components" },
+          { from: "/docs/sdks/web/react/events", to: "/docs/sdks/web/web-elements/events" },
+          { from: "/docs/sdks/web/react/properties", to: "/docs/sdks/web/web-elements/components#complete-options-reference" },
+          { from: "/docs/sdks/web/react/services", to: "/docs/sdks/web/web-elements/services" },
           { from: "/docs/sdks/web/web-elements/types", to: "/docs/sdks/web/web-elements/components" },
           { from: "/docs/sdks/web/web-elements/options", to: "/docs/sdks/web/web-elements/components" },
+          { from: "/docs/sdks/web/web-elements/content-security-policy", to: "/docs/sdks/web/web-elements/troubleshooting#content-security-policy-csp-requirements" },
           { from: "/docs/sdks/mobile/3ds-react-native", to: "/docs/sdks/mobile/react-native-threeds" },
           { from: "/docs/sdks/mobile/3ds-react-native/methods", to: "/docs/sdks/mobile/react-native-threeds/methods" },
           { from: "/docs/api/orchestration/stripe-forward", to: "/docs/api/connections/stripe-forward" },

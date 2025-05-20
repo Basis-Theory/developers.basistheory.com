@@ -1,0 +1,750 @@
+---
+title: Troubleshooting Web Elements
+sidebar_label: Troubleshooting
+---
+
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+
+# Troubleshooting Web Elements
+
+<p>This guide helps you diagnose and resolve issues with Basis Theory Web Elements.</p>
+
+<Alert type={Alerts.INFO}>
+  Need help? If you can't resolve your issue using this guide, our support team is ready to help at <a href="mailto:support@basistheory.com">support@basistheory.com</a>. See the <a href="#environment-information-to-provide-when-seeking-support">Getting Support</a> section for details on what information to provide.
+</Alert>
+
+    <p>Find immediate solutions to common problems below:</p>
+    
+    <div className="quick-guide-container">
+      <div className="quick-guide-card">
+        <h3>🔍 Common Error Messages</h3>
+        <ul>
+          <li><strong>"Element is not mounted"</strong> → <a href="#2-dom-lifecycle-issues">Check DOM lifecycle</a></li>
+          <li><strong>"Timeout while resolving element values"</strong> → <a href="#3-value-resolution-failures">See value resolution</a></li>
+          <li><strong>"Failed to communicate with Basis Theory Elements"</strong> → <a href="#1-initialization-problems">Check initialization</a></li>
+          <li><strong>"Element was removed from the DOM"</strong> → <a href="#2-dom-lifecycle-issues">Fix DOM removal issues</a></li>
+          <li><strong>"CORS error" or "Failed to fetch"</strong> → <a href="#cross-origin-and-network-troubleshooting">Network troubleshooting</a></li>
+          <li><strong>"Element mount timeout"</strong> → <a href="#element-mount-timeout">Mount timeout solutions</a></li>
+          <li><strong>"No route found for element of type..."</strong> → <a href="#1-initialization-problems">Reference errors</a></li>
+        </ul>
+      </div>
+      
+      <div className="quick-guide-card">
+        <h3>📱 Visual Problems</h3>
+        <ul>
+          <li><strong>Elements not appearing</strong> → <a href="#1-initialization-problems">Check initialization</a></li>
+          <li><strong>Elements disappearing</strong> → <a href="#2-dom-lifecycle-issues">Check DOM lifecycle</a></li>
+          <li><strong>Elements look wrong in mobile WebViews</strong> → <a href="#mobile-web-environments">WebView guidance</a></li>
+        </ul>
+      </div>
+      
+      <div className="quick-guide-card">
+        <h3>🔄 Tokenization Problems</h3>
+        <ul>
+          <li><strong>Validation errors</strong> → <a href="#3-value-resolution-failures">Value resolution issues</a></li>
+          <li><strong>Timeouts during submission</strong> → <a href="#3-value-resolution-failures">See value resolution</a></li>
+          <li><strong>API errors</strong> → <a href="#cross-origin-and-network-troubleshooting">Network troubleshooting</a></li>
+          <li><strong>Inconsistent tokenization failures</strong> → <a href="#mobile-web-environments">Browser compatibility</a></li>
+          <li><strong>Corporate firewall issues</strong> → <a href="#corporate-network-restrictions">Network restrictions</a></li>
+        </ul>
+      </div>
+    </div>
+
+## Framework-Specific Considerations
+
+### Server-Side Rendering (SSR)
+
+**Important:** Basis Theory Elements is designed to run exclusively on the client-side and cannot function properly in SSR environments.
+
+<Alert type={Alerts.WARNING}>
+  Elements cannot be initialized during server-side rendering because:
+  - It needs access to browser APIs like DOM, postMessage, and localStorage
+  - It creates secure iframes that must load in a browser context
+  - It requires real-time user interactions that aren't available during SSR
+</Alert>
+
+**Common pitfalls:**
+- Initializing BasisTheory during build or server render phase
+- Not properly guarding code with browser environment checks
+- Confusing hydration errors that seem unrelated to Elements
+
+<Alert type={Alerts.INFO}>
+  In frameworks like Next.js, be aware that using <code>getStaticProps</code> or <code>getServerSideProps</code> to fetch data related to Elements may lead to issues since Elements requires client-side initialization. Plan your data fetching strategy accordingly.
+</Alert>
+
+## Network & Security Challenges
+
+### Ad Blocker Detection
+
+Ad blockers and privacy extensions can block Elements from loading properly as they may:
+- Block the loading of third-party iframes
+- Prevent cross-origin communication
+- Block scripts from domains they categorize as trackers
+- Interfere with `postMessage` communication
+
+<Alert type={Alerts.INFO}>
+  Many users won't realize they have ad blockers or privacy extensions active, especially if installed by their employer.
+</Alert>
+
+**Signs of ad blocker interference:**
+- Elements containers remain empty with no errors in the console
+- Console errors about script loading failures
+- Missing network requests to basistheory.com domains
+- Tokenization attempts that silently fail
+- Messages like "Failed to load resource" for basistheory.com domains
+
+**User-Friendly Messages:**
+
+When an ad blocker is detected, consider showing a user-friendly message that:
+- Clearly explains that an ad blocker has been detected
+- Informs users that it may interfere with the secure payment form
+- Provides simple steps to temporarily disable their ad blocker
+- Reassures users that you don't show ads, but use technology that ad blockers might restrict
+- Uses a noticeable but non-intrusive design with appropriate warning styling
+
+**Detection and recovery:**
+```javascript
+try {
+  const bt = await basistheory("<YOUR_API_KEY>");
+  // Elements initialized successfully
+} catch (error) {
+  if (error.message.includes("Elements did not load properly")) {
+    // Likely ad blocker interference
+    showAdBlockerWarning();
+  } else if (error.message.includes("Unable to load the Elements script")) {
+    // Network or browser extension interference
+    showNetworkTroubleshootingMessage();
+  } else {
+    // Other initialization error
+    console.error("Initialization failed:", error);
+  }
+}
+```
+
+### Corporate Network Restrictions
+
+Enterprise environments often implement strict network policies that can prevent Elements from functioning:
+
+**Common corporate restrictions:**
+- Blocking outbound requests to third-party domains
+- TLS inspection that breaks secure iframe communication
+- Internal proxies that modify request headers
+- Network-level content filters that block iframe loading
+- Intrusion prevention systems flagging cross-origin communication
+- Data Loss Prevention (DLP) tools intercepting form inputs
+
+**Solutions:**
+- Whitelist ALL of these domains in your firewall:
+  - `*.basistheory.com` 
+  - `*.browser-intake-datadoghq.com` (for telemetry)
+- If you're in a restricted network environment, consider implementing a retry mechanism
+- Work with your network security team to allow cross-origin iframe communication
+- Test in environments with similar network restrictions before deploying to production
+
+### Content Security Policy (CSP) Requirements
+
+Web Elements requires specific CSP directives to function properly.
+
+**Required CSP directives:**
+```html
+<!-- Required CSP directives -->
+<meta http-equiv="Content-Security-Policy" 
+  content="frame-src https://*.basistheory.com; 
+           script-src https://*.basistheory.com;
+           connect-src https://*.basistheory.com" />
+```
+
+<Alert type={Alerts.INFO}>It is strongly recommended to implement a CSP in your website to help <a href="https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html#context" target="_blank">mitigate attacks</a> such as Cross Site Scripting (XSS).</Alert>
+
+#### Optional Sources
+
+The directives mentioned above are essential for the SDK to work properly. However, you may also need to include the following sources that support our services:
+
+##### Datadog
+
+[Datadog](https://www.datadoghq.com/) is used by BasisTheory for logging and debugging errors.
+If you don't allow the connection to Datadog in your CSP, it may be more difficult for Basis Theory to help with issues.
+
+To allow the connection to Datadog, add the following directive to your CSP:
+
+- `connect-src` - _https://*.browser-intake-datadoghq.com_
+
+#### Trusted Types
+
+If you are using [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/require-trusted-types-for), you must allow dynamic script loading from the _https://js.basistheory.com_ origin. This should be done **BEFORE** [initialization](/docs/sdks/web/web-elements/initialization).
+
+```javascript
+// Must be executed BEFORE initializing the SDK
+trustedTypes.createPolicy("default", {
+  createScriptURL: (input) => {
+    if (new URL(input).origin === "https://js.basistheory.com") {
+      return input;
+    }
+    return undefined;
+  }
+});
+```
+
+#### Common CSP Errors
+
+The setup above is recommended to avoid errors similar to these:
+
+<Alert type={Alerts.WARNING}>Refused to load the script '&lt;URL&gt;' because it violates the following Content Security Policy directive: (...).</Alert>
+
+<Alert type={Alerts.WARNING}>Refused to frame 'https://js.basistheory.com/' because it violates the following Content Security Policy directive: (...). Note that 'frame-src' was not explicitly set, so (...) is used as a fallback.</Alert>
+
+<Alert type={Alerts.WARNING}>Failed to set the 'src' property on 'HTMLScriptElement': This document requires 'TrustedScriptURL' assignment.</Alert>
+
+### Cross-Origin and Network Troubleshooting
+
+When experiencing network-related issues:
+
+1. **Enable Debug Mode**
+   ```javascript
+   // Enable debug mode
+   const bt = await basistheory("<YOUR_API_KEY>", { debug: true });
+   ```
+
+2. **Check Network Requests**
+   - In browser developer tools, monitor requests to `*.basistheory.com` domains
+   - Look for failed requests or unexpected HTTP status codes
+   - Check request/response headers for CORS or CSP issues
+
+3. **Examine Console for Specific Errors**
+   - "Failed to load resource" for basistheory.com domains
+   - "Refused to connect" errors indicating CORS issues
+   - CSP violation messages
+
+4. **Test in Incognito/Private Mode**
+   - This disables most extensions and provides a cleaner network environment
+   - Helps isolate if the issue is related to browser extensions or configuration
+
+### Common Issues and Solutions
+
+### 1. Initialization Problems
+
+#### Elements Not Loading
+
+**Symptoms:**
+- Blank containers where Elements should appear
+- Console errors about script loading failures
+- `Basis Theory Elements did not load properly` error message
+- Script timeouts or loading failures
+
+**Possible Causes:**
+
+1. **API Key Issues**
+   
+   Using an invalid API key or one with insufficient permissions.
+
+   **Solution:**
+   - Ensure you're using a PUBLIC API key (not Private/Management)
+   - Verify the key has `token:create` permission
+   - Check that the application is properly set up in the Basis Theory Portal
+   - Confirm the API key hasn't been revoked or expired
+
+2. **Network/Firewall Restrictions**
+   
+   The Web Elements library dynamically loads scripts from `js.basistheory.com` and creates iframes that point to `js.basistheory.com` domains.
+
+   **Solution:**
+   - Whitelist ALL of these domains in your firewall:
+     - `*.basistheory.com` 
+     - `*.browser-intake-datadoghq.com` (for telemetry)
+   - If you're in a restricted network environment, consider implementing a retry mechanism
+   
+   **Debugging:**
+   ```javascript
+   // Enable debug mode
+   const bt = await basistheory("<YOUR_API_KEY>", { debug: true });
+   
+   // Check network requests in browser dev tools
+   // Look for failed requests to js.basistheory.com
+   // Look for CSP violations in the console
+   ```
+
+   <Alert type={Alerts.INFO}>
+   While Basis Theory Elements implements internal retries for script loading failures, corporate proxies and deep packet inspection systems can sometimes interfere with these mechanisms.
+   </Alert>
+
+3. **Content Security Policy (CSP) Restrictions**
+   
+   See the [Content Security Policy Requirements](#content-security-policy-csp-requirements) section for details on required CSP directives.
+
+4. **Ad Blockers & Privacy Extensions**
+   
+   Browser extensions can block iframes and third-party scripts.
+
+   See the [Ad Blocker Detection](#ad-blocker-detection) section for detailed guidance on detection and solutions.
+
+### 2. DOM Lifecycle Issues
+
+#### Elements Unexpectedly Disappearing
+
+**Symptoms:**
+- Elements suddenly disappear during page updates
+- Errors about unmounted elements when trying to interact with them
+- "Element is not mounted" errors in console
+- Elements fail to render after conditional rendering changes
+
+**Causes:**
+Elements track their mounted state internally. If an element's container is removed from the DOM during rendering or updates, the element will detect this and fail.
+
+**Solutions:**
+
+1. **Avoid Removing Elements from DOM During Initialization**
+
+   Elements use `MutationObservers` to detect when they're removed from the DOM during initialization.
+
+   ```jsx
+   // PROBLEMATIC: Can cause initialization failures if the div is removed 
+   // during rendering cycles
+   {showPaymentForm && (
+     <div id="card-container"></div>
+   )}
+
+   // BETTER: Keep elements in DOM and hide them with CSS
+   <div id="card-container" style={{ display: showPaymentForm ? 'block' : 'none' }}></div>
+   ```
+
+   <Alert type={Alerts.INFO}>
+   This pattern is especially important in mobile environments where memory constraints may cause more aggressive page updates. See [Mobile Web Environments](#mobile-web-environments) for more details on how mobile browsers handle DOM updates.
+   </Alert>
+
+#### Element Mount Timeout
+
+**Symptoms:**
+- Error message: `"Element mount timeout"`
+- Elements fail to appear after initialization
+- Console warnings about exceeding mount time limits
+- Elements container remains empty longer than expected
+
+**Causes:**
+Elements have an internal timeout (typically 15 seconds) for mounting. If an element cannot be properly mounted within this timeframe, a timeout error is thrown.
+
+**Solutions:**
+
+1. **Ensure Proper Network Connectivity**
+   - Slow connections can delay the loading of iframe resources, triggering mount timeouts
+   - Check that all required domains are accessible from your environment
+
+2. **Reduce DOM Complexity**
+   - High DOM complexity around the mounting container can slow down the mounting process
+   - Avoid mounting elements during heavy DOM manipulations or page transitions
+
+3. **Verify Container Availability**
+   - Ensure the mount container element exists in the DOM before attempting to mount
+   - For dynamic UIs, make sure the container is fully rendered before mounting
+
+4. **Check for Browser Resource Constraints**
+   - Low memory or high CPU usage can delay mount operations
+   - Reduce other resource-intensive operations during element initialization
+
+5. **Preload Elements When Possible**
+   - If you know you'll need elements, initialize them earlier in the page lifecycle
+   - Consider initializing elements during idle periods before they're needed
+
+   <Alert type={Alerts.WARNING}>
+   Mobile devices may experience more frequent mount timeouts due to network variability and resource constraints. For mobile-specific optimizations, see our [Mobile Web Environments](#mobile-web-environments) section.
+   </Alert>
+
+<Alert type={Alerts.INFO}>
+Element mount timeouts are often environment-specific and may occur intermittently. Implementing proper error handling with retry logic can help create a more resilient user experience.
+</Alert>
+
+### 3. Value Resolution Failures
+
+**Symptoms:**
+- Console errors with `valueResolutionFailure` type
+- Timeout errors during tokenization
+- "Timeout while trying to securely read elements values" errors
+- Inconsistent tokenization failures that happen sporadically
+- Form submissions that time out rather than failing with validation errors
+- Error messages about "Maximum retries exceeded"
+
+**Causes:**
+These errors occur when Elements can't securely retrieve values across iframe boundaries within the expected time frame. This communication is essential for tokenization and other secured operations.
+
+<Alert type={Alerts.INFO}>
+Value resolution is a critical security mechanism in Elements. To maintain PCI compliance, sensitive data must remain isolated in our secure elements, which creates an inherent communication challenge that requires careful implementation.
+</Alert>
+
+**Technical explanation:**  
+Elements uses a secure multi-layered architecture where user input happens in iframes that are isolated from your main application. When you request data from these iframes (like during tokenization), the system must:
+
+1. Securely establish a trusted channel between frames
+2. Validate the request's origin and permissions
+3. Coordinate data retrieval across multiple isolated iframes
+4. Package and encrypt the values
+5. Transfer the data across domain boundaries using postMessage
+6. Verify the data's integrity before proceeding
+
+This complex secure communication can fail in various environments for several reasons:
+
+**Solutions:**
+
+1. **Understand the Internal Retry Mechanism**
+
+   Elements implement progressive backoff for value resolution failures:
+   
+   ```javascript
+   // You can implement similar logic in your tokenization flow
+   async function tokenizeWithRetry(cardElement, maxRetries = 2) {
+     let attempt = 0;
+     
+     while (attempt <= maxRetries) {
+       try {
+         return await bt.tokenize({ card: cardElement });
+       } catch (error) {
+         // Only retry timeouts, not validation errors
+         if (error.message.includes('timeout') || 
+             error.message.includes('Timeout while trying to securely read elements values')) {
+           console.log(`Retry attempt ${attempt + 1} for tokenization`);
+           attempt++;
+           
+           if (attempt > maxRetries) {
+             throw error; // Max retries reached
+           }
+           
+           // Wait before retrying (progressive backoff)
+           await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
+         } else {
+           // Don't retry other errors
+           throw error;
+         }
+       }
+     }
+   }
+   ```
+
+   <Alert type={Alerts.INFO}>
+   On mobile devices, consider implementing longer retry intervals and more retry attempts to accommodate variable network conditions and resource constraints. See the [Mobile Web Environments](#mobile-web-environments) section for more details.
+   </Alert>
+
+## Device & Platform Considerations
+
+### Mobile Web Environments
+
+Mobile browsers introduce additional complexity for Elements:
+
+**Common mobile browser issues:**
+- Limited resources causing iframe communication timeouts
+- Aggressive resource cleanup of inactive tabs or background processes
+- iOS WebView and PWA limitations with iframes
+- Varying cross-origin implementations across mobile browsers
+- Touch event handling differences affecting form inputs
+- Varying viewport behavior affecting Element sizing and positioning
+- Browser-specific input styling inconsistencies
+- Memory constraints causing performance degradation during tokenization
+
+**Additional WebView-specific issues:**
+- WebView iframe restrictions in iOS (WKWebView limitations)
+- Inconsistent postMessage support in older Android WebViews
+- Custom WebView implementations with non-standard security policies
+- Memory constraints causing iframe reloads during tokenization
+- Security features blocking third-party cookies or storage
+- Corporate MDM (Mobile Device Management) policies restricting iframe communication
+
+**Mobile optimization strategies:**
+- Implement responsive design for Elements containers
+- Be mindful of mobile keyboard interactions with Element inputs
+- Account for slower network connections common on mobile devices
+- Consider reduced timeout thresholds to prevent poor user experiences
+- Test thoroughly on actual mobile devices, not just emulators
+- For WebViews, verify that proper allowances for third-party content are enabled
+- Set appropriate WebView properties for cross-origin content (iOS: `webView.configuration.preferences.setValue(true, forKey: "allowsContentJavaScript")`)
+- Implement clear loading indicators and error states appropriate for mobile users
+- Consider reduced form complexity for mobile screens to improve performance
+
+**Mobile-specific retry handling:**
+   ```javascript
+   // For mobile browsers, implement specialized handling
+   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+   
+   if (isMobile) {
+     // On mobile, ensure tokenization happens when the device isn't busy
+     // with other operations like scrolling or animation
+     const safeTokenize = async (cardElement) => {
+       // Give the browser a moment to finish any UI operations
+       await new Promise(r => setTimeout(r, 100));
+       
+       try {
+         return await bt.tokenize({ card: cardElement });
+       } catch (error) {
+         if (error.message.includes('timeout')) {
+           console.warn('Mobile timeout detected, retrying...');
+           // Wait longer on mobile before retry
+           await new Promise(r => setTimeout(r, 500));
+           return await bt.tokenize({ card: cardElement });
+         }
+         throw error;
+       }
+     };
+   }
+   ```
+
+<Alert type={Alerts.WARNING}>
+Mobile WebViews, especially in iOS, have stricter security policies than regular browsers. Always test Elements in your specific WebView implementation thoroughly, and be prepared to adapt your integration approach based on the capabilities and limitations of the WebView environment.
+</Alert>
+
+### DOM Handling on Mobile Devices
+
+When working with Elements in mobile environments, pay special attention to DOM lifecycle:
+
+1. **Keep containers in the DOM**
+   - Mobile browsers may be more aggressive with garbage collection
+   - Use CSS to hide Elements rather than removing their containers from the DOM
+
+   ```jsx
+   // BETTER for mobile: Keep elements in DOM and hide them with CSS
+   <div id="card-container" style={{ display: showPaymentForm ? 'block' : 'none' }}></div>
+   ```
+
+2. **Avoid heavy DOM operations during tokenization**
+   - Mobile devices have limited CPU resources
+   - Performing large DOM updates during tokenization can cause timeouts
+
+3. **Handle orientation changes carefully**
+   - Resize Events can trigger layout shifts that affect Elements
+   - Consider debouncing resize handlers on mobile
+
+For more detailed guidance on mobile environments, see the [Mobile Web Environments](#mobile-web-environments) section.
+
+### Browser Compatibility Edge Cases
+
+While Elements supports all modern browsers, certain edge cases require special attention:
+- **Safari Private Browsing:** May have stricter storage and iframe limitations
+- **Internet Explorer:** Not supported due to modern security features used by Web Elements
+- **Older Mobile Browsers:** May have incomplete implementation of postMessage API
+- **Browser Extensions:** Privacy tools can modify or block iframe communication
+- **Enterprise Managed Browsers:** May have policies restricting third-party scripts
+- **PWA (Progressive Web App) Mode:** May have different storage and security contexts
+- **Chromium-Based Security Software:** May interfere with iframe communication
+
+## Developer Environment Considerations
+
+Local development environments present unique challenges for Elements integration:
+
+### Local Development Servers
+
+**Potential issues:**
+- Development proxies interfering with cross-origin policies
+- Hot-reloading breaking iframe connections
+- Mixed HTTP/HTTPS contexts causing secure context errors
+- Development extensions modifying request headers or network traffic
+
+**Recommendations:**
+- Always use HTTPS even in development (via tools like mkcert for local SSL certificates)
+- Verify that browser developer tools aren't set to block cross-origin requests
+- Test with and without development extensions or in incognito mode
+- Be aware that some bundlers modify the content security policy
+
+### Backend Mocking
+
+When developing with mocked backend services:
+- Ensure your mocked API returns appropriate CORS headers
+- Mock endpoints needed for Elements initialization
+- Be mindful that security tokens may expire when developing over extended sessions
+
+### Performance Profiling
+
+Development builds typically operate significantly slower than production builds, which can trigger timeouts that wouldn't occur in production. Consider:
+- Increasing timeout values during development
+- Building with production flags when testing critical flows
+- Using performance monitoring to identify bottlenecks 
+
+## Event Handling and Advanced Debugging
+
+### Common Event Handling Issues
+
+Event handling is a critical part of working with Elements. Here are solutions to common event-related problems:
+
+| Issue | Possible Cause | Solution |
+|-------|---------------|----------|
+| Events not firing | Element not properly mounted | Check if element.mount() was called and the container exists |
+| Multiple events firing | Event listener registered multiple times | Register event listeners once, ensure code isn't in a loop |
+| Event handler not receiving data | Incorrect event listener syntax | Ensure the callback function accepts the event parameter |
+| Custom styling not applying on focus | CSS selectors not matching | Use the focused state from events to apply custom focus styles |
+| Element not updating on props change (React) | Missing dependency in useEffect | Add all dependencies to useEffect array |
+
+### Debugging Events
+
+Adding debug listeners to your elements is a powerful troubleshooting technique:
+
+<Tabs className="bt-tabs" queryString="implementation">
+  <TabItem value="web" label="Web Elements">
+
+```javascript
+// Add debug listeners to all events
+const debugElement = (element, elementName) => {
+  // Log all events for debugging
+  element.on('ready', (e) => console.log(`${elementName} ready:`, e));
+  element.on('focus', () => console.log(`${elementName} focused`));
+  element.on('blur', () => console.log(`${elementName} blurred`));
+  element.on('change', (e) => console.log(`${elementName} changed:`, e));
+  element.on('keydown', (e) => console.log(`${elementName} keydown:`, e));
+  
+  return element;
+};
+
+// Apply debug wrapper to elements
+const cardElement = debugElement(
+  bt.createElement('card', { targetId: 'card' }),
+  'cardElement'
+);
+
+cardElement.mount('#card-container');
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+// Add debug listeners to all events
+const MyComponent = () => {
+  const handleEvent = (eventName) => (event) => {
+    console.log(`Event: ${eventName}`, event || {});
+  };
+  
+  return (
+    <CardElement 
+      id="card"
+      onReady={handleEvent('ready')}
+      onChange={handleEvent('change')}
+      onFocus={handleEvent('focus')}
+      onBlur={handleEvent('blur')}
+      onKeyDown={handleEvent('keydown')}
+    />
+  );
+};
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert type={Alerts.INFO}>
+When debugging events, remember that Element values are sensitive and never exposed directly in events. This is a security feature to ensure sensitive data like card numbers never touch your application code.
+</Alert>
+
+### Monitoring Frame Communication
+
+To troubleshoot cross-origin communication issues between Elements:
+
+```javascript
+// Add this before initializing Elements
+window.addEventListener('message', (event) => {
+  if (event.origin.includes('basistheory.com')) {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.correlationId) {
+        console.log(`Frame message ${data.type}:`, data);
+        
+        // Track timing for value resolution messages
+        if (data.type === 'valueRequest' || data.type === 'valueResponse') {
+          console.time(`value-resolution-${data.correlationId}`);
+        }
+        
+        if (data.type === 'valueResponse') {
+          console.timeEnd(`value-resolution-${data.correlationId}`);
+        }
+      }
+    } catch (e) {
+      // Not JSON data
+    }
+  }
+});
+```
+
+## Migration Guide
+
+When migrating from JavaScript Elements to Web Elements, you might encounter these common issues:
+
+### Common Migration Issues
+
+| Issue | Solution |
+|-------|----------|
+| `Cannot read properties of undefined (reading 'createElement')` | Make sure to capture and use the `bt` instance returned from `basistheory()` |
+| `basistheory is not defined` | Check that you've imported correctly from '@basis-theory/web-elements' or included the correct CDN script |
+| Element not rendering | Make sure the container exists in the DOM when mounting |
+| Tokenization errors | Verify your API key has the necessary permissions (`token:create`) |
+| Events not firing after migration | Re-check all event registration, as syntax might differ slightly |
+
+### Migration Syntax Differences
+
+The primary difference between JavaScript Elements and Web Elements is the initialization syntax:
+
+```diff
+- import { BasisTheory } from "@basis-theory/basis-theory-js";
++ import { basistheory } from "@basis-theory/web-elements";
+
+- const bt = await new BasisTheory().init("<API_KEY>");
++ const bt = await basistheory("<API_KEY>");
+```
+
+The element lifecycle methods (createElement, mount, update, etc.) remain the same between both SDKs.
+
+### Migration Checklist
+
+When migrating from JavaScript Elements to Web Elements:
+
+1. Update all import statements
+2. Change initialization code
+3. Verify API key permissions
+4. Confirm all event listeners are properly registered
+5. Test each element creation and mount process
+6. Verify all tokenization flows
+
+This methodical approach helps identify and resolve migration issues early in the process.
+
+
+<Alert type={Alerts.WARNING}>
+If you encounter any issues during migration that aren't covered in our documentation, please contact <a href="mailto:support@basistheory.com">support@basistheory.com</a> for assistance.
+</Alert>
+
+
+## Getting Support
+
+<Alert type={Alerts.INFO}>
+  If you've tried the troubleshooting steps in this guide and still have issues, our support team is ready to help.
+</Alert>
+
+### Contact Information
+- Email: [support@basistheory.com](mailto:support@basistheory.com)
+- Include all relevant details from the sections below
+- Share code snippets, error messages, and debug logs when possible
+
+### Environment Information to Provide
+
+When contacting support, include:
+
+### Library Details
+- Package & exact version (e.g., `@basis-theory/web-elements@1.13.0`)
+- Load method: CDN vs. NPM
+- If using NPM, include package.json and lockfile details
+
+### Framework Information
+- Framework name and version (React, Vue, Angular, etc.)
+- If React, which version and implementation (hooks vs class components)
+- Build system: Webpack/Rollup/Vite configuration
+- Any transpilation steps in your build process
+
+### Browser & OS Details
+- Browser and version (e.g., Chrome 112.0.5615)
+- Operating system and version (e.g., iOS 17.4, Windows 10)
+- Mobile or desktop device
+- Any relevant device specifics (pixel ratio, screen size, etc.)
+
+### Network Context
+- Corporate proxy, VPN, or firewall usage
+- Browser extensions or ad blockers active
+- Network restrictions that might affect third-party scripts
+
+### Reproduction Materials
+- Clear steps to reproduce the issue
+- Code snippets showing your implementation
+- Console logs and network request logs
+- Screenshots or video recordings if relevant
+
