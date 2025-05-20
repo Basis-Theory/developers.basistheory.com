@@ -1,3 +1,10 @@
+## [1.238.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.2...v1.238.3) (2025-05-20)
+
+
+### Bug Fixes
+
+* add examples to proxy concept page ([#571](https://github.com/Basis-Theory/developers.basistheory.com/issues/571)) ([20e7f87](https://github.com/Basis-Theory/developers.basistheory.com/commit/20e7f8779988a98f2e86bb3f5a4a4d82abd2a45c))
+
 ## [1.238.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.1...v1.238.2) (2025-05-19)
 
 
