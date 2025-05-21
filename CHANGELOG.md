@@ -1,3 +1,31 @@
+# [1.240.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.239.0...v1.240.0) (2025-05-21)
+
+
+### Features
+
+* adds the troubleshooting guide ([#572](https://github.com/Basis-Theory/developers.basistheory.com/issues/572)) ([7a904d0](https://github.com/Basis-Theory/developers.basistheory.com/commit/7a904d0f60952cb6444b2fdec5c0dd0c57515f1e))
+
+# [1.239.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.3...v1.239.0) (2025-05-21)
+
+
+### Features
+
+* **eng-8287:** add doc to client keys ([#566](https://github.com/Basis-Theory/developers.basistheory.com/issues/566)) ([2c9fab9](https://github.com/Basis-Theory/developers.basistheory.com/commit/2c9fab98131661d54596ae076d0a24d2711ac6c8))
+
+## [1.238.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.2...v1.238.3) (2025-05-20)
+
+
+### Bug Fixes
+
+* add examples to proxy concept page ([#571](https://github.com/Basis-Theory/developers.basistheory.com/issues/571)) ([20e7f87](https://github.com/Basis-Theory/developers.basistheory.com/commit/20e7f8779988a98f2e86bb3f5a4a4d82abd2a45c))
+
+## [1.238.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.1...v1.238.2) (2025-05-19)
+
+
+### Bug Fixes
+
+* adds Node SDK and config options for Reactors ([#557](https://github.com/Basis-Theory/developers.basistheory.com/issues/557)) ([6b710dc](https://github.com/Basis-Theory/developers.basistheory.com/commit/6b710dc71aa66b6d0da9628a0f89b7be276b156a))
+
 ## [1.238.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.0...v1.238.1) (2025-05-16)
 
 
