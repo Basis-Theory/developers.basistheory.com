@@ -1,3 +1,10 @@
+# [1.239.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.3...v1.239.0) (2025-05-21)
+
+
+### Features
+
+* **eng-8287:** add doc to client keys ([#566](https://github.com/Basis-Theory/developers.basistheory.com/issues/566)) ([2c9fab9](https://github.com/Basis-Theory/developers.basistheory.com/commit/2c9fab98131661d54596ae076d0a24d2711ac6c8))
+
 ## [1.238.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.2...v1.238.3) (2025-05-20)
 
 
