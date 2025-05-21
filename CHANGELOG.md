@@ -1,3 +1,10 @@
+# [1.240.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.239.0...v1.240.0) (2025-05-21)
+
+
+### Features
+
+* adds the troubleshooting guide ([#572](https://github.com/Basis-Theory/developers.basistheory.com/issues/572)) ([7a904d0](https://github.com/Basis-Theory/developers.basistheory.com/commit/7a904d0f60952cb6444b2fdec5c0dd0c57515f1e))
+
 # [1.239.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.238.3...v1.239.0) (2025-05-21)
 
 
