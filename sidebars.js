@@ -154,7 +154,7 @@ const sidebars = {
           type: "doc",
           id: "guides/account-updater/real-time-implementation",
           label: "Real-Time Implementation",
-        }
+        },
       ],
     },
     {
@@ -676,19 +676,8 @@ const sidebars = {
             type: "doc",
             id: "sdks/web/web-elements/index",
           },
-          items: ["sdks/web/web-elements/initialization", "sdks/web/web-elements/components", "sdks/web/web-elements/methods", "sdks/web/web-elements/events", "sdks/web/web-elements/lifecycle", "sdks/web/web-elements/services", "sdks/web/web-elements/migration", "sdks/web/content-security-policy"],
+          items: ["sdks/web/web-elements/initialization", "sdks/web/web-elements/components", "sdks/web/web-elements/methods", "sdks/web/web-elements/events", "sdks/web/web-elements/lifecycle", "sdks/web/web-elements/services", "sdks/web/web-elements/migration", "sdks/web/web-elements/troubleshooting"],
         },
-        /* TODO add redirects for these         
-
-  {
-          type: "category",
-          label: "React Elements",
-          link: {
-            type: "doc",
-            id: "sdks/web/react/index",
-          },
-          items: ["sdks/web/react/components", "sdks/web/react/events", "sdks/web/react/properties", "sdks/web/react/services"],
-        }, */
         {
           type: "category",
           label: "3DS",
