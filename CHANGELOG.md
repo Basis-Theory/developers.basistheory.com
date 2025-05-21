@@ -1,3 +1,10 @@
+# [1.241.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.240.0...v1.241.0) (2025-05-21)
+
+
+### Features
+
+* Document Apple Pay resources ([#570](https://github.com/Basis-Theory/developers.basistheory.com/issues/570)) ([31ef775](https://github.com/Basis-Theory/developers.basistheory.com/commit/31ef77524c1d3e4bf054f1ce0128b4ba316b4cba))
+
 # [1.240.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.239.0...v1.240.0) (2025-05-21)
 
 
