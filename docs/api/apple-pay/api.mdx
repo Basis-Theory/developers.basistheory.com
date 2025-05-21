@@ -11,12 +11,6 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Apple Pay™
 
-<Alert type={Alerts.Warning}>
-This Apple Pay integration method is deprecated and may be removed in a future release.
-We recommend using our new [Apple Pay Token](/docs/api/apple-pay/api) functionality, which provides enhanced features and improved integration capabilities.
-If you are currently using this integration, see the [Migration Guide](/docs/api/connections/apple-pay#migration-guide) below.
-</Alert>
-
 ## Register Domain Address
 
 Apple Pay™ requires websites to associate their domain address with a merchant identifier.
@@ -29,11 +23,11 @@ Review Apple's [documentation](https://developer.apple.com/documentation/apple_p
 Before registering your domain with Basis Theory, our domain verification file needs to be available to Apple via your website.
 [Download](https://cdn.basistheory.com/.well-known/apple-developer-merchantid-domain-association) the file and add it to your server at the URL `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association`.
 
-<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/apple-pay/domain-registration" />
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay/domain-registration" />
 
 #### Permissions
 
-<Permission content="connections:apple-pay:manage" />
+<Permission content="apple-pay:manage" />
 
 ### Request
 
@@ -42,7 +36,7 @@ Before registering your domain with Basis Theory, our domain verification file n
 
     ```shell showLineNumbers
     curl --request POST \
-      --url https://api.basistheory.com/connections/apple-pay/domain-registration \
+      --url https://api.basistheory.com/apple-pay/domain-registration \
       --header 'BT-API-KEY: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data '{
@@ -53,17 +47,23 @@ Before registering your domain with Basis Theory, our domain verification file n
 
   <TabItem value="node" label="Node">
   ```javascript
-
+await client.applePay.domain.register({
+    domain: "domain",
+});
   ```
     </TabItem>
     <TabItem value="csharp" label="C#">
   ```csharp showLineNumbers
-
+await client.ApplePay.Domain.RegisterAsync(
+    new ApplePayDomainRegistrationRequest { Domain = "domain" }
+);
   ```
     </TabItem>
     <TabItem value="python" label="Python">
   ```python showLineNumbers
-
+client.apple_pay.domain.register(
+    domain="domain",
+)
   ```
     </TabItem>
 </Tabs>
@@ -95,16 +95,16 @@ Before registering your domain with Basis Theory, our domain verification file n
 
 | Status Code | |
 |-------------|-|
-| 422 | Ensure that the domain registration file is [available](/docs/api/connections/apple-pay#prerequisite) from the domain being registered |
+| 422 | Ensure that the domain registration file is [available](/docs/api/apple-pay/api#prerequisite) from the domain being registered |
 | 50X | Please contact Basis Theory support and provide the domain name in your message. |
 
 ## Register All Domain Addresses
 
-<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/connections/apple-pay/domain-registration" />
+<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/apple-pay/domain-registration" />
 
 #### Permissions
 
-<Permission content="connections:apple-pay:manage" />
+<Permission content="apple-pay:manage" />
 
 ### Request
 
@@ -113,7 +113,7 @@ Before registering your domain with Basis Theory, our domain verification file n
 
     ```shell showLineNumbers
     curl --request PUT \
-      --url https://api.basistheory.com/connections/apple-pay/domain-registration \
+      --url https://api.basistheory.com/apple-pay/domain-registration \
       --header 'BT-API-KEY: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data '{
@@ -178,16 +178,16 @@ Before registering your domain with Basis Theory, our domain verification file n
 
 | Status Code | |
 |-------------|-|
-| 422 | Ensure that the domain registration file is [available](/docs/api/connections/apple-pay#prerequisite) from the domain being registered |
+| 422 | Ensure that the domain registration file is [available](/docs/api/apple-pay/api#prerequisite) from the domain being registered |
 | 50X | Please contact Basis Theory support and provide the domain name in your message. |
 
 ## Get Domain Registrations
 
-<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/connections/apple-pay/domain-registration" />
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/apple-pay/domain-registration" />
 
 #### Permissions
 
-<Permission content="connections:apple-pay:manage" />
+<Permission content="apple-pay:manage" />
 
 ### Request
 
@@ -196,24 +196,24 @@ Before registering your domain with Basis Theory, our domain verification file n
 
     ```shell showLineNumbers
     curl --request GET \
-      --url https://api.basistheory.com/connections/apple-pay/domain-registration \
+      --url https://api.basistheory.com/apple-pay/domain-registration \
       --header 'BT-API-KEY: <API_KEY>'
     ```
   </TabItem>
 
   <TabItem value="node" label="Node">
   ```javascript
-
+await client.applePay.domain.get();
   ```
     </TabItem>
     <TabItem value="csharp" label="C#">
   ```csharp showLineNumbers
-
+await client.ApplePay.Domain.GetAsync();
   ```
     </TabItem>
     <TabItem value="python" label="Python">
   ```python showLineNumbers
-
+client.apple_pay.domain.get()
   ```
     </TabItem>
 </Tabs>
@@ -239,11 +239,11 @@ Before registering your domain with Basis Theory, our domain verification file n
 
 ## Deregister Domain
 
-<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/apple-pay/domain-deregistration" />
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay/domain-deregistration" />
 
 #### Permissions
 
-<Permission content="connections:apple-pay:manage" />
+<Permission content="apple-pay:manage" />
 
 ### Request
 
@@ -252,7 +252,7 @@ Before registering your domain with Basis Theory, our domain verification file n
 
     ```shell showLineNumbers
     curl --request POST \
-      --url https://api.basistheory.com/connections/apple-pay/domain-deregistration \
+      --url https://api.basistheory.com/apple-pay/domain-deregistration \
       --header 'BT-API-KEY: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data '{
@@ -263,17 +263,23 @@ Before registering your domain with Basis Theory, our domain verification file n
 
   <TabItem value="node" label="Node">
   ```javascript
-
+await client.applePay.domain.deregister({
+    domain: "domain",
+});
   ```
     </TabItem>
     <TabItem value="csharp" label="C#">
   ```csharp showLineNumbers
-
+await client.ApplePay.Domain.DeregisterAsync(
+    new ApplePayDomainDeregistrationRequest { Domain = "domain" }
+);
   ```
     </TabItem>
     <TabItem value="python" label="Python">
   ```python showLineNumbers
-
+client.apple_pay.domain.deregister(
+    domain="domain",
+)
   ```
     </TabItem>
 </Tabs>
@@ -291,11 +297,11 @@ Before registering your domain with Basis Theory, our domain verification file n
 A proxy endpoint to start an Apple Pay session using Basis Theory's merchant identifier.
 See the [documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session) on Apple's site for more details.components
 
-<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/apple-pay/session" />
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay/session" />
 
 #### Permissions
 
-<Permission content="connections:apple-pay:invoke" />
+<Permission content="apple-pay:session" />
 
 ### Request
 
@@ -304,7 +310,7 @@ See the [documentation](https://developer.apple.com/documentation/apple_pay_on_t
 
     ```shell showLineNumbers
     curl --request POST \
-      --url https://api.basistheory.com/connections/apple-pay/session \
+      --url https://api.basistheory.com/apple-pay/session \
       --header 'BT-API-KEY: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data '{
@@ -317,17 +323,17 @@ See the [documentation](https://developer.apple.com/documentation/apple_pay_on_t
 
   <TabItem value="node" label="Node">
   ```javascript
-
+await client.applePay.session.create({});
   ```
     </TabItem>
     <TabItem value="csharp" label="C#">
   ```csharp showLineNumbers
-
+await client.ApplePay.Session.CreateAsync(new ApplePaySessionRequest());
   ```
     </TabItem>
     <TabItem value="python" label="Python">
   ```python showLineNumbers
-
+client.apple_pay.session.create()
   ```
     </TabItem>
 </Tabs>
@@ -346,13 +352,13 @@ Returns an opaque Apple Pay [session object](https://developer.apple.com/documen
 
 ## Tokenize
 
-Decrypts an Apple Pay token and creates a [Token Intent](/docs/api/tokens/token-intents#token-intent-object).
+Decrypts an Apple Pay token and creates an Apple Pay token.
 
-<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/connections/apple-pay/tokenize" />
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay" />
 
 #### Permissions
 
-<Permission content="connections:apple-pay:invoke" />
+<Permission content="apple-pay:create" />
 
 ### Request
 
@@ -361,11 +367,12 @@ Decrypts an Apple Pay token and creates a [Token Intent](/docs/api/tokens/token-
 
     ```shell showLineNumbers
     curl --request POST \
-      --url https://api.basistheory.com/connections/apple-pay/tokenize \
+      --url https://api.basistheory.com/apple-pay/tokenize \
       --header 'BT-API-KEY: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data '{
-      "apple_payment_method_token": {
+      "expires_at": "2030-12-25"
+      "apple_payment_data": {
         "paymentData": {
           "data": "...",
           "signature": "...",
@@ -390,17 +397,17 @@ Decrypts an Apple Pay token and creates a [Token Intent](/docs/api/tokens/token-
 
   <TabItem value="node" label="Node">
   ```javascript
-
+await client.applePay.create();
   ```
     </TabItem>
     <TabItem value="csharp" label="C#">
   ```csharp showLineNumbers
-
+await client.ApplePay.CreateAsync(new ApplePayCreateRequest());
   ```
     </TabItem>
     <TabItem value="python" label="Python">
   ```python showLineNumbers
-
+client.apple_pay.create()
   ```
     </TabItem>
 </Tabs>
@@ -409,174 +416,110 @@ Decrypts an Apple Pay token and creates a [Token Intent](/docs/api/tokens/token-
 
 | Attribute  | Required | Description                                                        |
 |------------|----------|--------------------------------------------------------------------|
-| `apple_payment_method_token` | true | The Apple Pay [token](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypayment/1916095-token) from the [`onpaymentauthorized`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized) event. |
+| `expires_at` | false | An optional expiration date for the token. If blank, defaults to the expiration date in the decrypted Apple Payment data. |
+| `apple_payment_data` | true | The Apple Pay [token](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypayment/1916095-token) from the [`onpaymentauthorized`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized) event. |
 
 ### Response
 
-Returns a [Token Intent](/docs/api/tokens/token-intents#token-intent-object) if successful.
-Returns [an error](/docs/api/errors) if there were validation errors, if the Apple payment token failed to decrypt create, or the Token Intent failed to create.
+Returns an Apple Pay Token.
+The return will include the Card BIN enrichments according to the tenant settings.
 
 ```json
 {
-  "token_intent": {
-    "id": "78f0fc3e-cebb-4e93-8609-d81594ce1fb0",
-    "type": "network_token",
-    "tenant_id": "9492840c-1308-4f5a-bb03-af66b83a04f9",
-    "fingerprint": "7bAjvyqJqfPc4jRjniEk87vNrjR74Xax1HnMREWsTiMz",
-    "created_by": "00ea333f-2fd7-4da2-b5fe-ec86316db024",
-    "created_at": "2025-03-05T20:58:59.8718437+00:00",
-    "expires_at": "2025-03-06T20:58:59.8718437+00:00",
-    "network_token": {
-      "bin": "411111",
-      "last4": "1111",
-      "expiration_month": 12,
-      "expiration_year": 2027,
-      "brand": "visa",
-      "funding": "credit",
-      "issuer_country": {
-        "alpha2": "US",
-        "name": "UNITED STATES OF AMERICA",
-        "numeric": "840"
-      }
-    },
-    "authentication": {
-      "threeds_cryptogram": "AcbNS...",
-      "eci_indicator": "7"
-    },
-    "_extras": {
-      "tsp_details": {
-        "tsp": "Apple",
-        "eci_indicator": "7",
-        "transaction_id": "abb87500d95157439c689e876c229cb9dfaf0c71737f4ac09f6703018c78519a",
-        "currency_code": "840",
-        "transaction_amount": 1,
-        "device_manufacturer_identifier": "040010030273",
-        "payment_data_type": "3DSecure"
-      }
-    }
+  "apple_pay": {
+    "id": "c2995d93-600a-44a2-b6f1-2c25e46603a9",
+    "type": "dpan",
+    "tenant_id": "...",
+    "status": "active",
+    "expires_at": "2030-12-15T00:00:00+00:00",
+    "created_by": "0a6475a5-4bb8-4165-8c31-7fbc058843bf",
+    "created_at": "2025-05-19T16:19:50.9013495+00:00",
+    "card": {...}
   }
 }
 ```
 
-Token Intents and the resulting tokens created from an Apple payment token will contain a `tsp_details` object in the `_extras` attribute.
+## Retrieve
 
-<Alert type={Alerts.Information}>
-The attributes in the `_extras` object are NOT addressable in proxies or reactors.
-</Alert>
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/apple-pay/{:id}" />
 
-| Attribute                         | Type      | Description                                   |
-|-----------------------------------|-----------|-----------------------------------------------|
-| `_extras`                         | Object    | Parent object containing additional details.  |
-| `tsp_details`                     | Object    | Details related to the transaction service provider (TSP). |
-| `tsp_details.tsp`                             | String    | The name of the transaction service provider. |
-| `tsp_details.transaction_id` | String | Transaction identifier, generated on the device |
-| `tsp_details.currency_code` | String | ISO 4217 numeric currency code, as a string to preserve leading zeros |
-| `tsp_details.transaction_amount` | String | Transaction amount |
-| `tsp_details.cardholder_name` | String | Optional. Cardholder name. |
-| `tsp_details.device_manufacturer_identifier` | String | Hex-encoded device manufacturer identifier |
-| `tsp_details.payment_data_type` | String | Either `3DSecure` or `EMV` |
-| `tsp_details.merchant_token_identifier` | String | For a merchant token request, the provisioned merchant token identifier from the payment network |
-| `tsp_details.authentication_responses[].merchant_identifier` | String | The submerchant identifier as provided by the coordinator merchant |
-| `tsp_details.authentication_responses[].authentication_data` | String | Payment network-generated cryptogram for the submerchant |
-| `tsp_details.authentication_responses[].transaction_amount` | String | The authorized amount for a given submerchant |
+#### Permissions
 
-## Migration Guide
+<Permission content="apple-pay:read" />
+<Permission content="apple-pay:reveal" />
 
-This guide outlines the changes required to migrate from the deprecated Apple Pay integration using Token Intents to the new Apple Pay Token integration.
+### Request
 
-### Key Changes
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell
+    curl --request GET \
+      --url https://api.basistheory.com/apple-pay/c2995d93-600a-44a2-b6f1-2c25e46603a9 \
+      --header 'BT-API-KEY: <API_KEY>'
+    ```
+  </TabItem>
 
-1. **Endpoint Changes**
-   - Old endpoints under `/connections/apple-pay/*` are being deprecated
-   - New endpoints are under `/apple-pay/*`
+  <TabItem value="node" label="Node">
+    ```javascript
+await client.applePay.get("id");
+    ```
+      </TabItem>
+      <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+await client.ApplePay.GetAsync("id");
+    ```
+      </TabItem>
+      <TabItem value="python" label="Python">
+    ```python showLineNumbers
+client.apple_pay.get(
+    id="id",
+)
+    ```
+      </TabItem>
+</Tabs>
 
-2. **Domain Registration**
-   - Old: `POST /connections/apple-pay/domain-registration`
-   - New: `POST /apple-pay/domain-registration`
+### Response
 
-3. **Permission Changes**
-   - Old: `connections:apple-pay:invoke`, `connections:apple-pay:manage`
-   - New: `apple-pay:session`, `apple-pay:create`, `apple-pay:manage`
+Returns an Apple Pay token.
+If the application has `apple-pay:reveal`, then the `data` element will contain the unencrypted card information.
+If the application has `apple-pay:reveal`, then the `data` element will contain masked card information.
 
-4. **Response Type Changes**
-   - Old: Returns Token Intent objects
-   - New: Returns Apple Pay Token objects directly
-
-### API Changes
-
-### Session Creation
-```diff
-- // Old Session Creation
-POST /connections/apple-pay/session
-Permission: connections:apple-pay:invoke
-
-+ // New Session Creation
-POST /apple-pay/session
-Permission: apple-pay:session
-```
-
-
-#### Tokenization
-```diff
-- // Old Tokenization
-POST /connections/apple-pay/tokenize
+```json
 {
-  "apple_payment_method_token": {
-    "paymentData": { ... }
+  "id": "c2995d93-600a-44a2-b6f1-2c25e46603a9",
+  "type": "dpan",
+  "tenant_id": "0def1587-e30b-44b7-ad3f-484b323a3917",
+  "status": "active",
+  "expires_at": "2025-12-12T00:00:00+00:00",
+  "created_by": "0a6475a5-4bb8-4165-8c31-7fbc058843bf",
+  "created_at": "2025-05-19T16:19:50.9013495+00:00",
+  "card": {
+    "bin": "42424242",
+    "last4": "4242",
+    "expiration_month": 6,
+    "expiration_year": 2025,
+    "brand": "mastercard",
+    "funding": "credit",
+    "authentication": "sca_required",
+    "issuer": {
+      "country": "PL",
+      "name": "3DS Test Cards (TEST)"
+    },
+    "issuer_country": {
+      "alpha2": "PL",
+      "name": "Bermuda",
+      "numeric": "369"
+    },
+    "segment": "Commercial"
+  },
+  "data": {
+    "number": "4242424242424242",
+    "expiration_month": 6,
+    "expiration_year": 2025
+  },
+  "authentication": {
+    "threeds_cryptogram": "AAAAAA=",
+    "eci_indicator": "7"
   }
 }
-Response: { "token_intent": { ... } }
-
-+ // New Tokenization
-POST /apple-pay/tokenize
-{
-  "apple_payment_data": {
-    "paymentData": { ... }
-  }
-}
-Response: { "apple_pay": { ... } }
 ```
-
-
-#### Proxy Expression Changes
-```diff
-- // Old Proxy Expression
-"token": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }}"
-
-+ // New Proxy Expression
-"token": "{{ apple_pay: <TOKEN_ID> | json: \"$.data.number\" }}"
-```
-
-
-### Application Changes
-
-1. **Public Application Permissions**
-```diff
-- permissions: ["connections:apple-pay:invoke"]
-+ permissions: ["apple-pay:session", "apple-pay:create"]
-```
-
-
-2. **Private Application Permissions**
-```diff
-- permissions: ["token:use"]
-+ permissions: ["proxy:invoke"]
-```
-
-### Benefits of Migration
-
-1. **Simplified Token Management**: Direct Apple Pay tokens instead of Token Intents
-2. **Better Permission Control**: More granular permissions for Apple Pay operations
-3. **Future Compatibility**: Access to new features and improvements
-
-### Testing the Migration
-
-1. Update your application permissions in the Basis Theory Portal
-2. Update API endpoint references in your code
-3. Modify proxy expressions to use the new `apple_pay:` syntax
-4. Test the complete payment flow in your staging environment
-5. Verify token creation and processing with your payment service provider
-
-### Timeline
-
-The deprecated `/connections/apple-pay/*` endpoints will continue to function for a transition period. However, we recommend migrating to the new endpoints as soon as possible to ensure continued functionality and access to new features.

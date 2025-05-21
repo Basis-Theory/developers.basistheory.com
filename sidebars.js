@@ -523,6 +523,20 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Apple Pay Tokens",
+      link: {
+        type: "doc",
+        id: "api/apple-pay/api",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/apple-pay/api",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "3D Secure",
       link: {
         type: "doc",
@@ -586,6 +600,9 @@ const sidebars = {
         {
           type: "doc",
           id: "api/connections/apple-pay",
+          customProps: {
+            deprecated: true,
+          },
         },
         {
           type: "doc",
