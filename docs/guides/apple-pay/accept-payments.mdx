@@ -25,36 +25,6 @@ When the user clicks the Apple "Pay" button, a sequence of high-level steps is i
 
 [![Accept Apple Pay](/img/guides/apple-pay/accept-payments.png)](/img/guides/apple-pay/accept-payments.png)
 
-{/* ```mermaid */}
-{/* sequenceDiagram */}
-{/*     participant Customer */}
-{/*     participant MF as Merchant Frontend */}
-{/*     participant MB as Merchant Backend */}
-{/*     participant BT as Basis Theory API */}
-{/*     participant PSP as Processor API */}
-
-{/*     Customer->>MF: Clicks Apple "Pay" button */}
-{/*     MF->>BT: Create Apple Pay session */}
-{/*     BT-->>MF: Apple Pay Session */}
-{/*     MF-->>Customer: Apple Payment Sheet */}
-
-{/*     Customer->>MF: Authorize Payment */}
-{/*     MF->>BT: Tokenize Apple Pay DPAN */}
-{/*     BT-->>MF: Apple Pay Token */}
-{/*     MF-->>Customer: Apple Pay success notification */}
-
-{/*     opt Optionally Async */}
-{/*     MF->>MB: Process Payment */}
-{/*     MB->>BT: [Proxy] Process Payment w/ {{ apple_pay }} */}
-{/*     BT->>BT: Detokenize DPAN */}
-{/*     BT->>PSP: Process Payment w/ DPAN */}
-{/*     PSP->>PSP: Process Transaction */}
-{/*     PSP-->>BT: Transaction Response */}
-{/*     BT-->>MB: Transaction Response */}
-{/*     MB-->>MF: Response */}
-{/*     end */}
-{/* ``` */}
-
 <GettingStartedSection/>
 
 ### Domain Verification
@@ -214,7 +184,7 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
         session.onpaymentauthorized = async (event, session) => {
           try {
             // decrypt and tokenize Apple Pay
-            const token = await tokenize(event);
+            const applePayToken  = await tokenize(event);
             // present green check to the user before the timeout (30 seconds)
             session.completePayment(ApplePaySession.STATUS_SUCCESS);
           } catch (e) {
@@ -308,12 +278,12 @@ We'll change our frontend application one last time to pass in the Token ID to t
         session.onpaymentauthorized = async (event, session) => {
           try {
             // decrypt and tokenize Apple Pay
-            const token = await tokenize(event);
+            const applePayToken = await tokenize(event);
             // present green check to the user before the timeout (30 seconds)
             session.completePayment(ApplePaySession.STATUS_SUCCESS);
             // highlight-start
             // send the token to the backend for payment processing
-            const response = await chargePayment(token.id);
+            const response = await chargePayment(applePayToken.id);
             console.log(response);
             // highlight-end
           } catch (e) {
@@ -330,14 +300,14 @@ We'll change our frontend application one last time to pass in the Token ID to t
       async function tokenize(event) { ... }
 
       // highlight-start
-      async function chargePayment(tokenId) {
+      async function chargePayment(applePayTokenId) {
         return fetch('http://localhost:3000/charge-payment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            applePayId: tokenId
+            applePayId: applePayTokenId
           })
         });
       }
