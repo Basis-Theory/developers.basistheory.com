@@ -1,3 +1,10 @@
+## [1.241.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.241.1...v1.241.2) (2025-05-22)
+
+
+### Bug Fixes
+
+* URL path; remove /tokenize ([#574](https://github.com/Basis-Theory/developers.basistheory.com/issues/574)) ([f9476ed](https://github.com/Basis-Theory/developers.basistheory.com/commit/f9476edcd9a9019fbfaa9e2c4d98913f8b8a004a))
+
 ## [1.241.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.241.0...v1.241.1) (2025-05-22)
 
 
