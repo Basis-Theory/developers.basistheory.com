@@ -1,3 +1,10 @@
+## [1.241.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.241.0...v1.241.1) (2025-05-22)
+
+
+### Bug Fixes
+
+* react elements doc url ([#573](https://github.com/Basis-Theory/developers.basistheory.com/issues/573)) ([087f3ea](https://github.com/Basis-Theory/developers.basistheory.com/commit/087f3ea31127bcbf692672871f1592c73d6a0ecc))
+
 # [1.241.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.240.0...v1.241.0) (2025-05-21)
 
 
