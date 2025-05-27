@@ -1,3 +1,10 @@
+# [1.242.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.241.2...v1.242.0) (2025-05-27)
+
+
+### Features
+
+* adds programatic validation to web-elements ([#576](https://github.com/Basis-Theory/developers.basistheory.com/issues/576)) ([cb19681](https://github.com/Basis-Theory/developers.basistheory.com/commit/cb19681923b2fb869aa0a6cded13cc2c9f59f4ff))
+
 ## [1.241.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.241.1...v1.241.2) (2025-05-22)
 
 
