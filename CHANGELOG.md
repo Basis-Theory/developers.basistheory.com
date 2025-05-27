@@ -1,3 +1,10 @@
+# [1.243.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.242.0...v1.243.0) (2025-05-27)
+
+
+### Features
+
+* add authentication_status_reason_code to 3ds docs ([#577](https://github.com/Basis-Theory/developers.basistheory.com/issues/577)) ([ff18d10](https://github.com/Basis-Theory/developers.basistheory.com/commit/ff18d10b7dc5121b6c2c79fcc7ea1b93a32af12f))
+
 # [1.242.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.241.2...v1.242.0) (2025-05-27)
 
 
