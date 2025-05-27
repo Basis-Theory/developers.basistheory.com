@@ -20,6 +20,7 @@ All Elements support these fundamental interaction methods:
 | `clear()` | _void_ | Clears the element input(s) value |
 | `focus()` | _void_ | Focuses on the element input |
 | `blur()` | _void_ | Blurs (unfocuses) the element input |
+| `validate()` | _void_ | Triggers validation on the element programmatically |
 | `setValue(tokenData)` | _void_ | Sets the element's value from a token reference (for displaying tokenized data) |
 
 ## Component-Specific Methods
@@ -55,6 +56,9 @@ textElement.focus();
 
 // Later, blur (unfocus) the element
 textElement.blur();
+
+// Trigger validation programmatically
+textElement.validate();
 ```
 
   </TabItem>
@@ -73,10 +77,16 @@ function MyComponent() {
     textRef.current.focus();
   };
   
+  const handleValidate = () => {
+    // Trigger validation programmatically
+    textRef.current.validate();
+  };
+  
   return (
     <>
       <TextElement id="my-input" ref={textRef} />
       <button onClick={handleReset}>Reset</button>
+      <button onClick={handleValidate}>Validate</button>
     </>
   );
 }
@@ -84,6 +94,106 @@ function MyComponent() {
 
   </TabItem>
 </Tabs>
+
+### Programmatic Validation
+
+The `validate()` method allows you to trigger validation on any element programmatically. This is useful when you want to validate user input at specific times, such as when a form is submitted or when certain conditions are met.
+
+<Tabs className="bt-tabs">
+  <TabItem value="js" label="Web Elements">
+
+```javascript
+// Create a text element with validation rules
+const textElement = bt.createElement('text', {
+  targetId: 'ssn-input',
+  validateOnChange: true,
+  validation: new RegExp('^\\d{3} \\d{2} \\d{4}$'), // SSN format: 123 45 6789
+});
+await textElement.mount('#ssn-container');
+
+// Listen for validation changes
+textElement.on('change', function (event) {
+  console.log('Valid:', event.valid);
+  console.log('Errors:', event.errors);
+});
+
+// Trigger validation manually (e.g., on form submission)
+function validateForm() {
+  textElement.validate(); // This will trigger validation and fire change event
+  
+  // Check validation state
+  if (textElement.metadata.valid) {
+    console.log('Element is valid');
+  } else {
+    console.log('Element has validation errors:', textElement.metadata.errors);
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { useRef, useState } from 'react';
+import { TextElement } from '@basis-theory/react-elements';
+
+function ValidationExample() {
+  const textRef = useRef();
+  const [validationState, setValidationState] = useState({
+    valid: false,
+    errors: []
+  });
+  
+  const handleChange = (event) => {
+    setValidationState({
+      valid: event.valid,
+      errors: event.errors
+    });
+  };
+  
+  const handleValidate = () => {
+    // Trigger validation programmatically
+    textRef.current.validate();
+  };
+  
+  const handleSubmit = () => {
+    // Validate before submission
+    textRef.current.validate();
+    
+    if (validationState.valid) {
+      // Proceed with form submission
+      console.log('Form is valid, submitting...');
+    } else {
+      console.log('Please fix validation errors');
+    }
+  };
+  
+  return (
+    <>
+      <TextElement 
+        id="ssn-input"
+        ref={textRef}
+        validateOnChange={true}
+        validation={/^\d{3} \d{2} \d{4}$/} // SSN format
+        onChange={handleChange}
+      />
+      <div>
+        Status: {validationState.valid ? 'Valid' : 'Invalid'}
+        {validationState.errors.length > 0 && (
+          <div>Errors: {validationState.errors.map(e => e.type).join(', ')}</div>
+        )}
+      </div>
+      <button onClick={handleValidate}>Validate</button>
+      <button onClick={handleSubmit}>Submit</button>
+    </>
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Alert>The <code>validate()</code> method will trigger validation based on the element's configured validation rules (such as <code>validation</code> regex patterns for text elements or built-in validation for card elements). The validation results will be available through the element's <code>metadata</code> property and will also trigger a <code>change</code> event.</Alert>
 
 ## Card Expiration Date Methods
 
