@@ -1,3 +1,17 @@
+# [1.243.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.242.0...v1.243.0) (2025-05-27)
+
+
+### Features
+
+* add authentication_status_reason_code to 3ds docs ([#577](https://github.com/Basis-Theory/developers.basistheory.com/issues/577)) ([ff18d10](https://github.com/Basis-Theory/developers.basistheory.com/commit/ff18d10b7dc5121b6c2c79fcc7ea1b93a32af12f))
+
+# [1.242.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.241.2...v1.242.0) (2025-05-27)
+
+
+### Features
+
+* adds programatic validation to web-elements ([#576](https://github.com/Basis-Theory/developers.basistheory.com/issues/576)) ([cb19681](https://github.com/Basis-Theory/developers.basistheory.com/commit/cb19681923b2fb869aa0a6cded13cc2c9f59f4ff))
+
 ## [1.241.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.241.1...v1.241.2) (2025-05-22)
 
 
