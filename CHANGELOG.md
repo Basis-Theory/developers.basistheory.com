@@ -1,3 +1,10 @@
+## [1.243.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.243.0...v1.243.1) (2025-05-29)
+
+
+### Bug Fixes
+
+* css supported properties ([#580](https://github.com/Basis-Theory/developers.basistheory.com/issues/580)) ([1de93f5](https://github.com/Basis-Theory/developers.basistheory.com/commit/1de93f50ab3c52bbf6322d1b6c14260e9bc86869))
+
 # [1.243.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.242.0...v1.243.0) (2025-05-27)
 
 
