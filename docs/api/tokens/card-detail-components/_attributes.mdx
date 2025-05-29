@@ -1,0 +1,25 @@
+import { Alert } from "@site/src/components/shared/Alert";
+
+export const getProp = (props, name, defaultValue = '') => {
+  return props[name] || defaultValue;
+};
+
+| Attribute          | Type     | Description                                                                                                         |
+|--------------------|----------|---------------------------------------------------------------------------------------------------------------------|
+| `bin`              | _string_ | Six to eight digit BIN of the {getProp(props, 'type')}                                                              |
+| `last4`            | _string_ | Last four digits of the {getProp(props, 'type')}                                                                    |
+| `expiration_month` | _number_ | The 2-digit expiration month of the {getProp(props, 'type')}                                                        |
+| `expiration_year`  | _number_ | The 4-digit expiration year of the {getProp(props, 'type')}                                                         |
+| `brand`            | _string_ | The primary [card brand](#card-brands)                                                                              |
+| `funding`          | _string_ | The primary [funding type](#card-funding-types) of the {getProp(props, 'type')}                                     |
+| `segment`          | _string_ | The segmentation of the {getProp(props, 'type')} (eg., Consumer, Commercial)                                        |
+| `issuer`           | object   | Describes the country and issuing bank. See [Issuer](#issuer) for details                                           |
+| `issuer_country`   | object   |                                                                                                                     |
+| _&nbsp;.alpha2_    | string   | Issuing country ISO3166 alpha country code                                                                          |
+| _&nbsp;.numeric_   | string   | Issuing country ISO3166 numeric country code                                                                        |
+| _&nbsp;.name_      | string   | Issuing country name                                                                                                |
+| `authentication`   | _string_ | The [authentication type](#authentication-types) required for this {getProp(props, 'type')}                         |
+| `additional`       | _array_  | Contains additional details associated to the same BIN number. See [Card Additional](#card-additional) for details. |
+
+<Alert><code>{getProp(props, 'type')[0].toUpperCase() + getProp(props, 'type').slice(1)}</code> properties shows the primary card details, while `Card.additional` provides additional {getProp(props, 'type')} details found for the same BIN.</Alert>
+<Alert>If a {getProp(props, 'type')} number does not correspond to any known [BIN Details](/docs/api/tokens/token-enrichments#bin-details), then `brand`, `funding`, `issuer_country`, and `authentication` will default to `null` and the [default BIN](/docs/api/tokens/token-enrichments#default-bin) will be returned.</Alert>

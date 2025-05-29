@@ -2,8 +2,7 @@ import {Permission} from "../../../src/components/shared/Permission";import {Htt
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import {Alert, Alerts} from "../../../src/components/shared/Alert";
-import CardDetails from "@site/docs/api/tokens/_card_details.mdx";
-import Info from "@site/static/img/getting-started/icons/information.svg";
+import NetworkTokenDetails from "@site/docs/api/tokens/_network_token_details.mdx";
 
 # Network Tokens
 
@@ -436,6 +435,11 @@ Returns a [network token object](#network-token-object) if successful. Returns [
             }
         ]
     },
+    "card": {
+        "last4": "2426",
+        "expiration_month": 12,
+        "expiration_year": 2029
+    },
     "status": "active",
     "created_by": "f8dee6b4-2f92-4052-81f9-8b0fc8078a6e",
     "created_at": "2025-05-07T17:04:06.3338559+00:00",
@@ -659,24 +663,32 @@ Returns a 204 No Content response if successful. Returns [an error](/docs/api/er
 
 ## Network Token Object
 
-| Attribute               | Type      | Description                                                                                 |
-|-------------------------|-----------|---------------------------------------------------------------------------------------------|
-| `id`                    | _string_  | Unique identifier of the network token                                                      |
-| `tenant_id`             | _uuid_    | The tenant ID associated with the network token                                             |
-| `data.number`           | _string_  | Masked card number                                                                          |
-| `data.expiration_month` | _integer_ | Card's expiration month                                                                     |
-| `data.expiration_year`  | _integer_ | Card's expiration year                                                                      |
-| `network_token`         | _object_  | An object containing the card data. See [Card Details](#card-details) for more information. |
-| `status`                | _string_  | The status of the network token. Possible values: `active`, `inactive` or `suspended`       |
-| `created_by`            | _uuid_    | ID of the entity that created the network token                                             |
-| `created_at`            | _date_    | Timestamp of when the network token was created                                             |
-| `token_id`              | _uuid_    | The ID of the token if created using a token_id                                             |
-| `token_intent_id`       | _uuid_    | The ID of the token intent if created using a token_intent_id                               |
+| Attribute               | Type      | Description                                                                                                                                       |
+|-------------------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`                    | _string_  | Unique identifier of the network token                                                                                                            |
+| `tenant_id`             | _uuid_    | The tenant ID associated with the network token                                                                                                   |
+| `data.number`           | _string_  | Masked card number                                                                                                                                |
+| `data.expiration_month` | _integer_ | Card's expiration month                                                                                                                           |
+| `data.expiration_year`  | _integer_ | Card's expiration year                                                                                                                            |
+| `network_token`         | _object_  | An object containing details for the network token data. See [Network Token Details](#network-token-details) for more information.                |
+| `card`                  | _object_  | An object containing details for the original card data used to create the network token. See [Card Details](#card-details) for more information. |
+| `status`                | _string_  | The status of the network token. Possible values: `active`, `inactive` or `suspended`                                                             |
+| `created_by`            | _uuid_    | ID of the entity that created the network token                                                                                                   |
+| `created_at`            | _date_    | Timestamp of when the network token was created                                                                                                   |
+| `token_id`              | _uuid_    | The ID of the token if created using a token_id                                                                                                   |
+| `token_intent_id`       | _uuid_    | The ID of the token intent if created using a token_intent_id                                                                                     |
 
 <Alert type={Alerts.INFO}>Both `token_id` and `token_intent_id` can be present if a token intent is eventually transformed into a token.</Alert>
 
+<NetworkTokenDetails type="network token" />
 
-<CardDetails />
+### Card Details
+
+| Attribute          | Type     | Description                                       |
+|--------------------|----------|---------------------------------------------------|
+| `last4`            | _string_ | Last four digits of the original card             |
+| `expiration_month` | _number_ | The 2-digit expiration month of the original card |
+| `expiration_year`  | _number_ | The 4-digit expiration year of the original card  |
 
 ## Cryptogram Object
 
