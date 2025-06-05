@@ -1,3 +1,10 @@
+# [1.244.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.243.1...v1.244.0) (2025-06-05)
+
+
+### Features
+
+* Add Apple Pay unlink documentation ([#581](https://github.com/Basis-Theory/developers.basistheory.com/issues/581)) ([be44bef](https://github.com/Basis-Theory/developers.basistheory.com/commit/be44bef9a140eed2f9747b8e2fcbd486362f27c7))
+
 ## [1.243.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.243.0...v1.243.1) (2025-05-29)
 
 
