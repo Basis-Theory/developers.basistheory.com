@@ -523,3 +523,83 @@ If the application has `apple-pay:reveal`, then the `data` element will contain 
   }
 }
 ```
+
+## Unlink
+
+Unlinks an Apple Pay MPAN token, marking it as unlinked.
+This operation can only be performed on tokens of type 'mpan'.
+Unlinked tokens will be scheduled for deletion 30 days after unlinking.
+
+For more information, review the [documentation](https://developer.apple.com/documentation/merchanttokennotificationservices/unlinking-merchanttoken) on Apple's site.
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay/{:id}/unlink" />
+
+#### Permissions
+
+<Permission content="apple-pay:unlink" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+      --url https://api.basistheory.com/apple-pay/c2995d93-600a-44a2-b6f1-2c25e46603a9/unlink \
+      --header 'BT-API-KEY: <API_KEY>'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+  ```javascript
+await client.applePay.unlink("id");
+  ```
+    </TabItem>
+    <TabItem value="csharp" label="C#">
+  ```csharp showLineNumbers
+await client.ApplePay.UnlinkAsync("id");
+  ```
+    </TabItem>
+    <TabItem value="python" label="Python">
+  ```python showLineNumbers
+client.apple_pay.unlink(
+    id="id",
+)
+  ```
+    </TabItem>
+</Tabs>
+
+### Response
+
+Returns the unlinked Apple Pay token with basic information.
+
+```json
+{
+ "apple_pay": {
+   "id": "c2995d93-600a-44a2-b6f1-2c25e46603a9",
+   "type": "mpan",
+   "tenant_id": "0def1587-e30b-44b7-ad3f-484b323a3917",
+   "status": "unlinked",
+   "expires_at": "2025-12-12T00:00:00+00:00"
+ }
+}
+```
+
+
+| Attribute                         | Type      | Description                                   |
+|-----------------------------------|-----------|-----------------------------------------------|
+| apple_pay | Object | The unlinked Apple Pay token |
+| apple_pay.id | string | Unique identifier for the Apple Pay token |
+| apple_pay.type | string | Type of Apple Pay token. Will be 'mpan' |
+| apple_pay.tenant_id | string | Identifier for the tenant that owns the token |
+| apple_pay.status | string | Status of the token. Will be 'unlinked' |
+| apple_pay.expires_at | string | ISO-8601 formatted date when the token expires |
+
+### Errors
+
+| Status Code | Description |
+|-------------|-|
+| 401 | Unauthorized - check API key permissions |
+| 403 | Forbidden - insufficient permissions to perform this action |
+| 422 | Token not found or token is not of type 'mpan' |
+| 503 | Unable to unlink token - please contact support |
