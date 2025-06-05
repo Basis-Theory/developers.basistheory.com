@@ -318,6 +318,7 @@ Elements track their mounted state internally. If an element's container is remo
 
 **Symptoms:**
 - Error message: `"Element mount timeout"`
+- Error message: `"Failed to load Basis Theory Elements. This could be due to network issues, ad blockers, or DevTools blocking requests. Please check your browser settings and try again."`
 - Elements fail to appear after initialization
 - Console warnings about exceeding mount time limits
 - Elements container remains empty longer than expected
@@ -325,25 +326,59 @@ Elements track their mounted state internally. If an element's container is remo
 **Causes:**
 Elements have an internal timeout (typically 15 seconds) for mounting. If an element cannot be properly mounted within this timeframe, a timeout error is thrown.
 
+Additionally, Elements perform a connectivity check during the mount process. If this check fails due to network issues, corporate firewalls, ad-blocking extensions, or DevTools settings, the mount will be rejected with a connectivity failure error.
+
 **Solutions:**
 
-1. **Ensure Proper Network Connectivity**
+1. **Handle Connectivity Check Failures**
+
+   When you encounter connectivity-related mount failures, implement user-friendly error handling:
+
+   ```javascript
+   try {
+     await cardElement.mount('#card-container');
+   } catch (error) {
+     if (error.message.includes('Failed to load Basis Theory Elements')) {
+       // Show user-friendly message with specific steps
+       showConnectivityErrorMessage();
+     } else {
+       // Handle other mount errors
+       console.error('Mount failed:', error);
+     }
+   }
+   
+   function showConnectivityErrorMessage() {
+     // Display a message asking users to:
+     // - Refresh the page and try again
+     // - Temporarily pause any ad blockers or privacy extensions
+     // - Ensure DevTools isn't set to "Block requests" or "Disable cache"
+     // - Confirm that *.basistheory.com is allowed through their firewall/CSP
+     // - Consider offering a fallback flow if connectivity issues persist
+   }
+   ```
+
+2. **Ensure Proper Network Connectivity**
    - Slow connections can delay the loading of iframe resources, triggering mount timeouts
    - Check that all required domains are accessible from your environment
 
-2. **Reduce DOM Complexity**
+3. **Reduce DOM Complexity**
    - High DOM complexity around the mounting container can slow down the mounting process
    - Avoid mounting elements during heavy DOM manipulations or page transitions
 
-3. **Verify Container Availability**
+4. **Verify Container Availability**
    - Ensure the mount container element exists in the DOM before attempting to mount
    - For dynamic UIs, make sure the container is fully rendered before mounting
 
-4. **Check for Browser Resource Constraints**
+5. **Check for Browser Resource Constraints**
    - Low memory or high CPU usage can delay mount operations
    - Reduce other resource-intensive operations during element initialization
 
-5. **Preload Elements When Possible**
+6. **Address Development Environment Issues**
+   - If using DevTools, ensure it's not set to "Block requests" or "Disable cache"
+   - Check that browser extensions aren't interfering with the connectivity check
+   - Verify that *.basistheory.com domains are not blocked by local development proxies
+
+7. **Preload Elements When Possible**
    - If you know you'll need elements, initialize them earlier in the page lifecycle
    - Consider initializing elements during idle periods before they're needed
 
