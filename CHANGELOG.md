@@ -1,3 +1,10 @@
+# [1.245.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.244.0...v1.245.0) (2025-06-06)
+
+
+### Features
+
+* add elements release 1.14.1 ([#582](https://github.com/Basis-Theory/developers.basistheory.com/issues/582)) ([0050b01](https://github.com/Basis-Theory/developers.basistheory.com/commit/0050b01455968775590b0bfd1c6cb9ec29a1414d))
+
 # [1.244.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.243.1...v1.244.0) (2025-06-05)
 
 
