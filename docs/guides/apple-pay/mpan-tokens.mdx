@@ -1,0 +1,182 @@
+---
+toc_max_heading_level: 2
+---
+
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import {ApplicationSection} from "@site/src/components/docs/ApplicationSection";
+
+# Accept Apple Pay MPAN Payments
+
+This guide explains how to accept Apple Pay payments using Merchant-Provisioned Account Numbers (MPANs) with the Basis Theory platform to handle PCI-sensitive data securely. MPANs are specialized tokens provided by Apple that enable merchants to accept payments for recurring transactions, subscriptions, and other ongoing payment scenarios.
+
+## Understanding Apple Pay MPANs
+
+Apple provides MPAN tokens for various payment scenarios:
+- **Recurring Payments** - Subscriptions, memberships, and regular billing cycles
+- **Automatic Reload** - Topping up accounts when balances fall below thresholds
+- **Deferred Payment** - Pre-authorization for services delivered at a later date
+
+When using MPANs, the payment flow includes additional configuration in the Apple Pay payment request to specify the type of recurring payment and associated parameters.
+
+<GettingStartedSection/>
+
+### Domain Verification
+
+Domain verification is required for MPAN implementations, following the same process as standard Apple Pay:
+1. Download and serve the [domain association file](https://cdn.basistheory.com/.well-known/apple-developer-merchantid-domain-association) on your server at `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association`.
+2. Add the public domain to your tenant using the [Customer Portal](https://portal.basistheory.com/settings?tab=apple+pay) or the [API](/docs/api/apple-pay/api#register-domain-address)
+
+## Creating an Apple Pay MPAN Session
+
+MPAN payments require additional configuration in the Apple Pay payment request using the `recurringPaymentRequest` parameter.
+
+### Create a Public Application
+
+<ApplicationSection type="public" permissions={["apple-pay:session", "apple-pay:create"]}/>
+
+### Configure Apple Pay with MPAN Support
+
+MPANs require an additional object passed into the Apple Payment session.
+Below are example ApplePaySessions for the various types of MPANs.
+
+Each object has slightly different attributes.
+However, there are two that are shared, `managementURL` and `tokenNotificationURL`.
+
+The `managementURL` attribute should be a URL to a webpage on your site where the user can manage their recurring payments.
+
+The `tokenNotificationURL` is the URL that Apple will call with events that affect the created MPAN.
+Basis theory will be responsible for receiving the events from Apple and updating the token.
+This URL should be in format of `https://api.basistheory.com/apple-pay/{<YOUR_TENANT_ID>}`.
+
+#### Recurring Payment (Subscription)
+
+```javascript
+const session = new ApplePaySession(3, {
+  "countryCode": "US",
+  "currencyCode": "USD",
+  "merchantCapabilities": [
+    "supports3DS"
+  ],
+  "supportedNetworks": [
+    "visa",
+    "masterCard",
+    "amex",
+    "discover"
+  ],
+  "total": {
+    "label": "Monthly Subscription",
+    "type": "final",
+    "amount": "9.99"
+  },
+  // highlight-start
+  "recurringPaymentRequest": {
+    "paymentDescription": "Monthly Premium Subscription",
+    "regularBilling": {
+      "label": "Monthly Premium",
+      "amount": "9.99",
+      "type": "final"
+    },
+    "managementURL": "https://yoursite.com/manage-subscription",
+    "tokenNotificationURL": "https://api.basistheory.com/apple-pay/{tenantId}"
+  }
+  // highlight-end
+});
+```
+
+See the [documentation](https://developer.apple.com/documentation/applepayontheweb/applepayrecurringpaymentrequest) on Apple's site for more information on recurring payments.
+
+#### Automatic Reload
+
+```javascript
+const autoReloadPaymentRequest = {
+  "countryCode": "US",
+  "currencyCode": "USD",
+  "merchantCapabilities": ["supports3DS"],
+  "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
+  "total": {
+    "label": "Account Auto-Reload Setup",
+    "type": "final",
+    "amount": "0.00"
+  },
+  // highlight-start
+  "automaticReloadPaymentRequest": {
+    "paymentDescription": "Automatic Account Reload",
+    "automaticReloadBilling": {
+      "label": "Account Reload",
+      "amount": "25.00",
+      "type": "final"
+    },
+    "billingAgreement": "Automatically reload $25.00 when account balance falls below $5.00",
+    "managementURL": "https://yoursite.com/manage-auto-reload"
+  }
+  // highlight-end
+};
+```
+
+See the [documentation](https://developer.apple.com/documentation/applepayontheweb/applepayautomaticreloadpaymentrequest) on Apple's site for more information on automatic reload payments.
+
+#### Deferred Payment
+
+```javascript
+const deferredPaymentRequest = {
+  "countryCode": "US",
+  "currencyCode": "USD",
+  "merchantCapabilities": ["supports3DS"],
+  "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
+  "total": {
+    "label": "Pre-order: Limited Edition Item",
+    "type": "final",
+    "amount": "149.99"
+  },
+  // highlight-start
+  "deferredPaymentRequest": {
+    "paymentDescription": "Pre-order Payment Authorization",
+    "deferredBilling": {
+      "label": "Item Charge",
+      "amount": "149.99",
+      "type": "final"
+    },
+    "billingAgreement": "Payment will be processed when item ships (estimated 30-45 days)",
+    "managementURL": "https://yoursite.com/manage-preorders"
+  }
+  // highlight-end
+};
+```
+
+See the [documentation](https://developer.apple.com/documentation/applepayontheweb/applepaydeferredpaymentrequest) on Apple's site for more information on deffered payments.
+
+## MPAN Token Processing
+
+MPAN tokens are processed using the same [tokenization flow](/docs/guides/apple-pay/accept-payments#tokenization) as standard Apple Pay payments.
+
+## Processing the MPAN Payment
+
+MPAN tokens are process using the same [payment flow](/docs/guides/apple-pay/accept-payments#processing-the-payment) as standard Apple Pay payments.
+
+## FAQs
+
+### What's the difference between regular Apple Pay tokens and MPANs?
+
+MPANs are merchant-provisioned tokens that offer enhanced security and specific use cases like recurring payments.
+They have different lifecycle management requirements and may include additional metadata.
+
+### Do all payment processors support MPANs?
+
+Not all payment processors support MPAN processing.
+Check with your PSP to ensure they can handle merchant-provisioned Apple Pay tokens before implementing MPAN support.
+
+### Do all card providers suppoert MPANs?
+
+No. Not all cards processors will supply MPANs.
+However, nothing changes in the tokenization or payment flows when a card does not support MPANs.
+
+### Can I use MPANs for one-time payments?
+
+While MPANs are designed primarily for recurring scenarios, they can be used for one-time payments if your merchant configuration and payment processor support it.
+
+### How do I handle MPAN token updates?
+
+Basis Theroy will handle the webhooks received from Apple and update your MPAN tokens accordingly.

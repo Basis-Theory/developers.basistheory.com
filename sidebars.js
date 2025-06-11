@@ -176,6 +176,11 @@ const sidebars = {
           id: "guides/apple-pay/accept-payments",
           label: "Accept Payments",
         },
+        {
+          type: "doc",
+          id: "guides/apple-pay/mpan-tokens",
+          label: "Merchant Tokens",
+        },
       ],
     },
     {
