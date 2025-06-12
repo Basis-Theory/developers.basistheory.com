@@ -1,153 +1,7 @@
----
-toc_max_heading_level: 2
----
-
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import {ApplicationSection} from "@site/src/components/docs/ApplicationSection";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import {ApplicationSection} from "@site/src/components/docs/ApplicationSection";
-
-# Accept Apple Pay Payments
-
-This guide explains how to accept Apple Pay payments using the Basis Theory platform to handle PCI-sensitive data securely.
-Let’s begin by reviewing the Apple Pay payment flow.
-
-When the user clicks the Apple "Pay" button, a sequence of high-level steps is initiated:
-
-1. **Creation of an Apple Pay session** - The client application calls Basis Theory to initiate an Apple Pay session.
-
-2. **Decryption of the payment data** - After the user authorizes the payment, the encrypted payment data is sent to Basis Theory for decryption and storage.
-   Basis Theory responds with an [Apple Pay](/docs/api/apple-pay/api) Token that can be used to process the payment.
-
-3. **Processing of the payment data** - The Basis Theory Apple Pay Token is forwarded to the payment processor via Basis Theory Proxy, which translates Token back to raw data before sending the request.
-   Upon receiving a successful payment response, the client application can complete the payment and inform the user that the payment was successful.
-
-[![Accept Apple Pay](/img/guides/apple-pay/accept-payments.png)](/img/guides/apple-pay/accept-payments.png)
-
-<GettingStartedSection/>
-
-### Domain Verification
-
-Domain verification is a key step in getting Apple Pay up and running on your site. It is a required step for development and production servers, to confirm that you own the domain where Apple Pay will be implemented, preventing unauthorized use and maintaining the integrity of the payment system.
-
-1. Download and serve the [domain association file](https://cdn.basistheory.com/.well-known/apple-developer-merchantid-domain-association) on your server at `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association`.
-2. Add the public domain to your tenant using the [Customer Portal](https://portal.basistheory.com/settings?tab=connections) or the [API](/docs/api/apple-pay/api#register-domain-address)
-
-<Alert type={Alerts.INFO}>
-  Apple requires the website to be served via HTTPS, which can be tricky during the development phase. Tunneling may represent a good option to preview local projects through a working HTTPS connection. [Cloudflare tunnel](https://developers.cloudflare.com/pages/how-to/preview-with-cloudflare-tunnel/) may be worth checking out.
-</Alert>
-
-
-
-## Creating an Apple Pay session
-
-To initiate the payment modal, an Apple Pay session must be started.
-Basis Theory integrates with Apple to [request the payment session](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session).
-
-### Create a Public Application
-
-<ApplicationSection type="public" permissions={["apple-pay:session", "apple-pay:create"]}/>
-
-### Configure Apple Pay
-
-Let's add the Apple Pay button and modify the `session.onvalidatemerchant` event handler to call Basis Theory and initiate the Apple Pay session.
-
-```html showLineNumbers
-<html>
-<head>
-    // highlight-start
-    <script crossorigin src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"></script>
-    // highlight-end
-    <style>
-      apple-pay-button {
-        --apple-pay-button-width: 194px;
-        --apple-pay-button-height: 64px;
-        --apple-pay-button-border-radius: 13px;
-        --apple-pay-button-padding: 0px 0px;
-        --apple-pay-button-box-sizing: border-box;
-      }
-    </style>
-
-    <script>
-      function onApplePayButtonClicked() {
-        if (!ApplePaySession) {
-          return;
-        }
-
-        const session = new ApplePaySession(3, {
-          "countryCode": "US",
-          "currencyCode": "USD",
-          "merchantCapabilities": [
-            "supports3DS"
-          ],
-          "supportedNetworks": [
-            "visa",
-            "masterCard",
-            "amex",
-            "discover"
-          ],
-          "total": {
-            "label": "Demo (Card is not charged)",
-            "type": "final",
-            "amount": "1.99"
-          }
-        });
-
-        // highlight-start
-        session.onvalidatemerchant = async event => {
-          const merchantSession = await validateMerchant();
-          session.completeMerchantValidation(merchantSession);
-        };
-        // highlight-end
-
-        session.begin();
-      }
-
-      // highlight-start
-      async function validateMerchant() {
-        try {
-          const response = await fetch('https://api.basistheory.com/apple-pay/session', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'BT-API-KEY': '<PUBLIC_APPLICATION_KEY>'
-            },
-            body: JSON.stringify({
-              display_name: 'My Store',
-              domain: window.location.host
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const data = await response.json();
-          return data;
-        } catch (error) {
-          console.error('Error validating merchant:', error);
-          throw error;
-        }
-      }
-      // highlight-end
-    </script>
-</head>
-<body>
-  // highlight-start
-  <apple-pay-button buttonstyle="black" type="plain" locale="en-US"></apple-pay-button>
-  // highlight-end
-  <script>
-    // Set up the onclick handler for the Apple Pay button
-    document.querySelector('apple-pay-button')
-      .addEventListener('click', onApplePayButtonClicked);
-  </script>
-</body>
-</html>
-```
-
-Adding the `apple-pay-sdk.js` script will enable the `<apple-pay-button>` directive to your website.
-The `validateMerchant` function calls Basis Theory to initiate the Apple Pay session.
 
 ## Tokenization
 
@@ -174,9 +28,7 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
           return;
         }
 
-        const session = new ApplePaySession(3, {
-          ...
-        });
+        const session = createApplePaySession();
 
         session.onvalidatemerchant = async (event) => { ... };
 
@@ -196,6 +48,8 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
 
         session.begin();
       }
+
+      function createApplePaySession() { ... }
 
       async function validateMerchant() { ... }
 
@@ -294,6 +148,8 @@ We'll change our frontend application one last time to pass in the Token ID to t
 
         session.begin();
       }
+
+      function createApplePaySession() { ... }
 
       async function validateMerchant() { ... }
 
@@ -438,11 +294,3 @@ Apple Pay generates a secure token payload for each transaction. It’s essentia
 - If you encounter additional issues or have questions specific to Basis Theory functionality, don’t hesitate to [contact Basis Theory’s support team](https://basistheory.com/contact) for further assistance.
 
 By following this checklist, you’ll be prepared to seamlessly integrate and go live with Apple Pay, providing a secure and smooth payment experience for your users.
-
-
-## FAQs
-
-### My Stripe PaymentIntent and SetupIntent fail when using ApplePay.
-
-For PaymentIntents, The `currency` for the ApplePay Session and the `currency` set in the PaymentIntent must match or Stripe will decline the transaction.
-For SetupIntents, The `currency` for the ApplePay Session must match the defualt `currency` of your account - SetupIntents do not allow `currency` to be overridden.
