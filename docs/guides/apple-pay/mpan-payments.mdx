@@ -3,14 +3,16 @@ toc_max_heading_level: 2
 ---
 
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
-import {ApplicationSection} from "@site/src/components/docs/ApplicationSection";
+import Introduction from "./introduction.mdx";
+import DomainVerificationGuide from "./domain-verification.mdx";
+import CreateApplePaySession from "./create-session.mdx";
+import TokenizeProcessPayment from "./tokenize-process-payment.mdx";
 
 # Accept Apple Pay MPAN Payments
 
 This guide explains how to accept Apple Pay payments using Merchant-Provisioned Account Numbers (MPANs) with the Basis Theory platform to handle PCI-sensitive data securely. MPANs are specialized tokens provided by Apple that enable merchants to accept payments for recurring transactions, subscriptions, and other ongoing payment scenarios.
+
+<Introduction />
 
 ## Understanding Apple Pay MPANs
 
@@ -21,9 +23,13 @@ Apple provides MPAN tokens for various payment scenarios:
 
 When using MPANs, the payment flow includes additional configuration in the Apple Pay payment request to specify the type of recurring payment and associated parameters.
 
-### Configure Apple Pay with MPAN Support
+<GettingStartedSection/>
 
-MPANs require an additional object passed into the Apple Payment session.
+<DomainVerificationGuide/>
+
+<CreateApplePaySession />
+
+MPANs require an additional configuration passed into the Apple Payment session.
 Below are example ApplePaySessions for the various types of MPANs.
 
 Each object has slightly different attributes.
@@ -38,36 +44,38 @@ This URL should be in format of `https://api.basistheory.com/apple-pay/{<YOUR_TE
 #### Recurring Payment (Subscription)
 
 ```javascript
-const session = new ApplePaySession(3, {
-  "countryCode": "US",
-  "currencyCode": "USD",
-  "merchantCapabilities": [
-    "supports3DS"
-  ],
-  "supportedNetworks": [
-    "visa",
-    "masterCard",
-    "amex",
-    "discover"
-  ],
-  "total": {
-    "label": "Monthly Subscription",
-    "type": "final",
-    "amount": "9.99"
-  },
-  // highlight-start
-  "recurringPaymentRequest": {
-    "paymentDescription": "Monthly Premium Subscription",
-    "regularBilling": {
-      "label": "Monthly Premium",
-      "amount": "9.99",
-      "type": "final"
+function createApplePaySession() {
+  return new ApplePaySession(3, {
+    "countryCode": "US",
+    "currencyCode": "USD",
+    "merchantCapabilities": [
+      "supports3DS"
+    ],
+    "supportedNetworks": [
+      "visa",
+      "masterCard",
+      "amex",
+      "discover"
+    ],
+    "total": {
+      "label": "Monthly Subscription",
+      "type": "final",
+      "amount": "9.99"
     },
-    "managementURL": "https://yoursite.com/manage-subscription",
-    "tokenNotificationURL": "https://api.basistheory.com/apple-pay/{tenantId}"
-  }
-  // highlight-end
-});
+    // highlight-start
+    "recurringPaymentRequest": {
+      "paymentDescription": "Monthly Premium Subscription",
+      "regularBilling": {
+        "label": "Monthly Premium",
+        "amount": "9.99",
+        "type": "final"
+      },
+      "managementURL": "https://yoursite.com/manage-subscription",
+      "tokenNotificationURL": "https://api.basistheory.com/apple-pay/{tenantId}"
+    }
+    // highlight-end
+  });
+}
 ```
 
 See the [documentation](https://developer.apple.com/documentation/applepayontheweb/applepayrecurringpaymentrequest) on Apple's site for more information on recurring payments.
@@ -75,29 +83,31 @@ See the [documentation](https://developer.apple.com/documentation/applepayonthew
 #### Automatic Reload
 
 ```javascript
-const autoReloadPaymentRequest = {
-  "countryCode": "US",
-  "currencyCode": "USD",
-  "merchantCapabilities": ["supports3DS"],
-  "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
-  "total": {
-    "label": "Account Auto-Reload Setup",
-    "type": "final",
-    "amount": "0.00"
-  },
-  // highlight-start
-  "automaticReloadPaymentRequest": {
-    "paymentDescription": "Automatic Account Reload",
-    "automaticReloadBilling": {
-      "label": "Account Reload",
-      "amount": "25.00",
-      "type": "final"
+function createApplePaySession() {
+  return new ApplePaySession(3, {
+    "countryCode": "US",
+    "currencyCode": "USD",
+    "merchantCapabilities": ["supports3DS"],
+    "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
+    "total": {
+      "label": "Account Auto-Reload Setup",
+      "type": "final",
+      "amount": "0.00"
     },
-    "billingAgreement": "Automatically reload $25.00 when account balance falls below $5.00",
-    "managementURL": "https://yoursite.com/manage-auto-reload"
-  }
-  // highlight-end
-};
+    // highlight-start
+    "automaticReloadPaymentRequest": {
+      "paymentDescription": "Automatic Account Reload",
+      "automaticReloadBilling": {
+        "label": "Account Reload",
+        "amount": "25.00",
+        "type": "final"
+      },
+      "billingAgreement": "Automatically reload $25.00 when account balance falls below $5.00",
+      "managementURL": "https://yoursite.com/manage-auto-reload"
+    }
+    // highlight-end
+  });
+}
 ```
 
 See the [documentation](https://developer.apple.com/documentation/applepayontheweb/applepayautomaticreloadpaymentrequest) on Apple's site for more information on automatic reload payments.
@@ -105,44 +115,38 @@ See the [documentation](https://developer.apple.com/documentation/applepayonthew
 #### Deferred Payment
 
 ```javascript
-const deferredPaymentRequest = {
-  "countryCode": "US",
-  "currencyCode": "USD",
-  "merchantCapabilities": ["supports3DS"],
-  "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
-  "total": {
-    "label": "Pre-order: Limited Edition Item",
-    "type": "final",
-    "amount": "149.99"
-  },
-  // highlight-start
-  "deferredPaymentRequest": {
-    "paymentDescription": "Pre-order Payment Authorization",
-    "deferredBilling": {
-      "label": "Item Charge",
-      "amount": "149.99",
-      "type": "final"
+function createApplePaySession() {
+  return new ApplePaySession(3, {
+    "countryCode": "US",
+    "currencyCode": "USD",
+    "merchantCapabilities": ["supports3DS"],
+    "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
+    "total": {
+      "label": "Pre-order: Limited Edition Item",
+      "type": "final",
+      "amount": "149.99"
     },
-    "billingAgreement": "Payment will be processed when item ships (estimated 30-45 days)",
-    "managementURL": "https://yoursite.com/manage-preorders"
-  }
-  // highlight-end
-};
+    // highlight-start
+    "deferredPaymentRequest": {
+      "paymentDescription": "Pre-order Payment Authorization",
+      "deferredBilling": {
+        "label": "Item Charge",
+        "amount": "149.99",
+        "type": "final"
+      },
+      "billingAgreement": "Payment will be processed when item ships (estimated 30-45 days)",
+      "managementURL": "https://yoursite.com/manage-preorders"
+    }
+    // highlight-end
+  });
+}
 ```
 
 See the [documentation](https://developer.apple.com/documentation/applepayontheweb/applepaydeferredpaymentrequest) on Apple's site for more information on deffered payments.
 
-## MPAN Token Processing
+<TokenizeProcessPayment />
 
-MPAN tokens are processed using the same [tokenization flow](/docs/guides/apple-pay/accept-payments#tokenization) as standard Apple Pay payments.
-
-## Processing the MPAN Payment
-
-MPAN tokens are process using the same [payment flow](/docs/guides/apple-pay/accept-payments#processing-the-payment) as standard Apple Pay payments.
-
-## FAQs
-
-### What's the difference between regular Apple Pay tokens and MPANs?
+### What's the difference between regular DPAN and MPAN tokens?
 
 MPANs are merchant-provisioned tokens that offer enhanced security and specific use cases like recurring payments.
 They have different lifecycle management requirements and may include additional metadata.
