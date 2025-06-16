@@ -33,7 +33,7 @@ Creates a Network Token.
     -d '{
           "token_id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
           "cardholder_info": {
-            "name": "Jonh Doe",
+            "name": "John Doe",
             "address": {
               "line1": "123 Main Street",
               "line2": "Apt 4B",
@@ -53,7 +53,7 @@ Creates a Network Token.
     -d '{
           "token_intent_id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
           "cardholder_info": {
-            "name": "Jonh Doe",
+            "name": "John Doe",
             "address": {
               "line1": "123 Main Street",
               "line2": "Apt 4B",
@@ -78,7 +78,7 @@ Creates a Network Token.
             "cvc": "123"
           },
           "cardholder_info": {
-            "name": "Jonh Doe",
+            "name": "John Doe",
             "address": {
               "line1": "123 Main Street",
               "line2": "Apt 4B",
@@ -99,7 +99,7 @@ Creates a Network Token.
     await client.networkTokens.create({
         token_id: "c06d0789-0a38-40be-b7cc-c28a718f76f1",
         cardholder_info: {
-          name: "Jonh Doe",
+          name: "John Doe",
           address: {
             line1: "123 Main Street",
             line2: "Apt 4B",
@@ -117,7 +117,7 @@ Creates a Network Token.
     await client.networkTokens.create({
         token_intent_id: "c06d0789-0a38-40be-b7cc-c28a718f76f1",
         cardholder_info: {
-          name: "Jonh Doe",
+          name: "John Doe",
           address: {
             line1: "123 Main Street",
             line2: "Apt 4B",
@@ -140,7 +140,7 @@ Creates a Network Token.
           cvc: "123"
         },
         cardholder_info: {
-          name: "Jonh Doe",
+          name: "John Doe",
           address: {
             line1: "123 Main Street",
             line2: "Apt 4B",
@@ -236,7 +236,7 @@ Creates a Network Token.
       .create(CreateNetworkTokenRequest.builder()
         .tokenId("c06d0789-0a38-40be-b7cc-c28a718f76f1")
         .cardholderInfo(CardholderInfo.builder()
-        .name("Jonh Doe")
+        .name("John Doe")
         .address(Address.builder()
           .line1("123 Main Street")
           .line2("Apt 4B")
@@ -254,7 +254,7 @@ Creates a Network Token.
       .create(CreateNetworkTokenRequest.builder()
         .tokenIntentId("c06d0789-0a38-40be-b7cc-c28a718f76f1")
         .cardholderInfo(CardholderInfo.builder()
-        .name("Jonh Doe")
+        .name("John Doe")
         .address(Address.builder()
           .line1("123 Main Street")
           .line2("Apt 4B")
@@ -271,7 +271,7 @@ Creates a Network Token.
     NetworkToken networkToken1 = new NetworkTokensClient(ClientOptions.builder().build())
       .create(CreateNetworkTokenRequest.builder()
         .cardholderInfo(CardholderInfo.builder()
-        .name("Jonh Doe")
+        .name("John Doe")
         .address(Address.builder()
           .line1("123 Main Street")
           .line2("Apt 4B")
@@ -677,6 +677,7 @@ Returns a 204 No Content response if successful. Returns [an error](/docs/api/er
 | `created_at`            | _date_    | Timestamp of when the network token was created                                                                                                   |
 | `token_id`              | _uuid_    | The ID of the token if created using a token_id                                                                                                   |
 | `token_intent_id`       | _uuid_    | The ID of the token intent if created using a token_intent_id                                                                                     |
+| `_extras`               | _object_  | Parent object containing additional details. See [Extras Object](#extras-object) for more information.                                            |
 
 <Alert type={Alerts.INFO}>Both `token_id` and `token_intent_id` can be present if a token intent is eventually transformed into a token.</Alert>
 
@@ -696,6 +697,11 @@ Returns a 204 No Content response if successful. Returns [an error](/docs/api/er
 |--------------|----------|------------------------------------------------|
 | `cryptogram` | _string_ | The cryptogram generated for the network token |
 | `eci`        | _string_ | The ECI value associated with the cryptogram   |
+
+## Extras Object
+| Attribute      | Type      | Description                                                                                                                                                                    |
+|----------------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `deduplicated` | _boolean_ | Indicates if this network token is a duplicate of a pre-existing one. When `true`, the response will contain the existing network token details rather than creating a new one |
 
 
 ## Test Cards
