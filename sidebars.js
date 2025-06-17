@@ -174,7 +174,7 @@ const sidebars = {
         {
           type: "doc",
           id: "guides/apple-pay/dpan-payments",
-          label: "Single-use tokens (DPANs)",
+          label: "Single Use tokens (DPANs)",
         },
         {
           type: "doc",
