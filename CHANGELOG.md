@@ -1,3 +1,10 @@
+## [1.245.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.245.0...v1.245.1) (2025-06-18)
+
+
+### Bug Fixes
+
+* clarify AMEX AU limitation ([#588](https://github.com/Basis-Theory/developers.basistheory.com/issues/588)) ([d92b81d](https://github.com/Basis-Theory/developers.basistheory.com/commit/d92b81dcb80dd4df3eabe4c27cdbfdeadfd9620b))
+
 # [1.245.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.244.0...v1.245.0) (2025-06-06)
 
 
