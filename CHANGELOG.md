@@ -1,3 +1,10 @@
+# [1.246.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.245.1...v1.246.0) (2025-06-18)
+
+
+### Features
+
+* adds docs for batch and real time account updater deduplication ([#586](https://github.com/Basis-Theory/developers.basistheory.com/issues/586)) ([20b1f98](https://github.com/Basis-Theory/developers.basistheory.com/commit/20b1f981ac36fc02dabf769917947fa237e088e3))
+
 ## [1.245.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.245.0...v1.245.1) (2025-06-18)
 
 
