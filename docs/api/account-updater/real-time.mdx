@@ -84,17 +84,21 @@ Attempts to retrieve updates to a single `card` token in real-time. Possibly ret
 
 #### Request Parameters
 
-| Attribute          | Required | Type      | Description                                                                                                   |
-|--------------------|----------|-----------|---------------------------------------------------------------------------------------------------------------|
-| `token_id`         | true     | _string_  | Card Token identifier                                                                                         |
-| `expiration_month` | false    | _integer_ | The 2-digit expiration month of the account number. Not required if the card token already stores this value. |
-| `expiration_year`  | false    | _integer_ | The 4-digit expiration year of the account number. Not required if the card token already stores this value.  |
+| Attribute           | Required | Type      | Description                                                                                                   |
+|---------------------|----------|-----------|---------------------------------------------------------------------------------------------------------------|
+| `token_id`          | true     | _string_  | Card Token identifier                                                                                         |
+| `expiration_month`  | false    | _integer_ | The 2-digit expiration month of the account number. Not required if the card token already stores this value. |
+| `expiration_year`   | false    | _integer_ | The 4-digit expiration year of the account number. Not required if the card token already stores this value.  |
+| `deduplicate_token` | false    | _boolean_ | Whether to deduplicate tokens when performing updates                                                         |
 
 The `token_id` must correspond to a `card` token in your tenant and the card must contain a `number` valid for the Visa or Mastercard networks.
 If the card number corresponds to a different network, the `WRN_UNSUPPORTED_NETWORK` [result code](/docs/api/account-updater/result-codes) will be returned.
 
 If the `card` token is missing an expiration date, the `expiration_month` and `expiration_year` parameters must be provided.
 If the token already contains an expiration date, these parameters will override the token's expiration date when requesting updates from the network.
+
+The `deduplicate_token` parameter will override the tenant-level deduplicate tokens setting. If token deduplication is enabled and
+an account update is received with data matching an existing token's fingerprint, the existing token will be updated and returned in `new_token` instead of creating a new token.
 
 ### Response
 
