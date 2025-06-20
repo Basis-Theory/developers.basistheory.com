@@ -710,6 +710,28 @@ The following test cards can be used to test different error and success scenari
 
 <Alert type={Alerts.INFO}>These cards are not valid for real transactions and should only be used in the Basis Theory sandbox environment.</Alert>
 
+### Recommended Actions for Test Card Errors
+
+Depending on the error you receive, you should take different actions. This table provides guidance on handling each error type:
+
+| Error Title              | Recommended Action                                 | Retryable   |
+|--------------------------|----------------------------------------------------|-------------|
+| PROVISION_DATA_EXPIRED   | Request updated card details from the user.        | ✅ **Yes**   |
+| CARD_VERIFICATION_FAILED | Prompt user to re-enter CVV or use another card.   | ✅ **Yes**   |
+| CARD_NOT_ELIGIBLE        | Advise user to use a different card.               | ❌ **No**    |
+| CARD_NOT_ALLOWED         | Advise user to use a different card.               | ❌ **No**    |
+| CARD_DECLINED            | Suggest user contact issuer or try another card.   | ❌ **No**    |
+| PROVISION_NOT_ALLOWED    | Advise user to contact issuer or use another card. | ❌ **No**    |
+| CARD_ELIGIBILITY_ERROR   | Retry once; if unsuccessful, use a different card. | ⚠️ **Once** |
+
+### Error Handling and Retries
+
+Not all errors can be safely retried without user interaction. The retry statuses are defined as:
+
+- ✅ **Yes**: You can safely retry the request after collecting updated or corrected user information.
+- ⚠️ **Once**: Attempt one retry; further retries might not resolve the issue.
+- ❌ **No**: Do not retry automatically. The user must provide alternative card information or contact the issuer.
+
 ### Visa Cards
 
 | Test PAN           | Response                 | Error Title              |
@@ -764,10 +786,12 @@ The following test cards can be used to test different error and success scenari
 | `348835199015504` | Card Eligibility Error   | CARD_ELIGIBILITY_ERROR   |
 
 
-In addition to the card-specific errors below, you may also encounter these error codes when transforming a Token or Token Intent into a Network Token:
+### Additional Error Codes
 
-| Error Title                | Description                                                                                    |
-|----------------------------|------------------------------------------------------------------------------------------------|
-| CARD_NUMBER_LENGTH_INVALID | The card number does not meet the required length. Please check the card number and try again. |
-| CARD_DATA_MISSING          | Required card data (card number, expiration year, and/or expiration month) is missing.         |
+When transforming a Token or Token Intent into a Network Token, you may encounter these additional error codes:
+
+| Error Title                | Description                                                                            | Recommended Action                                                                             |
+|----------------------------|----------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| CARD_NUMBER_LENGTH_INVALID | The card number does not meet the required length.                                     | Verify the card number length is between 13 and 16 digits inclusive.                           |
+| CARD_DATA_MISSING          | Required card data (card number, expiration year, and/or expiration month) is missing. | Ensure at least card number, expiration year, and expiration month are provided in the entity. |
 
