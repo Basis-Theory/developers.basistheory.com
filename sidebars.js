@@ -168,13 +168,18 @@ const sidebars = {
       },
       link: {
         type: "doc",
-        id: "guides/apple-pay/accept-payments",
+        id: "guides/apple-pay/dpan-payments",
       },
       items: [
         {
           type: "doc",
-          id: "guides/apple-pay/accept-payments",
-          label: "Accept Payments",
+          id: "guides/apple-pay/dpan-payments",
+          label: "Single Use tokens (DPANs)",
+        },
+        {
+          type: "doc",
+          id: "guides/apple-pay/mpan-payments",
+          label: "Multiple Use Tokens (MPANs)",
         },
       ],
     },

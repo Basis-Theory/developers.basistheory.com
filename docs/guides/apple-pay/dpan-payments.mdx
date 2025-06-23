@@ -1,0 +1,51 @@
+---
+toc_max_heading_level: 2
+---
+
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import PaymentFlow from "./payment-flow.mdx";
+import DomainVerificationGuide from "./domain-verification.mdx";
+import CreateApplePaySession from "./create-session.mdx";
+import TokenizeProcessPayment from "./tokenize-process-payment.mdx";
+import Faqs from "./shared-faqs.mdx";
+
+# Accept Apple Pay DPAN Payments
+
+This guide explains how to accept Apple Pay payments using the Basis Theory platform to handle PCI-sensitive data securely.
+
+<PaymentFlow />
+
+<GettingStartedSection/>
+
+<DomainVerificationGuide/>
+
+<CreateApplePaySession />
+
+Next, implement the `createApplePaySession` function.
+
+```javascript
+function createApplePaySession() {
+  return new ApplePaySession(3, {
+    "countryCode": "US",
+    "currencyCode": "USD",
+    "merchantCapabilities": [
+      "supports3DS"
+    ],
+    "supportedNetworks": [
+      "visa",
+      "masterCard",
+      "amex",
+      "discover"
+    ],
+    "total": {
+      "label": "Demo (Card is not charged)",
+      "type": "final",
+      "amount": "1.99"
+    }
+  });
+}
+```
+
+<TokenizeProcessPayment />
+
+<Faqs />
