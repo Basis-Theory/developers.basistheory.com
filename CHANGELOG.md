@@ -1,3 +1,10 @@
+# [1.247.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.246.0...v1.247.0) (2025-06-23)
+
+
+### Features
+
+* Apple MPAN guide ([#584](https://github.com/Basis-Theory/developers.basistheory.com/issues/584)) ([e6f1b5e](https://github.com/Basis-Theory/developers.basistheory.com/commit/e6f1b5e17ba367fb6f7c9271e83809cd97fbf75e))
+
 # [1.246.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.245.1...v1.246.0) (2025-06-18)
 
 
