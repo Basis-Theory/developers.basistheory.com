@@ -7,7 +7,7 @@ import { Permission } from "@site/src/components/shared/Permission";
 import ReservedHeaders from "./_reserved_headers.mdx";
 import CustomHeaders from "./_custom_headers.mdx";
 import { Enterprise } from "@site/src/components/shared/Enterprise";
-import { Alert } from "@site/src/components/shared/Alert";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Ephemeral Proxy
 
@@ -41,17 +41,9 @@ Any authentication required by the destination service can be set on the request
 
 ### Permissions
 
-<Permission content="token:use" />
+<Permission content="proxy:invoke" />
 <br />
-<br />
-
-The `token:use` permission is required for each [Container](/docs/concepts/what-are-containers) of Tokens you wish to detokenize through the Proxy.
-This permission is required to use the Proxy, even if there are no tokens being detokenized within your request.
-
-It is recommended that you restrict which tokens the Proxy can detokenize by only granting `token:use`
-permission on the most-specific [container](/docs/concepts/what-are-containers) of tokens that is required.
-
-<Alert>New `proxy:invoke` permission is coming soon, which will simplify permissions for Proxies.</Alert>
+<Alert type={Alerts.INFO}>For existing proxies and to maintain backward compatibility we are also supporting `token:use`, however we recommend updating the permissions since that will be deprecated soon.</Alert>
 
 ### Reserved Proxy Headers <Enterprise />
 
