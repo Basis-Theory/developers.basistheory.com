@@ -193,6 +193,7 @@ token, err := client.Tokens.Create(ctx, &basistheory.CreateTokenRequest{
 | `fingerprint_expression` | false    | _string_               | <code>\{\{ data &#124; stringify }}</code>                | [Expressions](/docs/expressions/fingerprints) used to fingerprint your token.                                                                                                                |
 | `deduplicate_token`      | false    | _bool_                 | `null`                                                    | Whether the token is deduplicated on creation.                                                                                                                                               |
 | `expires_at`             | false    | _string_               | `null`                                                    | ISO8601 compatible Token expiration DateTime. See [Token Expiration](/docs/api/tokens/#token-expiration) for more details.                                                                   |
+| `encrypted`              | false    | _string_               | `null`                                                    | An encrypted payload that contains the token data. See [Encrypted Token Creation](#encrypted-token-creation) for more details.                                                              |
 
 Either `type` and `data` are required to create a new token from the given data, or `token_intent_id` is required to convert an existing token intent to a token.
 
@@ -229,6 +230,71 @@ Returns a [token](#token-object) if the token was created. Returns [an error](/d
 
 <Alert type={Alerts.WARNING}>For security reasons, the `data` and `metadata` attributes are redacted from the response when a token is deduplicated, unless the API Key has `token:read` permission in the targeted container. [Click here](/docs/concepts/what-are-tokens#deduplication) to learn more about this behavior.</Alert>
 
+## Encrypted Token Creation
+
+The `encrypted` attribute enables you to create tokens from encrypted payloads generated using [Client Encryption Keys](/docs/api/client-keys). This approach allows for client-side encryption of sensitive data, reducing latency and providing more control over when data is sent to Basis Theory.
+
+### When to use encrypted token creation
+
+Use the `encrypted` attribute when you want to:
+- **Reduce frontend latency**: Encrypt data on the client side and send tokenization requests from your backend
+- **Maintain control**: Keep sensitive data encrypted until your backend is ready to process it
+- **Optimize user experience**: Provide immediate feedback to users without waiting for tokenization round-trips
+
+### How encrypted token creation works
+
+**Step 1: Generate a Client Encryption Key**
+Use the [Client Encryption Keys API](/docs/api/client-keys#create-client-encryption-key) to create an asymmetric key pair. This returns a public key in PEM format and a unique key ID.
+
+```bash
+# Example: Create encryption key
+curl -X POST "https://api.basistheory.com/keys" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{"expires_at": "2025-12-31T23:59:59Z"}'
+```
+
+**Step 2: Client-side encryption**
+Use the public key (PEM format) and key ID to encrypt your token creation payload in your frontend application, typically with Basis Theory Elements. The encrypted payload contains the same data you would normally send in the `data` attribute.
+
+**Step 3: Send encrypted payload to your backend**
+Your frontend receives the encrypted payload and sends it to your backend. Your backend can then create the token using the encrypted data instead of plaintext.
+
+**Step 4: Create token with encrypted data**
+Send the encrypted payload in the `encrypted` attribute instead of using the `data` attribute.
+
+```bash
+# Example: Create token with encrypted payload
+curl "https://api.basistheory.com/tokens" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "type": "card",
+    "encrypted": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+    "metadata": {
+      "customer_id": "12345"
+    }
+  }'
+```
+
+### Important usage requirements
+
+When using the `encrypted` attribute:
+- The `type` attribute must specify the expected token type (e.g., "card", "token", "bank")
+- The `encrypted` attribute must contain a valid encrypted payload generated using a Client Encryption Key
+- The `data` attribute must be omitted when using `encrypted`
+- All other token attributes (`metadata`, `containers`, `search_indexes`, etc.) can be specified normally alongside the encrypted payload
+
+### Error handling
+
+Common errors when using encrypted token creation:
+- **"Unable to decrypt token"**: The encrypted data is malformed or cannot be decrypted
+- **"Unrecognized client encryption key"**: The key used for encryption has been deleted or expired
+
+### Integration with Elements
+
+This feature is designed to work with Basis Theory Elements for seamless client-side encryption workflows. Elements can accept a public key and automatically encrypt token creation payloads before returning them to your frontend application.
 
 ## List Tokens v2
 
