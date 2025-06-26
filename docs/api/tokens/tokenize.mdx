@@ -447,6 +447,151 @@ result, err := client.Tokens.Tokenize(ctx, map[string]interface{}{
 }
 ```
 
+## Create Token with Encrypted Data
+
+You can create tokens using client-side encrypted payloads instead of sending plaintext data. This approach reduces latency and provides more control over when sensitive data is sent to Basis Theory.
+
+For detailed information about encrypted token creation, including setup instructions and usage requirements, see [Encrypted Token Creation](/docs/api/tokens/#encrypted-token-creation).
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokenize" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "type": "card",
+    "encrypted": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+    "metadata": {
+      "customer_id": "12345",
+      "source": "web"
+    }
+  }'
+```
+
+  </TabItem>
+  <TabItem value="node" label="Node">
+
+```javascript showLineNumbers
+await client.tokens.tokenize({
+  type: "card",
+  encrypted: "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+  metadata: {
+    customer_id: "12345",
+    source: "web",
+  },
+});
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const token = await bt.tokenize({
+  type: "card",
+  encrypted: "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+  metadata: {
+    customer_id: "12345",
+    source: "web",
+  },
+});
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+await client.Tokens.TokenizeAsync(new
+{
+  type = "card",
+  encrypted = "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+  metadata = new
+  {
+    customer_id = "12345",
+    source = "web"
+  }
+});
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+new TokensClient(ClientOptions.builder().build()).tokenize(Token.builder()
+    .type("card")
+    .encrypted("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...")
+    .metadata(new HashMap<String, Optional<String>>() {{
+        put("customer_id", Optional.of("12345"));
+        put("source", Optional.of("web"));
+    }})
+    .build());
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+client.tokens.tokenize(
+    request={
+        "type": "card",
+        "encrypted": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+        "metadata": {
+            "customer_id": "12345",
+            "source": "web"
+        }
+    }
+)
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+result, err := client.Tokens.Tokenize(ctx, map[string]interface{}{
+	"type": "card",
+	"encrypted": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+	"metadata": map[string]interface{}{
+		"customer_id": "12345",
+		"source": "web",
+	},
+})
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+```json showLineNumbers
+{
+  "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+  "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+  "type": "card",
+  "mask": {
+    "number": "XXXXXXXXXXXX4242",
+    "expiration_month": 12,
+    "expiration_year": 2025
+  },
+  "metadata": {
+    "customer_id": "12345",
+    "source": "web"
+  },
+  "fingerprint": "AKCUXS83DokKo4pDRKSAy4d42t9i8dcP1X2jijwEBCQH",
+  "fingerprint_expression": "{{ data.number }}",
+  "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+  "created_at": "2020-09-15T15:53:00+00:00",
+  "_extras": {
+    "deduplicated": false
+  }
+}
+```
+
 ## Tokenize Array
 
 ### Request
@@ -671,6 +816,213 @@ result, err := client.Tokens.Tokenize(ctx, []interface{}{
   },
   {
     "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+    "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+    "type": "token",
+    "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+    "created_at": "2020-09-15T15:53:00+00:00",
+    "_extras": {
+      "deduplicated": false
+    }
+  }
+]
+```
+
+## Tokenize Array with Encrypted Data
+
+You can mix encrypted and plaintext tokens within the same tokenize array request. This allows you to tokenize some data that was encrypted on the client side alongside regular data.
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/tokenize" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '[
+    "John",
+    "Doe",
+    {
+      "type": "card",
+      "encrypted": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+      "metadata": {
+        "source": "client_encrypted"
+      }
+    },
+    {
+      "type": "token",
+      "data": "Regular sensitive value"
+    }
+  ]'
+```
+
+  </TabItem>
+  <TabItem value="node" label="Node">
+
+```javascript showLineNumbers
+await client.tokens.tokenize([
+  "John",
+  "Doe",
+  {
+    type: "card",
+    encrypted: "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+    metadata: {
+      source: "client_encrypted",
+    },
+  },
+  {
+    type: "token",
+    data: "Regular sensitive value",
+  },
+]);
+```
+
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript (legacy)">
+```javascript showLineNumbers
+import { BasisTheory } from "@basis-theory/basis-theory-js";
+
+const bt = await new BasisTheory().init("<API_KEY>");
+
+const tokens = await bt.tokenize([
+  "John",
+  "Doe",
+  {
+    type: "card",
+    encrypted: "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+    metadata: {
+      source: "client_encrypted",
+    },
+  },
+  {
+    type: "token",
+    data: "Regular sensitive value",
+  },
+]);
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+
+```csharp showLineNumbers
+await client.Tokens.TokenizeAsync(new List<object>
+{
+  "John",
+  "Doe",
+  new {
+    type = "card",
+    encrypted = "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+    metadata = new
+    {
+      source = "client_encrypted"
+    }
+  },
+  new
+  {
+    type = "token",
+    data = "Regular sensitive value"
+  }
+});
+```
+
+  </TabItem>
+  <TabItem value="java" label="Java">
+
+```java showLineNumbers
+new TokensClient(ClientOptions.builder().build())
+    .tokenize(Arrays.asList(
+    "John",
+    "Doe",
+    Token.builder()
+        .type("card")
+        .encrypted("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...")
+        .metadata(new HashMap<String, Optional<String>>() {{
+            put("source", Optional.of("client_encrypted"));
+        }})
+        .build(),
+    Token.builder()
+        .type("token")
+        .data("Regular sensitive value")
+        .build()
+    ));
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python showLineNumbers
+client.tokens.tokenize(
+    request=[
+        "John",
+        "Doe",
+        {
+            "type": "card",
+            "encrypted": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+            "metadata": {
+                "source": "client_encrypted"
+            }
+        },
+        {
+            "type": "token",
+            "data": "Regular sensitive value"
+        }
+    ]
+)
+```
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+```go showLineNumbers
+result, err := client.Tokens.Tokenize(ctx, []interface{}{
+	"John",
+	"Doe",
+	map[string]interface{}{
+		"type": "card",
+		"encrypted": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+		"metadata": map[string]string{
+			"source": "client_encrypted",
+		},
+	},
+	map[string]interface{}{
+		"type": "token",
+		"data": "Regular sensitive value",
+	},
+})
+```
+
+  </TabItem>
+</Tabs>
+
+### Response
+
+```json showLineNumbers
+[
+  "b0804096-5a47-4b8c-8fb7-b9ecc5e72eec",
+  "814a6416-3410-4224-8ea9-c0b4d453c9ce",
+  {
+    "id": "c06d0789-0a38-40be-b7cc-c28a718f76f1",
+    "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
+    "type": "card",
+    "mask": {
+      "number": "XXXXXXXXXXXX4242",
+      "expiration_month": 12,
+      "expiration_year": 2025
+    },
+    "metadata": {
+      "source": "client_encrypted"
+    },
+    "fingerprint": "AKCUXS83DokKo4pDRKSAy4d42t9i8dcP1X2jijwEBCQH",
+    "fingerprint_expression": "{{ data.number }}",
+    "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
+    "created_at": "2020-09-15T15:53:00+00:00",
+    "_extras": {
+      "deduplicated": false
+    }
+  },
+  {
+    "id": "d17e0890-1b49-51cf-c7dd-d38b829f86g2",
     "tenant_id": "77cb0024-123e-41a8-8ff8-a3d5a0fa8a08",
     "type": "token",
     "created_by": "fb124bba-f90d-45f0-9a59-5edca27b3b4a",
