@@ -5,10 +5,18 @@ title: Encrypt Data from Web
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
 
 # Encrypt Data from Web
 
 This guide shows you how to implement client-side encryption in vanilla JavaScript web applications using Basis Theory Elements. You'll learn to encrypt sensitive data in the browser and send encrypted payloads to your backend for tokenization.
+
+Key concepts in this guide:
+
+- [Client Encryption Keys](/docs/api/client-keys)
+- [Elements](/docs/concepts/elements)
+- [Tokens](/docs/concepts/what-are-tokens)
+- [Applications](/docs/api/applications)
 
 ## What You'll Build
 
@@ -18,13 +26,36 @@ By the end of this guide, you'll have:
 - Immediate user feedback while tokenization happens asynchronously
 - Reduced frontend latency and improved user experience
 
-## Before You Begin
+## Getting Started
 
-You'll need:
-- A Basis Theory account with a **Public Application** for frontend encryption
-- A **Management Application** for creating encryption keys
-- A backend service to handle encrypted payloads and tokenization
-- Basic knowledge of JavaScript and HTML
+To get started, you will need a Basis Theory account.
+
+<AuthButtons />
+
+Next, you will need two applications:
+
+1. **Management Application** - to create encryption keys
+2. **Public Application** - to initialize Elements for your web page
+
+### Management Application
+
+[Click here](https://portal.basistheory.com/applications/create?name=Encryption%20Key%20Manager&type=management&permissions=key%3Acreate) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Encryption Key Manager
+- Application Type - Management
+- Permissions - `key:create`
+
+<Alert>Save the API Key from the created Management Application as it will be used to create encryption keys.</Alert>
+
+### Public Application
+
+[Click here](https://portal.basistheory.com/applications/create?permissions=&type=public&name=Encrypt%20Data%20from%20Web%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Encrypt Data from Web Guide
+- Application Type - Public
+- Permissions - (none required for client-side encryption)
+
+<Alert>Save the API Key from the created Public Application as it will be used later in this guide to initialize the form.</Alert>
 
 ## Step 1: Generate Client Encryption Keys
 
@@ -41,6 +72,8 @@ curl -X POST "https://api.basistheory.com/keys" \
   }'
 ```
 
+<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created in the <a href="#getting-started">Getting Started</a> step.</Alert>
+
 ### Expected Response
 
 ```json
@@ -51,13 +84,35 @@ curl -X POST "https://api.basistheory.com/keys" \
 }
 ```
 
-**Important**: Save the `publicKeyPEM` and `id` - you'll need both for client-side encryption.
+<Alert type={Alerts.WARNING}>Save the public key (<code>publicKeyPEM</code>) and key ID (<code>id</code>) - you'll need both for client-side encryption. The public key is only returned when creating a key. Make sure to securely store it, as you won't be able to retrieve it later.</Alert>
 
-## Step 2: Set Up Your HTML Form
+## Step 2: Setup the Project
 
-Create a form that will collect sensitive data and encrypt it before submission.
+We need to create a new directory and add a few files to get started.
 
-```html title="index.html"
+Run the following in your terminal:
+
+```shell showLineNumbers
+mkdir encrypt-guide
+cd encrypt-guide
+touch index.html
+touch app.js
+npm init
+```
+
+Accept all of the default npm options when prompted.
+
+This will create a new directory called `encrypt-guide`, create two new files (`index.html`, `app.js`), and setup npm packages.
+
+Open the contents of the directory in a text editor or IDE of your choice.
+
+## Step 3: Install the Basis Theory SDK
+
+We will need to include Basis Theory's JavaScript SDK, which will render secure Elements for capturing data and provide encryption capabilities.
+
+For this guide, we will use the CDN hosted bundle through a `script` tag:
+
+```html showLineNumbers title=index.html
 <!DOCTYPE html>
 <html>
 <head>
@@ -84,11 +139,93 @@ Create a form that will collect sensitive data and encrypt it before submission.
 </html>
 ```
 
-## Step 3: Initialize Basis Theory Elements
+<Alert>If you are building a React application, be sure to check out our <a href="/docs/guides/encrypt/encrypt-data-with-react">Encrypt Data with React guide</a>.</Alert>
 
-Set up Elements with your Public Application key and configure encryption.
+## Step 4: Initialize the SDK
 
-```javascript title="app.js"
+Now we need to initialize Basis Theory Elements. Add your configuration to `app.js`:
+
+```javascript showLineNumbers title=app.js
+// Initialize Basis Theory with your Public Application key
+const bt = BasisTheory('<PUBLIC_API_KEY>');
+
+// Your encryption key details from Step 1
+const ENCRYPTION_KEY_ID = 'b1e2c3d4-5678-1234-9abc-def012345678';
+const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
+WQ4geAENWHyR7+g94nN6lFZzY7YdGWxPtlX/16fJ4z0=
+-----END PUBLIC KEY-----`;
+
+let cardNumberElement, expirationDateElement, cvcElement;
+```
+
+<Alert>Be sure to replace <code>&lt;PUBLIC_API_KEY></code> with the Public API Key you created in the <a href="#getting-started">Getting Started</a> step, and update the encryption key details with your actual key ID and public key PEM.</Alert>
+
+## Step 5: Add Your Form Components
+
+This step will add [Card Elements](/docs/sdks/web/web-elements/components#cardelement) to our page for collecting payment card data.
+
+First, let's update our HTML with form elements:
+
+```html showLineNumbers title=index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client-Side Encryption Demo</title>
+    <script src="https://js.basistheory.com"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        .bt-element { border: 1px solid #ddd; border-radius: 4px; padding: 10px; }
+        #result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; white-space: pre-wrap; }
+        .error { color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; }
+        .success { color: #155724; background: #d4edda; border: 1px solid #c3e6cb; }
+    </style>
+</head>
+<body>
+    <h1>Client-Side Encryption Demo</h1>
+    
+    <form id="payment-form">
+        <div class="form-group">
+            <label for="cardholder-name">Cardholder Name</label>
+            <input type="text" id="cardholder-name" placeholder="John Doe" required />
+        </div>
+        
+        <div class="form-group">
+            <label>Card Number</label>
+            <div id="card-number"></div>
+        </div>
+        
+        <div class="form-group">
+            <label>Expiration Date</label>
+            <div id="card-expiration-date"></div>
+        </div>
+        
+        <div class="form-group">
+            <label>CVC</label>
+            <div id="card-cvc"></div>
+        </div>
+        
+        <button type="submit" id="submit-button">
+            Encrypt and Submit
+        </button>
+    </form>
+
+    <div id="result"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+```
+
+## Step 6: Create and Mount Elements
+
+Next, we need to create Card Elements and mount them to our form. Update your `app.js` file:
+
+```javascript showLineNumbers title=app.js
 // Initialize Basis Theory with your Public Application key
 const bt = BasisTheory('<PUBLIC_API_KEY>');
 
@@ -150,16 +287,454 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Error initializing Elements:', error);
         document.getElementById('result').innerHTML = 
-            '<div style="color: red;">Error initializing payment form</div>';
+            '<div class="error">Error initializing payment form</div>';
     }
 });
 ```
 
-## Step 4: Implement Client-Side Encryption
+This will create new instances of Card Elements and when mounted to your `<div>` elements, they will inject secure iFrames that are rendered by Basis Theory. The Basis Theory SDK will hold references to the Card Elements which enables interactions with the underlying data without direct access to the values.
 
-Add the encryption logic that creates encrypted payloads instead of tokenizing directly.
+## Step 7: Encrypt and Submit Data
 
-```javascript title="app.js (continued)"
+We want to encrypt the card data before sending it to our backend. Let's add the encryption and submit functionality:
+
+```javascript showLineNumbers title=app.js
+// Initialize Basis Theory with your Public Application key
+const bt = BasisTheory('<PUBLIC_API_KEY>');
+
+// Your encryption key details from Step 1
+const ENCRYPTION_KEY_ID = 'b1e2c3d4-5678-1234-9abc-def012345678';
+const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
+WQ4geAENWHyR7+g94nN6lFZzY7YdGWxPtlX/16fJ4z0=
+-----END PUBLIC KEY-----`;
+
+let cardNumberElement, expirationDateElement, cvcElement;
+
+// Initialize Elements when DOM is ready
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Create card Elements
+        cardNumberElement = bt.createElement('cardNumber', {
+            targetId: 'card-number',
+            style: {
+                base: {
+                    color: '#333',
+                    fontFamily: 'Arial, sans-serif',
+                    fontSize: '16px',
+                    padding: '12px'
+                }
+            }
+        });
+
+        expirationDateElement = bt.createElement('cardExpirationDate', {
+            targetId: 'card-expiration-date',
+            style: {
+                base: {
+                    color: '#333',
+                    fontFamily: 'Arial, sans-serif',
+                    fontSize: '16px',
+                    padding: '12px'
+                }
+            }
+        });
+
+        cvcElement = bt.createElement('cardVerificationCode', {
+            targetId: 'card-cvc',
+            style: {
+                base: {
+                    color: '#333',
+                    fontFamily: 'Arial, sans-serif',
+                    fontSize: '16px',
+                    padding: '12px'
+                }
+            }
+        });
+
+        await Promise.all([
+            cardNumberElement.mount(),
+            expirationDateElement.mount(),
+            cvcElement.mount()
+        ]);
+
+        console.log('Elements mounted successfully');
+    } catch (error) {
+        console.error('Error initializing Elements:', error);
+        document.getElementById('result').innerHTML = 
+            '<div class="error">Error initializing payment form</div>';
+    }
+});
+
+// Handle form submission with encryption
+document.getElementById('payment-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    const submitButton = document.getElementById('submit-button');
+    const resultDiv = document.getElementById('result');
+    
+    try {
+        // Disable submit button during processing
+        submitButton.disabled = true;
+        submitButton.textContent = 'Encrypting...';
+        resultDiv.innerHTML = '<div>Encrypting payment data...</div>';
+
+        // Get cardholder name from regular input
+        const cardholderName = document.getElementById('cardholder-name').value;
+
+        // Create the token payload that will be encrypted
+        const tokenPayload = {
+            type: 'card',
+            data: {
+                number: cardNumberElement,
+                expiration_month: expirationDateElement,
+                expiration_year: expirationDateElement,
+                cvc: cvcElement
+            },
+            metadata: {
+                cardholder_name: cardholderName,
+                source: 'web_encrypted'
+            }
+        };
+
+        // Encrypt the payload using the public key
+        const encryptedPayload = await bt.encrypt({
+            payload: tokenPayload,
+            publicKey: PUBLIC_KEY_PEM,
+            keyId: ENCRYPTION_KEY_ID
+        });
+
+        console.log('Encryption successful:', encryptedPayload);
+
+        // Send encrypted payload to your backend
+        await sendToBackend(encryptedPayload, cardholderName);
+
+        // Show success message immediately
+        resultDiv.innerHTML = `w
+            <div class="success">
+                <strong>✓ Payment data encrypted successfully!</strong><br>
+                Your payment is being processed securely.
+            </div>
+        `;
+
+        // Reset form
+        document.getElementById('cardholder-name').value = '';
+        
+    } catch (error) {
+        console.error('Encryption error:', error);
+        resultDiv.innerHTML = `
+            <div class="error">
+                <strong>✗ Encryption failed</strong><br>
+                ${error.message || 'Please try again.'}
+            </div>
+        `;
+    } finally {
+        // Re-enable submit button
+        submitButton.disabled = false;
+        submitButton.textContent = 'Encrypt and Submit';
+    }
+});
+
+// Send encrypted payload to your backend
+async function sendToBackend(encryptedPayload, cardholderName) {
+    const response = await fetch('/api/process-encrypted-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            encryptedPayload: encryptedPayload,
+            customerInfo: {
+                name: cardholderName
+            }
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Backend error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Backend response:', result);
+    return result;
+}
+```
+
+When our form is submitted, Basis Theory's SDK will encrypt the Element values using the provided public key. This will be securely encrypted directly in the browser. The resulting encrypted payload can then be safely sent to your backend for token creation.
+
+## Step 8: Verify Your Implementation
+
+Let's verify our form now loads and encrypts data properly. We can leverage a tool like [Parcel](https://parceljs.org/getting-started/webapp/) which will compile and launch our application:
+
+```shell showLineNumbers
+npx parcel index.html
+```
+
+Open [http://localhost:1234/](http://localhost:1234/) in your browser.
+
+### Test the Encryption Flow
+
+1. **Load the page**: Elements should mount without errors
+2. **Enter card details**: Use test card number `4242424242424242`
+3. **Submit form**: Should show "Encrypting..." then success message
+4. **Check console**: Should log successful encryption
+5. **Backend integration**: The encrypted payload is ready to send to your server
+
+### Test Card Numbers
+
+Use these test card numbers for development:
+
+| Card Number | Brand | Description |
+|-------------|-------|-------------|
+| 4242424242424242 | Visa | Valid card for testing |
+| 5555555555554444 | Mastercard | Valid card for testing |
+| 378282246310005 | American Express | Valid card for testing |
+
+## Step 9: Handle Encrypted Payloads in Your Backend
+
+Your backend receives encrypted payloads and creates tokens using the encrypted data.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="node" label="Node.js">
+
+```javascript title="server.js"
+const express = require('express');
+const { BasisTheory } = require('@basis-theory/basis-theory-js');
+
+const app = express();
+app.use(express.json());
+
+// Initialize Basis Theory with your Private Application key
+const bt = new BasisTheory('<PRIVATE_API_KEY>');
+
+app.post('/api/process-encrypted-payment', async (req, res) => {
+    try {
+        const { encryptedPayload, customerInfo } = req.body;
+
+        console.log('Processing encrypted payment for:', customerInfo.name);
+
+        // Create token using encrypted payload
+        const token = await bt.tokens.create({
+            type: 'card',
+            encrypted: encryptedPayload,
+            metadata: {
+                customer_name: customerInfo.name,
+                processed_at: new Date().toISOString()
+            }
+        });
+
+        console.log('Token created:', token.id);
+
+        // Process payment with the token...
+        // (Your payment processing logic here)
+
+        res.json({
+            success: true,
+            tokenId: token.id,
+            message: 'Payment processed successfully'
+        });
+
+    } catch (error) {
+        console.error('Error processing encrypted payment:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+app.listen(3000, () => {
+    console.log('Server running on port 3000');
+});
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+```python title="app.py"
+from flask import Flask, request, jsonify
+from basis_theory import BasisTheory
+import os
+from datetime import datetime
+
+app = Flask(__name__)
+
+# Initialize Basis Theory with your Private Application key
+bt = BasisTheory(api_key=os.getenv('PRIVATE_API_KEY'))
+
+@app.route('/api/process-encrypted-payment', methods=['POST'])
+def process_encrypted_payment():
+    try:
+        data = request.get_json()
+        encrypted_payload = data['encryptedPayload']
+        customer_info = data['customerInfo']
+
+        print(f'Processing encrypted payment for: {customer_info["name"]}')
+
+        # Create token using encrypted payload
+        token = bt.tokens.create(
+            type='card',
+            encrypted=encrypted_payload,
+            metadata={
+                'customer_name': customer_info['name'],
+                'processed_at': datetime.utcnow().isoformat()
+            }
+        )
+
+        print(f'Token created: {token.id}')
+
+        # Process payment with the token...
+        # (Your payment processing logic here)
+
+        return jsonify({
+            'success': True,
+            'tokenId': token.id,
+            'message': 'Payment processed successfully'
+        })
+
+    except Exception as error:
+        print(f'Error processing encrypted payment: {error}')
+        return jsonify({
+            'success': False,
+            'error': str(error)
+        }), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=3000)
+```
+
+  </TabItem>
+</Tabs>
+
+## Running the Complete Example
+
+Following this guide, your resulting application should look like the following:
+
+<Tabs className="bt-tabs">
+  <TabItem value="index.html" label="index.html">
+
+```html showLineNumbers
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client-Side Encryption Demo</title>
+    <script src="https://js.basistheory.com"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        .bt-element { border: 1px solid #ddd; border-radius: 4px; padding: 10px; }
+        #result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; white-space: pre-wrap; }
+        .error { color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; }
+        .success { color: #155724; background: #d4edda; border: 1px solid #c3e6cb; }
+    </style>
+</head>
+<body>
+    <h1>Client-Side Encryption Demo</h1>
+    
+    <form id="payment-form">
+        <div class="form-group">
+            <label for="cardholder-name">Cardholder Name</label>
+            <input type="text" id="cardholder-name" placeholder="John Doe" required />
+        </div>
+        
+        <div class="form-group">
+            <label>Card Number</label>
+            <div id="card-number"></div>
+        </div>
+        
+        <div class="form-group">
+            <label>Expiration Date</label>
+            <div id="card-expiration-date"></div>
+        </div>
+        
+        <div class="form-group">
+            <label>CVC</label>
+            <div id="card-cvc"></div>
+        </div>
+        
+        <button type="submit" id="submit-button">
+            Encrypt and Submit
+        </button>
+    </form>
+
+    <div id="result"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+```
+
+  </TabItem>
+  <TabItem value="app.js" label="app.js">
+
+```javascript showLineNumbers
+// Initialize Basis Theory with your Public Application key
+const bt = BasisTheory('<PUBLIC_API_KEY>');
+
+// Your encryption key details from Step 1
+const ENCRYPTION_KEY_ID = 'b1e2c3d4-5678-1234-9abc-def012345678';
+const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
+WQ4geAENWHyR7+g94nN6lFZzY7YdGWxPtlX/16fJ4z0=
+-----END PUBLIC KEY-----`;
+
+let cardNumberElement, expirationDateElement, cvcElement;
+
+// Initialize Elements when DOM is ready
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Create card Elements
+        cardNumberElement = bt.createElement('cardNumber', {
+            targetId: 'card-number',
+            style: {
+                base: {
+                    color: '#333',
+                    fontFamily: 'Arial, sans-serif',
+                    fontSize: '16px',
+                    padding: '12px'
+                }
+            }
+        });
+
+        expirationDateElement = bt.createElement('cardExpirationDate', {
+            targetId: 'card-expiration-date',
+            style: {
+                base: {
+                    color: '#333',
+                    fontFamily: 'Arial, sans-serif',
+                    fontSize: '16px',
+                    padding: '12px'
+                }
+            }
+        });
+
+        cvcElement = bt.createElement('cardVerificationCode', {
+            targetId: 'card-cvc',
+            style: {
+                base: {
+                    color: '#333',
+                    fontFamily: 'Arial, sans-serif',
+                    fontSize: '16px',
+                    padding: '12px'
+                }
+            }
+        });
+
+        await Promise.all([
+            cardNumberElement.mount(),
+            expirationDateElement.mount(),
+            cvcElement.mount()
+        ]);
+
+        console.log('Elements mounted successfully');
+    } catch (error) {
+        console.error('Error initializing Elements:', error);
+        document.getElementById('result').innerHTML = 
+            '<div class="error">Error initializing payment form</div>';
+    }
+});
+
 // Handle form submission with encryption
 document.getElementById('payment-form').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -205,7 +780,7 @@ document.getElementById('payment-form').addEventListener('submit', async (event)
 
         // Show success message immediately
         resultDiv.innerHTML = `
-            <div style="color: green; padding: 10px; border: 1px solid #4CAF50; border-radius: 4px;">
+            <div class="success">
                 <strong>✓ Payment data encrypted successfully!</strong><br>
                 Your payment is being processed securely.
             </div>
@@ -217,7 +792,7 @@ document.getElementById('payment-form').addEventListener('submit', async (event)
     } catch (error) {
         console.error('Encryption error:', error);
         resultDiv.innerHTML = `
-            <div style="color: red; padding: 10px; border: 1px solid #f44336; border-radius: 4px;">
+            <div class="error">
                 <strong>✗ Encryption failed</strong><br>
                 ${error.message || 'Please try again.'}
             </div>
@@ -254,160 +829,31 @@ async function sendToBackend(encryptedPayload, cardholderName) {
 }
 ```
 
-## Step 5: Handle Encrypted Payloads in Your Backend
-
-Your backend receives encrypted payloads and creates tokens using the encrypted data.
-
-<Tabs className="bt-tabs" groupId="languages">
-  <TabItem value="node" label="Node.js">
-
-```javascript title="server.js"
-const express = require('express');
-const { BasisTheory } = require('@basis-theory/basis-theory-js');
-
-const app = express();
-app.use(express.json());
-
-// Initialize Basis Theory with your Private Application key
-const bt = new BasisTheory('<PRIVATE_API_KEY>');
-
-app.post('/api/process-encrypted-payment', async (req, res) => {
-    try {
-        const { encryptedPayload, customerInfo } = req.body;
-
-        // Create token using encrypted payload
-        const token = await bt.tokens.create({
-            type: 'card',
-            encrypted: encryptedPayload,
-            metadata: {
-                customer_name: customerInfo.name,
-                processed_at: new Date().toISOString()
-            }
-        });
-
-        console.log('Token created:', token.id);
-
-        // Process payment with the token...
-        // (Your payment processing logic here)
-
-        res.json({
-            success: true,
-            tokenId: token.id,
-            message: 'Payment processed successfully'
-        });
-
-    } catch (error) {
-        console.error('Error processing encrypted payment:', error);
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
-    }
-});
-
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
-});
-```
-
-  </TabItem>
-  <TabItem value="python" label="Python">
-
-```python title="app.py"
-from flask import Flask, request, jsonify
-from basis_theory import BasisTheory
-import os
-
-app = Flask(__name__)
-
-# Initialize Basis Theory with your Private Application key
-bt = BasisTheory(api_key=os.getenv('PRIVATE_API_KEY'))
-
-@app.route('/api/process-encrypted-payment', methods=['POST'])
-def process_encrypted_payment():
-    try:
-        data = request.get_json()
-        encrypted_payload = data['encryptedPayload']
-        customer_info = data['customerInfo']
-
-        # Create token using encrypted payload
-        token = bt.tokens.create(
-            type='card',
-            encrypted=encrypted_payload,
-            metadata={
-                'customer_name': customer_info['name'],
-                'processed_at': datetime.utcnow().isoformat()
-            }
-        )
-
-        print(f'Token created: {token.id}')
-
-        # Process payment with the token...
-        # (Your payment processing logic here)
-
-        return jsonify({
-            'success': True,
-            'tokenId': token.id,
-            'message': 'Payment processed successfully'
-        })
-
-    except Exception as error:
-        print(f'Error processing encrypted payment: {error}')
-        return jsonify({
-            'success': False,
-            'error': str(error)
-        }), 500
-
-if __name__ == '__main__':
-    app.run(debug=True, port=3000)
-```
-
   </TabItem>
 </Tabs>
 
-## Step 6: Test Your Implementation
+We will now run the application again with Parcel:
 
-### Successful Encryption Flow
+```shell showLineNumbers
+npx parcel index.html
+```
 
-1. **Load the page**: Elements should mount without errors
-2. **Enter card details**: Use test card number `4242424242424242`
-3. **Submit form**: Should show "Encrypting..." then success message
-4. **Check console**: Should log successful encryption and backend response
-5. **Verify backend**: Should receive encrypted payload and create token
-
-### Test Card Numbers
-
-Use these test card numbers for development:
-
-| Card Number | Brand | Description |
-|-------------|-------|-------------|
-| 4242424242424242 | Visa | Valid card for testing |
-| 5555555555554444 | Mastercard | Valid card for testing |
-| 378282246310005 | American Express | Valid card for testing |
+Open [http://localhost:1234/](http://localhost:1234/) in your browser to use the application.
 
 ## Error Handling
 
 ### Common Errors and Solutions
 
 **"Elements failed to mount"**
-- Check that your Public API key is correct
 - Ensure Elements script is loaded before initialization
 - Verify DOM elements exist before mounting
 
-**"Encryption failed"**
-- Verify the public key PEM format is correct
-- Check that the encryption key hasn't expired
-- Ensure all required card fields are completed
+**"Unable to decrypt token"**
+- The encrypted data is malformed or cannot be decrypted
+- Check that your Public API key is correct
 
-**"Backend error: 500"**
-- Verify your Private API key has `token:create` permission
-- Check that encrypted payload is being sent correctly
-- Review backend logs for specific error details
-
-**"Invalid encrypted payload"**
-- Ensure the encryption key ID matches the key used for encryption
-- Verify the public key corresponds to an active encryption key
-- Check that the payload structure matches expected format
+**"Unrecognized client encryption key"**
+- The key used for encryption has been deleted or expired
 
 ## Security Considerations
 
@@ -426,20 +872,14 @@ Use these test card numbers for development:
 - Log detailed errors on the backend, not frontend
 - Provide user-friendly error messages in the UI
 
-## Next Steps
+## Conclusion
 
-### Production Deployment
-1. **Replace test keys**: Use production API keys and encryption keys
-2. **Enable HTTPS**: Ensure all communications are encrypted in transit
-3. **Monitor expiration**: Set up alerts for encryption key expiration
-4. **Test thoroughly**: Verify encryption works across different browsers
+You can now capture and encrypt sensitive card data without your frontend application accessing the underlying values, drastically reducing compliance and regulatory scope.
 
-### Advanced Features
-- **Multiple key support**: Implement key rotation without downtime
-- **Conditional encryption**: Encrypt only sensitive fields based on data type
-- **Performance optimization**: Cache public keys and reuse encryption contexts
-- **Error recovery**: Implement fallback mechanisms for encryption failures
+Try entering card details and clicking the submit button to securely encrypt the data directly in the browser and send encrypted payloads to your backend. The resulting encrypted payload can be safely transmitted and processed by your server infrastructure.
 
-## Complete Example
+## Learn More
 
-For a complete working example, see our [GitHub repository](https://github.com/Basis-Theory/client-encryption-examples) with full source code and deployment instructions. 
+- [Client Encryption Keys API](/docs/api/client-keys)
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [Encrypt data with React](/docs/guides/encrypt/encrypt-data-with-react)

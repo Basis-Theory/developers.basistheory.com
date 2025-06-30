@@ -5,43 +5,61 @@ title: Encrypt Data with Android
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { AuthButtons } from "@site/src/components/docs/AuthButtons";
 
 # Encrypt Data with Android
 
-This guide shows you how to implement client-side encryption in Android applications using Basis Theory Elements. You'll learn to encrypt sensitive data in Android and send encrypted payloads to your backend for tokenization.
+This guide will show you how to implement client-side encryption in Android applications using Basis Theory Elements. You'll learn to encrypt sensitive data in Android and send encrypted payloads to your backend for tokenization.
+
+Key concepts in this guide:
+
+- [Client Encryption Keys](/docs/api/client-keys)
+- [Android Elements](/docs/sdks/mobile/android)
+- [Tokens](/docs/concepts/what-are-tokens)
+- [Applications](/docs/api/applications)
 
 ## What You'll Build
 
+By the end of this guide, you'll have:
 - An Android payment form that encrypts card data before submission
 - Encrypted payloads sent to your backend instead of plaintext
 - Immediate user feedback while tokenization happens asynchronously
 - Secure handling of encryption keys and sensitive data
 
-## Before You Begin
+## Getting Started
 
-You'll need:
-- Android Studio Arctic Fox or later
-- Android API level 21 (Android 5.0) or higher
-- A Basis Theory account with a **Public Application** for frontend encryption
-- A **Management Application** for creating encryption keys
-- A backend service to handle encrypted payloads and tokenization
+To get started, you will need a Basis Theory account.
 
-## Step 1: Install Basis Theory Android SDK
+<AuthButtons />
 
-Add the Basis Theory Android SDK to your `build.gradle` file.
+Next, you will need two applications:
 
-```gradle title="app/build.gradle"
-dependencies {
-    implementation 'com.basistheory:basistheory-android:5.0.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.2'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-}
-```
+1. **Management Application** - to create encryption keys
+2. **Public Application** - to initialize Elements for your Android app
 
-## Step 2: Generate Client Encryption Keys
+### Management Application
 
-Create encryption keys using your Management Application.
+[Click here](https://portal.basistheory.com/applications/create?name=Encryption%20Key%20Manager&type=management&permissions=key%3Acreate) to create a Management Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Encryption Key Manager
+- Application Type - Management
+- Permissions - `key:create`
+
+<Alert>Save the API Key from the created Management Application as it will be used to create encryption keys.</Alert>
+
+### Public Application
+
+[Click here](https://portal.basistheory.com/applications/create?permissions=&type=public&name=Encrypt%20Data%20with%20Android%20Guide) to create a Public Application or [login to your Basis Theory account](https://portal.basistheory.com/applications) and create a new application with the following settings:
+
+- Name - Encrypt Data with Android Guide
+- Application Type - Public
+- Permissions - (none required for client-side encryption)
+
+<Alert>Save the API Key from the created Public Application as it will be used later in this guide to initialize the form.</Alert>
+
+## Step 1: Generate Client Encryption Keys
+
+Create encryption keys using your Management Application. These keys enable client-side encryption.
 
 ```bash
 curl -X POST "https://api.basistheory.com/keys" \
@@ -52,75 +70,458 @@ curl -X POST "https://api.basistheory.com/keys" \
   }'
 ```
 
-## Step 3: Configure Encryption Settings
+<Alert>Be sure to replace <code>&lt;MANAGEMENT_API_KEY></code> with the Management API Key you created in the <a href="#getting-started">Getting Started</a> step.</Alert>
 
-Create a configuration class to manage your encryption keys.
-
-```kotlin title="EncryptionConfig.kt"
-object EncryptionConfig {
-    const val PUBLIC_API_KEY = "<PUBLIC_API_KEY>"
-    const val ENCRYPTION_KEY_ID = "b1e2c3d4-5678-1234-9abc-def012345678"
-    const val PUBLIC_KEY_PEM = """
-        -----BEGIN PUBLIC KEY-----
-        WQ4geAENWHyR7+g94nN6lFZzY7YdGWxPtlX/16fJ4z0=
-        -----END PUBLIC KEY-----
-    """
+**Expected Response:**
+```json
+{
+  "id": "b1e2c3d4-5678-1234-9abc-def012345678",
+  "publicKeyPEM": "-----BEGIN PUBLIC KEY-----\nWQ4geAENWHyR7+g94nN6lFZzY7YdGWxPtlX/16fJ4z0=\n-----END PUBLIC KEY-----",
+  "expires_at": "2025-12-31T23:59:59Z"
 }
 ```
 
-## Step 4: Create Encryption Service
+<Alert type={Alerts.WARNING}>Save the public key (<code>publicKeyPEM</code>) and key ID (<code>id</code>) - you'll need both for client-side encryption. The public key is only returned when creating a key. Make sure to securely store it, as you won't be able to retrieve it later.</Alert>
 
-Build a service to handle encryption operations.
+## Step 2: Set Up the Project
 
-```kotlin title="EncryptionService.kt"
+We will create a new Android application through Android Studio. If you don't have Android Studio, download it [here](https://developer.android.com/studio).
+
+1. Launch Android Studio, then click `New Project`. On the `Phone and Tablet` tab select `Empty Activity` and click `Next`.
+
+2. For the `Name` enter "Android Encrypt Guide", and for the `Package name` use your organization's name. Leave the remaining settings as is and click `Finish`.
+
+This will launch Android Studio with the newly created project. Wait a bit for it to set up and Gradle sync to finish.
+
+## Step 3: Install the Android Elements SDK
+
+We will need to install Basis Theory's [Android Elements SDK](/docs/sdks/mobile/android), which will be used to render secure Elements for capturing data and provide encryption capabilities.
+
+In the settings.gradle file add this repository:
+
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+```
+
+Then in the build.gradle add this dependency specifying the correct version:
+
+```groovy
+dependencies {
+    implementation 'com.github.basis-theory:basistheory-android:<version>'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+}
+```
+
+## Step 4: Add Your Form Elements
+
+Now we need to add [Card Elements](/docs/sdks/mobile/android/types#cardnumberelement) to our application for collecting payment card data.
+
+To do so, open the `res/layout/activity_main.xml` file and add the following code:
+
+```xml showLineNumbers
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Client-Side Encryption Demo"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp" />
+
+            <EditText
+                android:id="@+id/customer_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Cardholder Name"
+                android:layout_marginBottom="10dp" />
+
+            <com.basistheory.android.view.CardNumberElement
+                android:id="@+id/card_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp" />
+
+            <com.basistheory.android.view.CardExpirationDateElement
+                android:id="@+id/expiration_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp" />
+
+            <com.basistheory.android.view.CardVerificationCodeElement
+                android:id="@+id/cvc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp" />
+
+            <Button
+                android:id="@+id/encrypt_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#00A4BA"
+                android:text="Encrypt and Submit" />
+
+            <TextView
+                android:id="@+id/result_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="#f8f9fa"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+This adds a form layout with cardholder name input, card number element, expiration date element, CVC element, and a button used to encrypt and submit the payment data.
+
+## Step 5: Configure Elements and Variables
+
+Now it's time to set up our Android activity. We'll be configuring our elements and declaring the necessary variables.
+
+Open your main activity class file which should be called `MainActivity.kt`. Now we need to declare and initialize variables to reference the elements we defined in the layout.
+
+```kotlin showLineNumbers
+import android.graphics.Color
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.basistheory.android.BasisTheoryElements
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
+import com.basistheory.android.view.CardNumberElement
+import com.basistheory.android.view.CardExpirationDateElement
+import com.basistheory.android.view.CardVerificationCodeElement
+import kotlinx.coroutines.launch
 
-class EncryptionService {
-    private val basisTheory = BasisTheoryElements(EncryptionConfig.PUBLIC_API_KEY)
-    
-    suspend fun encryptTokenPayload(
-        cardNumber: String,
-        expirationMonth: String,
-        expirationYear: String,
-        cvc: String,
-        customerName: String,
-        customerEmail: String
-    ): String = withContext(Dispatchers.IO) {
-        val tokenPayload = JSONObject().apply {
-            put("type", "card")
-            put("data", JSONObject().apply {
-                put("number", cardNumber)
-                put("expiration_month", expirationMonth.toInt())
-                put("expiration_year", expirationYear.toInt())
-                put("cvc", cvc)
-            })
-            put("metadata", JSONObject().apply {
-                put("customer_name", customerName)
-                put("customer_email", customerEmail)
-                put("source", "android_encrypted")
-            })
-        }
-        
-        basisTheory.encrypt(
-            payload = tokenPayload,
-            publicKey = EncryptionConfig.PUBLIC_KEY_PEM,
-            keyId = EncryptionConfig.ENCRYPTION_KEY_ID
-        )
-    }
-    
-    suspend fun submitEncryptedPayment(
-        encryptedPayload: String,
-        customerName: String,
-        customerEmail: String
-    ): PaymentResponse = withContext(Dispatchers.IO) {
-        // Implementation for sending to backend
-        // Return PaymentResponse
-        PaymentResponse(success = true, tokenId = "token_123")
+class MainActivity : AppCompatActivity() {
+
+    // Form element references
+    private lateinit var customerNameInput: EditText
+    private lateinit var cardNumberElement: CardNumberElement
+    private lateinit var expirationDateElement: CardExpirationDateElement
+    private lateinit var cvcElement: CardVerificationCodeElement
+    private lateinit var encryptButton: Button
+    private lateinit var resultText: TextView
+
+    // Encryption configuration from Step 1
+    private val encryptionKeyId = "b1e2c3d4-5678-1234-9abc-def012345678"
+    private val publicKeyPEM = """
+        -----BEGIN PUBLIC KEY-----
+        WQ4geAENWHyR7+g94nN6lFZzY7YdGWxPtlX/16fJ4z0=
+        -----END PUBLIC KEY-----
+    """.trimIndent()
+
+    // Initialize Basis Theory with your Public API key
+    private val bt = BasisTheoryElements.builder()
+        .apiKey("<PUBLIC_API_KEY>")
+        .build()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // Initialize form elements
+        customerNameInput = findViewById(R.id.customer_name)
+        cardNumberElement = findViewById(R.id.card_number)
+        expirationDateElement = findViewById(R.id.expiration_date)
+        cvcElement = findViewById(R.id.cvc)
+        encryptButton = findViewById(R.id.encrypt_button)
+        resultText = findViewById(R.id.result_text)
     }
 }
+```
+
+<Alert>Be sure to replace <code>&lt;PUBLIC_API_KEY></code> with the Public API Key you created in the <a href="#getting-started">Getting Started</a> step, and update the encryption key details with your actual key ID and public key PEM.</Alert>
+
+## Step 6: Style Your Form Elements
+
+With the element references declared, we can now style them. Add the following styling code to the `onCreate` method:
+
+```kotlin showLineNumbers
+class MainActivity : AppCompatActivity() {
+
+    // ... previous code ...
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // Initialize form elements
+        customerNameInput = findViewById(R.id.customer_name)
+        cardNumberElement = findViewById(R.id.card_number)
+        expirationDateElement = findViewById(R.id.expiration_date)
+        cvcElement = findViewById(R.id.cvc)
+        encryptButton = findViewById(R.id.encrypt_button)
+        resultText = findViewById(R.id.result_text)
+
+        // Style the Elements
+        cardNumberElement.setPadding(15, 15, 15, 15)
+        cardNumberElement.hint = "Card Number"
+        cardNumberElement.textColor = Color.BLACK
+        cardNumberElement.background = Color.WHITE.toDrawable()
+
+        expirationDateElement.setPadding(15, 15, 15, 15)
+        expirationDateElement.hint = "MM/YY"
+        expirationDateElement.textColor = Color.BLACK
+        expirationDateElement.background = Color.WHITE.toDrawable()
+
+        cvcElement.setPadding(15, 15, 15, 15)
+        cvcElement.hint = "CVC"
+        cvcElement.textColor = Color.BLACK
+        cvcElement.background = Color.WHITE.toDrawable()
+    }
+}
+```
+
+## Step 7: Encrypt and Submit Card Data
+
+We want to encrypt the card data before sending it to our backend. Let's add the encryption functionality.
+
+Just like we did with the other elements, let's add a click listener to the button that will encrypt the payment data:
+
+```kotlin showLineNumbers
+class MainActivity : AppCompatActivity() {
+
+    // ... previous code ...
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // Initialize form elements
+        customerNameInput = findViewById(R.id.customer_name)
+        cardNumberElement = findViewById(R.id.card_number)
+        expirationDateElement = findViewById(R.id.expiration_date)
+        cvcElement = findViewById(R.id.cvc)
+        encryptButton = findViewById(R.id.encrypt_button)
+        resultText = findViewById(R.id.result_text)
+
+        // Style the Elements
+        cardNumberElement.setPadding(15, 15, 15, 15)
+        cardNumberElement.hint = "Card Number"
+        cardNumberElement.textColor = Color.BLACK
+        cardNumberElement.background = Color.WHITE.toDrawable()
+
+        expirationDateElement.setPadding(15, 15, 15, 15)
+        expirationDateElement.hint = "MM/YY"
+        expirationDateElement.textColor = Color.BLACK
+        expirationDateElement.background = Color.WHITE.toDrawable()
+
+        cvcElement.setPadding(15, 15, 15, 15)
+        cvcElement.hint = "CVC"
+        cvcElement.textColor = Color.BLACK
+        cvcElement.background = Color.WHITE.toDrawable()
+
+        // Set up encrypt button listener
+        encryptButton.setOnClickListener {
+            encryptAndSubmit()
+        }
+    }
+
+    private fun encryptAndSubmit() {
+        lifecycleScope.launch {
+            try {
+                // Disable button during processing
+                encryptButton.isEnabled = false
+                encryptButton.text = "Encrypting..."
+                resultText.visibility = TextView.VISIBLE
+                resultText.text = "Encrypting payment data..."
+
+                val customerName = customerNameInput.text.toString()
+
+                // Create the token payload that will be encrypted
+                val tokenPayload = object {
+                    val type = "card"
+                    val data = object {
+                        val number = cardNumberElement
+                        val expiration_month = expirationDateElement
+                        val expiration_year = expirationDateElement
+                        val cvc = cvcElement
+                    }
+                    val metadata = object {
+                        val cardholder_name = customerName
+                        val source = "android_encrypted"
+                    }
+                }
+
+                // Encrypt the payload using the public key
+                val encryptedPayload = bt.encrypt(
+                    payload = tokenPayload,
+                    publicKey = publicKeyPEM,
+                    keyId = encryptionKeyId
+                )
+
+                // Send encrypted payload to backend
+                val response = sendToBackend(encryptedPayload, customerName)
+                
+                resultText.text = "✓ Payment data encrypted successfully!\n\nResponse: $response"
+                
+                // Reset form
+                customerNameInput.text.clear()
+                
+            } catch (e: Exception) {
+                resultText.text = "✗ Encryption failed: ${e.message}"
+            } finally {
+                // Re-enable button
+                encryptButton.isEnabled = true
+                encryptButton.text = "Encrypt and Submit"
+            }
+        }
+    }
+
+    private suspend fun sendToBackend(encryptedPayload: String, customerName: String): String {
+        // This would typically be an HTTP request to your backend
+        // For demonstration purposes, we'll simulate a successful response
+        return """
+            {
+              "success": true,
+              "tokenId": "token_123456",
+              "message": "Payment processed successfully"
+            }
+        """.trimIndent()
+    }
+}
+```
+
+When our form is submitted, Basis Theory's SDK will encrypt the Element values using the provided public key. This will be securely encrypted directly in the Android app. The resulting encrypted payload can then be safely sent to your backend for token creation.
+
+## Step 8: Handle Encrypted Payloads in Your Backend
+
+Your backend receives the encrypted payloads and creates tokens using the encrypted data.
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="node" label="Node.js (Express)">
+
+```javascript title="server.js"
+const express = require('express');
+const { BasisTheory } = require('@basis-theory/basis-theory-js');
+
+const app = express();
+app.use(express.json());
+
+// Initialize Basis Theory with your Private Application key
+const bt = new BasisTheory('<PRIVATE_API_KEY>');
+
+app.post('/api/process-encrypted-payment', async (req, res) => {
+    try {
+        const { encryptedPayload, customerName } = req.body;
+
+        console.log('Processing encrypted payment for:', customerName);
+
+        // Create token using encrypted payload
+        const token = await bt.tokens.create({
+            type: 'card',
+            encrypted: encryptedPayload,
+            metadata: {
+                customer_name: customerName,
+                processed_at: new Date().toISOString()
+            }
+        });
+
+        console.log('Token created:', token.id);
+
+        res.json({
+            success: true,
+            tokenId: token.id,
+            message: 'Payment processed successfully'
+        });
+
+    } catch (error) {
+        console.error('Error processing encrypted payment:', error);
+        
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Payment processing failed'
+        });
+    }
+});
+
+app.listen(3001, () => {
+    console.log('Server running on port 3001');
+});
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin (Spring Boot)">
+
+```kotlin title="PaymentController.kt"
+@RestController
+@RequestMapping("/api")
+class PaymentController {
+    
+    @Value("\${basis-theory.private-api-key}")
+    private lateinit var privateApiKey: String
+    
+    @PostMapping("/process-encrypted-payment")
+    suspend fun processEncryptedPayment(@RequestBody request: EncryptedPaymentRequest): ResponseEntity<PaymentResponse> {
+        return try {
+            val bt = BasisTheoryElements.builder()
+                .apiKey(privateApiKey)
+                .build()
+            
+            println("Processing encrypted payment for: ${request.customerName}")
+            
+            // Create token using encrypted payload
+            val token = bt.tokenize(object {
+                val type = "card"
+                val encrypted = request.encryptedPayload
+                val metadata = object {
+                    val customer_name = request.customerName
+                    val processed_at = Instant.now().toString()
+                }
+            })
+            
+            println("Token created: ${token.id}")
+            
+            ResponseEntity.ok(PaymentResponse(
+                success = true,
+                tokenId = token.id,
+                message = "Payment processed successfully"
+            ))
+            
+        } catch (e: Exception) {
+            println("Error processing encrypted payment: ${e.message}")
+            
+            ResponseEntity.status(500).body(PaymentResponse(
+                success = false,
+                error = e.message ?: "Payment processing failed"
+            ))
+        }
+    }
+}
+
+data class EncryptedPaymentRequest(
+    val encryptedPayload: String,
+    val customerName: String
+)
 
 data class PaymentResponse(
     val success: Boolean,
@@ -130,259 +531,19 @@ data class PaymentResponse(
 )
 ```
 
-## Step 5: Create Payment Activity
+  </TabItem>
+</Tabs>
 
-Build the Android UI for collecting and encrypting payment data.
+### Test the Encryption Flow
 
-```kotlin title="PaymentActivity.kt"
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.basistheory.android.view.CardNumberElement
-import com.basistheory.android.view.CardExpirationDateElement
-import com.basistheory.android.view.CardVerificationCodeElement
-import kotlinx.coroutines.launch
-
-class PaymentActivity : AppCompatActivity() {
-    private val viewModel: PaymentViewModel by viewModels()
-    
-    private lateinit var cardNumberElement: CardNumberElement
-    private lateinit var expirationDateElement: CardExpirationDateElement
-    private lateinit var cvcElement: CardVerificationCodeElement
-    
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_payment)
-        
-        setupElements()
-        setupObservers()
-        setupClickListeners()
-    }
-    
-    private fun setupElements() {
-        cardNumberElement = findViewById(R.id.card_number_element)
-        expirationDateElement = findViewById(R.id.expiration_date_element)
-        cvcElement = findViewById(R.id.cvc_element)
-        
-        // Configure Elements with your public API key
-        cardNumberElement.configure(EncryptionConfig.PUBLIC_API_KEY)
-        expirationDateElement.configure(EncryptionConfig.PUBLIC_API_KEY)
-        cvcElement.configure(EncryptionConfig.PUBLIC_API_KEY)
-    }
-    
-    private fun setupObservers() {
-        viewModel.isProcessing.observe(this) { isProcessing ->
-            findViewById<Button>(R.id.submit_button).apply {
-                isEnabled = !isProcessing
-                text = if (isProcessing) "Processing..." else "Encrypt and Submit Payment"
-            }
-        }
-        
-        viewModel.error.observe(this) { error ->
-            error?.let {
-                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-            }
-        }
-        
-        viewModel.success.observe(this) { success ->
-            if (success) {
-                Toast.makeText(this, "Payment processed successfully!", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-        }
-    }
-    
-    private fun setupClickListeners() {
-        findViewById<Button>(R.id.submit_button).setOnClickListener {
-            val customerName = findViewById<EditText>(R.id.customer_name).text.toString()
-            val customerEmail = findViewById<EditText>(R.id.customer_email).text.toString()
-            
-            lifecycleScope.launch {
-                viewModel.submitPayment(
-                    cardNumberElement = cardNumberElement,
-                    expirationDateElement = expirationDateElement,
-                    cvcElement = cvcElement,
-                    customerName = customerName,
-                    customerEmail = customerEmail
-                )
-            }
-        }
-    }
-}
-```
-
-## Step 6: Create Payment ViewModel
-
-```kotlin title="PaymentViewModel.kt"
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-
-class PaymentViewModel : ViewModel() {
-    private val encryptionService = EncryptionService()
-    
-    private val _isProcessing = MutableLiveData<Boolean>()
-    val isProcessing: LiveData<Boolean> = _isProcessing
-    
-    private val _error = MutableLiveData<String?>()
-    val error: LiveData<String?> = _error
-    
-    private val _success = MutableLiveData<Boolean>()
-    val success: LiveData<Boolean> = _success
-    
-    fun submitPayment(
-        cardNumberElement: CardNumberElement,
-        expirationDateElement: CardExpirationDateElement,
-        cvcElement: CardVerificationCodeElement,
-        customerName: String,
-        customerEmail: String
-    ) {
-        viewModelScope.launch {
-            try {
-                _isProcessing.value = true
-                _error.value = null
-                
-                // Get values from Elements
-                val cardNumber = cardNumberElement.getValue()
-                val expirationDate = expirationDateElement.getValue()
-                val cvc = cvcElement.getValue()
-                
-                // Extract month and year from expiration date
-                val (month, year) = parseExpirationDate(expirationDate)
-                
-                // Encrypt the payment data
-                val encryptedPayload = encryptionService.encryptTokenPayload(
-                    cardNumber = cardNumber,
-                    expirationMonth = month,
-                    expirationYear = year,
-                    cvc = cvc,
-                    customerName = customerName,
-                    customerEmail = customerEmail
-                )
-                
-                // Submit the encrypted payload
-                val response = encryptionService.submitEncryptedPayment(
-                    encryptedPayload = encryptedPayload,
-                    customerName = customerName,
-                    customerEmail = customerEmail
-                )
-                
-                if (response.success) {
-                    _success.value = true
-                } else {
-                    _error.value = response.error ?: "Payment processing failed"
-                }
-                
-            } catch (e: Exception) {
-                _error.value = e.message ?: "An error occurred"
-            } finally {
-                _isProcessing.value = false
-            }
-        }
-    }
-    
-    private fun parseExpirationDate(expirationDate: String): Pair<String, String> {
-        // Parse MM/YY format
-        val parts = expirationDate.split("/")
-        return Pair(parts[0], parts[1])
-    }
-}
-```
-
-## Step 7: Create Layout
-
-```xml title="activity_payment.xml"
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Customer Information"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
-
-        <EditText
-            android:id="@+id/customer_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Full Name"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/customer_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:layout_marginBottom="24dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Card Information"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
-
-        <com.basistheory.android.view.CardNumberElement
-            android:id="@+id/card_number_element"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <com.basistheory.android.view.CardExpirationDateElement
-                android:id="@+id/expiration_date_element"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp" />
-
-            <com.basistheory.android.view.CardVerificationCodeElement
-                android:id="@+id/cvc_element"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/submit_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Encrypt and Submit Payment"
-            android:layout_marginTop="24dp" />
-
-    </LinearLayout>
-</ScrollView>
-```
-
-## Step 8: Handle Encrypted Payloads in Your Backend
-
-Your backend receives encrypted payloads and creates tokens using the same approach as shown in other platform guides.
-
-## Testing Your Implementation
+1. **Load the app**: Elements should render without errors
+2. **Enter card details**: Use test card number `4242424242424242`
+3. **Submit form**: Should show "Encrypting..." then success message
+4. **Check result**: Should display the encrypted payload processing result
 
 ### Test Card Numbers
+
+Use these test card numbers for development:
 
 | Card Number | Brand | Description |
 |-------------|-------|-------------|
@@ -390,18 +551,26 @@ Your backend receives encrypted payloads and creates tokens using the same appro
 | 5555555555554444 | Mastercard | Valid card for testing |
 | 378282246310005 | American Express | Valid card for testing |
 
-### Validation Checklist
+## Error Handling
 
-- [ ] Elements mount without errors
-- [ ] Form validates required fields
-- [ ] Encryption shows progress indicator
-- [ ] Success message appears after submission
-- [ ] Backend receives encrypted payload
-- [ ] Token is created successfully
+### Common Errors and Solutions
+
+**"Elements not rendering"**
+- Ensure the Elements SDK is properly imported
+- Verify that Elements are properly configured
+
+**"Unable to decrypt token"**
+- The encrypted data is malformed or cannot be decrypted
+- Check that your Public API key is correct
+
+**"Unrecognized client encryption key"**
+- The key used for encryption has been deleted or expired
 
 ## Security Considerations
 
 ### ProGuard Configuration
+
+Add these rules to your `proguard-rules.pro` file to protect Basis Theory classes:
 
 ```proguard title="proguard-rules.pro"
 # Keep Basis Theory classes
@@ -413,61 +582,20 @@ Your backend receives encrypted payloads and creates tokens using the same appro
 -keep class java.security.** { *; }
 ```
 
-### Network Security Configuration
+### Network Security
 
-```xml title="res/xml/network_security_config.xml"
-<?xml version="1.0" encoding="utf-8"?>
-<network-security-config>
-    <domain-config>
-        <domain includeSubdomains="true">api.basistheory.com</domain>
-        <pin-set>
-            <pin digest="SHA-256">your-certificate-pin-here</pin>
-        </pin-set>
-    </domain-config>
-</network-security-config>
-```
+Ensure all communications use HTTPS and consider certificate pinning for production apps.
 
-## Production Considerations
+## Conclusion
 
-### Environment Configuration
+You can now capture and encrypt sensitive card data in your Android application without your app accessing the underlying values, drastically reducing compliance and regulatory scope.
 
-```kotlin title="BuildConfig.kt"
-object BuildConfig {
-    val isDebug = BuildConfig.DEBUG
-    
-    val apiKey = if (isDebug) {
-        "key_dev_..."
-    } else {
-        "key_live_..."
-    }
-    
-    val encryptionKeyId = if (isDebug) {
-        "dev-key-id"
-    } else {
-        "prod-key-id"
-    }
-}
-```
+Try entering card details and tapping the encrypt button to securely encrypt the data directly in the Android app and send encrypted payloads to your backend. The resulting encrypted payload can be safely transmitted and processed by your server infrastructure.
 
-### Performance Optimization
+## Learn More
 
-- Use background threads for encryption operations
-- Cache public keys and configuration data
-- Implement proper error handling and retry logic
-- Optimize UI updates and state management
+A full example Android application is included within the [example](https://github.com/Basis-Theory/basistheory-android/tree/master/example) module within the GitHub repository or explore all the supported [Element Types](/docs/sdks/mobile/android/types).
 
-## Next Steps
-
-### Advanced Features
-- Add biometric authentication for additional security
-- Implement offline support for network failures
-- Add comprehensive form validation
-- Integrate with Android's autofill framework
-
-### Testing
-- Implement unit tests for encryption logic
-- Add UI tests for payment flow
-- Test across different Android versions and devices
-- Validate error handling scenarios
-
-For complete examples and advanced patterns, visit our [Android encryption examples repository](https://github.com/Basis-Theory/android-encryption-examples). 
+- [Client Encryption Keys API](/docs/api/client-keys)
+- [What are tokens?](/docs/concepts/what-are-tokens)
+- [Encrypt data from Web](/docs/guides/encrypt/encrypt-data-from-web) 

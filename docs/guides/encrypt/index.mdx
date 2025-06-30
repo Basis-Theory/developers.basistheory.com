@@ -19,20 +19,57 @@ import { Card } from "@site/src/components/shared/Card";
 
 Client-side encryption enables you to encrypt sensitive data in your frontend applications and send the encrypted payload to your backend for tokenization. This approach reduces latency, improves user experience, and gives you more control over when and how data is sent to Basis Theory.
 
-## How Client-Side Encryption Works
+### How encrypted token creation works
 
-1. **Generate encryption keys**: Create asymmetric key pairs using the [Client Encryption Keys API](/docs/api/client-keys)
-2. **Client-side encryption**: Use the public key to encrypt token creation payloads in your frontend
-3. **Backend tokenization**: Send encrypted payloads from your backend to create tokens
-4. **Optimized workflow**: Provide immediate user feedback while maintaining security
+**Step 1: Generate a Client Encryption Key**
+Use the [Client Encryption Keys API](/docs/api/client-keys#create-client-encryption-key) to create an asymmetric key pair. This returns a public key in PEM format and a unique key ID.
 
-## When to Use Client-Side Encryption
+```bash
+# Example: Create encryption key
+curl -X POST "https://api.basistheory.com/keys" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{"expires_at": "2025-12-31T23:59:59Z"}'
+```
 
-Use client-side encryption when you want to:
-- **Reduce frontend latency**: Eliminate waiting for tokenization round-trips in your user interface
-- **Improve user experience**: Provide immediate feedback while processing happens asynchronously
-- **Maintain control**: Keep sensitive data encrypted until your backend is ready to process it
-- **Optimize performance**: Handle tokenization on known infrastructure with reliable connections
+**Step 2: Client-side encryption**
+Use the public key (PEM format) and key ID to encrypt your token creation payload in your frontend application, typically with Basis Theory Elements. The encrypted payload contains the same data you would normally send in the `data` attribute.
+
+**Step 3: Send encrypted payload to your backend**
+Your frontend receives the encrypted payload and sends it to your backend. Your backend can then create the token using the encrypted data instead of plaintext.
+
+**Step 4: Create token with encrypted data**
+Send the encrypted payload in the `encrypted` attribute instead of using the `data` attribute.
+
+```bash
+# Example: Create token with encrypted payload
+curl "https://api.basistheory.com/tokens" \
+  -H "BT-API-KEY: <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "type": "card",
+    "encrypted": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6...",
+    "metadata": {
+      "customer_id": "12345"
+    }
+  }'
+```
+See more details in the [Token Creation](/docs/api/tokens#encrypted-token-creation) API reference.
+
+## Key Benefits
+
+### Reduced Latency
+Encrypt data immediately in your frontend and provide instant user feedback, while tokenization happens asynchronously in your backend.
+
+### Enhanced Control
+Maintain full control over when and how sensitive data is processed, with encrypted payloads that remain secure until your backend is ready.
+
+### Improved Performance
+Leverage your backend infrastructure's reliable connections and processing power for tokenization operations.
+
+### Seamless Integration
+Works with existing Basis Theory Elements and APIs, requiring minimal changes to your current implementation. 
 
 ## Platform-Specific Guides
 
@@ -72,17 +109,3 @@ Use client-side encryption when you want to:
     heading="Encrypt Data with React Native"
   >Implement client-side encryption in React Native applications.</Card>
 </Card.TwoColumnLayout>
-
-## Key Benefits
-
-### Reduced Latency
-Encrypt data immediately in your frontend and provide instant user feedback, while tokenization happens asynchronously in your backend.
-
-### Enhanced Control
-Maintain full control over when and how sensitive data is processed, with encrypted payloads that remain secure until your backend is ready.
-
-### Improved Performance
-Leverage your backend infrastructure's reliable connections and processing power for tokenization operations.
-
-### Seamless Integration
-Works with existing Basis Theory Elements and APIs, requiring minimal changes to your current implementation. 
