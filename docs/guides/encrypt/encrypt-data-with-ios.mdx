@@ -1,0 +1,1234 @@
+---
+title: Encrypt Data with iOS
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Encrypt Data with iOS
+
+This guide shows you how to implement client-side encryption in iOS applications using Basis Theory Elements. You'll learn to encrypt sensitive data in iOS and send encrypted payloads to your backend for tokenization.
+
+## What You'll Build
+
+By the end of this guide, you'll have:
+- An iOS payment form that encrypts card data before submission
+- Encrypted payloads sent to your backend instead of plaintext
+- Immediate user feedback while tokenization happens asynchronously
+- Secure handling of encryption keys and sensitive data
+- Support for both UIKit and SwiftUI implementations
+
+## Before You Begin
+
+You'll need:
+- Xcode 14.0 or later
+- iOS 13.0 deployment target or later
+- A Basis Theory account with a **Public Application** for frontend encryption
+- A **Management Application** for creating encryption keys
+- A backend service to handle encrypted payloads and tokenization
+- Basic knowledge of Swift and iOS development
+
+## Step 1: Install Basis Theory iOS SDK
+
+Add the Basis Theory iOS SDK to your project using Swift Package Manager.
+
+### Using Xcode
+
+1. Open your project in Xcode
+2. Go to **File** → **Add Package Dependencies**
+3. Enter the repository URL: `https://github.com/Basis-Theory/basistheory-ios`
+4. Select **Up to Next Major Version** and click **Add Package**
+5. Select **BasisTheoryElements** and click **Add Package**
+
+### Using Package.swift
+
+```swift title="Package.swift"
+dependencies: [
+    .package(url: "https://github.com/Basis-Theory/basistheory-ios", from: "5.0.0")
+]
+```
+
+## Step 2: Generate Client Encryption Keys
+
+Create encryption keys using your Management Application.
+
+```bash
+curl -X POST "https://api.basistheory.com/keys" \
+  -H "BT-API-KEY: <MANAGEMENT_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "expires_at": "2025-12-31T23:59:59Z"
+  }'
+```
+
+**Expected Response:**
+```json
+{
+  "id": "b1e2c3d4-5678-1234-9abc-def012345678",
+  "publicKeyPEM": "-----BEGIN PUBLIC KEY-----\nWQ4geAENWHyR7+g94nN6lFZzY7YdGWxPtlX/16fJ4z0=\n-----END PUBLIC KEY-----",
+  "expires_at": "2025-12-31T23:59:59Z"
+}
+```
+
+## Step 3: Configure Encryption Settings
+
+Create a configuration struct to manage your encryption keys and settings.
+
+```swift title="EncryptionConfig.swift"
+import Foundation
+
+struct EncryptionConfig {
+    static let publicApiKey = "<PUBLIC_API_KEY>"
+    static let encryptionKeyId = "b1e2c3d4-5678-1234-9abc-def012345678"
+    static let publicKeyPEM = """
+    -----BEGIN PUBLIC KEY-----
+    WQ4geAENWHyR7+g94nN6lFZzY7YdGWxPtlX/16fJ4z0=
+    -----END PUBLIC KEY-----
+    """
+    
+    // For production, load these from your app's configuration
+    static func getConfig(for environment: Environment) -> EncryptionConfig {
+        switch environment {
+        case .development:
+            return EncryptionConfig(
+                apiKey: "key_dev_...",
+                keyId: "dev-key-id",
+                publicKeyPEM: "dev-public-key"
+            )
+        case .production:
+            return EncryptionConfig(
+                apiKey: "key_live_...",
+                keyId: "prod-key-id", 
+                publicKeyPEM: "prod-public-key"
+            )
+        }
+    }
+}
+
+enum Environment {
+    case development
+    case production
+}
+```
+
+## Step 4: Create Encryption Service
+
+Build a service to handle encryption operations and API communication.
+
+```swift title="EncryptionService.swift"
+import Foundation
+import BasisTheoryElements
+
+class EncryptionService: ObservableObject {
+    @Published var isEncrypting = false
+    @Published var encryptionError: String?
+    @Published var isSubmitting = false
+    @Published var submitError: String?
+    @Published var submitSuccess = false
+    
+    private let basisTheory: BasisTheoryElements
+    
+    init() {
+        self.basisTheory = BasisTheoryElements(apiKey: EncryptionConfig.publicApiKey)
+    }
+    
+    func encryptTokenPayload(
+        cardNumber: String,
+        expirationMonth: String,
+        expirationYear: String,
+        cvc: String,
+        customerName: String,
+        customerEmail: String
+    ) async throws -> String {
+        
+        await MainActor.run {
+            isEncrypting = true
+            encryptionError = nil
+        }
+        
+        do {
+            // Create the token payload structure
+            let tokenPayload: [String: Any] = [
+                "type": "card",
+                "data": [
+                    "number": cardNumber,
+                    "expiration_month": Int(expirationMonth) ?? 0,
+                    "expiration_year": Int(expirationYear) ?? 0,
+                    "cvc": cvc
+                ],
+                "metadata": [
+                    "customer_name": customerName,
+                    "customer_email": customerEmail,
+                    "source": "ios_encrypted"
+                ]
+            ]
+            
+            // Encrypt the payload
+            let encryptedPayload = try await basisTheory.encrypt(
+                payload: tokenPayload,
+                publicKey: EncryptionConfig.publicKeyPEM,
+                keyId: EncryptionConfig.encryptionKeyId
+            )
+            
+            await MainActor.run {
+                isEncrypting = false
+            }
+            
+            return encryptedPayload
+            
+        } catch {
+            await MainActor.run {
+                isEncrypting = false
+                encryptionError = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    
+    func submitEncryptedPayment(
+        encryptedPayload: String,
+        customerName: String,
+        customerEmail: String
+    ) async throws -> PaymentResponse {
+        
+        await MainActor.run {
+            isSubmitting = true
+            submitError = nil
+            submitSuccess = false
+        }
+        
+        do {
+            let requestBody: [String: Any] = [
+                "encryptedPayload": encryptedPayload,
+                "customerInfo": [
+                    "name": customerName,
+                    "email": customerEmail
+                ]
+            ]
+            
+            let response = try await sendToBackend(requestBody)
+            
+            await MainActor.run {
+                isSubmitting = false
+                submitSuccess = true
+            }
+            
+            return response
+            
+        } catch {
+            await MainActor.run {
+                isSubmitting = false
+                submitError = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    
+    private func sendToBackend(_ requestBody: [String: Any]) async throws -> PaymentResponse {
+        guard let url = URL(string: "https://your-api.com/api/process-encrypted-payment") else {
+            throw EncryptionError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let jsonData = try JSONSerialization.data(withJSONObject: requestBody)
+        request.httpBody = jsonData
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw EncryptionError.serverError
+        }
+        
+        let paymentResponse = try JSONDecoder().decode(PaymentResponse.self, from: data)
+        return paymentResponse
+    }
+    
+    func resetState() {
+        isEncrypting = false
+        encryptionError = nil
+        isSubmitting = false
+        submitError = nil
+        submitSuccess = false
+    }
+}
+
+// MARK: - Models
+
+struct PaymentResponse: Codable {
+    let success: Bool
+    let tokenId: String?
+    let message: String?
+    let orderId: String?
+    let error: String?
+}
+
+enum EncryptionError: LocalizedError {
+    case invalidURL
+    case serverError
+    case encryptionFailed
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return "Invalid API URL"
+        case .serverError:
+            return "Server error occurred"
+        case .encryptionFailed:
+            return "Failed to encrypt payment data"
+        }
+    }
+}
+```
+
+## Step 5: Build the Payment Form UI
+
+Create the user interface for collecting and encrypting payment data.
+
+<Tabs className="bt-tabs" groupId="ui-framework">
+  <TabItem value="swiftui" label="SwiftUI">
+
+```swift title="PaymentFormView.swift"
+import SwiftUI
+import BasisTheoryElements
+
+struct PaymentFormView: View {
+    @StateObject private var encryptionService = EncryptionService()
+    @State private var customerName = ""
+    @State private var customerEmail = ""
+    @State private var cardNumber = ""
+    @State private var expirationMonth = ""
+    @State private var expirationYear = ""
+    @State private var cvc = ""
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 20) {
+                    headerSection
+                    customerInfoSection
+                    cardInfoSection
+                    submitButton
+                    statusMessages
+                }
+                .padding()
+            }
+            .navigationTitle("Payment")
+            .navigationBarTitleDisplayMode(.large)
+        }
+    }
+    
+    private var headerSection: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "creditcard.fill")
+                .font(.system(size: 50))
+                .foregroundColor(.blue)
+            
+            Text("Secure Payment")
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            Text("Your payment data is encrypted before transmission")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.bottom, 20)
+    }
+    
+    private var customerInfoSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            sectionHeader("Customer Information")
+            
+            VStack(spacing: 12) {
+                CustomTextField(
+                    title: "Full Name",
+                    text: $customerName,
+                    placeholder: "John Doe"
+                )
+                
+                CustomTextField(
+                    title: "Email",
+                    text: $customerEmail,
+                    placeholder: "john@example.com",
+                    keyboardType: .emailAddress
+                )
+            }
+        }
+    }
+    
+    private var cardInfoSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            sectionHeader("Card Information")
+            
+            VStack(spacing: 12) {
+                CustomTextField(
+                    title: "Card Number",
+                    text: $cardNumber,
+                    placeholder: "1234 5678 9012 3456",
+                    keyboardType: .numberPad
+                )
+                
+                HStack(spacing: 12) {
+                    CustomTextField(
+                        title: "Month",
+                        text: $expirationMonth,
+                        placeholder: "MM",
+                        keyboardType: .numberPad
+                    )
+                    
+                    CustomTextField(
+                        title: "Year",
+                        text: $expirationYear,
+                        placeholder: "YY",
+                        keyboardType: .numberPad
+                    )
+                    
+                    CustomTextField(
+                        title: "CVC",
+                        text: $cvc,
+                        placeholder: "123",
+                        keyboardType: .numberPad
+                    )
+                }
+            }
+        }
+    }
+    
+    private var submitButton: some View {
+        Button(action: submitPayment) {
+            HStack {
+                if encryptionService.isEncrypting {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(0.8)
+                    Text("Encrypting...")
+                } else if encryptionService.isSubmitting {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(0.8)
+                    Text("Processing...")
+                } else {
+                    Image(systemName: "lock.shield.fill")
+                    Text("Encrypt and Submit Payment")
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(isProcessing ? Color.orange : Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(12)
+            .fontWeight(.semibold)
+        }
+        .disabled(isProcessing || !isFormValid)
+        .opacity(isProcessing || !isFormValid ? 0.7 : 1.0)
+    }
+    
+    private var statusMessages: some View {
+        VStack(spacing: 12) {
+            if let error = encryptionService.encryptionError ?? encryptionService.submitError {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.red)
+                    Text(error)
+                        .foregroundColor(.red)
+                    Spacer()
+                }
+                .padding()
+                .background(Color.red.opacity(0.1))
+                .cornerRadius(8)
+            }
+            
+            if encryptionService.submitSuccess {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                    Text("Payment data encrypted and processed successfully!")
+                        .foregroundColor(.green)
+                    Spacer()
+                }
+                .padding()
+                .background(Color.green.opacity(0.1))
+                .cornerRadius(8)
+            }
+        }
+    }
+    
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.headline)
+            .fontWeight(.semibold)
+            .foregroundColor(.primary)
+    }
+    
+    private var isProcessing: Bool {
+        encryptionService.isEncrypting || encryptionService.isSubmitting
+    }
+    
+    private var isFormValid: Bool {
+        !customerName.isEmpty &&
+        !customerEmail.isEmpty &&
+        !cardNumber.isEmpty &&
+        !expirationMonth.isEmpty &&
+        !expirationYear.isEmpty &&
+        !cvc.isEmpty
+    }
+    
+    private func submitPayment() {
+        Task {
+            do {
+                // First encrypt the payment data
+                let encryptedPayload = try await encryptionService.encryptTokenPayload(
+                    cardNumber: cardNumber,
+                    expirationMonth: expirationMonth,
+                    expirationYear: expirationYear,
+                    cvc: cvc,
+                    customerName: customerName,
+                    customerEmail: customerEmail
+                )
+                
+                // Then submit the encrypted payload
+                let response = try await encryptionService.submitEncryptedPayment(
+                    encryptedPayload: encryptedPayload,
+                    customerName: customerName,
+                    customerEmail: customerEmail
+                )
+                
+                print("Payment processed successfully: \(response)")
+                
+                // Reset form on success
+                await MainActor.run {
+                    resetForm()
+                }
+                
+            } catch {
+                print("Payment processing failed: \(error)")
+            }
+        }
+    }
+    
+    private func resetForm() {
+        customerName = ""
+        customerEmail = ""
+        cardNumber = ""
+        expirationMonth = ""
+        expirationYear = ""
+        cvc = ""
+    }
+}
+
+// MARK: - Custom TextField Component
+
+struct CustomTextField: View {
+    let title: String
+    @Binding var text: String
+    let placeholder: String
+    var keyboardType: UIKeyboardType = .default
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(.secondary)
+            
+            TextField(placeholder, text: $text)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .keyboardType(keyboardType)
+        }
+    }
+}
+
+// MARK: - Preview
+
+struct PaymentFormView_Previews: PreviewProvider {
+    static var previews: some View {
+        PaymentFormView()
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="uikit" label="UIKit">
+
+```swift title="PaymentViewController.swift"
+import UIKit
+import BasisTheoryElements
+
+class PaymentViewController: UIViewController {
+    
+    // MARK: - IBOutlets
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var customerNameTextField: UITextField!
+    @IBOutlet weak var customerEmailTextField: UITextField!
+    @IBOutlet weak var cardNumberTextField: UITextField!
+    @IBOutlet weak var expirationMonthTextField: UITextField!
+    @IBOutlet weak var expirationYearTextField: UITextField!
+    @IBOutlet weak var cvcTextField: UITextField!
+    @IBOutlet weak var submitButton: UIButton!
+    @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    // MARK: - Properties
+    private let encryptionService = EncryptionService()
+    
+    // MARK: - Lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        setupBindings()
+    }
+    
+    // MARK: - Setup
+    
+    private func setupUI() {
+        title = "Payment"
+        
+        // Configure submit button
+        submitButton.layer.cornerRadius = 12
+        submitButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        updateSubmitButton()
+        
+        // Configure text fields
+        configureTextField(customerNameTextField, placeholder: "Full Name")
+        configureTextField(customerEmailTextField, placeholder: "Email")
+        configureTextField(cardNumberTextField, placeholder: "Card Number")
+        configureTextField(expirationMonthTextField, placeholder: "MM")
+        configureTextField(expirationYearTextField, placeholder: "YY")
+        configureTextField(cvcTextField, placeholder: "CVC")
+        
+        // Set keyboard types
+        customerEmailTextField.keyboardType = .emailAddress
+        cardNumberTextField.keyboardType = .numberPad
+        expirationMonthTextField.keyboardType = .numberPad
+        expirationYearTextField.keyboardType = .numberPad
+        cvcTextField.keyboardType = .numberPad
+        
+        // Hide status initially
+        statusLabel.isHidden = true
+        activityIndicator.isHidden = true
+        
+        // Add text field observers
+        [customerNameTextField, customerEmailTextField, cardNumberTextField,
+         expirationMonthTextField, expirationYearTextField, cvcTextField].forEach { textField in
+            textField?.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+        }
+    }
+    
+    private func configureTextField(_ textField: UITextField, placeholder: String) {
+        textField.placeholder = placeholder
+        textField.borderStyle = .roundedRect
+        textField.layer.borderWidth = 1
+        textField.layer.borderColor = UIColor.systemGray4.cgColor
+        textField.layer.cornerRadius = 8
+    }
+    
+    private func setupBindings() {
+        // In a real app, you might use Combine or reactive bindings here
+        // For simplicity, we'll handle state updates manually
+    }
+    
+    // MARK: - Actions
+    
+    @IBAction func submitButtonTapped(_ sender: UIButton) {
+        submitPayment()
+    }
+    
+    @objc private func textFieldChanged() {
+        updateSubmitButton()
+    }
+    
+    // MARK: - Payment Processing
+    
+    private func submitPayment() {
+        guard isFormValid else { return }
+        
+        Task {
+            await MainActor.run {
+                setProcessingState(true, message: "Encrypting payment data...")
+            }
+            
+            do {
+                // Encrypt the payment data
+                let encryptedPayload = try await encryptionService.encryptTokenPayload(
+                    cardNumber: cardNumberTextField.text ?? "",
+                    expirationMonth: expirationMonthTextField.text ?? "",
+                    expirationYear: expirationYearTextField.text ?? "",
+                    cvc: cvcTextField.text ?? "",
+                    customerName: customerNameTextField.text ?? "",
+                    customerEmail: customerEmailTextField.text ?? ""
+                )
+                
+                await MainActor.run {
+                    setProcessingState(true, message: "Processing payment...")
+                }
+                
+                // Submit the encrypted payload
+                let response = try await encryptionService.submitEncryptedPayment(
+                    encryptedPayload: encryptedPayload,
+                    customerName: customerNameTextField.text ?? "",
+                    customerEmail: customerEmailTextField.text ?? ""
+                )
+                
+                await MainActor.run {
+                    setProcessingState(false)
+                    showSuccess(message: "Payment processed successfully!")
+                    resetForm()
+                }
+                
+                print("Payment processed: \(response)")
+                
+            } catch {
+                await MainActor.run {
+                    setProcessingState(false)
+                    showError(message: error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    // MARK: - UI Updates
+    
+    private func setProcessingState(_ isProcessing: Bool, message: String = "") {
+        submitButton.isEnabled = !isProcessing
+        
+        if isProcessing {
+            activityIndicator.startAnimating()
+            activityIndicator.isHidden = false
+            submitButton.setTitle(message.isEmpty ? "Processing..." : message, for: .normal)
+            submitButton.backgroundColor = .systemOrange
+        } else {
+            activityIndicator.stopAnimating()
+            activityIndicator.isHidden = true
+            submitButton.setTitle("Encrypt and Submit Payment", for: .normal)
+            submitButton.backgroundColor = .systemBlue
+        }
+    }
+    
+    private func showSuccess(message: String) {
+        statusLabel.text = "✓ \(message)"
+        statusLabel.textColor = .systemGreen
+        statusLabel.isHidden = false
+        
+        // Hide after delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.statusLabel.isHidden = true
+        }
+    }
+    
+    private func showError(message: String) {
+        statusLabel.text = "✗ \(message)"
+        statusLabel.textColor = .systemRed
+        statusLabel.isHidden = false
+        
+        // Hide after delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.statusLabel.isHidden = true
+        }
+    }
+    
+    private func updateSubmitButton() {
+        submitButton.isEnabled = isFormValid
+        submitButton.alpha = isFormValid ? 1.0 : 0.7
+    }
+    
+    private var isFormValid: Bool {
+        guard let name = customerNameTextField.text, !name.isEmpty,
+              let email = customerEmailTextField.text, !email.isEmpty,
+              let cardNumber = cardNumberTextField.text, !cardNumber.isEmpty,
+              let month = expirationMonthTextField.text, !month.isEmpty,
+              let year = expirationYearTextField.text, !year.isEmpty,
+              let cvc = cvcTextField.text, !cvc.isEmpty else {
+            return false
+        }
+        return true
+    }
+    
+    private func resetForm() {
+        customerNameTextField.text = ""
+        customerEmailTextField.text = ""
+        cardNumberTextField.text = ""
+        expirationMonthTextField.text = ""
+        expirationYearTextField.text = ""
+        cvcTextField.text = ""
+        updateSubmitButton()
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Step 6: Handle Encrypted Payloads in Your Backend
+
+Your backend receives encrypted payloads and creates tokens.
+
+<Tabs className="bt-tabs" groupId="backend-languages">
+  <TabItem value="node" label="Node.js">
+
+```javascript title="server.js"
+const express = require('express');
+const { BasisTheory } = require('@basis-theory/basis-theory-js');
+
+const app = express();
+app.use(express.json());
+
+const bt = new BasisTheory('<PRIVATE_API_KEY>');
+
+app.post('/api/process-encrypted-payment', async (req, res) => {
+    try {
+        const { encryptedPayload, customerInfo } = req.body;
+
+        console.log('Processing encrypted payment for:', customerInfo.email);
+
+        // Create token using encrypted payload
+        const token = await bt.tokens.create({
+            type: 'card',
+            encrypted: encryptedPayload,
+            metadata: {
+                customer_name: customerInfo.name,
+                customer_email: customerInfo.email,
+                platform: 'ios',
+                processed_at: new Date().toISOString()
+            }
+        });
+
+        console.log('Token created:', token.id);
+
+        // Process payment with token...
+        // (Your payment processing logic here)
+
+        res.json({
+            success: true,
+            tokenId: token.id,
+            message: 'Payment processed successfully',
+            orderId: `order_${Date.now()}`
+        });
+
+    } catch (error) {
+        console.error('Error processing encrypted payment:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+app.listen(3000, () => {
+    console.log('Server running on port 3000');
+});
+```
+
+  </TabItem>
+  <TabItem value="swift" label="Swift (Vapor)">
+
+```swift title="PaymentController.swift"
+import Vapor
+import Foundation
+
+struct PaymentController: RouteCollection {
+    func boot(routes: RoutesBuilder) throws {
+        routes.post("process-encrypted-payment", use: processEncryptedPayment)
+    }
+    
+    func processEncryptedPayment(req: Request) async throws -> PaymentResponse {
+        let request = try req.content.decode(EncryptedPaymentRequest.self)
+        
+        // Initialize Basis Theory client
+        let basisTheoryClient = BasisTheoryClient(apiKey: Environment.get("PRIVATE_API_KEY")!)
+        
+        do {
+            // Create token using encrypted payload
+            let tokenRequest = CreateTokenRequest(
+                type: "card",
+                encrypted: request.encryptedPayload,
+                metadata: [
+                    "customer_name": request.customerInfo.name,
+                    "customer_email": request.customerInfo.email,
+                    "platform": "ios",
+                    "processed_at": ISO8601DateFormatter().string(from: Date())
+                ]
+            )
+            
+            let token = try await basisTheoryClient.createToken(tokenRequest)
+            
+            print("Token created: \(token.id)")
+            
+            // Process payment with token...
+            // (Your payment processing logic here)
+            
+            return PaymentResponse(
+                success: true,
+                tokenId: token.id,
+                message: "Payment processed successfully",
+                orderId: "order_\(Int(Date().timeIntervalSince1970))"
+            )
+            
+        } catch {
+            print("Error processing encrypted payment: \(error)")
+            throw Abort(.internalServerError, reason: error.localizedDescription)
+        }
+    }
+}
+
+// MARK: - Request/Response Models
+
+struct EncryptedPaymentRequest: Content {
+    let encryptedPayload: String
+    let customerInfo: CustomerInfo
+    
+    struct CustomerInfo: Content {
+        let name: String
+        let email: String
+    }
+}
+
+struct PaymentResponse: Content {
+    let success: Bool
+    let tokenId: String?
+    let message: String?
+    let orderId: String?
+    let error: String?
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Step 7: Test Your Implementation
+
+### Development Testing
+
+1. **Run your iOS app** in the simulator or on a device
+2. **Fill out the payment form** with test data
+3. **Submit the form** and verify encryption progress
+4. **Check backend logs** to confirm token creation
+5. **Verify success message** appears in the app
+
+### Test Card Numbers
+
+| Card Number | Brand | Description |
+|-------------|-------|-------------|
+| 4242424242424242 | Visa | Valid card for testing |
+| 5555555555554444 | Mastercard | Valid card for testing |
+| 378282246310005 | American Express | Valid card for testing |
+
+### Validation Checklist
+
+- [ ] Form validates all required fields
+- [ ] Encryption shows proper loading state
+- [ ] Success message appears after submission
+- [ ] Backend receives encrypted payload correctly
+- [ ] Token is created successfully
+- [ ] Form resets after successful submission
+- [ ] Error handling works for various failure scenarios
+
+## Error Handling Best Practices
+
+### Network Error Handling
+
+```swift title="Enhanced Error Handling"
+extension EncryptionService {
+    func handleNetworkError(_ error: Error) -> String {
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .notConnectedToInternet:
+                return "No internet connection. Please check your network."
+            case .timedOut:
+                return "Request timed out. Please try again."
+            case .serverResponseUnavailable:
+                return "Server is currently unavailable."
+            default:
+                return "Network error occurred. Please try again."
+            }
+        }
+        return error.localizedDescription
+    }
+    
+    func retryOperation<T>(_ operation: @escaping () async throws -> T, maxRetries: Int = 3) async throws -> T {
+        var lastError: Error?
+        
+        for attempt in 1...maxRetries {
+            do {
+                return try await operation()
+            } catch {
+                lastError = error
+                if attempt < maxRetries {
+                    let delay = TimeInterval(attempt * 2) // Exponential backoff
+                    try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                }
+            }
+        }
+        
+        throw lastError ?? EncryptionError.encryptionFailed
+    }
+}
+```
+
+### Form Validation
+
+```swift title="Enhanced Validation"
+extension PaymentFormView {
+    private func validateForm() -> [String] {
+        var errors: [String] = []
+        
+        if customerName.trimmingCharacters(in: .whitespaces).isEmpty {
+            errors.append("Customer name is required")
+        }
+        
+        if !isValidEmail(customerEmail) {
+            errors.append("Valid email address is required")
+        }
+        
+        if !isValidCardNumber(cardNumber) {
+            errors.append("Valid card number is required")
+        }
+        
+        if !isValidExpirationMonth(expirationMonth) {
+            errors.append("Valid expiration month (01-12) is required")
+        }
+        
+        if !isValidExpirationYear(expirationYear) {
+            errors.append("Valid expiration year is required")
+        }
+        
+        if !isValidCVC(cvc) {
+            errors.append("Valid CVC is required")
+        }
+        
+        return errors
+    }
+    
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: email)
+    }
+    
+    private func isValidCardNumber(_ cardNumber: String) -> Bool {
+        let cleanedNumber = cardNumber.replacingOccurrences(of: " ", with: "")
+        return cleanedNumber.count >= 13 && cleanedNumber.count <= 19 && cleanedNumber.allSatisfy(\.isNumber)
+    }
+    
+    private func isValidExpirationMonth(_ month: String) -> Bool {
+        guard let monthInt = Int(month) else { return false }
+        return monthInt >= 1 && monthInt <= 12
+    }
+    
+    private func isValidExpirationYear(_ year: String) -> Bool {
+        guard let yearInt = Int(year) else { return false }
+        let currentYear = Calendar.current.component(.year, from: Date()) % 100
+        return yearInt >= currentYear && yearInt <= currentYear + 20
+    }
+    
+    private func isValidCVC(_ cvc: String) -> Bool {
+        return cvc.count >= 3 && cvc.count <= 4 && cvc.allSatisfy(\.isNumber)
+    }
+}
+```
+
+## Security Considerations
+
+### Keychain Storage for Keys
+
+```swift title="KeychainService.swift"
+import Security
+import Foundation
+
+class KeychainService {
+    static let shared = KeychainService()
+    
+    private init() {}
+    
+    func store(key: String, data: Data) -> Bool {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecValueData as String: data
+        ]
+        
+        SecItemDelete(query as CFDictionary)
+        
+        let status = SecItemAdd(query as CFDictionary, nil)
+        return status == errSecSuccess
+    }
+    
+    func retrieve(key: String) -> Data? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        
+        var dataTypeRef: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
+        
+        if status == errSecSuccess {
+            return dataTypeRef as? Data
+        }
+        
+        return nil
+    }
+    
+    func delete(key: String) -> Bool {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key
+        ]
+        
+        let status = SecItemDelete(query as CFDictionary)
+        return status == errSecSuccess
+    }
+}
+
+// Usage
+extension EncryptionConfig {
+    static func storePublicKey(_ publicKey: String) {
+        let data = publicKey.data(using: .utf8)!
+        KeychainService.shared.store(key: "encryption_public_key", data: data)
+    }
+    
+    static func retrievePublicKey() -> String? {
+        guard let data = KeychainService.shared.retrieve(key: "encryption_public_key") else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
+    }
+}
+```
+
+### Certificate Pinning
+
+```swift title="NetworkService.swift"
+import Foundation
+import Network
+
+class NetworkService: NSObject {
+    private let session: URLSession
+    
+    override init() {
+        let configuration = URLSessionConfiguration.default
+        self.session = URLSession(
+            configuration: configuration,
+            delegate: NetworkService(),
+            delegateQueue: nil
+        )
+        super.init()
+    }
+    
+    func performRequest(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        return try await session.data(for: request)
+    }
+}
+
+extension NetworkService: URLSessionDelegate {
+    func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        // Implement certificate pinning for production
+        guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+        
+        // Verify the server certificate matches your expected certificate
+        // This is a simplified example - implement proper certificate validation
+        completionHandler(.performDefaultHandling, nil)
+    }
+}
+```
+
+## Production Considerations
+
+### Environment Configuration
+
+```swift title="Environment.swift"
+import Foundation
+
+enum AppEnvironment {
+    case development
+    case staging
+    case production
+    
+    static var current: AppEnvironment {
+        #if DEBUG
+        return .development
+        #elseif STAGING
+        return .staging
+        #else
+        return .production
+        #endif
+    }
+}
+
+struct EnvironmentConfig {
+    let apiBaseURL: String
+    let basisTheoryApiKey: String
+    let encryptionKeyId: String
+    let publicKeyPEM: String
+    
+    static var current: EnvironmentConfig {
+        switch AppEnvironment.current {
+        case .development:
+            return EnvironmentConfig(
+                apiBaseURL: "https://dev-api.yourapp.com",
+                basisTheoryApiKey: Bundle.main.infoDictionary?["BT_DEV_API_KEY"] as? String ?? "",
+                encryptionKeyId: Bundle.main.infoDictionary?["BT_DEV_KEY_ID"] as? String ?? "",
+                publicKeyPEM: Bundle.main.infoDictionary?["BT_DEV_PUBLIC_KEY"] as? String ?? ""
+            )
+        case .staging:
+            return EnvironmentConfig(
+                apiBaseURL: "https://staging-api.yourapp.com",
+                basisTheoryApiKey: Bundle.main.infoDictionary?["BT_STAGING_API_KEY"] as? String ?? "",
+                encryptionKeyId: Bundle.main.infoDictionary?["BT_STAGING_KEY_ID"] as? String ?? "",
+                publicKeyPEM: Bundle.main.infoDictionary?["BT_STAGING_PUBLIC_KEY"] as? String ?? ""
+            )
+        case .production:
+            return EnvironmentConfig(
+                apiBaseURL: "https://api.yourapp.com",
+                basisTheoryApiKey: Bundle.main.infoDictionary?["BT_PROD_API_KEY"] as? String ?? "",
+                encryptionKeyId: Bundle.main.infoDictionary?["BT_PROD_KEY_ID"] as? String ?? "",
+                publicKeyPEM: Bundle.main.infoDictionary?["BT_PROD_PUBLIC_KEY"] as? String ?? ""
+            )
+        }
+    }
+}
+```
+
+### Performance Optimization
+
+- **Lazy initialization**: Only create encryption service when needed
+- **Background processing**: Perform encryption on background queues
+- **Caching**: Cache public keys and configuration data
+- **Memory management**: Properly dispose of sensitive data
+
+### App Store Guidelines
+
+- **Privacy Policy**: Include information about data encryption and processing
+- **Data Usage**: Clearly describe how payment data is handled
+- **Third-party SDKs**: Ensure compliance with App Store guidelines for financial apps
+- **Security**: Implement proper certificate validation and network security
+
+## Next Steps
+
+### Advanced Features
+- **Biometric authentication**: Add Touch ID/Face ID for additional security
+- **Offline support**: Handle network failures gracefully
+- **Multi-language support**: Internationalize your payment forms
+- **Accessibility**: Ensure your forms are accessible to all users
+
+### Integration Options
+- **Apple Pay**: Integrate with Apple Pay for streamlined payments
+- **Wallet integration**: Support adding cards to Apple Wallet
+- **Analytics**: Track encryption success rates and performance
+- **Testing**: Implement comprehensive unit and UI tests
+
+For complete examples and advanced patterns, visit our [iOS encryption examples repository](https://github.com/Basis-Theory/ios-encryption-examples). 

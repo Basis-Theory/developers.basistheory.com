@@ -221,6 +221,27 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Token Encryption",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/encrypt.svg",
+          dark: "/img/sidebar/dark/encrypt.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/encrypt/index",
+      },
+      items: [
+        "guides/encrypt/encrypt-data-from-web",
+        "guides/encrypt/encrypt-data-with-react",
+        "guides/encrypt/encrypt-data-with-ios",
+        "guides/encrypt/encrypt-data-with-android",
+        "guides/encrypt/encrypt-data-with-react-native"
+      ],
+    },
+    {
+      type: "category",
       label: "Other Data",
       customProps: {
         icon: {
