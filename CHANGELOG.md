@@ -1,3 +1,10 @@
+# [1.248.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.247.0...v1.248.0) (2025-07-01)
+
+
+### Features
+
+* **8290:** create docs to encrypted token attribute /tokens and /tokenize ([#590](https://github.com/Basis-Theory/developers.basistheory.com/issues/590)) ([fff9066](https://github.com/Basis-Theory/developers.basistheory.com/commit/fff9066ae6722d8931a1ac195db36fe446243a0c))
+
 # [1.247.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.246.0...v1.247.0) (2025-06-23)
 
 
