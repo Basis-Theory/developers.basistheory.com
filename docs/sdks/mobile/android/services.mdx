@@ -78,6 +78,83 @@ As you can see from this example, the `createToken` function is capable of resol
 from references to Element inputs. This enables your application to tokenize sensitive data values without
 needing to touch the raw data directly.
 
+### encryptTokens
+
+This function encrypts sensitive data using public key and Key ID created through [Encryption Keys](/docs/api/client-keys).
+The `encryptTokens` method enables encryption of data payloads, transforming sensitive information into encrypted JSON Web Encryption (JWE) strings.
+
+The `encryptTokens` method accepts data objects containing element instances and plaintext payloads. It also supports encrypting multiple nested token payloads within a single operation.
+
+
+```kotlin showLineNumbers
+val encryptTokenRequest = EncryptTokenRequest(
+    tokenRequests = object {
+        val data = object {
+            val number = cardNumberElement // an instance of CardNumberElement
+            val expiration_month = cardExpElement.month() // using the data parsing method
+            val expiration_year = cardExpElement.year()
+            val cvc = cvcElement // an instance of CardVerificationCodeElement
+        }
+        val type = "card"
+    },
+    publicKey = "-----BEGIN PUBLIC KEY-----\nw6RFs74UmOcxjbWBSlZQ0...=\n-----END PUBLIC KEY-----",
+    keyId = "d6b86549-212f-4bdc-adeb-2f39902740f6"
+)
+
+val result = bt.encryptTokens(encryptTokenRequest)
+
+// Response contains encrypted JWE string and type
+println(result.encrypted) // JWE encrypted payload
+println(result.type) // Token type
+```
+
+#### Encrypt Multiple Token Payloads
+
+The `encryptTokens` method allows you to encrypt multiple token payloads in a single operation by nesting them under object keys:
+
+```kotlin showLineNumbers
+val encryptTokenRequest = EncryptTokenRequest(
+    tokenRequests = object {
+        val tokenA = object {
+            val data = object {
+                val name = nameElement // an instance of TextElement
+                val phoneNumber = phoneNumberElement // an instance of TextElement
+                val note = "Non sensitive value" // plaintext strings can also be included
+            }
+            val type = "token"
+        }
+        val tokenB = object {
+            val data = object {
+                val name = nameElement
+                val phoneNumber = phoneNumberElement
+                val note = "Non sensitive value"
+            }
+            val type = "token"
+        }
+    },
+    publicKey = "-----BEGIN PUBLIC KEY-----\nw6RFs74UmOcxjbWBSlZQ0...=\n-----END PUBLIC KEY-----",
+    keyId = "d6b86549-212f-4bdc-adeb-2f39902740f6"
+)
+
+val result = bt.encryptTokens(encryptTokenRequest)
+
+// Multiple encrypted payloads returned in the response
+println(result.tokenA.encrypted) // Encrypted tokenA data
+println(result.tokenB.encrypted) // Encrypted tokenB data
+
+// Each response includes the token type
+println(result.tokenA.type) // "token"
+println(result.tokenB.type) // "token"
+
+// Full response with all encrypted payloads
+println(result.toString())
+```
+
+As you can see from these examples, the `encryptTokens` function is capable of resolving the raw data
+from references to Element inputs and encrypting them securely. This enables your application to encrypt 
+sensitive data values without needing to touch the raw data directly. The response contains only the 
+encrypted JWE string and token type - no plaintext data is exposed.
+
 ### createSession
 
 To retrieve sensitive data on Android, you'll need to create a `session` and use its `sessionKey` for making requests securely.
