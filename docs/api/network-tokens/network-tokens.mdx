@@ -608,6 +608,194 @@ Returns a [cryptogram object](#cryptogram-object) if successful. Returns [an err
     "eci": "07"
 }
 ```
+
+## Suspend a Network Token
+Suspends a Network Token, preventing it from being used for future transactions.
+
+<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/network-tokens/{id}/suspend"/>
+
+### Permissions
+
+<Permission content="network-token:suspend"/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL" default>
+    ```shell showLineNumbers
+    curl -L -X PUT 'https://api.basistheory.com/network-tokens/485fcc69-e105-4239-b821-92c612f9b03d/suspend' \
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'Content-Type: application/json'
+    ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.networkTokens.suspend("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.NetworkTokens.SuspendAsync("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    new NetworkTokensClient(ClientOptions.builder().build())
+      .suspend("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    await client.network_tokens.suspend("485fcc69-e105-4239-b821-92c612f9b03d")
+    ```
+  </TabItem>
+
+</Tabs>
+
+#### Request Parameters
+| Attribute | Required | Type   | Description                             |
+|-----------|----------|--------|-----------------------------------------|
+| id        | Yes      | string | The ID of the network token to suspend  |
+
+### Response
+Returns a [network token object](#network-token-object) if successful. Returns [an error](/docs/api/errors) if there were validation errors, or the network token failed to suspend.
+
+```json
+{
+    "id": "1a97a7f6-5d7e-4a8e-ad08-c2472cfedf7f",
+    "tenant_id": "a4ed655d-325e-4490-8c5a-2ff288db7aa5",
+    "data": {
+        "number": "XXXXXXXXXXXX2426",
+        "expiration_month": 12,
+        "expiration_year": 2029
+    },
+    "network_token": {
+        "bin": "433561",
+        "last4": "2426",
+        "expiration_month": 12,
+        "expiration_year": 2029,
+        "brand": "visa",
+        "funding": "debit",
+        "issuer": {
+            "country": "US",
+            "name": "CENTRAL FEDERAL SAVINGS AND LOAN ASSOCIATION"
+        },
+        "issuer_country": {
+            "alpha2": "US",
+            "name": "UNITED STATES OF AMERICA",
+            "numeric": "840"
+        },
+        "segment": "Consumer",
+        "additional": [
+            {
+                "brand": "star",
+                "funding": "debit",
+                "issuer": {
+                    "country": "US"
+                }
+            }
+        ]
+    },
+    "status": "suspended",
+    "created_by": "f8dee6b4-2f92-4052-81f9-8b0fc8078a6e",
+    "created_at": "2025-05-07T17:04:06.3338559+00:00"
+}
+```
+## Resume a Network Token
+
+Resumes a suspended Network Token, allowing it to be used again for future transactions.
+
+<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/network-tokens/{id}/resume"/>
+
+### Permissions
+
+<Permission content="network-token:resume"/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL" default>
+    ```shell showLineNumbers
+    curl -L -X PUT 'https://api.basistheory.com/network-tokens/485fcc69-e105-4239-b821-92c612f9b03d/resume' \
+    -H 'BT-API-KEY: <API_KEY>' \
+    -H 'Content-Type: application/json'
+    ```
+  </TabItem>
+  <TabItem value="node" label="Node">
+    ```javascript showLineNumbers
+    await client.networkTokens.resume("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.NetworkTokens.ResumeAsync("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="java" label="Java">
+    ```java showLineNumbers
+    new NetworkTokensClient(ClientOptions.builder().build())
+      .resume("485fcc69-e105-4239-b821-92c612f9b03d");
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    await client.network_tokens.resume("485fcc69-e105-4239-b821-92c612f9b03d")
+    ```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute | Required | Type   | Description                             |
+|-----------|----------|--------|-----------------------------------------|
+| id        | Yes      | string | The ID of the network token to resume   |
+
+### Response
+
+Returns a [network token object](#network-token-object) if successful. Returns [an error](/docs/api/errors) if there were validation errors, or the network token failed to activate.
+
+```json
+{
+    "id": "1a97a7f6-5d7e-4a8e-ad08-c2472cfedf7f",
+    "tenant_id": "a4ed655d-325e-4490-8c5a-2ff288db7aa5",
+    "data": {
+        "number": "XXXXXXXXXXXX2426",
+        "expiration_month": 12,
+        "expiration_year": 2029
+    },
+    "network_token": {
+        "bin": "433561",
+        "last4": "2426",
+        "expiration_month": 12,
+        "expiration_year": 2029,
+        "brand": "visa",
+        "funding": "debit",
+        "issuer": {
+            "country": "US",
+            "name": "CENTRAL FEDERAL SAVINGS AND LOAN ASSOCIATION"
+        },
+        "issuer_country": {
+            "alpha2": "US",
+            "name": "UNITED STATES OF AMERICA",
+            "numeric": "840"
+        },
+        "segment": "Consumer",
+        "additional": [
+            {
+                "brand": "star",
+                "funding": "debit",
+                "issuer": {
+                    "country": "US"
+                }
+            }
+        ]
+    },
+    "status": "active",
+    "created_by": "f8dee6b4-2f92-4052-81f9-8b0fc8078a6e",
+    "created_at": "2025-05-07T17:04:06.3338559+00:00"
+}
+```
+
 ## Delete a Network Token
 
 Deletes a Network Token.
