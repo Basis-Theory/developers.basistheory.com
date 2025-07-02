@@ -10,13 +10,14 @@ import PlaintextHttpClientResponse from "@site/docs/sdks/_plaintext-http-client-
 
 # Web Elements Services
 
-Basis Theory Web Elements offers a set of services that enable you to securely collect, manage, and share sensitive data without exposing it to your application code. This document explains the available services and how to use them in your applications.
+Basis Theory Web Elements offers a set of services that enable you to securely collect, manage, encrypt, and share sensitive data without exposing it to your application code. This document explains the available services and how to use them in your applications.
 
 ## Overview
 
 The services provided by Basis Theory Web Elements fall into four main categories:
 
-- **Data Collection** - Securely collect and tokenize sensitive data
+- **Data Collection** - Securely collect, and tokenize sensitive data
+- **Data Encryption** - Securely encrypt sensitive data using public key encryption
 - **Data Retrieval** - Safely detokenize and reveal sensitive data
 - **Session Management** - Create and manage temporary access sessions
 - **Third-Party Integration** - Securely interact with third-party APIs
@@ -214,6 +215,154 @@ bt.tokenIntents
   })
   .then((tokenIntent) => {
     console.log(tokenIntent.id);
+  });
+```
+
+## Data Encryption
+
+### Encrypting Data
+
+Basis Theory Elements can securely encrypt sensitive data using public key and Key ID created through [Encryption Keys](/docs/api/client-keys).
+The `tokens.encrypt` method enables encryption of data payloads, transforming sensitive information into encrypted JSON Web Encryption (JWE) strings.
+
+The `tokens.encrypt` method accepts data objects containing element instances and plaintext payloads. It also supports encrypting multiple nested token payloads within a single operation.
+
+#### 1. Encrypt a Single Token Payload
+
+The `tokens.encrypt` method encrypts a single token payload with your sensitive data:
+
+```javascript
+// Encrypt a token payload containing sensitive data
+bt.tokens
+  .encrypt({
+    tokenRequests: {
+      type: "token", // Specify the token type
+      data: {
+        // Include element instances containing sensitive data
+        sensitiveData: sensitiveDataElement, // Data remains in secure iframe
+        
+        // Include non-sensitive data directly
+        nonSensitiveData: "plainText", 
+        
+        // Nested data structures are supported
+        otherData: {
+          someInteger: 20,
+          someBoolean: false,
+        },
+        someOtherData: ["plainText1", "plainText2"],
+      },
+    },
+    public_key: "base64 encoded PEM file with public key",
+    key_id: "ECC93C58-CAF0-4179-BC56-09C21984B7BD" // Key identifier
+  })
+  .then((response) => {
+    // Response contains encrypted JWE string
+    console.log(response.encrypted); // JWE encrypted payload
+    console.log(response.type); // Token type
+    
+    // No sensitive data exposed - only encrypted string
+    console.log(JSON.stringify(response)); 
+  });
+```
+
+<Alert type={Alerts.INFO}>Note that the original data property will not appear in the response, maintaining secure data handling.</Alert>
+
+#### Encrypt a Card Token Payload
+
+For payment card data, you can encrypt card payloads using either the combined `CardElement` or individual card elements:
+
+```javascript
+// Option 1: Using the combined CardElement
+bt.tokens
+  .encrypt({
+    tokenRequests: {
+      type: "card", // Specific type for cards
+      data: cardElement, // Pass the entire card element
+    },
+    public_key: "base64 encoded PEM file with public key",
+    key_id: "ECC93C58-CAF0-4179-BC56-09C21984B7BD"
+  })
+  .then((response) => {
+    console.log(response.encrypted); // Encrypted card data as JWE
+    console.log(response.type); // "card"
+  });
+
+// Option 2: Using individual card elements
+bt.tokens
+  .encrypt({
+    tokenRequests: {
+      type: "card",
+      data: {
+        // Each piece of card data in a separate element
+        number: cardNumberElement,
+        expiration_month: cardExpirationDateElement.month(), // Using the data parsing method
+        expiration_year: cardExpirationDateElement.year(),
+        cvc: cardVerificationCodeElement
+      }
+    },
+    public_key: "base64 encoded PEM file with public key",
+    key_id: "ECC93C58-CAF0-4179-BC56-09C21984B7BD"
+  })
+  .then((response) => {
+    console.log(response.encrypted); // Encrypted card data as JWE
+    console.log(response.type); // "card"
+  });
+```
+
+#### 2. Encrypt Multiple Token Payloads at Once
+
+The `tokens.encrypt` method allows you to encrypt multiple token payloads in a single operation by nesting them under object keys:
+
+```javascript
+// Encrypt multiple token payloads at once
+bt.tokens
+  .encrypt({
+    tokenRequests: {
+      // Create two card token payloads with different approaches
+      tokenA: {
+        type: "card",
+        data: cardElement, // Using the combined card element
+      },
+      tokenB: {
+        type: "card",
+        data: {
+          // Using individual card elements
+          number: cardNumberElement,
+          expiration_month: cardExpirationDateElement.month(),
+          expiration_year: cardExpirationDateElement.year(),
+          cvc: cardVerificationCodeElement,
+        },
+      },
+      // Create a generic token payload
+      tokenC: {
+        type: "token",
+        data: {
+          sensitiveData: sensitiveDataElement,
+          nonSensitiveData: "plainText",
+          otherData: {
+            someInteger: 20,
+            someBoolean: false,
+          },
+          someOtherData: ["plainText1", "plainText2"],
+        },
+      },
+    },
+    public_key: "base64 encoded PEM file with public key",
+    key_id: "ECC93C58-CAF0-4179-BC56-09C21984B7BD"
+  })
+  .then((response) => {
+    // Multiple encrypted payloads returned in the response
+    console.log(response.tokenA.encrypted); // Encrypted card A data
+    console.log(response.tokenB.encrypted); // Encrypted card B data
+    console.log(response.tokenC.encrypted); // Encrypted generic data
+    
+    // Each response includes the token type
+    console.log(response.tokenA.type); // "card"
+    console.log(response.tokenB.type); // "card"
+    console.log(response.tokenC.type); // "token"
+    
+    // Full response with all encrypted payloads
+    console.log(JSON.stringify(response));
   });
 ```
 
