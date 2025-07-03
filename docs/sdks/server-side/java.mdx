@@ -82,12 +82,18 @@ The latest release version can be found in [GitHub](https://github.com/Basis-The
 ## Initialization
 
 ```java
-import com.basis.theory.api.core.ClientOptions;
-import com.basis.theory.api.resources.tenants.TenantsClient;
+import com.basistheory.BasisTheoryApiClient;
+import com.basistheory.resources.tokens.requests.CreateTokenRequest;
+import com.basistheory.types.Token;
 
-TenantsClient client = new TenantsClient(
-    ClientOptions.builder()
-        .addHeader("BT-API-KEY", "<API_KEY>")
-        .build()
-);
+BasisTheoryApiClient client = BasisTheoryApiClient
+        .builder()
+        .url("https://api.basistheory.com")
+        .apiKey("<API_KEY>")
+        .build();
+
+Token token = client.tokens().create(CreateTokenRequest.builder()
+        .type("token")
+        .data("sensitive-data")
+        .build());
 ```
