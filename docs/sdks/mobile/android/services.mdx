@@ -78,12 +78,12 @@ As you can see from this example, the `createToken` function is capable of resol
 from references to Element inputs. This enables your application to tokenize sensitive data values without
 needing to touch the raw data directly.
 
-### encryptTokens
+### encryptToken
 
 This function encrypts sensitive data using public key and Key ID created through [Encryption Keys](/docs/api/client-keys).
-The `encryptTokens` method enables encryption of data payloads, transforming sensitive information into encrypted JSON Web Encryption (JWE) strings.
+The `encryptToken` method enables encryption of data payloads, transforming sensitive information into encrypted JSON Web Encryption (JWE) strings.
 
-The `encryptTokens` method accepts data objects containing element instances and plaintext payloads. It also supports encrypting multiple nested token payloads within a single operation.
+The `encryptToken` method accepts data objects containing element instances and plaintext payloads. It also supports encrypting multiple nested token payloads within a single operation.
 
 
 ```kotlin showLineNumbers
@@ -101,7 +101,7 @@ val encryptTokenRequest = EncryptTokenRequest(
     keyId = "d6b86549-212f-4bdc-adeb-2f39902740f6"
 )
 
-val result = bt.encryptTokens(encryptTokenRequest)
+val result = bt.encryptToken(encryptTokenRequest)
 
 // Response contains encrypted JWE string and type
 println(result.encrypted) // JWE encrypted payload
@@ -110,7 +110,7 @@ println(result.type) // Token type
 
 #### Encrypt Multiple Token Payloads
 
-The `encryptTokens` method allows you to encrypt multiple token payloads in a single operation by nesting them under object keys:
+The `encryptToken` method allows you to encrypt multiple token payloads in a single operation by nesting them under object keys:
 
 ```kotlin showLineNumbers
 val encryptTokenRequest = EncryptTokenRequest(
@@ -136,7 +136,7 @@ val encryptTokenRequest = EncryptTokenRequest(
     keyId = "d6b86549-212f-4bdc-adeb-2f39902740f6"
 )
 
-val result = bt.encryptTokens(encryptTokenRequest)
+val result = bt.encryptToken(encryptTokenRequest)
 
 // Multiple encrypted payloads returned in the response
 println(result.tokenA.encrypted) // Encrypted tokenA data
@@ -150,7 +150,7 @@ println(result.tokenB.type) // "token"
 println(result.toString())
 ```
 
-As you can see from these examples, the `encryptTokens` function is capable of resolving the raw data
+As you can see from these examples, the `encryptToken` function is capable of resolving the raw data
 from references to Element inputs and encrypting them securely. This enables your application to encrypt 
 sensitive data values without needing to touch the raw data directly. The response contains only the 
 encrypted JWE string and token type - no plaintext data is exposed.
