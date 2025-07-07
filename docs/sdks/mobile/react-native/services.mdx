@@ -81,6 +81,92 @@ const token = await bt?.tokens.tokenize({
 });
 ```
 
+### Encrypt tokens
+
+This function encrypts sensitive data using a public key and Key ID created through [Encryption Keys](/docs/api/client-keys).
+The `encryptTokens` method enables encryption of data payloads, transforming sensitive information into encrypted JSON Web Encryption (JWE) strings.
+
+The `encryptTokens` method accepts data objects containing element instances and plaintext payloads. It also supports encrypting multiple nested token payloads within a single operation.
+
+```typescript
+const { bt } = useBasisTheory("<PUBLIC API KEY>");
+
+const encryptResponse = await bt?.tokens.encrypt({
+  tokenRequests: {
+    type: "card",
+    data: {
+      number: cardNumberRef.current, // element reference
+      expiration_month: cardExpirationRef.current.month(),
+      expiration_year: cardExpirationRef.current.year(),
+      cvc: cardVerificationRef.current,
+    },
+  },
+  publicKey: "-----BEGIN PUBLIC KEY-----\nw6RFs74UmOcxjbWBSlZQ0...=\n-----END PUBLIC KEY-----",
+  keyId: "d6b86549-212f-4bdc-adeb-2f39902740f6"
+});
+
+// Response contains encrypted JWE string and type
+console.log(encryptResponse.encrypted); // JWE encrypted payload
+console.log(encryptResponse.type); // Token type
+```
+
+#### Encrypt Multiple Token Payloads
+
+The `encryptTokens` method allows you to encrypt multiple token payloads in a single operation by nesting them under object keys:
+
+```typescript
+const { bt } = useBasisTheory("<PUBLIC API KEY>");
+
+const encryptResponse = await bt?.tokens.encrypt({
+  tokenRequests: {
+    creditCard: {
+      type: "card",
+      data: {
+        number: cardNumberRef.current, // element reference
+        expiration_month: cardExpirationRef.current.month(),
+        expiration_year: cardExpirationRef.current.year(),
+        cvc: cardVerificationRef.current,
+      },
+    },
+    bankAccount: {
+      type: "bank",
+      data: {
+        routing_number: routingNumberRef.current, // element reference
+        account_number: accountNumberRef.current,
+      },
+    },
+    personalInfo: {
+      type: "token",
+      data: {
+        name: nameRef.current, // element reference
+        email: "john@example.com", // plaintext data
+        phone: phoneRef.current,
+      },
+    },
+  },
+  publicKey: "-----BEGIN PUBLIC KEY-----\nw6RFs74UmOcxjbWBSlZQ0...=\n-----END PUBLIC KEY-----",
+  keyId: "d6b86549-212f-4bdc-adeb-2f39902740f6"
+});
+
+// Multiple encrypted payloads returned in the response
+console.log(encryptResponse.creditCard.encrypted); // Encrypted card data
+console.log(encryptResponse.bankAccount.encrypted); // Encrypted bank data
+console.log(encryptResponse.personalInfo.encrypted); // Encrypted personal data
+
+// Each response includes the token type
+console.log(encryptResponse.creditCard.type); // "card"
+console.log(encryptResponse.bankAccount.type); // "bank"
+console.log(encryptResponse.personalInfo.type); // "token"
+
+// Full response with all encrypted payloads
+console.log(JSON.stringify(encryptResponse));
+```
+
+As you can see from these examples, the `encryptTokens` function is capable of resolving the raw data
+from references to Element inputs and encrypting them securely. This enables your application to encrypt 
+sensitive data values without needing to touch the raw data directly. The response contains only the 
+encrypted JWE string and token type - no plaintext data is exposed.
+
 ### Retrieve a token and display its data
 
 This function wraps the [get a token API endpoint](/docs/api/tokens/#get-a-token), enabling you to fetch a single token by its `id`.
