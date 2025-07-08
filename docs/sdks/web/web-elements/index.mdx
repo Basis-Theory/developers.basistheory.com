@@ -70,7 +70,7 @@ yarn add @basis-theory/web-elements
       </TabItem>
     </Tabs>
   </TabItem>
-  
+
   <TabItem value="react" label="React Elements">
 
 <GithubCard heading="React Elements" icon={SDK.REACT} organization="basis-theory" repository="react-elements" fetchSri={true} />
@@ -115,7 +115,7 @@ import { useBasisTheory, BasisTheoryProvider } from "@basis-theory/react-element
 function App() {
   // Initialize with your API key using the hook
   const { bt } = useBasisTheory("<YOUR_API_KEY>");
-  
+
   return (
     <BasisTheoryProvider bt={bt}>
       {/* Your app content */}
@@ -144,11 +144,12 @@ cardElement.mount('#card-container');
 // Tokenize the data when ready
 document.getElementById('payment-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  const { token } = await bt.tokenize({
-    card: cardElement
+
+  const token = await bt.tokens.create({
+    type: 'card',
+    data: cardElement
   });
-  
+
   console.log('Token created:', token.id);
 });
 ```
@@ -163,17 +164,18 @@ import { CardElement, useBasisTheory } from "@basis-theory/react-elements";
 function PaymentForm() {
   const { bt } = useBasisTheory();
   const cardRef = useRef(null);
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const { token } = await bt.tokenize({
-      card: cardRef.current
+
+    const token = await bt.tokens.create({
+      type: 'card',
+      data: cardRef.current
     });
-    
+
     console.log('Token created:', token.id);
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <CardElement id="my-card" ref={cardRef} />
@@ -192,7 +194,7 @@ Both Element SDKs require an API Key associated with a **Public Application** wi
 
 To create one:
 1. Log in to the [Basis Theory Portal](https://portal.basistheory.com)
-2. Create a new "Public" Application 
+2. Create a new "Public" Application
 3. Select only the permissions you need (typically `token:create` and possibly `token:update`)
 
 <Alert type={Alerts.WARNING}>Never use Management or Private API keys in frontend code.</Alert>
