@@ -1,3 +1,10 @@
+## [1.248.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.248.0...v1.248.1) (2025-07-10)
+
+
+### Bug Fixes
+
+* apple stripe example ([#599](https://github.com/Basis-Theory/developers.basistheory.com/issues/599)) ([f1415ae](https://github.com/Basis-Theory/developers.basistheory.com/commit/f1415aea0c36cc844353be48ca51475aa441941f))
+
 # [1.248.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.247.0...v1.248.0) (2025-07-01)
 
 
