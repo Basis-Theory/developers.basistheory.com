@@ -727,49 +727,58 @@ const config = {
 
           // Process each MDX file
           for (const [mdxPath, mdxContent] of mdxFiles.entries()) {
-            try {
-              // Skip files that are imports/partials (start with underscore or are in certain patterns)
-              const baseName = path.basename(mdxPath);
-              const isImportFile = baseName.startsWith('_') ||
-                mdxPath.includes('/_') ||
-                mdxPath.includes('/sections/_') ||
-                // Skip common import patterns
-                baseName.match(/^_(test-cards|card-brands|custom-bin|ios-http-client-response|plaintext-http-client-response|raw-proxy-response|bank-details|bin-details-test-cards|card-details|cvc-ttl-info-alert|network-token-details)\.mdx$/);
 
-              if (isImportFile) {
-                console.log("LLMs plugin: Skipping import file:", mdxPath);
-                continue;
-              }
+            // Skip files that are imports/partials (start with underscore or are in certain patterns)
+            const baseName = path.basename(mdxPath);
+            const isImportFile = baseName.startsWith('_') ||
+              mdxPath.includes('/_') ||
+              mdxPath.includes('/sections/_') ||
+              // Skip common import patterns
+              baseName.match(/^_(test-cards|card-brands|custom-bin|ios-http-client-response|plaintext-http-client-response|raw-proxy-response|bank-details|bin-details-test-cards|card-details|cvc-ttl-info-alert|network-token-details)\.mdx$/);
 
-              // Convert the MDX path to the output path
-              const relativeOutputPath = mdxPath
-                .replace(/\.mdx$/, "")
-                .split("/")
-                .filter(Boolean);
-
-              // If the file is named index.mdx, don't include 'index' in the output path
-              const isIndexFile = relativeOutputPath[relativeOutputPath.length - 1] === "index";
-              const outputPath = isIndexFile ? relativeOutputPath.slice(0, -1) : relativeOutputPath;
-
-              const outputDir = path.join(outDir, "docs", ...outputPath);
-              const fileName = outputPath[outputPath.length - 1] || "index";
-              const mdPath = path.join(outputDir, `${fileName}.md`);
-
-              // Ensure directory exists
-              await fs.promises.mkdir(outputDir, { recursive: true });
-
-              // Write markdown file
-              await fs.promises.writeFile(mdPath, mdxContent);
-              processedFiles++;
-
-              // Add to links list - use the docs path for linking
-              const docPath = "/docs/" + relativeOutputPath.join("/");
-              markdownLinks.push(`- [${docPath}](https://developers.basistheory.com/${path.relative(outDir, mdPath)})`);
-
-              console.log("LLMs plugin: Wrote markdown file:", mdPath);
-            } catch (error) {
-              console.error("LLMs plugin: Error processing file:", mdxPath, error);
+            if (isImportFile) {
+              console.log("LLMs plugin: Skipping import file:", mdxPath);
+              continue;
             }
+
+            // Convert the MDX path to the output path
+            const relativeOutputPath = mdxPath
+              .replace(/\.mdx$/, "")
+              .split("/")
+              .filter(Boolean);
+
+            // If the file is named index.mdx, don't include 'index' in the output path
+            const isIndexFile = relativeOutputPath[relativeOutputPath.length - 1] === "index";
+            const outputPath = relativeOutputPath;
+
+            const outputDir = isIndexFile ? path.join(outDir, "docs", ...outputPath.slice(0, -1)) : path.join(outDir, "docs", ...outputPath);
+            const fileName = isIndexFile ? outputPath[outputPath.length - 2] : outputPath[outputPath.length - 1];
+            const outputPathWithoutFilename = isIndexFile ? outputPath.slice(0, -2) : outputPath.slice(0, -1);
+            const mdPath = path.join(outputPathWithoutFilename.join("/"), `${fileName}.md`);
+
+            // Debugging
+            if (isIndexFile) {
+              console.log("LLMs plugin: isIndexFile:", isIndexFile);
+              console.log("LLMs plugin: outputPath:", outputPath);
+              console.log("LLMs plugin: outputDir:", outputDir);
+              console.log("LLMs plugin: fileName:", fileName);
+              console.log("LLMs plugin: outputPathWithoutFilename:", outputPathWithoutFilename);
+              console.log("LLMs plugin: mdPath:", mdPath);
+            }
+
+            // Ensure directory exists
+            await fs.promises.mkdir(outputDir, { recursive: true });
+
+            // Write markdown file
+            await fs.promises.writeFile(`${outputDir}.md`, mdxContent);
+            processedFiles++;
+
+            // Add to links list - use the docs path for linking
+            const docPath = "/docs/" + mdPath;
+            markdownLinks.push(`- [${docPath}](https://developers.basistheory.com${docPath})`);
+
+            console.log("LLMs plugin: Wrote markdown file:", mdPath);
+
           }
 
           console.log("LLMs plugin: Processed files:", processedFiles);
