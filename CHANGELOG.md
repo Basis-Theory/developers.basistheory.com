@@ -1,3 +1,10 @@
+# [1.249.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.248.1...v1.249.0) (2025-07-11)
+
+
+### Features
+
+* programmatically fetch ip list ([#601](https://github.com/Basis-Theory/developers.basistheory.com/issues/601)) ([f539043](https://github.com/Basis-Theory/developers.basistheory.com/commit/f53904345bedf4ded13a563c7bf15d6ea888c9ac))
+
 ## [1.248.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.248.0...v1.248.1) (2025-07-10)
 
 
