@@ -41,7 +41,7 @@ export default function DocItemHeader() {
     const getMarkdownPaths = () => {
         const path = location.pathname;
         const cleanPath = path.replace(new RegExp(`^${baseUrl}`), '').replace(/\/$/, '');
-        const contentPath = `${baseUrl}${cleanPath}/content.md`.replace(/\/+/g, '/');
+        const contentPath = `${baseUrl}${cleanPath}.md`.replace(/\/+/g, '/');
         return { contentPath };
     };
 
