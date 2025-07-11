@@ -368,14 +368,14 @@ const config = {
           try {
             // Write llm.txt with links to all markdown files
             const llmsTxt = `# ${context.siteConfig.title}\n\n## Documentation Files\n\n${markdownLinks.join("\n")}`;
-            const llmsTxtPath = path.join(outDir, "llm.txt");
-            console.log("LLMs plugin: Writing llm.txt to:", llmsTxtPath);
+            const llmsTxtPath = path.join(outDir, "llms.txt");
+            console.log("LLMs plugin: Writing llms.txt to:", llmsTxtPath);
             await fs.promises.writeFile(llmsTxtPath, llmsTxt);
 
             // Write llm-full.txt with concatenated content
             const fullContent = Array.from(mdxFiles.values()).join("\n\n---\n\n");
-            const llmsFullPath = path.join(outDir, "llm-full.txt");
-            console.log("LLMs plugin: Writing llm-full.txt to:", llmsFullPath);
+            const llmsFullPath = path.join(outDir, "llms-full.txt");
+            console.log("LLMs plugin: Writing llms-full.txt to:", llmsFullPath);
             await fs.promises.writeFile(llmsFullPath, fullContent);
 
             console.log("LLMs plugin: Successfully wrote all files");
