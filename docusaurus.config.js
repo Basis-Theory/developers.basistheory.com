@@ -779,6 +779,15 @@ const config = {
 
               // Write markdown file
               await fs.promises.writeFile(`${outputDir}.md`, mdxContent);
+
+              const pathSegments = outputDir.split('/');
+              if (pathSegments[pathSegments.length - 1] === pathSegments[pathSegments.length - 2]) {
+                const parentPathSegments = pathSegments.slice(0, -1);
+                // Write the duplicate file
+                await fs.promises.writeFile(`${parentPathSegments.join("/")}.md`, mdxContent);
+                console.log("LLMs plugin: Wrote duplicate file for same-name folders:", parentPathSegments.join("/"));
+              }
+
               processedFiles++;
 
               // Add to links list - use the actual title from MDX frontmatter or first H1
