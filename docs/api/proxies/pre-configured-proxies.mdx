@@ -1280,6 +1280,7 @@ The `BT-ENCRYPTED` header should contain a base64-encoded token request with the
 ```
 
 To see how to use this header with the proxy, see [Using Encrypted Data in Proxy Requests](#using-encrypted-data-in-proxy-requests).
+You can encrypt a token and get the JWE data with the [Basis Theory SDKs](/docs/sdks/web/web-elements/services#encrypting-data).
 
 ### Reserved Proxy Headers <Enterprise />
 
@@ -1344,7 +1345,21 @@ curl "https://api.basistheory.com/proxy" \
   }'
 ```
 
-For multiple token requests, you can access specific tokens:
+For multiple token requests, you can access specific tokens. The object key is used to reference the token in the Liquid expression.
+
+```json
+// Token requests before encryption:
+{
+  "tokenA": {
+    "type": "card",
+    "encrypted": "<JWE_STRING>"
+  },
+  "tokenB": {
+    "type": "token",
+    "encrypted": "<JWE_STRING>"
+  }
+}
+```
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \
