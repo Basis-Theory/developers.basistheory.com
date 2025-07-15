@@ -49,6 +49,43 @@ Any authentication required by the destination service can be set on the request
 
 <ReservedHeaders />
 
+### Encrypted Token Header
+
+The `BT-ENCRYPTED` header allows you to pass encrypted token requests to proxy destinations. This header accepts a base64-encoded token request containing encrypted JWE (JSON Web Encryption) data instead of plaintext.
+
+#### Header Format
+
+The `BT-ENCRYPTED` header should contain a base64-encoded token request with the following structure:
+
+**Single Token Request:**
+```json
+{
+  "type": "card",
+  "encrypted": "<JWE_STRING>"
+}
+```
+
+**Multiple Token Requests:**
+```json
+{
+  "creditCard": {
+    "type": "card",
+    "encrypted": "<JWE_STRING>"
+  },
+  "bankAccount": {
+    "type": "bank",
+    "encrypted": "<JWE_STRING>"
+  },
+  "personalInfo": {
+    "type": "token",
+    "encrypted": "<JWE_STRING>"
+  }
+}
+```
+
+To see how to use this header with the proxy, see [Using Encrypted Data in Proxy Requests](#using-encrypted-data-in-proxy-requests).
+You can encrypt a token and get the JWE data with the [Basis Theory SDKs](/docs/sdks/web/web-elements/services#encrypting-data).
+
 ### Request
 
 A `BT-PROXY-URL` request header is required - its value defines the base URL to which the request will be proxied.
@@ -75,6 +112,58 @@ If an error occurs within the proxy (e.g., an invalid detokenization expression 
 | Attribute     | Type  | Description                                       |
 | ------------- | ----- | ------------------------------------------------- |
 | `proxy_error` | _any_ | A standard Basis Theory [error](/docs/api/errors) |
+
+### Using Encrypted Data in Proxy Requests
+
+You can reference the decrypted data in your proxy request body using the `encrypted` keyword with Liquid expressions:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "BT-PROXY-URL: https://example.com/api" \
+  -H "BT-ENCRYPTED: <BASE64_ENCODED_TOKEN_REQUEST>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "accountNumber": "{{ encrypted | json: \"$.data.number\" }}",
+    "expMonth": "{{ encrypted | json: \"$.data.expiration_month\" }}",
+    "expYear": "{{ encrypted | json: \"$.data.expiration_year\" }}"
+  }'
+```
+
+For multiple token requests, you can access specific tokens. The object key is used to reference the token in the Liquid expression.
+
+```json
+// Token requests before encryption:
+{
+  "creditCard": {
+    "type": "card",
+    "encrypted": "<JWE_STRING>"
+  },
+  "bankAccount": {
+    "type": "bank",
+    "encrypted": "<JWE_STRING>"
+  },
+  "personalInfo": {
+    "type": "token",
+    "encrypted": "<JWE_STRING>"
+  }
+}
+```
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "BT-PROXY-URL: https://example.com/api" \
+  -H "BT-ENCRYPTED: <BASE64_ENCODED_MULTIPLE_TOKEN_REQUEST>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "cardNumber": "{{ encrypted | json: \"$.creditCard.data.number\" }}",
+    "routingNumber": "{{ encrypted | json: \"$.bankAccount.data.routing_number\" }}",
+    "personalInfo": "{{ encrypted | json: \"$.personalInfo.data.name\" }}"
+  }'
+```
 
 #### Custom Headers
 
