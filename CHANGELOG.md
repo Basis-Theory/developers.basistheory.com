@@ -1,3 +1,10 @@
+# [1.250.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.249.0...v1.250.0) (2025-07-15)
+
+
+### Features
+
+* **eng-8366:** add documentation to encrypted header in proxy request ([#604](https://github.com/Basis-Theory/developers.basistheory.com/issues/604)) ([7b8919e](https://github.com/Basis-Theory/developers.basistheory.com/commit/7b8919e80016e658a02deeef6bf72f9499a0459a))
+
 # [1.249.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.248.1...v1.249.0) (2025-07-11)
 
 
