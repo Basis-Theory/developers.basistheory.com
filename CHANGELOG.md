@@ -1,3 +1,10 @@
+# [1.251.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.250.0...v1.251.0) (2025-07-17)
+
+
+### Features
+
+* adds useNetworkCheck ([#606](https://github.com/Basis-Theory/developers.basistheory.com/issues/606)) ([49f892a](https://github.com/Basis-Theory/developers.basistheory.com/commit/49f892af35cd2c4e014e82d671bee9dbdcdd65dd))
+
 # [1.250.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.249.0...v1.250.0) (2025-07-15)
 
 
