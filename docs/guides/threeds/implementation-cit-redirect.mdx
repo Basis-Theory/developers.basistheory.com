@@ -70,54 +70,61 @@ The **Public Application** allows your front-end or client-side integration to c
 
 ### Private Application
 
-The **Private Application** is used by your backend system to retrieve 3DS sessions.
+The **Private Application** is used by your backend system to retrieve 3DS sessions and challenge results.
 
-- **Permissions Required:** `3ds:session:read`
+- **Permissions Required:** `3ds:session:read`, `3ds:session:authenticate`
 
-[Click here to create the Private Application](https://portal.basistheory.com/applications/create?type=private&permissions=3ds%3Asession%3Aread)
+[Click here to create the Private Application](https://portal.basistheory.com/applications/create?type=private&permissions=3ds%3Asession%3Aread&permissions=3ds%3Asession%3Aauthenticate)
 
 ***Important:** Save the generated API Key. You'll use it later in this guide.*
 
 ## Creating a CIT 3DS Session
 
-Differently from the regular [CIT Implementation](/docs/guides/threeds/implementation-cit), the 3DS session with redirection is created from the backend instead of the client-side.
-Of note, the `callback_urls` parameter and `authentication_request` are required when creating the session if you are using redirection.
+Unlike the regular [CIT Implementation](/docs/guides/threeds/implementation-cit), the 3DS session with redirection is created from your backend instead of the client-side.
+It's important to note that the `callback_urls` parameter and `authentication_request` are required when creating the session if you are using redirection.
 
-The code examples below demonstrate how to create sessions with redirection using our API and available SDKs.
-
-TODO: EXAMPLE OF CREATING A SESSION WITH REDIRECTION - THE CODE BELOW IS NOT CORRECT - ITS FOR AUTHENTICATING A SESSION, THIS IS AN EXAMPLE BODY:
+Here's the recommended minimum payload for creating a 3DS session with redirection in most scenarios:
 
 ```json
 {
   token_id: "d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
   type: "customer",
-  device: "browser",
+  device: "browser", // always use browser for 3DS with redirection
   authentication_request: {
-      authentication_category: "payment",
-      authentication_type: "payment-transaction",
-      challenge_preference: "no-preference",
-      purchase_info: {
-          amount: "80000",
-          currency: "826",
-          exponent: "2",
-          date: "20240109141010"
-      },
-      merchant_info: {
-          mid: "9876543210001",
-          acquirer_bin: "000000999",
-          name: "Example 3DS Merchant",
-          category_code: "7922",
-          country_code: "826",
-          url: "https://basistheory.com",
-      },
-      cardholder_info: {
-          name: "John Doe",
-          email: "john@example.com"
-      }
+    "authentication_category": "payment",
+    "authentication_type": "payment-transaction",
+    "challenge_preference": "no-challenge", // or challenge-requested if challenge is preferred (not guaranteed).
+    "card_brand": "Visa", // optional for co-badged cards
+    "merchant_info": {
+      "mid": "9876543210001",
+      "acquirer_bin": "000000999",
+      "name": "Example 3DS Merchant",
+      "country_code": "7922",
+      "category_code": "826",
+      "url": "https://example.com",
+    },
+    "requestor_info": { // if accepting American Express, Discover or Cartes Bancaires
+      "amex_requestor_type": "MER", // if American Express is accepted
+      "cb_siret_number": "78467169500087", // If Cartes Bancaires is accepted
+    },
+    "purchase_info": {
+      "amount": "80000",
+      "currency": "826",
+      "exponent": "2",
+      "date": "20250101141010",
+      "transaction_type": "purchase",
+      "installment_count": "5", // only for installment transactions
+      "recurring_expiration": "20250131", // only for recurring transactions
+      "recurring_frequency": "30", // only for recurring transactions
+    },
+    "cardholder_info": {
+      "name": "John Doe",
+      "email": "john@example.com",
+    }
   },
   callback_urls: {
-      success: "http://localhost:3000/success",
-      failure: "http://localhost:3000/failure"
+    success: "http://localhost:3000/success",
+    failure: "http://localhost:3000/failure"
   }
 }
 ```
@@ -125,37 +132,46 @@ TODO: EXAMPLE OF CREATING A SESSION WITH REDIRECTION - THE CODE BELOW IS NOT COR
 <Tabs className="bt-tabs" queryString="backend">
   <TabItem value="shell" label="cURL">
     ```shell showLineNumbers
-    curl "https://api.basistheory.com/3ds/sessions/<SESSION_ID>/authenticate" \
+    curl "https://api.basistheory.com/3ds/sessions" \
       -H "BT-API-KEY: <PRIVATE_API_KEY>" \
       -H "Content-Type: application/json" \
       -X "POST" \
       -d '{
-        "authentication_category": "payment",
-        "authentication_type": "payment-transaction",
-        "challenge_preference": "no-challenge",
-        "card_brand": "Visa",
-        "merchant_info": {
-          "mid": "9876543210001",
-          "acquirer_bin": "000000999",
-          "name": "Example 3DS Merchant",
-          "category_code": "7922",
-          "country_code": "826",
-          "url": "https://example.com"
+        "token_id": "d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
+        "type": "customer",
+        "device": "browser",
+        "authenticate_request": {
+          "authentication_category": "payment",
+          "authentication_type": "payment-transaction",
+          "challenge_preference": "no-challenge",
+          "card_brand": "Visa",
+          "merchant_info": {
+            "mid": "9876543210001",
+            "acquirer_bin": "000000999",
+            "name": "Example 3DS Merchant",
+            "category_code": "7922",
+            "country_code": "826",
+            "url": "https://example.com"
+          },
+          "requestor_info": {
+            "amex_requestor_type": "MER",
+            "cb_siret_number": "78467169500087"
+          },
+          "purchase_info": {
+            "amount": "80000",
+            "currency": "826",
+            "exponent": "2",
+            "date": "20240109141010",
+            "transaction_type": "purchase"
+          },
+          "cardholder_info": {
+            "name": "John Doe",
+            "email": "john@example.com"
+          }
         },
-        "requestor_info": {
-          "amex_requestor_type": "MER",
-          "cb_siret_number": "78467169500087"
-        },
-        "purchase_info": {
-          "amount": "80000",
-          "currency": "826",
-          "exponent": "2",
-          "date": "20240109141010",
-          "transaction_type": "purchase"
-        },
-        "cardholder_info": {
-          "name": "John Doe",
-          "email": "john@example.com"
+        "callback_urls": {
+          "success": "https://example.com/success",
+          "failure": "https://example.com/failure"
         }
       }'
     ```
@@ -189,49 +205,56 @@ TODO: EXAMPLE OF CREATING A SESSION WITH REDIRECTION - THE CODE BELOW IS NOT COR
       });
     })();
 
-    app.post("/:sessionId/authenticate", async (req, res) => {
-      const { sessionId } = req.params;
-
+    app.post("/create-session", async (req, res) => {
       try {
         // highlight-start
-        const authentication = await bt.threeds.sessions.authenticate(sessionId, {
-          authenticationCategory: "payment",
-          authenticationType: "payment-transaction",
-          challengePreference: "no-challenge",
-          // cardBrand: "Visa", // optional - used if co-badged card
-          merchantInfo: {
-            mid: "9876543210001",
-            acquirerBin: "000000999",
-            name: "Example 3DS Merchant",
-            categoryCode: "7922",
-            countryCode: "826",
-            url: "https://example.com",
-          },
-          requestorInfo: { // if accepting American Express, Discover or Cartes Bancaires
-            amexRequestorType: "MER", // if American Express is accepted
-            cbSiretNumber: "78467169500087", // if Cartes Bancaires is accepted
-          },
-          purchaseInfo: {
-            amount: "80000",
-            currency: "826",
-            exponent: "2",
-            date: "20240109141010",
-            transactionType: "purchase",
+        const session = await bt.threeds.sessions.create({
+          tokenId: "d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
+          type: "customer",
+          device: "browser",
+          authenticationRequest: {
+            authenticationCategory: "payment",
+            authenticationType: "payment-transaction",
+            challengePreference: "no-challenge",
+            // cardBrand: "Visa", // optional - used if co-badged card
+            merchantInfo: {
+              mid: "9876543210001",
+              acquirerBin: "000000999",
+              name: "Example 3DS Merchant",
+              categoryCode: "7922",
+              countryCode: "826",
+              url: "https://example.com",
+            },
+            requestorInfo: { // if accepting American Express, Discover or Cartes Bancaires
+              amexRequestorType: "MER", // if American Express is accepted
+              cbSiretNumber: "78467169500087", // if Cartes Bancaires is accepted
+            },
+            purchaseInfo: {
+              amount: "80000",
+              currency: "826",
+              exponent: "2",
+              date: "20240109141010",
+              transactionType: "purchase",
 
-            //installmentCount": "5", // only for installment transactions
-            //recurringExpiration: "20250131", // only for recurring transactions
-            //recurringFrequency: "30", // only for recurring transactions
+              //installmentCount": "5", // only for installment transactions
+              //recurringExpiration: "20250131", // only for recurring transactions
+              //recurringFrequency: "30", // only for recurring transactions
+            },
+            cardholderInfo: {
+              name: "John Doe",
+              email: "john@example.com"
+            }
           },
-          cardholderInfo: {
-            name: "John Doe",
-            email: "john@example.com"
+          callbackUrls: {
+            success: "https://example.com/success",
+            failure: "https://example.com/failures"
           }
         });
         // highlight-end
 
-        res.status(200).send(authentication);
+        res.status(200).send(session);
       } catch (error) {
-        console.error('Error during authentication:', error);
+        console.error('Error during session creation:', error);
         res.status(500).send({ error: "Internal Server Error" });
       }
     });
@@ -301,60 +324,71 @@ TODO: EXAMPLE OF CREATING A SESSION WITH REDIRECTION - THE CODE BELOW IS NOT COR
         }
 
         // highlight-start
-        [HttpPost("{sessionId:guid}/authenticate")]
-        public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
+        [HttpPost("create-session")]
+        public async Task<ActionResult> CreateSession()
         {
           try
           {
-            var authentication = await _client.Threeds.Sessions.AuthenticateAsync(sessionId.ToString(), new AuthenticateThreeDsSessionRequest
+            var session = await _client.Threeds.Sessions.CreateAsync(new CreateThreeDsSessionRequest
             {
-              AuthenticationCategory = "payment",
-              AuthenticationType = "payment-transaction",
-              ChallengePreference = "no-challenge",
-              // CardBrand = "Visa", // optional - used if co-badged card
-              MerchantInfo = new ThreeDsMerchantInfo
+              TokenId = "d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
+              Type = "customer",
+              Device = "browser",
+              AuthenticationRequest = new AuthenticateThreeDsSessionRequest
               {
-                Mid = "9876543210001",
-                AcquirerBin = "000000999",
-                Name = "Example 3DS Merchant",
-                CategoryCode = "7922",
-                CountryCode = "826",
-                Url = "https://example.com"
-              },
-              RequestorInfo = new ThreeDsRequestorInfo // if accepting American Express, Discover or Cartes Bancaires
-              {
-                AmexRequestorType = "MER", // if American Express is accepted
-                CbSiretNumber = "78467169500087", // if Cartes Bancaires is accepted
-              },
-              PurchaseInfo = new ThreeDsPurchaseInfo
-              {
-                Amount = "80000",
-                Currency = "826",
-                Exponent = "2",
-                Date = "20240109141010",
-                TransactionType = "purchase",
+                AuthenticationCategory = "payment",
+                AuthenticationType = "payment-transaction",
+                ChallengePreference = "no-challenge",
+                // CardBrand = "Visa", // optional - used if co-badged card
+                MerchantInfo = new ThreeDsMerchantInfo
+                {
+                  Mid = "9876543210001",
+                  AcquirerBin = "000000999",
+                  Name = "Example 3DS Merchant",
+                  CategoryCode = "7922",
+                  CountryCode = "826",
+                  Url = "https://example.com"
+                },
+                RequestorInfo = new ThreeDsRequestorInfo // if accepting American Express, Discover or Cartes Bancaires
+                {
+                  AmexRequestorType = "MER", // if American Express is accepted
+                  CbSiretNumber = "78467169500087", // if Cartes Bancaires is accepted
+                },
+                PurchaseInfo = new ThreeDsPurchaseInfo
+                {
+                  Amount = "80000",
+                  Currency = "826",
+                  Exponent = "2",
+                  Date = "20240109141010",
+                  TransactionType = "purchase",
 
-                // InstallmentCount = "5", // only for installment transactions
-                // RecurringExpiration = "20250131", // only for recurring transactions
-                // RecurringFrequency = "30", // only for recurring transactions
+                  // InstallmentCount = "5", // only for installment transactions
+                  // RecurringExpiration = "20250131", // only for recurring transactions
+                  // RecurringFrequency = "30", // only for recurring transactions
+                },
+                CardholderInfo = new ThreeDsCardholderInfo
+                {
+                  Name = "John Doe",
+                  Email = "john@example.com"
+                }
               },
-              CardholderInfo = new ThreeDsCardholderInfo
+              CallbackUrls = new ThreeDsCallbackUrls
               {
-                Name = "John Doe",
-                Email = "john@example.com"
+                Success = "https://example.com/success",
+                Failure = "https://example.com/failure"
               }
             });
 
-            if (authentication == null)
+            if (session == null)
             {
-              return Problem("Error during authentication.");
+              return Problem("Error during session creation.");
             }
 
-            return Ok(authentication);
+            return Ok(session);
           }
           catch (Exception ex)
           {
-            Console.WriteLine($"Error during authentication: {ex.Message}");
+            Console.WriteLine($"Error during session creation: {ex.Message}");
             return Problem("Internal Server Error");
           }
         }
@@ -376,7 +410,9 @@ TODO: EXAMPLE OF CREATING A SESSION WITH REDIRECTION - THE CODE BELOW IS NOT COR
         ThreeDsMerchantInfo,
         ThreeDsRequestorInfo,
         ThreeDsPurchaseInfo,
-        ThreeDsCardholderInfo
+        ThreeDsCardholderInfo,
+        AuthenticateThreeDsSessionRequest,
+        ThreeDsCallbackUrls
     )
     # highlight-end
 
@@ -387,47 +423,55 @@ TODO: EXAMPLE OF CREATING A SESSION WITH REDIRECTION - THE CODE BELOW IS NOT COR
     # highlight-end
 
     # highlight-start
-    @app.route('/<sessionId>/authenticate', methods=['POST'])
-    def authenticate_session(sessionId):
-      authentication = client.threeds.sessions.authenticate(
-          session_id=sessionId,
-          authentication_category="payment",
-          authentication_type="payment-transaction",
-          challenge_preference="no-challenge",
-          # card_brand="Visa", # optional - used if co-badged card
-          merchant_info=ThreeDsMerchantInfo(
-              mid="9876543210001",
-              acquirer_bin="000000999",
-              name="Example 3DS Merchant",
-              category_code="7922",
-              country_code="826",
-              url="https://example.com"
-          ),
-          requestor_info=ThreeDsRequestorInfo( # if accepting American Express, Discover or Cartes Bancaires
-              amex_requestor_type="MER",  # if American Express is accepted
-              cb_siret_number="78467169500087"  # if Cartes Bancaires is accepted
-          ),
-          purchase_info=ThreeDsPurchaseInfo(
-              amount="80000",
-              currency="826",
-              exponent="2",
-              date="20240109141010",
-              transaction_type="purchase",
+    @app.route('/create-session', methods=['POST'])
+    def create_session():
+      session = client.threeds.sessions.create(
+          token_id="d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
+          type="customer",
+          device="browser",
+          authentication_request=AuthenticateThreeDsSessionRequest(
+            authentication_category="payment",
+            authentication_type="payment-transaction",
+            challenge_preference="no-challenge",
+            # card_brand="Visa", # optional - used if co-badged card
+            merchant_info=ThreeDsMerchantInfo(
+                mid="9876543210001",
+                acquirer_bin="000000999",
+                name="Example 3DS Merchant",
+                category_code="7922",
+                country_code="826",
+                url="https://example.com"
+            ),
+            requestor_info=ThreeDsRequestorInfo( # if accepting American Express, Discover or Cartes Bancaires
+                amex_requestor_type="MER",  # if American Express is accepted
+                cb_siret_number="78467169500087"  # if Cartes Bancaires is accepted
+            ),
+            purchase_info=ThreeDsPurchaseInfo(
+                amount="80000",
+                currency="826",
+                exponent="2",
+                date="20240109141010",
+                transaction_type="purchase",
 
-              # installment_count="5", # only for installment transactions
-              # recurring_expiration="20250131", # only for recurring transactions
-              # recurring_frequency="30", # only for recurring transactions
+                # installment_count="5", # only for installment transactions
+                # recurring_expiration="20250131", # only for recurring transactions
+                # recurring_frequency="30", # only for recurring transactions
+            ),
+            cardholder_info=ThreeDsCardholderInfo(
+                name="John Doe",
+                email="john@example.com"
+            ),
           ),
-          cardholder_info=ThreeDsCardholderInfo(
-              name="John Doe",
-              email="john@example.com"
+          callback_urls=ThreeDsCallbackUrls(
+              success="https://example.com/success",
+              failure="https://example.com/failure"
           )
       )
 
-      if authentication is None:
-          return jsonify({"error": "Error during authentication."}), 500
+      if session is None:
+          return jsonify({"error": "Error during session creation."}), 500
 
-      return jsonify(authentication.to_dict()), 200
+      return jsonify(session.to_dict()), 200
     # highlight-end
 
     if __name__ == '__main__':
@@ -468,7 +512,7 @@ TODO: EXAMPLE OF CREATING A SESSION WITH REDIRECTION - THE CODE BELOW IS NOT COR
 
       router := mux.NewRouter()
       // highlight-start
-      router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
+      router.HandleFunc("/create-session", createSession).Methods("POST")
       // highlight-end
 
       addr := "localhost:4242"
@@ -481,9 +525,16 @@ TODO: EXAMPLE OF CREATING A SESSION WITH REDIRECTION - THE CODE BELOW IS NOT COR
     }
 
     // highlight-start
-    func authenticateSession(rw http.ResponseWriter, r *http.Request) {
-      vars := mux.Vars(r)
-      sessionId := vars["sessionId"]
+    func createSession(rw http.ResponseWriter, r *http.Request) {
+      session := client.Threeds.Sessions.Create(context.Background(), &threeds.CreateThreeDsSessionRequest{
+        TokenId: "d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
+        Type: "customer",
+        Device: "browser",
+        CallbackUrls: &threeds.ThreeDsCallbackUrls{
+          Success: pointerToString("https://example.com/success"),
+          Failure: pointerToString("https://example.com/failure"),
+        },
+      })
 
       authRequest := &threeds.AuthenticateThreeDsSessionRequest{
         AuthenticationCategory: pointerToString("payment"),
@@ -528,16 +579,18 @@ TODO: EXAMPLE OF CREATING A SESSION WITH REDIRECTION - THE CODE BELOW IS NOT COR
       authRequest.PurchaseInfo = purchaseInfo
       authRequest.CardholderInfo = cardholderInfo
 
-      authenticateResponse, authenticateErr := client.Threeds.Sessions.Authenticate(context.Background(), sessionId, authRequest)
+      session.AuthenticationRequest = authRequest
 
-      if authenticateErr != nil {
+      createResponse, createErr := client.Threeds.Sessions.Create(context.Background(), session)
+
+      if createErr != nil {
         rw.WriteHeader(http.StatusInternalServerError)
-        json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
+        json.NewEncoder(rw).Encode(map[string]string{"error": createErr.Error()})
         return
       }
 
       rw.WriteHeader(http.StatusOK)
-      json.NewEncoder(rw).Encode(authenticateResponse)
+      json.NewEncoder(rw).Encode(createResponse)
     }
     // highlight-end
     ```
@@ -551,43 +604,6 @@ If no expiration date is set, the session expires after **one hour**. Once a ses
 
 The `authentication_request` parameter is a JSON object that contains the 3DS authentication request details.
 It is the accepted practice that the more information you provide to a 3DS session, the higher the likelihood of a frictionless authentication.
-Below is the recommended minimum payload for the `authentication_request` parameter required for successful 3DS authentications in most scenarios:
-
-```json
-{
-  "authentication_category": "payment",
-  "authentication_type": "payment-transaction",
-  "challenge_preference": "no-challenge", // or challenge-requested if challenge is preferred (not guaranteed).
-  "card_brand": "Visa", // optional for co-badged cards
-  "merchant_info": {
-    "mid": "9876543210001",
-    "acquirer_bin": "000000999",
-    "name": "Example 3DS Merchant",
-    "country_code": "7922",
-    "category_code": "826",
-    "url": "https://example.com",
-  },
-  "requestor_info": { // if accepting American Express, Discover or Cartes Bancaires
-    "amex_requestor_type": "MER", // if American Express is accepted
-    "cb_siret_number": "78467169500087", // If Cartes Bancaires is accepted
-  },
-  "purchase_info": {
-    "amount": "80000",
-    "currency": "826",
-    "exponent": "2",
-    "date": "20250101141010",
-    "transaction_type": "purchase",
-    "installment_count": "5", // only for installment transactions
-    "recurring_expiration": "20250131", // only for recurring transactions
-    "recurring_frequency": "30", // only for recurring transactions
-  },
-  "cardholder_info": {
-    "name": "John Doe",
-    "email": "john@example.com",
-  }
-}
-```
-
 Continue reading to learn more about each property in the Authentication Request object and how to best utilize them for your specific use case.
 
 #### Authentication Category
