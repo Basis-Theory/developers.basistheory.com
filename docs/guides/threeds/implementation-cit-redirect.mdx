@@ -991,6 +991,22 @@ handleThreeDSRedirect(sessionResponse.redirect_url);
 
 After the customer completes the authentication process and is redirected to one of your callback URLs, you need to retrieve the session to verify the authentication results and obtain the final authentication values needed for payment processing.
 
+### When to Retrieve the Session
+
+You should retrieve the session:
+
+- **After receiving a callback redirect** - When the customer is redirected to your success or failure URL
+- **Before processing payment** - To get the authentication values (CAVV, ECI, etc.) for your payment processor
+- **For verification** - To confirm the authentication status and any challenge results
+
+### Retrieval Methods
+
+You have two options for getting the session results:
+
+#### Option 1: Direct API Retrieval
+
+Make a GET request to retrieve the session immediately after receiving the callback redirect:
+
 <Tabs className="bt-tabs" queryString="backend">
   <TabItem value="shell" label="cURL">
     ```shell showLineNumbers
@@ -1151,9 +1167,7 @@ After the customer completes the authentication process and is redirected to one
 
         public ThreeDsApiController()
         {
-          // highlight-start
           _client = new BasisTheory(apiKey: "<PRIVATE_API_KEY>");
-          // highlight-end
         }
 
         [HttpPost("create-session")]
@@ -1369,7 +1383,9 @@ After the customer completes the authentication process and is redirected to one
 
       router := mux.NewRouter()
       router.HandleFunc("/create-session", createSession).Methods("POST")
+      // highlight-start
       router.HandleFunc("/{sessionId}", getSession).Methods("GET")
+      // highlight-end
 
       addr := "localhost:4242"
       log.Printf("Listening on %s", addr)
@@ -1469,44 +1485,26 @@ After the customer completes the authentication process and is redirected to one
   </TabItem>
 </Tabs>
 
-### When to Retrieve the Session
-
-You should retrieve the session:
-
-- **After receiving a callback redirect** - When the customer is redirected to your success or failure URL
-- **Before processing payment** - To get the authentication values (CAVV, ECI, etc.) for your payment processor
-- **For verification** - To confirm the authentication status and any challenge results
-
-### When to Retrieve the Session
-
-You have two options for getting the session results:
-
-#### Option 1: Direct API Retrieval (Recommended)
-
-Make a GET request to retrieve the session immediately after receiving the callback redirect:
-
-```http
-GET /3ds/sessions/<SESSION_ID>
-```
-
-Use your `PRIVATE_API_KEY` for this request, where `SESSION_ID` is the ID of the session you created.
-
 #### Option 2: Webhook Notifications
 
-Alternatively, you can subscribe to webhook events to be notified when authentication completes:
+Alternatively, you can subscribe to [webhook events](/docs/api/webhooks/eventdata) to be notified when authentication completes:
 
-- `3ds.session.authenticated` - Triggered when authentication finishes
-- `3ds.session.challenge-completed` - Triggered when a challenge is completed
+- [`3ds.session.authenticated`](/docs/api/webhooks/eventdata#3ds-session-authenticated) - Triggered when authentication finishes
+- [`3ds.session.challenge-completed`](/docs/api/webhooks/eventdata#3ds-session-challenge-completed) - Triggered when a challenge is completed
+
+The webhook events will not include the full `authentication` object, but you can use the `session_id` to retrieve the full session and get the authentication values.
+The main benefit of using webhooks is that the webhook events include the `authentication_status` value, which can be used to determine if the authentication was successful or not.
+This is useful if you want to handle different scenarios based on the authentication status.
 
 ## Verifying the Authentication Results
 
-The `authentication` object returned in the retrieved session contains everything you need to successfully validate a 3DS transaction or identify why it failed.
+The retrieved session contains an `authentication` object with everything you need to validate a 3DS transaction or identify why it failed. The code examples above show how to retrieve this data - now let's examine what to do with it.
 
 See below a detailed table with descriptions for what each field means, and continue reading to understand different authentication scenarios that can happen with a 3DS transaction.
 
 | Field | Description |
 | --- | --- |
-| `session_id` | The id for the authenticated 3DS session |
+| **`session_id`** | The id for the authenticated 3DS session |
 | **`threeds_version`** | The 3DS version (i.e. 2.2.0) used in the transaction |
 | **`token_id`** | The ID of the card token used in the 3DS transaction |
 | **`token_intent_id`** | The ID of the card token intent used in the 3DS transaction |
@@ -1553,7 +1551,7 @@ If the `authentication_status` indicates `success`, and the `directory_status_co
 
 ##### Challenge Authentication
 
-If the `directory_status_code` indicates the code `C`, the cardholder completed an additional verification step—a "Challenge"—before the 3DS authentication can be finalized and the final authentication value (CAVV) provided.
+If the `directory_status_code` indicates the code `C`, the cardholder completed an additional verification step inside the Basis Theory 3DS Authentication page—a "Challenge"—before the 3DS authentication could be finalized and the final authentication value (CAVV) provided.
 Alternatively, you can use our **Webhooks** solution. Subscribing a webhook to the  `3ds.session.challenge-completed` event will trigger when a challenge completion has finished and contain the `id` to enable [Getting a Challenge Result](#getting-a-challenge-result).
 
 Challenges can vary significantly, often involving methods such as entering a one-time password (OTP) or authorizing the transaction via a banking app.
@@ -1595,45 +1593,71 @@ Once a challenge is completed, you must retrieve the result directly from the AP
       });
     })();
 
-    app.post("/:sessionId/authenticate", async (req, res) => {
+    app.post("/create-session", async (req, res) => {
+      try {
+        const session = await bt.threeds.sessions.create({
+          tokenId: "d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
+          type: "customer",
+          device: "browser",
+          authenticationRequest: {
+            authenticationCategory: "payment",
+            authenticationType: "payment-transaction",
+            challengePreference: "no-challenge",
+            // cardBrand: "Visa", // optional - used if co-badged card
+            merchantInfo: {
+              mid: "9876543210001",
+              acquirerBin: "000000999",
+              name: "Example 3DS Merchant",
+              categoryCode: "7922",
+              countryCode: "826",
+              url: "https://example.com",
+            },
+            requestorInfo: { // if accepting American Express, Discover or Cartes Bancaires
+              amexRequestorType: "MER", // if American Express is accepted
+              cbSiretNumber: "78467169500087", // if Cartes Bancaires is accepted
+            },
+            purchaseInfo: {
+              amount: "80000",
+              currency: "826",
+              exponent: "2",
+              date: "20240109141010",
+              transactionType: "purchase",
+
+              //installmentCount": "5", // only for installment transactions
+              //recurringExpiration: "20250131", // only for recurring transactions
+              //recurringFrequency: "30", // only for recurring transactions
+            },
+            cardholderInfo: {
+              name: "John Doe",
+              email: "john@example.com"
+            }
+          },
+          callbackUrls: {
+            success: "https://example.com/success",
+            failure: "https://example.com/failures"
+          }
+        });
+
+        res.status(200).send(session);
+      } catch (error) {
+        console.error('Error during session creation:', error);
+        res.status(500).send({ error: "Internal Server Error" });
+      }
+    });
+
+    app.get("/:sessionId", async (req, res) => {
       const { sessionId } = req.params;
 
       try {
-        const authentication = await bt.threeds.sessions.authenticate(sessionId, {
-          authenticationCategory: "payment",
-          authenticationType: "payment-transaction",
-          challengePreference: "no-challenge",
-          merchantInfo: {
-            mid: "9876543210001",
-            acquirerBin: "000000999",
-            name: "Example 3DS Merchant",
-            categoryCode: "7922",
-            countryCode: "826",
-            url: "https://example.com",
-          },
-          requestorInfo: { // if accepting American Express, Discover or Cartes Bancaires
-            amexRequestorType: "MER", // if American Express is accepted
-            cbSiretNumber: "78467169500087", // if Cartes Bancaires is accepted
-          },
-          purchaseInfo: {
-            amount: "80000",
-            currency: "826",
-            exponent: "2",
-            date: "20240109141010",
-            transactionType: "purchase",
+        const session = await bt.threeds.sessions.get(sessionId);
 
-            //installmentCount": "5", // only for installment transactions
-            //recurringExpiration: "20250131", // only for recurring transactions
-            //recurringFrequency: "30", // only for recurring transactions
-          },
-          cardholderInfo: {
-            name: "John Doe",
-            email: "john@example.com"
-          }
-        });
-        res.status(200).send(authentication);
+        if (!session) {
+          return res.status(500).send({ error: "Failed to get session." });
+        }
+
+        res.status(200).send(session);
       } catch (error) {
-        console.error('Error during authentication:', error);
+        console.error('Error during session retrieval:', error);
         res.status(500).send({ error: "Internal Server Error" });
       }
     });
@@ -1676,7 +1700,6 @@ Once a challenge is completed, you must retrieve the result directly from the AP
     using BasisTheory.Client;
     using BasisTheory.Client.Threeds;
 
-
     namespace server.Controllers
     {
       public class Program
@@ -1718,59 +1741,92 @@ Once a challenge is completed, you must retrieve the result directly from the AP
           _client = new BasisTheory(apiKey: "<PRIVATE_API_KEY>");
         }
 
-        [HttpPost("{sessionId:guid}/authenticate")]
-        public async Task<ActionResult> AuthenticateSession([FromRoute] Guid sessionId)
+        [HttpPost("create-session")]
+        public async Task<ActionResult> CreateSession()
         {
           try
           {
-            var authentication = await _client.Threeds.Sessions.AuthenticateAsync(sessionId.ToString(), new AuthenticateThreeDsSessionRequest
+            var session = await _client.Threeds.Sessions.CreateAsync(new CreateThreeDsSessionRequest
             {
-              AuthenticationCategory = "payment",
-              AuthenticationType = "payment-transaction",
-              ChallengePreference = "no-challenge",
-              MerchantInfo = new ThreeDsMerchantInfo
+              TokenId = "d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
+              Type = "customer",
+              Device = "browser",
+              AuthenticationRequest = new AuthenticateThreeDsSessionRequest
               {
-                Mid = "9876543210001",
-                AcquirerBin = "000000999",
-                Name = "Example 3DS Merchant",
-                CategoryCode = "7922",
-                CountryCode = "826",
-                Url = "https://example.com"
-              },
-              RequestorInfo = new ThreeDsRequestorInfo // if accepting American Express, Discover or Cartes Bancaires
-              {
-                AmexRequestorType = "MER", // if American Express is accepted
-                CbSiretNumber = "78467169500087" // if Cartes Bancaires is accepted
-              },
-              PurchaseInfo = new ThreeDsPurchaseInfo
-              {
-                Amount = "80000",
-                Currency = "826",
-                Exponent = "2",
-                Date = "20240109141010",
-                TransactionType = "purchase",
+                AuthenticationCategory = "payment",
+                AuthenticationType = "payment-transaction",
+                ChallengePreference = "no-challenge",
+                // CardBrand = "Visa", // optional - used if co-badged card
+                MerchantInfo = new ThreeDsMerchantInfo
+                {
+                  Mid = "9876543210001",
+                  AcquirerBin = "000000999",
+                  Name = "Example 3DS Merchant",
+                  CategoryCode = "7922",
+                  CountryCode = "826",
+                  Url = "https://example.com"
+                },
+                RequestorInfo = new ThreeDsRequestorInfo // if accepting American Express, Discover or Cartes Bancaires
+                {
+                  AmexRequestorType = "MER", // if American Express is accepted
+                  CbSiretNumber = "78467169500087", // if Cartes Bancaires is accepted
+                },
+                PurchaseInfo = new ThreeDsPurchaseInfo
+                {
+                  Amount = "80000",
+                  Currency = "826",
+                  Exponent = "2",
+                  Date = "20240109141010",
+                  TransactionType = "purchase",
 
-                // InstallmentCount = "5", // only for installment transactions
-                // RecurringExpiration = "20250131", // only for recurring transactions
-                // RecurringFrequency = "30", // only for recurring transactions
+                  // InstallmentCount = "5", // only for installment transactions
+                  // RecurringExpiration = "20250131", // only for recurring transactions
+                  // RecurringFrequency = "30", // only for recurring transactions
+                },
+                CardholderInfo = new ThreeDsCardholderInfo
+                {
+                  Name = "John Doe",
+                  Email = "john@example.com"
+                }
               },
-              CardholderInfo = new ThreeDsCardholderInfo
+              CallbackUrls = new ThreeDsCallbackUrls
               {
-                Name = "John Doe",
-                Email = "john@example.com"
+                Success = "https://example.com/success",
+                Failure = "https://example.com/failure"
               }
             });
 
-            if (authentication == null)
+            if (session == null)
             {
-              return Problem("Error during authentication.");
+              return Problem("Error during session creation.");
             }
 
-            return Ok(authentication);
+            return Ok(session);
           }
           catch (Exception ex)
           {
-            Console.WriteLine($"Error during authentication: {ex.Message}");
+            Console.WriteLine($"Error during session creation: {ex.Message}");
+            return Problem("Internal Server Error");
+          }
+        }
+
+        [HttpGet("{sessionId:guid}")]
+        public async Task<ActionResult> GetSession([FromRoute] Guid sessionId)
+        {
+          try
+          {
+            var session = await _client.Threeds.Sessions.GetAsync(sessionId.ToString());
+
+            if (session == null)
+            {
+              return Problem("Failed to get session.");
+            }
+
+            return Ok(session);
+          }
+          catch (Exception ex)
+          {
+            Console.WriteLine($"Error during session retrieval: {ex.Message}");
             return Problem("Internal Server Error");
           }
         }
@@ -1812,21 +1868,26 @@ Once a challenge is completed, you must retrieve the result directly from the AP
         ThreeDsMerchantInfo,
         ThreeDsRequestorInfo,
         ThreeDsPurchaseInfo,
-        ThreeDsCardholderInfo
+        ThreeDsCardholderInfo,
+        AuthenticateThreeDsSessionRequest,
+        ThreeDsCallbackUrls
     )
 
     app = Flask(__name__)
 
     client = BasisTheory(api_key="<PRIVATE_API_KEY>")
 
-    @app.route('/<sessionId>/authenticate', methods=['POST'])
-    def authenticate_session(sessionId):
-      try:
-        authentication = client.threeds.sessions.authenticate(
-            session_id=sessionId,
+    @app.route('/create-session', methods=['POST'])
+    def create_session():
+      session = client.threeds.sessions.create(
+          token_id="d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
+          type="customer",
+          device="browser",
+          authentication_request=AuthenticateThreeDsSessionRequest(
             authentication_category="payment",
             authentication_type="payment-transaction",
             challenge_preference="no-challenge",
+            # card_brand="Visa", # optional - used if co-badged card
             merchant_info=ThreeDsMerchantInfo(
                 mid="9876543210001",
                 acquirer_bin="000000999",
@@ -1853,15 +1914,30 @@ Once a challenge is completed, you must retrieve the result directly from the AP
             cardholder_info=ThreeDsCardholderInfo(
                 name="John Doe",
                 email="john@example.com"
-            )
-        )
+            ),
+          ),
+          callback_urls=ThreeDsCallbackUrls(
+              success="https://example.com/success",
+              failure="https://example.com/failure"
+          )
+      )
 
-        if authentication is None:
-            return jsonify({"error": "Error during authentication."}), 500
+      if session is None:
+          return jsonify({"error": "Error during session creation."}), 500
 
-        return jsonify(authentication.to_dict()), 200
+      return jsonify(session.to_dict()), 200
+
+    @app.route('/<sessionId>', methods=['GET'])
+    def get_session(sessionId):
+      try:
+        session = client.threeds.sessions.get(sessionId)
+
+        if session is None:
+          return jsonify({"error": "Failed to get session."}), 500
+
+        return jsonify(session.to_dict()), 200
       except Exception as ex:
-        print(f"Error during authentication: {ex}")
+        print(f"Error during session retrieval: {ex}")
         return jsonify({"error": "Internal Server Error"}), 500
 
     # highlight-start
@@ -1910,7 +1986,8 @@ Once a challenge is completed, you must retrieve the result directly from the AP
       )
 
       router := mux.NewRouter()
-      router.HandleFunc("/{sessionId}/authenticate", authenticateSession).Methods("POST")
+      router.HandleFunc("/create-session", createSession).Methods("POST")
+      router.HandleFunc("/{sessionId}", getSession).Methods("GET")
       // highlight-start
       router.HandleFunc("/{sessionId}/challenge-result", getChallengeResult).Methods("GET")
       // highlight-end
@@ -1924,14 +2001,22 @@ Once a challenge is completed, you must retrieve the result directly from the AP
       return &s
     }
 
-    func authenticateSession(rw http.ResponseWriter, r *http.Request) {
-      vars := mux.Vars(r)
-      sessionId := vars["sessionId"]
+    func createSession(rw http.ResponseWriter, r *http.Request) {
+      session := client.Threeds.Sessions.Create(context.Background(), &threeds.CreateThreeDsSessionRequest{
+        TokenId: "d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
+        Type: "customer",
+        Device: "browser",
+        CallbackUrls: &threeds.ThreeDsCallbackUrls{
+          Success: pointerToString("https://example.com/success"),
+          Failure: pointerToString("https://example.com/failure"),
+        },
+      })
 
       authRequest := &threeds.AuthenticateThreeDsSessionRequest{
-        AuthenticationCategory: "payment",
-        AuthenticationType:     "payment-transaction",
-        ChallengePreference:    "no-challenge",
+        AuthenticationCategory: pointerToString("payment"),
+        AuthenticationType:     pointerToString("payment-transaction"),
+        ChallengePreference:    pointerToString("no-challenge"),
+        // CardBrand:              pointerToString("Visa"), // optional - used if co-badged card
       }
 
       merchantInfo := &basistheory.ThreeDsMerchantInfo{
@@ -1949,15 +2034,15 @@ Once a challenge is completed, you must retrieve the result directly from the AP
       }
 
       purchaseInfo := &basistheory.ThreeDsPurchaseInfo{
-        Amount:          pointerToString("80000"),
-        Currency:        pointerToString("826"),
-        Exponent:        pointerToString("2"),
-        Date:            pointerToString("20240109141010"),
+        Amount:   pointerToString("80000"),
+        Currency: pointerToString("826"),
+        Exponent: pointerToString("2"),
+        Date:     pointerToString("20240109141010"),
         TransactionType: pointerToString("purchase"),
 
-        // InstallmentCount:    pointerToString("5"), // only for installment transactions
+        // InstallmentCount: pointerToString("5"), // only for installment transactions
         // RecurringExpiration: pointerToString("20250131"), // only for recurring transactions
-        // RecurringFrequency:  pointerToString("30"), // only for recurring transactions
+        // RecurringFrequency: pointerToString("30"), // only for recurring transactions
       }
 
       cardholderInfo := &basistheory.ThreeDsCardholderInfo{
@@ -1970,16 +2055,34 @@ Once a challenge is completed, you must retrieve the result directly from the AP
       authRequest.PurchaseInfo = purchaseInfo
       authRequest.CardholderInfo = cardholderInfo
 
-      authenticateResponse, authenticateErr := client.Threeds.Sessions.Authenticate(context.Background(), sessionId, authRequest)
+      session.AuthenticationRequest = authRequest
 
-      if authenticateErr != nil {
+      createResponse, createErr := client.Threeds.Sessions.Create(context.Background(), session)
+
+      if createErr != nil {
         rw.WriteHeader(http.StatusInternalServerError)
-        json.NewEncoder(rw).Encode(map[string]string{"error": authenticateErr.Error()})
+        json.NewEncoder(rw).Encode(map[string]string{"error": createErr.Error()})
         return
       }
 
       rw.WriteHeader(http.StatusOK)
-      json.NewEncoder(rw).Encode(authenticateResponse)
+      json.NewEncoder(rw).Encode(createResponse)
+    }
+
+    func getSession(rw http.ResponseWriter, r *http.Request) {
+      vars := mux.Vars(r)
+      sessionId := vars["sessionId"]
+
+      session, err := client.Threeds.Sessions.Get(context.Background(), sessionId)
+
+      if err != nil {
+        rw.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(rw).Encode(map[string]string{"error": err.Error()})
+        return
+      }
+
+      rw.WriteHeader(http.StatusOK)
+      json.NewEncoder(rw).Encode(session)
     }
 
     // highlight-start
@@ -2327,13 +2430,19 @@ A Basis Theory **3DS Session** represents the lifecycle of a 3DS authentication 
 
 It stores transaction details and dynamically captures data as each step of the authentication flow is completed, providing a complete record of the transaction's 3DS authentication journey.
 
-### Can I create a CIT 3DS Session without using Basis Theory SDKs?
+### What is the difference between a 3DS Session with or without redirection?
 
-For native mobile applications (iOS and Android), you must use Basis Theory's SDK due to specific device data collection and security requirements.
+A 3DS Session with redirection is created from the backend by passing the `authentication_request` upfront and including `callback_urls`.
+The device data collection, authentication and challenge handling is all performed by Basis Theory inside the provided `redirect_url`.
 
-For Web or React Native applications, creating a 3DS session manually via the API is technically possible but **not recommended**, as it involves manually managing device/browser data capture and handling the Method Request.
+A 3DS Session without redirection is created from the frontend using the provided Basis Theory SDKs.
+The authentication and challenge handling is done by the customer, using the SDKs, providing a more customizable experience.
 
-If you prefer to implement this, refer to our [API reference on session creation](/docs/api/3ds/sessions#create-a-customer-session).
+### Is it possible to change the styling or add my company logo to the 3DS redirection page?
+
+At the moment, you cannot change the styling or add your company logo to the 3DS redirection page.
+
+Reach out to our support team if you wish to explore this possibility in the future.
 
 ### How long is a 3DS Session kept in the Basis Theory vault?
 
@@ -2451,9 +2560,6 @@ Yes, 3DS authentications from a `Test` Tenant will use our 3DS Sandbox environme
 
 Yes, refer to the [Test Cards](#test-cards) session in this guide.
 
-### Why do I see a 'ACS browser fingerprinting FAILED!' message in the browser console when creating a session in the test environment?
-
-That message can be safely ignored as it only exists for internal test scenarios
 
 ### Does Basis Theory provide test cards for use in a **production** environment?
 
