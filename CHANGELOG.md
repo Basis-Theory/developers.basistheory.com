@@ -1,3 +1,10 @@
+# [1.252.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.251.0...v1.252.0) (2025-07-18)
+
+
+### Features
+
+* Document documents ([#607](https://github.com/Basis-Theory/developers.basistheory.com/issues/607)) ([4e54720](https://github.com/Basis-Theory/developers.basistheory.com/commit/4e5472001001f0cbb493bfa60cdd38de17e3a623))
+
 # [1.251.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.250.0...v1.251.0) (2025-07-17)
 
 
