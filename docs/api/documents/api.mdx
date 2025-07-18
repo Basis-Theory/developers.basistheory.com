@@ -1,0 +1,256 @@
+---
+title: Documents
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Documents API
+
+## Upload Document
+
+Uploads a document.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/documents"
+/>
+
+#### Permissions
+
+<Permission content="documents:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl --request POST \
+  --url https://api.basistheory.com/documents \
+  --header 'BT-API-KEY: <PRIVATE_API_KEY>' \
+  --header 'Content-Type: multipart/form-data' \
+  --form 'request={"metadata": {"name":"value"}}' \
+  --form document=@/path/to/file.pdf
+```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+
+```
+  </TabItem>
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+
+```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Parameter | Required | Type | Default | Description |
+|-----------|----------|------|---------|-------------|
+| `request` | false | _string_ | `null` | JSON string containing request metadata. Must be provided as a form field. |
+| `document` | true | _file_ | `null` | The document file to upload. Must be provided as a multipart form field with file content. |
+
+The `request` parameter accepts a JSON string with the following properties:
+
+| Property | Required | Type | Default | Description |
+|----------|----------|------|---------|-------------|
+| `metadata` | false | _object_ | `{}` | Key-value pairs of metadata to associate with the document |
+
+
+### Response
+
+Returns a document information if the document was created successfully. Returns an [error](/docs/api/errors) if there were validation errors, or the document failed to create.
+
+```json showLineNumbers
+{
+  "id": "a05d2a09-b4f4-4ce7-9743-ab18d3aa8a43",
+  "tenant_id": "064bbc70-204b-4ef1-a757-ec0878be5945",
+  "metadata": {
+    "name": "value"
+  },
+  "content_type": "application/pdf",
+  "created_by": "f0f504e5-79c2-40a6-aad3-dbee7a692828",
+  "created_at": "2025-07-18T14:41:08.254248+00:00"
+}
+```
+
+## Get Document Metadata
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/documents/{id}"
+/>
+
+#### Permissions
+
+<Permission content="documents:read" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl --request GET \
+  --url https://api.basistheory.com/documents/79602dc6-ac0c-4fe0-9903-62fd88f1303a \
+  --header 'BT-API-KEY: <PRIVATE_API_KEY>'
+```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+await client.documents.get("c2995d93-600a-44a2-b6f1-2c25e46603a9");
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Documents.GetAsync("c2995d93-600a-44a2-b6f1-2c25e46603a9");
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.documents.get(
+    id="c2995d93-600a-44a2-b6f1-2c25e46603a9"
+)
+```
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type | Default | Description |
+|-----------|----------|------|---------|-------------|
+| `id` | true | _uuid_ | `null` | The ID of the document |
+
+### Response
+
+Returns a document with the `id` provided.
+Returns [an error](/docs/api/errors) if the document could not be retrieved.
+
+```json showLineNumbers
+{
+  "id": "79602dc6-ac0c-4fe0-9903-62fd88f1303a",
+  "tenant_id": "6f5ea0c2-f1a6-46c2-ba36-8024cecfb2c3",
+  "metadata": {
+    "name": "value"
+  },
+  "content_type": "application/pdf",
+  "created_by": "0bd433d3-e635-4a81-8263-bb13dcacfc79",
+  "created_at": "2025-07-18T14:41:08.254248+00:00"
+}
+```
+
+## Download Document
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/documents/{id}/data"
+/>
+
+#### Permissions
+
+<Permission content="documents:reveal" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl --request GET \
+  --url https://api.basistheory.com/documents/79602dc6-ac0c-4fe0-9903-62fd88f1303a/data \
+  --header 'BT-API-KEY: <PRIVATE_API_KEY>'
+```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+await client.documents.data.get("c2995d93-600a-44a2-b6f1-2c25e46603a9");
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Documents.Data.GetAsync("c2995d93-600a-44a2-b6f1-2c25e46603a9");
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.documents.data.get(
+    id="c2995d93-600a-44a2-b6f1-2c25e46603a9"
+)
+```
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns the raw, unencrypted binary content of the document file that was previously uploaded.
+
+## Delete Document
+
+Deletes a document.
+
+<HttpMethod
+  method={HttpMethods.DELETE}
+  endpoint="https://api.basistheory.com/documents/{id}"
+/>
+
+#### Permissions
+
+<Permission content="documents:delete" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell showLineNumbers
+curl --request DELETE \
+  --url https://api.basistheory.com/documents/79602dc6-ac0c-4fe0-9903-62fd88f1303a \
+  --header 'BT-API-KEY: <PRIVATE_API_KEY>'
+```
+  </TabItem>
+  <TabItem value="node" label="Node">
+```javascript
+await client.documents.delete("c2995d93-600a-44a2-b6f1-2c25e46603a9");
+```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Documents.DeleteAsync("c2995d93-600a-44a2-b6f1-2c25e46603a9");
+```
+  </TabItem>
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.documents.delete(
+    id="c2995d93-600a-44a2-b6f1-2c25e46603a9"
+)
+```
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type | Default | Description |
+|-----------|----------|------|---------|-------------|
+| `id` | true | _uuid_ | `null` | The ID of the document |
+
+### Response
+
+Returns `204 No Content` if the document was deleted successfully.
+Returns [an error](/docs/api/errors) if the document could not be deleted.
