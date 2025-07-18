@@ -99,18 +99,24 @@ ThreeDSSession session = new ThreedsClient(ClientOptions.builder().build())
 
 #### Request Parameters
 
-| Attribute            | Required          | Type     | Description                                                                                                         |
-|----------------------|-------------------|----------|---------------------------------------------------------------------------------------------------------------------|
-| `token_id`           | conditional       | _string_ | A card type token `id`. Required if `token_intent_id` not present.                                                  |
-| `token_intent_id`    | conditional       | _string_ | A card type token intent `id`. Required if `token_id` not present.                                                  |
-| `pan`                | false             | _string_ | <Deprecated/> A card type token `id`.                                                                               |
-| `type`               | false             | _string_ | The 3DS session type between `customer` (CIT) and `merchant` (MIT). Defaults to `customer`.                         |
-| `device`             | conditional       | _string_ | The device type for the 3DS session between `browser` (web) or `app` (mobile). Required if `type` is `customer`.    |
-| `device_info`        | conditional       | _object_ | Information about the device. See [Device Info](#device-info-object) for details. Required if `type` is `customer`. |
+| Attribute                | Required          | Type     | Description                                                                                                                                                               |
+|--------------------------|-------------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `token_id`               | conditional       | _string_ | A card type token `id`. Required if `token_intent_id` not present.                                                                                                        |
+| `token_intent_id`        | conditional       | _string_ | A card type token intent `id`. Required if `token_id` not present.                                                                                                        |
+| `pan`                    | false             | _string_ | <Deprecated/> A card type token `id`.                                                                                                                                     |
+| `type`                   | false             | _string_ | The 3DS session type between `customer` (CIT) and `merchant` (MIT). Defaults to `customer`.                                                                               |
+| `device`                 | conditional       | _string_ | The device type for the 3DS session between `browser` (web) or `app` (mobile). Required if `type` is `customer`.                                                          |
+| `device_info`            | conditional       | _object_ | Information about the device. See [Device Info](#device-info-object) for details. Required if `type` is `customer`.                                                       |
+| `authentication_request` | conditional       | _object_ | Authentication request details for redirect flows. See [Authentication Request](#authentication-request-object) for details. Required when using redirect implementation. |
+| `callback_urls`          | conditional       | _object_ | Success and failure callback URLs for redirect flows. See [Callback URLs](#callback-urls-object) for details. Required when using redirect implementation.                |
 
 <Alert type={Alerts.WARNING}>
   3DS sessions of type `customer` (CIT) are  only officially supported through our frontend <a href="/docs/sdks/web/3ds/">web</a>, <a href="/docs/sdks/mobile/3ds-react-native">react-native</a> and <a href="/docs/sdks/mobile/3ds/">mobile</a> SDKs.
   Using the API directly is not recommended and may lead to lower success rates. Basis Theory only supports creation of type `merchant` (MIT) through the API or backend SDKs.
+</Alert>
+
+<Alert type={Alerts.INFO}>
+  <strong>Redirect Implementation:</strong> If you include both <code>authentication_request</code> and <code>callback_urls</code> parameters when creating a customer session, the response will include a <code>redirect_url</code> that you can use to redirect customers to the Basis Theory 3DS authentication page. This approach allows you to create CIT sessions from your backend without using frontend SDKs. See the <a href="/docs/guides/threeds/implementation-cit-redirect">3DS CIT with Redirection guide</a> for more details.
 </Alert>
 
 ##### Device Info Object
@@ -142,6 +148,30 @@ ThreeDSSession session = new ThreedsClient(ClientOptions.builder().build())
 | `sdk_interface`      | conditional | _string_ | The interface types the mobile device supports.. Required if session `device` is `app` and `type` is `customer`.               |
 | `sdk_ui_type`        | conditional | _array_  | The UI types the device supports for displaying challenge UIs. Required if session `device` is `app` and `type` is `customer`. |
 
+##### Authentication Request Object
+
+| Attribute                      | Required    | Type                                       | Description                                                                                                                                                                      |
+|--------------------------------|-------------|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `authentication_category`      | true        | _string_                                   | The category of the 3DS authentication, see [Authentication Categories](#authentication-categories) for allowed values.                                                          |
+| `authentication_type`          | true        | _string_                                   | The type of 3DS transaction, see [Authentication Types](#authentication-types) for allowed values.                                                                               |
+| `card_brand`                   | false       | _string_                                   | The chosen card brand to route the transaction through (for co-badged cards).                                                                                                    |
+| `request_decoupled_challenge`  | false       | _bool_                                     | If a decoupled challenge is required in case of a challenge. Defaults to `true` for `merchant` session `type`.                                                                   |
+| `decoupled_challenge_max_time` | conditional | _number_                                   | The maximum time in minutes for the decoupled challenge. Required if `request_decoupled_challenge` is `true` or session `type` is `merchant`.                                    |
+| `challenge_preference`         | false       | _string_                                   | The merchant 3DS challenge preference, see [Challenge Preferences](#challenge-preferences) for allowed values.                                                                   |
+| `merchant_info`                | conditional | [Merchant Info](#merchant-info-object)     | Information about the merchant. Required if `authentication_category` is `payment`.                                                                                              |
+| `requestor_info`               | conditional | [Requestor Info](#requestor-info-object)   | Additional nformation about the 3DS requestor for certain card brands. Required only if authenticating American Express, Discover or Cartes Bancaires transactions.              |
+| `purchase_info`                | conditional | [Purchase Info](#purchase-info-object)     | Information about the purchase (If any). Required if `authentication_category` is `payment` or if `authentication_type` is `recurring-transaction` or `installment-transaction`. |
+| `cardholder_info`              | true        | [Cardholder Info](#cardholder-info-object) | Information about the cardholder.                                                                                                                                                |
+| `broadcast_info`               | false       | _object_                                   | Unstructured information sent to the 3DS Server, Directory Server and Access Control Server.                                                                                     |
+| `message_extensions`           | false       | _array_                                    | Array of [Message Extensions](#message-extension-object) - Data necessary to support requirements not defined in the standard 3DS format.                                        |
+
+##### Callback URLs Object
+
+| Attribute | Required | Type     | Description                                                    |
+|-----------|----------|----------|----------------------------------------------------------------|
+| `success` | true     | _string_ | The URL to redirect customers to after successful authentication. |
+| `failure` | true     | _string_ | The URL to redirect customers to after failed authentication.     |
+
 ### Response
 
 Returns relevant information about the created 3DS session in a [Create Session Response](#create-session-response-object) object. Returns [an error](/docs/api/errors) if the session cannot be retrieved.
@@ -154,22 +184,24 @@ Returns relevant information about the created 3DS session in a [Create Session 
   "method_url": "https://acs.example.com/3ds/acs/browser/method",
   "method_notification_url": "https://api.basistheory.com/3ds/sessions/c0c22fcd-d42c-497e-a9a6-2eacd31770d7/method-notification",
   "directory_server_id": "M000000003",
-  "recommended_version": "2.2.0"
+  "recommended_version": "2.2.0",
+  "redirect_url": "https://api.basistheory.com/3ds/redirect/c0c22fcd-d42c-497e-a9a6-2eacd31770d7?apiKey=<PUBLIC_API_KEY>"
 }
 ```
 
 #### Create Session Response Object
 
-| Attribute                 | Type     | Description                                                                            |
-|---------------------------|----------|----------------------------------------------------------------------------------------|
-| `id`                      | _string_ | The ID of the 3DS session.                                                             |
-| `type`                    | _string_ | The 3DS session type.                                                                  |
-| `cardBrand`               | _string_ | The main brand for the card used in the 3DS transaction.                               |
-| `additional_card_brands`  | _array_  | Array of all brands the card was identified as (if co-badged).                         |
-| `method_url`              | _string_ | The URL for the Method request, used by the 3DS SDK.                                   |
-| `method_notification_url` | _string_ | The URL for which to send the method completion notification, used by the 3DS Web SDK. |
-| `directory_server_id`     | _string_ | The 3DS directory server ID, used by the 3DS Mobile SDKs.                              |
-| `recommended_version`     | _string_ | The 3DS version that was used for the transaction.                                     |
+| Attribute                 | Type     | Description                                                                                                |
+|---------------------------|----------|------------------------------------------------------------------------------------------------------------|
+| `id`                      | _string_ | The ID of the 3DS session.                                                                                 |
+| `type`                    | _string_ | The 3DS session type.                                                                                      |
+| `cardBrand`               | _string_ | The main brand for the card used in the 3DS transaction.                                                   |
+| `additional_card_brands`  | _array_  | Array of all brands the card was identified as (if co-badged).                                             |
+| `method_url`              | _string_ | The URL for the Method request, used by the 3DS SDK.                                                       |
+| `method_notification_url` | _string_ | The URL for which to send the method completion notification, used by the 3DS Web SDK.                     |
+| `directory_server_id`     | _string_ | The 3DS directory server ID, used by the 3DS Mobile SDKs.                                                  |
+| `recommended_version`     | _string_ | The 3DS version that was used for the transaction.                                                         |
+| `redirect_url`            | _string_ | The URL to redirect customers to for 3DS authentication (only present when using redirect implementation). |
 
 ## Get a Session
 
