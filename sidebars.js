@@ -542,6 +542,23 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Documents",
+      link: {
+        type: "doc",
+        id: "api/documents/api",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/documents/api",
+          customProps: {
+            enterprise: true,
+          }
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "3D Secure",
       link: {
         type: "doc",
