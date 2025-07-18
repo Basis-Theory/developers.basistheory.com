@@ -60,7 +60,7 @@ To successfully process 3DS authentications, you must first create two applicati
 
 ### Public Application
 
-The **Public Application** allows your front-end or client-side integration to create 3DS sessions securely and redirect the customer to the Basis Theory 3DS authentication page.
+The **Public Application** provides the public API key needed to create a 3DS session and construct the redirect URL that customers will be redirected to for 3DS authentication.
 
 - **Permissions Required:** `3ds:session:create`
 
@@ -99,8 +99,8 @@ Here's the recommended minimum payload for creating a 3DS session with redirecti
       "mid": "9876543210001",
       "acquirer_bin": "000000999",
       "name": "Example 3DS Merchant",
-      "country_code": "7922",
-      "category_code": "826",
+      "country_code": "826",
+      "category_code": "5999",
       "url": "https://example.com",
     },
     "requestor_info": { // if accepting American Express, Discover or Cartes Bancaires
@@ -142,7 +142,7 @@ And below is how you can use this object to create a 3DS session with the Basis 
         "token_id": "d65ead1a-84aa-45eb-96ba-f3e7e26087c0",
         "type": "customer",
         "device": "browser",
-        "authenticate_request": {
+        "authentication_request": {
           "authentication_category": "payment",
           "authentication_type": "payment-transaction",
           "challenge_preference": "no-challenge",
@@ -151,7 +151,7 @@ And below is how you can use this object to create a 3DS session with the Basis 
             "mid": "9876543210001",
             "acquirer_bin": "000000999",
             "name": "Example 3DS Merchant",
-            "category_code": "7922",
+            "category_code": "5999",
             "country_code": "826",
             "url": "https://example.com"
           },
@@ -223,7 +223,7 @@ And below is how you can use this object to create a 3DS session with the Basis 
               mid: "9876543210001",
               acquirerBin: "000000999",
               name: "Example 3DS Merchant",
-              categoryCode: "7922",
+              categoryCode: "5999",
               countryCode: "826",
               url: "https://example.com",
             },
@@ -238,7 +238,7 @@ And below is how you can use this object to create a 3DS session with the Basis 
               date: "20240109141010",
               transactionType: "purchase",
 
-              //installmentCount": "5", // only for installment transactions
+              //installmentCount: "5", // only for installment transactions
               //recurringExpiration: "20250131", // only for recurring transactions
               //recurringFrequency: "30", // only for recurring transactions
             },
@@ -249,7 +249,7 @@ And below is how you can use this object to create a 3DS session with the Basis 
           },
           callbackUrls: {
             success: "https://example.com/success",
-            failure: "https://example.com/failures"
+            failure: "https://example.com/failure"
           }
         });
         // highlight-end
@@ -347,7 +347,7 @@ And below is how you can use this object to create a 3DS session with the Basis 
                   Mid = "9876543210001",
                   AcquirerBin = "000000999",
                   Name = "Example 3DS Merchant",
-                  CategoryCode = "7922",
+                  CategoryCode = "5999",
                   CountryCode = "826",
                   Url = "https://example.com"
                 },
@@ -440,7 +440,7 @@ And below is how you can use this object to create a 3DS session with the Basis 
                 mid="9876543210001",
                 acquirer_bin="000000999",
                 name="Example 3DS Merchant",
-                category_code="7922",
+                category_code="5999",
                 country_code="826",
                 url="https://example.com"
             ),
@@ -549,7 +549,7 @@ And below is how you can use this object to create a 3DS session with the Basis 
         Mid:          pointerToString("9876543210001"),
         AcquirerBin:  pointerToString("000000999"),
         Name:         pointerToString("Example 3DS Merchant"),
-        CategoryCode: pointerToString("7922"),
+        CategoryCode: pointerToString("5999"),
         CountryCode:  pointerToString("826"),
         Url:          pointerToString("https://example.com"),
       }
@@ -657,8 +657,8 @@ Merchant information often varies depending on the card network or brand. You mu
   "mid": "9876543210001",
   "acquirer_bin": "000000999",
   "name": "Example 3DS Merchant",
-  "country_code": "7922",
-  "category_code": "826",
+  "country_code": "826",
+  "category_code": "5999",
   "url": "https://example.com",
 }
 ```
@@ -1054,7 +1054,7 @@ Make a GET request to retrieve the session immediately after receiving the callb
               mid: "9876543210001",
               acquirerBin: "000000999",
               name: "Example 3DS Merchant",
-              categoryCode: "7922",
+              categoryCode: "5999",
               countryCode: "826",
               url: "https://example.com",
             },
@@ -1080,7 +1080,7 @@ Make a GET request to retrieve the session immediately after receiving the callb
           },
           callbackUrls: {
             success: "https://example.com/success",
-            failure: "https://example.com/failures"
+            failure: "https://example.com/failure"
           }
         });
 
@@ -1191,7 +1191,7 @@ Make a GET request to retrieve the session immediately after receiving the callb
                   Mid = "9876543210001",
                   AcquirerBin = "000000999",
                   Name = "Example 3DS Merchant",
-                  CategoryCode = "7922",
+                  CategoryCode = "5999",
                   CountryCode = "826",
                   Url = "https://example.com"
                 },
@@ -1301,7 +1301,7 @@ Make a GET request to retrieve the session immediately after receiving the callb
                 mid="9876543210001",
                 acquirer_bin="000000999",
                 name="Example 3DS Merchant",
-                category_code="7922",
+                category_code="5999",
                 country_code="826",
                 url="https://example.com"
             ),
@@ -1418,7 +1418,7 @@ Make a GET request to retrieve the session immediately after receiving the callb
         Mid:          pointerToString("9876543210001"),
         AcquirerBin:  pointerToString("000000999"),
         Name:         pointerToString("Example 3DS Merchant"),
-        CategoryCode: pointerToString("7922"),
+        CategoryCode: pointerToString("5999"),
         CountryCode:  pointerToString("826"),
         Url:          pointerToString("https://example.com"),
       }
@@ -1608,7 +1608,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
               mid: "9876543210001",
               acquirerBin: "000000999",
               name: "Example 3DS Merchant",
-              categoryCode: "7922",
+              categoryCode: "5999",
               countryCode: "826",
               url: "https://example.com",
             },
@@ -1623,7 +1623,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
               date: "20240109141010",
               transactionType: "purchase",
 
-              //installmentCount": "5", // only for installment transactions
+              //installmentCount: "5", // only for installment transactions
               //recurringExpiration: "20250131", // only for recurring transactions
               //recurringFrequency: "30", // only for recurring transactions
             },
@@ -1634,7 +1634,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
           },
           callbackUrls: {
             success: "https://example.com/success",
-            failure: "https://example.com/failures"
+            failure: "https://example.com/failure"
           }
         });
 
@@ -1762,7 +1762,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
                   Mid = "9876543210001",
                   AcquirerBin = "000000999",
                   Name = "Example 3DS Merchant",
-                  CategoryCode = "7922",
+                  CategoryCode = "5999",
                   CountryCode = "826",
                   Url = "https://example.com"
                 },
@@ -1892,7 +1892,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
                 mid="9876543210001",
                 acquirer_bin="000000999",
                 name="Example 3DS Merchant",
-                category_code="7922",
+                category_code="5999",
                 country_code="826",
                 url="https://example.com"
             ),
@@ -2023,7 +2023,7 @@ Once a challenge is completed, you must retrieve the result directly from the AP
         Mid:          pointerToString("9876543210001"),
         AcquirerBin:  pointerToString("000000999"),
         Name:         pointerToString("Example 3DS Merchant"),
-        CategoryCode: pointerToString("7922"),
+        CategoryCode: pointerToString("5999"),
         CountryCode:  pointerToString("826"),
         Url:          pointerToString("https://example.com"),
       }
@@ -2474,7 +2474,7 @@ For installment transactions where a product is broken into multiple payments, u
 
 ### What settings do I use if I only do a $0 Authorization?
 
-Yes, when doing pre-authorizations, that signifies the intent to charge - you should use `payment` as the `authentication_category` and `purchase` as the `authentication_type`.
+Yes, when doing pre-authorizations, that signifies the intent to charge - you should use `payment` as the `authentication_category` and `payment-transaction` as the `authentication_type`.
 
 ### How do I find my Merchant Information?
 
@@ -2520,7 +2520,7 @@ A frictionless 3DS authentication is a successful authentication where no challe
 
 ### How can I verify a non-frictionless challenge was completed?
 
-You can either wait for the SDKs challenge methods promises to be completed or use the `3ds.session.challenge-completed` [webhook](/docs/api/webhooks/eventdata#challenge-completed).
+With the redirection approach, the customer will be redirected to your success or failure callback URL after completing the challenge. You can also use the `3ds.session.challenge-completed` [webhook](/docs/api/webhooks/eventdata#challenge-completed) to be notified when the challenge is completed.
 
 ### How do I handle co-badged cards in 3DS authentication?
 
@@ -2548,9 +2548,7 @@ Yes. Although decoupled challenges are more commonly used in Merchant-Initiated 
 
 The issuer or acquirer fully controls the design and layout of the challenge window (e.g., fonts and colors).
 
-However, Basis Theory allows you to customize the size and placement of the challenge window in your application.
-
-Refer to the [SDK documentation](/docs/sdks/) for platform-specific instructions.
+With the redirection approach, the challenge is presented directly on the Basis Theory authentication page, so styling customization is limited. However, you can customize the popup window size and placement if you're using the popup implementation approach.
 
 ### Does Basis Theory provide a way to test a 3DS implementation?
 

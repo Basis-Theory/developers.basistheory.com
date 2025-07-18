@@ -10,6 +10,9 @@ import TabItem from "@theme/TabItem";
 
 Customer Initiated Transactions (CIT) are 3DS transactions in which the customer is present during the transaction to complete any required external authorizations, such as a challenge.
 
+This guide covers the standard 3DS CIT implementation where the authentication flow is embedded directly in your checkout page using Basis Theory SDKs.
+If you prefer to redirect customers to the Basis Theory 3DS authentication page instead (and have to perform less steps), please refer to the [3DS CIT with Redirection guide](/docs/guides/threeds/implementation-cit-redirect).
+
 If you perform transactions without the customer present at checkout, these are classified as Merchant-Initiated Transactions (MIT). For guidance on implementing 3DS MIT, please refer to the implementation guide [here](/docs/guides/threeds/implementation-mit).
 
 ## Summary
@@ -2264,6 +2267,21 @@ The SDK will throw exceptions or return error objects that you can catch and han
 A Basis Theory **3DS Session** represents the lifecycle of a 3DS authentication process.
 
 It stores transaction details and dynamically captures data as each step of the authentication flow is completed, providing a complete record of the transaction's 3DS authentication journey.
+
+### What's the difference between this implementation and the redirect approach?
+
+This guide covers the **standard 3DS CIT implementation** where:
+- The authentication flow is embedded directly in your checkout page
+- You use Basis Theory SDKs to handle device data collection and challenges
+- You have full control over the user experience and styling
+
+The **[3DS CIT with Redirection approach](/docs/guides/threeds/implementation-cit-redirect)** is where:
+- The 3DS session is created from your backend with all authentication details upfront
+- Customers are redirected to the Basis Theory 3DS authentication page
+- Basis Theory handles the entire authentication flow and redirects customers back to your site
+- Less customization but simpler implementation
+
+Choose the redirect approach if you want simpler implementation and don't need to customize the authentication experience. Choose this standard approach if you want full control over the user experience.
 
 ### Can I create a CIT 3DS Session without using Basis Theory SDKs?
 
