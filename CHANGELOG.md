@@ -1,3 +1,10 @@
+# [1.253.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.252.0...v1.253.0) (2025-07-21)
+
+
+### Features
+
+* 3ds redirect guide ([#597](https://github.com/Basis-Theory/developers.basistheory.com/issues/597)) ([82739a7](https://github.com/Basis-Theory/developers.basistheory.com/commit/82739a7ee2efed8b81aa8db99ff455702bdcdf46))
+
 # [1.252.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.251.0...v1.252.0) (2025-07-18)
 
 
