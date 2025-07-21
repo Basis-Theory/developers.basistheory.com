@@ -116,6 +116,11 @@ const sidebars = {
         },
         {
           type: "doc",
+          id: "guides/threeds/implementation-cit-redirect",
+          label: "3DS Implementation (CIT Redirect)",
+        },
+        {
+          type: "doc",
           id: "guides/threeds/implementation-mit",
           label: "3DS Implementation (MIT)",
         },
