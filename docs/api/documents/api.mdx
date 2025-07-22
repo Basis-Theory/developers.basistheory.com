@@ -41,17 +41,61 @@ curl --request POST \
 
   <TabItem value="node" label="Node">
 ```javascript
-
+import { Blob } from "buffer";
+const blob = new Blob(['Hello World'], { type: 'text/plain' });
+const uploaded = await client.documents.upload(blob, {
+  request: {
+      metadata: {
+          "attribute 1": "value 1"
+      }
+  }
+});
 ```
   </TabItem>
   <TabItem value="csharp" label="C#">
 ```csharp showLineNumbers
-
+var uploaded = await client.Documents.UploadAsync(new DocumentsUploadRequest
+{
+    Document = new FileParameter
+    {
+        Stream = new MemoryStream(Encoding.UTF8.GetBytes("Hello World")),
+        FileName = "hello.txt",
+        ContentType = "text/plain"
+    },
+    Request = new CreateDocumentRequest
+    {
+        Metadata = new Dictionary<string, string?>
+        {
+           ["attribute 1"] = "value 1",
+        }
+    }
+});
 ```
   </TabItem>
   <TabItem value="python" label="Python">
 ```python showLineNumbers
-
+document = client.documents.upload(
+    document=("hello.txt", "Hello World", "text/plain"),
+    request={
+        "metadata": {
+            "attribute 1": "value 1"
+        }
+    }
+)
+```
+  </TabItem>
+  <TabItem value="java" label="Java">
+```java showLineNumbers
+File tempFile = Files.createTempFile("test", ".txt").toFile();
+String originalContent = "Hello World";
+try (FileWriter writer = new FileWriter(tempFile)) {
+    writer.write(originalContent);
+}
+Map<String, Optional<String>> metadata = new HashMap<>();
+metadata.put("attribute 1", Optional.of("value 1"));
+DocumentsUploadRequest request = DocumentsUploadRequest.builder()
+        .request(CreateDocumentRequest.builder()
+                .metadata(metadata).build()).build();
 ```
   </TabItem>
 </Tabs>
@@ -128,6 +172,11 @@ client.documents.get(
 )
 ```
   </TabItem>
+  <TabItem value="java" label="Java">
+```java showLineNumbers
+client.documents().get(uploaded.getId().get());
+```
+  </TabItem>
 </Tabs>
 
 #### URI Parameters
@@ -179,20 +228,41 @@ curl --request GET \
 
   <TabItem value="node" label="Node">
 ```javascript
-await client.documents.data.get("c2995d93-600a-44a2-b6f1-2c25e46603a9");
+const downloadStream = await client.documents.data.get(uploaded.id!);
+const chunks: Buffer[] = [];
+for await (const chunk of downloadStream) {
+    chunks.push(chunk);
+}
+const downloadedContent = Buffer.concat(chunks).toString('utf8');
 ```
   </TabItem>
   <TabItem value="csharp" label="C#">
 ```csharp showLineNumbers
-await client.Documents.Data.GetAsync("c2995d93-600a-44a2-b6f1-2c25e46603a9");
+var httpClient = new HttpClient();
+httpClient.DefaultRequestHeaders.Add("BT-API-KEY", "<API_KEY>");
+var response = await httpClient.GetAsync($"https://api.basistheory.com/documents/{documentId}/data");
+var downloadedContent = await response.Content.ReadAsStringAsync();
 ```
   </TabItem>
 
   <TabItem value="python" label="Python">
 ```python showLineNumbers
-client.documents.data.get(
-    id="c2995d93-600a-44a2-b6f1-2c25e46603a9"
-)
+data_bytes = b""
+for chunk in client.documents.data.get(document_id=document_id):
+    data_bytes += chunk
+
+data_content = data_bytes.decode('utf-8')
+```
+  </TabItem>
+  <TabItem value="java" label="Java">
+```java showLineNumbers
+InputStream dataStream = client.documents().data().get(documentId);
+ByteArrayOutputStream result = new ByteArrayOutputStream();
+byte[] buffer = new byte[1024];
+int length;
+while ((length = dataStream.read(buffer)) != -1) {
+    result.write(buffer, 0, length);
+}
 ```
   </TabItem>
 </Tabs>
@@ -240,6 +310,11 @@ await client.Documents.DeleteAsync("c2995d93-600a-44a2-b6f1-2c25e46603a9");
 client.documents.delete(
     id="c2995d93-600a-44a2-b6f1-2c25e46603a9"
 )
+```
+  </TabItem>
+  <TabItem value="java" label="Java">
+```java showLineNumbers
+client.documents().delete(documentId);
 ```
   </TabItem>
 </Tabs>
