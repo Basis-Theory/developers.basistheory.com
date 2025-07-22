@@ -1,3 +1,10 @@
+## [1.253.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.253.1...v1.253.2) (2025-07-22)
+
+
+### Bug Fixes
+
+* add jszip to reactors ([#609](https://github.com/Basis-Theory/developers.basistheory.com/issues/609)) ([d52c211](https://github.com/Basis-Theory/developers.basistheory.com/commit/d52c211253a44e90ff1ef48c422f0b9285c23db5))
+
 ## [1.253.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.253.0...v1.253.1) (2025-07-22)
 
 
