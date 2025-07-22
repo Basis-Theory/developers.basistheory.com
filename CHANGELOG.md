@@ -1,3 +1,10 @@
+## [1.253.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.253.0...v1.253.1) (2025-07-22)
+
+
+### Bug Fixes
+
+* Apple Pay domain registration limit ([#605](https://github.com/Basis-Theory/developers.basistheory.com/issues/605)) ([e9163fb](https://github.com/Basis-Theory/developers.basistheory.com/commit/e9163fbfa8df237bcec3c6585d0f66361a0d3227))
+
 # [1.253.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.252.0...v1.253.0) (2025-07-21)
 
 
