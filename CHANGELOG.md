@@ -1,3 +1,10 @@
+## [1.254.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.254.0...v1.254.1) (2025-07-23)
+
+
+### Bug Fixes
+
+* Documents rate limit definition ([#611](https://github.com/Basis-Theory/developers.basistheory.com/issues/611)) ([898a746](https://github.com/Basis-Theory/developers.basistheory.com/commit/898a746ef7c9617d03adeeda3d67e88808e736c2))
+
 # [1.254.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.253.2...v1.254.0) (2025-07-22)
 
 
