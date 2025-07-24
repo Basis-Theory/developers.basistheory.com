@@ -63,6 +63,33 @@ BasisTheoryElements.createToken(body: body, apiKey: "<PUBLIC_API_KEY>")
 
 The callback provided calls your function with a `data` of type [CreateTokenResponse](https://github.com/Basis-Theory/basistheory-swift/blob/master/docs/CreateTokenResponse.md), and an `error` of type [Error](#errors).
 
+### createTokenIntent
+
+Token Intents provide a secure mechanism to collect and validate sensitive information, like card details, before converting it into a long-lived token. Using the Basis Theory iOS SDK, you can initiate a token intent request with minimal client-side code:
+
+```swift showLineNumbers
+let request = CreateTokenIntentRequest(
+    type: "card",
+    data: [
+        "number": cardNumberTextField.text ?? "",
+        "expiration_month": expirationDateTextField.month(),
+        "expiration_year": expirationDateTextField.year(),
+        "cvc": cvcTextField.text ?? ""
+    ]
+)
+
+BasisTheoryElements.createTokenIntent(request: request) { result in
+    switch result {
+    case .success(let tokenIntent):
+        print("Token Intent created: \(tokenIntent.id)")
+    case .failure(let error):
+        print("Failed to create Token Intent: \(error)")
+    }
+}
+```
+
+This initiates a `card` Token Intent, which can then be used for authentication, 3DS, or converted into a permanent token depending on your use case.
+
 ### encryptToken
 
 This function encrypts sensitive data using a public key and Key ID created through [Encryption Keys](/docs/api/client-keys).

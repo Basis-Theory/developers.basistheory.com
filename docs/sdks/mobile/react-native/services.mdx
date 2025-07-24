@@ -274,6 +274,31 @@ await bt?.tokens.delete("<TOKEN ID>");
 
 <Alert>The <Link to="https://github.com/Basis-Theory/react-native-elements/tree/master/demo" target="_blank">Basis Theory React Native SDK repository</Link> contains code examples demonstrating the implementation of each of the aforementioned methods, adhering to best practices.</Alert>
 
+
+
+## Token Intents
+
+### Create a token intent
+
+Token Intents provide a secure mechanism to collect and validate sensitive information, like card details, before converting it into a long-lived token. Using the Basis Theory React Native SDK, you can initiate a token intent request with minimal client-side code:
+
+```typescript
+const { bt } = useBasisTheory("<PUBLIC API KEY>");
+
+const token = await bt?.tokenIntents.create({
+  type: "card",
+  data: {
+    number: cardNumberRef.current,
+    expiration_month: cardExpirationRef.current.month(),
+    expiration_year: cardExpirationRef.current.year(),
+    cvc: cardVerificationRef.current,
+  },
+});
+```
+
+This initiates a `card` Token Intent, which can then be used for authentication, 3DS, or converted into a permanent token depending on your use case.
+
+
 ## Proxy
 
 Proxy provides a simple way to retrieve data back into an element utilizing our [proxy](/docs/api/proxies) service.
