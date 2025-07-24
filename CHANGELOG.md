@@ -1,3 +1,10 @@
+# [1.255.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.254.1...v1.255.0) (2025-07-24)
+
+
+### Features
+
+* add token intents to ios and react-native sdks ([#613](https://github.com/Basis-Theory/developers.basistheory.com/issues/613)) ([7708aba](https://github.com/Basis-Theory/developers.basistheory.com/commit/7708aba7b13e52f5f599802b246d5c714e89f128))
+
 ## [1.254.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.254.0...v1.254.1) (2025-07-23)
 
 
