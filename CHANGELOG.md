@@ -1,3 +1,10 @@
+# [1.256.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.255.1...v1.256.0) (2025-07-28)
+
+
+### Features
+
+* improve migration doc ([#615](https://github.com/Basis-Theory/developers.basistheory.com/issues/615)) ([8d90ba9](https://github.com/Basis-Theory/developers.basistheory.com/commit/8d90ba9d3a8a075ecc62b8f600f3d12d687e0c62))
+
 ## [1.255.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.255.0...v1.255.1) (2025-07-28)
 
 
