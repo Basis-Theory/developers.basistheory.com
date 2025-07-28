@@ -1,3 +1,10 @@
+## [1.255.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.255.0...v1.255.1) (2025-07-28)
+
+
+### Bug Fixes
+
+* Use correct permissions ([#616](https://github.com/Basis-Theory/developers.basistheory.com/issues/616)) ([91c6164](https://github.com/Basis-Theory/developers.basistheory.com/commit/91c6164d46e48291272d14cf7362a09f7a10aac6))
+
 # [1.255.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.254.1...v1.255.0) (2025-07-24)
 
 
