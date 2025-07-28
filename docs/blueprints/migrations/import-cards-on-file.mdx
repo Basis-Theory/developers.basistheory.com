@@ -3,42 +3,33 @@ toc_max_heading_level: 2
 ---
 
 import { Card } from "@site/src/components/shared/Card";
-import { PublicKey } from "@site/src/components/shared/PublicKey";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 # Import Cards on File
 
-Migrate credit card data to Basis Theory by extracting and tokenizing stored information from your current vendor, who can be a Payments Processor, Tokenization Provider, or any other party responsible for protecting your customer's card data.
+Migrating cards on file from your current vendor into Basis Theory is a straightforward process that allows you to maintain continuity in billing and prepare for a multiprocessor strategy.
 
-This guide will walk you through the process and requirements for achieving it securely.
+This guide outlines the steps, best practices, and technical considerations for a successful card import.
 
-## Understanding the Migration Process
+## 1. Request an Export
 
-Before starting the migration process it is important to gather a few pieces of information:
+To get started, the account owner contacts the current provider, asking for a partial or full card-on-file token export. Vendors may require different methods to initiate the migration, such as submitting a support ticket or sending a signed letter to a designated email address.
 
-- A member of the migration team should have an understanding of the existing payment integration
-- Identify the account owner and authorized signers at your organization for the vendor
-- Documentation or descriptions of the outputs from a data migration from your vendor
-- The requirements your vendor has for any party receiving card data
+<Alert type={Alerts.WARNING}>
+  Whenever possible, request that your current provider exports the Network Transaction ID along with the stored cards. Passing that information to your new provider when [processing MITs (Merchant-Initiated Transactions)](/docs/card-payments/charge-card#subsequent-charges) improves your chances of successful authorization and future compliance.
+</Alert>
 
-## Initiating the Migration
-
-Once you have a clear understanding of the migration process, it's time to initiate the actual migration from your vendor to Basis Theory.
-
-### 1. Contacting the Vendor
-
-To get started, you need to reach out to the account owners or authorized signers for the vendor, they hold the authority to initiate the process on your behalf. Depending on the vendor, there are different methods to initiate the migration, such as submitting a support ticket or sending a signed letter to a designated email address.
-
-Some processors publicly document the data export process and provide guidelines to their customers. For those who don't, here is a template message the account owner can use:
+Some vendors publicly document the data export process and provide guidelines for their customers. For those who don’t, here is a template message the account owner can use:
 
 <Card>
   **from**: John Doe &lt;the_account_owner@mycompany.com&gt;<br/>
   **to**: Vendor Support &lt;support@previousvendor.com&gt;<br/>
   **cc**: Basis Theory Support &lt;support@basistheory.com&gt;<br/>
-  **subject**: Request for Tokens Export
+  **subject**: Request for Token Export
 
-  Dear &lcub; vendor &rcub; team,
+  Dear `provider_name` team,
 
-  I would like to proceed with a &lcub; full / partial &rcub; cards on file export.<br/>
+  I would like to proceed with a `full_or_partial` card-on-file token export.<br/>
   My new provider (CC) is:
 
   Basis Theory Inc.<br/>
@@ -46,35 +37,61 @@ Some processors publicly document the data export process and provide guidelines
   Mill Valley, CA 94941<br/>
   https://www.basistheory.com<br/>
 
-  1. Timeline - we plan to complete the migration process by &lcub; target date &rcub;.<br/>
+  1. Timeline: We plan to complete the migration process by `target_date`.<br/>
   Any guidance or support to expedite this request would be greatly appreciated.
-  2. Data format - CSV is preferred
+  2. Data format: CSV is preferred. Please include Network Transaction IDs.
 
-  Regards,
+  Regards,<br/>
+  John Doe, Account Owner
 </Card>
 <br/>
 
-Notice that by copying Basis Theory Support in the email makes the introduction between the parties. This important step guarantees that Basis Theory can take over when necessary.
+<Alert>
+Copying Basis Theory Support in the email facilitates an introduction between the parties. This important step ensures that Basis Theory can take over when necessary.
+</Alert>
 
-### 2. Requirements from the Vendor
+Some requirements are typical across all providers:
 
-The vendor may have specific requirements that need to be fulfilled before exporting the data. They may ask the set of tokens to export in a partial migration, the merchant account, among other information.
+| Provider Requirement                | Basis Theory Fulfillment                                                                                                          |
+|-------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| File transmission                   | SFTP is preferred. <br/>_Basis Theory can offer an SFTP server. The provider must share a public SSH key in this case._           |
+| File format                         | CSV is preferred. [JSONL](https://jsonlines.org/) is also supported. <br/>_Avoid including line breaks in the file._              |
+| Public PGP Encryption Key           | Data is transmitted in an encrypted format. [Available in our CDN](https://cdn.basistheory.com/pgp/bt.public.gpg.txt).            |
+| PCI Attestation of Compliance (AOC) | Providers ask for a copy of this document for PCI due diligence. [Available in our Trust Center](https://trust.basistheory.com/). |
 
-For the receiving party (Basis Theory), the vendor may request the PGP Public Key from Basis Theory to establish a secure and encrypted channel for data transfer. You can find [Basis Theory's PGP Public Key](https://cdn.basistheory.com/pgp/bt.public.gpg.txt) below:
-
-<PublicKey />
-
-It is also very common that at each migration the processor will request Basis Theory's latest PCI Attestation of Compliance (AOC), which your Basis Theory Account Manager can provide.
 
 Basis Theory will support fulfilling any additional vendor requirements in the best way we can.
 
-## Results and Data Handling
+## 2. Process the Export
 
-Once Basis Theory receives and analyzes the encrypted file from the vendor, it is important to convey and agree on tokenization needs. Your Basis Theory Account Manager will reach out to discuss matters such as:
+Once the export file is received and validated, your Account Manager will coordinate next steps with you, including:
+- Providing a migration key to ingest the data into your tenant
+- Sharing a public SSH key so you can access our SFTP and retrieve results
+- Confirming any additional tokenization requirements (e.g., container, deduplication, etc.)
+- Aligning on custom output formatting (e.g., fingerprint, card brand, etc.), if you need to store these additional fields in your database.
 
-- Fingerprinting and Deduplication
-- Token Format and Portability
-- Access Controls
-- PII and Metadata handling
+<Alert>
+  The import process can take up to 14 days after receiving the export file, but working with your Account Manager to align on requirements can accelerate timelines.
+</Alert>
 
-After the requirements are gathered, Basis Theory will import the cards and share a result file with you. This file contains the new tokens created, paired with any previous references from the vendor, to facilitate data indexing and processing on your side.
+## 3. Output Reconciliation
+
+After the import process is completed, we will generate a result file that echoes the export file with a few differences:
+- The card number (PAN) is replaced with the Basis Theory token ID.
+- Any additional output columns are appended to the end of the file.
+
+For example:
+
+```text title="Export file (from provider)"
+merchant_id,customer_reference,card_id,cardholder_name,card_number,card_expiration,zip
+A1B2C2D4E5F,cus_123456789,card_123456,John Doe,4242424242424242,12/30,12345
+```
+
+```text title="Result file (from Basis Theory)"
+merchant_id,customer_reference,card_id,cardholder_name,card_number,card_expiration,zip,fingerprint
+A1B2C2D4E5F,cus_123456789,card_123456,John Doe,d2cbc1b4-5c3a-45a3-9ee2-392a1c475ab4,12/30,12345,BKJYqf2tcvhTHSXN7EvBJLviN3PBYRgwoJgce8VAfnSr
+```
+
+Using the prior vendor’s reference (e.g., the `card_id` field), your data team can map each record to the corresponding Basis Theory token (e.g., the `card_number` field).
+
+The result file will be available to your team through a secure SFTP account provided by Basis Theory.
