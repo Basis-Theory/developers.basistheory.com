@@ -23,15 +23,6 @@ const WebElementsCdnExample = ({ organization, repository }) => {
   return (
     <Highlight
       code={`  <!-- Including this tag will export a global/window "basistheory" variable -->
-  <!-- 
-    You can either pin the version to a specific release for stability 
-    or use the latest tag to always pull the most recent version. 
-    However, relying on latest can be risky, as it may introduce unexpected changes or breaking updates. 
-    For detailed information about each version, refer to our changelog.
-  -->
-      
-  <script src="https://js.basistheory.com/web-elements/latest/index.js"></script>
- <!-- or -->
  ${sri?.html}`}
       language="html"
     >
