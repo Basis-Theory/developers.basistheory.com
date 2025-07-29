@@ -1,3 +1,10 @@
+## [1.256.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.256.1...v1.256.2) (2025-07-29)
+
+
+### Bug Fixes
+
+* Update documents node snippets ([#618](https://github.com/Basis-Theory/developers.basistheory.com/issues/618)) ([bd9b3bd](https://github.com/Basis-Theory/developers.basistheory.com/commit/bd9b3bde396842ec9d547680b777a93968500c1a))
+
 ## [1.256.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.256.0...v1.256.1) (2025-07-29)
 
 
