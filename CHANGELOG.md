@@ -1,3 +1,10 @@
+## [1.256.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.256.0...v1.256.1) (2025-07-29)
+
+
+### Bug Fixes
+
+* document psp requirements ([#617](https://github.com/Basis-Theory/developers.basistheory.com/issues/617)) ([b8cc474](https://github.com/Basis-Theory/developers.basistheory.com/commit/b8cc47408fda392c524df6b3b264cc4d0462f5f0))
+
 # [1.256.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.255.1...v1.256.0) (2025-07-28)
 
 
