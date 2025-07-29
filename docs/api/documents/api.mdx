@@ -50,13 +50,15 @@ curl --request POST \
 ```javascript
 import { Blob } from "buffer";
 const blob = new Blob(['Hello World'], { type: 'text/plain' });
-const uploaded = await client.documents.upload(blob, {
-  request: {
-      metadata: {
-          "attribute 1": "value 1"
-      }
-  }
-});
+const uploaded = await client.documents.upload({
+        document: blob,
+        request: {
+            metadata: {
+                "attribute 1": "value 1"
+            }
+        }
+    }
+);
 ```
   </TabItem>
   <TabItem value="csharp" label="C#">
@@ -235,12 +237,9 @@ curl --request GET \
 
   <TabItem value="node" label="Node">
 ```javascript
-const downloadStream = await client.documents.data.get(uploaded.id!);
-const chunks: Buffer[] = [];
-for await (const chunk of downloadStream) {
-    chunks.push(chunk);
-}
-const downloadedContent = Buffer.concat(chunks).toString('utf8');
+const download = await client.documents.data.get(uploaded.id!);
+const stream: ReadableStream<Uint8Array> = download.stream();
+const downloadedContent = await new Response(stream).text();
 ```
   </TabItem>
   <TabItem value="csharp" label="C#">
