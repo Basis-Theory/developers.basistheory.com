@@ -1,4 +1,6 @@
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 ## Implementation Guide
 
@@ -93,63 +95,66 @@ For more information of how to setup a proxies [follow this page](/docs/concepts
 External providers such as Adyen explicitly support external network tokens, allowing you to collect and store network tokens yourself and use them for payment processing. Adapt the payload structure in the proxy code to match your specific payment provider's API requirements.
 </Alert>
 
-#### ADYEN
-
 Using Pre-configured proxies, setup your request_transform to do the following:
 
-```javascript
-const { BasisTheoryClient } = require('@basis-theory/node-sdk-2');
-const {Client, Config, CheckoutAPI} = require('@adyen/api-library');
+<Tabs className="bt-tabs" groupId="processor">
+  <TabItem value="adyen" label="Adyen" default>
 
-module.exports = async function (req) {
-     const {applicationOptions: {apiKey}, args, configuration} = req;
-     const {ADYEN_API_KEY, ADYEN_MERCHANT_ACCOUNT} = configuration;
+    ```javascript
+    const { BasisTheoryClient } = require('@basis-theory/node-sdk-2');
+    const {Client, Config, CheckoutAPI} = require('@adyen/api-library');
 
-    const bt = new BasisTheoryClient({apiKey});
+    module.exports = async function (req) {
+         const {applicationOptions: {apiKey}, args, configuration} = req;
+         const {ADYEN_API_KEY, ADYEN_MERCHANT_ACCOUNT} = configuration;
 
-    const {networkToken} = args.body;
+        const bt = new BasisTheoryClient({apiKey});
 
-    const cryptogramData = await bt.networkTokens.cryptogram(networkToken.id);
+        const {networkToken} = args.body;
 
-    const requestData = {
-        amount: {currency: 'USD', value: 100},
-        reference: 'ORDER-12345',
-        merchantAccount: ADYEN_MERCHANT_ACCOUNT,
-        paymentMethod: {
-            type: 'networkToken',
-            number: networkToken.number,
-            expiryMonth: networkToken.expiryMonth,
-            expiryYear: networkToken.expiryYear,
-            brand: 'visa',
-            holderName: 'John Doe',
-        },
-        mpiData: {
-            directoryResponse: 'Y',
-            authenticationResponse: 'Y',
-            tokenAuthenticationVerificationValue: cryptogramData.cryptogram,
-            eci: cryptogramData.eci
-        },
-        shopperInteraction: 'Ecommerce',
-        recurringProcessingModel: 'Subscription',
-        shopperReference: 'CUSTOMER_ID_123'
+        const cryptogramData = await bt.networkTokens.cryptogram(networkToken.id);
+
+        const requestData = {
+            amount: {currency: 'USD', value: 100},
+            reference: 'ORDER-12345',
+            merchantAccount: ADYEN_MERCHANT_ACCOUNT,
+            paymentMethod: {
+                type: 'networkToken',
+                number: networkToken.number,
+                expiryMonth: networkToken.expiryMonth,
+                expiryYear: networkToken.expiryYear,
+                brand: 'visa',
+                holderName: 'John Doe',
+            },
+            mpiData: {
+                directoryResponse: 'Y',
+                authenticationResponse: 'Y',
+                tokenAuthenticationVerificationValue: cryptogramData.cryptogram,
+                eci: cryptogramData.eci
+            },
+            shopperInteraction: 'Ecommerce',
+            recurringProcessingModel: 'Subscription',
+            shopperReference: 'CUSTOMER_ID_123'
+        };
+
+
+        const config = new Config({
+            apiKey: ADYEN_API_KEY,
+            merchantAccount: ADYEN_MERCHANT_ACCOUNT,
+            environment: "TEST"
+        });
+
+        const client = new Client({config});
+
+        const checkoutClient = new CheckoutAPI(client);
+        const result = await checkoutClient.payments(requestData);
+        return {
+            body: result
+        };
     };
-
-
-    const config = new Config({
-        apiKey: ADYEN_API_KEY,
-        merchantAccount: ADYEN_MERCHANT_ACCOUNT,
-        environment: "TEST"
-    });
-
-    const client = new Client({config});
-
-    const checkoutClient = new CheckoutAPI(client);
-    const result = await checkoutClient.payments(requestData);
-    return {
-        body: result
-    };
-};
-```
+    ```
+  </TabItem>
+</Tabs>
 ### Proxy creation
 
 ```shell
@@ -232,6 +237,4 @@ async function completePaymentFlow() {
         throw error;
     }
 }
-
-completePaymentFlow();
 ```
