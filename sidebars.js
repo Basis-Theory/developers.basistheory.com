@@ -211,6 +211,27 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Network Tokens",
+      customProps: {
+        // icon: {
+        //   light: "/img/sidebar/light/network-token.svg",
+        //   dark: "/img/sidebar/dark/network-token.svg",
+        // },
+      },
+      link: {
+        type: "doc",
+        id: "guides/network-tokens/overview",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "guides/network-tokens/overview",
+          label: "Overview",
+        }
+      ]
+    },
+    {
+      type: "category",
       label: "Card Issuing",
       customProps: {
         icon: {
