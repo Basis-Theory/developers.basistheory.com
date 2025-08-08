@@ -248,6 +248,101 @@ The value of these attributes will be persisted in the `authentication` object o
 }
 ```
 
+## Migration Guide
+
+This guide outlines the changes required to migrate from the deprecated Google Pay integration using Token Intents to the new Google Pay Token integration.
+
+### Key Changes
+
+1. **Endpoint Changes**
+- Old endpoint under `/connections/google-pay/tokenize` is being deprecated
+- New endpoints are under `/google-pay/*`
+
+2. **Permission Changes**
+- Old: `connections:google-pay:invoke`
+- New: `google-pay:create`
+
+3. **Response Type Changes**
+- Old: Returns Token Intent objects
+- New: Returns Google Pay Token objects directly or Token Intent objects depending on the authorization method
+
+### API Changes
+
+#### Tokenization
+```diff
+- // Old Tokenization
+POST /connections/google-pay/tokenize
+{
+  "google_payment_method_token": {
+    "intermediateSigningKey": { ... }
+    "protocolVersion": "...",
+    "signature": "...",
+    "signedMessage": "...",
+  }
+}
+
+Response: { "token_intent": { ... } }
+
++ // New Tokenization
+POST /google-pay
+  {
+    "google_payment_data": {
+      "intermediateSigningKey": { ... }
+      "protocolVersion": "...",
+      "signature": "...",
+      "signedMessage": "...",
+    }
+  }
+
+Response: { "google_pay": { ... } } // For CRYPTOGRAM_3DS authorization method.
+
+Response: { "token_intent": { ... } } // For PAN_ONLY authorization method.
+
+```
+
+#### Proxy Expression Changes
+```diff
+- // Old Proxy Expression
+"token": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }}"
+
++ // New Proxy Expression
+"token": "{{ google_pay: <TOKEN_ID> | json: \"$.data.number\" }}"
+```
+
+### Application Changes
+
+1. **Public Application Permissions**
+```diff
+- permissions: ["connections:google-pay:invoke"]
++ permissions: ["google-pay:create"]
+```
+
+
+2. **Private Application Permissions**
+```diff
+- permissions: ["token:use"]
++ permissions: ["proxy:invoke"]
+```
+
+### Benefits of Migration
+
+1. **Simplified Token Management**: Direct Google Pay tokens instead of Token Intents
+2. **Better Permission Control**: More granular permissions for Google Pay operations
+3. **Future Compatibility**: Access to new features and improvements
+
+### Testing the Migration
+
+1. Update your application permissions in the Basis Theory Portal
+2. Update API endpoint references in your code
+3. Modify proxy expressions to use the new `google_pay:` syntax
+4. Test the complete payment flow in your staging environment
+5. Verify token creation and processing with your payment service provider
+
+### Timeline
+
+The deprecated `/connections/google-pay/tokenize` endpoint will continue to function for a transition period. However, we recommend migrating to the new endpoints as soon as possible to ensure continued functionality and access to new features.
+
+
 ## Additional Resources
 
 For additional information on using Google Pay™, view the documentation provided by Google.

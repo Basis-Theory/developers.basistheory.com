@@ -547,6 +547,20 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Google Pay Tokens",
+      link: {
+        type: "doc",
+        id: "api/google-pay/api",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/google-pay/api",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Documents",
       link: {
         type: "doc",
@@ -634,6 +648,9 @@ const sidebars = {
         {
           type: "doc",
           id: "api/connections/google-pay",
+          customProps: {
+            deprecated: true,
+          },
         },
         {
           type: "doc",

@@ -1,0 +1,274 @@
+---
+title: Google Pay™
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Google Pay™
+
+## Create
+
+Decrypts a Google Pay token and creates either a Google Pay token or a Basis Theory's [Token Intent](/docs/api/tokens/token-intents#token-intent-object) based on the provided encrypted token. This endpoint only supports the `ECv2` token versions. It supports both auth methods, `PAN_ONLY` and `CRYPTOGRAM_3DS`.
+
+Basis Theory supports the `PAN_ONLY` and `CRYPTOGRAM_3DS` authorization methods.
+The table below shows the resulting Token Intent type based on the Google Payment Token's `authMethod` attribute.
+
+| Auth Method   | Token Type   |
+|---------------|--------------|
+| [PAN_ONLY](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) | [`card`](/docs/api/tokens/token-types#card) |
+| [CRYPTOGRAM_3DS](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds)  | [`network_token`](/docs/api/tokens/token-types#network-token)  |
+
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/google-pay" />
+
+#### Permissions
+
+<Permission content="google-pay:create" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+    ```shell showLineNumbers
+    curl --request POST \
+    --url https://api.basistheory.com/google-pay \
+    --header 'BT-API-KEY: <API_KEY>' \
+    --header 'Content-Type: application/json' \
+    --data '{
+      "expires_at": "2030-12-25"
+      "google_payment_data": {
+        "protocolVersion": "...",
+        "signature": "...",
+        "intermediateSigningKey": {
+          "signedKey": "...",
+          "signatures": ["...", "..."]
+        },
+        "signedMessage": "...
+      }
+    }'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+    ```javascript
+    await client.googlePay.create();
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.GooglePay.CreateAsync(new GooglePayCreateRequest());
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    client.google_pay.create()
+    ```
+  </TabItem>
+</Tabs>
+
+#### Request Parameters
+
+| Attribute  | Required | Description                                                        |
+|------------|----------|--------------------------------------------------------------------|
+| `expires_at` | false | An optional expiration date for the token. If blank, no expiration date is set for the token. |
+| `google_payment_data` | true | The Google Pay [token](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#payment-method-token-structure). |
+
+### Response
+
+Returns a Google Pay Token for tokenized cards that consists of device PAN and cryptograms.
+The return will include the Card BIN enrichments.
+Returns [an error](/docs/api/errors) if there were validation errors, if the Google Pay token failed to decrypt or the token failed to create.
+
+```json
+{
+  "google_pay": {
+    "id": "b7248b11-acfb-4695-93a9-9609f90ec038",
+    "tenant_id": "...",
+    "status": "active",
+    "expires_at": "2030-12-25T00:00:00+00:00",
+    "created_by": "50c63e9b-91e5-4a6a-9f9e-81088d106f2c",
+    "created_at": "2025-08-06T11:02:53.9261435+00:00",
+    "card": {
+      "bin": "411111",
+      "last4": "1111",
+      "expiration_month": 12,
+      "expiration_year": 2027,
+      "brand": "visa",
+      "funding": "debit",
+      "authentication": "sca_required"
+    },
+    "details": {
+      "tsp": "Google",
+      "auth_method": "PAN_ONLY",
+      "message_id": "AH2EjtdkuuxxO3nA7RuWAo0fU4u5BPoySvd9ajlSSrTWy3yTCu2IRbRwp8K3sFjSUS-ELa7UzetwY6UFsNLISYiKY6arNIOfYxutYYH3LJdIH0UcmoRDzmM",
+      "eci_indicator": "",
+      "assurance_details": {
+        "account_verified": true,
+        "card_holder_authenticated": false
+      }
+    }
+  }
+}
+```
+
+<Alert type={Alerts.Information}>
+  For encrypted cards with an authorization method of "PAN_ONLY", a Token Intent will be created. Refer to [Token Intents documentation](/docs/api/tokens/token-intents#token-intent-object) for more information.
+</Alert>
+
+## Retrieve
+
+Retrieves an already tokenized Google Pay token. For encrypted cards with an authorization method of "PAN_ONLY" use [Token Intents documentation](/docs/api/tokens/token-intents#get-a-token-intent).
+
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/google-pay/{:id}" />
+
+#### Permissions
+
+<Permission content="google-pay:read" />
+<Permission content="google-pay:reveal" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell
+    curl --request GET \
+    --url https://api.basistheory.com/google-pay/3c367ed4-678d-4b98-9cec-d7eaa0f0c26e \
+    --header 'BT-API-KEY: <API_KEY>'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+    ```javascript
+    await client.googlePay.get("id");
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.GooglePay.GetAsync("id");
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    client.google_pay.get(
+    id="id",
+    )
+    ```
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a Google Pay token.
+If the application has `google-pay:reveal`, then the `data` element will contain the unencrypted card information.
+If the application has `google-pay:read`, then the `data` element will contain masked card information.
+
+```json
+{
+  "id": "99978b31-78e8-4751-926c-83775bfb126b",
+  "tenant_id": "eb210708-f709-495f-b4de-b9e3877bd4c3",
+  "status": "active",
+  "expires_at": "2025-12-25T00:00:00+00:00",
+  "created_by": "c1847894-2f72-4999-a47d-bf9a12d19ca9",
+  "created_at": "2025-08-04T16:19:50.9013495+00:00",
+  "card": {
+    "bin": "42424242",
+    "last4": "4242",
+    "expiration_month": 6,
+    "expiration_year": 2025,
+    "brand": "mastercard",
+    "funding": "credit",
+    "authentication": "sca_required",
+    "issuer": {
+      "country": "PL",
+      "name": "3DS Test Cards (TEST)"
+    },
+    "issuer_country": {
+      "alpha2": "PL",
+      "name": "Bermuda",
+      "numeric": "369"
+    },
+    "segment": "Commercial"
+  },
+  "data": {
+    "number": "4242424242424242",
+    "expiration_month": 6,
+    "expiration_year": 2025
+  },
+  "authentication": {
+    "threeds_cryptogram": "AAAAAA=",
+    "eci_indicator": "7"
+  }
+}
+```
+
+Google Pay Tokens created from a Google Pay token will contain a `details` attribute.
+
+| Attribute                         | Type      | Description                                   |
+|-----------------------------------|-----------|-----------------------------------------------|
+| `details`                         | Object    | Details related to the transaction service provider (TSP).  |
+| `tsp`                             | String    | The name of the transaction service provider. |
+| `auth_method`                     | String    | The authentication method used.              |
+| `message_id`                      | String    | Unique identifier for the message.           |
+| `eci_indicator`                   | String    | Electronic Commerce Indicator (may be empty).|
+| `assurance_details`               | Object    | Information about the assurance of the transaction. |
+| `account_verified`                | Boolean   | Indicates if the account was verified.       |
+| `card_holder_authenticated`       | Boolean   | Indicates if the cardholder was authenticated.|
+
+## Delete
+
+Deletes an already tokenized Google Pay token. For encrypted cards with an authorization method of "PAN_ONLY" use [Token Intents documentation](/docs/api/tokens/token-intents#delete-token-intent).
+
+<HttpMethod method={HttpMethods.DELETE} endpoint="https://api.basistheory.com/google-pay/{:id}" />
+
+#### Permissions
+
+<Permission content="google-pay:delete" />
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+    ```shell
+    curl --request DELETE \
+    --url https://api.basistheory.com/google-pay/3c367ed4-678d-4b98-9cec-d7eaa0f0c26e \
+    --header 'BT-API-KEY: <API_KEY>'
+    ```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+    ```javascript
+    await client.googlePay.delete("id");
+    ```
+  </TabItem>
+  <TabItem value="csharp" label="C#">
+    ```csharp showLineNumbers
+    await client.GooglePay.DeleteAsync("id");
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python showLineNumbers
+    client.google_pay.delete(
+    id="id",
+    )
+    ```
+  </TabItem>
+</Tabs>
+
+### Response
+
+Returns a Google Pay token with summarized information.
+
+```json
+{
+  "id": "99978b31-78e8-4751-926c-83775bfb126b",
+  "tenant_id": "eb210708-f709-495f-b4de-b9e3877bd4c3",
+  "status": "active",
+  "expires_at": "2025-12-25T00:00:00+00:00"
+}
+```
