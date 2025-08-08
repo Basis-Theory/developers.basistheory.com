@@ -1,0 +1,54 @@
+## Development Best Practices
+
+### Comprehensive Error Handling
+
+Implement robust error handling for Network Token operations. Basis Theory provides specific error codes and retry guidance to help you handle different failure scenarios appropriately:
+
+```javascript
+try {
+    const networkToken = await createNetworkToken(cardTokenId);
+} catch (error) {
+    // Handle specific error types with appropriate retry logic
+    switch (error.title) {
+        case 'CARD_NOT_ELIGIBLE':
+            // Card is not eligible for network tokenization - do not retry
+            console.log('Card not eligible for network tokenization, falling back to regular processing');
+            // Fall back to regular card processing
+            break;
+
+        case 'CARD_VERIFICATION_FAILED':
+            // Prompt user to re-enter CVV or card details - retryable
+            console.log('Card verification failed - request user to re-enter card details');
+            throw new Error('Please re-enter your card details');
+            break;
+
+        case 'PROVISION_DATA_EXPIRED':
+            // Request updated card details from user - retryable
+            console.log('Card data expired - request updated card details');
+            throw new Error('Please provide updated card information');
+            break;
+
+        // ... additional error types available
+        // See API documentation for complete list of error codes and retry guidance
+
+        default:
+            // Handle other unexpected errors
+            console.error('Unexpected error during network tokenization:', error);
+            throw error;
+    }
+}
+```
+
+### Testing
+
+Use the provided [test cards](/docs/api/network-tokens/#error-handling-and-retries) to test different scenarios during development. These test cards simulate various success and error conditions you may encounter in production.
+
+### Network Token Management
+
+When managing Network Tokens for long-term storage and recurring transactions, consider these best practices to maximize security and operational efficiency:
+- Store the Network Token ID in your database, not the raw card data.
+- Use the stored token for future transactions, such as recurring billing or card-on-file scenarios.
+- Monitor Webhook events for token updates to ensure you react promptly to changes.
+- Handle token lifecycle changes appropriately to maintain seamless payment experiences for your customers.
+
+Network Tokens are particularly beneficial for companies with large subscription customer bases who store many cards on file for recurring transactions.
