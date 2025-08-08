@@ -13,7 +13,7 @@ import { Alert, Alerts } from "@site/src/components/shared/Alert";
 
 ## Create
 
-Decrypts a Google Pay token and creates either a Google Pay token or a Basis Theory's [Token Intent](/docs/api/tokens/token-intents#token-intent-object) based on the provided ecrypted token. This endpoint only supports the `ECv2` token versions. It supports both auth methods, `PAN_ONLY` and `CRYPTOGRAM_3DS`.
+Decrypts a Google Pay token and creates either a Google Pay token or a Basis Theory's [Token Intent](/docs/api/tokens/token-intents#token-intent-object) based on the provided encrypted token. This endpoint only supports the `ECv2` token versions. It supports both auth methods, `PAN_ONLY` and `CRYPTOGRAM_3DS`.
 
 Basis Theory supports the `PAN_ONLY` and `CRYPTOGRAM_3DS` authorization methods.
 The table below shows the resulting Token Intent type based on the Google Payment Token's `authMethod` attribute.
@@ -82,7 +82,7 @@ The table below shows the resulting Token Intent type based on the Google Paymen
 ### Response
 
 Returns a Google Pay Token for tokenized cards that consists of device PAN and cryptograms.
-The return will include the Card BIN enrichments according to the tenant settings.
+The return will include the Card BIN enrichments.
 Returns [an error](/docs/api/errors) if there were validation errors, if the Google Pay token failed to decrypt or the token failed to create.
 
 ```json
@@ -104,10 +104,10 @@ Returns [an error](/docs/api/errors) if there were validation errors, if the Goo
       "authentication": "sca_required"
     },
     "details": {
-        "tsp": "Google",
-        "auth_method": "PAN_ONLY",
-        "message_id": "AH2EjtdkuuxxO3nA7RuWAo0fU4u5BPoySvd9ajlSSrTWy3yTCu2IRbRwp8K3sFjSUS-ELa7UzetwY6UFsNLISYiKY6arNIOfYxutYYH3LJdIH0UcmoRDzmM",
-        "eci_indicator": "",
+      "tsp": "Google",
+      "auth_method": "PAN_ONLY",
+      "message_id": "AH2EjtdkuuxxO3nA7RuWAo0fU4u5BPoySvd9ajlSSrTWy3yTCu2IRbRwp8K3sFjSUS-ELa7UzetwY6UFsNLISYiKY6arNIOfYxutYYH3LJdIH0UcmoRDzmM",
+      "eci_indicator": "",
         "assurance_details": {
           "account_verified": true,
           "card_holder_authenticated": false
@@ -118,12 +118,12 @@ Returns [an error](/docs/api/errors) if there were validation errors, if the Goo
 ```
 
 <Alert type={Alerts.Information}>
-  For encrypted cards that consist of PAN a Token Intent will be created. Refer to Basis Theory's [Token Intents documentation](/docs/api/tokens/token-intents#token-intent-object) for more information.
+  For encrypted cards with an authorization method of "PAN_ONLY", a Token Intent will be created. Refer to [Token Intents documentation](/docs/api/tokens/token-intents#token-intent-object) for more information.
 </Alert>
 
 ## Retrieve
 
-Retrieves an already tokenized Google Pay token. For encrypted cards that consist of PAN look at Basis Theory's [Token Intents documentation](/docs/api/tokens/token-intents#get-a-token-intent).
+Retrieves an already tokenized Google Pay token. For encrypted cards with an authorization method of "PAN_ONLY" use [Token Intents documentation](/docs/api/tokens/token-intents#get-a-token-intent).
 
 <HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/google-pay/{:id}" />
 
@@ -222,7 +222,7 @@ Google Pay Tokens created from a Google Pay token will contain a `details` attri
 
 ## Delete
 
-Deletes an already tokenized Google Pay token. For encrypted cards that consist of PAN look at Basis Theory's [Token Intents documentation](/docs/api/tokens/token-intents#delete-token-intent).
+Deletes an already tokenized Google Pay token. For encrypted cards with an authorization method of "PAN_ONLY" use [Token Intents documentation](/docs/api/tokens/token-intents#delete-token-intent).
 
 <HttpMethod method={HttpMethods.DELETE} endpoint="https://api.basistheory.com/google-pay/{:id}" />
 

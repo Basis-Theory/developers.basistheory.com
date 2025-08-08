@@ -264,7 +264,7 @@ This guide outlines the changes required to migrate from the deprecated Google P
 
 3. **Response Type Changes**
 - Old: Returns Token Intent objects
-- New: Returns Google Pay Token objects directly
+- New: Returns Google Pay Token objects directly or Token Intent objects depending on the authorization method
 
 ### API Changes
 
@@ -294,7 +294,10 @@ POST /google-pay
     }
   }
 
-Response: { "google_pay": { ... } }
+Response: { "google_pay": { ... } } // For CRYPTOGRAM_3DS authorization method.
+
+Response: { "token_intent": { ... } } // For PAN_ONLY authorization method.
+
 ```
 
 #### Proxy Expression Changes
