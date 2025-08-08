@@ -2213,12 +2213,12 @@ These errors are returned with a `424` HTTP status code, providing detailed info
 The error object will contain all the necessary details on what the error was and how to handle it.
 Below are some suggestions on how to handle common errors based on the received `error.service_status` code.
 
-| Service Status | Error Scenario          | Possible Actions                                                                                                     |
-|----------------|-------------------------|----------------------------------------------------------------------------------------------------------------------|
-| `400`          | Bad Request             | Check the request payload and ensure it's correct. Details are include in the `message` and `detail` fields.         |
-| `401`, `403`   | Access Denied           | Check your merchant information (MID, Acquirer BIN, etc.) and ensure it's correct for the card network you're using. |
-| `404`          | Not Found               | Check if the session ID is correct and that the session exists in the tenant.                                        |
-| `5XX`          | Internal Service Errors | Check the error message and if applicable, retry the authentication.                                                 |
+| Service Status | Error Scenario          | Possible Actions                                                                                                                                           |
+|----------------|-------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `400`          | Bad Request             | Check the request payload and ensure it's correct. Details are include in the `message` and `detail` fields.                                               |
+| `401`, `403`   | Access Denied           | Check your merchant information (MID, Acquirer BIN, etc.) and ensure it's correct for the card network you're using.                                       |
+| `404`          | Not Found               | Check if the session ID is correct and that the session exists in the tenant.                                                                              |
+| `5XX`          | Internal Service Errors | Check the error message and if applicable, retry the authentication. For `502` and `504`, the transaction must be fully retried by creating a new session. |
 
 *If you have questions about specific error codes or how to handle them, please reach out to our support team at <a href="mailto:support@basistheory.com">support@basistheory.com</a>.*
 
