@@ -213,10 +213,10 @@ const sidebars = {
       type: "category",
       label: "Network Tokens",
       customProps: {
-        // icon: {
-        //   light: "/img/sidebar/light/network-token.svg",
-        //   dark: "/img/sidebar/dark/network-token.svg",
-        // },
+        icon: {
+          light: "/img/sidebar/light/network-tokens.svg",
+          dark: "/img/sidebar/dark/network-tokens.svg",
+        },
       },
       link: {
         type: "doc",
