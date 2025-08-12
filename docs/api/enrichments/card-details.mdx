@@ -1,0 +1,92 @@
+---
+title: Card Details
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+
+# Card Details
+
+## Get Card Details
+
+Returns the bin details of a card.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/enrichments/card-details"
+/>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+
+```shell
+curl --location 'https://api.basistheory.com/enrichments/card-details?bin=411111' \
+--header 'BT-API-KEY: <API_KEY>' \
+--header 'Content-Type: application/json'
+```
+  </TabItem>
+</Tabs>
+
+#### Query Parameters
+
+| Name   | Type   | Description                                                                  |
+|--------|--------|------------------------------------------------------------------------------|
+| bin   | String | The first 6 digits of the card. |
+
+### Response
+
+Returns the bin details of the card.
+
+```json showLineNumbers
+{
+    "brand": "Visa",
+    "funding": "Debit",
+    "issuer": {
+        "country": "US",
+        "name": "JPMORGAN CHASE BANK, N.A."
+    },
+    "segment": "Consumer",
+    "additional": [
+        {
+            "brand": "Visa",
+            "funding": "Credit",
+            "issuer": {
+                "country": "US",
+                "name": "JPMORGAN CHASE BANK, N.A."
+            },
+            "segment": "Commercial"
+        }
+    ]
+}
+```
+
+| Name   | Type   | Description                                                                  |
+|--------|--------|------------------------------------------------------------------------------|
+| brand   | String | The brand of the card. |
+| funding   | String | The funding type of the card. |
+| issuer   | CardIssuerDetails | The issuer of the card. |
+| segment   | String | The segment of the card. |
+| additional   | CardInfo[] | Additional card details. |
+
+
+Card Issuer Details
+
+| Name   | Type   | Description                                                                  |
+|--------|--------|------------------------------------------------------------------------------|
+| country   | String | The country of the card. |
+| name   | String | The name of the issuer. |
+
+Card Info
+
+| Name   | Type   | Description                                                                  |
+|--------|--------|------------------------------------------------------------------------------|
+| brand   | String | The brand of the card. |
+| funding   | String | The funding type of the card. |
+| issuer   | CardIssuerDetails | The issuer of the card. |
+| segment   | String | The segment of the card. |

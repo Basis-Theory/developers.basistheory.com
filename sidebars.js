@@ -656,6 +656,10 @@ const sidebars = {
             enterprise: true,
           },
         },
+        {
+          type: "doc",
+          id: "api/enrichments/card-details",
+        },
       ],
     },
     "api/deprecations",
