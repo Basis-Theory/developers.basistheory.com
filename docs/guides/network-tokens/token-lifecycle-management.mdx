@@ -1,0 +1,55 @@
+## Token Lifecycle Management
+
+### Token Suspension
+
+Temporarily suspend a Network Token to prevent transaction processing while preserving the ability to reactivate:
+
+```javascript
+async function suspendNetworkToken(req) {
+    const { bt, args } = req;
+    try {
+        const result = await bt.networkTokens.suspend(args.network_token_id);
+        console.log('Network Token suspended:', result.status);
+        return result;
+    } catch (error) {
+        console.error('Error suspending Network Token:', error);
+        throw error;
+    }
+}
+```
+
+### Token Reactivation
+
+Restore transaction capability for a previously suspended Network Token:
+
+```javascript
+async function resumeNetworkToken(req) {
+    const { bt, args } = req;
+    try {
+        const result = await bt.networkTokens.resume(args.network_token_id);
+        console.log('Network Token resumed:', result.status);
+        return result;
+    } catch (error) {
+        console.error('Error resuming Network Token:', error);
+        throw error;
+    }
+}
+```
+
+### Token Deletion
+
+Eliminates a previously created Network Token
+
+```javascript
+async function deleteNetworkToken(req) {
+    const { bt, args } = req;
+    try {
+        const result = await bt.networkTokens.delete(args.network_token_id);
+        console.log('Network Token resumed:', result.status);
+        return result;
+    } catch (error) {
+        console.error('Error resuming Network Token:', error);
+        throw error;
+    }
+}
+```
