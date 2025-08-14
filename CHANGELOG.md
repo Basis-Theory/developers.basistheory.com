@@ -1,3 +1,10 @@
+# [1.257.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.256.3...v1.257.0) (2025-08-14)
+
+
+### Features
+
+* Add documentation for new /google-pay endpoints ([bc77ab9](https://github.com/Basis-Theory/developers.basistheory.com/commit/bc77ab98fd256ffd89d4eac984f70e272f385d2e))
+
 ## [1.256.3](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.256.2...v1.256.3) (2025-08-05)
 
 
