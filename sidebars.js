@@ -164,7 +164,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Apple Pay",
+      label: "Apple Pay™",
       customProps: {
         icon: {
           light: "/img/sidebar/light/apple.svg",
@@ -190,7 +190,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Google Pay",
+      label: "Google Pay™",
       customProps: {
         icon: {
           light: "/img/sidebar/light/google.svg",
@@ -554,7 +554,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Apple Pay Tokens",
+      label: "Apple Pay™",
       link: {
         type: "doc",
         id: "api/apple-pay/api",
@@ -568,7 +568,7 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Google Pay Tokens",
+      label: "Google Pay™",
       link: {
         type: "doc",
         id: "api/google-pay/api",
