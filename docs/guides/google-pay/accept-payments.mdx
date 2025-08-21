@@ -195,10 +195,10 @@ async function tokenizeGooglePayTokenWithBasisTheory(encryptedPaymentToken) {
 
 The result of this call will be either a [Google Pay™ resource](/docs/api/google-pay/api#response) or a [Token Intent](/docs/api/tokens/token-intents#token-intent-object) that you can use to process the payment. The type resource depending on the `authMethod` of the Google Pay™ payment method that was available for the chosen card. The [`authMethod`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only) is how the card was authenticated. The table below shows the differences between these two types.
 
-| Google Pay™ Payment Data `authMethod`                                                                                    | Token Intent Type | Details                                                                                                                                                                                                                                                                                                        |
+| Google Pay™ Payment Data `authMethod`                                                                                    | Resource Type | Details                                                                                                                                                                                                                                                                                                        |
 |-------------------------------------------------------------------------------------------------------------------------|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`CRYPTOGRAM_3DS`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds) | `google_pay`   | The payment method stored is a DPAN (Device Primary Account Number). This payment method is tied to the device for which it was added. This needs to be top of mind when charging with these payment methods in the future because we don't have insight into if these payment methods get revoked or updated. |
-| [`PAN_ONLY`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only)             | `token_intent`            | The payment method stored is an FPAN (Funding Primary Account Number). This payment method is the underlying card itself and we have the capability to update the tokens tied to those payments with our [Account Updater](/docs/features/account-updater)                                                     |
+| [`CRYPTOGRAM_3DS`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#cryptogram_3ds) | [Google Pay](https://developers.basistheory.com/docs/api/google-pay/api)   | The payment method stored is a DPAN (Device Primary Account Number). This payment method is tied to the device for which it was added. This needs to be top of mind when charging with these payment methods in the future because we don't have insight into if these payment methods get revoked or updated. |
+| [`PAN_ONLY`](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography#pan_only)             | [Token Intent](https://developers.basistheory.com/docs/api/tokens/token-intents)  | The payment method stored is an FPAN (Funding Primary Account Number). This payment method is the underlying card itself and we have the capability to update the tokens tied to those payments with our [Account Updater](/docs/features/account-updater)                                                     |
 
 Remember that Token Intents are short-lived and expire after 24 hours by default. If you're wanting to use the payment data stored in a Token Intent for recurring transactions, for example, you can convert the Token Intent to a [Token](/docs/concepts/what-are-tokens) by calling the [create Token endpoint](/docs/api/tokens/token-intents#convert-token-intent-to-token).
 
@@ -291,19 +291,19 @@ curl 'https://api.basistheory.com/proxy' \
 ```
   [Checkout Payment Method Docs](https://www.checkout.com/docs/payments/add-payment-methods/google-pay/api-only#Pay_with_a_pre-decrypted_Google_Pay_token).
 
-You may notice that in this example we are not passing in any 3DS cryptogram or eci indicator. This is not necessary for charging FPANs. If you need to charge a DPAN, you will need to pass in the 3DS cryptogram and eci indicator available on the `authentication` property of the Token Intent.
+You may notice that in this example we are not passing in any 3DS cryptogram or eci indicator. This is not necessary for charging FPANs. If you need to charge a DPAN, you will need to pass in the 3DS cryptogram and eci indicator available on the `authentication` property of the `POST /google-pay` response. Keep in mind that you may get either a [Token Intent](https://developers.basistheory.com/docs/api/tokens/token-intents) or a [Google Pay resource](https://developers.basistheory.com/docs/api/google-pay/api) depending on the authorization method.
 
 ```json showLineNumbers title="Create a payment transaction for a DPAN"
 {
     "source": {
         "type": "card",
         "token_type": "googlepay",
-        "token": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.number\" }}",
-        "expiry_month": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"MM\" }}",
-        "expiry_year": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}",
+        "token": "{{ google_pay: <GOOGLE_PAY_ID> | json: \"$.data.number\" }}",
+        "expiry_month": "{{ google_pay: <GOOGLE_PAY_ID> | json: \"$.data\" | card_exp: \"MM\" }}",
+        "expiry_year": "{{ google_pay: <GOOGLE_PAY_ID> | json: \"$.data\" | card_exp: \"YYYY\" }}",
 // highlight-start
-        "eci": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.authentication.eci_indicator\" }}",
-        "cryptogram": "{{ token_intent: <TOKEN_INTENT_ID> | json: \"$.data.authentication.threeds_cryptogram\" }}"
+        "eci": "{{ google_pay: <GOOGLE_PAY_ID> | json: \"$.data.authentication.eci_indicator\" }}",
+        "cryptogram": "{{ google_pay: <GOOGLE_PAY_ID> | json: \"$.data.authentication.threeds_cryptogram\" }}"
 // highlight-end
     },
   ...
