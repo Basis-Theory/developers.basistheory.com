@@ -1,3 +1,10 @@
+# [1.258.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.257.0...v1.258.0) (2025-08-22)
+
+
+### Features
+
+* Add documentation for ApplePay DELETE endpoint ([#629](https://github.com/Basis-Theory/developers.basistheory.com/issues/629)) ([733e6f9](https://github.com/Basis-Theory/developers.basistheory.com/commit/733e6f96adedd5babfb17c1528b0f4b0319311b0))
+
 # [1.257.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.256.3...v1.257.0) (2025-08-14)
 
 
