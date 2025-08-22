@@ -12,11 +12,12 @@ import { Deprecated } from "@site/src/components/shared/Deprecated";
 
 # Apple Pay™
 
+
 ## Register Domain Address
 
 Apple Pay™ requires websites to associate their domain address with a merchant identifier.
 Basis Theory handles the merchant and certificate handling.
-To utilize Basis Theory's Apple Pay integration, you will need to add your domain and subdomains to our merchant.
+To utilize Basis Theory's Apple Pay™ integration, you will need to add your domain and subdomains to our merchant.
 Review Apple's [documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/configuring_your_environment#3179109) for important considerations regarding your domain.
 
 <Alert type={Alerts.INFO}>
@@ -301,7 +302,7 @@ client.apple_pay.domain.deregister(
 
 ## Create Session
 
-A proxy endpoint to start an Apple Pay session using Basis Theory's merchant identifier.
+A proxy endpoint to start an Apple Pay™ session using Basis Theory's merchant identifier.
 See the [documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session) on Apple's site for more details.components
 
 <HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay/session" />
@@ -351,15 +352,15 @@ client.apple_pay.session.create()
 |------------|----------|-------------|
 | `validation_url` | false | Validation URL returned from the [`onvalidatemerchant`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778021-onvalidatemerchant) event. Default: https://apple-pay-gateway.apple.com/paymentservices/paymentSession |
 | `display_name` | true | A string of 64 or fewer UTF-8 characters containing the canonical name for your store, suitable for display. A good display name remains a consistent value for the store and doesn't contain dynamic values such as incrementing order numbers. Don’t localize the name. Use only characters from the supported character sets in the fonts listed in the table below. |
-| `domain` | true | The fully qualified domain name of the website requesting the Apple Pay session.
+| `domain` | true | The fully qualified domain name of the website requesting the Apple Pay™ session.
 
 ### Response
 
-Returns an opaque Apple Pay [session object](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session#3199963) that will be passed into the [`completeMerchantValidation`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778015-completemerchantvalidation) method.
+Returns an opaque Apple Pay™ [session object](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api/requesting_an_apple_pay_payment_session#3199963) that will be passed into the [`completeMerchantValidation`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778015-completemerchantvalidation) method.
 
 ## Tokenize
 
-Decrypts an Apple Pay token and creates an Apple Pay token.
+Decrypts an Apple Pay™ token and creates an Apple Pay™ resource.
 
 <HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/apple-pay" />
 
@@ -424,11 +425,11 @@ client.apple_pay.create()
 | Attribute  | Required | Description                                                        |
 |------------|----------|--------------------------------------------------------------------|
 | `expires_at` | false | An optional expiration date for the token. If blank, defaults to the expiration date in the decrypted Apple Payment data. |
-| `apple_payment_data` | true | The Apple Pay [token](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypayment/1916095-token) from the [`onpaymentauthorized`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized) event. |
+| `apple_payment_data` | true | The Apple Pay™ [token](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypayment/1916095-token) from the [`onpaymentauthorized`](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaysession/1778020-onpaymentauthorized) event. |
 
 ### Response
 
-Returns an Apple Pay Token.
+Returns an Apple Pay™ resource.
 The return will include the Card BIN enrichments according to the tenant settings.
 
 ```json
@@ -487,7 +488,7 @@ client.apple_pay.get(
 
 ### Response
 
-Returns an Apple Pay token.
+Returns an Apple Pay™ resource.
 If the application has `apple-pay:reveal`, then the `data` element will contain the unencrypted card information.
 If the application has `apple-pay:read`, then the `data` element will contain masked card information.
 
@@ -533,7 +534,7 @@ If the application has `apple-pay:read`, then the `data` element will contain ma
 
 ## Unlink <Deprecated />
 
-Unlinks an Apple Pay MPAN token, marking it as unlinked.
+Unlinks an Apple Pay™ MPAN token, marking it as unlinked.
 This operation can only be performed on tokens of type 'mpan'.
 Unlinked tokens will be scheduled for deletion 30 days after unlinking.
 
@@ -578,7 +579,7 @@ client.apple_pay.unlink(
 
 ### Response
 
-Returns the unlinked Apple Pay token with basic information.
+Returns the unlinked Apple Pay™ resource with basic information.
 
 ```json
 {
@@ -595,12 +596,12 @@ Returns the unlinked Apple Pay token with basic information.
 
 | Attribute                         | Type      | Description                                   |
 |-----------------------------------|-----------|-----------------------------------------------|
-| apple_pay | Object | The unlinked Apple Pay token |
-| apple_pay.id | string | Unique identifier for the Apple Pay token |
-| apple_pay.type | string | Type of Apple Pay token. Will be 'mpan' |
-| apple_pay.tenant_id | string | Identifier for the tenant that owns the token |
-| apple_pay.status | string | Status of the token. Will be 'unlinked' |
-| apple_pay.expires_at | string | ISO-8601 formatted date when the token expires |
+| apple_pay | Object | The unlinked Apple Pay™ resource |
+| apple_pay.id | string | Unique identifier for the Apple Pay™ resource |
+| apple_pay.type | string | Type of Apple Pay™ resource. Will be 'mpan' |
+| apple_pay.tenant_id | string | Identifier for the tenant that owns the resource |
+| apple_pay.status | string | Status of the resource. Will be 'unlinked' |
+| apple_pay.expires_at | string | ISO-8601 formatted date when the resource expires |
 
 ### Errors
 
@@ -688,3 +689,6 @@ Returns the deleted Apple Pay token with basic information.
 | 401 | Unauthorized - check API key permissions |
 | 403 | Forbidden - insufficient permissions to perform this action |
 | 404 | Token not found |
+| 422 | Resource not found or resource is not of type 'mpan' |
+| 503 | Unable to unlink resource - please contact support |
+>>>>>>> origin/master

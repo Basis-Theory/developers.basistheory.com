@@ -5,7 +5,7 @@ import TabItem from "@theme/TabItem";
 
 ## Tokenization
 
-After the customer has authorized the payment, your application will need to call Basis Theory with the encrypted Apple Pay token.
+After the customer has authorized the payment, your application will need to call Basis Theory with the encrypted Apple Pay™ token.
 Let's add the `session.onpaymentauthorized` event to call Basis Theory.
 
 ```html showLineNumbers
@@ -35,7 +35,7 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
         // highlight-start
         session.onpaymentauthorized = async (event, session) => {
           try {
-            // decrypt and tokenize Apple Pay
+            // decrypt and tokenize Apple Pay™
             const applePayToken  = await tokenize(event);
             // present green check to the user before the timeout (30 seconds)
             session.completePayment(ApplePaySession.STATUS_SUCCESS);
@@ -80,7 +80,7 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
 <body>
   <apple-pay-button buttonstyle="black" type="plain" locale="en-US"></apple-pay-button>
   <script>
-    // Set up the onclick handler for the Apple Pay button
+    // Set up the onclick handler for the Apple Pay™ button
     document.querySelector('apple-pay-button')
       .addEventListener('click', onApplePayButtonClicked);
   </script>
@@ -90,7 +90,7 @@ Let's add the `session.onpaymentauthorized` event to call Basis Theory.
 
 ## Processing the Payment
 
-We'll send the Basis Theory Apple Pay Token to a Payments Service Provider (PSP) to test charging a card.
+We'll send the Basis Theory Apple Pay™ resource to a Payments Service Provider (PSP) to test charging a card.
 We'll be doing this from our backend by using a [Proxy](/docs/api/proxies/ephemeral-proxy) and a Private Application.
 
 ### Create a Private Application
@@ -131,7 +131,7 @@ We'll change our frontend application one last time to pass in the Token ID to t
 
         session.onpaymentauthorized = async (event, session) => {
           try {
-            // decrypt and tokenize Apple Pay
+            // decrypt and tokenize Apple Pay™
             const applePayToken = await tokenize(event);
             // present green check to the user before the timeout (30 seconds)
             session.completePayment(ApplePaySession.STATUS_SUCCESS);
@@ -173,7 +173,7 @@ We'll change our frontend application one last time to pass in the Token ID to t
 <body>
   <apple-pay-button buttonstyle="black" type="plain" locale="en-US"></apple-pay-button>
   <script>
-    // Set up the onclick handler for the Apple Pay button
+    // Set up the onclick handler for the Apple Pay™ button
     document.querySelector('apple-pay-button')
       .addEventListener('click', onApplePayButtonClicked);
   </script>
@@ -218,7 +218,7 @@ curl 'https://api.basistheory.com/proxy' \
 
   <TabItem value="stripe" label="Stripe">
   <Alert>
-  You may need to ask Stripe to enable accepting decrypted Apple Pay in your account.
+  You may need to ask Stripe to enable accepting decrypted Apple Pay™ in your account.
   </Alert>
 
   Please note that Stripe does not recognize network token parameters on creation of a payment method.
@@ -249,25 +249,25 @@ curl 'https://api.basistheory.com/proxy'
   </TabItem>
 </Tabs>
 
-<Alert>You are not restricted to only using Checkout or Stripe. You can use any payment processor that accepts decrypted Apple Pay tokens.</Alert>
+<Alert>You are not restricted to only using Checkout or Stripe. You can use any payment processor that accepts decrypted Apple Pay™ resources.</Alert>
 
 ## Testing
 
 Basis Theory does not support Apple’s sandbox environment, requiring the use of an actual card from your Apple Wallet for testing purposes.
 When operating within a **Test tenant**, Basis Theory will not return real card data.
-Although the Apple Pay token generated during development is authentic, the associated Basis Theory Apple Pay token will contain simulated data only.
+Although the Apple Pay™ resource generated during development is authentic, the associated Basis Theory Apple Pay™ resource will contain simulated data only.
 
-To access genuine, valid network tokens derived from Apple Pay tokens, a **Production tenant** must be utilized.
+To access genuine, valid network tokens derived from Apple Pay™ resources, a **Production tenant** must be utilized.
 
 
 ## Preparing for Production
 
-This checklist will guide you through the critical steps you need to follow before moving your Apple Pay integration into production. Ensuring that everything is properly set up and tested reduces the likelihood of errors during live transactions and offers a seamless payment experience to your customers.
+This checklist will guide you through the critical steps you need to follow before moving your Apple Pay™ integration into production. Ensuring that everything is properly set up and tested reduces the likelihood of errors during live transactions and offers a seamless payment experience to your customers.
 
 ### Test in Production with a Live Wallet and Card
 
-- Before going live, perform test transactions using a **Live Apple Pay wallet** with a personal or corporate card added. This step ensures that everything is functioning correctly in the production environment with real-world payment methods.
-- Keep in mind that Apple Pay in production does not behave the same as in testing, so using live payment information is critical.
+- Before going live, perform test transactions using a **Live Apple Pay™ wallet** with a personal or corporate card added. This step ensures that everything is functioning correctly in the production environment with real-world payment methods.
+- Keep in mind that Apple Pay™ in production does not behave the same as in testing, so using live payment information is critical.
 
 ### Handling Transaction Failures
 
@@ -277,14 +277,14 @@ When a transaction fails, here’s what you should do:
 2. **Contact Your Payment Processor**: If the error code is unclear, reach out to your **Payment Processor** to diagnose the issue. As processors handle the transaction flow, they often have the most accurate and actionable information about why a transaction may have failed.
 3. **Seek Assistance from Basis Theory (if applicable)**: If your integration leverages Basis Theory and you’re unable to resolve the issue with your processor, Basis Theory support can assist in identifying potential issues. However, the **Processor** will usually have the best resources and tools to help address errors swiftly.
 
-### Determine Where to Send Apple Pay Token Payloads
+### Determine Where to Send Apple Pay™ Token Payloads
 
-Apple Pay generates a secure token payload for each transaction. It’s essential to configure your integration properly to ensure these tokens are correctly routed. Follow these steps:
+Apple Pay™ generates a secure token payload for each transaction. It’s essential to configure your integration properly to ensure these tokens are correctly routed. Follow these steps:
 
-1. **Review Processor Documentation**: check the integration and setup documentation provided by your **Payment Processor** (PSP). They often provide detailed instructions on how and where to send Apple Pay token payloads.
-2. **Enable Apple Pay Support with Your PSP**: some payment processors require you to explicitly enable Apple Pay within their systems. Reach out to your PSP to ensure Apple Pay functionality is activated for your account.
-3. **Understand How to Send Tokens**: each PSP handles Apple Pay tokens differently, so it is critical to verify where the token payloads should be sent, and confirm the API endpoints, required headers, and payload formats specific to your PSP.
-4. **Contact PSP for Guidance**: if the documentation is unclear, **reach out to your PSP’s support team** to clarify the process for enabling Apple Pay support, and the steps to correctly transmit the token payload for processing.
+1. **Review Processor Documentation**: check the integration and setup documentation provided by your **Payment Processor** (PSP). They often provide detailed instructions on how and where to send Apple Pay™ token payloads.
+2. **Enable Apple Pay™ Support with Your PSP**: some payment processors require you to explicitly enable Apple Pay™ within their systems. Reach out to your PSP to ensure Apple Pay™ functionality is activated for your account.
+3. **Understand How to Send Tokens**: each PSP handles Apple Pay™ tokens differently, so it is critical to verify where the token payloads should be sent, and confirm the API endpoints, required headers, and payload formats specific to your PSP.
+4. **Contact PSP for Guidance**: if the documentation is unclear, **reach out to your PSP’s support team** to clarify the process for enabling Apple Pay™ support, and the steps to correctly transmit the token payload for processing.
 
 ### Final Notes
 
@@ -292,4 +292,4 @@ Apple Pay generates a secure token payload for each transaction. It’s essentia
 - Double-check all API keys, certificates, and environment configurations to avoid common production issues.
 - If you encounter additional issues or have questions specific to Basis Theory functionality, don’t hesitate to [contact Basis Theory’s support team](https://basistheory.com/contact) for further assistance.
 
-By following this checklist, you’ll be prepared to seamlessly integrate and go live with Apple Pay, providing a secure and smooth payment experience for your users.
+By following this checklist, you’ll be prepared to seamlessly integrate and go live with Apple Pay™, providing a secure and smooth payment experience for your users.
