@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "Running pre-commit hook to check for 'flock-dev.com' in docs directory..."
+
+# Find files in the docs directory that contain "flock-dev.com"
+matching_files=$(grep -l "flock-dev.com" $(git diff --cached --name-only --diff-filter=ACM docs/ 2>/dev/null) 2>/dev/null)
+
+# If any matching files were found, print them and exit with an error
+if [ -n "$matching_files" ]; then
+    echo "ERROR: The following files in the docs directory contain 'flock-dev.com':"
+    echo "$matching_files" | sed 's/^/  - /'
+    echo "Please remove these references before committing."
+    exit 1
+fi
+
+# If we get here, no matching files were found
+echo "No 'flock-dev.com' references found in docs directory. Proceeding with commit."
+exit 0
