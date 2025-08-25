@@ -1,3 +1,10 @@
+## [1.258.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.258.0...v1.258.1) (2025-08-25)
+
+
+### Bug Fixes
+
+* dns typo ([#632](https://github.com/Basis-Theory/developers.basistheory.com/issues/632)) ([63cc6cc](https://github.com/Basis-Theory/developers.basistheory.com/commit/63cc6cc03b56c29e93ba551f9bef292b1ee0ba06))
+
 # [1.258.0](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.257.0...v1.258.0) (2025-08-22)
 
 
