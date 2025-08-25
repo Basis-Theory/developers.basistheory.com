@@ -1242,3 +1242,66 @@ The `.error` objects in the `proxy.response`, `request_transform.response`, and 
 | token_intent.type | String | The type of the token intent.                                                                    |
 | token.id          | String | The unique identifier of the [token](/docs/api/tokens#token-object).                             |
 | token.type        | String | The type of the token.                                                                           |
+
+## Google Pay™
+
+As mentioned in the [Google Pay™ API documentation](/docs/api/google-pay/api#create) either a Google Pay™ resource or a Basis Theory's [Token Intent](/docs/api/tokens/token-intents#token-intent-object) can be created based on the provided encrypted token. Please refer to [Token Intent events documentation](/docs/api/webhooks/eventdata#token-intents) for information about token intents created through the Google Pay™ API.
+
+### Resource Created
+
+```json title="google-pay.created"
+{
+  "google_pay": {
+    "id": "...",
+    "status": "...",
+    "created_by": "...",
+    "created_at": "...",
+    "expires_at": "..."
+  }
+}
+```
+| Name                         | Type                 | Description                                                           |
+|------------------------------|----------------------|-----------------------------------------------------------------------|
+| google_pay.id                | String               | The unique identifier of the resource.                                |
+| google_pay.status            | String               | The status of the resource.                                           |
+| google_pay.created_by        | String               | The creator of the resource.                                          |
+| google_pay.created_at        | String               | The creation date of the resource in ISO 8601 format.                 |
+| google_pay.expires_at        | String               | The expiration date of the resource in ISO 8601 format.               |
+
+### Resource Deleted
+
+```json title="google-pay.deleted"
+{
+  "google_pay": {
+    "id": "...",
+    "status": "...",
+    "created_by": "...",
+    "created_at": "...",
+    "expires_at": "...",
+    "modified_by": "...",
+    "modified_at": "..."
+  }
+}
+```
+| Name                         | Type                 | Description                                                           |
+|------------------------------|----------------------|-----------------------------------------------------------------------|
+| google_pay.id                | String               | The unique identifier of the resource.                                |
+| google_pay.status            | String               | The status of the resource.                                           |
+| google_pay.created_by        | String               | The creator of the resource.                                          |
+| google_pay.created_at        | String               | The creation date of the resource in ISO 8601 format.                 |
+| google_pay.expires_at        | String               | The expiration date of the resource in ISO 8601 format.               |
+| google_pay.modified_by       | String               | The user who deleted the resource.                                    |
+| google_pay.modified_at       | String               | The delete date of the resource in ISO 8601 format.                   |
+
+### Resource Retrieved
+
+```json title="google-pay.retrieved"
+{
+  "google_pay": {
+    "id": "..."
+  }
+}
+```
+| Name          | Type   | Description                                                           |
+|---------------|--------|-----------------------------------------------------------------------|
+| google_pay.id | String | The unique identifier of the resource.                                |
