@@ -370,6 +370,64 @@ Given a token with the data:
 | <code>\{\{ data.nonexistent }}</code>                                   | `null`                               |
 | <code>\{\{ data &#124; json: '$.book..author' }}</code>                 | `<400 Error>`                        |
 
+## json_stringify
+
+Returns a JSON serialized string of the input object.
+
+Returns null when provided a null input value.
+
+It must be the last filter.
+
+#### Parameters
+
+None
+
+#### Examples
+
+Given a token with the data:
+
+```json showLineNumbers
+{
+  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
+  "type": "token",
+  "data": {
+    "books": [
+      {
+        "category": "fiction",
+        "author": "Herman Melville",
+        "title": "Moby Dick",
+        "isbn": "0-553-21311-3",
+        "price": 8.99
+      },
+      {
+        "category": "fantasy",
+        "author": "J. R. R. Tolkien",
+        "title": "The Lord of the Rings",
+        "isbn": "0-395-19395-8",
+        "price": 22.99
+      }
+    ],
+    "bicycles": [
+      {
+        "color": "red",
+        "price": 19.95
+      },
+      {
+        "color": "blue",
+        "price": 24.95
+      }
+    ]
+  }
+}
+```
+
+| Expression                                                | Result                                                                         |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| <code>\{\{ data.books[0].price &#124; json_stringify }}</code> | `"8.99"`                                                                       |
+| <code>\{\{ data.books[1].title &#124; json_stringify }}</code> | `"The Lord of the Rings"`                                                      |
+| <code>\{\{ data.bicycles[0] &#124; json_stringify }}</code>    | `"{\"color\":\"red\",\"price\":19.95}"`                                        |
+| <code>\{\{ data.bicycles &#124; json_stringify }}</code>       | `"[{\"color\":\"red\",\"price\":19.95},{\"color\":\"blue\",\"price\":24.95}]"` |
+
 ## last4
 
 Returns the last 4 characters of a string. If the string's length is less than 4, the whole value is returned.
@@ -525,62 +583,6 @@ Given a token with the data:
 | ---------------------------------------------------- | ------------------ |
 | <code>\{\{ data &#124; reveal_last: 6 }}</code>      | `"XXXXXXXX271667"` |
 | <code>\{\{ data &#124; reveal_last: 3, '#' }}</code> | `"###########667"` |
-
-## stringify
-
-Returns a JSON serialized string of the input object.
-
-Returns null when provided a null input value.
-
-#### Parameters
-
-None
-
-#### Examples
-
-Given a token with the data:
-
-```json showLineNumbers
-{
-  "id": "d35412f4-9d3b-45d8-b051-fe4b7d4e14c5",
-  "type": "token",
-  "data": {
-    "books": [
-      {
-        "category": "fiction",
-        "author": "Herman Melville",
-        "title": "Moby Dick",
-        "isbn": "0-553-21311-3",
-        "price": 8.99
-      },
-      {
-        "category": "fantasy",
-        "author": "J. R. R. Tolkien",
-        "title": "The Lord of the Rings",
-        "isbn": "0-395-19395-8",
-        "price": 22.99
-      }
-    ],
-    "bicycles": [
-      {
-        "color": "red",
-        "price": 19.95
-      },
-      {
-        "color": "blue",
-        "price": 24.95
-      }
-    ]
-  }
-}
-```
-
-| Expression                                                | Result                                                                         |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| <code>\{\{ data.books[0].price &#124; stringify }}</code> | `"8.99"`                                                                       |
-| <code>\{\{ data.books[1].title &#124; stringify }}</code> | `"The Lord of the Rings"`                                                      |
-| <code>\{\{ data.bicycles[1] &#124; stringify }}</code>    | `"{\"color\":\"red\",\"price\":19.95}"`                                        |
-| <code>\{\{ data.bicycles &#124; stringify }}</code>       | `"[{\"color\":\"red\",\"price\":19.95},{\"color\":\"blue\",\"price\":24.95}]"` |
 
 ## to_boolean
 
