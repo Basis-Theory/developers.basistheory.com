@@ -1,3 +1,10 @@
+## [1.258.2](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.258.1...v1.258.2) (2025-08-27)
+
+
+### Bug Fixes
+
+* document p-limit ([#636](https://github.com/Basis-Theory/developers.basistheory.com/issues/636)) ([633374a](https://github.com/Basis-Theory/developers.basistheory.com/commit/633374a5bc798d96fdee919051ed44abca8dbfcc))
+
 ## [1.258.1](https://github.com/Basis-Theory/developers.basistheory.com/compare/v1.258.0...v1.258.1) (2025-08-25)
 
 
