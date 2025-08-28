@@ -291,7 +291,7 @@ would result in the following error response:
 
 ### Proxy Transform Errors
 
-Custom errors can be returned from request and response transforms by throwing [reactor errors](/docs/api/reactors/reactor-errors#error-types) defined in the
+Custom errors can be returned from request and response transforms by throwing [reactor errors](/docs/api/reactors/invoke-reactors#reactor-error-codes) defined in the
 [@basis-theory/basistheory-reactor-formulas-sdk-js](https://www.npmjs.com/package/@basis-theory/basis-theory-reactor-formulas-sdk-js)
 npm package (proxy transforms are executed in Basis Theory's secure [serverless reactor](/docs/concepts/what-are-reactors) environment).
 
@@ -337,7 +337,7 @@ would result in the following error response with a `401` status code if the `MY
 
 ### Custom Errors
 
-To provide more control over the errors returned from a proxy transform, a [CustomHttpResponseError](/docs/api/reactors/reactor-errors#custom-errors) can be thrown from the transform.
+To provide more control over the errors returned from a proxy transform, a [CustomHttpResponseError](/docs/api/reactors/reactor-errors#error-types) can be thrown from the transform.
 This will enable you to specify a status code, custom headers, and have complete control over the response body that is returned.
 
 For example, a transform containing the following code:
