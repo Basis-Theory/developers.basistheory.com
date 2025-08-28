@@ -282,6 +282,10 @@ const config = {
           { from: "/docs/guides/collect/issue-cards", to: "/docs/card-issuing/issue-cards" },
           { from: "/docs/guides/share/display-cards", to: "/docs/card-issuing/display-cards" },
           { from: "/docs/guides/collect/set-card-pin", to: "/docs/card-issuing/set-card-pin" },
+
+          // Redirects for reorganized proxy and reactor pages
+          { from: "/docs/api/proxies/ephemeral-proxy", to: "/docs/api/proxies/invoke-ephemeral-proxies" },
+          { from: "/docs/api/reactors/reactor-errors", to: "/docs/api/reactors/invoke-reactors#reactor-error-codes" },
         ],
       },
     ],
