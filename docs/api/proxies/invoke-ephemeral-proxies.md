@@ -111,7 +111,7 @@ You can encrypt a token and get the JWE data with the [Basis Theory SDKs](/docs/
 ### Request
 
 A `BT-PROXY-URL` request header is required - its value defines the base URL to which the request will be proxied.
-See [Destination URLs](/docs/api/proxies/#destination-urls) for more information.
+See [Destination URLs](/docs/api/proxies/pre-configured-proxies#destination-urls) for more information.
 
 ```shell showLineNumbers
 curl "https://api.basistheory.com/proxy" \

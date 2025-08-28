@@ -286,6 +286,8 @@ const config = {
           // Redirects for reorganized proxy and reactor pages
           { from: "/docs/api/proxies/ephemeral-proxy", to: "/docs/api/proxies/invoke-ephemeral-proxies" },
           { from: "/docs/api/reactors/reactor-errors", to: "/docs/api/reactors/invoke-reactors#reactor-error-codes" },
+          { from: "/docs/api/proxies", to: "/docs/api/proxies/pre-configured-proxies" },
+          { from: "/docs/api/proxies/proxy-errors", to: "/docs/api/proxies/invoke-pre-configured-proxies#proxy-transform-errors" },
         ],
       },
     ],

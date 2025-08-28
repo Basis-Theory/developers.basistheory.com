@@ -245,7 +245,7 @@ At most, 20 tokens may be detokenized within a single proxy request. You can fin
 
 ## Errors
 
-Please refer to [Proxy Transform Errors](/docs/api/proxies/proxy-errors#proxy-transform-errors) for
+Please refer to [Proxy Transform Errors](#proxy-transform-errors) for
 the full documentation around handling and returning errors from proxy transforms.
 
 
