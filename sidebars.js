@@ -467,15 +467,39 @@ const sidebars = {
     },
   ],
   api: [
+    // Overview
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Overview</div>",
+    },
+    "api/index",
+    "api/authentication",
+    "api/idempotency",
+    "api/request-correlation",
+    "api/pagination",
+    "api/errors",
+    "api/ip-addresses",
+    "api/rate-limits",
+    "api/testing",
+    "api/deprecations",
+
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    // Tenant Management
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Management</div>",
+    },
     {
       type: "category",
-      label: "Overview",
-      collapsed: false,
+      label: "Tenants",
       link: {
         type: "doc",
-        id: "api/index",
+        id: "api/tenants/tenants",
       },
-      items: ["api/index", "api/authentication", "api/request-correlation", "api/pagination", "api/errors", "api/ip-addresses", "api/rate-limits", "api/idempotency", "api/testing"],
+      items: ["api/tenants/tenants", "api/tenants/tenant-members"],
     },
     {
       type: "category",
@@ -486,16 +510,14 @@ const sidebars = {
       },
       items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
     },
-    "api/client-keys",
-    "api/logs",
     {
       type: "category",
       label: "Proxies",
       link: {
         type: "doc",
-        id: "api/proxies/proxies",
+        id: "api/proxies/pre-configured-proxies",
       },
-      items: ["api/proxies/proxies", "api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies", "api/proxies/proxy-errors"],
+      items: ["api/proxies/pre-configured-proxies"],
     },
     {
       type: "category",
@@ -508,12 +530,39 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Tenants",
+      label: "Logs",
       link: {
         type: "doc",
-        id: "api/tenants/tenants",
+        id: "api/logs",
       },
-      items: ["api/tenants/tenants", "api/tenants/tenant-members"],
+      items: ["api/logs"],
+    },
+    {
+      type: "category",
+      label: "Webhooks",
+      link: {
+        type: "doc",
+        id: "api/webhooks/webhooks",
+      },
+      items: ["api/webhooks/api", "api/webhooks/eventdata"],
+    },
+    {
+      type: "category",
+      label: "Client Keys",
+      link: {
+        type: "doc",
+        id: "api/client-keys",
+      },
+      items: ["api/client-keys"],
+    },
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    // Tokenization
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Tokenization</div>",
     },
     {
       type: "category",
@@ -540,45 +589,21 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Network Tokens",
+      label: "Invoke Proxies",
       link: {
         type: "doc",
-        id: "api/network-tokens/network-tokens",
+        id: "api/proxies/invoke-ephemeral-proxies",
       },
-      items: [
-        {
-          type: "doc",
-          id: "api/network-tokens/network-tokens",
-        },
-      ],
+      items: ["api/proxies/invoke-ephemeral-proxies", "api/proxies/invoke-pre-configured-proxies"],
     },
     {
       type: "category",
-      label: "Apple Pay™",
+      label: "Invoke Reactors",
       link: {
         type: "doc",
-        id: "api/apple-pay/api",
+        id: "api/reactors/invoke-reactors",
       },
-      items: [
-        {
-          type: "doc",
-          id: "api/apple-pay/api",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Google Pay™",
-      link: {
-        type: "doc",
-        id: "api/google-pay/api",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "api/google-pay/api",
-        },
-      ],
+      items: ["api/reactors/invoke-reactors", "api/reactors/invoke-async-reactors"],
     },
     {
       type: "category",
@@ -597,22 +622,15 @@ const sidebars = {
         },
       ],
     },
+
     {
-      type: "category",
-      label: "3D Secure",
-      link: {
-        type: "doc",
-        id: "api/3ds/sessions",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "api/3ds/sessions",
-          customProps: {
-            enterprise: true,
-          },
-        },
-      ],
+      type: "html",
+      value: "<hr />",
+    },
+
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Credential Management</div>",
     },
     {
       type: "category",
@@ -648,12 +666,83 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Webhooks",
+      label: "Network Tokens",
       link: {
         type: "doc",
-        id: "api/webhooks/webhooks",
+        id: "api/network-tokens/network-tokens",
       },
-      items: ["api/webhooks/api", "api/webhooks/eventdata"],
+      items: [
+        {
+          type: "doc",
+          id: "api/network-tokens/network-tokens",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "3D Secure",
+      link: {
+        type: "doc",
+        id: "api/3ds/sessions",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/3ds/sessions",
+          customProps: {
+            enterprise: true,
+          },
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Enrichments",
+      link: {
+        type: "doc",
+        id: "api/enrichments/bank-accounts",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/enrichments/bank-accounts",
+          customProps: {
+            enterprise: true,
+          },
+        },
+        {
+          type: "doc",
+          id: "api/enrichments/card-details",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Apple Pay™",
+      link: {
+        type: "doc",
+        id: "api/apple-pay/api",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/apple-pay/api",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Google Pay™",
+      link: {
+        type: "doc",
+        id: "api/google-pay/api",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/google-pay/api",
+        },
+      ],
     },
     {
       type: "category",
@@ -679,32 +768,12 @@ const sidebars = {
         },
       ],
     },
-    {
-      type: "category",
-      label: "Enrichments",
-      link: {
-        type: "doc",
-        id: "api/enrichments/bank-accounts",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "api/enrichments/bank-accounts",
-          customProps: {
-            enterprise: true,
-          },
-        },
-        {
-          type: "doc",
-          id: "api/enrichments/card-details",
-        },
-      ],
-    },
-    "api/deprecations",
+
     {
       type: "html",
       value: "<hr />",
     },
+
     {
       type: "link",
       label: "Guides",

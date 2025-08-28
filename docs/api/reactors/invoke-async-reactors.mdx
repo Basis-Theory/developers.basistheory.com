@@ -1,0 +1,229 @@
+---
+title: Invoke Async Reactors
+---
+
+import { Enterprise } from "@site/src/components/shared/Enterprise";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import {
+  HttpMethod,
+  HttpMethods,
+} from "@site/src/components/shared/HttpMethod";
+import { Permission } from "@site/src/components/shared/Permission";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Deprecated } from "@site/src/components/shared/Deprecated";
+
+## Invoke Asynchronously <Enterprise /> \{#invoke-a-reactor-async}
+
+Invoke a reactor by ID asynchronously. See [Asynchronous Reactors](/docs/concepts/what-are-reactors#asynchronous-reactors) for more info.
+
+<HttpMethod
+  method={HttpMethods.POST}
+  endpoint="https://api.basistheory.com/reactors/{id}/react-async"
+/>
+
+#### Permissions
+
+<Permission content="reactor:invoke" />
+<br/>
+<Alert type={Alerts.INFO}>For existing reactors and to maintain backward compatibility we are also supporting `token:use`, however we recommend updating the permissions since that will be deprecated soon.</Alert>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+```shell showLineNumbers
+curl "https://api.basistheory.com/reactors/5b493235-6917-4307-906a-2cd6f1a90b13/react-async" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "args": {
+      "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      "customer_id": "myCustomerId1234"
+    }
+  }'
+```
+
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+await client.reactors.reactAsync(
+  reactorId,
+  {
+    args: {
+      card "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      customer_id: "myCustomerId1234"
+    }
+  }
+);
+```
+  </TabItem>
+
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Reactors.ReactAsyncAsync(
+  reactorId,
+  new ReactRequestAsync
+  {
+    Args = new
+    {
+      card = "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      customer_id = "myCustomerId1234"
+    }
+  }
+);
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.reactors.react_async(
+    id=reactor_id,
+    args={
+      "card": "{{fe7c0a36-eb45-4f68-b0a0-791de28b29e4}}",
+      "customer_id": "myCustomerId1234"
+    }
+)
+```
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter | Required | Type   | Default | Description           |
+|-----------|----------|--------|---------|-----------------------|
+| `id`      | true     | _uuid_ | `null`  | The ID of the Reactor |
+
+#### Request Parameters
+
+| Parameter | Required | Type     | Default | Description                          |
+|-----------|----------|----------|---------|--------------------------------------|
+| `args`    | false    | _object_ | `null`  | Arguments to provide to the reactor. |
+
+### Response
+
+```json
+{
+    "asyncReactorRequestId": "3254626a-e1cf-4616-968f-e08a7ade4fce"
+}
+```
+
+Returns a request ID that can be used later to [retrieve the results](/docs/api/reactors#retrieve-result) of the asynchronous invocation.
+
+## Retrieve Async Result <Enterprise /> \{#retrieve-result}
+
+Will retrieve the results of an asynchronous invocation.
+
+<HttpMethod
+  method={HttpMethods.GET}
+  endpoint="https://api.basistheory.com/reactors/{id}/results/{request_id}"
+/>
+
+#### Permissions
+
+<Permission content="reactor:invoke" />
+<br/>
+<Alert type={Alerts.INFO}>For existing reactors and to maintain backward compatibility we are also supporting `token:use`, however we recommend updating the permissions since that will be deprecated soon.</Alert>
+
+### Request
+
+<Tabs className="bt-tabs" groupId="languages">
+  <TabItem value="shell" label="cURL">
+```shell showLineNumbers
+curl --location 'https://api.basistheory.com/reactors/7001A144-96D0-4401-9D96-13557824A9E0/results/369a879e-338d-4f52-83cf-53a6af3f3f18' \
+--header 'BT-API-KEY: <PRIVATE_API_KEY>'
+```
+  </TabItem>
+
+  <TabItem value="node" label="Node">
+```javascript
+await client.reactors.results.get("id", "requestId");
+```
+  </TabItem>
+
+  <TabItem value="csharp" label="C#">
+```csharp showLineNumbers
+await client.Reactors.Results.GetAsync("id", "requestId");
+```
+  </TabItem>
+
+  <TabItem value="python" label="Python">
+```python showLineNumbers
+client.reactors.results.get(
+    id="id",
+    request_id="requestId",
+)
+```
+  </TabItem>
+
+    <TabItem value="java" label="Java">
+```java showLineNumbers
+new ReactorsClient(ClientOptions.builder().build()).results().get("id", "requestId");
+```
+  </TabItem>
+
+    <TabItem value="go" label="Go">
+```go showLineNumbers
+response, err := client.Reactors.Results.Get(ctx, "reactorId", "requestId")
+```
+
+  </TabItem>
+</Tabs>
+
+#### URI Parameters
+
+| Parameter    | Required | Type   | Default | Description                                                                                                                                                                                                                                                                                                                   |
+|--------------|----------|--------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`         | true     | _uuid_ | `null`  | The ID of the Reactor                                                                                                                                                                                                                                                                                                         |
+| `request_id` | true     | _uuid_ | `null`  | The ID of the Reactor request id. Retrieved from either the response of `react-async` or from the webhook events ([`reactor.invoked`](/docs/api/webhooks/eventdata#reactor-invoked), [`reactor.completed`](/docs/api/webhooks/eventdata#reactor-completed), [`reactor.failed`](/docs/api/webhooks/eventdata#reactor-failed)). |
+
+#### Request Parameters
+
+| Parameter | Required | Type     | Default | Description                          |
+|-----------|----------|----------|---------|--------------------------------------|
+| `args`    | false    | _object_ | `null`  | Arguments to provide to the reactor. |
+
+## Limitations
+
+Head over to [Rate Limits](/docs/api/rate-limits) to learn more about Reactors limitations.
+
+## Detokenization
+
+In order to use tokenized data within a reactor, the `args` parameter may contain one or more [detokenization expressions](/docs/expressions/detokenization).
+When any detokenization expressions are detected, Basis Theory will attempt to detokenize and inject the raw token data into the `args` forwarded to the Reactor function.
+
+Reactor request `args` may contain a mixture of detokenization expressions and raw plaintext data.
+
+Tokens containing complex data may be detokenized into a Reactor request, including Bank and Card token types.
+When tokens with complex data are detokenized, the entire JSON data payload will be included within the `args`.
+For an example, see [Use Complex Tokens](/docs/expressions/detokenization#examples).
+
+Validation is performed on the resulting request after detokenization, so several required request parameters may be supplied by detokenizing
+a single complex token that contains several of the request parameters.
+
+At most, 100 tokens may be detokenized within a single Reactor request.
+
+<Alert>For more detailed examples about how to detokenize within Reactors, check out our <a href="/docs/expressions/detokenization#examples">Detokenization Examples</a>.</Alert>
+
+## Reactor Error Codes
+
+| Code  | Meaning                | Common Scenarios                                                                                                                                                               |
+|-------|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `400` | Bad Request            | <ul><li>Missing or invalid `args` on the request</li><li>Invalid Reactor Configuration</li></ul>                                                                               |
+| `401` | Authentication Error   | <ul><li>Invalid or unknown credentials</li><li>Credentials are valid, but lack permission to complete the operation</li></ul>                                                  |
+| `402` | Invalid Payment Method | <ul><li>Expired Card</li><li>A test card or bank account was used in a production environment, or vice-versa</li><li>An external API denied the card or bank account</li></ul> |
+| `422` | Unprocessable Entity   | <ul><li>Reactor code is not a valid function</li></ul>                                                                                                                         |
+| `429` | Rate Limit Error       | <ul><li>An external API responded with a 429 HTTP response code</li></ul>                                                                                                      |
+| `500` | Reactor Runtime Error  | <ul><li>An unhandled exception occurred</li><li>An external API responded with a 5XX HTTP response code</li><li>External API connection failure</li></ul>                      |
+
+There are a few different root causes for why one of these errors may be returned from a reactor:
+
+1. An error occurred within Basis Theory's reactor execution framework when processing your request. For example,
+this can occur if the reactor code is invalid and fails to compile (JavaScript code is validated before being executed) resulting in a `422` error, or if the provided `args`
+contain an invalid expression resulting in a `400` error.
+
+2. An error occurred within your reactor code. For example, an HTTP call is made to an external API and they responded with an error,
+or a runtime error occurred within the code due to a bug. The following section details best practices when handling errors within reactor code.
