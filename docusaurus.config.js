@@ -153,7 +153,7 @@ const config = {
       {
         redirects: [
           { from: "/api-reference", to: "/docs/api" },
-          { from: "/elements", to: "/docs/sdks/web/javascript" },
+          { from: "/elements", to: "/docs/sdks/web/web-elements" },
           { from: "/expressions", to: "/docs/expressions" },
           { from: "/labs", to: "/docs" },
 
