@@ -4,16 +4,13 @@ title: Pre-Configured Proxies
 
 import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Alert } from "@site/src/components/shared/Alert";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import ReservedHeaders from "./_reserved_headers.mdx";
-import CustomHeaders from "./_custom_headers.mdx";
-import { Enterprise } from "@site/src/components/shared/Enterprise";
 
 # Pre-Configured Proxies
 
-Pre-Configured Proxies differ from the [Ephemeral Proxy](/docs/api/proxies/ephemeral-proxy) by requiring setup beforehand. You define a proxy instance with a unique URL and fixed settings, which can be reused across requests or shared with third parties for inbound HTTP requests (e.g., providing an integrator with a proxy URL). This approach suits scenarios needing consistent configurations or stricter controls, such as whitelisting destinations in production environments.
+Pre-Configured Proxies differ from the [Ephemeral Proxy](/docs/api/proxies/invoke-ephemeral-proxies) by requiring setup beforehand. You define a proxy instance with a unique URL and fixed settings, which can be reused across requests or shared with third parties for inbound HTTP requests (e.g., providing an integrator with a proxy URL). This approach suits scenarios needing consistent configurations or stricter controls, such as whitelisting destinations in production environments.
 
 Additional options for Pre-Configured Proxies include:
 
@@ -1184,7 +1181,7 @@ Returns [an error](/docs/api/errors) if the Proxy failed to delete.
 
 | Attribute            | Type                                                           | Description                                                                                                                                                                                                                                                 |
 |----------------------|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `id`                 | _uuid_                                                         | Unique identifier of the Proxy which can be used to [get a Proxy](/docs/api/proxies#get-a-proxy)                                                                                                                                                            |
+| `id`                 | _uuid_                                                         | Unique identifier of the Proxy which can be used to [get a Proxy](#get-a-proxy)                                                                                                                                                            |
 | `key`                | _string_                                                       | Auto-generated key used to [invoke this Proxy](/docs/api/proxies/pre-configured-proxies#invoke-a-proxy)                                                                                                                                                     |
 | `name`               | _string_                                                       | The name of the Proxy                                                                                                                                                                                                                                       |
 | `destination_url`    | _string_                                                       | The URL to which requests will be proxied                                                                                                                                                                                                                   |
@@ -1217,167 +1214,6 @@ See [Response Transforms](#response-transforms) for details regarding the variou
 | `replacement` | _string_ | The replacement character for masking. Must be only one character in length. *Required* when `type` is `mask`                                                                        |
 | `expression`  | _string_ | The regular expression to use when determining masking values. Must contain at least one capture group using parenthesis. *Required* when `type` is `mask` and `matcher` is `regex`. |
 
-## Invoke a Proxy
-
-Invoke a pre-configured proxy instance.
-
-<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/proxy" />
-
-<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/proxy" />
-
-<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/proxy" />
-
-<HttpMethod method={HttpMethods.PATCH} endpoint="https://api.basistheory.com/proxy" />
-
-<HttpMethod method={HttpMethods.DELETE} endpoint="https://api.basistheory.com/proxy" />
-
-### Authentication
-
-Pre-configured proxies can be configured to either require authentication or allow anonymous requests.
-When authentication is required, a `BT-API-KEY` header must be provided with the request (see [Authentication](/docs/api/authentication)).
-
-Unauthenticated proxy requests may be desired when receiving inbound requests from a third party.
-This would allow any caller who knows your unique proxy key to make inbound requests through the proxy
-without needing to share a Basis Theory API key with third parties.
-
-Any authentication required by the destination service can be set on the request and will be forwarded through the proxy
-(for example, by setting an `Authorization` header).
-
-### Permissions
-
-<Permission content="proxy:invoke" />
-<br/>
-<Alert type={Alerts.INFO}>For existing proxies and to maintain backward compatibility we are also supporting `token:use`, however we recommend updating the permissions since that will be deprecated soon.</Alert>
-
-### Encrypted Token Header
-
-The `BT-ENCRYPTED` header allows you to pass encrypted token requests to proxy destinations. This header accepts a base64-encoded token request containing encrypted JWE (JSON Web Encryption) data instead of plaintext.
-
-#### Header Format
-
-The `BT-ENCRYPTED` header should contain a base64-encoded token request with the following structure:
-
-**Single Token Request:**
-```json
-{
-  "type": "card",
-  "encrypted": "<JWE_STRING>"
-}
-```
-
-**Multiple Token Requests:**
-```json
-{
-  "tokenA": {
-    "type": "card", 
-    "encrypted": "<JWE_STRING>"
-  },
-  "tokenB": {
-    "type": "token",
-    "encrypted": "<JWE_STRING>"
-  }
-}
-```
-
-To see how to use this header with the proxy, see [Using Encrypted Data in Proxy Requests](#using-encrypted-data-in-proxy-requests).
-You can encrypt a token and get the JWE data with the [Basis Theory SDKs](/docs/sdks/web/web-elements/services#encrypting-data).
-
-### Reserved Proxy Headers <Enterprise />
-
-<ReservedHeaders />
-
-<Alert><span> The header  <b>BT-PROXY-URL</b> will be ignored for Pre-Configured proxies</span></Alert>
-
-### Request
-
-The unique key for a pre-configured proxy can either be supplied in a request header or a query string parameter.
-
-```shell title="Request with 'BT-PROXY-KEY' header" showLineNumbers
-curl "https://api.basistheory.com/proxy" \
-  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
-  -H "BT-PROXY-KEY: e29a50980ca5" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
-    "parameter2": "non-sensitive"
-  }'
-```
-
-```shell title="Request with 'bt-proxy-key' query param" showLineNumbers
-curl "https://api.basistheory.com/proxy?bt-proxy-key=e29a50980ca5" \
-  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "parameter1": "{{26818785-547b-4b28-b0fa-531377e99f4e}}",
-    "parameter2": "non-sensitive"
-  }'
-```
-
-<Alert><span> The header  <b>BT-PROXY-URL</b> will be ignored for Pre-Configured proxies</span></Alert>
-
-### Response
-
-The raw response from the destination will be returned from the proxy, unless an error occurs within the Basis Theory Proxy while processing the request.
-
-If an error occurs within the proxy (e.g., an invalid detokenization expression was found), then the following error response will be returned:
-
-| Attribute     | Type  | Description                                       |
-|---------------|-------|---------------------------------------------------|
-| `proxy_error` | _any_ | A standard Basis Theory [error](/docs/api/errors) |
-
-### Using Encrypted Data in Proxy Requests
-
-You can reference the decrypted data in your proxy request body using the `encrypted` keyword with Liquid expressions:
-
-```shell showLineNumbers
-curl "https://api.basistheory.com/proxy" \
-  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
-  -H "BT-PROXY-KEY: e29a50980ca5" \
-  -H "BT-ENCRYPTED: <BASE64_ENCODED_TOKEN_REQUEST>" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "accountNumber": "{{ encrypted | json: \"$.data.number\" }}",
-    "expMonth": "{{ encrypted | json: \"$.data.expiration_month\" }}",
-    "expYear": "{{ encrypted | json: \"$.data.expiration_year\" }}"
-  }'
-```
-
-For multiple token requests, you can access specific tokens. The object key is used to reference the token in the Liquid expression.
-
-```json
-// Token requests before encryption:
-{
-  "tokenA": {
-    "type": "card",
-    "encrypted": "<JWE_STRING>"
-  },
-  "tokenB": {
-    "type": "token",
-    "encrypted": "<JWE_STRING>"
-  }
-}
-```
-
-```shell showLineNumbers
-curl "https://api.basistheory.com/proxy" \
-  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
-  -H "BT-PROXY-KEY: e29a50980ca5" \
-  -H "BT-ENCRYPTED: <BASE64_ENCODED_MULTIPLE_TOKEN_REQUEST>" \
-  -H "Content-Type: application/json" \
-  -X "POST" \
-  -d '{
-    "cardNumber": "{{ encrypted | json: \"$.tokenA.data.number\" }}",
-    "personalInfo": "{{ encrypted | json: \"$.tokenB.data.name\" }}"
-  }'
-```
-
-#### Custom Headers
-
-<CustomHeaders />
-
 ## Transforms
 
 Pre-configured proxies allow you to optionally define request or response transforms, which allow custom Node.js code to be
@@ -1390,7 +1226,91 @@ Testing Transforms works the same as [testing Reactors](/docs/api/testing#testin
 
 ### Whitelisted npm modules
 
-You can find a list of all whitelisted npm modules [here](/docs/api/reactors/reactor-dependencies).
+You can find a list of all whitelisted NPM modules [here](/docs/api/reactors/reactor-dependencies).
+
+
+### Errors
+
+Custom errors can be returned from request and response transforms by throwing [reactor errors](/docs/api/reactors/reactor-errors)..
+
+Any errors thrown from a transform will cause the proxy request to be terminated and the HTTP response to be immediately returned.
+In particular, errors thrown from a request transform will cause the proxy request to terminate _before_ calling the destination API.
+
+#### Reactor Errors
+
+All pre-defined [reactor error types](/docs/api/reactors/reactor-errors#error-types), excluding errors of type `CustomHttpResponseError`,
+will be returned in their standard format and wrapped in a `proxy_error` property to distinguish these errors from destination API errors.
+
+For example, a transform containing the following code:
+
+```javascript
+const { AuthenticationError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+module.exports = async function (req) {
+    const apiKey = req.args.headers['MY-CUSTOM-API-KEY'];
+
+    if (!apiKey)
+        throw new AuthenticationError('MY-CUSTOM-API-KEY header is required');
+
+    // ...
+}
+```
+
+would result in the following error response with a `401` status code if the `MY-CUSTOM-API-KEY` header is omitted:
+
+```json
+{
+    "proxy_error": {
+        "errors": {
+            "error": [
+                "MY-CUSTOM-API-KEY header is required"
+            ]
+        },
+        "title": "One or more validation errors occurred.",
+        "status": 401,
+        "detail": "Authentication Failed"
+    }
+}
+```
+
+#### Custom Errors
+
+To provide more control over the errors returned from a proxy transform, a [CustomHttpResponseError](/docs/api/reactors/reactor-errors#error-types) can be thrown from the transform.
+This will enable you to specify a status code, custom headers, and have complete control over the response body that is returned.
+
+For example, a transform containing the following code:
+
+```javascript
+const { CustomHttpResponseError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+module.exports = async function (req) {
+  throw new CustomHttpResponseError({
+    status: 400,
+    headers: {
+        "Custom-Response-Header-1": "custom-value-1",
+        "Custom-Response-Header-2": "custom-value-2"
+    },
+    body: {
+        myCustomError: "My custom error message"
+    }
+  });
+};
+```
+
+results in an API response with status code `400`, having the headers:
+
+```text
+Custom-Response-Header-1: custom-value-1
+Custom-Response-Header-2: custom-value-2
+```
+
+and the response body:
+
+```json
+{
+    "myCustomError": "My custom error message"
+}
+```
 
 ### Request Transforms
 
@@ -1399,6 +1319,11 @@ Request Transforms can be used to:
 - Transform the body or headers on the HTTP request before forwarding the request to the destination
 - Tokenize parts of an inbound HTTP request and replace sensitive data with tokens before it hits your systems
 - Inject secrets that are configured within the proxy (e.g., third party API credentials) into the request body or headers
+
+<Alert type="warning">
+Response transforms will only be executed when the destination returns a `2xx` status code, and other non-`2xx`
+statuses will result in an immediate response from the proxy.
+</Alert>
 
 Request transforms are Node.js v16 code blocks which export a function of the form:
 
@@ -1447,6 +1372,8 @@ An object of the following type must be returned by the request transform functi
 |-----------|----------|---------------------------------------------------------------|
 | `body`    | _object_ | The transformed request body to forward to the destination    |
 | `headers` | _object_ | The transformed request headers to forward to the destination |
+
+
 
 ### Response Transforms
 
@@ -1594,7 +1521,7 @@ T74VEqMOciR1n8le3BhTVvl3zJ104240726         *******************0329DI   00000000
 ### Tokenizing or Detokenizing
 
 In some situations, you may want to tokenize or detokenize data within a transform. In order to do this,
-set the `application.id` property when [creating your Proxy](/docs/api/proxies#create-a-proxy) with the `id` of an
+set the `application.id` property when [creating your Proxy](#create-a-proxy) with the `id` of an
 [Application](/docs/api/applications) that has been granted the desired permissions.
 This will inject a [Basis Theory JS](/docs/sdks/server-side/node) instance into the transform request
 that is pre-configured for this application. For example:
@@ -1617,8 +1544,3 @@ module.exports = async function (req) {
 
 In the above example, we utilized the injected Basis Theory JS instance to tokenize a property called `sensitive_value` on our request body
 and passed the token back as the updated `sensitive_value` to be forwarded to the configured `destination_url` on our [Proxy](#proxy-object).
-
-### Errors
-
-Please refer to [Proxy Transform Errors](/docs/api/proxies/proxy-errors#proxy-transform-errors) for
-the full documentation around handling and returning errors from proxy transforms.

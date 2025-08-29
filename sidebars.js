@@ -37,6 +37,15 @@ const sidebars = {
       },
     },
     {
+      type: "html",
+      value: "<hr />",
+    },
+    // Use-Cases
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Use-Cases</div>",
+    },
+    {
       type: "category",
       label: "Card Payments",
       customProps: {
@@ -84,6 +93,73 @@ const sidebars = {
         },
       },
       items: ["guides/banks/collect-bank-accounts", "guides/banks/process-bank-payments"],
+    },
+    {
+      type: "category",
+      label: "Card Issuing",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/issue-card.svg",
+          dark: "/img/sidebar/dark/issue-card.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "card-issuing/index",
+      },
+      items: ["card-issuing/issue-cards", "card-issuing/display-cards", "card-issuing/set-card-pin"],
+    },
+    {
+      type: "category",
+      label: "Other Data",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/any-data.svg",
+          dark: "/img/sidebar/dark/any-data.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/any/index",
+      },
+      items: ["guides/collect/collect-data-from-web", "guides/collect/collect-data-with-react", "guides/collect/collect-data-with-android", "guides/collect/collect-data-with-ios", "guides/collect/collect-data-with-react-native-on-ios", "guides/collect/collect-inbound-sensitive-data", "guides/collect/customize-web-form", "guides/share/send-data-to-third-party", "guides/share/display-masked-data", "guides/share/reveal-tokenized-data", "guides/share/reveal-data-from-third-party", "guides/process/search-data", "guides/process/analyze-data", "guides/govern/control-data-access", "guides/govern/audit-data-access", "guides/govern/sessions"],
+    },
+    {
+      type: "category",
+      label: "Migrations",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/migration.svg",
+          dark: "/img/sidebar/dark/migration.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "blueprints/migrations/index",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "blueprints/migrations/import-cards-on-file",
+        },
+        {
+          type: "doc",
+          id: "blueprints/migrations/import-from-database",
+        },
+        {
+          type: "doc",
+          id: "blueprints/migrations/migrate-off-basis-theory",
+        },
+      ],
+    },
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    // Credential Management
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Credential Management</div>",
     },
     {
       type: "category",
@@ -164,6 +240,27 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Network Tokens",
+      customProps: {
+        icon: {
+          light: "/img/sidebar/light/network-tokens.svg",
+          dark: "/img/sidebar/dark/network-tokens.svg",
+        },
+      },
+      link: {
+        type: "doc",
+        id: "guides/network-tokens/overview",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "guides/network-tokens/overview",
+          label: "Overview",
+        }
+      ]
+    },
+    {
+      type: "category",
       label: "Apple Pay™",
       customProps: {
         icon: {
@@ -209,60 +306,15 @@ const sidebars = {
         },
       ],
     },
-    {
-      type: "category",
-      label: "Network Tokens",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/network-tokens.svg",
-          dark: "/img/sidebar/dark/network-tokens.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "guides/network-tokens/overview",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "guides/network-tokens/overview",
-          label: "Overview",
-        }
-      ]
-    },
-    {
-      type: "category",
-      label: "Card Issuing",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/issue-card.svg",
-          dark: "/img/sidebar/dark/issue-card.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "card-issuing/index",
-      },
-      items: ["card-issuing/issue-cards", "card-issuing/display-cards", "card-issuing/set-card-pin"],
-    },
-    {
-      type: "category",
-      label: "Other Data",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/any-data.svg",
-          dark: "/img/sidebar/dark/any-data.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "guides/any/index",
-      },
-      items: ["guides/collect/collect-data-from-web", "guides/collect/collect-data-with-react", "guides/collect/collect-data-with-android", "guides/collect/collect-data-with-ios", "guides/collect/collect-data-with-react-native-on-ios", "guides/collect/collect-inbound-sensitive-data", "guides/collect/customize-web-form", "guides/share/send-data-to-third-party", "guides/share/display-masked-data", "guides/share/reveal-tokenized-data", "guides/share/reveal-data-from-third-party", "guides/process/search-data", "guides/process/analyze-data", "guides/govern/control-data-access", "guides/govern/audit-data-access", "guides/govern/sessions"],
-    },
+
     {
       type: "html",
       value: "<hr />",
+    },
+    // Platform
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Platform</div>",
     },
     {
       type: "category",
@@ -357,68 +409,6 @@ const sidebars = {
       items: ["expressions/filters", "expressions/detokenization", "expressions/configuration", "expressions/proxy", "expressions/aliasing", "expressions/fingerprints", "expressions/masks", "expressions/search-indexes"],
     },
     {
-      type: "category",
-      label: "Migrations",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/migration.svg",
-          dark: "/img/sidebar/dark/migration.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "blueprints/migrations/index",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "blueprints/migrations/import-cards-on-file",
-        },
-        {
-          type: "doc",
-          id: "blueprints/migrations/import-from-database",
-        },
-        {
-          type: "doc",
-          id: "blueprints/migrations/migrate-off-basis-theory",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Blueprints",
-      customProps: {
-        icon: {
-          light: "/img/sidebar/light/blueprint.svg",
-          dark: "/img/sidebar/dark/blueprint.svg",
-        },
-      },
-      link: {
-        type: "doc",
-        id: "blueprints/index",
-      },
-      items: [
-        {
-          type: "category",
-          label: "Cards",
-          link: {
-            type: "doc",
-            id: "blueprints/cards/index",
-          },
-          items: ["blueprints/cards/collect-and-process-cards", "blueprints/cards/issue-and-display-cards"],
-        },
-        {
-          type: "category",
-          label: "Personal Information",
-          link: {
-            type: "doc",
-            id: "blueprints/personal-information/index",
-          },
-          items: ["blueprints/personal-information/query-user-data-from-api"],
-        },
-      ],
-    },
-    {
       id: "guides/production-checklist",
       type: "doc",
       customProps: {
@@ -467,15 +457,39 @@ const sidebars = {
     },
   ],
   api: [
+    // Overview
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Overview</div>",
+    },
+    "api/index",
+    "api/authentication",
+    "api/idempotency",
+    "api/request-correlation",
+    "api/pagination",
+    "api/errors",
+    "api/ip-addresses",
+    "api/rate-limits",
+    "api/testing",
+    "api/deprecations",
+
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    // Tenant Management
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Management</div>",
+    },
     {
       type: "category",
-      label: "Overview",
-      collapsed: false,
+      label: "Tenants",
       link: {
         type: "doc",
-        id: "api/index",
+        id: "api/tenants/tenants",
       },
-      items: ["api/index", "api/authentication", "api/request-correlation", "api/pagination", "api/errors", "api/ip-addresses", "api/rate-limits", "api/idempotency", "api/testing"],
+      items: ["api/tenants/tenants", "api/tenants/tenant-members"],
     },
     {
       type: "category",
@@ -486,16 +500,14 @@ const sidebars = {
       },
       items: ["api/applications/applications", "api/applications/access-rules", "api/applications/application-keys", "api/applications/permissions", "api/applications/sessions"],
     },
-    "api/client-keys",
-    "api/logs",
     {
       type: "category",
       label: "Proxies",
       link: {
         type: "doc",
-        id: "api/proxies/proxies",
+        id: "api/proxies/pre-configured-proxies",
       },
-      items: ["api/proxies/proxies", "api/proxies/ephemeral-proxy", "api/proxies/pre-configured-proxies", "api/proxies/proxy-errors"],
+      items: ["api/proxies/pre-configured-proxies"],
     },
     {
       type: "category",
@@ -508,12 +520,39 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Tenants",
+      label: "Logs",
       link: {
         type: "doc",
-        id: "api/tenants/tenants",
+        id: "api/logs",
       },
-      items: ["api/tenants/tenants", "api/tenants/tenant-members"],
+      items: ["api/logs"],
+    },
+    {
+      type: "category",
+      label: "Webhooks",
+      link: {
+        type: "doc",
+        id: "api/webhooks/webhooks",
+      },
+      items: ["api/webhooks/api", "api/webhooks/eventdata"],
+    },
+    {
+      type: "category",
+      label: "Client Keys",
+      link: {
+        type: "doc",
+        id: "api/client-keys",
+      },
+      items: ["api/client-keys"],
+    },
+    {
+      type: "html",
+      value: "<hr />",
+    },
+    // Tokenization
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Tokenization</div>",
     },
     {
       type: "category",
@@ -540,45 +579,21 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Network Tokens",
+      label: "Invoke Proxies",
       link: {
         type: "doc",
-        id: "api/network-tokens/network-tokens",
+        id: "api/proxies/invoke-ephemeral-proxies",
       },
-      items: [
-        {
-          type: "doc",
-          id: "api/network-tokens/network-tokens",
-        },
-      ],
+      items: ["api/proxies/invoke-ephemeral-proxies", "api/proxies/invoke-pre-configured-proxies"],
     },
     {
       type: "category",
-      label: "Apple Pay™",
+      label: "Invoke Reactors",
       link: {
         type: "doc",
-        id: "api/apple-pay/api",
+        id: "api/reactors/invoke-reactors",
       },
-      items: [
-        {
-          type: "doc",
-          id: "api/apple-pay/api",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Google Pay™",
-      link: {
-        type: "doc",
-        id: "api/google-pay/api",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "api/google-pay/api",
-        },
-      ],
+      items: ["api/reactors/invoke-reactors", "api/reactors/invoke-async-reactors"],
     },
     {
       type: "category",
@@ -597,22 +612,15 @@ const sidebars = {
         },
       ],
     },
+
     {
-      type: "category",
-      label: "3D Secure",
-      link: {
-        type: "doc",
-        id: "api/3ds/sessions",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "api/3ds/sessions",
-          customProps: {
-            enterprise: true,
-          },
-        },
-      ],
+      type: "html",
+      value: "<hr />",
+    },
+
+    {
+      type: "html",
+      value: "<div style='padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ifm-color-emphasis-700); text-transform: uppercase; letter-spacing: 0.5px;'>Credential Management</div>",
     },
     {
       type: "category",
@@ -648,12 +656,83 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Webhooks",
+      label: "Network Tokens",
       link: {
         type: "doc",
-        id: "api/webhooks/webhooks",
+        id: "api/network-tokens/network-tokens",
       },
-      items: ["api/webhooks/api", "api/webhooks/eventdata"],
+      items: [
+        {
+          type: "doc",
+          id: "api/network-tokens/network-tokens",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "3D Secure",
+      link: {
+        type: "doc",
+        id: "api/3ds/sessions",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/3ds/sessions",
+          customProps: {
+            enterprise: true,
+          },
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Enrichments",
+      link: {
+        type: "doc",
+        id: "api/enrichments/bank-accounts",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/enrichments/bank-accounts",
+          customProps: {
+            enterprise: true,
+          },
+        },
+        {
+          type: "doc",
+          id: "api/enrichments/card-details",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Apple Pay™",
+      link: {
+        type: "doc",
+        id: "api/apple-pay/api",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/apple-pay/api",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Google Pay™",
+      link: {
+        type: "doc",
+        id: "api/google-pay/api",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/google-pay/api",
+        },
+      ],
     },
     {
       type: "category",
@@ -679,32 +758,12 @@ const sidebars = {
         },
       ],
     },
-    {
-      type: "category",
-      label: "Enrichments",
-      link: {
-        type: "doc",
-        id: "api/enrichments/bank-accounts",
-      },
-      items: [
-        {
-          type: "doc",
-          id: "api/enrichments/bank-accounts",
-          customProps: {
-            enterprise: true,
-          },
-        },
-        {
-          type: "doc",
-          id: "api/enrichments/card-details",
-        },
-      ],
-    },
-    "api/deprecations",
+
     {
       type: "html",
       value: "<hr />",
     },
+
     {
       type: "link",
       label: "Guides",

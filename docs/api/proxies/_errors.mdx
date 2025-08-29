@@ -1,0 +1,39 @@
+import { Alert } from "@site/src/components/shared/Alert";
+
+## Errors
+
+### Destination Errors
+
+The proxy destination may return an error response, the format of which is completely controlled by the destination API.
+When an error occurs at the destination, the response is forwarded through the Basis Theory proxy as-is. In particular, these types of
+errors will have the same status code, headers, and response body as returned by the destination API.
+
+You can identify whether an error was returned by the destination by inspecting the `BT-PROXY-DESTINATION-STATUS` response header,
+which will indicate the status code that Basis Theory received from the destination API.
+
+### Basis Theory Errors
+
+If the proxy request is invalid (e.g., Basis Theory authentication fails, an invalid `BT-PROXY-KEY` is provided,
+an invalid [detokenization expression](/docs/expressions/detokenization) is specified)
+or if a transform fails (e.g., code contains a syntax error, code throws an error), then the proxy will wrap a standard
+[RFC 7807 error](/docs/api/errors) inside a `proxy_error` property to distinguish between Basis Theory errors and destination errors.
+For example, an invalid detokenization expression on a proxy request such as:
+
+```json showLineNumbers title="Request Body Template"
+{
+    "invalid": "{{ unknown_token_id }}"
+}
+```
+
+would result in the following error response:
+
+```json showLineNumbers title="Error Response"
+{
+     "proxy_error": {
+        "errors": {},
+        "title": "Invalid proxy request",
+        "status": 400,
+        "detail": "Failed to detokenize some tokens: unknown_token_id"
+    }
+}
+```

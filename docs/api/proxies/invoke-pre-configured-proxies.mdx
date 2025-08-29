@@ -1,0 +1,97 @@
+---
+title: Invoke Pre-Configured Proxy
+---
+
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
+import DestinationUrls from "./_destination_urls.mdx";
+import ReservedHeaders from "./_reserved_headers.mdx";
+import Permissions from "./_permissions.mdx";
+import IpWhitelisting from "./_ip-whitelisting.mdx";
+import Detokenization from "./_detokenization.mdx";
+import Response from "./_response.mdx";
+import Errors from "./_errors.mdx";
+import EncryptedData from "./_encrypted_data.mdx";
+import { Alert } from "@site/src/components/shared/Alert";
+
+# Invoke Pre-Configured Proxy
+
+The Basis Theory Proxy can be used to share tokenized data with trusted third parties via outbound HTTP requests. Pre-configured proxy requests are designed for recurring integrations with fixed destinations, allowing you to create a proxy instance with a unique key and predefined settings upfront. This approach is ideal for scenarios requiring consistent configurations, such as whitelisting destinations in production or applying custom request and response transforms with tailored logic.
+
+<Alert type="info">Need to create a pre-configured proxy first? See <a href="/docs/api/proxies/pre-configured-proxies">Pre-Configured Proxies</a> for setup instructions.</Alert>
+
+Invoke a pre-configured proxy instance.
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/proxy" />
+
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/proxy" />
+
+<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/proxy" />
+
+<HttpMethod method={HttpMethods.PATCH} endpoint="https://api.basistheory.com/proxy" />
+
+<HttpMethod method={HttpMethods.DELETE} endpoint="https://api.basistheory.com/proxy" />
+
+### Authentication
+
+Pre-configured proxies can be configured to either require authentication or allow anonymous requests.
+When authentication is required, a `BT-API-KEY` header must be provided with the request (see [Authentication](/docs/api/authentication)).
+
+Unauthenticated proxy requests may be desired when receiving inbound requests from a third party.
+This would allow any caller who knows your unique proxy key to make inbound requests through the proxy
+without needing to share a Basis Theory API key with third parties.
+
+Any authentication required by the destination service can be set on the request and will be forwarded through the proxy
+(for example, by setting an `Authorization` header).
+
+<Permissions />
+
+<DestinationUrls />
+
+<ReservedHeaders />
+
+<IpWhitelisting />
+
+## Request
+
+The unique key for a pre-configured proxy can either be supplied in a request header or a query string parameter.
+
+```shell title="Request with 'BT-PROXY-KEY' header" showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+// highlight-next-line
+  -H "BT-PROXY-KEY: e29a50980ca5" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "parameter1": "{{ 26818785-547b-4b28-b0fa-531377e99f4e }}",
+    "parameter2": "non-sensitive"
+  }'
+```
+
+```shell title="Request with 'bt-proxy-key' query param" showLineNumbers
+// highlight-next-line
+curl "https://api.basistheory.com/proxy?bt-proxy-key=e29a50980ca5" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "parameter1": "{{ 26818785-547b-4b28-b0fa-531377e99f4e }}",
+    "parameter2": "non-sensitive"
+  }'
+```
+
+<Alert>The `BT-PROXY-URL` header will be ignored when invoking Pre-Configured proxies</Alert>
+
+<Detokenization />
+
+<Response />
+
+<Errors />
+
+### Transform Errors
+
+Pre-configured proxies support custom request and response transforms, allowing you to execute tailored logic during proxy invocations. Errors that may occur during such steps may require appropriately handling to ensure robust proxy operations.
+
+Please refer to [Proxy Transform Errors](/docs/api/proxies/pre-configured-proxies#errors) to understand how such errors are thrown.
+
+<EncryptedData/>

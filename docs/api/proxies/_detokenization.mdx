@@ -1,0 +1,39 @@
+import { Alert } from "@site/src/components/shared/Alert";
+
+### Detokenization
+
+When making a request through the Proxy, Basis Theory will attempt to [detokenize](/docs/expressions/detokenization)
+any [expressions](/docs/expressions/) present in the request and inject the raw token data in the request body before it is sent
+to the downstream destination.
+
+For example, given a token:
+
+```json showLineNumbers title="Token"
+{
+  "id": "26818785-547b-4b28-b0fa-531377e99f4e",
+  "data": "sensitive data"
+}
+```
+
+and a proxy request with the body:
+
+```json showLineNumbers title="Request Body Template"
+{
+  "parameter1": "{{ 26818785-547b-4b28-b0fa-531377e99f4e }}",
+  "parameter2": "non-sensitive data"
+}
+```
+
+then the following request body will be sent to the destination:
+
+```json showLineNumbers title="Final Request Body"
+{
+  "parameter1": "sensitive data",
+  "parameter2": "non-sensitive data"
+}
+```
+
+The `proxy:invoke` permission is required in order to detokenize tokens within a proxy request.
+At most, 20 tokens may be detokenized within a single proxy request. You can find more information about the supported detokenization expressions [here](/docs/expressions/detokenization).
+
+<Alert>For more detailed examples about how to detokenize within the Proxy, check out our <a href="/docs/expressions/detokenization#examples">Detokenization Examples</a>.</Alert>

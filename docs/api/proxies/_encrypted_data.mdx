@@ -1,0 +1,70 @@
+## Encrypted Data
+
+Use the `BT-ENCRYPTED` header to securely pass encrypted data in JWE (JSON Web Encryption) format to proxy destinations
+Generate these payloads using [Basis Theory SDKs](/docs/sdks/web/web-elements/services#encrypting-data) and reference them in your proxy request body with Liquid expressions, as shown below.
+
+**Single Token Request:**
+
+```json title="BT-ENCRYPTED header value"
+{
+  "type": "card",
+  "encrypted": "<JWE_STRING>"
+}
+```
+You can reference the decrypted data in your proxy request body using the `encrypted` keyword with Liquid expressions:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "BT-PROXY-URL: https://example.com/api" \
+  // highlight-next-line
+  -H "BT-ENCRYPTED: <BASE64_ENCODED_VALUE>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    // highlight-start
+    "accountNumber": "{{ encrypted | json: \"$.data.number\" }}",
+    "expMonth": "{{ encrypted | json: \"$.data.expiration_month\" }}",
+    "expYear": "{{ encrypted | json: \"$.data.expiration_year\" }}"
+    // highlight-end
+  }'
+```
+
+
+**Multiple Token Requests:**
+```json title="BT-ENCRYPTED header value"
+{
+  "creditCard": {
+    "type": "card",
+    "encrypted": "<JWE_STRING>"
+  },
+  "bankAccount": {
+    "type": "bank",
+    "encrypted": "<JWE_STRING>"
+  },
+  "personalInfo": {
+    "type": "token",
+    "encrypted": "<JWE_STRING>"
+  }
+}
+```
+
+You can reference the decrypted data in your proxy request body using the `encrypted` keyword with Liquid expressions:
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "BT-PROXY-URL: https://example.com/api" \
+  // highlight-next-line
+  -H "BT-ENCRYPTED: <BASE64_ENCODED_VALUE>" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    // highlight-start
+    "cardNumber": "{{ encrypted | json: \"$.creditCard.data.number\" }}",
+    "routingNumber": "{{ encrypted | json: \"$.bankAccount.data.routing_number\" }}",
+    "personalInfo": "{{ encrypted | json: \"$.personalInfo.data.name\" }}"
+    // highlight-end
+  }'
+```
+
