@@ -1,0 +1,122 @@
+---
+title: Co-Badge Support
+sidebar_label: Co-Badge Support
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import { Alert, Alerts } from "@site/src/components/shared/Alert";
+
+# Co-Badge Support
+
+Co-badge support allows the Card Element to handle cards that support multiple payment networks, giving users the ability to choose which network to use for processing their payment. This feature is particularly important in regions where co-branded cards are common.
+
+## Overview
+
+When a card supports multiple payment networks (co-badged), the Card Element can detect this and allow users to select their preferred network. Currently, Basis Theory supports co-badge functionality for **Cartes Bancaires** cards, which are commonly co-badged with Visa or Mastercard in France.
+
+## Enabling Co-Badge Support
+
+To enable co-badge support on your Card Element, include the `coBadgedSupport` property in your element configuration:
+
+<Tabs className="bt-tabs">
+  <TabItem value="js" label="Web Elements">
+
+```javascript
+// Create a Card Element with co-badge support
+const cardElement = bt.createElement('card', {
+  targetId: 'my-card',
+  coBadgedSupport: ['cartes-bancaires'],
+  onChange: (event) => {
+    // Handle network selection events
+    if (event.selectedNetwork) {
+      console.log('Selected network:', event.selectedNetwork);
+    }
+  }
+});
+
+// Mount the element
+cardElement.mount('#card-container');
+```
+
+  </TabItem>
+  <TabItem value="react" label="React Elements">
+
+```jsx
+import { CardElement } from "@basis-theory/react-elements";
+
+function PaymentForm() {
+  const handleCardChange = (event) => {
+    // Handle network selection events
+    if (event.selectedNetwork) {
+      console.log('Selected network:', event.selectedNetwork);
+    }
+  };
+
+  return (
+    <CardElement 
+      id="my-card"
+      coBadgedSupport={['cartes-bancaires']}
+      onChange={handleCardChange}
+    />
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Supported Co-Badge Networks
+
+| Network | Identifier | Description |
+|---------|------------|-------------|
+| Cartes Bancaires | `cartes-bancaires` | French domestic payment scheme, often co-badged with Visa or Mastercard |
+
+<Alert type={Alerts.WARNING}>Adding unsupported networks will result in an error. Additional co-badge networks may be supported in future releases.</Alert>
+
+## Co-Badge Events
+
+When co-badge support is enabled, the Card Element emits additional event data that allows your application to respond to network selection changes.
+
+### Change Event with Co-Badge Data
+
+The `change` event includes a `selectedNetwork` property when co-badge support is enabled and a user selects a network:
+
+```javascript
+{
+  cardBin: "123456",
+  cardBrand: "visa",
+  cardLast4: "1234",
+  complete: true,
+  empty: false,
+  errors: [],
+  maskSatisfied: true,
+  valid: true,
+  binInfo: { /* BIN information */ },
+  selectedNetwork: "cartes-bancaires"  // The user's selected network
+}
+```
+
+## API Reference
+
+### coBadgedSupport Property
+
+| Property | Type | Required | Default | Description |
+|----------|------|----------|---------|-------------|
+| coBadgedSupport | `array` | No | `[]` | Array of supported co-badge networks |
+
+**Supported Values:**
+- `'cartes-bancaires'` - French Cartes Bancaires network
+
+### selectedNetwork Event Property
+
+| Property | Type | Description |
+|----------|------|-------------|
+| selectedNetwork | `string` | The network selected by the user for co-badged cards |
+
+**Possible Values:**
+- `'cartes-bancaires'` - When user selects Cartes Bancaires network
+- `'visa'` - When user selects Visa network (for co-badged cards)
+- `'mastercard'` - When user selects Mastercard network (for co-badged cards)
+
+<Alert>The <code>selectedNetwork</code> property is only present in change events when co-badge support is enabled and a user has made a network selection.</Alert>
