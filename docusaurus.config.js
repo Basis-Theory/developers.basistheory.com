@@ -878,7 +878,7 @@ const config = {
       "data-website-id": "3755b5a8-e659-404c-9119-8cce3b1e87a7",
       "data-project-name": "Basis Theory",
       "data-project-color": "#45D1DB",
-      "data-project-logo": "https://avatars.githubusercontent.com/u/75859349?s=280&v=4",
+      "data-project-logo": "https://cdn.basistheory.com/images/favicons/apple-touch-icon.png",
       async: true,
       "data-search-mode-enabled": "true", // ADD THIS LINE TO ENABLE SEARCH
       // "data-modal-override-open-class": "navbar__search" // OPTIONAL: If you want to override the default search
