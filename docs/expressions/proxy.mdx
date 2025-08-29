@@ -12,6 +12,124 @@ import TabItem from "@theme/TabItem";
  [Pre-Configured Proxy](/docs/api/proxies/pre-configured-proxies).
  A useful example would be computing a signature required by the destination to verify data integrity and authenticity of the request.
 
+## Tokenize Transform Expression
+
+Basis Theory Proxy supports powerful expressions for working with tokenized data in your proxy pipeline.
+
+The `tokenize_transform` expression allows you to reference tokens created by [request transforms](/docs/api/proxies/pre-configured-proxies#tokenize-request-transforms) within your request body. This enables you to:
+
+- Access token properties (id, data, metadata, etc.) after tokenization
+- Build request payloads that include both token references and token data
+- Create dynamic requests based on tokenized content
+
+#### Syntax
+```liquid
+{{ tokenize_transform: 'identifier_name' | json: '$.property_path' }}
+```
+
+#### Example Usage
+
+Given a proxy with a tokenize request transform:
+
+```json showLineNumbers
+{
+  "request_transforms": [
+    {
+      "type": "tokenize",
+      "options": {
+        "token": {
+          "type": "card",
+          "data": "{{ encrypted | json: '$.card_data' }}",
+          "metadata": {
+            "customer_id": "12345"
+          }
+        },
+        "identifier": "payment_card"
+      }
+    }
+  ]
+}
+```
+
+You can reference this token in your request body:
+
+```json showLineNumbers
+{
+  "token_id": "{{ tokenize_transform: 'payment_card' | json: '$.id' }}",
+  "card_brand": "{{ tokenize_transform: 'payment_card' | json: '$.card.brand' }}",
+  "card_last_four": "{{ tokenize_transform: 'payment_card' | json: '$.card.last4' }}",
+  "customer": "{{ tokenize_transform: 'payment_card' | json: '$.metadata.customer_id' }}",
+  "processing_info": {
+    "tokenized_at": "{{ tokenize_transform: 'payment_card' | json: '$.created_at' }}",
+    "token_type": "{{ tokenize_transform: 'payment_card' | json: '$.type' }}"
+  }
+}
+```
+
+## Transform Identifier Expression
+
+The `transform_identifier` expression allows you to reference tokens created by request transforms within response transforms. This enables you to:
+
+- Inject token IDs into API responses
+- Add token metadata to response payloads
+- Create audit trails linking requests to tokens
+
+#### Syntax
+```liquid
+{{ transform_identifier: 'identifier_name' | json: '$.property_path' }}
+```
+
+#### Example Usage
+
+Using the same tokenize request transform, you can reference it in response transforms:
+
+```json showLineNumbers
+{
+  "response_transforms": [
+    {
+      "type": "append_json",
+      "options": {
+        "value": "{{ transform_identifier: 'payment_card' | json: '$.id' }}",
+        "location": "$.payment.token_id"
+      }
+    },
+    {
+      "type": "append_json",
+      "options": {
+        "value": "{{ transform_identifier: 'payment_card' | json: '$.fingerprint' }}",
+        "location": "$.payment.card_fingerprint"
+      }
+    }
+  ]
+}
+```
+
+This would transform a response like:
+
+```json title="Original Response"
+{
+  "payment": {
+    "amount": 1000,
+    "currency": "USD",
+    "status": "processed"
+  }
+}
+```
+
+Into:
+
+```json title="Transformed Response"
+{
+  "payment": {
+    "amount": 1000,
+    "currency": "USD", 
+    "status": "processed",
+    "token_id": "tok_ABC123XYZ789",
+    "card_fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4"
+  }
+}
+```
+
 ## Signing the request using HMAC-SHA256
 
 Given a Pre-Configured proxy with the following configuration:

@@ -17,7 +17,7 @@ Pre-Configured Proxies differ from the [Ephemeral Proxy](/docs/api/proxies/ephem
 
 Additional options for Pre-Configured Proxies include:
 
-- **Request and response transforms**: Optionally use custom Node.js code to alter requests or responses—useful for specific cases, but not mandatory.
+- **Request and response transforms**: Optionally use custom Node.js code to alter requests or responses—useful for specific cases, but not mandatory. You can also use specialized transform types like `tokenize` (for creating tokens from encrypted data) and `append_json` (for injecting values into JSON responses) which provide alternatives to custom code.
 - **Configuration map**: Store proxy-specific secrets, like API keys, securely.
 - **Anonymous access**: Permit requests without authentication if needed.
 
@@ -61,6 +61,18 @@ curl "https://api.basistheory.com/proxies" \
     "response_transform": {
       "code": '"$(echo $transform | jq -Rsa .)"',
     },
+    "request_transforms": [
+      {
+        "type": "code",
+        "code": '"$(echo $transform | jq -Rsa .)"'
+      }
+    ],
+    "response_transforms": [
+      {
+        "type": "code",
+        "code": '"$(echo $transform | jq -Rsa .)"'
+      }
+    ],
     "configuration": {
       "SERVICE_API_KEY": "key_abcd1234"
     },
@@ -301,6 +313,8 @@ proxy, err := client.Proxies.Create(ctx, &basistheory.CreateProxyRequest{
 | `destination_url`    | true     | _string_                                                       | `null`  | The URL to which requests will be proxied                                                                                                                                                                                                        |
 | `request_transform`  | false    | _[Proxy Request Transform](#proxy-request-transform-object)_   | `null`  | [Request Transform](#request-transforms) which will be executed against the proxy request before sending to the destination.                                                                                                                     |
 | `response_transform` | false    | _[Proxy Response Transform](#proxy-response-transform-object)_ | `null`  | [Response Transform](#response-transforms) which will be executed against the destination's response before returning the proxy response.                                                                                                        |
+| `request_transforms` | false    | _array\<[Proxy Request Transform](#proxy-request-transform-object)>_   | `null`  | Array of [Request Transforms](#request-transforms) which will be executed sequentially against the proxy request before sending to the destination.                                                                                             |
+| `response_transforms`| false    | _array\<[Proxy Response Transform](#proxy-response-transform-object)>_ | `null`  | Array of [Response Transforms](#response-transforms) which will be executed sequentially against the destination's response before returning the proxy response.                                                                               |
 | `application`        | false    | _[Application](/docs/api/applications#application-object)_     | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the transform. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
 | `configuration`      | false    | _map\<string, string>_                                         | `null`  | A string key and string value map of all configuration name and values for a Proxy Transform                                                                                                                                                     |
 | `require_auth`       | false    | _boolean_                                                      | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                       |
@@ -897,6 +911,8 @@ err := client.Proxies.Patch(ctx, "id", &basistheory.PatchProxyRequest{
 | `destination_url`    | true     | _string_                                                       | `null`  | The URL to which requests will be proxied                                                                                                                                                                                                        |
 | `request_transform`  | false    | _[Proxy Request Transform](#proxy-request-transform-object)_   | `null`  | [Request Transform](#request-transforms) which will be executed against the proxy request before sending to the destination.                                                                                                                     |
 | `response_transform` | false    | _[Proxy Response Transform](#proxy-response-transform-object)_ | `null`  | [Response Transform](#response-transforms) which will be executed against the destination's response before returning the proxy response.                                                                                                        |
+| `request_transforms` | false    | _array\<[Proxy Request Transform](#proxy-request-transform-object)>_   | `null`  | Array of [Request Transforms](#request-transforms) which will be executed sequentially against the proxy request before sending to the destination.                                                                                             |
+| `response_transforms`| false    | _array\<[Proxy Response Transform](#proxy-response-transform-object)>_ | `null`  | Array of [Response Transforms](#response-transforms) which will be executed sequentially against the destination's response before returning the proxy response.                                                                               |
 | `application`        | false    | _[Application](/docs/api/applications#application-object)_     | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the transform. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
 | `configuration`      | false    | _map\<string, string>_                                         | `null`  | A string key and string value map of all configuration name and values for a Proxy Transform                                                                                                                                                     |
 | `require_auth`       | false    | _boolean_                                                      | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                       |
@@ -1092,6 +1108,8 @@ err := client.Proxies.Patch(ctx, "id", &basistheory.PatchProxyRequest{
 | `destination_url`    | false    | _string_                                                       | `null`  | The URL to which requests will be proxied                                                                                                                                                                                                        |
 | `request_transform`  | false    | _[Proxy Request Transform](#proxy-request-transform-object)_   | `null`  | [Request Transform](#request-transforms) which will be executed against the proxy request before sending to the destination.                                                                                                                     |
 | `response_transform` | false    | _[Proxy Response Transform](#proxy-response-transform-object)_ | `null`  | [Response Transform](#response-transforms) which will be executed against the destination's response before returning the proxy response.                                                                                                        |
+| `request_transforms` | false    | _array\<[Proxy Request Transform](#proxy-request-transform-object)>_   | `null`  | Array of [Request Transforms](#request-transforms) which will be executed sequentially against the proxy request before sending to the destination.                                                                                             |
+| `response_transforms`| false    | _array\<[Proxy Response Transform](#proxy-response-transform-object)>_ | `null`  | Array of [Response Transforms](#response-transforms) which will be executed sequentially against the destination's response before returning the proxy response.                                                                               |
 | `application`        | false    | _[Application](/docs/api/applications#application-object)_     | `null`  | This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the transform. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
 | `configuration`      | false    | _map\<string, string>_                                         | `null`  | A string key and string value map of all configuration name and values for a Proxy Transform                                                                                                                                                     |
 | `require_auth`       | false    | _boolean_                                                      | `true`  | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                       |
@@ -1192,6 +1210,8 @@ Returns [an error](/docs/api/errors) if the Proxy failed to delete.
 | `require_auth`       | _boolean_                                                      | Require a `BT-API-KEY` request header for authentication and authorization                                                                                                                                                                                  |
 | `request_transform`  | _[Proxy Request Transform](#proxy-request-transform-object)_   | (Optional) [Request Transform](#request-transforms) which will be executed against the proxy request before sending to the destination.                                                                                                                     |
 | `response_transform` | _[Proxy Response Transform](#proxy-response-transform-object)_ | (Optional) [Response Transform](#response-transforms) which will be executed against the destination's response before returning the proxy response.                                                                                                        |
+| `request_transforms` | _array\<[Proxy Request Transform](#proxy-request-transform-object)>_   | (Optional) Array of [Request Transforms](#request-transforms) which will be executed sequentially against the proxy request before sending to the destination.                                                                                      |
+| `response_transforms`| _array\<[Proxy Response Transform](#proxy-response-transform-object)>_ | (Optional) Array of [Response Transforms](#response-transforms) which will be executed sequentially against the destination's response before returning the proxy response.                                                                         | 
 | `application_id`     | _string_                                                       | (Optional) This Application's API key is injected into a pre-configured [BasisTheory JS SDK](/docs/sdks/server-side/node) instance passed into the transform. Must be a `public` or `private` [Application Type](/docs/api/applications#application-types). |
 | `configuration`      | _map\<string, string>_                                         | (Optional) A string key and string value map of all configuration name and values for a Proxy Transform                                                                                                                                                     |
 | `created_by`         | _uuid_                                                         | (Optional) The ID of the user or [Application](/docs/api/applications) that created the Proxy                                                                                                                                                               |
@@ -1203,7 +1223,16 @@ Returns [an error](/docs/api/errors) if the Proxy failed to delete.
 
 | Attribute | Type     | Description                                                                                                                             |
 |-----------|----------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `code`    | _string_ | Transform code which will be executed when the Proxy transform is processed. See [Request Transforms](#request-transforms) for details. |
+| `type`    | _string_ | The type of request transform. One of `code` or `tokenize`. Default: `code`.                                                           |
+| `code`    | _string_ | Transform code which will be executed when the Proxy transform is processed. See [Request Transforms](#request-transforms) for details. *Required* when `type` is `code` |
+| `options` | _object_ | Transform options object. *Required* when `type` is `tokenize`. See [Tokenize Transform Options](#tokenize-transform-options) for details. |
+
+#### Tokenize Transform Options
+
+| Attribute    | Type     | Description                                                                                                                                           |
+|--------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `token`      | _object_ | A [Create Token Request](/docs/api/tokens#create-token) object defining the token to be created. Supports Liquid expressions with the `encrypted` keyword when using a `BT-ENCRYPTED` header. *Required* |
+| `identifier` | _string_ | A unique identifier for this token that can be referenced in request body expressions using `tokenize_transform` or response transforms using `transform_identifier`. Must contain only alphanumeric characters, hyphens, and underscores. Maximum length of 100 characters. See [Advanced Transform Types](#advanced-transform-types) for details. |
 
 ### Proxy Response Transform Object
 
@@ -1211,11 +1240,19 @@ See [Response Transforms](#response-transforms) for details regarding the variou
 
 | Attribute     | Type     | Description                                                                                                                                                                          |
 |---------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `type`        | _string_ | The type of response transform. One of `code` or `mask`. Default: `code`.                                                                                                            |
+| `type`        | _string_ | The type of response transform. One of `code`, `mask`, or `append_json`. Default: `code`.                                                                                           |
 | `code`        | _string_ | Transform code which will be executed when the Proxy transform is processed. *Required* when `type` is `code`                                                                        |
 | `matcher`     | _string_ | The type of matching. One of `regex` or `chase_stratus_pan`. *Required* when `type` is `mask`                                                                                        |
 | `replacement` | _string_ | The replacement character for masking. Must be only one character in length. *Required* when `type` is `mask`                                                                        |
 | `expression`  | _string_ | The regular expression to use when determining masking values. Must contain at least one capture group using parenthesis. *Required* when `type` is `mask` and `matcher` is `regex`. |
+| `options`     | _object_ | Transform options object. *Required* when `type` is `append_json`. See [Append JSON Transform Options](#append-json-transform-options) for details.                                |
+
+#### Append JSON Transform Options
+
+| Attribute  | Type     | Description                                                                                                                                                                                    |
+|------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `value`    | _string_ | The value to append to the JSON response. Supports Liquid expressions including `transform_identifier` to reference tokens created in request transforms. *Required*                        |
+| `location` | _string_ | JSONPath expression specifying where to add the value in the response JSON. For example, `$.created_token_id` adds the value as a top-level property named `created_token_id`. *Required* |
 
 ## Invoke a Proxy
 
@@ -1392,6 +1429,171 @@ Testing Transforms works the same as [testing Reactors](/docs/api/testing#testin
 
 You can find a list of all whitelisted npm modules [here](/docs/api/reactors/reactor-dependencies).
 
+## Advanced Transform Types
+
+Beyond the traditional code-based transforms, Pre-configured Proxies support specialized transform types for common operations:
+
+### Tokenize Request Transforms
+
+Tokenize request transforms allow you to create tokens from data before sending the request to your destination. This is useful for:
+
+- Converting sensitive data from encrypted payloads into tokens
+- Creating tokens with mixed static and dynamic properties
+- Generating referenceable tokens that can be used in response transforms
+
+#### Basic Tokenize Transform Example
+
+```json showLineNumbers
+{
+  "name": "My Tokenizing Proxy",
+  "destination_url": "https://api.example.com/payments",
+  "request_transforms": [
+    {
+      "type": "tokenize",
+      "options": {
+        "token": {
+          "type": "card",
+          "data": "{{ encrypted | json: '$.data' }}",
+          "metadata": {
+            "customer_id": "12345",
+            "card_holder": "{{ encrypted | json: '$.metadata.card_holder' }}"
+          }
+        },
+        "identifier": "payment_card"
+      }
+    }
+  ],
+  "require_auth": false
+}
+```
+
+#### Using Tokenized Data in Request Body
+
+Once tokens are created via request transforms, you can reference them in your request body using the `tokenize_transform` expression:
+
+```json showLineNumbers
+{
+  "card_token_id": "{{ tokenize_transform: 'payment_card' | json: '$.id' }}",
+  "card_brand": "{{ tokenize_transform: 'payment_card' | json: '$.card.brand' }}",
+  "customer_info": {
+    "holder_name": "{{ tokenize_transform: 'payment_card' | json: '$.metadata.card_holder' }}"
+  }
+}
+```
+
+### Append JSON Response Transforms
+
+Append JSON response transforms allow you to modify the JSON response from your destination by adding new properties. This is useful for:
+
+- Injecting token IDs into responses for client reference
+- Adding metadata about the tokenization process
+
+#### Basic Append JSON Transform Example
+
+```json showLineNumbers
+{
+  "name": "My Response-Enhancing Proxy",
+  "destination_url": "https://api.example.com/payments",
+  "request_transforms": [
+    {
+      "type": "tokenize",
+      "options": {
+        "token": {
+          "type": "card",
+          "data": "{{ encrypted | json: '$.data' }}"
+        },
+        "identifier": "created_card_token"
+      }
+    }
+  ],
+  "response_transforms": [
+    {
+      "type": "append_json",
+      "options": {
+        "value": "{{ transform_identifier: 'created_card_token' | json: '$.id' }}",
+        "location": "$.payment.token_id"
+      }
+    },
+    {
+      "type": "append_json", 
+      "options": {
+        "value": "tokenized",
+        "location": "$.payment.status"
+      }
+    }
+  ],
+  "require_auth": false
+}
+```
+
+## Working with Encrypted Data
+
+When using tokenize transforms with the `BT-ENCRYPTED` header, the proxy can merge encrypted data with static token properties defined in your transform configuration.
+
+### Encrypted Data Merge Behavior
+
+For outbound proxies with a `BT-ENCRYPTED` header, the proxy will:
+
+1. **Merge Properties**: Combine properties from the `BT-ENCRYPTED` header with the `options.token` block
+2. **Static + Dynamic**: This allows for partially static and dynamic properties in token creation
+
+#### Example: Encrypted Data with Static Metadata
+
+**Proxy Configuration:**
+```json showLineNumbers
+{
+  "request_transforms": [
+    {
+      "type": "tokenize",
+      "options": {
+        "token": {
+          "type": "card",
+          "data": "fallback-data-if-no-encrypted",
+          "metadata": {
+            "source": "proxy_transform",
+            "processing_date": "2024-01-15"
+          }
+        },
+        "identifier": "merged_card_token"
+      }
+    }
+  ]
+}
+```
+
+**BT-ENCRYPTED Header Content:**
+```json showLineNumbers
+{
+  "type": "card",
+  "encrypted": "<JWE_ENCRYPTED_CARD_DATA>",
+  "metadata": {
+    "customer_id": "cust_12345"
+  }
+}
+```
+
+**Resulting Token Creation:**
+```json showLineNumbers
+{
+  "type": "card",
+  "data": "<DECRYPTED_CARD_DATA>", // Replaced from encrypted
+  "metadata": {
+    "source": "proxy_transform",      // From transform config
+    "processing_date": "2024-01-15", // From transform config  
+    "customer_id": "cust_12345"       // From BT-ENCRYPTED header
+  }
+}
+```
+
+### Security Considerations
+
+When creating tokens using `proxy:invoke` or `token:use` permissions:
+
+- **Token data is redacted** - The actual token data will not be revealed in responses
+- **Token IDs are accessible** - You can safely reference token IDs in expressions
+
+This ensures that sensitive data remains protected while still allowing you to build functional proxy workflows.
+
 ### Request Transforms
 
 Request Transforms can be used to:
@@ -1447,54 +1649,6 @@ An object of the following type must be returned by the request transform functi
 |-----------|----------|---------------------------------------------------------------|
 | `body`    | _object_ | The transformed request body to forward to the destination    |
 | `headers` | _object_ | The transformed request headers to forward to the destination |
-
-### Response Transforms
-
-There are two types of Response Transforms available: `code` and `mask`.
-
-#### Code Response Transforms
-
-Code Response Transforms can be used to:
-
-- Transform the body or headers on the HTTP response received from the destination before returning a response from the proxy
-- Tokenize sensitive values returned by a third party destination API
-- For inbound HTTP requests, tokens returned in responses from your system can be detokenized before sending the response to the third party caller
-
-Code response transforms are Node.js v16 code blocks which export a function of the form:
-
-```javascript showLineNumbers
-module.exports = async function (req) {
-  const { bt, args, configuration } = req;
-  const { body, headers } = args; // access properties of the http response
-  const { MY_CONFIG } = configuration; // access any static config defined on the Proxy
-
-  // do anything here!
-  const processedBody = ...; // do something to build a transformed body
-  const processedHeaders = ...; // do something to build transformed headers
-
-  return {
-      body: processedBody, // transformed response body
-      headers: processedHeaders // transformed request headers
-  };
-};
-```
-
-##### Code Response Transform - Javascript Request Object
-
-The response transform function receives the following object:
-
-| Attribute       | Type     | Description                                                                                                               |
-|-----------------|----------|---------------------------------------------------------------------------------------------------------------------------|
-| `args`          | _object_ | Properties of the proxy response (see below)                                                                              |
-| `configuration` | _object_ | The configuration defined for the [Proxy object](#proxies-proxy-object)                                                   |
-| `bt`            | _object_ | A pre-configured Basis Theory JS instance if an `application` was configured on the [Proxy object](#proxies-proxy-object) |
-
-where `args` contains:
-
-| Attribute | Type                 | Description                                                                                                                                                               |
-|-----------|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `body`    | _object_ or _string_ | The response body returned from the destination endpoint, parsed as a JavaScript `object` when `Content-Type` is `application/json`, or `string` for other content types. |
-| `headers` | _object_             | A JavaScript object containing the response headers returned from the destination endpoint                                                                                |
 
 <Alert><span>Request header names are case-sensitive and can only contain alphanumeric characters, hyphens, and underscores. Headers names containing other characters will be discarded from the request. Response headers are unrestricted. If you must forward a restricted header to the proxy destination, as a workaround, you may add this header manually from within the request transform.</span></Alert>
 
