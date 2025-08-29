@@ -4,12 +4,9 @@ title: Pre-Configured Proxies
 
 import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
 import { Permission } from "@site/src/components/shared/Permission";
-import { Alert, Alerts } from "@site/src/components/shared/Alert";
+import { Alert } from "@site/src/components/shared/Alert";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import ReservedHeaders from "./_reserved_headers.mdx";
-import CustomHeaders from "./_custom_headers.mdx";
-import { Enterprise } from "@site/src/components/shared/Enterprise";
 
 # Pre-Configured Proxies
 
@@ -1229,7 +1226,91 @@ Testing Transforms works the same as [testing Reactors](/docs/api/testing#testin
 
 ### Whitelisted npm modules
 
-You can find a list of all whitelisted npm modules [here](/docs/api/reactors/reactor-dependencies).
+You can find a list of all whitelisted NPM modules [here](/docs/api/reactors/reactor-dependencies).
+
+
+### Errors
+
+Custom errors can be returned from request and response transforms by throwing [reactor errors](/docs/api/reactors/reactor-errors)..
+
+Any errors thrown from a transform will cause the proxy request to be terminated and the HTTP response to be immediately returned.
+In particular, errors thrown from a request transform will cause the proxy request to terminate _before_ calling the destination API.
+
+#### Reactor Errors
+
+All pre-defined [reactor error types](/docs/api/reactors/reactor-errors#error-types), excluding errors of type `CustomHttpResponseError`,
+will be returned in their standard format and wrapped in a `proxy_error` property to distinguish these errors from destination API errors.
+
+For example, a transform containing the following code:
+
+```javascript
+const { AuthenticationError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+module.exports = async function (req) {
+    const apiKey = req.args.headers['MY-CUSTOM-API-KEY'];
+
+    if (!apiKey)
+        throw new AuthenticationError('MY-CUSTOM-API-KEY header is required');
+
+    // ...
+}
+```
+
+would result in the following error response with a `401` status code if the `MY-CUSTOM-API-KEY` header is omitted:
+
+```json
+{
+    "proxy_error": {
+        "errors": {
+            "error": [
+                "MY-CUSTOM-API-KEY header is required"
+            ]
+        },
+        "title": "One or more validation errors occurred.",
+        "status": 401,
+        "detail": "Authentication Failed"
+    }
+}
+```
+
+#### Custom Errors
+
+To provide more control over the errors returned from a proxy transform, a [CustomHttpResponseError](/docs/api/reactors/reactor-errors#error-types) can be thrown from the transform.
+This will enable you to specify a status code, custom headers, and have complete control over the response body that is returned.
+
+For example, a transform containing the following code:
+
+```javascript
+const { CustomHttpResponseError } = require('@basis-theory/basis-theory-reactor-formulas-sdk-js');
+
+module.exports = async function (req) {
+  throw new CustomHttpResponseError({
+    status: 400,
+    headers: {
+        "Custom-Response-Header-1": "custom-value-1",
+        "Custom-Response-Header-2": "custom-value-2"
+    },
+    body: {
+        myCustomError: "My custom error message"
+    }
+  });
+};
+```
+
+results in an API response with status code `400`, having the headers:
+
+```text
+Custom-Response-Header-1: custom-value-1
+Custom-Response-Header-2: custom-value-2
+```
+
+and the response body:
+
+```json
+{
+    "myCustomError": "My custom error message"
+}
+```
 
 ### Request Transforms
 
@@ -1238,6 +1319,11 @@ Request Transforms can be used to:
 - Transform the body or headers on the HTTP request before forwarding the request to the destination
 - Tokenize parts of an inbound HTTP request and replace sensitive data with tokens before it hits your systems
 - Inject secrets that are configured within the proxy (e.g., third party API credentials) into the request body or headers
+
+<Alert type="warning">
+Response transforms will only be executed when the destination returns a `2xx` status code, and other non-`2xx`
+statuses will result in an immediate response from the proxy.
+</Alert>
 
 Request transforms are Node.js v16 code blocks which export a function of the form:
 
@@ -1286,6 +1372,8 @@ An object of the following type must be returned by the request transform functi
 |-----------|----------|---------------------------------------------------------------|
 | `body`    | _object_ | The transformed request body to forward to the destination    |
 | `headers` | _object_ | The transformed request headers to forward to the destination |
+
+
 
 ### Response Transforms
 

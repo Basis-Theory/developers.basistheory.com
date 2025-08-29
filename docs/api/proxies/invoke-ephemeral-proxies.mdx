@@ -1,0 +1,75 @@
+---
+title: Invoke Ephemeral Proxy
+---
+
+import { HttpMethod, HttpMethods } from "@site/src/components/shared/HttpMethod";
+import DestinationUrls from "./_destination_urls.mdx";
+import ReservedHeaders from "./_reserved_headers.mdx";
+import IpWhitelisting from "./_ip-whitelisting.mdx";
+import Permissions from "./_permissions.mdx";
+import Detokenization from "./_detokenization.mdx";
+import Response from "./_response.mdx";
+import Errors from "./_errors.mdx";
+import EncryptedData from "./_encrypted_data.mdx";
+import { Alert } from "@site/src/components/shared/Alert";
+
+# Invoke Ephemeral Proxy
+
+The Basis Theory Proxy can be used to share tokenized data with trusted third parties via outbound HTTP requests.
+Most outbound proxy requests simply need to [detokenize](/docs/expressions/detokenization) some tokens in the request and forward
+the plaintext data to a destination API over HTTP. Ephemeral proxy requests are a good fit for this use case,
+as they don't require any up-front setup, and all configuration is self-contained within the proxy request.
+
+<Alert>Ephemeral proxies can be enabled or disabled per tenant, allowing you to maintain a destination whitelist via [Pre-configured Proxies](/docs/api/proxies/pre-configured-proxies) instead.</Alert>
+
+Detokenize and forward an HTTP request through the proxy.
+
+<HttpMethod method={HttpMethods.POST} endpoint="https://api.basistheory.com/proxy" />
+
+<HttpMethod method={HttpMethods.GET} endpoint="https://api.basistheory.com/proxy" />
+
+<HttpMethod method={HttpMethods.PUT} endpoint="https://api.basistheory.com/proxy" />
+
+<HttpMethod method={HttpMethods.PATCH} endpoint="https://api.basistheory.com/proxy" />
+
+<HttpMethod method={HttpMethods.DELETE} endpoint="https://api.basistheory.com/proxy" />
+
+
+### Authentication
+
+Ephemeral proxy requests require a `BT-API-KEY` header (see [Authentication](/docs/api/authentication)) containing an API key for an authorized `private` application.
+
+Any authentication required by the destination service can be set on the request and it will be forwarded through the proxy
+(for example, by setting an `Authorization` header).
+
+<Permissions />
+
+<DestinationUrls />
+
+<ReservedHeaders />
+
+<IpWhitelisting />
+
+## Request
+
+A `BT-PROXY-URL` request header is required - its value defines the base URL to which the request will be proxied.
+See [Destination URLs](#destination-urls) for more information.
+
+```shell showLineNumbers
+curl "https://api.basistheory.com/proxy" \
+  -H "BT-API-KEY: <PRIVATE_API_KEY>" \
+  -H "BT-PROXY-URL: https://example.com/api" \
+  -H "Content-Type: application/json" \
+  -X "POST" \
+  -d '{
+    "parameter1": "{{ 26818785-547b-4b28-b0fa-531377e99f4e }}",
+    "parameter2": "non-sensitive"
+  }'
+```
+<Detokenization />
+
+<Response />
+
+<Errors />
+
+<EncryptedData />
